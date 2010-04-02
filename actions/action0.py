@@ -1,5 +1,6 @@
 import ast
 from generic import *
+from action4 import *
 from action6 import *
 from actionD import *
 
@@ -77,7 +78,7 @@ properties[0x0A] = {
     'input_multiplier_1': {'size': 4, 'num': 0x1C},
     'input_multiplier_2': {'size': 4, 'num': 0x1D},
     'input_multiplier_3': {'size': 4, 'num': 0x1E},
-    'ind_name': {'size': 2, 'num': 0x1F},
+    'ind_name': {'size': 2, 'num': 0x1F, 'string': 0xDC},
     'prospect_chance': {'size': 4, 'num': 0x20},
     'callback_flags_1': {'size': 1, 'num': 0x21},
     'callback_flags_2': {'size': 1, 'num': 0x22},
@@ -88,20 +89,19 @@ properties[0x0A] = {
 
 def parse_property(feature, name, value):
     global properties
-    num = name
-    size = -1
+    prop = None
     action_list = []
+    action_list_append = []
     mods = []
     
     if isinstance(name, str):
         if not name in properties[feature]: raise ScriptError("Unkown property name: " + name)
         prop = properties[feature][name]
-        num = prop['num']
-        size = prop['size']
     elif isinstance(name, ast.ConstantNumeric):
-        for prop in properties[feature]:
-            if prop['num'] != name.value: continue
-            size = prop['size']
+        for p in properties[feature]:
+            if p['num'] != name.value: continue
+            prop = p
+        if prop == None: raise ScriptError("Unkown property number: " + name.value)
     else: raise ScriptError("Invalid type as property identifier")
     
     if isinstance(value, ast.ConstantNumeric):
@@ -109,19 +109,28 @@ def parse_property(feature, name, value):
     elif isinstance(value, ast.Parameter) and isinstance(value.num, ast.ConstantNumeric):
         mods.append((value.num.value, size, 1))
         value = ast.ConstantNumeric(0)
+    elif isinstance(value, str):
+        if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
+        string_range = prop['string']
+        stringid, prepend, string_actions = get_string_action4s(feature, string_range, value)
+        value = ast.ConstantNumeric(stringid)
+        if prepend:
+            action_list.extend(string_actions)
+        else:
+            action_list_append.extend(string_actions)
     else:
         tmp_param, tmp_param_actions = get_tmp_parameter(value)
         mods.append((tmp_param, size, 1))
         action_list.extend(tmp_param_actions)
         value = ast.ConstantNumeric(0)
     
-    assert size > 0
-    return (Action0Property(num, value, size), action_list, mods)
+    return (Action0Property(prop['num'], value, prop['size']), action_list, mods, action_list_append)
 
 def parse_property_block(prop_list, feature, id):
     global free_parameters
     free_parameters_backup = free_parameters[:]
     action_list = []
+    action_list_append = []
     action6 = Action6()
     if isinstance(id, ast.ConstantNumeric):
         action0 = Action0(feature, id.value)
@@ -133,8 +142,9 @@ def parse_property_block(prop_list, feature, id):
     
     offset = 7
     for prop in prop_list:
-        property, extra_actions, mods = parse_property(feature, prop.name, prop.value)
+        property, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value)
         action_list.extend(extra_actions)
+        action_list_append.extend(extra_append_actions)
         for mod in mods:
             action6.modify_bytes(mod[0], mod[1], mod[2] + offset)
         offset += property.get_size()
@@ -142,6 +152,7 @@ def parse_property_block(prop_list, feature, id):
     
     if len(action6.modifications) > 0: action_list.append(action6)
     action_list.append(action0)
+    action_list.extend(action_list_append)
     
     free_parameters = free_parameters_backup
     return action_list
