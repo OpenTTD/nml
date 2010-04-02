@@ -30,19 +30,22 @@ class Action4:
         return True
 
 string_ranges = {
-    0xC4: {'object_specific': True},
-    0xC5: {'object_specific': True},
-    0xC9: {'object_specific': True},
-    0xD0: {'object_specific': False, 'ids': range(0xFF, -1, -1)},
-    0xDC: {'object_specific': False, 'ids': range(0x3FF, -1, -1)},
+    0xC4: {'random_id': False},
+    0xC5: {'random_id': False},
+    0xC9: {'random_id': False},
+    0xD0: {'random_id': True, 'ids': range(0xFF, -1, -1)},
+    0xDC: {'random_id': True, 'ids': range(0x3FF, -1, -1)},
 }
 
 def get_string_action4s(feature, string_range, string, id = None):
     global grf_strings, string_ranges
     if not string in grf_strings: raise ScriptError("Unkown string: " + string)
-    assert string_range in string_ranges
-    object_specific = string_ranges[string_range]['object_specific']
-    if not object_specific: id = (string_range << 8) | string_ranges[string_range]['ids'].pop()
+    if string_range != None:
+        word_sized = True
+        if string_ranges[string_range]['random_id']:
+            id = (string_range << 8) | string_ranges[string_range]['ids'].pop()
+    else:
+        word_sized = False
     
     actions = []
     for translation in grf_strings[string]:
