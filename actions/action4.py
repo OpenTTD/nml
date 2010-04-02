@@ -43,12 +43,13 @@ def get_string_action4s(feature, string_range, string, id = None):
     if string_range != None:
         word_sized = True
         if string_ranges[string_range]['random_id']:
-            id = (string_range << 8) | string_ranges[string_range]['ids'].pop()
+            id = string_ranges[string_range]['ids'].pop()
+        id = id | (string_range << 8)
     else:
         word_sized = False
     
     actions = []
     for translation in grf_strings[string]:
-        actions.append(Action4(feature, translation['lang'], not object_specific, id, translation['text']))
+        actions.append(Action4(feature, translation['lang'], word_sized, id, translation['text']))
     
-    return (id, not object_specific, actions)
+    return (id, word_sized, actions)
