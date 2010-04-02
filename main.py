@@ -5,6 +5,7 @@ import sys
 from ast import *
 from tokens import *
 from parser import *
+from grfstrings import *
 from generic import ScriptError
 
 # Build the lexer
@@ -24,6 +25,8 @@ script = open('data.nml', 'r').read().strip()
 if script == "": print "Empty input file"
 result = parser.parse(script)
 print_script(result, 0)
+
+read_lang_files()
 
 outf = open('data.nfo', 'w')
 
