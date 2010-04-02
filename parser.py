@@ -141,8 +141,10 @@ def p_property_list(t):
 def p_property_assignment(t):
     '''property_assignment : ID COLON expression
                            | ID COLON STRING
+                           | ID COLON ID
                            | NUMBER COLON expression
-                           | NUMBER COLON STRING'''
+                           | NUMBER COLON STRING
+                           | NUMBER COLON ID'''
     t[0] = Property(t[1], t[3])
 
 def p_graphics_block(t):

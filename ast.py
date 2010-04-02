@@ -277,7 +277,10 @@ class Property:
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Property:', self.name
-        self.value.debug_print(indentation + 2)
+        if isinstance(self.value, str):
+            print (indentation + 2)*' ' + 'String: ', self.value
+        else:
+            self.value.debug_print(indentation + 2)
 
 class PropertyBlock:
     def __init__(self, prop_list):
