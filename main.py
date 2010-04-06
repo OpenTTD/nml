@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 from string import *
-import sys
+import sys, codecs
 from ast import *
 from tokens import *
 from parser import *
@@ -28,7 +28,7 @@ print_script(result, 0)
 
 read_lang_files()
 
-outf = open('data.nfo', 'w')
+outf = codecs.open('data.nfo', 'w', 'utf-8')
 
 actions = []
 for block in result:

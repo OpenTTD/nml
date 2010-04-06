@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def to_hex(value):
     ret = hex(value)[2:].upper()
     if ret[-1] == 'L': ret = ret[0:-1]
@@ -42,7 +44,9 @@ def print_varx(file, value, size):
         assert False
 
 def print_string(file, value):
-    file.write('"' + value + '" 00 ')
+    file.write(u'"Þ')
+    file.write(value)
+    file.write('" 00 ')
 
 class ScriptError(Exception):
     def __init__(self, value):

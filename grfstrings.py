@@ -1,12 +1,13 @@
-import os, string
+import os, string, codecs
 
 grf_strings = {}
 
 def read_lang_files():
     for filename in os.listdir("lang/"):
         lang = -1
-        for line in open("lang/" + filename):
-            if len(line) <= 1 or line[0] == "#":
+        for line in codecs.open("lang/" + filename, "r", "utf-8"):
+            line = line.strip()
+            if len(line) == 0 or line[0] == "#":
                 pass
             elif line[:6] == "lang: ":
                 assert lang == -1, "Only one 'lang:' line allowed per language file"
