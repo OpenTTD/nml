@@ -17,8 +17,8 @@ class Action4:
         print_bytex(file, self.lang)
         file.write("01 ")
         print_varx(file, self.id, 2 if self.word_sized else 1)
-        file.write('"' + self.text + '" ')
-        file.write("00\n\n")
+        print_string(file, self.text)
+        file.write("\n\n")
     
     def skip_action7(self):
         return True
