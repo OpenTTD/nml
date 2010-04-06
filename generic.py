@@ -42,7 +42,7 @@ def print_varx(file, value, size):
         assert False
 
 def print_string(file, value):
-    file.write(value + ' 00' + " ")
+    file.write('"' + value + '" 00 ')
 
 class ScriptError(Exception):
     def __init__(self, value):

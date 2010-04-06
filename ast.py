@@ -2,6 +2,7 @@ from generic import *
 from actions.action0 import *
 from actions.action7 import *
 from actions.action8 import *
+from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
 
@@ -303,3 +304,22 @@ class GraphicsBlock:
         print indentation*' ' + 'Graphics block:'
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
+
+class Error:
+    def __init__(self, severity, msg, data, param1, param2):
+        self.severity = severity
+        self.msg = msg
+        self.data = data
+        self.param1 = param1
+        self.param2 = param2
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Error, msg = ', self.msg
+        print (indentation+2)*' ' + 'Severity:'
+        self.severity.debug_print(indentation + 4)
+        print (indentation+2)*' ' + 'Data: ', self.data
+        print (indentation+2)*' ' + 'Param1: ', self.param1
+        print (indentation+2)*' ' + 'Param2: ', self.param2
+    
+    def get_action_list(self):
+        return parse_error_block(self)

@@ -161,7 +161,8 @@ def p_graphics_assignment(t):
     'graphics_assignment : ID COLON ID'
     t[0] = GraphicsDefinition(t[1], t[3])
 
-#severity, message (one if ERROR_NOTICE, ERROR_WARNING, ERROR_ERROR, ERROR_FATAL, or custom string),
+#severity, message (one of REQUIRES_TTDPATCH, REQUIRES_DOS_WINDOWS, USED_WITH, INVALID_PARAMETER,
+#MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),
 #data (=string to insert in message), number of parameter, number of parameter
 def p_error_block(t):
     '''error_block : ERROR LPAREN expression COMMA ID RPAREN
