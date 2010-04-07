@@ -43,6 +43,11 @@ escapes = {
 'DARK_GRAY':      {'escape': r'\UE096', 'num_params': 0},
 'MAUVE':          {'escape': r'\UE097', 'num_params': 0},
 'BLACK':          {'escape': r'\UE098', 'num_params': 0},
+'TRAIN':          {'escape': r'\UE0B4', 'num_params': 0},
+'LORRY':          {'escape': r'\UE0B5', 'num_params': 0},
+'BUS':            {'escape': r'\UE0B6', 'num_params': 0},
+'PLANE':          {'escape': r'\UE0B7', 'num_params': 0},
+'SHIP':           {'escape': r'\UE0B8', 'num_params': 0},
 }
 
 def parse_command(command):
