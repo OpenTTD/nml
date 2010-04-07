@@ -86,18 +86,6 @@ class ParameterAssignment:
     def get_action_list(self):
         return parse_actionD(self)
 
-class AssignmentList:
-    def __init__(self, item0, prev_list = None):
-        if not prev_list:
-            self.assignments = [item0]
-        else:
-            self.assignments = prev_list.assignments + [item0]
-    
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Assignment list'
-        for item in self.assignments:
-            item.debug_print(indentation + 2)
-
 class String:
     def __init__(self, name, params = []):
         self.name = name
@@ -121,7 +109,7 @@ class GRF:
         self.name = None
         self.desc = None
         self.grfid = None
-        for assignment in alist.assignments:
+        for assignment in alist:
             if not isinstance(assignment.value, String):
                 raise ScriptError("Assignments in GRF-block must be constant strings")
             if assignment.name == "name": self.name = assignment.value

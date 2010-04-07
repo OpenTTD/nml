@@ -51,15 +51,12 @@ def p_grf_block(t):
 def p_assignment_list(t):
     '''assignment_list : assignment
                        | assignment_list SEMICOLON assignment'''
-    if len(t) == 4: t[0] = AssignmentList(t[3], t[1])
-    else: t[0] = AssignmentList(t[1])
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[3]]
 
-def p_assignment_string(t):
-    'assignment : ID COLON string'
-    t[0] = Assignment(t[1], t[3])
-
-def p_assignment_expr(t):
-    'assignment : ID COLON expression'
+def p_assignment(t):
+    '''assignment : ID COLON string
+                  | ID COLON expression'''
     t[0] = Assignment(t[1], t[3])
 
 def p_param_assignment(t):
