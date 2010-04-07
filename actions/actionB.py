@@ -1,6 +1,6 @@
 import ast
 from generic import *
-from grfstrings import grf_strings
+from grfstrings import grf_strings, get_translation
 from action6 import *
 from actionD import *
 
@@ -48,17 +48,6 @@ default_error_msg = {
     'MUST_LOAD_AFTER' : 5,
     'REQUIRES_OPENTTD' : 6,
 }
-
-def get_translation(string, lang):
-    global grf_strings
-    assert string in grf_strings
-    def_trans = None
-    for translation in grf_strings[string]:
-        if translation['lang'] == lang:
-            return translation['text']
-        if translation['lang'] == 0x7F:
-            def_trans = translation['text']
-    return def_trans
 
 def parse_error_block(error):
     global free_parameters, default_error_msg, grf_strings

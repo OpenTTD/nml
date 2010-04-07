@@ -1,3 +1,5 @@
+import sys
+
 reserved = {
     'grf' : 'GRF',
     'var' : 'VARIABLE',
@@ -50,7 +52,6 @@ tokens = list(reserved.values()) + [
     'TERNARY_OPEN',
     'COLON',
     'SEMICOLON',
-    'STRING',
     'NUMBER',
     ]
 
@@ -81,7 +82,6 @@ t_RBRACE           = r'}'
 t_TERNARY_OPEN     = r'\?'
 t_COLON            = r':'
 t_SEMICOLON        = r';'
-t_STRING           = r'".*?[^\\]"'
 t_ignore_COMMENT   = r'(/\*.*?\*/)|(//.*)'
 
 def t_NUMBER(t):
@@ -112,4 +112,4 @@ def t_newline(t):
     
 def t_error(t):
     print "Illegal character '%s' at line %d" % (t.value[0], t.lexer.lineno)
-    sys.Exit(1)
+    sys.exit(1)

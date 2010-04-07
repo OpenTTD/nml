@@ -55,8 +55,8 @@ def p_assignment_list(t):
     else: t[0] = AssignmentList(t[1])
 
 def p_assignment_string(t):
-    'assignment : ID COLON STRING'
-    t[0] = Assignment(t[1], ConstantString(t[3]))
+    'assignment : ID COLON string'
+    t[0] = Assignment(t[1], t[3])
 
 def p_assignment_expr(t):
     'assignment : ID COLON expression'
@@ -65,6 +65,18 @@ def p_assignment_expr(t):
 def p_param_assignment(t):
     'param_assignment : param EQ expression'
     t[0] = ParameterAssignment(t[1].num, t[3])
+
+def p_string(t):
+    '''string : ID
+              | ID LPAREN string_param_list RPAREN'''
+    if len(t) == 2: t[0] = String(t[1])
+    else: t[0] = String(t[1], t[3])
+
+def p_string_param_list(t):
+    '''string_param_list : expression
+                         | string_param_list COMMA expression'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[3]]
 
 def p_const_expression(t):
     'expression : NUMBER'
@@ -140,10 +152,10 @@ def p_property_list(t):
 
 def p_property_assignment(t):
     '''property_assignment : ID COLON expression
-                           | ID COLON STRING
+                           | ID COLON string
                            | ID COLON ID
                            | NUMBER COLON expression
-                           | NUMBER COLON STRING
+                           | NUMBER COLON string
                            | NUMBER COLON ID'''
     t[0] = Property(t[1], t[3])
 

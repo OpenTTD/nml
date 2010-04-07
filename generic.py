@@ -43,10 +43,12 @@ def print_varx(file, value, size):
     else:
         assert False
 
-def print_string(file, value):
-    file.write(u'"Þ')
+def print_string(file, value, final_zero = True, force_ascii = False):
+    file.write('"')
+    if not force_ascii: file.write(u'Þ')
     file.write(value)
-    file.write('" 00 ')
+    file.write('" ')
+    if final_zero: file.write('00 ')
 
 class ScriptError(Exception):
     def __init__(self, value):

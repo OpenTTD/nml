@@ -1,3 +1,5 @@
+from generic import *
+from grfstrings import get_translation
 
 class Action8:
     def __init__(self, grfid, name, description):
@@ -7,10 +9,9 @@ class Action8:
     
     def write(self, file):
         file.write("-1 * 0 08 07 ")
-        self.grfid.write(file, False)
-        file.write("\n")
-        self.name.write(file)
-        self.description.write(file)
+        print_string(file, get_translation(self.grfid.name), False, True)
+        print_string(file, get_translation(self.name.name))
+        print_string(file, get_translation(self.description.name))
         file.write("\n")
     
     def skip_action7(self):

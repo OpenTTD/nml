@@ -98,14 +98,15 @@ class AssignmentList:
         for item in self.assignments:
             item.debug_print(indentation + 2)
 
-class ConstantString:
-    def __init__(self, value):
-        self.value = value
+class String:
+    def __init__(self, name, params = []):
+        self.name = name
+        self.params = params
     def debug_print(self, indentation):
-        print indentation*' ' + 'String: ' + self.value
-    def write(self, file, full_string = True):
-        file.write(self.value + " ")
-        if full_string: file.write("00\n")
+        print indentation*' ' + 'String: ' + self.name
+        for param in self.params:
+            print (indentation+2)*' ' + 'Parameter:'
+            param.debug_print(indentation + 4)
 
 class ConstantNumeric(Expr):
     def __init__(self, value):
@@ -121,7 +122,7 @@ class GRF:
         self.desc = None
         self.grfid = None
         for assignment in alist.assignments:
-            if not isinstance(assignment.value, ConstantString):
+            if not isinstance(assignment.value, String):
                 raise ScriptError("Assignments in GRF-block must be constant strings")
             if assignment.name == "name": self.name = assignment.value
             elif assignment.name == "desc": self.desc = assignment.value

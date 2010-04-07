@@ -3,6 +3,17 @@ from generic import ScriptError
 
 grf_strings = {}
 
+def get_translation(string, lang = 0x7F):
+    global grf_strings
+    assert string in grf_strings
+    def_trans = None
+    for translation in grf_strings[string]:
+        if translation['lang'] == lang:
+            return translation['text']
+        if translation['lang'] == 0x7F:
+            def_trans = translation['text']
+    return def_trans
+
 escapes = {
 '':               {'escape': r'\n',    'num_params': 0},
 'TINYFONT':       {'escape': r'\0E',    'num_params': 0},
@@ -103,7 +114,7 @@ def read_lang_files():
                 assert lang != -1, "Language id not set"
                 i = string.index(line, ':')
                 name = line[:i].strip()
-                value = line[i+1:-1]
+                value = line[i+1:]
                 if not name in grf_strings:
                     grf_strings[name] = []
                 grf_strings[name].append({'lang': lang, 'text': parse_grf_string(value)})
