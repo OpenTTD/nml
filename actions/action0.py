@@ -109,7 +109,7 @@ def parse_property(feature, name, value):
     elif isinstance(value, ast.Parameter) and isinstance(value.num, ast.ConstantNumeric):
         mods.append((value.num.value, size, 1))
         value = ast.ConstantNumeric(0)
-    elif isinstance(value, str):
+    elif isinstance(value, ast.String):
         if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
         string_range = prop['string']
         stringid, prepend, string_actions = get_string_action4s(feature, string_range, value)
