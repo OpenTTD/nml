@@ -33,8 +33,8 @@ string_ranges = {
     0xC4: {'random_id': False},
     0xC5: {'random_id': False},
     0xC9: {'random_id': False},
-    0xD0: {'random_id': True, 'ids': range(0xFF, -1, -1)},
-    0xDC: {'random_id': True, 'ids': range(0x3FF, -1, -1)},
+    0xD0: {'random_id': True, 'ids': range(0x3FF, -1, -1)},
+    0xDC: {'random_id': True, 'ids': range(0xFF, -1, -1)},
 }
 
 def get_string_action4s(feature, string_range, string, id = None):
