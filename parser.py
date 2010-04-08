@@ -66,13 +66,13 @@ def p_param_assignment(t):
 
 def p_string(t):
     '''string : STRING LPAREN ID RPAREN
-              | STRING LPAREN ID COMMA string_param_list RPAREN'''
+              | STRING LPAREN ID COMMA param_list RPAREN'''
     if len(t) == 5: t[0] = String(t[3], [])
     else: t[0] = String(t[3], t[5])
 
-def p_string_param_list(t):
-    '''string_param_list : expression
-                         | string_param_list COMMA expression'''
+def p_param_list(t):
+    '''param_list : expression
+                  | param_list COMMA expression'''
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
 
@@ -285,3 +285,18 @@ def p_variable(t):
                 | VARIABLE LBRACKET expression COMMA expression RBRACKET'''
     param = None if len(t) == 5 else t[5]
     t[0] = Variable(t[3], param)
+
+def p_function(t):
+    '''expression : ID LPAREN RPAREN
+                  | ID LPAREN param_list RPAREN'''
+    name = t[1]
+    args = [] if len(t) == 4 else t[3]
+    if name == "min" or name == "max":
+        if len(args) != 2: raise ScriptError("wrong number of arguments to " + name)
+        op = Operator.MIN if name == "min" else Operator.MAX
+        t[0] = BinOp(op, args[0], args[1])
+        return
+    if len(args) != 0: raise ScriptError("Calls to another action2 can't have arguments")
+    t[0] = Variable(ConstantNumeric(0x7E), name)
+    
+
