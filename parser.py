@@ -73,7 +73,7 @@ def p_string(t):
 def p_string_param_list(t):
     '''string_param_list : expression
                          | string_param_list COMMA expression'''
-    if len(t) == 1: t[0] = [t[1]]
+    if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
 
 def p_const_expression(t):
