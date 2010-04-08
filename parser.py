@@ -65,15 +65,15 @@ def p_param_assignment(t):
     t[0] = ParameterAssignment(t[1].num, t[3])
 
 def p_string(t):
-    '''string : ID
-              | ID LPAREN string_param_list RPAREN'''
-    if len(t) == 2: t[0] = String(t[1])
-    else: t[0] = String(t[1], t[3])
+    '''string : STRING LPAREN ID RPAREN
+              | STRING LPAREN ID COMMA string_param_list RPAREN'''
+    if len(t) == 5: t[0] = String(t[3], [])
+    else: t[0] = String(t[3], t[5])
 
 def p_string_param_list(t):
     '''string_param_list : expression
                          | string_param_list COMMA expression'''
-    if len(t) == 2: t[0] = [t[1]]
+    if len(t) == 1: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
 
 def p_const_expression(t):
@@ -122,6 +122,8 @@ def p_switch(t):
 
 def p_switch_body(t):
     '''switch_body : expression
+                   | ID
+                   | string
                    | switch_range switch_body'''
     if len(t) == 2: t[0] = SwitchBody(t[1])
     else: t[0] = t[2].add_range(t[1])

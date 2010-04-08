@@ -23,6 +23,7 @@ reserved = {
     'replace' : 'REPLACESPRITE',#action A
     'replacenew' : 'REPLACENEWSPRITE',#action 5
     'deactivate' : 'DEACTIVATE',#action E
+    'string' : 'STRING',
 }
 
 tokens = list(reserved.values()) + [
