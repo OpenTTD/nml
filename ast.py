@@ -1,5 +1,6 @@
 from generic import *
 from actions.action0 import *
+from actions.action1 import *
 from actions.action7 import *
 from actions.action8 import *
 from actions.actionB import *
@@ -310,7 +311,7 @@ class SpriteBlock:
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 2)
     def get_action_list(self):
-        return []
+        return parse_sprite_block(self)
 
 class SpriteSet:
     def __init__(self, name, pcx, sprite_list):

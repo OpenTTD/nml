@@ -50,6 +50,9 @@ def print_string(file, value, final_zero = True, force_ascii = False):
     file.write('" ')
     if final_zero: file.write('00 ')
 
+def print_decimal(file, value):
+    file.write(str(value) + " ")
+
 class ScriptError(Exception):
     def __init__(self, value):
         self.value = value
