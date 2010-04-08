@@ -186,7 +186,7 @@ def p_spriteset_list(t):
     else: t[0] = t[1] + [t[2]]
 
 def p_spriteset(t):
-    'spriteset : SPRITESET LPAREN ID COMMA STRING RPAREN LBRACE real_sprite_list RBRACE'
+    'spriteset : SPRITESET LPAREN ID COMMA STRING_LITERAL RPAREN LBRACE real_sprite_list RBRACE'
     t[0] = SpriteSet(t[3], t[5], t[8])
 
 def p_real_sprite_list(t):
