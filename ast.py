@@ -25,6 +25,8 @@ class Operator:
     CMP_NEQ = 10
     CMP_LT  = 11
     CMP_GT  = 12
+    MIN     = 13
+    MAX     = 14
 
 
 ########### expressions ###########
@@ -86,6 +88,21 @@ class ParameterAssignment:
     
     def get_action_list(self):
         return parse_actionD(self)
+
+class Variable:
+    def __init__(self, num, param):
+        self.num = num
+        self.param = param
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Action2 variable'
+        self.num.debug_print(indentation + 2)
+        if self.param != None:
+            print (indentation+2)*' ' + 'Parameter:'
+            if isinstance(self.param, str):
+                print (indentation+4)*' ' + 'Procedure call:', self.param
+            else:
+                self.param.debug_print(indentation + 4)
 
 class String:
     def __init__(self, name, params = []):
