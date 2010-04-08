@@ -341,7 +341,27 @@ class RealSprite:
         print (indentation+2)*' ' + 'size:     (', self.xsize, ',', self.ysize, ')'
         print (indentation+2)*' ' + 'offset:   (', self.xrel,  ',', self.yrel,  ')'
         print (indentation+2)*' ' + 'compression: ', self.compression
+
+class SpriteGroup:
+    def __init__(self, name, spriteview_list):
+        self.name = name
+        self.spriteview_list = spriteview_list
     
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite group:', self.name
+        for spriteview in self.spriteview_list:
+            spriteview.debug_print(indentation + 2)
+
+class SpriteView:
+    def __init__(self, name, spriteset_list):
+        self.name = name
+        self.spriteset_list = spriteset_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite view:', self.name
+        print (indentation+2)*' ' + 'Sprite sets:'
+        for spriteset in self.spriteset_list:
+            print (indentation+4)*' ' + spriteset
 
 class Error:
     def __init__(self, severity, msg, data, param1, param2):

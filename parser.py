@@ -179,7 +179,9 @@ def p_spriteblock(t):
 
 def p_spriteset_list(t):
     '''spriteset_list : spriteset
-                      | spriteset_list spriteset'''
+                      | spritegroup
+                      | spriteset_list spriteset
+                      | spriteset_list spritegroup'''
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
 
@@ -192,6 +194,27 @@ def p_real_sprite_list(t):
                         | real_sprite_list real_sprite'''
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
+
+def p_spritegroup(t):
+    'spritegroup : SPRITEGROUP ID LBRACE spriteview_list RBRACE'
+    t[0] = SpriteGroup(t[2], t[4]);
+
+def p_spriteview_list(t):
+    '''spriteview_list : spriteview
+                       | spriteview_list spriteview'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+def p_spriteview(t):
+    'spriteview : ID COLON id_list'
+    t[0] = SpriteView(t[1], t[3])
+
+#comma-seperated list of ID tokens
+def p_id_list(t):
+    '''id_list : ID
+               | id_list COMMA ID'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[3]]
 
 #xpos ypos xsize ysize xrel yrel [compression]
 #compression (optional) can either be a number, or one of the following:
