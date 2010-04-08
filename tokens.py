@@ -52,6 +52,7 @@ tokens = list(reserved.values()) + [
     'TERNARY_OPEN',
     'COLON',
     'SEMICOLON',
+    'STRING',
     'NUMBER',
     ]
 
@@ -102,6 +103,10 @@ def t_ID(t):
     t.type = reserved.get(t.value,'ID')    # Check for reserved words
     return t
 
+def t_STRING(t):
+    r'".*?[^\\]"'
+    t.value = t.value[1:-1]
+    return t
 
 # Ignored characters
 t_ignore = " \t"

@@ -294,6 +294,49 @@ class GraphicsBlock:
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
 
+class SpriteBlock:
+    def __init__(self, feature, spriteset_list):
+        self.feature = feature
+        self.spriteset_list = spriteset_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite block, feature', hex(self.feature)
+        for spriteset in self.spriteset_list:
+            spriteset.debug_print(indentation + 2)
+    def get_action_list(self):
+        return []
+
+class SpriteSet:
+    def __init__(self, name, pcx, sprite_list):
+        self.name = name
+        self.pcx = pcx
+        self.sprite_list = sprite_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite set:', self.name
+        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print (indentation+2)*' ' + 'Sprites:'
+        for sprite in self.sprite_list:
+            sprite.debug_print(indentation + 4)
+
+class RealSprite:
+    def __init__(self, xpos, ypos, xsize, ysize, xrel, yrel, compression = 0x01):
+        self.xpos = xpos
+        self.ypos = ypos
+        self.xsize = xsize
+        self.ysize = ysize
+        self.xrel = xrel
+        self.yrel = yrel
+        self.compression = compression
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Real sprite'
+        print (indentation+2)*' ' + 'position: (', self.xpos,  ',', self.ypos,  ')'
+        print (indentation+2)*' ' + 'size:     (', self.xsize, ',', self.ysize, ')'
+        print (indentation+2)*' ' + 'offset:   (', self.xrel,  ',', self.yrel,  ')'
+        print (indentation+2)*' ' + 'compression: ', self.compression
+    
+
 class Error:
     def __init__(self, severity, msg, data, param1, param2):
         self.severity = severity

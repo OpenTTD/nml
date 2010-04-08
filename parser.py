@@ -19,7 +19,8 @@ def p_script(t):
 
 def p_main_block(t):
     '''main_block : skipable_block
-                  | switch'''
+                  | switch
+                  | spriteblock'''
     t[0] = t[1]
 
 def p_skipable_script(t):
@@ -169,6 +170,42 @@ def p_graphics_list(t):
 def p_graphics_assignment(t):
     'graphics_assignment : ID COLON ID'
     t[0] = GraphicsDefinition(t[1], t[3])
+
+def p_spriteblock(t):
+    'spriteblock : SPRITEBLOCK LPAREN feature RPAREN LBRACE spriteset_list RBRACE'
+    t[0] = SpriteBlock(t[3], t[6])
+
+def p_spriteset_list(t):
+    '''spriteset_list : spriteset
+                      | spriteset_list spriteset'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+def p_spriteset(t):
+    'spriteset : SPRITESET LPAREN ID COMMA STRING RPAREN LBRACE real_sprite_list RBRACE'
+    t[0] = SpriteSet(t[3], t[5], t[8])
+
+def p_real_sprite_list(t):
+    '''real_sprite_list : real_sprite
+                        | real_sprite_list real_sprite'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+#xpos ypos xsize ysize xrel yrel [compression]
+#compression (optional) can either be a number, or one of the following:
+#NORMAL (=default), TILE_COMPRESSION, STORE_COMPRESSED, NORMAL_NOCROP, TILE_COMPRESSION_NOCROP, STORE_COMPRESSED_NOCROP
+def p_real_sprite(t):
+    '''real_sprite : LBRACKET sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset RBRACKET
+                   | LBRACKET sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset RBRACKET
+                   | LBRACKET sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset ID RBRACKET'''
+    if len(t) < 10: t[0] = RealSprite(t[2], t[3], t[4], t[5], t[6], t[7])
+    else: t[0] = RealSprite(t[2], t[3], t[4], t[5], t[6], t[7], t[8])
+
+def p_sprite_offset(t):
+    '''sprite_offset : NUMBER
+                    | MINUS NUMBER'''
+    if len(t) == 2: t[0] = t[1]
+    else: t[0] = -t[2]
 
 #severity, message (one of REQUIRES_TTDPATCH, REQUIRES_DOS_WINDOWS, USED_WITH, INVALID_PARAMETER,
 #MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),
