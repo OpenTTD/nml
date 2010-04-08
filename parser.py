@@ -202,9 +202,12 @@ def p_spritegroup(t):
     t[0] = SpriteGroup(t[2], t[4]);
 
 def p_spriteview_list(t):
-    '''spriteview_list : spriteview
+    '''spriteview_list : ID
+                       | spriteview
                        | spriteview_list spriteview'''
-    if len(t) == 2: t[0] = [t[1]]
+    if len(t) == 2: 
+        if isinstance(t[1], str): t[0] = [SpriteView('default', [t[1]])]
+        else: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
 
 def p_spriteview(t):
