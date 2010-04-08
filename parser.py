@@ -128,7 +128,9 @@ def p_switch_body(t):
 
 def p_switch_range(t):
     '''switch_range : expression COLON expression
-                    | expression RANGE expression COLON expression'''
+                    | expression COLON ID
+                    | expression RANGE expression COLON expression
+                    | expression RANGE expression COLON ID'''
     if len(t) == 4: t[0] = SwitchRange(t[1], t[1], t[3])
     else: t[0] = SwitchRange(t[1], t[3], t[5])
 

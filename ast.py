@@ -180,6 +180,9 @@ class Switch:
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
         self.body.debug_print(indentation + 4)
+    
+    def get_action_list(self):
+        return []
 
 class SwitchBody:
     def __init__(self, default):
@@ -208,7 +211,10 @@ class SwitchRange:
         print indentation*' ' + 'Max:'
         self.max.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        self.result.debug_print(indentation + 2)
+        if isinstance(self.result, str):
+            print (indentation+2)*' ' + 'Go to switch:', self.result
+        else:
+            self.result.debug_print(indentation + 2)
 
 class DeactivateBlock:
     def __init__(self, grfid):
