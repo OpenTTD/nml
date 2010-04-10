@@ -43,6 +43,9 @@ outf.write(
 
 ''')
 
+for i in range(len(actions) - 1, -1, -1):
+    if isinstance(actions[i], Action2Var):
+        actions[i].resolve_tmp_storage()
 
 for action in actions:
     action.write(outf)

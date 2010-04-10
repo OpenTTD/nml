@@ -117,23 +117,28 @@ def p_loop(t):
     t[0] = Loop(t[3], t[6])
 
 def p_switch(t):
-    'switch : SWITCH LPAREN feature COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
-    t[0] = Switch(t[3], t[5], t[7], t[10])
+    'switch : SWITCH LPAREN feature COMMA VARSIZE COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
+    t[0] = Switch(t[3], t[5], t[7], t[9], t[12])
 
 def p_switch_body(t):
-    '''switch_body : expression
+    '''switch_body : RETURN expression
                    | ID
                    | string
                    | switch_range switch_body'''
-    if len(t) == 2: t[0] = SwitchBody(t[1])
-    else: t[0] = t[2].add_range(t[1])
+    if t[1] == 'return': t[0] = SwitchBody(t[2])
+    elif len(t) == 3: t[0] = t[2].add_range(t[1])
+    else:t[0] = SwitchBody(t[1])
 
 def p_switch_range(t):
-    '''switch_range : expression COLON expression
+    '''switch_range : expression COLON RETURN expression
                     | expression COLON ID
-                    | expression RANGE expression COLON expression
-                    | expression RANGE expression COLON ID'''
-    if len(t) == 4: t[0] = SwitchRange(t[1], t[1], t[3])
+                    | expression COLON string
+                    | expression RANGE expression COLON RETURN expression
+                    | expression RANGE expression COLON ID
+                    | expression RANGE expression COLON string'''
+    if len(t) == 5: t[0] = SwitchRange(t[1], t[1], t[4])
+    elif len(t) == 4: t[0] = SwitchRange(t[1], t[1], t[3])
+    elif len(t) == 7: t[0] = SwitchRange(t[1], t[3], t[6])
     else: t[0] = SwitchRange(t[1], t[3], t[5])
 
 def p_item(t):

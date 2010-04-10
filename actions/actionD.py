@@ -47,7 +47,7 @@ def convert_op_to_actiond(op):
     if op == ast.Operator.SUB: return ActionDOperator.SUB
     if op == ast.Operator.AND: return ActionDOperator.AND
     if op == ast.Operator.OR: return ActionDOperator.OR
-    raise ast.ScriptError("Unsupported operator in parameter assignment")
+    raise ast.ScriptError("Unsupported operator in parameter assignment: " + str(op))
 
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):

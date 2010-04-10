@@ -1,6 +1,7 @@
 from generic import *
 from actions.action0 import *
 from actions.action1 import *
+from actions.action2var import *
 from actions.action7 import *
 from actions.action8 import *
 from actions.actionB import *
@@ -186,21 +187,22 @@ class Loop:
         return parse_loop_block(self)
 
 class Switch:
-    def __init__(self, feature, id, expr, body):
+    def __init__(self, feature, varsize, name, expr, body):
         self.feature = feature
-        self.id = id
+        self.varsize = varsize
+        self.name = name
         self.expr = expr
         self.body = body
     
     def debug_print(self, indentation):
-        print indentation*' ' + 'Switch, Feature =,',self.feature,', name =', self.id
+        print indentation*' ' + 'Switch, Feature =,',self.feature,', name =', self.name
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
         self.body.debug_print(indentation + 4)
     
     def get_action_list(self):
-        return []
+        return parse_varaction2(self)
 
 class SwitchBody:
     def __init__(self, default):
@@ -215,7 +217,10 @@ class SwitchBody:
         for r in self.ranges:
             r.debug_print(indentation)
         print indentation*' ' + 'Default:'
-        self.default.debug_print(indentation + 2)
+        if isinstance(self.default, str):
+            print (indentation+2)*' ' + 'Go to switch:', self.default
+        else:
+            self.default.debug_print(indentation + 2)
 
 class SwitchRange:
     def __init__(self, min, max, result):

@@ -24,6 +24,16 @@ reserved = {
     'replacenew' : 'REPLACENEWSPRITE',#action 5
     'deactivate' : 'DEACTIVATE',#action E
     'string' : 'STRING',
+    'return' : 'RETURN',
+}
+
+var_sizes = {
+    'BYTE' :  {'varsize': 1, 'type_byte': 0x81},
+    'WORD' :  {'varsize': 2, 'type_byte': 0x85},
+    'DWORD' : {'varsize': 4, 'type_byte': 0x89},
+    'BYTE_PARENT' :  {'varsize': 1, 'type_byte': 0x82},
+    'WORD_PARENT' :  {'varsize': 2, 'type_byte': 0x86},
+    'DWORD_PARENT' : {'varsize': 4, 'type_byte': 0x8A},
 }
 
 tokens = list(reserved.values()) + [
@@ -55,7 +65,8 @@ tokens = list(reserved.values()) + [
     'SEMICOLON',
     'STRING_LITERAL',
     'NUMBER',
-    ]
+    'VARSIZE'
+]
 
 # Tokens
 
@@ -101,7 +112,11 @@ def t_NUMBER(t):
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
-    t.type = reserved.get(t.value,'ID')    # Check for reserved words
+    if t.value in var_sizes:
+        t.type = 'VARSIZE'
+        t.value = var_sizes[t.value]
+    else:
+        t.type = reserved.get(t.value,'ID')    # Check for reserved words
     return t
 
 def t_STRING_LITERAL(t):
