@@ -197,7 +197,8 @@ def parse_property_block(prop_list, feature, id):
         action_list_append.extend(extra_append_actions)
         for mod in mods:
             action6.modify_bytes(mod[0], mod[1], mod[2] + offset)
-        offset += property.get_size()
+        for p in properties:
+            offset += p.get_size()
         action0.prop_list.extend(properties)
     
     if len(action6.modifications) > 0: action_list.append(action6)
