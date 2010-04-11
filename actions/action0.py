@@ -15,7 +15,7 @@ class Action0:
         file.write("-1 * 0 00 ")
         print_bytex(file, self.feature)
         print_byte(file, len(self.prop_list))
-        if self.num_ids == None: self.num_ids = 0
+        if self.num_ids == None: self.num_ids = 1
         print_bytex(file, self.num_ids)
         file.write("FF ")
         print_wordx(file, self.id)
