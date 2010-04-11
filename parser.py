@@ -62,9 +62,9 @@ def p_grf_block(t):
 
 def p_assignment_list(t):
     '''assignment_list : assignment
-                       | assignment_list SEMICOLON assignment'''
+                       | assignment_list assignment'''
     if len(t) == 2: t[0] = [t[1]]
-    else: t[0] = t[1] + [t[3]]
+    else: t[0] = t[1] + [t[2]]
 
 def p_assignment(t):
     '''assignment : ID COLON string
