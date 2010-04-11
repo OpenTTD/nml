@@ -26,7 +26,7 @@ real_action2_alias = {
     'default': 0,
 }
 
-def get_real_action2(spritegroup, feature, spritesets):
+def get_real_action2s(spritegroup, feature, spritesets):
     global real_action2_alias
     loaded_list = []
     loading_list = []
@@ -36,4 +36,4 @@ def get_real_action2(spritegroup, feature, spritesets):
         for set_name in view.spriteset_list:
             if set_name not in spritesets: raise ScriptError("Unknown sprite set: " + set_name)
             cur_list.append(spritesets[set_name])
-    return Action2Real(feature, spritegroup.name, loaded_list, loading_list)
+    return [Action2Real(feature, spritegroup.name, loaded_list, loading_list)]

@@ -386,6 +386,38 @@ class SpriteView:
         for spriteset in self.spriteset_list:
             print (indentation+4)*' ' + spriteset
 
+class LayoutSpriteGroup:
+    def __init__(self, name, layout_sprite_list):
+        self.name = name
+        self.layout_sprite_list = layout_sprite_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Tile layout sprite group:', self.name
+        for layout_sprite in self.layout_sprite_list:
+            layout_sprite.debug_print(indentation + 2)
+
+class LayoutSprite:
+    def __init__(self, type, param_list):
+        self.type = type
+        self.param_list = param_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Tile layout sprite of type:', self.type
+        for layout_param in self.param_list:
+            layout_param.debug_print(indentation + 2)
+
+class LayoutParam:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Layout parameter:', self.name
+        if isinstance(self.value, str):
+            print (indentation + 2)*' ' + 'String: ', self.value
+        else:
+            self.value.debug_print(indentation + 2)
+
 class Error:
     def __init__(self, severity, msg, data, param1, param2):
         self.severity = severity

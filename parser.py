@@ -219,9 +219,13 @@ def p_real_sprite_list(t):
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
 
-def p_spritegroup(t):
+def p_spritegroup_normal(t):
     'spritegroup : SPRITEGROUP ID LBRACE spriteview_list RBRACE'
-    t[0] = SpriteGroup(t[2], t[4]);
+    t[0] = SpriteGroup(t[2], t[4])
+
+def p_spritegroup_layout(t):
+    'spritegroup : SPRITEGROUP ID LBRACE layout_sprite_list RBRACE'
+    t[0] = LayoutSpriteGroup(t[2], t[4])
 
 def p_spriteview_list(t):
     '''spriteview_list : ID
@@ -247,6 +251,29 @@ def p_id_list(t):
 def p_id_array(t):
     'id_array : LBRACKET id_list RBRACKET'
     t[0] = t[2]
+
+def p_layout_sprite_list(t):
+    '''layout_sprite_list : layout_sprite
+                          | layout_sprite_list layout_sprite'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+def p_layout_sprite(t):
+    '''layout_sprite : GROUND LBRACE layout_param_list RBRACE
+                     | BUILDING LBRACE layout_param_list RBRACE
+                     | CHILDSPRITE LBRACE layout_param_list RBRACE'''
+    t[0] = LayoutSprite(t[1], t[3])
+
+def p_layout_param_list(t):
+    '''layout_param_list : layout_param
+                         | layout_param_list layout_param'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+def p_layout_param(t):
+    '''layout_param : ID COLON ID
+                    | ID COLON expression'''
+    t[0] = LayoutParam(t[1], t[3])
 
 #xpos ypos xsize ysize xrel yrel [compression]
 #compression (optional) can either be a number, or one of the following:

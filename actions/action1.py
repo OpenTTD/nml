@@ -2,6 +2,7 @@ import ast
 from generic import *
 from real_sprite import *
 from action2real import *
+from action2layout import *
 
 class Action1:
     def __init__(self, feature, num_sets, num_ent):
@@ -46,9 +47,11 @@ def parse_sprite_block(sprite_block):
             for sprite in item.sprite_list:
                 action_list.append(get_real_sprite(sprite, item.pcx))
     
+        elif isinstance(item, ast.SpriteGroup):
+            action_list_append.extend(get_real_action2s(item, sprite_block.feature, spritesets))
         else:
-            assert isinstance(item, ast.SpriteGroup)
-            action_list_append.append(get_real_action2(item, sprite_block.feature, spritesets))
+            assert isinstance(item, ast.LayoutSpriteGroup)
+            action_list_append.extend(get_layout_action2s(item, sprite_block.feature, spritesets))
     
     action_list[0] = Action1(sprite_block.feature, num_sets, num_ent)
     action_list.extend(action_list_append)
