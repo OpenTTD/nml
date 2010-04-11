@@ -233,15 +233,20 @@ def p_spriteview_list(t):
     else: t[0] = t[1] + [t[2]]
 
 def p_spriteview(t):
-    'spriteview : ID COLON id_list'
-    t[0] = SpriteView(t[1], t[3])
+    ''' spriteview : ID COLON id_array
+                   | ID COLON ID'''
+    if isinstance(t[3], list): t[0] = SpriteView(t[1], t[3])
+    else: t[0] = SpriteView(t[1], [t[3]])
 
-#comma-seperated list of ID tokens
 def p_id_list(t):
     '''id_list : ID
                | id_list COMMA ID'''
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
+
+def p_id_array(t):
+    'id_array : LBRACKET id_list RBRACKET'
+    t[0] = t[2]
 
 #xpos ypos xsize ysize xrel yrel [compression]
 #compression (optional) can either be a number, or one of the following:
