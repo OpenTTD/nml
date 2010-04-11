@@ -15,7 +15,8 @@ def get_translation(string, lang = 0x7F):
     return def_trans
 
 escapes = {
-'':               {'escape': r'\n',    'num_params': 0},
+'':               {'escape': r'\n',     'num_params': 0},
+'{':              {'escape': r'{',      'num_params': 0},
 'TINYFONT':       {'escape': r'\0E',    'num_params': 0},
 'BIGFONT':        {'escape': r'\0F',    'num_params': 0},
 'DWORD_S':        {'escape': r'\UE07B', 'num_params': 0},
@@ -82,6 +83,7 @@ def parse_command(command):
 def parse_grf_string(orig_string):
     ret = ''
     ignore = 0
+    special_chars = {r'"': r'\"', r'\\': r'\\\\'}
     for i in range(len(orig_string)):
         if ignore > 0:
             ignore = ignore - 1
@@ -96,6 +98,8 @@ def parse_grf_string(orig_string):
                     ignore = j - i
                     break
             if not has_end: raise ScriptError("Command block without ending '}'")
+        elif c in special_chars:
+            ret += special_chars[c]
         else:
             ret += c
     return ret
