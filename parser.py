@@ -172,10 +172,16 @@ def p_property_assignment(t):
     '''property_assignment : ID COLON expression
                            | ID COLON string
                            | ID COLON ID
+                           | ID COLON array
                            | NUMBER COLON expression
                            | NUMBER COLON string
-                           | NUMBER COLON ID'''
+                           | NUMBER COLON ID
+                           | NUMBER COLON array'''
     t[0] = Property(t[1], t[3])
+
+def p_array(t):
+    'array : LBRACKET param_list RBRACKET'
+    t[0] = t[2]
 
 def p_graphics_block(t):
     'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
