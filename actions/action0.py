@@ -54,8 +54,51 @@ class Action0Property:
     def get_size(self):
         return self.size + 1
 
+def train_weight_prop(value):
+    if not isinstance(value, ast.ConstantNumeric): raise ScriptError("Train weight must be a constant number")
+    low_byte = ast.ConstantNumeric(value.value & 0xFF)
+    high_byte = ast.ConstantNumeric(value.value >> 8)
+    return [Action0Property(0x16, low_byte, 1), Action0Property(0x24, high_byte, 1)]
 
 properties = 0x12 * [None]
+
+properties[0x00] = {
+    'reliability_decay' : {'size': 1, 'num': 0x02},
+    'vehicle_life' : {'size': 1, 'num': 0x03},
+    'model_life' : {'size': 1, 'num': 0x04},
+    'climates_available' : {'size': 1, 'num': 0x06},
+    'load_amount' : {'size': 2, 'num': 0x07},
+    'track_type' : {'size': 1, 'num': 0x05},
+    'ai_special_flag' : {'size': 1, 'num': 0x08},
+    'speed' : {'size': 2, 'num': 0x09},
+    'power' : {'size': 2, 'num': 0x0B},
+    'running_cost_factor' : {'size': 1, 'num': 0x0D},
+    'running_cost_base' : {'size': 4, 'num': 0x0E},
+    'sprite_id' : {'size': 1, 'num': 0x12},
+    'dual_headed' : {'size': 1, 'num': 0x13},
+    'cargo_capacity' : {'size': 1, 'num': 0x14},
+    'cargo_type' : {'size': 1, 'num': 0x15},
+    'weight' : {'custom_function': train_weight_prop},
+    'cost_factor' : {'size': 1, 'num': 0x17},
+    'ai_engine_rank' : {'size': 1, 'num': 0x18},
+    'traction_type' : {'size': 1, 'num': 0x19},
+    'weight' : {'size': 1, 'num': 0x1A},
+    'extra_power_per_wagon' : {'size': 2, 'num': 0x1B},
+    'refit_cost' : {'size': 1, 'num': 0x1C},
+    'refittable_cargo_types' : {'size': 4, 'num': 0x1D},
+    'callback flags' : {'size': 1, 'num': 0x1E},
+    'tractive_effort_coefficient' : {'size': 1, 'num': 0x1F},
+    'air_drag_coefficient' : {'size': 1, 'num': 0x20},
+    'shorten_vehicle' : {'size': 1, 'num': 0x21},
+    'visual_effect' : {'size': 1, 'num': 0x22},
+    'extra_weight_per_wagon' : {'size': 1, 'num': 0x23},
+    'bitmask_var42' : {'size': 1, 'num': 0x25},
+    'retire_early' : {'size': 1, 'num': 0x26},
+    'misc_flags' : {'size': 1, 'num': 0x27},
+    'refittable_cargo_classes' : {'size': 2, 'num': 0x28},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29},
+    'introduction_date' : {'size': 4, 'num': 0x2A},
+}
 
 properties[0x0A] = {
     'substitute': {'size': 1, 'num': 0x08},
@@ -102,32 +145,36 @@ def parse_property(feature, name, value):
         prop = properties[feature][name]
     elif isinstance(name, ast.ConstantNumeric):
         for p in properties[feature]:
-            if p['num'] != name.value: continue
+            if 'num' in p and p['num'] != name.value: continue
             prop = p
         if prop == None: raise ScriptError("Unkown property number: " + name.value)
     else: raise ScriptError("Invalid type as property identifier")
     
-    if isinstance(value, ast.ConstantNumeric):
-        pass
-    elif isinstance(value, ast.Parameter) and isinstance(value.num, ast.ConstantNumeric):
-        mods.append((value.num.value, size, 1))
-        value = ast.ConstantNumeric(0)
-    elif isinstance(value, ast.String):
-        if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
-        string_range = prop['string']
-        stringid, prepend, string_actions = get_string_action4s(feature, string_range, value)
-        value = ast.ConstantNumeric(stringid)
-        if prepend:
-            action_list.extend(string_actions)
-        else:
-            action_list_append.extend(string_actions)
+    if 'custom_function' in prop:
+        props = prop['custom_function'](value)
     else:
-        tmp_param, tmp_param_actions = get_tmp_parameter(value)
-        mods.append((tmp_param, size, 1))
-        action_list.extend(tmp_param_actions)
-        value = ast.ConstantNumeric(0)
+        if isinstance(value, ast.ConstantNumeric):
+            pass
+        elif isinstance(value, ast.Parameter) and isinstance(value.num, ast.ConstantNumeric):
+            mods.append((value.num.value, size, 1))
+            value = ast.ConstantNumeric(0)
+        elif isinstance(value, ast.String):
+            if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
+            string_range = prop['string']
+            stringid, prepend, string_actions = get_string_action4s(feature, string_range, value)
+            value = ast.ConstantNumeric(stringid)
+            if prepend:
+                action_list.extend(string_actions)
+            else:
+                action_list_append.extend(string_actions)
+        else:
+            tmp_param, tmp_param_actions = get_tmp_parameter(value)
+            mods.append((tmp_param, size, 1))
+            action_list.extend(tmp_param_actions)
+            value = ast.ConstantNumeric(0)
+        props = [Action0Property(prop['num'], value, prop['size'])]
     
-    return (Action0Property(prop['num'], value, prop['size']), action_list, mods, action_list_append)
+    return (props, action_list, mods, action_list_append)
 
 def parse_property_block(prop_list, feature, id):
     global free_parameters
@@ -145,13 +192,13 @@ def parse_property_block(prop_list, feature, id):
     
     offset = 7
     for prop in prop_list:
-        property, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value)
+        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:
             action6.modify_bytes(mod[0], mod[1], mod[2] + offset)
         offset += property.get_size()
-        action0.prop_list.append(property)
+        action0.prop_list.extend(properties)
     
     if len(action6.modifications) > 0: action_list.append(action6)
     action_list.append(action0)
