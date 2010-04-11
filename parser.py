@@ -20,7 +20,8 @@ def p_script(t):
 def p_main_block(t):
     '''main_block : skipable_block
                   | switch
-                  | spriteblock'''
+                  | spriteblock
+                  | cargotable'''
     t[0] = t[1]
 
 def p_skipable_script(t):
@@ -40,6 +41,16 @@ def p_skipable_block(t):
                       | property_block
                       | graphics_block'''
     t[0] = t[1]
+
+def p_cargotable(t):
+    'cargotable : CARGOTABLE LBRACE cargotable_list RBRACE'
+    t[0] = CargoTable(t[3])
+
+def p_cargotable_list(t):
+    '''cargotable_list : ID
+                       | cargotable_list COMMA ID'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[3]]
 
 def p_deactivate(t):
     'deactivate : DEACTIVATE LPAREN NUMBER RPAREN'

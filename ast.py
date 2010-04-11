@@ -404,3 +404,15 @@ class Error:
     
     def get_action_list(self):
         return parse_error_block(self)
+
+class CargoTable:
+    def __init__(self, cargo_list):
+        self.cargo_list = cargo_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Cargo table'
+        for cargo in self.cargo_list:
+            print (indentation+2)*' ' + 'Cargo:', cargo
+    
+    def get_action_list(self):
+        return get_cargolist_action(self.cargo_list)

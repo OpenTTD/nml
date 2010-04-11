@@ -9,12 +9,15 @@ class Action0:
         self.feature = feature
         self.id = id
         self.prop_list = []
+        self.num_ids = None
     
     def write(self, file):
         file.write("-1 * 0 00 ")
         print_bytex(file, self.feature)
         print_byte(file, len(self.prop_list))
-        file.write("01 FF ")
+        if self.num_ids == None: self.num_ids = 0
+        print_bytex(file, self.num_ids)
+        file.write("FF ")
         print_wordx(file, self.id)
         file.write("\n")
         for prop in self.prop_list:
@@ -156,3 +159,19 @@ def parse_property_block(prop_list, feature, id):
     
     free_parameters = free_parameters_backup
     return action_list
+
+class CargoListProp:
+    def __init__(self, cargo_list):
+        self.cargo_list = cargo_list
+    
+    def write(self, file):
+        print_bytex(file, 0x09)
+        for i in range(0, len(self.cargo_list)):
+            print_string(file, self.cargo_list[i], False, True)
+            if i > 0 and i % 5 == 0: file.write("\n")
+
+def get_cargolist_action(cargo_list):
+    action0 = Action0(0x08, 0)
+    action0.prop_list.append(CargoListProp(cargo_list))
+    action0.num_ids = len(cargo_list)
+    return [action0]
