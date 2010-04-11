@@ -215,8 +215,9 @@ class CargoListProp:
     def write(self, file):
         print_bytex(file, 0x09)
         for i in range(0, len(self.cargo_list)):
-            print_string(file, self.cargo_list[i], False, True)
             if i > 0 and i % 5 == 0: file.write("\n")
+            print_string(file, self.cargo_list[i], False, True)
+        file.write("\n")
 
 def get_cargolist_action(cargo_list):
     action0 = Action0(0x08, 0)
