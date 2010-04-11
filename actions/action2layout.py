@@ -163,9 +163,15 @@ def set_sprite_property(sprite, name, value, spritesets):
         else:
             raise ScriptError("Unknown sprite layout parameter: " + name)
 
+layout_action2_features = [0x07, 0x09, 0x11] #houses, industry and airport tiles
+
 def get_layout_action2s(spritegroup, feature, spritesets):
+    global layout_action2_features
     ground_sprite = None
     building_sprites = []
+    
+    if feature not in layout_action2_features:
+        raise ScriptError("Sprite groups that define tile layouts are not supported for this feature: " + str(feature))
     
     for layout_sprite in spritegroup.layout_sprite_list:
         sprite = Action2LayoutSprite(layout_sprite.type)

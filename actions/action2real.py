@@ -19,21 +19,34 @@ class Action2Real(Action2):
         file.write("\n")
 
 real_action2_alias = {
-    'loaded': 0,
-    'loading': 1,
-    'little': 0,
-    'lots': 1,
-    'default': 0,
+    'loaded': (0, [0x00, 0x01, 0x02, 0x03]),  #vehicles
+    'loading': (1, [0x00, 0x01, 0x02, 0x03]), #vehicles
+    'little': (0, [0x04]), #stations
+    'lots': (1, [0x04]),   #stations
+    'default': (0, [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x10]), #vehicles, stations, canals, cargos, railtypes
 }
 
+real_action2_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x10] #vehicles, stations, canals, cargos, railtypes
+
 def get_real_action2s(spritegroup, feature, spritesets):
-    global real_action2_alias
+    global real_action2_alias, real_action2_features
     loaded_list = []
     loading_list = []
+    
+    if feature not in real_action2_features:
+        raise ScriptError("Sprite groups that directly define sprite sets are not supported for this feature: " + str(feature))
+    
     for view in spritegroup.spriteview_list:
         if view.name not in real_action2_alias: raise ScriptError("Unknown sprite view type encountered in sprite group: " + view.name)
-        cur_list = loaded_list if real_action2_alias[view.name] == 0 else loading_list
+        type, feature_list = real_action2_alias[view.name];
+        #of course stations want to be different, their default view is the second type instead of the first
+        if view.name == 'default' and feature is 0x04: type = 1
+        if feature not in feature_list:
+            raise ScriptError("Sprite view type '" + view.name + "' is not supported for this feature: " + str(feature))
+        
         for set_name in view.spriteset_list:
-            if set_name not in spritesets: raise ScriptError("Unknown sprite set: " + set_name)
-            cur_list.append(spritesets[set_name])
+            if set_name not in spritesets:
+                raise ScriptError("Unknown sprite set: " + set_name)
+            if type == 0: loaded_list.append(spritesets[set_name])
+            else:  loading_list.append(spritesets[set_name])
     return [Action2Real(feature, spritegroup.name, loaded_list, loading_list)]
