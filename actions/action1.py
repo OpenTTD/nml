@@ -17,7 +17,7 @@ class Action1:
         print_byte(file, self.num_sets)
         print_byte(file, self.num_ent)
         file.write("\n")
-     
+    
     def skip_action7(self):
         return True
     
@@ -27,12 +27,19 @@ class Action1:
     def skip_needed(self):
         return True
 
+#vehicles, stations, canals, cargos, airports, railtypes, houses, industry tiles, airport tiles
+action1_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11]
+
 def parse_sprite_block(sprite_block):
+    global action1_features
     action_list = [None] #reserve one for action 1
     action_list_append = []
     spritesets = {} #map names to action1 entries
     num_sets = 0
     num_ent = -1
+    
+    if sprite_block.feature not in action1_features:
+        raise ScriptError("Sprite blocks are not supported for this feature: " + str(sprite_block.feature))
     
     for item in sprite_block.spriteset_list:
         if isinstance(item, ast.SpriteSet):
