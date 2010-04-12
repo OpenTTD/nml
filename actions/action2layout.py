@@ -89,12 +89,13 @@ class Action2LayoutSprite:
             raise ScriptError("Only one recolor sprite may be set per per ground/building/childsprite")
     
     def set_draw_transparant(self, value):
-        #bit may not be set for ground sprites, according to grf specs
-        if self.type == Action2LayoutSpriteType.GROUND:
-            raise ScriptError("Ground sprites cannot be drawn transparantly")
         if self._draw_transparant_set:
-            raise ScriptError("Transparancy may be set only once per sprite")
-        self._draw_transparant = value
+            raise ScriptError("'always_draw' may be set only once per sprite")
+        self._draw_transparant_set = True
+        #bit has no effect for ground sprites but should be left empty, so ignore it 
+        if self.type != Action2LayoutSpriteType.GROUND:
+            self._draw_transparant = value
+        
 
     def is_bounding_box_param(self, name):
         return name in self._bounding_box
@@ -103,17 +104,21 @@ class Action2LayoutSprite:
         assert name in self._bounding_box
         if self.type == Action2LayoutSpriteType.GROUND:
             raise ScriptError(name + " can not be set for ground sprites")
-        if self.type == Action2LayoutSpriteType.CHILD and name != 'xoffset' and name != 'yoffset':
-            raise ScriptError(name + " can not be set for child sprites")
+        if name == 'xoffset' or name == 'yoffset':
+            if value > 127 or value < -128:
+                raise ScriptError(name + " has to be in range -128..127, encountered " + str(value))
+        else:
+            if self.type == Action2LayoutSpriteType.CHILD:
+                raise ScriptError(name + " can not be set for child sprites")
+            if value < 0 or value > 255:
+                raise ScriptError(name + " has to be in range 0..255, encountered " + str(value))
         
         if self._bounding_box[name]['is_set']:
             raise ScriptError(name + " may be set only once per sprite")
         
-        if value > 127 or value < -128:
-            raise ScriptError(name + " has to be in range -128..127")
-        
+                
         if name == 'zoffset' and value != 0:
-            raise ScriptError("zoffset should always be 0")
+            raise ScriptError("zoffset should always be 0, encountered " + str(value))
                 
         self._bounding_box[name]['value'] = value
         self._bounding_box[name]['is_set'] = True
