@@ -39,7 +39,7 @@ def parse_sprite_block(sprite_block):
     num_ent = -1
     
     if sprite_block.feature not in action1_features:
-        raise ScriptError("Sprite blocks are not supported for this feature: " + str(sprite_block.feature))
+        raise ScriptError("Sprite blocks are not supported for this feature: 0x" + to_hex(sprite_block.feature, 2))
     
     for item in sprite_block.spriteset_list:
         if isinstance(item, ast.SpriteSet):

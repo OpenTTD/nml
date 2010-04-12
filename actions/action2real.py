@@ -34,7 +34,7 @@ def get_real_action2s(spritegroup, feature, spritesets):
     loading_list = []
     
     if feature not in real_action2_features:
-        raise ScriptError("Sprite groups that directly define sprite sets are not supported for this feature: " + str(feature))
+        raise ScriptError("Sprite groups that directly combine sprite sets are not supported for this feature: 0x" + to_hex(feature, 2))
     
     for view in spritegroup.spriteview_list:
         if view.name not in real_action2_alias: raise ScriptError("Unknown sprite view type encountered in sprite group: " + view.name)
@@ -42,7 +42,7 @@ def get_real_action2s(spritegroup, feature, spritesets):
         #of course stations want to be different, their default view is the second type instead of the first
         if view.name == 'default' and feature is 0x04: type = 1
         if feature not in feature_list:
-            raise ScriptError("Sprite view type '" + view.name + "' is not supported for this feature: " + str(feature))
+            raise ScriptError("Sprite view type '" + view.name + "' is not supported for this feature: 0x" + to_hex(feature, 2))
         
         for set_name in view.spriteset_list:
             if set_name not in spritesets:

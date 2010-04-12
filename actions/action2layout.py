@@ -171,7 +171,7 @@ def get_layout_action2s(spritegroup, feature, spritesets):
     building_sprites = []
     
     if feature not in layout_action2_features:
-        raise ScriptError("Sprite groups that define tile layouts are not supported for this feature: " + str(feature))
+        raise ScriptError("Sprite groups that define tile layouts are not supported for this feature: 0x" + to_hex(feature, 2))
     
     for layout_sprite in spritegroup.layout_sprite_list:
         sprite = Action2LayoutSprite(layout_sprite.type)
