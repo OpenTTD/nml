@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-def to_hex(value):
+def to_hex(value, width = 0):
     ret = hex(value)[2:].upper()
     if ret[-1] == 'L': ret = ret[0:-1]
-    return ret
+    return ret.zfill(width)
 
 def print_byte(file, value):
     assert value >= 0 and value < 256
@@ -15,7 +15,7 @@ def print_extended_byte(file, value):
 
 def print_bytex(file, value):
     assert value >= 0 and value < 256
-    file.write(to_hex(value).zfill(2) + " ")
+    file.write(to_hex(value, 2) + " ")
 
 def print_word(file, value):
     assert value >= 0 and value < 65536
@@ -23,7 +23,7 @@ def print_word(file, value):
 
 def print_wordx(file, value):
     assert value >= 0 and value < 65536
-    file.write("\\wx" + to_hex(value).zfill(4) + " ")
+    file.write("\\wx" + to_hex(value, 4) + " ")
 
 def print_dword(file, value):
     assert value >= 0 and value < 4294967296
@@ -31,7 +31,7 @@ def print_dword(file, value):
 
 def print_dwordx(file, value):
     assert value >= 0 and value < 4294967296
-    file.write("\\dx" + to_hex(value).zfill(8) + " ")
+    file.write("\\dx" + to_hex(value, 8) + " ")
 
 def print_varx(file, value, size):
     if size == 1:
