@@ -7,6 +7,7 @@ from actions.action8 import *
 from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
+import operator
 
 def print_script(script, indent):
     for r in script:
@@ -28,7 +29,6 @@ class Operator:
     CMP_GT  = 12
     MIN     = 13
     MAX     = 14
-
 
 ########### expressions ###########
 class Expr:
@@ -80,7 +80,7 @@ class Parameter(Expr):
 class ParameterAssignment:
     def __init__(self, param, value):
         self.param = param
-        self.value = value
+        self.value = reduce_expr(value)
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
@@ -117,12 +117,41 @@ class String:
 
 class ConstantNumeric(Expr):
     def __init__(self, value):
-        self.value = value
+        self.value = truncate_int32(value)
     def debug_print(self, indentation):
         print indentation*' ' + 'Int:', self.value
     def write(self, file, size):
         print_varx(file, self.value, size)
 
+# compile-time expression evaluation
+compile_time_operator = {
+    Operator.ADD:     operator.add,
+    Operator.SUB:     operator.sub,
+    Operator.DIV:     operator.div,
+    Operator.MOD:     operator.mod,
+    Operator.MUL:     operator.mul,
+    Operator.AND:     operator.and_,
+    Operator.OR:      operator.or_,
+    Operator.XOR:     operator.xor,
+    Operator.VAL2:    lambda a, b: b,
+    Operator.CMP_EQ:  operator.eq,
+    Operator.CMP_NEQ: operator.ne,
+    Operator.CMP_LT:  operator.lt,
+    Operator.CMP_GT:  operator.gt,
+    Operator.MIN:     lambda a, b: min(a, b),
+    Operator.MAX:     lambda a, b: max(a, b)
+}
+
+def reduce_expr(expr):
+    global compile_time_operator
+    if isinstance(expr, BinOp):
+        expr.expr1 = reduce_expr(expr.expr1)
+        expr.expr2 = reduce_expr(expr.expr2)
+        if isinstance(expr.expr1, ConstantNumeric) and isinstance(expr.expr2, ConstantNumeric):
+            return ConstantNumeric(compile_time_operator[expr.op](expr.expr1.value, expr.expr2.value))
+    return expr
+
+########### code blocks ###########
 class GRF:
     def __init__(self, alist):
         self.name = None
