@@ -53,7 +53,7 @@ def p_cargotable_list(t):
     else: t[0] = t[1] + [t[3]]
 
 def p_deactivate(t):
-    'deactivate : DEACTIVATE LPAREN NUMBER RPAREN'
+    'deactivate : DEACTIVATE LPAREN NUMBER RPAREN SEMICOLON'
     t[0] = DeactivateBlock(t[3])
 
 def p_grf_block(t):
@@ -67,12 +67,12 @@ def p_assignment_list(t):
     else: t[0] = t[1] + [t[2]]
 
 def p_assignment(t):
-    '''assignment : ID COLON string
-                  | ID COLON expression'''
+    '''assignment : ID COLON string SEMICOLON
+                  | ID COLON expression SEMICOLON'''
     t[0] = Assignment(t[1], t[3])
 
 def p_param_assignment(t):
-    'param_assignment : param EQ expression'
+    'param_assignment : param EQ expression SEMICOLON'
     t[0] = ParameterAssignment(t[1].num, t[3])
 
 def p_string(t):
@@ -132,24 +132,24 @@ def p_switch(t):
     t[0] = Switch(t[3], t[5], t[7], t[9], t[12])
 
 def p_switch_body(t):
-    '''switch_body : RETURN expression
-                   | ID
-                   | string
+    '''switch_body : RETURN expression SEMICOLON
+                   | ID SEMICOLON
+                   | string SEMICOLON
                    | switch_range switch_body'''
     if t[1] == 'return': t[0] = SwitchBody(t[2])
-    elif len(t) == 3: t[0] = t[2].add_range(t[1])
-    else:t[0] = SwitchBody(t[1])
+    elif t[2] == ';': t[0] = SwitchBody(t[1])
+    else: t[0] = t[2].add_range(t[1])
 
 def p_switch_range(t):
-    '''switch_range : expression COLON RETURN expression
-                    | expression COLON ID
-                    | expression COLON string
-                    | expression RANGE expression COLON RETURN expression
-                    | expression RANGE expression COLON ID
-                    | expression RANGE expression COLON string'''
-    if len(t) == 5: t[0] = SwitchRange(t[1], t[1], t[4])
-    elif len(t) == 4: t[0] = SwitchRange(t[1], t[1], t[3])
-    elif len(t) == 7: t[0] = SwitchRange(t[1], t[3], t[6])
+    '''switch_range : expression COLON RETURN expression SEMICOLON
+                    | expression COLON ID SEMICOLON
+                    | expression COLON string SEMICOLON
+                    | expression RANGE expression COLON RETURN expression SEMICOLON
+                    | expression RANGE expression COLON ID SEMICOLON
+                    | expression RANGE expression COLON string SEMICOLON'''
+    if len(t) == 6: t[0] = SwitchRange(t[1], t[1], t[4])
+    elif len(t) == 5: t[0] = SwitchRange(t[1], t[1], t[3])
+    elif len(t) == 8: t[0] = SwitchRange(t[1], t[3], t[6])
     else: t[0] = SwitchRange(t[1], t[3], t[5])
 
 def p_item(t):
@@ -169,14 +169,14 @@ def p_property_list(t):
     else: t[0] = t[1] + [t[2]]
 
 def p_property_assignment(t):
-    '''property_assignment : ID COLON expression
-                           | ID COLON string
-                           | ID COLON ID
-                           | ID COLON array
-                           | NUMBER COLON expression
-                           | NUMBER COLON string
-                           | NUMBER COLON ID
-                           | NUMBER COLON array'''
+    '''property_assignment : ID COLON expression SEMICOLON
+                           | ID COLON string SEMICOLON
+                           | ID COLON ID SEMICOLON
+                           | ID COLON array SEMICOLON
+                           | NUMBER COLON expression SEMICOLON
+                           | NUMBER COLON string SEMICOLON
+                           | NUMBER COLON ID SEMICOLON
+                           | NUMBER COLON array SEMICOLON'''
     t[0] = Property(t[1], t[3])
 
 def p_array(t):
@@ -188,13 +188,13 @@ def p_graphics_block(t):
     t[0] = GraphicsBlock(t[3])
 
 def p_graphics_list(t):
-    '''graphics_list : ID
+    '''graphics_list : ID SEMICOLON
                      | graphics_assignment graphics_list'''
-    if len(t) == 2: t[0] = GraphicsBlock(t[1])
+    if isinstance(t[1], str): t[0] = GraphicsBlock(t[1])
     else: t[0] = t[1].append_definition(t[2])
 
 def p_graphics_assignment(t):
-    'graphics_assignment : ID COLON ID'
+    'graphics_assignment : ID COLON ID SEMICOLON'
     t[0] = GraphicsDefinition(t[1], t[3])
 
 def p_spriteblock(t):
@@ -228,17 +228,16 @@ def p_spritegroup_layout(t):
     t[0] = LayoutSpriteGroup(t[2], t[4])
 
 def p_spriteview_list(t):
-    '''spriteview_list : ID
+    '''spriteview_list : ID SEMICOLON
                        | spriteview
                        | spriteview_list spriteview'''
-    if len(t) == 2: 
-        if isinstance(t[1], str): t[0] = [SpriteView('default', [t[1]])]
-        else: t[0] = [t[1]]
+    if isinstance(t[1], str): t[0] = [SpriteView('default', [t[1]])]
+    elif len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
 
 def p_spriteview(t):
-    ''' spriteview : ID COLON id_array
-                   | ID COLON ID'''
+    ''' spriteview : ID COLON id_array SEMICOLON
+                   | ID COLON ID SEMICOLON'''
     if isinstance(t[3], list): t[0] = SpriteView(t[1], t[3])
     else: t[0] = SpriteView(t[1], [t[3]])
 
@@ -271,8 +270,8 @@ def p_layout_param_list(t):
     else: t[0] = t[1] + [t[2]]
 
 def p_layout_param(t):
-    '''layout_param : ID COLON ID
-                    | ID COLON expression'''
+    '''layout_param : ID COLON ID SEMICOLON
+                    | ID COLON expression SEMICOLON'''
     t[0] = LayoutParam(t[1], t[3])
 
 #xpos ypos xsize ysize xrel yrel [compression]
@@ -287,7 +286,7 @@ def p_real_sprite(t):
 
 def p_sprite_offset(t):
     '''sprite_offset : NUMBER
-                    | MINUS NUMBER'''
+                     | MINUS NUMBER'''
     if len(t) == 2: t[0] = t[1]
     else: t[0] = -t[2]
 
@@ -295,13 +294,13 @@ def p_sprite_offset(t):
 #MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),
 #data (=string to insert in message), number of parameter, number of parameter
 def p_error_block(t):
-    '''error_block : ERROR LPAREN expression COMMA ID RPAREN
-                   | ERROR LPAREN expression COMMA ID COMMA ID RPAREN
-                   | ERROR LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN
-                   | ERROR LPAREN expression COMMA ID COMMA ID COMMA expression COMMA expression RPAREN'''
-    data = None if len(t) < 8 else t[7]
-    param1 = None if len(t) < 10 else t[9]
-    param2 = None if len(t) < 12 else t[11]
+    '''error_block : ERROR LPAREN expression COMMA ID RPAREN SEMICOLON
+                   | ERROR LPAREN expression COMMA ID COMMA ID RPAREN SEMICOLON
+                   | ERROR LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN SEMICOLON
+                   | ERROR LPAREN expression COMMA ID COMMA ID COMMA expression COMMA expression RPAREN SEMICOLON'''
+    data = None if len(t) < 9 else t[7]
+    param1 = None if len(t) < 11 else t[9]
+    param2 = None if len(t) < 13 else t[11]
     t[0] = Error(t[3], t[5], data, param1, param2)
 
 code_to_op = {
