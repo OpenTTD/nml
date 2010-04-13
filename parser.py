@@ -333,6 +333,10 @@ def p_binop_plus(t):
                   | expression COMP_GT expression'''
     t[0] = BinOp(code_to_op[t[2]], t[1], t[3]);
 
+def p_unary_minus(t):
+    'expression : MINUS expression'
+    t[0] = BinOp(code_to_op[t[1]], ConstantNumeric(0), t[2])
+
 def p_variable(t):
     '''variable : VARIABLE LBRACKET expression RBRACKET
                 | VARIABLE LBRACKET expression COMMA expression RBRACKET'''
