@@ -223,8 +223,8 @@ def parse_varaction2(switch_block):
     global free_parameters
     free_parameters_backup = free_parameters[:]
     action6 = Action6()
-    varsize = switch_block.varsize['varsize']
-    varaction2 = Action2Var(switch_block.feature, switch_block.name, switch_block.varsize['type_byte'], varsize)
+    varsize = 4
+    varaction2 = Action2Var(switch_block.feature, switch_block.name, switch_block.var_range, varsize)
     
     offset = 4 #first var
     

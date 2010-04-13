@@ -76,10 +76,8 @@ def p_param_assignment(t):
     t[0] = ParameterAssignment(t[1].num, t[3])
 
 def p_string(t):
-    '''string : STRING LPAREN ID RPAREN
-              | STRING LPAREN ID COMMA param_list RPAREN'''
-    if len(t) == 5: t[0] = String(t[3], [])
-    else: t[0] = String(t[3], t[5])
+    'string : STRING LPAREN param_list RPAREN'
+    t[0] = String(t[3][0], t[3][1:])
 
 def p_param_list(t):
     '''param_list : expression
@@ -97,6 +95,10 @@ def p_param_expression(t):
 
 def p_variable_expression(t):
     'expression : variable'
+    t[0] = t[1]
+
+def p_expression_id(t):
+    'expression : ID'
     t[0] = t[1]
 
 def p_parenthesed_expression(t):
@@ -128,7 +130,7 @@ def p_loop(t):
     t[0] = Loop(t[3], t[6])
 
 def p_switch(t):
-    'switch : SWITCH LPAREN feature COMMA VARSIZE COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
+    'switch : SWITCH LPAREN feature COMMA VARRANGE COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
     t[0] = Switch(t[3], t[5], t[7], t[9], t[12])
 
 def p_switch_body(t):
@@ -171,11 +173,9 @@ def p_property_list(t):
 def p_property_assignment(t):
     '''property_assignment : ID COLON expression SEMICOLON
                            | ID COLON string SEMICOLON
-                           | ID COLON ID SEMICOLON
                            | ID COLON array SEMICOLON
                            | NUMBER COLON expression SEMICOLON
                            | NUMBER COLON string SEMICOLON
-                           | NUMBER COLON ID SEMICOLON
                            | NUMBER COLON array SEMICOLON'''
     t[0] = Property(t[1], t[3])
 
@@ -270,8 +270,7 @@ def p_layout_param_list(t):
     else: t[0] = t[1] + [t[2]]
 
 def p_layout_param(t):
-    '''layout_param : ID COLON ID SEMICOLON
-                    | ID COLON expression SEMICOLON'''
+    'layout_param : ID COLON expression SEMICOLON'
     t[0] = LayoutParam(t[1], t[3])
 
 #xpos ypos xsize ysize xrel yrel [compression]

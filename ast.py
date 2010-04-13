@@ -187,9 +187,9 @@ class Loop:
         return parse_loop_block(self)
 
 class Switch:
-    def __init__(self, feature, varsize, name, expr, body):
+    def __init__(self, feature, var_range, name, expr, body):
         self.feature = feature
-        self.varsize = varsize
+        self.var_range = var_range
         self.name = name
         self.expr = expr
         self.body = body
