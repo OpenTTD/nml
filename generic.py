@@ -6,31 +6,38 @@ def to_hex(value, width = 0):
     return ret.zfill(width)
 
 def print_byte(file, value):
-    assert value >= 0 and value < 256
+    if -0x80 < value < 0 : value += 0x100
+    assert value >= 0 and value <= 0xFF
     file.write("\\b" + str(value) + " ")
 
 def print_extended_byte(file, value):
-    assert value >= 0 and value < 65536
+    if -0x8000 < value < 0: value += 0x10000
+    assert value >= 0 and value <= 0xFFFF
     file.write("\\b*" + str(value) + " ")
 
 def print_bytex(file, value):
-    assert value >= 0 and value < 256
+    if -0x80 < value < 0: value += 0x100
+    assert value >= 0 and value <= 0xFF
     file.write(to_hex(value, 2) + " ")
 
 def print_word(file, value):
-    assert value >= 0 and value < 65536
+    if -0x8000 < value < 0: value += 0x10000
+    assert value >= 0 and value <= 0xFFFF
     file.write("\\w" + str(value) + " ")
 
 def print_wordx(file, value):
-    assert value >= 0 and value < 65536
+    if -0x8000 < value < 0: value += 0x10000
+    assert value >= 0 and value <= 0xFFFF
     file.write("\\wx" + to_hex(value, 4) + " ")
 
 def print_dword(file, value):
-    assert value >= 0 and value < 4294967296
+    if -0x80000000 < value < 0: value += 0x100000000
+    assert value >= 0 and value <= 0xFFFFFFFF
     file.write("\\d" + str(value) + " ")
 
 def print_dwordx(file, value):
-    assert value >= 0 and value < 4294967296
+    if -0x80000000 < value < 0: value += 0x100000000
+    assert value >= 0 and value <= 0xFFFFFFFF
     file.write("\\dx" + to_hex(value, 8) + " ")
 
 def print_varx(file, value, size):
