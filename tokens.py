@@ -25,6 +25,8 @@ reserved = {
     'deactivate' : 'DEACTIVATE',#action E
     'string' : 'STRING',
     'return' : 'RETURN',
+    'min' : 'MIN',
+    'max' : 'MAX',
 }
 
 var_ranges = {
@@ -61,7 +63,7 @@ tokens = list(reserved.values()) + [
     'SEMICOLON',
     'STRING_LITERAL',
     'NUMBER',
-    'VARRANGE'
+    'VARRANGE',
 ]
 
 # Tokens
