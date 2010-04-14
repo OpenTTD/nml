@@ -348,11 +348,7 @@ def p_min_max(t):
     args = t[3]
     if len(args) < 2: raise ScriptError("Min/Max must have at least 2 parameters")
     op = Operator.MIN if t[1] == 'min' else Operator.MAX
-    expr1 = args[0]
-    for i in range(1, len(args)):
-        expr2 = args[i]
-        expr1 = BinOp(op, expr1, expr2)
-    t[0] = expr1
+    t[0] = reduce(lambda x, y: BinOp(op, x, y), args)
 
 def p_function(t):
     'expression : ID LPAREN RPAREN'
