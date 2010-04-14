@@ -15,6 +15,7 @@ class Action2Layout(Action2):
         Action2.write(self, file)
         print_byte(file, len(self.sprite_list))
         print_dwordx(file, self.ground_sprite.get_sprite_number())
+        file.write("\n")
         for sprite in self.sprite_list:
             print_dwordx(file, sprite.get_sprite_number())
             print_byte(file, sprite.get_bounding_box_param('xoffset'))
@@ -27,6 +28,7 @@ class Action2Layout(Action2):
                 print_byte(file, sprite.get_bounding_box_param('xextent'))
                 print_byte(file, sprite.get_bounding_box_param('yextent'))
                 print_byte(file, sprite.get_bounding_box_param('zextent'))
+            file.write("\n")
         file.write("\n")
 
 class Action2LayoutRecolorMode:

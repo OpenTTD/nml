@@ -2,9 +2,10 @@ import ast
 from generic import *
 
 class RealSpriteAction:
-    def __init__(self, sprite, pcx):
+    def __init__(self, sprite, pcx, last = False):
         self.sprite = sprite
         self.pcx = pcx
+        self.last = last
     
     def write(self, file):
         #<Sprite-number> <filename> <xpos> <ypos> <compression> <ysize> <xsize> <xrel> <yrel>
@@ -17,7 +18,7 @@ class RealSpriteAction:
         print_decimal(file, self.sprite.xsize.value)
         print_decimal(file, self.sprite.xrel.value)
         print_decimal(file, self.sprite.yrel.value)
-        file.write("\n")
+        file.write("\n\n" if self.last else "\n")
     
     def skip_action7(self):
         return True

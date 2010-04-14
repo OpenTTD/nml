@@ -16,7 +16,7 @@ class Action1:
         print_bytex(file, self.feature)
         print_byte(file, self.num_sets)
         print_byte(file, self.num_ent)
-        file.write("\n")
+        file.write("\n\n")
     
     def skip_action7(self):
         return True
@@ -51,8 +51,9 @@ def parse_sprite_block(sprite_block):
             elif num_ent != len(item.sprite_list):
                 raise ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
     
+            last_sprite = item.sprite_list[len(item.sprite_list) - 1]
             for sprite in item.sprite_list:
-                action_list.append(RealSpriteAction(sprite, item.pcx))
+                action_list.append(RealSpriteAction(sprite, item.pcx, sprite == last_sprite))
     
         elif isinstance(item, ast.SpriteGroup):
             action_list_append.extend(get_real_action2s(item, sprite_block.feature, spritesets))
