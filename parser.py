@@ -274,20 +274,9 @@ def p_layout_param(t):
     t[0] = LayoutParam(t[1], t[3])
 
 #xpos ypos xsize ysize xrel yrel [compression]
-#compression (optional) can either be a number, or one of the following:
-#NORMAL (=default), TILE_COMPRESSION, STORE_COMPRESSED, NORMAL_NOCROP, TILE_COMPRESSION_NOCROP, STORE_COMPRESSED_NOCROP
 def p_real_sprite(t):
-    '''real_sprite : LBRACKET sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset RBRACKET
-                   | LBRACKET sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset RBRACKET
-                   | LBRACKET sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset sprite_offset ID RBRACKET'''
-    if len(t) < 10: t[0] = RealSprite(t[2], t[3], t[4], t[5], t[6], t[7])
-    else: t[0] = RealSprite(t[2], t[3], t[4], t[5], t[6], t[7], t[8])
-
-def p_sprite_offset(t):
-    '''sprite_offset : NUMBER
-                     | MINUS NUMBER'''
-    if len(t) == 2: t[0] = t[1]
-    else: t[0] = -t[2]
+    'real_sprite : LBRACKET param_list RBRACKET'
+    t[0] = RealSprite(t[2])
 
 #severity, message (one of REQUIRES_TTDPATCH, REQUIRES_DOS_WINDOWS, USED_WITH, INVALID_PARAMETER,
 #MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),

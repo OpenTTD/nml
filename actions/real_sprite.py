@@ -2,27 +2,21 @@ import ast
 from generic import *
 
 class RealSpriteAction:
-    def __init__(self, sprite, pcx, compression = None):
-        self.xpos = sprite.xpos
-        self.ypos = sprite.ypos
-        self.xsize = sprite.xsize
-        self.ysize = sprite.ysize
-        self.xrel = sprite.xrel
-        self.yrel = sprite.yrel
+    def __init__(self, sprite, pcx):
+        self.sprite = sprite
         self.pcx = pcx
-        self.compression = compression if compression is not None else sprite.compression
     
     def write(self, file):
         #<Sprite-number> <filename> <xpos> <ypos> <compression> <ysize> <xsize> <xrel> <yrel>
         file.write("-1 ")
         file.write(self.pcx + " ")
-        print_decimal(file, self.xpos)
-        print_decimal(file, self.ypos)
-        print_bytex(file, self.compression)
-        print_decimal(file, self.ysize)
-        print_decimal(file, self.xsize)
-        print_decimal(file, self.xrel)
-        print_decimal(file, self.yrel)
+        print_decimal(file, self.sprite.xpos.value)
+        print_decimal(file, self.sprite.ypos.value)
+        print_bytex(file, self.sprite.compression.value)
+        print_decimal(file, self.sprite.ysize.value)
+        print_decimal(file, self.sprite.xsize.value)
+        print_decimal(file, self.sprite.xrel.value)
+        print_decimal(file, self.sprite.yrel.value)
         file.write("\n")
     
     def skip_action7(self):
@@ -34,18 +28,12 @@ class RealSpriteAction:
     def skip_needed(self):
         return True
 
-compression_flags = {
-    'NORMAL' : 0x01,
-    'STORE_COMPRESSED' : 0x03,
-    'TILE_COMPRESSION' : 0x09,
-    'NORMAL_NOCROP' : 0x41,
-    'STORE_COMPRESSED_NOCROP' : 0x43,
-    'TILE_COMPRESSION_NOCROP' : 0x49,
+real_sprite_compression_flags = {
+    'NORMAL'       : 0x00,
+    'TILE'         : 0x08,
+    'UNCOMPRESSED' : 0x00,
+    'COMPRESSED'   : 0x02,
+    'CROP'         : 0x00,
+    'NOCROP'       : 0x40,
 }
-def get_real_sprite(sprite, pcx):
-    global compression_flags
-    if isinstance(sprite.compression, str):
-        if not sprite.compression in compression_flags: raise ScriptError("Unknown real sprite compression:" + sprite.compression)
-        return RealSpriteAction(sprite, pcx, compression_flags[sprite.compression])
-    else: return RealSpriteAction(sprite, pcx)
 

@@ -1,6 +1,7 @@
 from generic import *
 from actions.action0 import *
 from actions.action1 import *
+from actions.real_sprite import *
 from actions.action2var import *
 from actions.action7 import *
 from actions.action8 import *
@@ -395,21 +396,27 @@ class SpriteSet:
             sprite.debug_print(indentation + 4)
 
 class RealSprite:
-    def __init__(self, xpos, ypos, xsize, ysize, xrel, yrel, compression = 0x01):
-        self.xpos = xpos
-        self.ypos = ypos
-        self.xsize = xsize
-        self.ysize = ysize
-        self.xrel = xrel
-        self.yrel = yrel
-        self.compression = compression
+    def __init__(self, param_list):
+        if not 6 <= len(param_list) <= 7:
+            raise ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
+        self.xpos  = reduce_expr(param_list[0])
+        self.ypos  = reduce_expr(param_list[1])
+        self.xsize = reduce_expr(param_list[2])
+        self.ysize = reduce_expr(param_list[3])
+        self.xrel  = reduce_expr(param_list[4])
+        self.yrel  = reduce_expr(param_list[5])
+        if len(param_list) == 7:
+            self.compression = reduce_expr(param_list[6], [real_sprite_compression_flags])
+            self.compression.value |= 0x01
+        else:
+            self.compression = ConstantNumeric(0x01)
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Real sprite'
-        print (indentation+2)*' ' + 'position: (', self.xpos,  ',', self.ypos,  ')'
-        print (indentation+2)*' ' + 'size:     (', self.xsize, ',', self.ysize, ')'
-        print (indentation+2)*' ' + 'offset:   (', self.xrel,  ',', self.yrel,  ')'
-        print (indentation+2)*' ' + 'compression: ', self.compression
+        print (indentation+2)*' ' + 'position: (', self.xpos.value,  ',', self.ypos.value,  ')'
+        print (indentation+2)*' ' + 'size:     (', self.xsize.value, ',', self.ysize.value, ')'
+        print (indentation+2)*' ' + 'offset:   (', self.xrel.value,  ',', self.yrel.value,  ')'
+        print (indentation+2)*' ' + 'compression: ', self.compression.value
 
 class SpriteGroup:
     def __init__(self, name, spriteview_list):

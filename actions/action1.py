@@ -52,7 +52,7 @@ def parse_sprite_block(sprite_block):
                 raise ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
     
             for sprite in item.sprite_list:
-                action_list.append(get_real_sprite(sprite, item.pcx))
+                action_list.append(RealSpriteAction(sprite, item.pcx))
     
         elif isinstance(item, ast.SpriteGroup):
             action_list_append.extend(get_real_action2s(item, sprite_block.feature, spritesets))
