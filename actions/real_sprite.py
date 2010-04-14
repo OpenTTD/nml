@@ -36,4 +36,3 @@ real_sprite_compression_flags = {
     'CROP'         : 0x00,
     'NOCROP'       : 0x40,
 }
-
