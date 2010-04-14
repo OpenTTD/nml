@@ -69,3 +69,7 @@ class ScriptError(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
+
+class ConstError(ScriptError):
+    def __init__(self):
+        ScriptError.__init__(self, "Expected a compile-time constant")

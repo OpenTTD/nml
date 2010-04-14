@@ -169,6 +169,12 @@ def reduce_expr(expr, id_dicts = []):
         raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
     return expr
 
+def reduce_constant(expr, id_dicts = []):
+    expr = reduce_expr(expr, id_dicts)
+    if not isinstance(expr, ConstantNumeric):
+        raise ConstError()
+    return expr
+
 ########### code blocks ###########
 class GRF:
     def __init__(self, alist):
@@ -399,17 +405,20 @@ class RealSprite:
     def __init__(self, param_list):
         if not 6 <= len(param_list) <= 7:
             raise ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
-        self.xpos  = reduce_expr(param_list[0])
-        self.ypos  = reduce_expr(param_list[1])
-        self.xsize = reduce_expr(param_list[2])
-        self.ysize = reduce_expr(param_list[3])
-        self.xrel  = reduce_expr(param_list[4])
-        self.yrel  = reduce_expr(param_list[5])
-        if len(param_list) == 7:
-            self.compression = reduce_expr(param_list[6], [real_sprite_compression_flags])
-            self.compression.value |= 0x01
-        else:
-            self.compression = ConstantNumeric(0x01)
+        try:
+            self.xpos  = reduce_constant(param_list[0])
+            self.ypos  = reduce_constant(param_list[1])
+            self.xsize = reduce_constant(param_list[2])
+            self.ysize = reduce_constant(param_list[3])
+            self.xrel  = reduce_constant(param_list[4])
+            self.yrel  = reduce_constant(param_list[5])
+            if len(param_list) == 7:
+                self.compression = reduce_constant(param_list[6], [real_sprite_compression_flags])
+                self.compression.value |= 0x01
+            else:
+                self.compression = ConstantNumeric(0x01)
+        except ConstError:
+            raise ScriptError("Real sprite parameters should be compile-time constants.")
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Real sprite'
