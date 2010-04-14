@@ -144,20 +144,28 @@ compile_time_operator = {
     Operator.MAX:     lambda a, b: max(a, b)
 }
 
-def reduce_expr(expr):
+def reduce_expr(expr, id_dicts = []):
     global compile_time_operator
     if isinstance(expr, BinOp):
-        expr.expr1 = reduce_expr(expr.expr1)
-        expr.expr2 = reduce_expr(expr.expr2)
+        expr.expr1 = reduce_expr(expr.expr1, id_dicts)
+        expr.expr2 = reduce_expr(expr.expr2, id_dicts)
         if isinstance(expr.expr1, ConstantNumeric) and isinstance(expr.expr2, ConstantNumeric):
             return ConstantNumeric(compile_time_operator[expr.op](expr.expr1.value, expr.expr2.value))
     elif isinstance(expr, Parameter):
-        expr.num = reduce_expr(expr.num)
+        expr.num = reduce_expr(expr.num, id_dicts)
     elif isinstance(expr, Variable):
-        expr.num = reduce_expr(expr.num)
-        expr.shift = reduce_expr(expr.shift)
-        expr.mask = reduce_expr(expr.mask)
-        expr.param = reduce_expr(expr.num)
+        expr.num = reduce_expr(expr.num, id_dicts)
+        expr.shift = reduce_expr(expr.shift, id_dicts)
+        expr.mask = reduce_expr(expr.mask, id_dicts)
+        expr.param = reduce_expr(expr.num, id_dicts)
+    elif isinstance(expr, str):
+        for id_dict in id_dicts:
+            try:
+                value = id_dict[expr]
+                return ConstantNumeric(value)
+            except KeyError:
+                pass
+        raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
     return expr
 
 ########### code blocks ###########
