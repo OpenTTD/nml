@@ -91,8 +91,10 @@ class ParameterAssignment:
         return parse_actionD(self)
 
 class Variable:
-    def __init__(self, num, param):
+    def __init__(self, num, shift = None, mask = None, param = None):
         self.num = num
+        self.shift = shift if shift != None else ConstantNumeric(0)
+        self.mask = mask if mask != None else ConstantNumeric(0xFFFFFFFF)
         self.param = param
     
     def debug_print(self, indentation):
@@ -149,6 +151,13 @@ def reduce_expr(expr):
         expr.expr2 = reduce_expr(expr.expr2)
         if isinstance(expr.expr1, ConstantNumeric) and isinstance(expr.expr2, ConstantNumeric):
             return ConstantNumeric(compile_time_operator[expr.op](expr.expr1.value, expr.expr2.value))
+    elif isinstance(expr, Parameter):
+        expr.num = reduce_expr(expr.num)
+    elif isinstance(expr, Variable):
+        expr.num = reduce_expr(expr.num)
+        expr.shift = reduce_expr(expr.shift)
+        expr.mask = reduce_expr(expr.mask)
+        expr.param = reduce_expr(expr.num)
     return expr
 
 ########### code blocks ###########

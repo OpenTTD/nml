@@ -33,17 +33,17 @@ class Action2Var(Action2):
         self.references = set(self.references)
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):
-                var.mask = self.tmp_locations.pop()
+                var.mask = ast.ConstantNumeric(self.tmp_locations.pop())
                 for action2 in self.references:
-                    if var.mask in action2.tmp_locations:
-                        action2.tmp_locations.remove(var.mask)
+                    if var.mask.value in action2.tmp_locations:
+                        action2.tmp_locations.remove(var.mask.value)
     
     def write(self, file):
         Action2.write(self, file)
         print_bytex(file, self.type_byte)
         file.write("\n")
         for i in range(0, len(self.var_list) - 1, 2):
-            self.var_list[i].shift |= 0x20
+            self.var_list[i].shift.value |= 0x20
         for var in self.var_list:
             if isinstance(var, str):
                 file.write("\n" + var + " ")
@@ -90,9 +90,9 @@ class VarAction2Var:
     
     def write(self, file, size):
         print_bytex(file, self.var_num)
-        if self.parameter != None: print_bytex(file, self.parameter)
-        print_bytex(file, self.shift)
-        print_varx(file, self.mask, size)
+        if self.parameter != None: self.parameter.write(file, 1)
+        self.shift.write(file, 1)
+        self.mask.write(file, size)
     
     def get_size(self, varsize):
         #var number [+ parameter] + shift num + and mask
@@ -102,7 +102,7 @@ class VarAction2Var:
 
 class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
-        VarAction2Var.__init__(self, 0x1A, 0, 0)
+        VarAction2Var.__init__(self, 0x1A, ast.ConstantNumeric(0), ast.ConstantNumeric(0))
         #mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
     
     def get_size(self, varsize):
@@ -115,13 +115,13 @@ def get_mask(size):
 
 class VarAction2LoadTempVar(VarAction2Var):
     def __init__(self, tmp_var):
-        VarAction2Var.__init__(self, 0x7D, 0, 0)
+        VarAction2Var.__init__(self, 0x7D, ast.ConstantNumeric(0), ast.ConstantNumeric(0))
         assert isinstance(tmp_var, VarAction2StoreTempVar)
         self.tmp_var = tmp_var
     
     def write(self, file, size):
         self.parameter = self.tmp_var.mask
-        self.mask = get_mask(size)
+        self.mask = ast.ConstantNumeric(get_mask(size))
         VarAction2Var.write(self, file, size)
     
     def get_size(self, varsize):
@@ -140,30 +140,28 @@ def parse_varaction2_expression(expr, varsize):
     var_list_size = 0
     
     if isinstance(expr, ast.ConstantNumeric):
-        var = VarAction2Var(0x1A, 0, expr.value)
+        var = VarAction2Var(0x1A, ast.ConstantNumeric(0), expr)
         var_list.append(var)
         var_list_size += var.get_size(varsize)
     
     elif isinstance(expr, ast.Parameter):
         if isinstance(expr.num, ast.ConstantNumeric):
-            param_num = expr.num
+            param_num = expr.num.value
         else:
             param_num, tmp_param_actions = get_tmp_parameter(expr)
             extra_actions.extend(tmp_param_actions)
         mods.append(Modification(param_num, varsize, var_list_size + 2))
-        var = VarAction2Var(0x1A, 0, 0)
+        var = VarAction2Var(0x1A, ast.ConstantNumeric(0), ast.ConstantNumeric(0))
         var_list.append(var)
         var_list_size += var.get_size(varsize)
         target = ast.ConstantNumeric(0)
-        action_list.extend(tmp_param_actions)
     
     elif isinstance(expr, ast.Variable):
         if not isinstance(expr.num, ast.ConstantNumeric):
             raise ScriptError("Variable number must be a constant number")
         if not (expr.param == None or isinstance(expr.param, ast.ConstantNumeric)):
             raise ScriptError("Variable parameter must be a constant number")
-        param = None if expr.param == None else expr.param.value
-        var = VarAction2Var(expr.num.value, 0, get_mask(varsize), param)
+        var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
         var_list.append(var)
         var_list_size += var.get_size(varsize)
     

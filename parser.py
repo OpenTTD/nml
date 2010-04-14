@@ -337,10 +337,8 @@ def p_unary_minus(t):
     t[0] = BinOp(code_to_op[t[1]], ConstantNumeric(0), t[2])
 
 def p_variable(t):
-    '''variable : VARIABLE LBRACKET expression RBRACKET
-                | VARIABLE LBRACKET expression COMMA expression RBRACKET'''
-    param = None if len(t) == 5 else t[5]
-    t[0] = Variable(t[3], param)
+    'variable : VARIABLE LBRACKET param_list RBRACKET'
+    t[0] = Variable(*t[3])
 
 def p_min_max(t):
     '''expression : MIN LPAREN param_list RPAREN
