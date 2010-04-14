@@ -412,11 +412,22 @@ class RealSprite:
             self.ysize = reduce_constant(param_list[3])
             self.xrel  = reduce_constant(param_list[4])
             self.yrel  = reduce_constant(param_list[5])
+            
+            check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'")
+            check_range(self.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'")
+            check_range(self.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'")
+            check_range(self.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'")
+            check_range(self.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'")
+            check_range(self.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'")
+            
             if len(param_list) == 7:
                 self.compression = reduce_constant(param_list[6], [real_sprite_compression_flags])
                 self.compression.value |= 0x01
             else:
                 self.compression = ConstantNumeric(0x01)
+            # only bits 0, 1, 3, and 6 can be set
+            if (self.compression.value & ~0x4B) != 0:
+                raise ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(self.compression.value))
         except ConstError:
             raise ScriptError("Real sprite parameters should be compile-time constants.")
     
