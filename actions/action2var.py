@@ -258,5 +258,5 @@ def parse_varaction2(switch_block):
     if len(action6.modifications) > 0: action_list.append(action6)
     
     action_list.append(varaction2)
-    free_parameters = free_parameters_backup
+    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

@@ -128,7 +128,7 @@ def parse_property_block(prop_list, feature, id):
     action_list.append(action0)
     action_list.extend(action_list_append)
     
-    free_parameters = free_parameters_backup
+    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list
 
 class CargoListProp:

@@ -28,3 +28,7 @@ class Action6:
     
     def skip_needed(self):
         return True
+
+def reset_free_parameters(free_params):
+    global free_parameters
+    free_parameters = free_params

@@ -112,5 +112,5 @@ def parse_error_block(error):
         if len(action6.modifications) > 0: action_list.append(action6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
     
-    free_parameters = free_parameters_backup
+    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

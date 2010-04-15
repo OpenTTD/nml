@@ -121,5 +121,5 @@ def parse_actionD(assignment):
     if len(action6.modifications) > 0: action_list.append(action6)
     
     action_list.append(ActionD(target, param1, op, param2, data))
-    free_parameters = free_parameters_backup
+    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

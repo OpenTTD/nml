@@ -140,9 +140,8 @@ def parse_conditional_block(cond):
                 action_list.append(ActionD(ast.ConstantNumeric(block['param_dst']), ast.ConstantNumeric(block['param_dst']), ActionDOperator.AND, ast.ConstantNumeric(param_skip_all)))
         action_list.extend(cond_skip_actions(block['action_list'], param))
     
-    
-    free_labels = free_labels_backup
-    free_parameters = free_parameters_backup
+    free_labels.extend([item for item in free_labels_backup if not item in free_labels])
+    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list
 
 def parse_loop_block(loop):
@@ -161,6 +160,6 @@ def parse_loop_block(loop):
     block_actions.append(UnconditionalSkipAction(9, begin_label))
     action_list.extend(cond_skip_actions(block_actions, cond_param))
     
-    free_labels = free_labels_backup
-    free_parameters = free_parameters_backup
+    free_labels.extend([item for item in free_labels_backup if not item in free_labels])
+    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list
