@@ -44,8 +44,14 @@ class BinOp(Expr):
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Binary operator, op = ', self.op
-        self.expr1.debug_print(indentation + 2)
-        self.expr2.debug_print(indentation + 2)
+        if isinstance(self.expr1, str):
+            print (indentation+2)*' ' + 'ID:', self.expr1
+        else:
+            self.expr1.debug_print(indentation + 2)
+        if isinstance(self.expr2, str):
+            print (indentation+2)*' ' + 'ID:', self.expr2
+        else:
+            self.expr2.debug_print(indentation + 2)
 
 class TernaryOp(Expr):
     def __init__(self, guard, expr1, expr2):
@@ -162,9 +168,9 @@ def reduce_expr(expr, id_dicts = []):
         expr.param = reduce_expr(expr.num, id_dicts)
     elif isinstance(expr, str):
         for id_dict in id_dicts:
-            id_dict, func = id_dict, lambda x: ConstantNumeric(x) if not isinstance(id_dict, tuple) else id_dict
-            if expr in id_dict:
-                return func(id_dict[expr])
+            id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
+            if expr in id_d:
+                return func(id_d[expr])
         raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
     return expr
 
