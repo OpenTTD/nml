@@ -88,17 +88,34 @@ class VarAction2Var:
         self.shift = shift
         self.mask = mask
         self.parameter = parameter
+        self.add = None
+        self.div = None
+        self.mod = None
     
     def write(self, file, size):
         print_bytex(file, self.var_num)
         if self.parameter != None: self.parameter.write(file, 1)
+        if self.mod != None:
+            self.shift.value |= 0x80
+        elif self.add != None or self.div != None:
+            self.shift.value |= 0x40
         self.shift.write(file, 1)
         self.mask.write(file, size)
+        if self.add != None:
+            self.add.write(file, size)
+            if self.div != None:
+                self.div.write(file, size)
+            elif self.mod != None:
+                self.mod.write(file, size)
+            else:
+                #no div or add, just divide by 1
+                print_varx(file, 1, size)
     
     def get_size(self, varsize):
         #var number [+ parameter] + shift num + and mask
         size = 2 + varsize
         if self.parameter != None: size += 1
+        if self.add != None or self.div != None or self.mod != None: size += varsize * 2
         return size
 
 class VarAction2StoreTempVar(VarAction2Var):
@@ -163,6 +180,7 @@ def parse_varaction2_expression(expr, varsize):
         if not (expr.param == None or isinstance(expr.param, ast.ConstantNumeric)):
             raise ScriptError("Variable parameter must be a constant number")
         var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
+        var.add, var.div, var.mod = expr.add, expr.div, expr.mod
         var_list.append(var)
         var_list_size += var.get_size(varsize)
     

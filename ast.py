@@ -124,6 +124,9 @@ class Variable:
         self.shift = shift if shift != None else ConstantNumeric(0)
         self.mask = mask if mask != None else ConstantNumeric(0xFFFFFFFF)
         self.param = param
+        self.add = None
+        self.div = None
+        self.mod = None
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Action2 variable'
@@ -199,6 +202,22 @@ def reduce_expr(expr, id_dicts = []):
         if isinstance(expr.expr1, Variable) and isinstance(expr.expr2, ConstantNumeric):
             if expr.op == Operator.AND and isinstance(expr.expr1.mask, ConstantNumeric):
                 expr.expr1.mask = ConstantNumeric(expr.expr1.mask.value & expr.expr2.value)
+                return expr.expr1
+            if expr.op == Operator.ADD and expr.expr1.div == None and expr.expr1.mod == None:
+                if expr.expr1.add == None: expr.expr1.add = expr.expr2
+                else: expr.expr1.add = ConstantNumeric(expr.expr1.add + expr.expr2.value)
+                return expr.expr1
+            if expr.op == Operator.SUB and expr.expr1.div == None and expr.expr1.mod == None:
+                if expr.expr1.add == None: expr.expr1.add = ConstantNumeric(-expr.expr2.value)
+                else: expr.expr1.add = ConstantNumeric(expr.expr1.add - expr.expr2.value)
+                return expr.expr1
+            if expr.op == Operator.DIV and expr.expr1.div == None and expr.expr1.mod == None:
+                if expr.expr1.add == None: expr.expr1.add = ConstantNumeric(0)
+                expr.expr1.div = expr.expr2
+                return expr.expr1
+            if expr.op == Operator.MOD and expr.expr1.div == None and expr.expr1.mod == None:
+                if expr.expr1.add == None: expr.expr1.add = ConstantNumeric(0)
+                expr.expr1.mod = expr.expr2
                 return expr.expr1
     elif isinstance(expr, Parameter):
         expr.num = reduce_expr(expr.num, id_dicts)
