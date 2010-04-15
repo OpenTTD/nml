@@ -75,7 +75,7 @@ def parse_error_block(error):
     
     if not isinstance(error.msg, str):
         raise ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
-        
+    
     langs = [0x7F]
     if error.msg in default_error_msg:
         custom_msg = False
@@ -91,13 +91,12 @@ def parse_error_block(error):
         for translation in grf_strings[error.data]:
             langs.append(translation['lang'])
     
-    if len(action6.modifications) > 0: action_list.append(action6)
-    
     langs = set(langs)
     for lang in langs:
         if custom_msg:
             msg = get_translation(error.msg, lang)
         data = None if error.data == None else get_translation(error.data, lang)
+        if len(action6.modifications) > 0: action_list.append(action6)
         action_list.append(ActionB(severity, lang, msg, data, None, None))
     
     free_parameters = free_parameters_backup
