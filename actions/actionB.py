@@ -68,7 +68,7 @@ def parse_error_block(error):
         action6.modify_bytes(error.severity.num.value, 1, 1)
         severity = ast.ConstantNumeric(0)
     else:
-        tmp_param, tmp_param_actions = get_tmp_parameter(id)
+        tmp_param, tmp_param_actions = get_tmp_parameter(error.severity)
         action_list.extend(tmp_param_actions)
         action6.modify_bytes(tmp_param, 1, 1)
         severity = ast.ConstantNumeric(0)
@@ -90,6 +90,8 @@ def parse_error_block(error):
             raise ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
         for translation in grf_strings[error.data]:
             langs.append(translation['lang'])
+    
+    if len(action6.modifications) > 0: action_list.append(action6)
     
     langs = set(langs)
     for lang in langs:
