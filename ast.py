@@ -494,21 +494,24 @@ class LayoutParam:
 
 class Error:
     def __init__(self, param_list):
+        self.params = []
         if not 2 <= len(param_list) <= 5:
             raise ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)))
         self.severity = reduce_expr(param_list[0], [error_severity])
         self.msg      = param_list[1]
         self.data     = param_list[2] if len(param_list) >= 3 else None
-        self.param1   = reduce_expr(param_list[3]) if len(param_list) >= 4 else None
-        self.param2   = reduce_expr(param_list[4]) if len(param_list) >= 5 else None
+        self.params.append(reduce_expr(param_list[3]) if len(param_list) >= 4 else None)
+        self.params.append(reduce_expr(param_list[4]) if len(param_list) >= 5 else None)
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Error, msg = ', self.msg
         print (indentation+2)*' ' + 'Severity:'
         self.severity.debug_print(indentation + 4)
         print (indentation+2)*' ' + 'Data: ', self.data
-        print (indentation+2)*' ' + 'Param1: ', self.param1
-        print (indentation+2)*' ' + 'Param2: ', self.param2
+        print (indentation+2)*' ' + 'Param1: '
+        if self.params[0] is not None: self.params[0].debug_print(indentation + 4)
+        print (indentation+2)*' ' + 'Param2: '
+        if self.params[1] is not None: self.params[1].debug_print(indentation + 4)
     
     def get_action_list(self):
         return parse_error_block(self)

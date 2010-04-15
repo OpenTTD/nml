@@ -25,9 +25,9 @@ class ActionB:
         if self.data != None:
             print_string(file, self.data)
             if self.param1 != None:
-                print_bytex(file, self.param1)
+                self.param1.write(file, 1)
                 if self.param2 != None:
-                    print_bytex(file, self.param2)
+                    self.param2.write(file, 1)
         file.write("\n\n")
     
     def skip_action7(self):
@@ -91,13 +91,26 @@ def parse_error_block(error):
         for translation in grf_strings[error.data]:
             langs.append(translation['lang'])
     
+    params = []
+    for expr in error.params:
+        if expr is None:
+            params.append(None)
+        elif isinstance(expr, ast.Parameter) and isinstance(expr.num, ast.ConstantNumeric):
+            params.append(expr.num)
+        else:
+            tmp_param, tmp_param_actions = get_tmp_parameter(expr)
+            action_list.extend(tmp_param_actions)
+            params.append(ast.ConstantNumeric(tmp_param))
+    
+    assert len(params) == 2
+    
     langs = set(langs)
     for lang in langs:
         if custom_msg:
             msg = get_translation(error.msg, lang)
         data = None if error.data == None else get_translation(error.data, lang)
         if len(action6.modifications) > 0: action_list.append(action6)
-        action_list.append(ActionB(severity, lang, msg, data, None, None))
+        action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
     
     free_parameters = free_parameters_backup
     return action_list
