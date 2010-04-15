@@ -72,6 +72,8 @@ def convert_op_to_action2(op):
     op_to_act2 = {
         ast.Operator.ADD: Action2Operator.ADD,
         ast.Operator.SUB: Action2Operator.SUB,
+        ast.Operator.DIV: Action2Operator.DIVS,
+        ast.Operator.MOD: Action2Operator.MODS,
         ast.Operator.MUL: Action2Operator.MUL,
         ast.Operator.AND: Action2Operator.AND,
         ast.Operator.OR: Action2Operator.OR,
