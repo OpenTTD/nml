@@ -145,6 +145,7 @@ compile_time_operator = {
     Operator.MAX:     lambda a, b: max(a, b)
 }
 
+# note: id_dicts is a *list* of dictionaries!
 def reduce_expr(expr, id_dicts = []):
     global compile_time_operator
     if isinstance(expr, BinOp):
@@ -492,12 +493,14 @@ class LayoutParam:
             self.value.debug_print(indentation + 2)
 
 class Error:
-    def __init__(self, severity, msg, data, param1, param2):
-        self.severity = severity
-        self.msg = msg
-        self.data = data
-        self.param1 = param1
-        self.param2 = param2
+    def __init__(self, param_list):
+        if not 2 <= len(param_list) <= 5:
+            raise ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)))
+        self.severity = reduce_expr(param_list[0], [error_severity])
+        self.msg      = param_list[1]
+        self.data     = param_list[2] if len(param_list) >= 3 else None
+        self.param1   = reduce_expr(param_list[3]) if len(param_list) >= 4 else None
+        self.param2   = reduce_expr(param_list[4]) if len(param_list) >= 5 else None
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Error, msg = ', self.msg

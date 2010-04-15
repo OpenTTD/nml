@@ -49,6 +49,13 @@ default_error_msg = {
     'REQUIRES_OPENTTD' : 6,
 }
 
+error_severity = {
+    'NOTICE'  : 0,
+    'WARNING' : 1,
+    'ERROR'   : 2,
+    'FATAL'   : 3,
+}
+
 def parse_error_block(error):
     global free_parameters, default_error_msg, grf_strings
     free_parameters_backup = free_parameters[:]
@@ -66,6 +73,9 @@ def parse_error_block(error):
         action6.modify_bytes(tmp_param, 1, 1)
         severity = ast.ConstantNumeric(0)
     
+    if not isinstance(error.msg, str):
+        raise ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
+        
     langs = [0x7F]
     if error.msg in default_error_msg:
         custom_msg = False
@@ -76,6 +86,8 @@ def parse_error_block(error):
             langs.append(translation['lang'])
     
     if error.data != None:
+        if not isinstance(error.data, str):
+            raise ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
         for translation in grf_strings[error.data]:
             langs.append(translation['lang'])
     

@@ -282,14 +282,8 @@ def p_real_sprite(t):
 #MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),
 #data (=string to insert in message), number of parameter, number of parameter
 def p_error_block(t):
-    '''error_block : ERROR LPAREN expression COMMA ID RPAREN SEMICOLON
-                   | ERROR LPAREN expression COMMA ID COMMA ID RPAREN SEMICOLON
-                   | ERROR LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN SEMICOLON
-                   | ERROR LPAREN expression COMMA ID COMMA ID COMMA expression COMMA expression RPAREN SEMICOLON'''
-    data = None if len(t) < 9 else t[7]
-    param1 = None if len(t) < 11 else t[9]
-    param2 = None if len(t) < 13 else t[11]
-    t[0] = Error(t[3], t[5], data, param1, param2)
+    'error_block : ERROR LPAREN param_list RPAREN SEMICOLON'
+    t[0] = Error(t[3])
 
 code_to_op = {
     '+' : Operator.ADD,
