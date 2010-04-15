@@ -53,7 +53,7 @@ def p_cargotable_list(t):
     else: t[0] = t[1] + [t[3]]
 
 def p_deactivate(t):
-    'deactivate : DEACTIVATE LPAREN NUMBER RPAREN SEMICOLON'
+    'deactivate : DEACTIVATE LPAREN param_list RPAREN SEMICOLON'
     t[0] = DeactivateBlock(t[3])
 
 def p_grf_block(t):

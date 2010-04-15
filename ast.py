@@ -294,14 +294,16 @@ class SwitchRange:
             self.result.debug_print(indentation + 2)
 
 class DeactivateBlock:
-    def __init__(self, grfid):
-        self.grfid = grfid
+    def __init__(self, grfid_list):
+        self.grfid_list = [reduce_expr(grfid) for grfid in grfid_list]
     
     def debug_print(self, indentation):
-        print indentation*' ' + 'Deactivate other newgrf:', hex(self.grfid)
+        print indentation*' ' + 'Deactivate other newgrfs:'
+        for grfid in self.grfid_list:
+            grfid.debug_print(indentation + 2)
     
     def get_action_list(self):
-        return [ActionE(self.grfid)]
+        return parse_deactivate_block(self)
 
 def validate_item_block(block_list):
     for block in block_list:
