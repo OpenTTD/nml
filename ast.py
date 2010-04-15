@@ -146,7 +146,7 @@ compile_time_operator = {
 }
 
 # note: id_dicts is a *list* of dictionaries!
-def reduce_expr(expr, id_dicts = []):
+def reduce_expr(expr, id_dicts = [], func = lambda x: ConstantNumeric(x)):
     global compile_time_operator
     if isinstance(expr, BinOp):
         expr.expr1 = reduce_expr(expr.expr1, id_dicts)
@@ -164,14 +164,14 @@ def reduce_expr(expr, id_dicts = []):
         for id_dict in id_dicts:
             try:
                 value = id_dict[expr]
-                return ConstantNumeric(value)
+                return func(value)
             except KeyError:
                 pass
         raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
     return expr
 
-def reduce_constant(expr, id_dicts = []):
-    expr = reduce_expr(expr, id_dicts)
+def reduce_constant(expr, id_dicts = [], func = lambda x: ConstantNumeric(x)):
+    expr = reduce_expr(expr, id_dicts, func)
     if not isinstance(expr, ConstantNumeric):
         raise ConstError()
     return expr
