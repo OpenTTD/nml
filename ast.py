@@ -145,8 +145,8 @@ compile_time_operator = {
     Operator.MAX:     lambda a, b: max(a, b)
 }
 
-# note: id_dicts is a *list* of dictionaries!
-def reduce_expr(expr, id_dicts = [], func = lambda x: ConstantNumeric(x)):
+# note: id_dicts is a *list* of dictionaries or (dictionary, function)-tuples
+def reduce_expr(expr, id_dicts = []):
     global compile_time_operator
     if isinstance(expr, BinOp):
         expr.expr1 = reduce_expr(expr.expr1, id_dicts)
@@ -162,11 +162,9 @@ def reduce_expr(expr, id_dicts = [], func = lambda x: ConstantNumeric(x)):
         expr.param = reduce_expr(expr.num, id_dicts)
     elif isinstance(expr, str):
         for id_dict in id_dicts:
-            try:
-                value = id_dict[expr]
-                return func(value)
-            except KeyError:
-                pass
+            id_dict, func = id_dict, lambda x: ConstantNumeric(x) if not isinstance(id_dict, tuple) else id_dict
+            if expr in id_dict:
+                return func(id_dict[expr])
         raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
     return expr
 
