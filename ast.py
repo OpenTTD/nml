@@ -172,6 +172,18 @@ compile_time_operator = {
     Operator.MAX:     lambda a, b: max(a, b)
 }
 
+commutative_operators = [
+    Operator.ADD,
+    Operator.MUL,
+    Operator.AND,
+    Operator.OR,
+    Operator.XOR,
+    Operator.CMP_EQ,
+    Operator.CMP_NEQ,
+    Operator.MIN,
+    Operator.MAX,
+]
+
 # note: id_dicts is a *list* of dictionaries or (dictionary, function)-tuples
 def reduce_expr(expr, id_dicts = []):
     global compile_time_operator
@@ -180,6 +192,14 @@ def reduce_expr(expr, id_dicts = []):
         expr.expr2 = reduce_expr(expr.expr2, id_dicts)
         if isinstance(expr.expr1, ConstantNumeric) and isinstance(expr.expr2, ConstantNumeric):
             return ConstantNumeric(compile_time_operator[expr.op](expr.expr1.value, expr.expr2.value))
+        simple_expr1 = isinstance(expr.expr1, ConstantNumeric) or isinstance(expr.expr1, Parameter) or isinstance(expr.expr1, Variable)
+        simple_expr2 = isinstance(expr.expr2, ConstantNumeric) or isinstance(expr.expr2, Parameter) or isinstance(expr.expr2, Variable)
+        if expr.op in commutative_operators and ((simple_expr1 and not simple_expr2) or (isinstance(expr.expr2, Variable) and isinstance(expr.expr1, ConstantNumeric))):
+            expr.expr1, expr.expr2 = expr.expr2, expr.expr1
+        if isinstance(expr.expr1, Variable) and isinstance(expr.expr2, ConstantNumeric):
+            if expr.op == Operator.AND and isinstance(expr.expr1.mask, ConstantNumeric):
+                expr.expr1.mask = ConstantNumeric(expr.expr1.mask.value & expr.expr2.value)
+                return expr.expr1
     elif isinstance(expr, Parameter):
         expr.num = reduce_expr(expr.num, id_dicts)
     elif isinstance(expr, Variable):
