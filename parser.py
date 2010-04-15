@@ -121,16 +121,12 @@ def p_else_block(t):
     elif len(t) == 5: t[0] = Conditional(None, t[3], None)
     else: t[0] = t[2]
 
-def p_feature(t):
-    'feature : NUMBER'
-    t[0] = t[1]
-
 def p_loop(t):
     'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'
     t[0] = Loop(t[3], t[6])
 
 def p_switch(t):
-    'switch : SWITCH LPAREN feature COMMA VARRANGE COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
+    'switch : SWITCH LPAREN expression COMMA VARRANGE COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
     t[0] = Switch(t[3], t[5], t[7], t[9], t[12])
 
 def p_switch_body(t):
@@ -155,8 +151,8 @@ def p_switch_range(t):
     else: t[0] = SwitchRange(t[1], t[3], t[5])
 
 def p_item(t):
-    '''item : ITEM LPAREN feature RPAREN LBRACE skipable_script RBRACE
-            | ITEM LPAREN feature COMMA expression RPAREN LBRACE skipable_script RBRACE'''
+    '''item : ITEM LPAREN expression RPAREN LBRACE skipable_script RBRACE
+            | ITEM LPAREN expression COMMA expression RPAREN LBRACE skipable_script RBRACE'''
     if len(t) == 8: t[0] = Item(t[3], t[6])
     else: t[0] = Item(t[3], t[8], t[5])
 
@@ -198,7 +194,7 @@ def p_graphics_assignment(t):
     t[0] = GraphicsDefinition(t[1], t[3])
 
 def p_spriteblock(t):
-    'spriteblock : SPRITEBLOCK LPAREN feature RPAREN LBRACE spriteset_list RBRACE'
+    'spriteblock : SPRITEBLOCK LPAREN expression RPAREN LBRACE spriteset_list RBRACE'
     t[0] = SpriteBlock(t[3], t[6])
 
 def p_spriteset_list(t):

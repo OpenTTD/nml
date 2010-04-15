@@ -223,9 +223,9 @@ def parse_varaction2(switch_block):
     free_parameters_backup = free_parameters[:]
     action6 = Action6()
     varsize = 4
-    feature = switch_block.feature if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature]
+    feature = switch_block.feature.value if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature.value]
     if feature == None: raise ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
-    varaction2 = Action2Var(switch_block.feature, switch_block.name, switch_block.var_range, varsize)
+    varaction2 = Action2Var(switch_block.feature.value, switch_block.name, switch_block.var_range, varsize)
     
     func = lambda x: ast.Variable(ast.ConstantNumeric(x['var']), ast.ConstantNumeric(x['start']), ast.ConstantNumeric((1 << x['size']) - 1))
     expr = ast.reduce_expr(switch_block.expr, [(varact2vars[feature], func)])

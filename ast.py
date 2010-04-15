@@ -31,6 +31,27 @@ class Operator:
     MIN     = 13
     MAX     = 14
 
+feature_ids = {
+    'FEAT_TRAINS': 0x00,
+    'FEAT_ROADVEHS': 0x01,
+    'FEAT_SHIPS': 0x02,
+    'FEAT_PLANES': 0x03,
+    'FEAT_STATIONS': 0x04,
+    'FEAT_CANALS': 0x05,
+    'FEAT_BRIDGES': 0x06,
+    'FEAT_HOUSES': 0x07,
+    'FEAT_GLOBALVARS': 0x08,
+    'FEAT_INDUSTRYTILES': 0x09,
+    'FEAT_INDUSTRIES': 0x0A,
+    'FEAT_CARGOS': 0x0B,
+    'FEAT_SOUNDEFFECTS': 0x0C,
+    'FEAT_AIRPORTS': 0x0D,
+    'FEAT_SIGNALS': 0x0E,
+    'FEAT_NEWOBJECTS': 0x0F,
+    'FEAT_RAILTYPES': 0x10,
+    'FEAT_AIRPORTTILES': 0x11,
+}
+
 ########### expressions ###########
 class Expr:
     def debug_print(self, indentation):
@@ -174,8 +195,8 @@ def reduce_expr(expr, id_dicts = []):
         raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
     return expr
 
-def reduce_constant(expr, id_dicts = [], func = lambda x: ConstantNumeric(x)):
-    expr = reduce_expr(expr, id_dicts, func)
+def reduce_constant(expr, id_dicts = []):
+    expr = reduce_expr(expr, id_dicts)
     if not isinstance(expr, ConstantNumeric):
         raise ConstError()
     return expr
@@ -246,7 +267,7 @@ class Loop:
 
 class Switch:
     def __init__(self, feature, var_range, name, expr, body):
-        self.feature = feature
+        self.feature = reduce_constant(feature, [feature_ids])
         self.var_range = var_range
         self.name = name
         self.expr = expr
@@ -328,13 +349,13 @@ item_id = None
 
 class Item:
     def __init__(self, feature, body, id = None):
-        self.feature = feature
+        self.feature = reduce_constant(feature, [feature_ids])
         self.body = body
         self.id = id
         validate_item_block(body)
     
     def debug_print(self, indentation):
-        print indentation*' ' + 'Item, feature', hex(self.feature)
+        print indentation*' ' + 'Item, feature', hex(self.feature.value)
         for b in self.body: b.debug_print(indentation + 2)
     
     def get_action_list(self):
@@ -342,8 +363,8 @@ class Item:
         if self.id != None:
             item_id = self.id
         else:
-            item_id = ConstantNumeric(get_free_id(self.feature))
-        item_feature = self.feature
+            item_id = ConstantNumeric(get_free_id(self.feature.value))
+        item_feature = self.feature.value
         action_list = []
         for b in self.body:
             action_list.extend(b.get_action_list())
@@ -385,11 +406,11 @@ class GraphicsBlock:
 
 class SpriteBlock:
     def __init__(self, feature, spriteset_list):
-        self.feature = feature
+        self.feature = reduce_constant(feature, [feature_ids])
         self.spriteset_list = spriteset_list
     
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite block, feature', hex(self.feature)
+        print indentation*' ' + 'Sprite block, feature', hex(self.feature.value)
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 2)
     def get_action_list(self):

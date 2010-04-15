@@ -13,7 +13,7 @@ class Action1:
     def write(self, file):
         #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
         file.write("-1 * 0 01 ")
-        print_bytex(file, self.feature)
+        self.feature.write(file, 1)
         print_byte(file, self.num_sets)
         print_byte(file, self.num_ent)
         file.write("\n\n")
@@ -38,8 +38,8 @@ def parse_sprite_block(sprite_block):
     num_sets = 0
     num_ent = -1
     
-    if sprite_block.feature not in action1_features:
-        raise ScriptError("Sprite blocks are not supported for this feature: 0x" + to_hex(sprite_block.feature, 2))
+    if sprite_block.feature.value not in action1_features:
+        raise ScriptError("Sprite blocks are not supported for this feature: 0x" + to_hex(sprite_block.feature.value, 2))
     
     for item in sprite_block.spriteset_list:
         if isinstance(item, ast.SpriteSet):
@@ -56,10 +56,10 @@ def parse_sprite_block(sprite_block):
                 action_list.append(RealSpriteAction(sprite, item.pcx, sprite == last_sprite))
     
         elif isinstance(item, ast.SpriteGroup):
-            action_list_append.extend(get_real_action2s(item, sprite_block.feature, spritesets))
+            action_list_append.extend(get_real_action2s(item, sprite_block.feature.value, spritesets))
         else:
             assert isinstance(item, ast.LayoutSpriteGroup)
-            action_list_append.extend(get_layout_action2s(item, sprite_block.feature, spritesets))
+            action_list_append.extend(get_layout_action2s(item, sprite_block.feature.value, spritesets))
     
     action_list[0] = Action1(sprite_block.feature, num_sets, num_ent)
     action_list.extend(action_list_append)
