@@ -102,9 +102,8 @@ def parse_actionD(assignment):
             param1 = expr.expr1.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr1)
-            action6.modify_bytes(tmp_param, 1, 3)
             action_list.extend(tmp_param_actions)
-            param1 = ast.ConstantNumeric(0)
+            param1 = ast.ConstantNumeric(tmp_param)
         
         # We can use the data only for one for the parameters.
         # If the first parameter uses "data" we need a temp parameter for this one
@@ -115,9 +114,8 @@ def parse_actionD(assignment):
             param2 = expr.expr2.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr2)
-            action6.modify_bytes(tmp_param, 1, 4)
             action_list.extend(tmp_param_actions)
-            param2 = ast.ConstantNumeric(0)
+            param2 = ast.ConstantNumeric(tmp_param)
         
     else: raise ast.ScriptError("Invalid expression in argument assignment")
     
