@@ -123,7 +123,7 @@ def t_STRING_LITERAL(t):
     return t
 
 # Ignored characters
-t_ignore = " \t"
+t_ignore = " \t\r"
 
 def t_newline(t):
     r'\n+'
