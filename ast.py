@@ -225,7 +225,7 @@ def reduce_expr(expr, id_dicts = []):
         expr.num = reduce_expr(expr.num, id_dicts)
         expr.shift = reduce_expr(expr.shift, id_dicts)
         expr.mask = reduce_expr(expr.mask, id_dicts)
-        expr.param = reduce_expr(expr.num, id_dicts)
+        expr.param = reduce_expr(expr.param, id_dicts)
     elif isinstance(expr, str):
         for id_dict in id_dicts:
             id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
@@ -313,7 +313,7 @@ class Switch:
         self.body = body
     
     def debug_print(self, indentation):
-        print indentation*' ' + 'Switch, Feature =,',self.feature,', name =', self.name
+        print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
