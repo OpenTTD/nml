@@ -329,6 +329,18 @@ def p_min_max(t):
 
 def p_function(t):
     'expression : ID LPAREN RPAREN'
-    t[0] = Variable(ConstantNumeric(0x7E), t[1])
-    
+    t[0] = Variable(ConstantNumeric(0x7E), param=t[1])
 
+def p_store_var(t):
+    '''expression : STORE_TEMP LPAREN expression COMMA expression RPAREN
+                  | STORE_PERM LPAREN expression COMMA expression RPAREN'''
+    op = Operator.STO_TMP if t[1] == 'STORE_TEMP' else Operator.STO_PERM
+    t[0] = BinOp(op, t[5], t[3])
+
+def p_load_tmp_var(t):
+    'expression : LOAD_TEMP LPAREN expression RPAREN'
+    t[0] = Variable(ConstantNumeric(0x7D), param=t[3])
+
+def p_load_perm_var(t):
+    'expression : LOAD_PERM LPAREN expression RPAREN'
+    t[0] = Variable(ConstantNumeric(0x7C), param=t[3])

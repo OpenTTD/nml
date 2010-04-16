@@ -30,6 +30,8 @@ class Operator:
     CMP_GT  = 12
     MIN     = 13
     MAX     = 14
+    STO_TMP = 15
+    STO_PERM = 16
 
 feature_ids = {
     'FEAT_TRAINS': 0x00,
