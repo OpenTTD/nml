@@ -9,12 +9,15 @@ def train_weight_prop(value):
     high_byte = ast.ConstantNumeric(value.value >> 8)
     return [Action0Property(0x16, low_byte, 1), Action0Property(0x24, high_byte, 1)]
 
-properties[0x00] = {
+general_veh_props = {
     'reliability_decay' : {'size': 1, 'num': 0x02},
     'vehicle_life' : {'size': 1, 'num': 0x03},
     'model_life' : {'size': 1, 'num': 0x04},
     'climates_available' : {'size': 1, 'num': 0x06},
     'load_amount' : {'size': 2, 'num': 0x07},
+}
+
+properties[0x00] = {
     'track_type' : {'size': 1, 'num': 0x05},
     'ai_special_flag' : {'size': 1, 'num': 0x08},
     'speed' : {'size': 2, 'num': 0x09},
@@ -29,7 +32,6 @@ properties[0x00] = {
     'cost_factor' : {'size': 1, 'num': 0x17},
     'ai_engine_rank' : {'size': 1, 'num': 0x18},
     'traction_type' : {'size': 1, 'num': 0x19},
-    'weight' : {'size': 1, 'num': 0x1A},
     'extra_power_per_wagon' : {'size': 2, 'num': 0x1B},
     'refit_cost' : {'size': 1, 'num': 0x1C},
     'refittable_cargo_types' : {'size': 4, 'num': 0x1D},
@@ -46,6 +48,39 @@ properties[0x00] = {
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29},
     'introduction_date' : {'size': 4, 'num': 0x2A},
 }
+properties[0x00].update(general_veh_props)
+
+
+def roadveh_speed_prop(value):
+    if not isinstance(value, ast.ConstantNumeric): raise ScriptError("Road vehicle speed must be a constant number")
+    prop08 = ast.ConstantNumeric(min(value.value, 0xFF))
+    prop15 = ast.ConstantNumeric(value.value / 4)
+    return [Action0Property(0x08, prop08, 1), Action0Property(0x15, prop15, 1)]
+
+properties[0x01] = {
+    'speed': {'custom_function': roadveh_speed_prop},
+    'running_cost_factor' : {'size': 1, 'num': 0x09},
+    'running_cost_base' : {'size': 4, 'num': 0x0A},
+    'sprite_id' : {'size': 1, 'num': 0x0E},
+    'cargo_capacity' : {'size': 1, 'num': 0x0F},
+    'cargo_type' : {'size': 1, 'num': 0x10},
+    'cost_factor' : {'size': 1, 'num': 0x11},
+    'sound_effect' : {'size': 1, 'num': 0x12},
+    'power' : {'size': 1, 'num': 0x13},
+    'weight' : {'size': 1, 'num': 0x14},
+    'refittable_cargo_types' : {'size': 4, 'num': 0x16},
+    'callback flags' : {'size': 1, 'num': 0x17},
+    'tractive_effort_coefficient' : {'size': 1, 'num': 0x18},
+    'air_drag_coefficient' : {'size': 1, 'num': 0x19},
+    'refit_cost' : {'size': 1, 'num': 0x1A},
+    'retire_early' : {'size': 1, 'num': 0x1B},
+    'misc_flags' : {'size': 1, 'num': 0x1C},
+    'refittable_cargo_classes' : {'size': 2, 'num': 0x1D},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E},
+    'introduction_date' : {'size': 4, 'num': 0x1F},
+}
+properties[0x01].update(general_veh_props)
+
 
 properties[0x0A] = {
     'substitute': {'size': 1, 'num': 0x08},
