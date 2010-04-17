@@ -15,6 +15,9 @@ const_table = {
     #never expire
     'VEHICLE_NEVER_EXPIRES' : 0xFF,
     
+    #start date
+    'START_DATE_1920' : 701265
+    
     #cargo classes
     'CC_NONE'         : 0x0000,
     'CC_PASSENGERS'   : 0x0001,
