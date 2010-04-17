@@ -9,7 +9,7 @@ class Action8:
     
     def write(self, file):
         file.write("-1 * 0 08 07 ")
-        print_string(file, get_translation(self.grfid.name), False, True)
+        print_string(file, self.grfid, False, True)
         print_string(file, get_translation(self.name.name))
         print_string(file, get_translation(self.description.name))
         file.write("\n")

@@ -251,7 +251,10 @@ class GRF:
         self.desc = None
         self.grfid = None
         for assignment in alist:
-            if not isinstance(assignment.value, String):
+            if assignment.name == "grfid":
+                if not isinstance(assignment.value, str):
+                    raise ScriptError("GRFID must be a string literal")
+            elif not isinstance(assignment.value, String):
                 raise ScriptError("Assignments in GRF-block must be constant strings")
             if assignment.name == "name": self.name = assignment.value
             elif assignment.name == "desc": self.desc = assignment.value
@@ -261,8 +264,7 @@ class GRF:
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
         if self.grfid != None:
-            print (2+indentation)*' ' + 'grfid:'
-            self.grfid.debug_print(indentation + 4)
+            print (2+indentation)*' ' + 'grfid:', self.grfid
         if self.name != None:
             print (2+indentation)*' ' + 'Name:'
             self.name.debug_print(indentation + 4)

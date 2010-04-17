@@ -69,7 +69,8 @@ def p_assignment_list(t):
 
 def p_assignment(t):
     '''assignment : ID COLON string SEMICOLON
-                  | ID COLON expression SEMICOLON'''
+                  | ID COLON expression SEMICOLON
+                  | ID COLON STRING_LITERAL SEMICOLON'''
     t[0] = Assignment(t[1], t[3])
 
 def p_param_assignment(t):
