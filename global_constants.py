@@ -16,7 +16,7 @@ const_table = {
     'VEHICLE_NEVER_EXPIRES' : 0xFF,
     
     #days up to 1920-01-01
-    'DATE_1920' : 701265
+    'DATE_1920' : 701265,
     
     #cargo classes
     'CC_NONE'         : 0x0000,
