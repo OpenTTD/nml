@@ -438,13 +438,30 @@ class PropertyBlock:
         return parse_property_block(self.prop_list, item_feature, item_id)
 
 class GraphicsBlock:
-    def __init__(self, graphics_list):
-        self.graphics_list = graphics_list
+    def __init__(self, default_graphics):
+        self.default_graphics = default_graphics
+        self.graphics_list = []
+    
+    def append_definition(self, graphics_assignment):
+        self.graphics_list.append(graphics_assignment)
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics block:'
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
+    
+    def get_action_list(self):
+        return []
+
+class GraphicsDefinition:
+    def __init__(self, cargo_id, action2_id):
+        self.cargo_id = cargo_id
+        self.action2_id = action2_id
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Graphics:'
+        print (indentation+2)*' ' + 'Cargo:', self.cargo_id
+        print (indentation+2)*' ' + 'Linked to action2:', self.action2_id
 
 class SpriteBlock:
     def __init__(self, feature, spriteset_list):

@@ -188,7 +188,7 @@ def p_graphics_list(t):
     '''graphics_list : ID SEMICOLON
                      | graphics_assignment graphics_list'''
     if isinstance(t[1], str): t[0] = GraphicsBlock(t[1])
-    else: t[0] = t[1].append_definition(t[2])
+    else: t[0] = t[2].append_definition(t[1])
 
 def p_graphics_assignment(t):
     'graphics_assignment : ID COLON ID SEMICOLON'
