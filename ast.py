@@ -3,6 +3,7 @@ from actions.action0 import *
 from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
+from actions.action3 import *
 from actions.action7 import *
 from actions.action8 import *
 from actions.actionB import *
@@ -451,7 +452,8 @@ class GraphicsBlock:
             graphics.debug_print(indentation + 2)
     
     def get_action_list(self):
-        return []
+        global item_feature, item_id
+        return parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
 
 class GraphicsDefinition:
     def __init__(self, cargo_id, action2_id):

@@ -182,7 +182,7 @@ def p_array(t):
 
 def p_graphics_block(t):
     'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
-    t[0] = GraphicsBlock(t[3])
+    t[0] = t[3]
 
 def p_graphics_list(t):
     '''graphics_list : ID SEMICOLON

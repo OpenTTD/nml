@@ -45,6 +45,9 @@ def print_varx(file, value, size):
         print_bytex(file, value)
     elif size == 2:
         print_wordx(file, value)
+    elif size == 3:
+        print_bytex(file, 0xFF)
+        print_wordx(file, value)
     elif size == 4:
         print_dwordx(file, value)
     else:
