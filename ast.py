@@ -8,6 +8,7 @@ from actions.action8 import *
 from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
+import global_constants
 import operator
 
 def print_script(script, indent):
@@ -110,7 +111,7 @@ class Parameter(Expr):
 class ParameterAssignment:
     def __init__(self, param, value):
         self.param = param
-        self.value = reduce_expr(value)
+        self.value = reduce_expr(value, [global_constants.const_table])
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
@@ -414,7 +415,7 @@ class Item:
 class Property:
     def __init__(self, name, value):
         self.name = name
-        self.value = value
+        self.value = reduce_expr(value, [global_constants.const_table])
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Property:', self.name

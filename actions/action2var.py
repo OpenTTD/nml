@@ -4,6 +4,7 @@ from action2 import *
 from action2var_variables import *
 from action6 import *
 from actionD import *
+import global_constants
 
 class Action2Operator:
     ADD   = r'\2+'
@@ -248,7 +249,7 @@ def parse_varaction2(switch_block):
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name, switch_block.var_range, varsize)
     
     func = lambda x: ast.Variable(ast.ConstantNumeric(x['var']), ast.ConstantNumeric(x['start']), ast.ConstantNumeric((1 << x['size']) - 1))
-    expr = ast.reduce_expr(switch_block.expr, [(varact2vars[feature], func), (varact2_globalvars, func)])
+    expr = ast.reduce_expr(switch_block.expr, [(varact2vars[feature], func), (varact2_globalvars, func), global_constants.const_table])
     
     offset = 4 #first var
     
