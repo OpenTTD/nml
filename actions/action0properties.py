@@ -15,6 +15,7 @@ general_veh_props = {
     'model_life' : {'size': 1, 'num': 0x04},
     'climates_available' : {'size': 1, 'num': 0x06},
     'load_amount' : {'size': 1, 'num': 0x07},
+    'name': {'num': -1, 'string': None},
 }
 
 properties[0x00] = {

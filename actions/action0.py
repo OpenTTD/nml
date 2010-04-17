@@ -56,7 +56,7 @@ class Action0Property:
         return self.size + 1
 
 
-def parse_property(feature, name, value):
+def parse_property(feature, name, value, id):
     global properties
     prop = None
     action_list = []
@@ -84,7 +84,7 @@ def parse_property(feature, name, value):
         elif isinstance(value, ast.String):
             if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
             string_range = prop['string']
-            stringid, prepend, string_actions = get_string_action4s(feature, string_range, value)
+            stringid, prepend, string_actions = get_string_action4s(feature, string_range, value, id)
             value = ast.ConstantNumeric(stringid)
             if prepend:
                 action_list.extend(string_actions)
@@ -95,7 +95,10 @@ def parse_property(feature, name, value):
             mods.append((tmp_param, size, 1))
             action_list.extend(tmp_param_actions)
             value = ast.ConstantNumeric(0)
-        props = [Action0Property(prop['num'], value, prop['size'])]
+        if prop['num'] != -1:
+            props = [Action0Property(prop['num'], value, prop['size'])]
+        else:
+            props = []
     
     return (props, action_list, mods, action_list_append)
 
@@ -115,7 +118,7 @@ def parse_property_block(prop_list, feature, id):
     
     offset = 7
     for prop in prop_list:
-        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value)
+        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id.value)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:
