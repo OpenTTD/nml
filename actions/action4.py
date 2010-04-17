@@ -3,20 +3,20 @@ from generic import *
 from grfstrings import grf_strings
 
 class Action4:
-    def __init__(self, feature, lang, word_sized, id, text):
+    def __init__(self, feature, lang, size, id, text):
         self.feature = feature
         self.lang = lang
-        self.word_sized = word_sized
+        self.size = size
         self.id = id
         self.text = text
     
     def write(self, file):
         file.write("-1 * 0 04 ")
         print_bytex(file, self.feature)
-        if self.word_sized: self.lang = self.lang | 0x80
+        if self.size == 2: self.lang = self.lang | 0x80
         print_bytex(file, self.lang)
         file.write("01 ")
-        print_varx(file, self.id, 2 if self.word_sized else 1)
+        print_varx(file, self.id, self.size)
         print_string(file, self.text)
         file.write("\n\n")
     
@@ -41,15 +41,17 @@ def get_string_action4s(feature, string_range, string, id = None):
     global grf_strings, string_ranges
     if not string.name in grf_strings: raise ScriptError("Unkown string: " + string.name)
     if string_range != None:
-        word_sized = True
+        size = 2
         if string_ranges[string_range]['random_id']:
             id = string_ranges[string_range]['ids'].pop()
         id = id | (string_range << 8)
+    elif feature <= 3:
+        size = 3
     else:
-        word_sized = False
+        size = 1
     
     actions = []
     for translation in grf_strings[string.name]:
-        actions.append(Action4(feature, translation['lang'], word_sized, id, translation['text']))
+        actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
     
-    return (id, word_sized, actions)
+    return (id, size == 2, actions)
