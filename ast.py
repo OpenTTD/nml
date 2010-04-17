@@ -50,7 +50,7 @@ feature_ids = {
     'FEAT_SOUNDEFFECTS': 0x0C,
     'FEAT_AIRPORTS': 0x0D,
     'FEAT_SIGNALS': 0x0E,
-    'FEAT_NEWOBJECTS': 0x0F,
+    'FEAT_OBJECTS': 0x0F,
     'FEAT_RAILTYPES': 0x10,
     'FEAT_AIRPORTTILES': 0x11,
 }
