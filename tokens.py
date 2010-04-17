@@ -31,6 +31,7 @@ reserved = {
     'LOAD_TEMP' : 'LOAD_TEMP',
     'STORE_PERM' : 'STORE_PERM',
     'LOAD_PERM' : 'LOAD_PERM',
+    'date' : 'DATE',
 }
 
 var_ranges = {

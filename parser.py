@@ -1,4 +1,5 @@
 from ast import *
+import datetime, calendar
 
 precedence = (
     ('left','COMMA'),
@@ -344,3 +345,12 @@ def p_load_tmp_var(t):
 def p_load_perm_var(t):
     'expression : LOAD_PERM LPAREN expression RPAREN'
     t[0] = Variable(ConstantNumeric(0x7C), param=t[3])
+
+def p_date(t):
+    'expression : DATE LPAREN param_list RPAREN '
+    if len(t[3]) != 3: raise ScriptError("'date' must have 3 arguments")
+    year = reduce_constant(t[3][0]).value
+    month = reduce_constant(t[3][1]).value
+    day = reduce_constant(t[3][2]).value
+    date = datetime.date(year, month, day)
+    t[0] = ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1)
