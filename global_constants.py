@@ -94,10 +94,10 @@ const_table = {
     #ship misc flags
     'SHIP_FLAG_2CC'  : 0x02,
     
-    #plane misc flags
-    'PLANE_FLAG_2CC'  : 0x02,
+    #aircrafts misc flags
+    'AIRCRAFT_FLAG_2CC'  : 0x02,
     
-    #for those, who can't tell the difference between a train and a plane:
+    #for those, who can't tell the difference between a train and an aircraft:
     'VEHICLE_FLAG_2CC' : 0x02,
     
     #ai flags
@@ -118,10 +118,10 @@ const_table = {
     'SOUND_JET_3'          : 0x46,
     
     #sprite ids
-    'SPRITE_ID_NEW_TRAIN'   : 0xFD,
-    'SPRITE_ID_NEW_ROADVEH' : 0xFF,
-    'SPRITE_ID_NEW_SHIP'    : 0xFF,
-    'SPRITE_ID_NEW_PLANE'   : 0xFF,
+    'SPRITE_ID_NEW_TRAIN'    : 0xFD,
+    'SPRITE_ID_NEW_ROADVEH'  : 0xFF,
+    'SPRITE_ID_NEW_SHIP'     : 0xFF,
+    'SPRITE_ID_NEW_AIRCRAFT' : 0xFF,
     
     #aircraft type/size
     'AIRCRAFT_TYPE_NORMAL'     : 0x00,
