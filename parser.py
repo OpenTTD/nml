@@ -280,6 +280,10 @@ def p_real_sprite(t):
     'real_sprite : LBRACKET param_list RBRACKET'
     t[0] = RealSprite(t[2])
 
+def p_real_sprite_empty(t):
+    'real_sprite : LBRACKET  RBRACKET'
+    t[0] = EmptyRealSprite()
+
 #severity, message (one of REQUIRES_TTDPATCH, REQUIRES_DOS_WINDOWS, USED_WITH, INVALID_PARAMETER,
 #MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),
 #data (=string to insert in message), number of parameter, number of parameter

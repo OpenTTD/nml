@@ -8,6 +8,10 @@ class RealSpriteAction:
         self.last = last
     
     def write(self, file):
+        if isinstance(self.sprite, ast.EmptyRealSprite):
+            file.write("-1 * 0 0\n")
+            if self.last: file.write("\n")
+            return
         #<Sprite-number> <filename> <xpos> <ypos> <compression> <ysize> <xsize> <xrel> <yrel>
         file.write("-1 ")
         file.write(self.pcx + " ")

@@ -253,7 +253,7 @@ def parse_varaction2(switch_block):
     
     offset = 4 #first var
     
-    action_list, mods, var_list, var_list_size = parse_varaction2_expression(switch_block.expr, varsize)
+    action_list, mods, var_list, var_list_size = parse_varaction2_expression(expr, varsize)
     for mod in mods:
         action6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = var_list
@@ -261,8 +261,9 @@ def parse_varaction2(switch_block):
     
     for r in switch_block.body.ranges:
         if isinstance(r.result, str):
-            action2 = add_ref(r.result)
-            varaction2.references.append(action2)
+            if r.result != 'CB_FAILED':
+                action2 = add_ref(r.result)
+                varaction2.references.append(action2)
         elif not isinstance(r.result, ast.ConstantNumeric):
             raise ScriptError("Result of varaction2 range must be another action2 or a constant number")
         
@@ -275,8 +276,9 @@ def parse_varaction2(switch_block):
     
     default = switch_block.body.default
     if isinstance(default, str):
-        action2 = add_ref(default)
-        varaction2.references.append(action2)
+        if default != 'CB_FAILED':
+            action2 = add_ref(default)
+            varaction2.references.append(action2)
     elif not isinstance(default, ast.ConstantNumeric):
         raise ScriptError("Default result of varaction2 must be another action2 or a constant number")
     

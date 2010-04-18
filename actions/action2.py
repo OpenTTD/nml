@@ -1,7 +1,7 @@
 import ast
 from generic import *
 
-free_action2_ids = range(0, 256)
+free_action2_ids = range(1, 255)
 
 action2_map = {}
 
@@ -37,6 +37,7 @@ def add_ref(name):
     return action2_map[name]
 
 def remove_ref(name):
+    if name == 'CB_FAILED': return 0
     global action2_map, free_action2_ids
     action2 = action2_map[name]
     id = action2.id

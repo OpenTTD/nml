@@ -519,6 +519,10 @@ class SpriteSet:
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
+class EmptyRealSprite:
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Empty real sprite'
+
 class RealSprite:
     def __init__(self, param_list):
         if not 6 <= len(param_list) <= 7:
