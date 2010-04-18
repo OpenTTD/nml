@@ -10,6 +10,7 @@ from actions.actionA import *
 from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
+from actions.sprite_count import SpriteCountAction
 import global_constants
 import operator
 import unit
@@ -663,3 +664,10 @@ class CargoTable:
     
     def get_action_list(self):
         return get_cargolist_action(self.cargo_list)
+
+class SpriteCount:
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite count'
+    
+    def get_action_list(self):
+        return [SpriteCountAction()]

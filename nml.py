@@ -7,6 +7,7 @@ from tokens import *
 from parser import *
 from grfstrings import *
 from generic import ScriptError
+from actions.sprite_count import SpriteCountAction
 
 # Build the lexer
 import ply.lex as lex
@@ -89,7 +90,6 @@ def nml(inputfile):
 // (Info version 7)
 // Escapes: 2+ = 71 = D= = DR 2- = 70 = D+ = DF 2< = 7= = D- = DC 2> = 7! = Du* = DM 2u< = 7< = D* = DnF 2u> = 7> = Du<< = DnC 2/ = 7G = D<< = DO 2% = 7g = D& 2u/ = 7gG = D| 2u% = 7GG = Du/ 2* = 7gg = D/ 2& = 7c = Du% 2| = 7C = D% 2^ 2sto = 2s 2rst = 2r 2+ 2ror = 2rot
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
--1 * 4 00 00 00 00
 
 ''')
     
@@ -98,6 +98,7 @@ def nml(inputfile):
             actions[i].resolve_tmp_storage()
         
     for action in actions:
+        if isinstance(action, SpriteCountAction): action.count = len(actions)
         action.write(outf)
     
     outf.close()
