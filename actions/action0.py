@@ -82,7 +82,7 @@ def parse_property(feature, name, value, id, unit):
     if mul != 1:
         if not isinstance(value, ast.ConstantNumeric):
             raise ScriptError("Unit conversion specified for property, but no constant value found")
-        value = ast.ConstantNumeric(int(value.value * mul))
+        value = ast.ConstantNumeric(int(value.value * mul + 0.5))
     
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
