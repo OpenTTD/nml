@@ -100,7 +100,7 @@ def nml(inputfile):
     
     sprite_num = 0
     for action in actions:
-        if isinstance(action, SpriteCountAction): action.count = len(actions)
+        if isinstance(action, SpriteCountAction): action.count = len(actions) - 1
         outf.write(str(sprite_num) + " ")
         if not isinstance(action, RealSpriteAction): outf.write("* ")
         action.write(outf)
