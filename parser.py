@@ -39,6 +39,7 @@ def p_skipable_block(t):
                       | item
                       | error_block
                       | deactivate
+                      | replace
                       | property_block
                       | graphics_block'''
     t[0] = t[1]
@@ -358,3 +359,7 @@ def p_date(t):
     day = reduce_constant(t[3][2]).value
     date = datetime.date(year, month, day)
     t[0] = ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1)
+
+def p_replace(t):
+    'replace : REPLACESPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE real_sprite_list RBRACE'
+    t[0] = ReplaceSprite(t[3], t[5], t[8])

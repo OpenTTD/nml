@@ -6,6 +6,7 @@ from actions.action2var import *
 from actions.action3 import *
 from actions.action7 import *
 from actions.action8 import *
+from actions.actionA import *
 from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
@@ -476,6 +477,22 @@ class GraphicsDefinition:
         print indentation*' ' + 'Graphics:'
         print (indentation+2)*' ' + 'Cargo:', self.cargo_id
         print (indentation+2)*' ' + 'Linked to action2:', self.action2_id
+
+class ReplaceSprite:
+    def __init__(self, start_id, pcx, sprite_list):
+        self.start_id = reduce_constant(start_id)
+        self.pcx = pcx
+        self.sprite_list = sprite_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Replace sprites starting at', self.start_id
+        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print (indentation+2)*' ' + 'Sprites:'
+        for sprite in self.sprite_list:
+            sprite.debug_print(indentation + 4)
+    
+    def get_action_list(self):
+        return parse_actionA(self)
 
 class SpriteBlock:
     def __init__(self, feature, spriteset_list):
