@@ -1,5 +1,5 @@
-from expression import *
-from generic import ScriptError	
+from nml.expression import *
+from nml.generic import ScriptError	
 from action6 import *
 
 class ActionDOperator:

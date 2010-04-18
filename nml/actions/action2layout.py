@@ -1,5 +1,5 @@
 from action2 import *
-from generic import *
+from nml.generic import *
 
 class Action2Layout(Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):

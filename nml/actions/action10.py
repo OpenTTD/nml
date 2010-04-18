@@ -1,4 +1,4 @@
-from generic import *
+from nml.generic import *
 
 class Action10:
     def __init__(self, label):

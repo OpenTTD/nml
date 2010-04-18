@@ -1,5 +1,5 @@
-import ast
-from generic import *
+import nml.ast
+from nml.generic import *
 
 class RealSpriteAction:
     def __init__(self, sprite, pcx, last = False):
@@ -8,7 +8,7 @@ class RealSpriteAction:
         self.last = last
     
     def write(self, file):
-        if isinstance(self.sprite, ast.EmptyRealSprite):
+        if isinstance(self.sprite, nml.ast.EmptyRealSprite):
             file.write("0 0\n")
             if self.last: file.write("\n")
             return

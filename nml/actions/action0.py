@@ -1,9 +1,9 @@
-from action0properties import properties
-from generic import *
+from nml.actions.action0properties import properties
+from nml.generic import *
 from action4 import *
 from action6 import *
 from actionD import *
-from expression import *
+from nml.expression import *
 
 class Action0:
     def __init__(self, feature, id):

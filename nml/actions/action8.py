@@ -1,5 +1,5 @@
-from generic import *
-from grfstrings import get_translation
+from nml.generic import *
+from nml.grfstrings import get_translation
 
 class Action8:
     def __init__(self, grfid, name, description):

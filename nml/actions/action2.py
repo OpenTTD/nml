@@ -1,4 +1,4 @@
-from generic import *
+from nml.generic import *
 
 free_action2_ids = range(1, 255)
 

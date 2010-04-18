@@ -1,8 +1,8 @@
-from expression import *
+from nml.expression import *
 from action6 import *
 from actionD import *
 from action10 import *
-from generic import *
+from nml.generic import *
 
 #a jump is always to the next action10 with a given id, so they
 #can be freely reused

@@ -1,5 +1,6 @@
 import action0
-from expression import *
+from nml.generic import ScriptError
+from nml.expression import ConstantNumeric
 
 properties = 0x12 * [None]
 

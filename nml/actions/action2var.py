@@ -1,10 +1,10 @@
-from expression import *
-from generic import *
+from nml.expression import *
+from nml.generic import *
 from action2 import *
 from action2var_variables import *
 from action6 import *
 from actionD import *
-import global_constants
+from nml import global_constants
 
 class Action2Operator:
     ADD   = r'\2+'

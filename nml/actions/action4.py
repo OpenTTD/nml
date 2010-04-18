@@ -1,5 +1,5 @@
-from generic import *
-from grfstrings import grf_strings
+from nml.generic import *
+from nml.grfstrings import grf_strings
 
 class Action4:
     def __init__(self, feature, lang, size, id, text):

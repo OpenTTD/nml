@@ -1,4 +1,4 @@
-from generic import *
+from nml.generic import *
 
 class SpriteCountAction:
     def write(self, file):

@@ -1,5 +1,6 @@
-from generic import *
-from expression import *
+import nml.ast
+from nml.generic import *
+from nml.expression import *
 from real_sprite import *
 from action2real import *
 from action2layout import *
@@ -42,7 +43,7 @@ def parse_sprite_block(sprite_block):
         raise ScriptError("Sprite blocks are not supported for this feature: 0x" + to_hex(sprite_block.feature.value, 2))
     
     for item in sprite_block.spriteset_list:
-        if isinstance(item, ast.SpriteSet):
+        if isinstance(item, nml.ast.SpriteSet):
             spritesets[item.name] = num_sets
             num_sets += 1
     
@@ -55,10 +56,10 @@ def parse_sprite_block(sprite_block):
             for sprite in item.sprite_list:
                 action_list.append(RealSpriteAction(sprite, item.pcx, sprite == last_sprite))
     
-        elif isinstance(item, ast.SpriteGroup):
+        elif isinstance(item, nml.ast.SpriteGroup):
             action_list_append.extend(get_real_action2s(item, sprite_block.feature.value, spritesets))
         else:
-            assert isinstance(item, ast.LayoutSpriteGroup)
+            assert isinstance(item, nml.ast.LayoutSpriteGroup)
             action_list_append.extend(get_layout_action2s(item, sprite_block.feature.value, spritesets))
     
     action_list[0] = Action1(sprite_block.feature, num_sets, num_ent)

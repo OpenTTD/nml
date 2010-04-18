@@ -1,6 +1,6 @@
-from expression import *
-from generic import *
-from grfstrings import grf_strings, get_translation
+from nml.expression import *
+from nml.generic import *
+from nml.grfstrings import grf_strings, get_translation
 from action6 import *
 from actionD import *
 

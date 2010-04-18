@@ -1,6 +1,5 @@
-import ast
 from action2 import *
-from generic import *
+from nml.generic import *
 
 class Action2Real(Action2):
     def __init__(self, feature, name, loaded_list, loading_list):
