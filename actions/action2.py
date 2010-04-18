@@ -16,7 +16,7 @@ class Action2:
     
     def write(self, file):
         global free_action2_ids
-        file.write("-1 * 0 02 ")
+        file.write("0 02 ")
         print_bytex(file, self.feature)
         self.id = free_action2_ids.pop()
         print_bytex(file, self.id)

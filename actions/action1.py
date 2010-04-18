@@ -12,7 +12,7 @@ class Action1:
     
     def write(self, file):
         #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
-        file.write("-1 * 0 01 ")
+        file.write("0 01 ")
         self.feature.write(file, 1)
         print_byte(file, self.num_sets)
         print_byte(file, self.num_ent)

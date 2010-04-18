@@ -23,7 +23,7 @@ class SkipAction:
         self.label = label
     
     def write(self, file):
-        file.write("-1 * 0 ")
+        file.write("0 ")
         print_bytex(file, self.feature)
         print_bytex(file, self.var)
         print_bytex(file, self.varsize)

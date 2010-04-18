@@ -8,7 +8,7 @@ class ActionE:
         self.grfid_list = grfid_list
     
     def write(self, file):
-        file.write("-1 * 0 0E ")
+        file.write("0 0E ")
         print_byte(file, len(self.grfid_list))
         for grfid in self.grfid_list:
             file.write("\n")

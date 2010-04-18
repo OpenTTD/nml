@@ -8,7 +8,7 @@ class Action8:
         self.description = description
     
     def write(self, file):
-        file.write("-1 * 0 08 07 ")
+        file.write("0 08 07 ")
         print_string(file, self.grfid, False, True)
         print_string(file, get_translation(self.name.name))
         print_string(file, get_translation(self.description.name))

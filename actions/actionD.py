@@ -25,7 +25,7 @@ class ActionD:
         self.data = data
     
     def write(self, file):
-        file.write("-1 * 0 0D ")
+        file.write("0 0D ")
         self.target.write(file, 1)
         file.write(self.op + " ")
         self.param1.write(file, 1)

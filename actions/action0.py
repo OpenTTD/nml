@@ -13,7 +13,7 @@ class Action0:
         self.num_ids = None
     
     def write(self, file):
-        file.write("-1 * 0 00 ")
+        file.write("0 00 ")
         print_bytex(file, self.feature)
         print_byte(file, len(self.prop_list))
         if self.num_ids == None: self.num_ids = 1

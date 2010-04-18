@@ -14,7 +14,7 @@ class ActionB:
         self.param2 = param2
     
     def write(self, file):
-        file.write("-1 * 0 0B ")
+        file.write("0 0B ")
         self.severity.write(file, 1)
         print_bytex(file, self.lang)
         if isinstance(self.msg, int):

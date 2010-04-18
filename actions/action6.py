@@ -11,7 +11,7 @@ class Action6:
         self.modifications.append( (param, num_bytes, offset) )
     
     def write(self, file):
-        file.write("-1 * 0 06\n")
+        file.write("0 06\n")
         for mod in self.modifications:
             print_bytex(file, mod[0])
             print_bytex(file, mod[1])

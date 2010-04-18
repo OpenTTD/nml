@@ -8,6 +8,7 @@ from parser import *
 from grfstrings import *
 from generic import ScriptError
 from actions.sprite_count import SpriteCountAction
+from actions.real_sprite import RealSpriteAction
 
 # Build the lexer
 import ply.lex as lex
@@ -96,10 +97,14 @@ def nml(inputfile):
     for i in range(len(actions) - 1, -1, -1):
         if isinstance(actions[i], Action2Var):
             actions[i].resolve_tmp_storage()
-        
+    
+    sprite_num = 0
     for action in actions:
         if isinstance(action, SpriteCountAction): action.count = len(actions)
+        outf.write(str(sprite_num) + " ")
+        if not isinstance(action, RealSpriteAction): outf.write("* ")
         action.write(outf)
+        sprite_num += 1
     
     outf.close()
     

@@ -11,7 +11,7 @@ class Action4:
         self.text = text
     
     def write(self, file):
-        file.write("-1 * 0 04 ")
+        file.write("0 04 ")
         print_bytex(file, self.feature)
         if self.size == 2: self.lang = self.lang | 0x80
         print_bytex(file, self.lang)
