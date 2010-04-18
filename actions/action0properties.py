@@ -21,7 +21,7 @@ general_veh_props = {
 properties[0x00] = {
     'track_type' : {'size': 1, 'num': 0x05},
     'ai_special_flag' : {'size': 1, 'num': 0x08},
-    'speed' : {'size': 2, 'num': 0x09},
+    'speed' : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': 1.6},
     'power' : {'size': 2, 'num': 0x0B},
     'running_cost_factor' : {'size': 1, 'num': 0x0D},
     'running_cost_base' : {'size': 4, 'num': 0x0E},
@@ -59,7 +59,7 @@ def roadveh_speed_prop(value):
     return [action0.Action0Property(0x08, prop08, 1), action0.Action0Property(0x15, prop15, 1)]
 
 properties[0x01] = {
-    'speed': {'custom_function': roadveh_speed_prop},
+    'speed': {'custom_function': roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': 3.2},
     'running_cost_factor' : {'size': 1, 'num': 0x09},
     'running_cost_base' : {'size': 4, 'num': 0x0A},
     'sprite_id' : {'size': 1, 'num': 0x0E},

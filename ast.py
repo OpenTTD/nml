@@ -11,6 +11,7 @@ from actions.actionD import *
 from actions.actionE import *
 import global_constants
 import operator
+import unit
 
 def print_script(script, indent):
     for r in script:
@@ -415,10 +416,19 @@ class Item:
             action_list.extend(b.get_action_list())
         return action_list
 
+class Unit:
+    def __init__(self, name):
+        assert name in unit.units
+        self.type = unit.units[name]['type']
+        self.convert = unit.units[name]['convert']
+
 class Property:
-    def __init__(self, name, value):
+    def __init__(self, name, value, unit):
         self.name = name
         self.value = reduce_expr(value, [global_constants.const_table])
+        self.unit = unit
+        if unit != None and not isinstance(self.value, ConstantNumeric):
+            raise ScriptError("Using a unit for a property is only allowed if the value is constant")
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Property:', self.name

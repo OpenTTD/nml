@@ -56,7 +56,7 @@ class Action0Property:
         return self.size + 1
 
 
-def parse_property(feature, name, value, id):
+def parse_property(feature, name, value, id, unit):
     global properties
     prop = None
     action_list = []
@@ -72,6 +72,17 @@ def parse_property(feature, name, value, id):
             prop = p
         if prop == None: raise ScriptError("Unkown property number: " + name.value)
     else: raise ScriptError("Invalid type as property identifier")
+    
+    mul = 1
+    if 'unit_conversion' in prop: mul = prop['unit_conversion']
+    if unit != None:
+        if not 'unit_type' in prop or unit.type != prop['unit_type']:
+            raise ScriptError("Invalid unit for property: " + name)
+        mul = mul / unit.convert
+    if mul != 1:
+        if not isinstance(value, ast.ConstantNumeric):
+            raise ScriptError("Unit conversion specified for property, but no constant value found")
+        value = ast.ConstantNumeric(int(value.value * mul))
     
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
@@ -118,7 +129,7 @@ def parse_property_block(prop_list, feature, id):
     
     offset = 7
     for prop in prop_list:
-        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id.value)
+        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id.value, prop.unit)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:

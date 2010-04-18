@@ -170,12 +170,15 @@ def p_property_list(t):
 
 def p_property_assignment(t):
     '''property_assignment : ID COLON expression SEMICOLON
+                           | ID COLON expression UNIT SEMICOLON
                            | ID COLON string SEMICOLON
                            | ID COLON array SEMICOLON
-                           | NUMBER COLON expression SEMICOLON
+                           | NUMBER COLON expression 
+                           | NUMBER COLON expression UNIT SEMICOLON
                            | NUMBER COLON string SEMICOLON
                            | NUMBER COLON array SEMICOLON'''
-    t[0] = Property(t[1], t[3])
+    unit = None if len(t) == 5 else Unit(t[4])
+    t[0] = Property(t[1], t[3], unit)
 
 def p_array(t):
     'array : LBRACKET param_list RBRACKET'
