@@ -1,4 +1,4 @@
-import ast
+from expression import *
 from generic import *
 from action6 import *
 from actionD import *
@@ -35,7 +35,7 @@ def parse_deactivate_block(block):
     action6 = Action6()
     offset = 2
     for grfid in block.grfid_list:
-        if isinstance(grfid, ast.ConstantNumeric):
+        if isinstance(grfid, ConstantNumeric):
             grfid_list.append(grfid)
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(grfid)
@@ -45,9 +45,9 @@ def parse_deactivate_block(block):
                     param = tmp_param
                 else:
                     param = free_parameters.pop()
-                    action_list.append(ActionD(ast.ConstantNumeric(param), ast.ConstantNumeric(tmp_param), ActionDOperator.SHFTU, ast.ConstantNumeric(0xFF), ast.ConstantNumeric(-8 * i)))
+                    action_list.append(ActionD(ConstantNumeric(param), ConstantNumeric(tmp_param), ActionDOperator.SHFTU, ConstantNumeric(0xFF), ConstantNumeric(-8 * i)))
                 action6.modify_bytes(param, 1, offset + 3 - i)
-            grfid_list.append(ast.ConstantNumeric(0))
+            grfid_list.append(ConstantNumeric(0))
         offset += 4
     
     if len(action6.modifications) != 0: action_list.append(action6)

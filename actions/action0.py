@@ -1,9 +1,9 @@
-import ast
 from action0properties import properties
 from generic import *
 from action4 import *
 from action6 import *
 from actionD import *
+from expression import *
 
 class Action0:
     def __init__(self, feature, id):
@@ -66,7 +66,7 @@ def parse_property(feature, name, value, id, unit):
     if isinstance(name, str):
         if not name in properties[feature]: raise ScriptError("Unkown property name: " + name)
         prop = properties[feature][name]
-    elif isinstance(name, ast.ConstantNumeric):
+    elif isinstance(name, ConstantNumeric):
         for p in properties[feature]:
             if 'num' in p and p['num'] != name.value: continue
             prop = p
@@ -80,23 +80,23 @@ def parse_property(feature, name, value, id, unit):
             raise ScriptError("Invalid unit for property: " + name)
         mul = mul / unit.convert
     if mul != 1:
-        if not isinstance(value, ast.ConstantNumeric):
+        if not isinstance(value, ConstantNumeric):
             raise ScriptError("Unit conversion specified for property, but no constant value found")
-        value = ast.ConstantNumeric(int(value.value * mul + 0.5))
+        value = ConstantNumeric(int(value.value * mul + 0.5))
     
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
     else:
-        if isinstance(value, ast.ConstantNumeric):
+        if isinstance(value, ConstantNumeric):
             pass
-        elif isinstance(value, ast.Parameter) and isinstance(value.num, ast.ConstantNumeric):
+        elif isinstance(value, Parameter) and isinstance(value.num, ConstantNumeric):
             mods.append((value.num.value, size, 1))
-            value = ast.ConstantNumeric(0)
-        elif isinstance(value, ast.String):
+            value = ConstantNumeric(0)
+        elif isinstance(value, String):
             if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
             string_range = prop['string']
             stringid, prepend, string_actions = get_string_action4s(feature, string_range, value, id)
-            value = ast.ConstantNumeric(stringid)
+            value = ConstantNumeric(stringid)
             if prepend:
                 action_list.extend(string_actions)
             else:
@@ -105,7 +105,7 @@ def parse_property(feature, name, value, id, unit):
             tmp_param, tmp_param_actions = get_tmp_parameter(value)
             mods.append((tmp_param, size, 1))
             action_list.extend(tmp_param_actions)
-            value = ast.ConstantNumeric(0)
+            value = ConstantNumeric(0)
         if prop['num'] != -1:
             props = [Action0Property(prop['num'], value, prop['size'])]
         else:
@@ -119,7 +119,7 @@ def parse_property_block(prop_list, feature, id):
     action_list = []
     action_list_append = []
     action6 = Action6()
-    if isinstance(id, ast.ConstantNumeric):
+    if isinstance(id, ConstantNumeric):
         action0 = Action0(feature, id.value)
     else:
         tmp_param, tmp_param_actions = get_tmp_parameter(id)

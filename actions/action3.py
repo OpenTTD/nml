@@ -1,4 +1,3 @@
-import ast
 from generic import *
 from action2 import *
 from action6 import *
@@ -36,7 +35,7 @@ class Action3:
 def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
     action_list = []
     action6 = Action6()
-    if isinstance(id, ast.ConstantNumeric):
+    if isinstance(id, ConstantNumeric):
         action3 = Action3(feature, id.value)
     else:
         tmp_param, tmp_param_actions = get_tmp_parameter(id)

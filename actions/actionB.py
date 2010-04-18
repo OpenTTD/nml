@@ -1,4 +1,4 @@
-import ast
+from expression import *
 from generic import *
 from grfstrings import grf_strings, get_translation
 from action6 import *
@@ -62,16 +62,16 @@ def parse_error_block(error):
     action_list = []
     action6 = Action6()
     
-    if isinstance(error.severity, ast.ConstantNumeric):
+    if isinstance(error.severity, ConstantNumeric):
         severity = error.severity
-    elif isinstance(error.severity, ast.Parameter) and isinstance(error.severity.num, ast.ConstantNumeric):
+    elif isinstance(error.severity, Parameter) and isinstance(error.severity.num, ConstantNumeric):
         action6.modify_bytes(error.severity.num.value, 1, 1)
-        severity = ast.ConstantNumeric(0)
+        severity = ConstantNumeric(0)
     else:
         tmp_param, tmp_param_actions = get_tmp_parameter(error.severity)
         action_list.extend(tmp_param_actions)
         action6.modify_bytes(tmp_param, 1, 1)
-        severity = ast.ConstantNumeric(0)
+        severity = ConstantNumeric(0)
     
     if not isinstance(error.msg, str):
         raise ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
@@ -95,12 +95,12 @@ def parse_error_block(error):
     for expr in error.params:
         if expr is None:
             params.append(None)
-        elif isinstance(expr, ast.Parameter) and isinstance(expr.num, ast.ConstantNumeric):
+        elif isinstance(expr, Parameter) and isinstance(expr.num, ConstantNumeric):
             params.append(expr.num)
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(expr)
             action_list.extend(tmp_param_actions)
-            params.append(ast.ConstantNumeric(tmp_param))
+            params.append(ConstantNumeric(tmp_param))
     
     assert len(params) == 2
     

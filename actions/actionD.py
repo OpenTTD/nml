@@ -1,4 +1,5 @@
-import ast
+from expression import *
+from generic import ScriptError	
 from action6 import *
 
 class ActionDOperator:
@@ -43,19 +44,19 @@ class ActionD:
         return True
 
 def convert_op_to_actiond(op):
-    if op == ast.Operator.ADD: return ActionDOperator.ADD
-    if op == ast.Operator.SUB: return ActionDOperator.SUB
-    if op == ast.Operator.AND: return ActionDOperator.AND
-    if op == ast.Operator.OR: return ActionDOperator.OR
-    if op == ast.Operator.MUL: return ActionDOperator.MULS
-    if op == ast.Operator.DIV: return ActionDOperator.DIVS
-    if op == ast.Operator.MOD: return ActionDOperator.MODS
-    raise ast.ScriptError("Unsupported operator in parameter assignment: " + str(op))
+    if op == Operator.ADD: return ActionDOperator.ADD
+    if op == Operator.SUB: return ActionDOperator.SUB
+    if op == Operator.AND: return ActionDOperator.AND
+    if op == Operator.OR: return ActionDOperator.OR
+    if op == Operator.MUL: return ActionDOperator.MULS
+    if op == Operator.DIV: return ActionDOperator.DIVS
+    if op == Operator.MOD: return ActionDOperator.MODS
+    raise ScriptError("Unsupported operator in parameter assignment: " + str(op))
 
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
     param = free_parameters.pop()
-    actions = parse_actionD(ast.ParameterAssignment(ast.ConstantNumeric(param), expr))
+    actions = parse_actionD(ParameterAssignment(ConstantNumeric(param), expr))
     return (param, actions)
 
 def parse_actionD(assignment):
@@ -64,24 +65,24 @@ def parse_actionD(assignment):
     action_list = []
     action6 = Action6()
     target = assignment.param
-    if isinstance(target, ast.Parameter) and isinstance(target.num, ast.ConstantNumeric):
+    if isinstance(target, Parameter) and isinstance(target.num, ConstantNumeric):
         action6.modify_bytes(target.num.value, 1, 1)
-        target = ast.ConstantNumeric(0)
-    elif not isinstance(target, ast.ConstantNumeric):
+        target = ConstantNumeric(0)
+    elif not isinstance(target, ConstantNumeric):
         tmp_param, tmp_param_actions = get_tmp_parameter(target)
         action6.modify_bytes(tmp_param, 1, 1)
-        target = ast.ConstantNumeric(0)
+        target = ConstantNumeric(0)
         action_list.extend(tmp_param_actions)
     
     data = None
     #print assignment.value
-    if isinstance(assignment.value, ast.ConstantNumeric):
+    if isinstance(assignment.value, ConstantNumeric):
         op = ActionDOperator.EQUAL
-        param1 = ast.ConstantNumeric(0xFF)
-        param2 = ast.ConstantNumeric(0)
+        param1 = ConstantNumeric(0xFF)
+        param2 = ConstantNumeric(0)
         data = assignment.value
-    elif isinstance(assignment.value, ast.Parameter):
-        if isinstance(assignment.value.num, ast.ConstantNumeric):
+    elif isinstance(assignment.value, Parameter):
+        if isinstance(assignment.value.num, ConstantNumeric):
             op = ActionDOperator.EQUAL
             param1 = assignment.value.num
         else:
@@ -89,35 +90,35 @@ def parse_actionD(assignment):
             action6.modify_bytes(tmp_param, 1, 3)
             action_list.extend(tmp_param_actions)
             op = ActionDOperator.EQUAL
-            param1 = ast.ConstantNumeric(0)
-        param2 = ast.ConstantNumeric(0)
-    elif isinstance(assignment.value, ast.BinOp):
+            param1 = ConstantNumeric(0)
+        param2 = ConstantNumeric(0)
+    elif isinstance(assignment.value, BinOp):
         expr = assignment.value
         op = convert_op_to_actiond(expr.op)
         
-        if isinstance(expr.expr1, ast.ConstantNumeric):
-            param1 = ast.ConstantNumeric(0xFF)
+        if isinstance(expr.expr1, ConstantNumeric):
+            param1 = ConstantNumeric(0xFF)
             data = expr.expr1
-        elif isinstance(expr.expr1, ast.Parameter):
+        elif isinstance(expr.expr1, Parameter):
             param1 = expr.expr1.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr1)
             action_list.extend(tmp_param_actions)
-            param1 = ast.ConstantNumeric(tmp_param)
+            param1 = ConstantNumeric(tmp_param)
         
         # We can use the data only for one for the parameters.
         # If the first parameter uses "data" we need a temp parameter for this one
-        if isinstance(expr.expr2, ast.ConstantNumeric) and data == None:
-            param2 = ast.ConstantNumeric(0xFF)
+        if isinstance(expr.expr2, ConstantNumeric) and data == None:
+            param2 = ConstantNumeric(0xFF)
             data = expr.expr2
-        elif isinstance(expr.expr2, ast.Parameter):
+        elif isinstance(expr.expr2, Parameter):
             param2 = expr.expr2.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr2)
             action_list.extend(tmp_param_actions)
-            param2 = ast.ConstantNumeric(tmp_param)
+            param2 = ConstantNumeric(tmp_param)
         
-    else: raise ast.ScriptError("Invalid expression in argument assignment")
+    else: raise ScriptError("Invalid expression in argument assignment")
     
     if len(action6.modifications) > 0: action_list.append(action6)
     

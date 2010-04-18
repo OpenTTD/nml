@@ -1,4 +1,4 @@
-import ast
+from expression import *
 from action6 import *
 from actionD import *
 from action10 import *
@@ -106,7 +106,7 @@ def parse_conditional_block(cond):
     #of the conditionals was true. We can't always skip directly
     #to the end of the blocks since action7/action9 can't always
     #be mixed
-    param_skip_all, action_list = get_tmp_parameter(ast.ConstantNumeric(0xFFFFFFFF))
+    param_skip_all, action_list = get_tmp_parameter(ConstantNumeric(0xFFFFFFFF))
     
     blocks = []
     while cond != None:
@@ -118,7 +118,7 @@ def parse_conditional_block(cond):
     #actions (like action6) can be skipped safely
     for block in blocks:
         block['param_dst'], block['cond_actions'] = parse_conditional(block['expr'])
-        block['action_list'] = [ActionD(ast.ConstantNumeric(param_skip_all), ast.ConstantNumeric(0xFF), ActionDOperator.EQUAL, ast.ConstantNumeric(0), ast.ConstantNumeric(0))]
+        block['action_list'] = [ActionD(ConstantNumeric(param_skip_all), ConstantNumeric(0xFF), ActionDOperator.EQUAL, ConstantNumeric(0), ConstantNumeric(0))]
         for stmt in block['statements']:
             block['action_list'].extend(stmt.get_action_list())
     
@@ -137,7 +137,7 @@ def parse_conditional_block(cond):
             if param == None:
                 param = param_skip_all
             else:
-                action_list.append(ActionD(ast.ConstantNumeric(block['param_dst']), ast.ConstantNumeric(block['param_dst']), ActionDOperator.AND, ast.ConstantNumeric(param_skip_all)))
+                action_list.append(ActionD(ConstantNumeric(block['param_dst']), ConstantNumeric(block['param_dst']), ActionDOperator.AND, ConstantNumeric(param_skip_all)))
         action_list.extend(cond_skip_actions(block['action_list'], param))
     
     free_labels.extend([item for item in free_labels_backup if not item in free_labels])

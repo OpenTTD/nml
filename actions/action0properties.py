@@ -1,12 +1,12 @@
-import ast
 import action0
+from expression import *
 
 properties = 0x12 * [None]
 
 def train_weight_prop(value):
-    if not isinstance(value, ast.ConstantNumeric): raise ScriptError("Train weight must be a constant number")
-    low_byte = ast.ConstantNumeric(value.value & 0xFF)
-    high_byte = ast.ConstantNumeric(value.value >> 8)
+    if not isinstance(value, ConstantNumeric): raise ScriptError("Train weight must be a constant number")
+    low_byte = ConstantNumeric(value.value & 0xFF)
+    high_byte = ConstantNumeric(value.value >> 8)
     return [action0.Action0Property(0x16, low_byte, 1), action0.Action0Property(0x24, high_byte, 1)]
 
 general_veh_props = {
@@ -53,9 +53,9 @@ properties[0x00].update(general_veh_props)
 
 
 def roadveh_speed_prop(value):
-    if not isinstance(value, ast.ConstantNumeric): raise ScriptError("Road vehicle speed must be a constant number")
-    prop08 = ast.ConstantNumeric(min(value.value, 0xFF))
-    prop15 = ast.ConstantNumeric(value.value / 4)
+    if not isinstance(value, ConstantNumeric): raise ScriptError("Road vehicle speed must be a constant number")
+    prop08 = ConstantNumeric(min(value.value, 0xFF))
+    prop15 = ConstantNumeric(value.value / 4)
     return [action0.Action0Property(0x08, prop08, 1), action0.Action0Property(0x15, prop15, 1)]
 
 properties[0x01] = {

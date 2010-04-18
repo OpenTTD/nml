@@ -1,4 +1,4 @@
-import ast
+from expression import *
 from generic import *
 from action2 import *
 from action2var_variables import *
@@ -35,7 +35,7 @@ class Action2Var(Action2):
         self.references = set(self.references)
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):
-                var.mask = ast.ConstantNumeric(self.tmp_locations.pop())
+                var.mask = ConstantNumeric(self.tmp_locations.pop())
                 for action2 in self.references:
                     if var.mask.value in action2.tmp_locations:
                         action2.tmp_locations.remove(var.mask.value)
@@ -71,18 +71,18 @@ class Action2Var(Action2):
 
 def convert_op_to_action2(op):
     op_to_act2 = {
-        ast.Operator.ADD: Action2Operator.ADD,
-        ast.Operator.SUB: Action2Operator.SUB,
-        ast.Operator.DIV: Action2Operator.DIVS,
-        ast.Operator.MOD: Action2Operator.MODS,
-        ast.Operator.MUL: Action2Operator.MUL,
-        ast.Operator.AND: Action2Operator.AND,
-        ast.Operator.OR: Action2Operator.OR,
-        ast.Operator.XOR: Action2Operator.XOR,
-        ast.Operator.MIN: Action2Operator.MIN,
-        ast.Operator.MAX: Action2Operator.MAX,
+        Operator.ADD: Action2Operator.ADD,
+        Operator.SUB: Action2Operator.SUB,
+        Operator.DIV: Action2Operator.DIVS,
+        Operator.MOD: Action2Operator.MODS,
+        Operator.MUL: Action2Operator.MUL,
+        Operator.AND: Action2Operator.AND,
+        Operator.OR: Action2Operator.OR,
+        Operator.XOR: Action2Operator.XOR,
+        Operator.MIN: Action2Operator.MIN,
+        Operator.MAX: Action2Operator.MAX,
     }
-    if not op in op_to_act2: raise ast.ScriptError("Unsupported operator in action2 expression: " + op)
+    if not op in op_to_act2: raise ScriptError("Unsupported operator in action2 expression: " + op)
     return op_to_act2[op]
 
 class VarAction2Var:
@@ -123,7 +123,7 @@ class VarAction2Var:
 
 class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
-        VarAction2Var.__init__(self, 0x1A, ast.ConstantNumeric(0), ast.ConstantNumeric(0))
+        VarAction2Var.__init__(self, 0x1A, ConstantNumeric(0), ConstantNumeric(0))
         #mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
     
     def get_size(self, varsize):
@@ -136,13 +136,13 @@ def get_mask(size):
 
 class VarAction2LoadTempVar(VarAction2Var):
     def __init__(self, tmp_var):
-        VarAction2Var.__init__(self, 0x7D, ast.ConstantNumeric(0), ast.ConstantNumeric(0))
+        VarAction2Var.__init__(self, 0x7D, ConstantNumeric(0), ConstantNumeric(0))
         assert isinstance(tmp_var, VarAction2StoreTempVar)
         self.tmp_var = tmp_var
     
     def write(self, file, size):
         self.parameter = self.tmp_var.mask
-        self.mask = ast.ConstantNumeric(get_mask(size))
+        self.mask = ConstantNumeric(get_mask(size))
         VarAction2Var.write(self, file, size)
     
     def get_size(self, varsize):
@@ -160,38 +160,38 @@ def parse_varaction2_expression(expr, varsize):
     var_list = []
     var_list_size = 0
     
-    if isinstance(expr, ast.ConstantNumeric):
-        var = VarAction2Var(0x1A, ast.ConstantNumeric(0), expr)
+    if isinstance(expr, ConstantNumeric):
+        var = VarAction2Var(0x1A, ConstantNumeric(0), expr)
         var_list.append(var)
         var_list_size += var.get_size(varsize)
     
-    elif isinstance(expr, ast.Parameter):
-        if isinstance(expr.num, ast.ConstantNumeric):
+    elif isinstance(expr, Parameter):
+        if isinstance(expr.num, ConstantNumeric):
             param_num = expr.num.value
         else:
             param_num, tmp_param_actions = get_tmp_parameter(expr)
             extra_actions.extend(tmp_param_actions)
         mods.append(Modification(param_num, varsize, var_list_size + 2))
-        var = VarAction2Var(0x1A, ast.ConstantNumeric(0), ast.ConstantNumeric(0))
+        var = VarAction2Var(0x1A, ConstantNumeric(0), ConstantNumeric(0))
         var_list.append(var)
         var_list_size += var.get_size(varsize)
-        target = ast.ConstantNumeric(0)
+        target = ConstantNumeric(0)
     
-    elif isinstance(expr, ast.Variable):
-        if not isinstance(expr.num, ast.ConstantNumeric):
+    elif isinstance(expr, Variable):
+        if not isinstance(expr.num, ConstantNumeric):
             raise ScriptError("Variable number must be a constant number")
-        if not (expr.param == None or isinstance(expr.param, ast.ConstantNumeric)):
+        if not (expr.param == None or isinstance(expr.param, ConstantNumeric)):
             raise ScriptError("Variable parameter must be a constant number")
         var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
         var.add, var.div, var.mod = expr.add, expr.div, expr.mod
         var_list.append(var)
         var_list_size += var.get_size(varsize)
     
-    elif isinstance(expr, ast.BinOp):
+    elif isinstance(expr, BinOp):
         op = convert_op_to_action2(expr.op)
         
         #parse expression 2 first in case we need to temporary store the result
-        if not isinstance(expr.expr2, ast.BinOp):
+        if not isinstance(expr.expr2, BinOp):
             expr2 = expr.expr2
         else:
             tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr2, varsize)
@@ -248,8 +248,8 @@ def parse_varaction2(switch_block):
     if feature == None: raise ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name, switch_block.var_range, varsize)
     
-    func = lambda x: ast.Variable(ast.ConstantNumeric(x['var']), ast.ConstantNumeric(x['start']), ast.ConstantNumeric((1 << x['size']) - 1))
-    expr = ast.reduce_expr(switch_block.expr, [(varact2vars[feature], func), (varact2_globalvars, func), global_constants.const_table])
+    func = lambda x: Variable(ConstantNumeric(x['var']), ConstantNumeric(x['start']), ConstantNumeric((1 << x['size']) - 1))
+    expr = reduce_expr(switch_block.expr, [(varact2vars[feature], func), (varact2_globalvars, func), global_constants.const_table])
     
     offset = 4 #first var
     
@@ -264,12 +264,12 @@ def parse_varaction2(switch_block):
             if r.result != 'CB_FAILED':
                 action2 = add_ref(r.result)
                 varaction2.references.append(action2)
-        elif not isinstance(r.result, ast.ConstantNumeric):
+        elif not isinstance(r.result, ConstantNumeric):
             raise ScriptError("Result of varaction2 range must be another action2 or a constant number")
         
-        if not isinstance(r.min, ast.ConstantNumeric):
+        if not isinstance(r.min, ConstantNumeric):
             raise ScriptError("Min value of varaction2 range must be a constant number")
-        if not isinstance(r.max, ast.ConstantNumeric):
+        if not isinstance(r.max, ConstantNumeric):
             raise ScriptError("Max value of varaction2 range must be a constant number")
         
         varaction2.ranges.append(r)
@@ -279,7 +279,7 @@ def parse_varaction2(switch_block):
         if default != 'CB_FAILED':
             action2 = add_ref(default)
             varaction2.references.append(action2)
-    elif not isinstance(default, ast.ConstantNumeric):
+    elif not isinstance(default, ConstantNumeric):
         raise ScriptError("Default result of varaction2 must be another action2 or a constant number")
     
     varaction2.default_result = default

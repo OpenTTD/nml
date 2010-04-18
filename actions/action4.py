@@ -1,4 +1,3 @@
-import ast
 from generic import *
 from grfstrings import grf_strings
 

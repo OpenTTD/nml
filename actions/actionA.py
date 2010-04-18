@@ -1,4 +1,3 @@
-import ast
 from generic import *
 from real_sprite import *
 from action2real import *
