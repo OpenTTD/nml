@@ -381,6 +381,7 @@ def validate_item_block(block_list):
     for block in block_list:
         if isinstance(block, PropertyBlock): continue
         if isinstance(block, GraphicsBlock): continue
+        if isinstance(block, LiveryOverride): continue
         if isinstance(block, Conditional):
             while block != None:
                 validate_item_block(block.block)
@@ -450,6 +451,20 @@ class PropertyBlock:
     def get_action_list(self):
         global item_feature, item_id
         return parse_property_block(self.prop_list, item_feature, item_id)
+
+class LiveryOverride:
+    def __init__(self, wagon_id, graphics_block):
+        self.graphics_block = graphics_block
+        self.wagon_id = reduce_constant(wagon_id)
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Liverry override, wagon id:', self.wagon_id
+        for graphics in self.graphics_list:
+            graphics.debug_print(indentation + 2)
+    
+    def get_action_list(self):
+        global item_feature
+        return parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, self.wagon_id, True)
 
 class GraphicsBlock:
     def __init__(self, default_graphics):

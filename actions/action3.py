@@ -13,7 +13,7 @@ class Action3:
     def write(self, file):
         file.write("-1 * 0 03 ")
         print_bytex(file, self.feature)
-        print_bytex(file, 1) # a single id
+        print_bytex(file, 1 if not self.is_livery_override else 0x81) # a single id
         print_varx(file, self.id, 3 if self.feature <= 3 else 1)
         print_byte(file, len(self.cid_mappings))
         file.write("\n")
@@ -33,7 +33,7 @@ class Action3:
     def skip_needed(self):
         return True
 
-def parse_graphics_block(graphics_list, default_graphics, feature, id):
+def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
     action_list = []
     action6 = Action6()
     if isinstance(id, ast.ConstantNumeric):
@@ -45,6 +45,8 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id):
         action6.modify_bytes(tmp_param, size, offset)
         action_list.extend(tmp_param_actions)
         action3 = Action3(feature, 0)
+    
+    action3.is_livery_override = is_livery_override
     
     add_ref(default_graphics)
     action3.def_cid = default_graphics

@@ -32,6 +32,7 @@ reserved = {
     'STORE_PERM' : 'STORE_PERM',
     'LOAD_PERM' : 'LOAD_PERM',
     'date' : 'DATE',
+    'livery_override' : 'LIVERYOVERRIDE',
 }
 
 var_ranges = {

@@ -41,7 +41,8 @@ def p_skipable_block(t):
                       | deactivate
                       | replace
                       | property_block
-                      | graphics_block'''
+                      | graphics_block
+                      | liveryoverride_block'''
     t[0] = t[1]
 
 def p_cargotable(t):
@@ -188,6 +189,10 @@ def p_array(t):
 def p_graphics_block(t):
     'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
     t[0] = t[3]
+
+def p_liveryoverride_block(t):
+    'liveryoverride_block : LIVERYOVERRIDE LPAREN expression RPAREN LBRACE graphics_list RBRACE'
+    t[0] = LiveryOverride(t[3], t[6])
 
 def p_graphics_list(t):
     '''graphics_list : ID SEMICOLON
