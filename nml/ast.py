@@ -207,9 +207,12 @@ class Item:
         self.feature = reduce_constant(feature, [feature_ids])
         self.body = body
         self.name = name
-        if id == None: self.id = ConstantNumeric(get_free_id(self.feature.value))
+        if name != None and name in item_names:
+            self.id = ConstantNumeric(item_names[name])
+        elif id == None: self.id = ConstantNumeric(get_free_id(self.feature.value))
         else: self.id = reduce_constant(id)
-        if name != None: item_names[name] = self.id.value
+        if name != None:
+            item_names[name] = self.id.value
         validate_item_block(body)
     
     def debug_print(self, indentation):
