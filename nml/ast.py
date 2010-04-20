@@ -279,6 +279,7 @@ class GraphicsBlock:
     
     def append_definition(self, graphics_assignment):
         self.graphics_list.append(graphics_assignment)
+        return self
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics block:'
