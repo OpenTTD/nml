@@ -15,10 +15,8 @@ precedence = (
 
 def p_script(t):
     '''script : main_block
-              | SPRITECOUNT SEMICOLON
               | script main_block'''
-    if t[1] == 'sprite_count': t[0] = [SpriteCount()]
-    elif len(t) == 2: t[0] = [t[1]]
+    if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
 
 def p_main_block(t):

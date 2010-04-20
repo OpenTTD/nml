@@ -33,7 +33,6 @@ reserved = {
     'LOAD_PERM' : 'LOAD_PERM',
     'date' : 'DATE',
     'livery_override' : 'LIVERYOVERRIDE',
-    'sprite_count' : 'SPRITECOUNT',
     'bitmask' : 'BITMASK',
 }
 

@@ -9,6 +9,7 @@ from grfstrings import *
 from generic import ScriptError
 from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
+from actions.action8 import Action8
 
 # Build the lexer
 import ply.lex as lex
@@ -93,14 +94,18 @@ def nml(inputfile):
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
 ''')
-    
+    has_action8 = False
     for i in range(len(actions) - 1, -1, -1):
         if isinstance(actions[i], Action2Var):
             actions[i].resolve_tmp_storage()
+        elif isinstance(actions[i], Action8):
+            has_action8 = True
+    
+    if has_action8:
+        actions = [SpriteCountAction(len(actions) - 1)] + actions
     
     sprite_num = 0
     for action in actions:
-        if isinstance(action, SpriteCountAction): action.count = len(actions) - 1
         outf.write(str(sprite_num) + " ")
         if not isinstance(action, RealSpriteAction): outf.write("* ")
         action.write(outf)

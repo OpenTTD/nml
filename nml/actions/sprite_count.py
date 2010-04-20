@@ -1,6 +1,8 @@
 from nml.generic import *
 
 class SpriteCountAction:
+    def __init__(self, count):
+        self.count = count
     def write(self, file):
         file.write("4 ")
         print_dword(file, self.count)
