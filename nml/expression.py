@@ -1,6 +1,8 @@
 import operator
 from generic import *
 
+cargo_numbers = {}
+
 class Operator:
     ADD     = 0
     SUB     = 1

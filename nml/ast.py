@@ -42,7 +42,7 @@ feature_ids = {
 class ParameterAssignment:
     def __init__(self, param, value):
         self.param = param
-        self.value = reduce_expr(value, [global_constants.const_table])
+        self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
@@ -233,7 +233,7 @@ class Unit:
 class Property:
     def __init__(self, name, value, unit):
         self.name = name
-        self.value = reduce_expr(value, [global_constants.const_table])
+        self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
         self.unit = unit
         if unit != None and not isinstance(self.value, ConstantNumeric):
             raise ScriptError("Using a unit for a property is only allowed if the value is constant")
@@ -460,7 +460,12 @@ class Error:
 
 class CargoTable:
     def __init__(self, cargo_list):
+        global cargo_numbers;
         self.cargo_list = cargo_list
+        i = 0
+        for cargo in cargo_list:
+            cargo_numbers[cargo] = i
+            i += 1
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Cargo table'
