@@ -158,9 +158,11 @@ def p_switch_range(t):
 
 def p_item(t):
     '''item : ITEM LPAREN expression RPAREN LBRACE skipable_script RBRACE
-            | ITEM LPAREN expression COMMA expression RPAREN LBRACE skipable_script RBRACE'''
+            | ITEM LPAREN expression COMMA ID RPAREN LBRACE skipable_script RBRACE
+            | ITEM LPAREN expression COMMA ID COMMA expression RPAREN LBRACE skipable_script RBRACE'''
     if len(t) == 8: t[0] = Item(t[3], t[6])
-    else: t[0] = Item(t[3], t[8], t[5])
+    elif len(t) == 10: t[0] = Item(t[3], t[8], t[5])
+    else: t[0] = Item(t[3], t[10], t[5], t[7])
 
 def p_property_block(t):
     'property_block : PROPERTY LBRACE property_list RBRACE'

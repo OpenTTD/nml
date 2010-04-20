@@ -202,10 +202,14 @@ item_feature = None
 item_id = None
 
 class Item:
-    def __init__(self, feature, body, id = None):
+    def __init__(self, feature, body, name = None, id = None):
+        global item_names
         self.feature = reduce_constant(feature, [feature_ids])
         self.body = body
-        self.id = id
+        self.name = name
+        if id == None: self.id = ConstantNumeric(get_free_id(self.feature.value))
+        else: self.id = reduce_constant(id)
+        if name != None: item_names[name] = self.id.value
         validate_item_block(body)
     
     def debug_print(self, indentation):
@@ -214,10 +218,7 @@ class Item:
     
     def get_action_list(self):
         global item_feature, item_id
-        if self.id != None:
-            item_id = self.id
-        else:
-            item_id = ConstantNumeric(get_free_id(self.feature.value))
+        item_id = self.id
         item_feature = self.feature.value
         action_list = []
         for b in self.body:
@@ -261,16 +262,18 @@ class PropertyBlock:
 class LiveryOverride:
     def __init__(self, wagon_id, graphics_block):
         self.graphics_block = graphics_block
-        self.wagon_id = reduce_constant(wagon_id)
+        self.wagon_id = wagon_id
     
     def debug_print(self, indentation):
-        print indentation*' ' + 'Liverry override, wagon id:', self.wagon_id
+        print indentation*' ' + 'Liverry override, wagon id:'
+        self.wagon_id.debug_print(indentation + 2)
         for graphics in self.graphics_block.graphics_list:
             graphics.debug_print(indentation + 2)
     
     def get_action_list(self):
-        global item_feature
-        return parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, self.wagon_id, True)
+        global item_feature, item_names
+        wagon_id = reduce_constant(self.wagon_id, [item_names])
+        return parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
 class GraphicsBlock:
     def __init__(self, default_graphics):

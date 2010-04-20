@@ -2,6 +2,7 @@ import operator
 from generic import *
 
 cargo_numbers = {}
+item_names = {}
 
 class Operator:
     ADD     = 0
