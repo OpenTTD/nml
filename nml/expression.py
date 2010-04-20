@@ -28,6 +28,14 @@ class ConstantNumeric:
     def write(self, file, size):
         print_varx(file, self.value, size)
 
+class BitMask:
+    def __init__(self, values):
+        self.values = values
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Get bitmask:'
+        for value in self.values:
+            value.debug_print(indentation + 2)
+
 class BinOp:
     def __init__(self, op, expr1, expr2):
         self.op = op
@@ -183,6 +191,14 @@ def reduce_expr(expr, id_dicts = []):
             if expr in id_d:
                 return func(id_d[expr])
         raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
+    elif isinstance(expr, BitMask):
+        ret = 0
+        for orig_expr in expr.values:
+            val = reduce_expr(orig_expr, id_dicts)
+            if not isinstance(val, ConstantNumeric): raise ScriptError("Parameters of 'bit' should be a constant")
+            if val.value >= 32: raise ScriptError("Parameters of 'bit' cannot be greater then 31")
+            ret |= 1 << val.value
+        return ConstantNumeric(ret)
     return expr
 
 def reduce_constant(expr, id_dicts = []):

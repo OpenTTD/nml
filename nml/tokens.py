@@ -34,6 +34,7 @@ reserved = {
     'date' : 'DATE',
     'livery_override' : 'LIVERYOVERRIDE',
     'sprite_count' : 'SPRITECOUNT',
+    'bitmask' : 'BITMASK',
 }
 
 var_ranges = {

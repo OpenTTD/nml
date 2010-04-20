@@ -265,7 +265,7 @@ class LiveryOverride:
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Liverry override, wagon id:', self.wagon_id
-        for graphics in self.graphics_list:
+        for graphics in self.graphics_block.graphics_list:
             graphics.debug_print(indentation + 2)
     
     def get_action_list(self):

@@ -363,6 +363,10 @@ def p_load_perm_var(t):
     'expression : LOAD_PERM LPAREN expression RPAREN'
     t[0] = Variable(ConstantNumeric(0x7C), param=t[3])
 
+def p_bit(t):
+    'expression : BITMASK LPAREN param_list RPAREN'
+    t[0] = BitMask(t[3])
+
 def p_date(t):
     'expression : DATE LPAREN param_list RPAREN '
     if len(t[3]) != 3: raise ScriptError("'date' must have 3 arguments")
