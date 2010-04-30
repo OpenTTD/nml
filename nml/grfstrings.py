@@ -62,6 +62,23 @@ escapes = {
 'SHIP':           {'escape': r'\UE0B8', 'num_params': 0},
 }
 
+def read_extra_commands():
+    global escapes
+    if not os.access("custom_tags.txt", os.R_OK):
+        #Failed to open custom_tags.txt, ignore this
+        return
+    for line in codecs.open("custom_tags.txt", "r", "utf-8"):
+        line = line.strip()
+        if len(line) == 0 or line[0] == "#":
+            pass
+        else:
+            i = string.index(line, ':')
+            name = line[:i].strip()
+            value = line[i+1:]
+            if name in escapes:
+                print 'Warning: overwriting existing tag "' + name + '"'
+            escapes[name] = {'escape': value, 'num_params': 0}
+
 def parse_command(command):
     global escapes
     match = re.match(r'^([a-zA-Z_]*)(( \d+)*)$', command)

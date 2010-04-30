@@ -42,12 +42,12 @@ def main(argv):
     
     try:                  
         opts, args = getopt.getopt(argv, "hd", ["help","debug"])
-    except getopt.GetoptError:          
-        usage()                         
-        sys.exit(2)                     
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            usage()                     
+            usage()
             sys.exit()
         elif opt in ("-d", "--debug"):
             _debug = 1
@@ -79,6 +79,7 @@ def nml(inputfile):
     outputfile = filename_output_from_input(inputfile)
     print outputfile+": parsing "+inputfile
     
+    read_extra_commands()
     read_lang_files()
     
     outf = codecs.open(outputfile, 'w', 'utf-8')
