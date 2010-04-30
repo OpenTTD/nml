@@ -60,7 +60,7 @@ class GRF:
         self.grfid = None
         for assignment in alist:
             if assignment.name == "grfid":
-                if not isinstance(assignment.value, str):
+                if not isinstance(assignment.value, basestring):
                     raise ScriptError("GRFID must be a string literal")
             elif not isinstance(assignment.value, String):
                 raise ScriptError("Assignments in GRF-block must be constant strings")
@@ -149,7 +149,7 @@ class SwitchBody:
         for r in self.ranges:
             r.debug_print(indentation)
         print indentation*' ' + 'Default:'
-        if isinstance(self.default, str):
+        if isinstance(self.default, basestring):
             print (indentation+2)*' ' + 'Go to switch:', self.default
         else:
             self.default.debug_print(indentation + 2)
@@ -166,7 +166,7 @@ class SwitchRange:
         print indentation*' ' + 'Max:'
         self.max.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        if isinstance(self.result, str):
+        if isinstance(self.result, basestring):
             print (indentation+2)*' ' + 'Go to switch:', self.result
         else:
             self.result.debug_print(indentation + 2)
@@ -244,7 +244,7 @@ class Property:
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Property:', self.name
-        if isinstance(self.value, str):
+        if isinstance(self.value, basestring):
             print (indentation + 2)*' ' + 'String: ', self.value
         else:
             self.value.debug_print(indentation + 2)
@@ -436,7 +436,7 @@ class LayoutParam:
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Layout parameter:', self.name
-        if isinstance(self.value, str):
+        if isinstance(self.value, basestring):
             print (indentation + 2)*' ' + 'String: ', self.value
         else:
             self.value.debug_print(indentation + 2)

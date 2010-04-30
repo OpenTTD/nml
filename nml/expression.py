@@ -47,11 +47,11 @@ class BinOp:
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Binary operator, op = ', self.op
-        if isinstance(self.expr1, str):
+        if isinstance(self.expr1, basestring):
             print (indentation+2)*' ' + 'ID:', self.expr1
         else:
             self.expr1.debug_print(indentation + 2)
-        if isinstance(self.expr2, str):
+        if isinstance(self.expr2, basestring):
             print (indentation+2)*' ' + 'ID:', self.expr2
         else:
             self.expr2.debug_print(indentation + 2)
@@ -102,7 +102,7 @@ class Variable:
         self.num.debug_print(indentation + 2)
         if self.param != None:
             print (indentation+2)*' ' + 'Parameter:'
-            if isinstance(self.param, str):
+            if isinstance(self.param, basestring):
                 print (indentation+4)*' ' + 'Procedure call:', self.param
             else:
                 self.param.debug_print(indentation + 4)
@@ -188,7 +188,7 @@ def reduce_expr(expr, id_dicts = []):
         expr.shift = reduce_expr(expr.shift, id_dicts)
         expr.mask = reduce_expr(expr.mask, id_dicts)
         expr.param = reduce_expr(expr.param, id_dicts)
-    elif isinstance(expr, str):
+    elif isinstance(expr, basestring):
         for id_dict in id_dicts:
             id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
             if expr in id_d:

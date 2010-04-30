@@ -201,7 +201,7 @@ def p_liveryoverride_block(t):
 def p_graphics_list(t):
     '''graphics_list : ID SEMICOLON
                      | graphics_assignment graphics_list'''
-    if isinstance(t[1], str): t[0] = GraphicsBlock(t[1])
+    if isinstance(t[1], basestring): t[0] = GraphicsBlock(t[1])
     else: t[0] = t[2].append_definition(t[1])
 
 def p_graphics_assignment(t):
@@ -242,7 +242,7 @@ def p_spriteview_list(t):
     '''spriteview_list : ID SEMICOLON
                        | spriteview
                        | spriteview_list spriteview'''
-    if isinstance(t[1], str): t[0] = [SpriteView('default', [t[1]])]
+    if isinstance(t[1], basestring): t[0] = [SpriteView('default', [t[1]])]
     elif len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
 

@@ -73,7 +73,7 @@ def parse_error_block(error):
         action6.modify_bytes(tmp_param, 1, 1)
         severity = ConstantNumeric(0)
     
-    if not isinstance(error.msg, str):
+    if not isinstance(error.msg, basestring):
         raise ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
     
     langs = [0x7F]
@@ -86,7 +86,7 @@ def parse_error_block(error):
             langs.append(translation['lang'])
     
     if error.data != None:
-        if not isinstance(error.data, str):
+        if not isinstance(error.data, basestring):
             raise ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
         for translation in grf_strings[error.data]:
             langs.append(translation['lang'])

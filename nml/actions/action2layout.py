@@ -132,7 +132,7 @@ class Action2LayoutSprite:
 def set_sprite_property(sprite, name, value, spritesets):
 
     if name == 'sprite':
-        if not isinstance(value, str):
+        if not isinstance(value, basestring):
             raise ScriptError("Value of 'sprite' should be a spritset identifier")
         if value not in spritesets:
             raise ScriptError("Unknown sprite set: " + value)
@@ -144,7 +144,7 @@ def set_sprite_property(sprite, name, value, spritesets):
         sprite.set_sprite(True, value.value)
     
     elif name == 'recolor':
-        if isinstance(value, str):
+        if isinstance(value, basestring):
             if value == 'TRANSPARANT':
                 sprite.set_recolor_sprite(Action2LayoutRecolorMode.TRANSPARANT, 0)
             else:

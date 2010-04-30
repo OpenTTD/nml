@@ -63,7 +63,7 @@ def parse_property(feature, name, value, id, unit):
     action_list_append = []
     mods = []
     
-    if isinstance(name, str):
+    if isinstance(name, basestring):
         if not name in properties[feature]: raise ScriptError("Unkown property name: " + name)
         prop = properties[feature][name]
     elif isinstance(name, ConstantNumeric):

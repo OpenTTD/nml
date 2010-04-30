@@ -47,14 +47,14 @@ class Action2Var(Action2):
         for i in range(0, len(self.var_list) - 1, 2):
             self.var_list[i].shift.value |= 0x20
         for var in self.var_list:
-            if isinstance(var, str):
+            if isinstance(var, basestring):
                 file.write("\n" + var + " ")
             else:
                 var.write(file, self.varsize)
         print_byte(file, len(self.ranges))
         file.write("\n")
         for r in self.ranges:
-            if isinstance(r.result, str):
+            if isinstance(r.result, basestring):
                 print_bytex(file, remove_ref(r.result))
                 print_bytex(file, 0)
             else:
@@ -62,7 +62,7 @@ class Action2Var(Action2):
             print_varx(file, r.min.value, self.varsize)
             print_varx(file, r.max.value, self.varsize)
             file.write("\n")
-        if isinstance(self.default_result, str):
+        if isinstance(self.default_result, basestring):
             print_bytex(file, remove_ref(self.default_result))
             print_bytex(file, 0)
         else:
@@ -260,7 +260,7 @@ def parse_varaction2(switch_block):
     offset += var_list_size
     
     for r in switch_block.body.ranges:
-        if isinstance(r.result, str):
+        if isinstance(r.result, basestring):
             if r.result != 'CB_FAILED':
                 action2 = add_ref(r.result)
                 varaction2.references.append(action2)
@@ -275,7 +275,7 @@ def parse_varaction2(switch_block):
         varaction2.ranges.append(r)
     
     default = switch_block.body.default
-    if isinstance(default, str):
+    if isinstance(default, basestring):
         if default != 'CB_FAILED':
             action2 = add_ref(default)
             varaction2.references.append(action2)
