@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 from string import *
 import sys, codecs, getopt
 from ast import *
