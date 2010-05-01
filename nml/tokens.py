@@ -101,7 +101,7 @@ t_RBRACE           = r'}'
 t_TERNARY_OPEN     = r'\?'
 t_COLON            = r':'
 t_SEMICOLON        = r';'
-t_ignore_COMMENT   = r'(/\*.*?\*/)|(//.*)'
+t_ignore_COMMENT   = r'(/\*(\n|.)*?\*/)|(//.*)'
 
 def t_NUMBER(t):
     r'(0x[0-9a-zA-Z]+)|(\d+)'
