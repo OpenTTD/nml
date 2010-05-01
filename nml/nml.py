@@ -106,7 +106,7 @@ def nml(inputfile, outputfile):
             has_action8 = True
     
     if has_action8:
-        actions = [SpriteCountAction(len(actions) - 1)] + actions
+        actions = [SpriteCountAction(len(actions))] + actions
     
     sprite_num = 0
     for action in actions:
