@@ -8,7 +8,8 @@ class Action2Real(Action2):
         self.loading_list = loading_list
         
     def write(self, file):
-        Action2.write(self, file)
+        size = 2 + 2 * len(self.loaded_list) + 2 * len(self.loading_list)
+        Action2.write(self, file, size)
         print_byte(file, len(self.loaded_list))
         print_byte(file, len(self.loading_list))
         file.write("\n")

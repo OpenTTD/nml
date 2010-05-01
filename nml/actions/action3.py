@@ -11,7 +11,9 @@ class Action3:
         self.cid_mappings = []
     
     def write(self, file):
-        file.write("0 03 ")
+        size = 7 + 3 * len(self.cid_mappings)
+        if self.feature <= 3: size += 2
+        file.write(str(size) + " 03 ")
         print_bytex(file, self.feature)
         print_bytex(file, 1 if not self.is_livery_override else 0x81) # a single id
         print_varx(file, self.id, 3 if self.feature <= 3 else 1)

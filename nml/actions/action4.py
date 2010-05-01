@@ -1,5 +1,5 @@
 from nml.generic import *
-from nml.grfstrings import grf_strings
+from nml.grfstrings import grf_strings, get_string_size
 
 class Action4:
     def __init__(self, feature, lang, size, id, text):
@@ -10,7 +10,9 @@ class Action4:
         self.text = text
     
     def write(self, file):
-        file.write("0 04 ")
+        # +3 after string size is for final 0 and thorn at the start
+        size = 4 + self.size + get_string_size(self.text) + 3
+        file.write(str(size) + " 04 ")
         print_bytex(file, self.feature)
         if self.size == 2: self.lang = self.lang | 0x80
         print_bytex(file, self.lang)

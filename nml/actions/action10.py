@@ -5,7 +5,7 @@ class Action10:
         self.label = label
     
     def write(self, file):
-        file.write("0 10 ")
+        file.write("2 10 ")
         print_bytex(file, self.label)
         file.write("\n\n")
     

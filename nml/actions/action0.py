@@ -13,7 +13,9 @@ class Action0:
         self.num_ids = None
     
     def write(self, file):
-        file.write("0 00 ")
+        size = 7
+        for prop in self.prop_list: size += prop.get_size()
+        file.write(str(size) + " 00 ")
         print_bytex(file, self.feature)
         print_byte(file, len(self.prop_list))
         if self.num_ids == None: self.num_ids = 1
@@ -155,6 +157,9 @@ class CargoListProp:
             if i > 0 and i % 5 == 0: file.write("\n")
             print_string(file, self.cargo_list[i], False, True)
         file.write("\n")
+    
+    def get_size(self):
+        return len(self.cargo_list) * 4 + 1
 
 def get_cargolist_action(cargo_list):
     action0 = Action0(0x08, 0)

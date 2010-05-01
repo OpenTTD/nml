@@ -1,6 +1,6 @@
 from nml.expression import *
 from nml.generic import *
-from nml.grfstrings import grf_strings, get_translation
+from nml.grfstrings import grf_strings, get_translation, get_string_size
 from action6 import *
 from actionD import *
 
@@ -14,7 +14,16 @@ class ActionB:
         self.param2 = param2
     
     def write(self, file):
-        file.write("0 0B ")
+        size = 4
+        if not isinstance(self.msg, int): size += get_string_size(self.msg) + 3
+        if self.data != None:
+            size += get_string_size(self.data) + 3
+            if self.param1 != None:
+                size += 1
+                if self.param2 != None:
+                    size += 1
+        
+        file.write(str(size) + " 0B ")
         self.severity.write(file, 1)
         print_bytex(file, self.lang)
         if isinstance(self.msg, int):

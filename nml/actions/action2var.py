@@ -41,7 +41,15 @@ class Action2Var(Action2):
                         action2.tmp_locations.remove(var.mask.value)
     
     def write(self, file):
-        Action2.write(self, file)
+        #type_byte, num_ranges, default_result = 4
+        size = 4 + (2 + 2 * self.varsize) * len(self.ranges)
+        for var in self.var_list:
+            if isinstance(var, basestring):
+                size += 1
+            else:
+                size += var.get_size(self.varsize)
+        
+        Action2.write(self, file, size)
         print_bytex(file, self.type_byte)
         file.write("\n")
         for i in range(0, len(self.var_list) - 1, 2):

@@ -11,7 +11,14 @@ class Action2Layout(Action2):
         assert len(sprite_list) != 0
     
     def write(self, file):
-        Action2.write(self, file)
+        size = 5
+        for sprite in self.sprite_list:
+            if sprite.type == Action2LayoutSpriteType.CHILD:
+                size += 7
+            else:
+                size += 10
+        
+        Action2.write(self, file, size)
         print_byte(file, len(self.sprite_list))
         print_dwordx(file, self.ground_sprite.get_sprite_number())
         file.write("\n")

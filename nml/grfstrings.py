@@ -14,6 +14,31 @@ def get_translation(string, lang = 0x7F):
             def_trans = translation['text']
     return def_trans
 
+def utf8_get_size(char):
+    if char < 128: return 1
+    if char < 2048: return 2
+    if char < 65536: return 3
+    return 4
+
+def get_string_size(string):
+    size = 0
+    i = 0
+    while i < len(string):
+        if string[i] != '\\':
+            size += utf8_get_size(ord(string[i]))
+            i += 1
+        else:
+            if string[i+1] in ('\\', 'n', '"'):
+                size += 1
+                i += 2
+            elif string[i+1] == 'U':
+                size += utf8_get_size(int(string[i+2:i+6], 16))
+                i += 6
+            else:
+                size += 1
+                i += 3
+    return size
+
 escapes = {
 '':               {'escape': r'\n',     'num_params': 0},
 '{':              {'escape': r'{',      'num_params': 0},

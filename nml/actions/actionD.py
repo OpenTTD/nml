@@ -27,7 +27,9 @@ class ActionD:
         self.data = data
     
     def write(self, file):
-        file.write("0 0D ")
+        size = 5
+        if self.data != None: size += 4
+        file.write(str(size) + " 0D ")
         self.target.write(file, 1)
         file.write(self.op + " ")
         self.param1.write(file, 1)

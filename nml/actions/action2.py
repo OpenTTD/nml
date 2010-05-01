@@ -13,9 +13,9 @@ class Action2:
         self.name = name
         self.num_refs = 0
     
-    def write(self, file):
+    def write(self, file, size):
         global free_action2_ids
-        file.write("0 02 ")
+        file.write(str(size + 3) + " 02 ")
         print_bytex(file, self.feature)
         self.id = free_action2_ids.pop()
         print_bytex(file, self.id)

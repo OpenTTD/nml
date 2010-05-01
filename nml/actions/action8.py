@@ -1,5 +1,5 @@
 from nml.generic import *
-from nml.grfstrings import get_translation
+from nml.grfstrings import get_translation, get_string_size
 
 class Action8:
     def __init__(self, grfid, name, description):
@@ -8,10 +8,13 @@ class Action8:
         self.description = description
     
     def write(self, file):
-        file.write("0 08 07 ")
+        name = get_translation(self.name.name)
+        desc = get_translation(self.description.name)
+        size = 6 + get_string_size(name) + 3 + get_string_size(desc) + 3
+        file.write(str(size) + " 08 07 ")
         print_string(file, self.grfid, False, True)
-        print_string(file, get_translation(self.name.name))
-        print_string(file, get_translation(self.description.name))
+        print_string(file, name)
+        print_string(file, desc)
         file.write("\n")
     
     def skip_action7(self):
