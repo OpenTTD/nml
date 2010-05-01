@@ -1,3 +1,4 @@
+import nml
 from nml.expression import *
 from nml.generic import ScriptError	
 from action6 import *
@@ -56,7 +57,7 @@ def convert_op_to_actiond(op):
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
     param = free_parameters.pop()
-    actions = parse_actionD(ParameterAssignment(ConstantNumeric(param), expr))
+    actions = parse_actionD(nml.ast.ParameterAssignment(ConstantNumeric(param), expr))
     return (param, actions)
 
 def parse_actionD(assignment):
