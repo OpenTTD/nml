@@ -90,7 +90,7 @@ def parse_property(feature, name, value, id, unit):
         if isinstance(value, ConstantNumeric):
             pass
         elif isinstance(value, Parameter) and isinstance(value.num, ConstantNumeric):
-            mods.append((value.num.value, size, 1))
+            mods.append((value.num.value, prop['size'], 1))
             value = ConstantNumeric(0)
         elif isinstance(value, String):
             if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
