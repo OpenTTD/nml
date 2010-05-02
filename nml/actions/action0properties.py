@@ -83,6 +83,27 @@ properties[0x01] = {
 }
 properties[0x01].update(general_veh_props)
 
+properties[0x03] = {
+    'sprite_id' : {'size': 1, 'num': 0x08},
+    'is_helicopter' : {'size': 1, 'num': 0x09},
+    'is_large' : {'size': 1, 'num': 0x0A},
+    'cost_factor' : {'size': 1, 'num': 0x0B},
+    'speed' : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.125},
+    'acceleration' : {'size': 1, 'num': 0x0D},
+    'running_cost_factor' : {'size': 1, 'num': 0x0D},
+    'passenger_capacity' : {'size': 2, 'num': 0x0F},
+    'mail_capacity' : {'size': 1, 'num': 0x11},
+    'sound_effect' : {'size': 1, 'num': 0x12},
+    'refittable_cargo_types' : {'size': 4, 'num': 0x13},
+    'callback_flags' : {'size': 1, 'num': 0x14},
+    'refit_cost' : {'size': 1, 'num': 0x15},
+    'retire_early' : {'size': 1, 'num': 0x16},
+    'misc_flags' : {'size': 1, 'num': 0x17},
+    'refittable_cargo_classes' : {'size': 2, 'num': 0x18},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
+    'introduction_date' : {'size': 4, 'num': 0x1A},
+}
+properties[0x03].update(general_veh_props)
 
 properties[0x0A] = {
     'substitute': {'size': 1, 'num': 0x08},
