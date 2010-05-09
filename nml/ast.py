@@ -432,7 +432,7 @@ class LayoutSprite:
 class LayoutParam:
     def __init__(self, name, value):
         self.name = name
-        self.value = value
+        self.value = reduce_expr(value, [global_constants.const_table], False)
     
     def debug_print(self, indentation):
         print indentation*' ' + 'Layout parameter:', self.name

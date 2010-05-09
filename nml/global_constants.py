@@ -129,4 +129,7 @@ const_table = {
     'AIRCRAFT_SIZE_SMALL'      : 0x00,
     'AIRCRAFT_SIZE_LARGE'      : 0x01,
     
+    'GROUNDSPRITE_NORMAL'      : 3981,
+    'GROUNDSPRITE_SNOW'        : 4550,
+    'GROUNDSPRITE_DESERT'      : 4550,
 }
