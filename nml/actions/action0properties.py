@@ -127,10 +127,27 @@ properties[0x03] = {
 }
 properties[0x03].update(general_veh_props)
 
+properties[0x09] = {
+    'substitute': {'size': 1, 'num': 0x08},
+    'override': {'size': 1, 'num': 0x09},
+    'cargo_1': {'size': 2, 'num': 0x0A},
+    'cargo_2': {'size': 2, 'num': 0x0B},
+    'cargo_3': {'size': 2, 'num': 0x0C},
+    'land_shape_flags': {'size': 1, 'num': 0x0D},
+    'callback_flags': {'size': 1, 'num': 0x0E},
+    'animation_info': {'size': 2, 'num': 0x0F},
+    'animation_speed': {'size': 1, 'num': 0x10},
+    'triggers_cb25': {'size': 1, 'num': 0x11},
+    'special_flags': {'size': 1, 'num': 0x12},
+}
+
+def industry_layouts(value):
+    return []
+
 properties[0x0A] = {
     'substitute': {'size': 1, 'num': 0x08},
     'override': {'size': 1, 'num': 0x09},
-    'layouts': {'size': 0, 'num': 0x0A},
+    'layouts': {'custom_function': industry_layouts},
     'prod_flags': {'size': 1, 'num': 0x0B},
     'closure_msg': {'size': 2, 'num': 0x0C},
     'prod_increase_msg': {'size': 2, 'num': 0x0D},
@@ -151,7 +168,7 @@ properties[0x0A] = {
     'input_multiplier_1': {'size': 4, 'num': 0x1C},
     'input_multiplier_2': {'size': 4, 'num': 0x1D},
     'input_multiplier_3': {'size': 4, 'num': 0x1E},
-    'ind_name': {'size': 2, 'num': 0x1F, 'string': 0xDC},
+    'name': {'size': 2, 'num': 0x1F, 'string': 0xDC},
     'prospect_chance': {'size': 4, 'num': 0x20},
     'callback_flags_1': {'size': 1, 'num': 0x21},
     'callback_flags_2': {'size': 1, 'num': 0x22},
