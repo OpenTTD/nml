@@ -156,5 +156,5 @@ properties[0x0A] = {
     'callback_flags_1': {'size': 1, 'num': 0x21},
     'callback_flags_2': {'size': 1, 'num': 0x22},
     'remove_cost_multiplier': {'size': 4, 'num': 0x23},
-    'nearby_station_name': {'size': 2, 'num': 0x24},
+    'nearby_station_name': {'size': 2, 'num': 0x24, 'string': 0xDC},
 }
