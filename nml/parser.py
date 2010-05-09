@@ -313,6 +313,8 @@ code_to_op = {
     '!=' : Operator.CMP_NEQ,
     '<' : Operator.CMP_LT,
     '>' : Operator.CMP_GT,
+    '<<' : Operator.SHIFT_LEFT,
+    '>>' : Operator.SHIFT_RIGHT,
 }
 
 def p_binop_plus(t):
@@ -324,6 +326,8 @@ def p_binop_plus(t):
                   | expression AND expression
                   | expression OR expression
                   | expression XOR expression
+                  | expression SHIFT_LEFT expression
+                  | expression SHIFT_RIGHT expression
                   | expression COMP_EQ expression
                   | expression COMP_NEQ expression
                   | expression COMP_LT expression

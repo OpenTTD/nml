@@ -54,6 +54,8 @@ tokens = list(reserved.values()) + [
     'EQ',
     'LPAREN',
     'RPAREN',
+    'SHIFT_LEFT',
+    'SHIFT_RIGHT',
     'COMP_EQ',
     'COMP_NEQ',
     'COMP_LT',
@@ -87,6 +89,8 @@ t_XOR              = r'\^'
 t_EQ               = r'='
 t_LPAREN           = r'\('
 t_RPAREN           = r'\)'
+t_SHIFT_LEFT       = r'<<'
+t_SHIFT_RIGHT      = r'>>'
 t_COMP_EQ          = r'=='
 t_COMP_NEQ         = r'!='
 t_COMP_LT          = r'<'

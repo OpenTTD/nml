@@ -22,6 +22,8 @@ class Operator:
     MAX     = 14
     STO_TMP = 15
     STO_PERM = 16
+    SHIFT_LEFT = 17
+    SHIFT_RIGHT = 18
 
 class ConstantNumeric:
     def __init__(self, value):
@@ -134,7 +136,9 @@ compile_time_operator = {
     Operator.CMP_LT:  operator.lt,
     Operator.CMP_GT:  operator.gt,
     Operator.MIN:     lambda a, b: min(a, b),
-    Operator.MAX:     lambda a, b: max(a, b)
+    Operator.MAX:     lambda a, b: max(a, b),
+    Operator.SHIFT_LEFT: operator.lshift,
+    Operator.SHIFT_RIGHT: operator.rshift,
 }
 
 commutative_operators = [
