@@ -1,4 +1,4 @@
-import os, string, codecs, re
+import os, string, codecs, re, glob
 from generic import ScriptError
 
 grf_strings = {}
@@ -147,9 +147,9 @@ def parse_grf_string(orig_string):
     return ret
 
 def read_lang_files():
-    for filename in os.listdir("lang/"):
+    for filename in glob.glob("lang/*.lng"):
         lang = -1
-        for line in codecs.open("lang/" + filename, "r", "utf-8"):
+        for line in codecs.open(filename, "r", "utf-8"):
             line = line.strip()
             if len(line) == 0 or line[0] == "#":
                 pass
