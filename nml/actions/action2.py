@@ -21,7 +21,7 @@ class Action2:
             self.id = free_action2_ids.pop()
     
     def write(self, file, size):
-        file.print_decimal(size + 3, 2)
+        file.print_sprite_size(size + 3)
         file.print_bytex(2)
         file.print_bytex(self.feature)
         file.print_bytex(self.id)

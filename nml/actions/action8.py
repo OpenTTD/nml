@@ -14,7 +14,7 @@ class Action8:
         name = get_translation(self.name.name)
         desc = get_translation(self.description.name)
         size = 6 + get_string_size(name) + 3 + get_string_size(desc) + 3
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(8)
         file.print_bytex(7)
         file.print_string(self.grfid, False, True)

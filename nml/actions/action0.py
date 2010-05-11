@@ -18,7 +18,7 @@ class Action0:
     def write(self, file):
         size = 7
         for prop in self.prop_list: size += prop.get_size()
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(0)
         file.print_bytex(self.feature)
         file.print_byte(len(self.prop_list))

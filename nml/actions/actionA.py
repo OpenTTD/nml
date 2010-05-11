@@ -14,7 +14,7 @@ class ActionA:
     def write(self, file):
         #<Sprite-number> * <Length> 0A <num-sets> [<num-sprites> <first-sprite>]+
         size = 2 + 3 * len(self.sets)
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(0x0A)
         file.print_byte(len(self.sets))
         for num, first in self.sets:

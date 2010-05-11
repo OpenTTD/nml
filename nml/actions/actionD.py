@@ -49,7 +49,7 @@ class ActionD:
         global actionDoperator_to_num
         size = 5
         if self.data != None: size += 4
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(0x0D)
         self.target.write(file, 1)
         file.print_bytex(action2operator_to_num(self.op), self.op)

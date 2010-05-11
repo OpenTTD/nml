@@ -15,7 +15,7 @@ class Action6:
     
     def write(self, file):
         size = 2 + 5 * len(self.modifications)
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(6)
         file.newline()
         for mod in self.modifications:

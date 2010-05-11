@@ -17,7 +17,7 @@ class Action3:
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
         if self.feature <= 3: size += 2
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(3)
         file.print_bytex(self.feature)
         file.print_bytex(1 if not self.is_livery_override else 0x81) # a single id

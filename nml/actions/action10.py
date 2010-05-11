@@ -8,7 +8,7 @@ class Action10:
         pass
     
     def write(self, file):
-        file.print_decimal(2, 2)
+        file.print_sprite_size(2)
         file.print_bytex(0x10)
         file.print_bytex(self.label)
         file.newline()

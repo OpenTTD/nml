@@ -26,7 +26,7 @@ class ActionB:
                 if self.param2 != None:
                     size += 1
         
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(0x0B)
         self.severity.write(file, 1)
         file.print_bytex(self.lang)

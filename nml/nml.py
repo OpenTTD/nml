@@ -9,6 +9,7 @@ from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
 from actions.action8 import Action8
 from output_nfo import OutputNFO
+from output_grf import OutputGRF
 
 # Build the lexer
 import ply.lex as lex
@@ -62,19 +63,21 @@ def main(argv):
             print "Failed to open "+arg
             retval |= 2
         else:
-            outputfilename = filename_output_from_input(arg)
+            outputfilename = filename_output_from_input(arg, ".nfo")
             print outputfilename+": parsing "+arg
             input = codecs.open(arg, 'r', 'utf-8')
-            output = OutputNFO(outputfilename)
-            retval |= nml(input, output)
-            output.close()
+            output_nfo = OutputNFO(outputfilename)
+            output_grf = OutputGRF(filename_output_from_input(arg, ".grf"))
+            outputs = (output_nfo, output_grf)
+            retval |= nml(input, outputs)
+            for output in outputs: output.close()
             input.close()
     sys.exit(retval)
 
-def filename_output_from_input(name):
-    return os.path.splitext(name)[0] + ".nfo"
+def filename_output_from_input(name, ext):
+    return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, outputfile):
+def nml(inputfile, outputfiles):
     script = inputfile.read().strip()
     if script == "":
         print "Empty input file"
@@ -105,9 +108,10 @@ def nml(inputfile, outputfile):
     
     for action in actions:
         action.prepare_output()
-    for action in actions:
-        outputfile.next_sprite(isinstance(action, RealSpriteAction))
-        action.write(outputfile)    
+    for outputfile in outputfiles:
+        for action in actions:
+            outputfile.next_sprite(isinstance(action, RealSpriteAction))
+            action.write(outputfile)    
     return 0
 
 if __name__ == "__main__":

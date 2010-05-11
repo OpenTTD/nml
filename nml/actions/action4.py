@@ -15,7 +15,7 @@ class Action4:
     def write(self, file):
         # +3 after string size is for final 0 and thorn at the start
         size = 4 + self.size + get_string_size(self.text) + 3
-        file.print_decimal(size, 2)
+        file.print_sprite_size(size)
         file.print_bytex(4)
         file.print_bytex(self.feature)
         file.print_bytex(self.lang)

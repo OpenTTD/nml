@@ -73,6 +73,9 @@ class OutputNFO:
     def print_decimal(self, value, size = None):
         self.file.write(str(value) + " ")
     
+    def print_sprite_size(self, size):
+        self.print_decimal(size)
+    
     def newline(self):
         self.file.write("\n")
     
@@ -92,4 +95,4 @@ class OutputNFO:
         self.print_decimal(sprite_info.yrel.value)
     
     def print_empty_realsprite(self):
-        self.file.write("* 0 0")
+        self.file.write("* 1 0")

@@ -16,7 +16,7 @@ class Action1:
     
     def write(self, file):
         #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
-        file.print_decimal(6, 2)
+        file.print_sprite_size(6)
         file.print_bytex(1)
         self.feature.write(file, 1)
         file.print_byte(self.num_sets)
