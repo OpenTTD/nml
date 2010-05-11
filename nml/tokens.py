@@ -72,6 +72,7 @@ tokens = list(reserved.values()) + [
     'SEMICOLON',
     'STRING_LITERAL',
     'NUMBER',
+    'FLOAT',
     'VARRANGE',
     'UNIT',
 ]
@@ -106,6 +107,11 @@ t_TERNARY_OPEN     = r'\?'
 t_COLON            = r':'
 t_SEMICOLON        = r';'
 t_ignore_COMMENT   = r'(/\*(\n|.)*?\*/)|(//.*)'
+
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
 
 def t_NUMBER(t):
     r'(0x[0-9a-zA-Z]+)|(\d+)'

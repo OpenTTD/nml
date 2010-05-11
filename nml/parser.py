@@ -95,6 +95,10 @@ def p_const_expression(t):
     'expression : NUMBER'
     t[0] = ConstantNumeric(t[1])
 
+def p_expression_float(t):
+    'expression : FLOAT'
+    t[0] = ConstantFloat(t[1])
+
 def p_param_expression(t):
     'expression : param'
     t[0] = t[1]

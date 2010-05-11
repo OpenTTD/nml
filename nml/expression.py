@@ -33,6 +33,12 @@ class ConstantNumeric:
     def write(self, file, size):
         file.print_varx(self.value, size)
 
+class ConstantFloat:
+    def __init__(self, value):
+        self.value = value
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Float:', self.value
+
 class BitMask:
     def __init__(self, values):
         self.values = values
@@ -210,6 +216,6 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
 
 def reduce_constant(expr, id_dicts = []):
     expr = reduce_expr(expr, id_dicts)
-    if not isinstance(expr, ConstantNumeric):
+    if not (isinstance(expr, ConstantNumeric) or isinstance(expr, ConstantFloat)):
         raise ConstError()
     return expr

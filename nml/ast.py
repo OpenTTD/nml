@@ -239,7 +239,7 @@ class Property:
         self.name = name
         self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
         self.unit = unit
-        if unit != None and not isinstance(self.value, ConstantNumeric):
+        if unit != None and not (isinstance(self.value, ConstantNumeric) or isinstance(self.value, ConstantFloat)):
             raise ScriptError("Using a unit for a property is only allowed if the value is constant")
     
     def debug_print(self, indentation):
