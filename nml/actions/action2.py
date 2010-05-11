@@ -13,11 +13,13 @@ class Action2:
         self.name = name
         self.num_refs = 0
     
+    def prepare_output(self):
+        self.id = free_action2_ids.pop()
+    
     def write(self, file, size):
         global free_action2_ids
         file.write(str(size + 3) + " 02 ")
         print_bytex(file, self.feature)
-        self.id = free_action2_ids.pop()
         print_bytex(file, self.id)
     
     def skip_action7(self):

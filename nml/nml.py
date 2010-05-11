@@ -108,6 +108,8 @@ def nml(inputfile, outputfile):
     if has_action8:
         actions = [SpriteCountAction(len(actions))] + actions
     
+    for action in actions:
+        action.prepare_output()
     sprite_num = 0
     for action in actions:
         outputfile.write(str(sprite_num) + " ")

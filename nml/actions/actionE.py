@@ -5,7 +5,10 @@ from actionD import *
 
 class ActionE:
     def __init__(self, grfid_list):
-        self.grfid_list = grfid_list
+        self.grfid_list = [bswap32(grfid.value) for grfid in grfid_list]
+    
+    def prepare_output(self):
+        pass
     
     def write(self, file):
         size = 2 + 4 * len(self.grfid_list)
@@ -13,7 +16,7 @@ class ActionE:
         print_byte(file, len(self.grfid_list))
         for grfid in self.grfid_list:
             file.write("\n")
-            print_dwordx(file, bswap32(grfid.value))
+            print_dwordx(file, grfid)
         file.write("\n\n")
     
     def skip_action7(self):

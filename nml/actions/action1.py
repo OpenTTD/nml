@@ -11,6 +11,9 @@ class Action1:
         self.num_sets = num_sets
         self.num_ent = num_ent
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
         file.write("6 01 ")

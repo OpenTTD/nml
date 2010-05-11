@@ -9,12 +9,14 @@ class Action4:
         self.id = id
         self.text = text
     
+    def prepare_output(self):
+        if self.size == 2: self.lang = self.lang | 0x80
+    
     def write(self, file):
         # +3 after string size is for final 0 and thorn at the start
         size = 4 + self.size + get_string_size(self.text) + 3
         file.write(str(size) + " 04 ")
         print_bytex(file, self.feature)
-        if self.size == 2: self.lang = self.lang | 0x80
         print_bytex(file, self.lang)
         file.write("01 ")
         print_varx(file, self.id, self.size)

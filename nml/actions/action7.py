@@ -22,6 +22,9 @@ class SkipAction:
         self.value = value
         self.label = label
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         size = 5 + self.varsize
         file.write(str(size) + ' ')

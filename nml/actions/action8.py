@@ -7,6 +7,9 @@ class Action8:
         self.name = name
         self.description = description
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         name = get_translation(self.name.name)
         desc = get_translation(self.description.name)

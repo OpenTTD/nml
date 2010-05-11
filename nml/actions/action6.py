@@ -10,6 +10,9 @@ class Action6:
     def modify_bytes(self, param, num_bytes, offset):
         self.modifications.append( (param, num_bytes, offset) )
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         size = 2 + 5 * len(self.modifications)
         file.write(str(size) + " 06\n")

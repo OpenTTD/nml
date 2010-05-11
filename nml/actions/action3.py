@@ -10,6 +10,10 @@ class Action3:
         self.id = id
         self.cid_mappings = []
     
+    def prepare_output(self):
+        self.cid_mappings = [(cargo, remove_ref(cid)) for cargo, cid in self.cid_mappings]
+        self.def_cid = remove_ref(self.def_cid)
+    
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
         if self.feature <= 3: size += 2
@@ -21,9 +25,9 @@ class Action3:
         file.write("\n")
         for cargo, cid in self.cid_mappings:
             cargo.write(file, 1)
-            print_wordx(file, remove_ref(cid))
+            print_wordx(file, cid)
             file.write("\n")
-        print_wordx(file, remove_ref(self.def_cid))
+        print_wordx(file, self.def_cid)
         file.write("\n\n")
     
     def skip_action7(self):

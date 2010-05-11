@@ -26,6 +26,9 @@ class ActionD:
         self.param2 = param2
         self.data = data
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         size = 5
         if self.data != None: size += 4

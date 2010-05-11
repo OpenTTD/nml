@@ -40,6 +40,21 @@ class Action2Var(Action2):
                     if var.mask.value in action2.tmp_locations:
                         action2.tmp_locations.remove(var.mask.value)
     
+    def prepare_output(self):
+        Action2.prepare_output(self)
+        for i in range(0, len(self.var_list) - 1, 2):
+            self.var_list[i].shift.value |= 0x20
+        
+        for r in self.ranges:
+            if isinstance(r.result, basestring):
+                 r.result = remove_ref(r.result)
+            else:
+                 r.result = r.result.value | 0x8000
+        if isinstance(r.default_result, basestring):
+             r.default_result = remove_ref(r.default_result)
+        else:
+             r.default_result = r.default_result.value | 0x8000
+    
     def write(self, file):
         #type_byte, num_ranges, default_result = 4
         size = 4 + (2 + 2 * self.varsize) * len(self.ranges)
@@ -52,8 +67,6 @@ class Action2Var(Action2):
         Action2.write(self, file, size)
         print_bytex(file, self.type_byte)
         file.write("\n")
-        for i in range(0, len(self.var_list) - 1, 2):
-            self.var_list[i].shift.value |= 0x20
         for var in self.var_list:
             if isinstance(var, basestring):
                 file.write("\n" + var + " ")
@@ -62,19 +75,11 @@ class Action2Var(Action2):
         print_byte(file, len(self.ranges))
         file.write("\n")
         for r in self.ranges:
-            if isinstance(r.result, basestring):
-                print_bytex(file, remove_ref(r.result))
-                print_bytex(file, 0)
-            else:
-                print_wordx(file, r.result.value | 0x8000)
+            print_wordx(file, r.result)
             print_varx(file, r.min.value, self.varsize)
             print_varx(file, r.max.value, self.varsize)
             file.write("\n")
-        if isinstance(self.default_result, basestring):
-            print_bytex(file, remove_ref(self.default_result))
-            print_bytex(file, 0)
-        else:
-            print_wordx(file, self.default_result.value | 0x8000)
+        print_wordx(file, r.default_result)
         file.write("\n\n")
 
 def convert_op_to_action2(op):

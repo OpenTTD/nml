@@ -13,6 +13,9 @@ class ActionB:
         self.param1 = param1
         self.param2 = param2
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         size = 4
         if not isinstance(self.msg, int): size += get_string_size(self.msg) + 3

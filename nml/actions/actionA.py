@@ -8,6 +8,9 @@ class ActionA:
         self.num_sets = num_sets
         self.sets = sets
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         #<Sprite-number> * <Length> 0A <num-sets> [<num-sprites> <first-sprite>]+
         size = 2 + 3 * len(self.sets)

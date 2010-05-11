@@ -7,6 +7,9 @@ class RealSpriteAction:
         self.pcx = pcx
         self.last = last
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         if isinstance(self.sprite, nml.ast.EmptyRealSprite):
             file.write("* 0 0\n")

@@ -12,13 +12,15 @@ class Action0:
         self.prop_list = []
         self.num_ids = None
     
+    def prepare_output(self):
+        if self.num_ids == None: self.num_ids = 1
+    
     def write(self, file):
         size = 7
         for prop in self.prop_list: size += prop.get_size()
         file.write(str(size) + " 00 ")
         print_bytex(file, self.feature)
         print_byte(file, len(self.prop_list))
-        if self.num_ids == None: self.num_ids = 1
         print_bytex(file, self.num_ids)
         file.write("FF ")
         print_wordx(file, self.id)

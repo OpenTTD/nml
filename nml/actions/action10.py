@@ -4,6 +4,9 @@ class Action10:
     def __init__(self, label):
         self.label = label
     
+    def prepare_output(self):
+        pass
+    
     def write(self, file):
         file.write("2 10 ")
         print_bytex(file, self.label)
