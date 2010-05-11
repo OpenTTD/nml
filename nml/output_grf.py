@@ -54,13 +54,29 @@ class OutputGRF:
         else:
             assert False
     
+    def _print_utf8(self, char):
+        for c in unichr(char).encode('utf8'):
+            self.wb(ord(c))
+    
     def print_string(self, value, final_zero = True, force_ascii = False):
         if not force_ascii:
             self.wb(0xC3)
             self.wb(0x9E)
-        for c in value:
-            #TODO: doesn't work for unicode strings
-            self.wb(ord(c))
+        i = 0
+        while i < len(value):
+            if value[i] == '\\':
+                if value[i+1] in ('\\', 'n', '"'):
+                    self.wb(ord(value[i+1]))
+                    i += 2
+                elif value[i+1] == 'U':
+                    self._print_utf8(int(value[i+2:i+6], 16))
+                    i += 6
+                else:
+                    self.wb(int(value[i+1:i+3], 16))
+                    i += 3
+            else:
+                self._print_utf8(ord(value[i]))
+                i += 1
         if final_zero: self.wb(0)
     
     def print_decimal(self, value, size):
@@ -91,7 +107,7 @@ class OutputGRF:
     
     def wsprite_header(self, sprite, size, xoffset, yoffset, compression):
         size_x, size_y = sprite.size
-        ww(size + 8)
+        self.print_word(size + 8)
         self.wb(compression)
         self.wb(size_y)
         self.print_word(size_x)
