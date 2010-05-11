@@ -1,6 +1,11 @@
 #! /usr/bin/env python
 
+import sys
 from distutils.core import setup
+
+if sys.version < '2.5':
+    sys.exit('ERROR: Sorry, python 2.5 is required for this application.')
+
 setup(name='nml',
       version='0.1',
       description='A tool to convert nml files to nfo files',

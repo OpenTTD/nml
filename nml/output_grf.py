@@ -126,6 +126,8 @@ class OutputGRF:
                 l-=1
     
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
+        #self.wsprite_encoderegular_fakecompress(sprite, data, xoffset, yoffset, compression)
+        #return
         lz = LZ77(data)
         stream = lz.Encode()
         if (compression & 2) == 0: size = len(data)
@@ -168,7 +170,80 @@ class OutputGRF:
         output += data_output
         self.wsprite_encoderegular(sprite, output, xoffset, yoffset, compression)
     
+    def crop_sprite(self, sprite, xoffset, yoffset):
+        data = list(sprite.getdata())
+        size_x, size_y = sprite.size
+        
+        #Crop the top of the sprite
+        y = 0
+        while y < size_y:
+            x = 0
+            while x < size_x:
+                if data[y * size_x + x] != 0: break
+                x += 1
+            if x != size_x: break
+            y += 1
+        if y != 0:
+            yoffset += y
+            sprite = sprite.crop((0, y, size_x, size_y))
+            data = list(sprite.getdata())
+            size_y -= y
+        
+        #Crop the bottom of the sprite
+        y = size_y - 1
+        while y >= 0:
+            x = 0
+            while x < size_x:
+                if data[y * size_x + x] != 0: break
+                x += 1
+            if x != size_x: break
+            y -= 1
+        if y != size_y - 1:
+            sprite = sprite.crop((0, 0, size_x, y + 1))
+            data = list(sprite.getdata())
+            size_y = y + 1
+        
+        #Crop the left of the sprite
+        x = 0
+        while x < size_x:
+            y = 0
+            while y < size_y:
+                if data[y * size_x + x] != 0: break
+                y += 1
+            if y != size_y: break
+            x += 1
+        if x != 0:
+            xoffset += x
+            sprite = sprite.crop((x, 0, size_x, size_y))
+            data = list(sprite.getdata())
+            size_x -= x
+        
+        #Crop the right of the sprite
+        x = size_x - 1
+        while x >= 0:
+            y = 0
+            while y < size_y:
+                if data[y * size_x + x] != 0: break
+                y += 1
+            if y != size_y: break
+            x -= 1
+        if x != size_x - 1:
+            sprite = sprite.crop((0, 0, x + 1, size_y))
+        return (sprite, xoffset, yoffset)
+    
     def wsprite(self, sprite, xoffset, yoffset, compression):
+        if compression & 0x40 == 0:
+            all_blue = True
+            for p in sprite.getdata():
+                if p != 0:
+                    all_blue = False
+                    break
+            if all_blue:
+                sprite = sprite.crop(0, 0, 1, 1)
+                xoffset = 0
+                yoffset = 0
+            else:
+                sprite, xoffset, yoffset = self.crop_sprite(sprite, xoffset, yoffset)
         if compression == 9:
             self.wsprite_encodetile(sprite, xoffset, yoffset, compression)
         elif compression == 1 or compression == 3:
