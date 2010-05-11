@@ -22,6 +22,23 @@ class Action2Operator:
     VAL2  = r'\2r'
     STO_TMP = r'\2sto'
 
+action2operator_to_num = {
+    Action2Operator.ADD: 0,
+    Action2Operator.SUB: 1,
+    Action2Operator.MUL: 0x0A,
+    Action2Operator.AND: 0x0B,
+    Action2Operator.OR: 0x0C,
+    Action2Operator.XOR: 0x0D,
+    Action2Operator.DIVU: 8,
+    Action2Operator.DIVS: 6,
+    Action2Operator.MODU: 9,
+    Action2Operator.MODS: 7,
+    Action2Operator.MIN: 2,
+    Action2Operator.MAX: 3,
+    Action2Operator.VAL2: 0x0F,
+    Action2Operator.STO_TMP: 0x0E,
+}
+
 class Action2Var(Action2):
     def __init__(self, feature, name, type_byte, varsize):
         Action2.__init__(self, feature, name)
@@ -56,6 +73,7 @@ class Action2Var(Action2):
              r.default_result = r.default_result.value | 0x8000
     
     def write(self, file):
+        global action2operator_to_num
         #type_byte, num_ranges, default_result = 4
         size = 4 + (2 + 2 * self.varsize) * len(self.ranges)
         for var in self.var_list:
@@ -65,22 +83,24 @@ class Action2Var(Action2):
                 size += var.get_size(self.varsize)
         
         Action2.write(self, file, size)
-        print_bytex(file, self.type_byte)
-        file.write("\n")
+        file.print_bytex(self.type_byte)
+        file.newline()
         for var in self.var_list:
             if isinstance(var, basestring):
-                file.write("\n" + var + " ")
+                file.newline()
+                file.print_bytex(action2operator_to_num(var), var)
             else:
                 var.write(file, self.varsize)
-        print_byte(file, len(self.ranges))
-        file.write("\n")
+        file.print_byte(len(self.ranges))
+        file.newline()
         for r in self.ranges:
-            print_wordx(file, r.result)
-            print_varx(file, r.min.value, self.varsize)
-            print_varx(file, r.max.value, self.varsize)
-            file.write("\n")
-        print_wordx(file, r.default_result)
-        file.write("\n\n")
+            file.print_wordx(r.result)
+            file.print_varx(r.min.value, self.varsize)
+            file.print_varx(r.max.value, self.varsize)
+            file.newline()
+        file.print_wordx(r.default_result)
+        file.newline()
+        file.newline()
 
 def convert_op_to_action2(op):
     op_to_act2 = {
@@ -109,7 +129,7 @@ class VarAction2Var:
         self.mod = None
     
     def write(self, file, size):
-        print_bytex(file, self.var_num)
+        file.print_bytex(self.var_num)
         if self.parameter != None: self.parameter.write(file, 1)
         if self.mod != None:
             self.shift.value |= 0x80
@@ -125,7 +145,7 @@ class VarAction2Var:
                 self.mod.write(file, size)
             else:
                 #no div or add, just divide by 1
-                print_varx(file, 1, size)
+                file.print_varx(1, size)
     
     def get_size(self, varsize):
         #var number [+ parameter] + shift num + and mask

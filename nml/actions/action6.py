@@ -15,14 +15,18 @@ class Action6:
     
     def write(self, file):
         size = 2 + 5 * len(self.modifications)
-        file.write(str(size) + " 06\n")
+        file.print_decimal(size, 2)
+        file.print_bytex(6)
+        file.newline()
         for mod in self.modifications:
-            print_bytex(file, mod[0])
-            print_bytex(file, mod[1])
-            print_bytex(file, 0xFF)
-            print_wordx(file, mod[2])
-            file.write("\n")
-        file.write("FF\n\n")
+            file.print_bytex(mod[0])
+            file.print_bytex(mod[1])
+            file.print_bytex(0xFF)
+            file.print_wordx(mod[2])
+            file.newline()
+        file.print_bytex(0xFF)
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return False

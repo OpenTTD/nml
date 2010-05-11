@@ -14,11 +14,13 @@ class Action8:
         name = get_translation(self.name.name)
         desc = get_translation(self.description.name)
         size = 6 + get_string_size(name) + 3 + get_string_size(desc) + 3
-        file.write(str(size) + " 08 07 ")
-        print_string(file, self.grfid, False, True)
-        print_string(file, name)
-        print_string(file, desc)
-        file.write("\n")
+        file.print_decimal(size, 2)
+        file.print_bytex(8)
+        file.print_bytex(7)
+        file.print_string(self.grfid, False, True)
+        file.print_string(name)
+        file.print_string(desc)
+        file.newline()
     
     def skip_action7(self):
         return False

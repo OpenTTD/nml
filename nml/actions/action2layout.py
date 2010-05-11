@@ -20,23 +20,23 @@ class Action2Layout(Action2):
                 size += 10
         
         Action2.write(self, file, size)
-        print_byte(file, len(self.sprite_list))
-        print_dwordx(file, self.ground_sprite.get_sprite_number())
-        file.write("\n")
+        file.print_byte(len(self.sprite_list))
+        file.print_dwordx(self.ground_sprite.get_sprite_number())
+        file.newline()
         for sprite in self.sprite_list:
-            print_dwordx(file, sprite.get_sprite_number())
-            print_byte(file, sprite.get_bounding_box_param('xoffset'))
-            print_byte(file, sprite.get_bounding_box_param('yoffset'))
+            file.print_dwordx(sprite.get_sprite_number())
+            file.print_byte(sprite.get_bounding_box_param('xoffset'))
+            file.print_byte(sprite.get_bounding_box_param('yoffset'))
             if sprite.type == Action2LayoutSpriteType.CHILD:
-                print_bytex(file, 0x80)
+                file.print_bytex(0x80)
             else:
                 #normal building sprite
-                print_byte(file, sprite.get_bounding_box_param('zoffset'))
-                print_byte(file, sprite.get_bounding_box_param('xextent'))
-                print_byte(file, sprite.get_bounding_box_param('yextent'))
-                print_byte(file, sprite.get_bounding_box_param('zextent'))
-            file.write("\n")
-        file.write("\n")
+                file.print_byte(sprite.get_bounding_box_param('zoffset'))
+                file.print_byte(sprite.get_bounding_box_param('xextent'))
+                file.print_byte(sprite.get_bounding_box_param('yextent'))
+                file.print_byte(sprite.get_bounding_box_param('zextent'))
+            file.newline()
+        file.newline()
 
 class Action2LayoutRecolorMode:
     NONE = 0

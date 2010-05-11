@@ -14,13 +14,17 @@ class Action2:
         self.num_refs = 0
     
     def prepare_output(self):
-        self.id = free_action2_ids.pop()
+        global free_action2_ids
+        if self.num_refs == 0:
+            self.id = free_action2_ids[0]
+        else:
+            self.id = free_action2_ids.pop()
     
     def write(self, file, size):
-        global free_action2_ids
-        file.write(str(size + 3) + " 02 ")
-        print_bytex(file, self.feature)
-        print_bytex(file, self.id)
+        file.print_decimal(size + 3, 2)
+        file.print_bytex(2)
+        file.print_bytex(self.feature)
+        file.print_bytex(self.id)
     
     def skip_action7(self):
         return False

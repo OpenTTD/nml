@@ -18,16 +18,17 @@ class Action0:
     def write(self, file):
         size = 7
         for prop in self.prop_list: size += prop.get_size()
-        file.write(str(size) + " 00 ")
-        print_bytex(file, self.feature)
-        print_byte(file, len(self.prop_list))
-        print_bytex(file, self.num_ids)
-        file.write("FF ")
-        print_wordx(file, self.id)
-        file.write("\n")
+        file.print_decimal(size, 2)
+        file.print_bytex(0)
+        file.print_bytex(self.feature)
+        file.print_byte(len(self.prop_list))
+        file.print_bytex(self.num_ids)
+        file.print_bytex(0xFF)
+        file.print_wordx(self.id)
+        file.newline()
         for prop in self.prop_list:
             prop.write(file)
-        file.write("\n")
+        file.newline()
     
     def skip_action7(self):
         return True
@@ -52,9 +53,9 @@ class Action0Property:
         self.size = size
         
     def write(self, file):
-        print_bytex(file, self.num)
+        file.print_bytex(self.num)
         self.value.write(file, self.size)
-        file.write("\n")
+        file.newline()
     
     def get_size(self):
         return self.size + 1
@@ -154,11 +155,11 @@ class CargoListProp:
         self.cargo_list = cargo_list
     
     def write(self, file):
-        print_bytex(file, 0x09)
+        file.print_bytex(0x09)
         for i in range(0, len(self.cargo_list)):
             if i > 0 and i % 5 == 0: file.write("\n")
-            print_string(file, self.cargo_list[i], False, True)
-        file.write("\n")
+            file.print_string(self.cargo_list[i], False, True)
+        file.newline()
     
     def get_size(self):
         return len(self.cargo_list) * 4 + 1

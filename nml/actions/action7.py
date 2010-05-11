@@ -27,14 +27,15 @@ class SkipAction:
     
     def write(self, file):
         size = 5 + self.varsize
-        file.write(str(size) + ' ')
-        print_bytex(file, self.feature)
-        print_bytex(file, self.var)
-        print_bytex(file, self.varsize)
-        file.write(self.condtype + ' ')
-        print_varx(file, self.value, self.varsize)
-        print_bytex(file, self.label)
-        file.write('\n\n')
+        file.print_decimal(size, 2)
+        file.print_bytex(self.feature)
+        file.print_bytex(self.var)
+        file.print_bytex(self.varsize)
+        file.print_bytex(self.condtype[0], self.condtype[1])
+        file.print_varx(self.value, self.varsize)
+        file.print_bytex(self.label)
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return self.feature == 7
@@ -47,7 +48,7 @@ class SkipAction:
 
 class UnconditionalSkipAction(SkipAction):
     def __init__(self, feature, label):
-        SkipAction.__init__(self, feature, 0x83, 1, r'\7! ', 0xFF, label)
+        SkipAction.__init__(self, feature, 0x83, 1, (3, r'\7! '), 0xFF, label)
 
 def parse_conditional(expr):
     if expr == None:
@@ -82,7 +83,7 @@ def cond_skip_actions(action_list, param):
         else:
             target = free_labels.pop()
             label = Action10(target)
-        actions.append(SkipAction(feature, param, 4, r'\7=', 0, target))
+        actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
         actions.extend(action_list[start:start+length])
         if label != None: actions.append(label)
         start = i + 1
@@ -97,7 +98,7 @@ def cond_skip_actions(action_list, param):
         else:
             target = free_labels.pop()
             label = Action10(target)
-        actions.append(SkipAction(feature, param, 4, r'\7=', 0, target))
+        actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
         actions.extend(action_list[start:start+length])
         if label != None: actions.append(label)
     return actions

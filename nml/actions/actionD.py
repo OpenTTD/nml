@@ -18,6 +18,22 @@ class ActionDOperator:
     MODU  = r'\Du%'
     MODS  = r'\D%'
 
+actionDoperator_to_num = {
+    ActionDOperator.EQUAL: 0,
+    ActionDOperator.ADD: 1,
+    ActionDOperator.SUB: 2,
+    ActionDOperator.MULU: 3,
+    ActionDOperator.MULS: 4,
+    ActionDOperator.SHFTU: 5,
+    ActionDOperator.SHFTS: 6,
+    ActionDOperator.AND: 7,
+    ActionDOperator.OR: 8,
+    ActionDOperator.DIVU: 9,
+    ActionDOperator.DIVS: 0x0A,
+    ActionDOperator.MODU: 0x0B,
+    ActionDOperator.MODS: 0x0C,
+}
+
 class ActionD:
     def __init__(self, target, param1, op, param2, data = None):
         self.target = target
@@ -30,15 +46,18 @@ class ActionD:
         pass
     
     def write(self, file):
+        global actionDoperator_to_num
         size = 5
         if self.data != None: size += 4
-        file.write(str(size) + " 0D ")
+        file.print_decimal(size, 2)
+        file.print_bytex(0x0D)
         self.target.write(file, 1)
-        file.write(self.op + " ")
+        file.print_bytex(action2operator_to_num(self.op), self.op)
         self.param1.write(file, 1)
         self.param2.write(file, 1)
         if self.data != None: self.data.write(file, 4)
-        file.write("\n\n")
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return False

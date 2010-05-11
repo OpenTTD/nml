@@ -12,19 +12,12 @@ class RealSpriteAction:
     
     def write(self, file):
         if isinstance(self.sprite, nml.ast.EmptyRealSprite):
-            file.write("* 0 0\n")
-            if self.last: file.write("\n")
+            file.print_empty_realsprite()
+            if self.last: file.newline()
             return
-        #<Sprite-number> <filename> <xpos> <ypos> <compression> <ysize> <xsize> <xrel> <yrel>
-        file.write(self.pcx + " ")
-        print_decimal(file, self.sprite.xpos.value)
-        print_decimal(file, self.sprite.ypos.value)
-        print_bytex(file, self.sprite.compression.value)
-        print_decimal(file, self.sprite.ysize.value)
-        print_decimal(file, self.sprite.xsize.value)
-        print_decimal(file, self.sprite.xrel.value)
-        print_decimal(file, self.sprite.yrel.value)
-        file.write("\n\n" if self.last else "\n")
+        file.print_sprite(self.pcx, self.sprite)
+        file.newline()
+        if self.last: file.newline()
     
     def skip_action7(self):
         return True

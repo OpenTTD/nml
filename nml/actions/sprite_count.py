@@ -8,6 +8,7 @@ class SpriteCountAction:
         pass
     
     def write(self, file):
-        file.write("4 ")
-        print_dword(file, self.count)
-        file.write("\n\n")
+        file.print_decimal(4, 2)
+        file.print_dword(self.count)
+        file.newline()
+        file.newline()

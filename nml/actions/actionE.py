@@ -12,12 +12,14 @@ class ActionE:
     
     def write(self, file):
         size = 2 + 4 * len(self.grfid_list)
-        file.write(str(size) + " 0E ")
-        print_byte(file, len(self.grfid_list))
+        file.print_decimal(size, 2)
+        file.print_bytex(0x0E)
+        file.print_byte(len(self.grfid_list))
         for grfid in self.grfid_list:
-            file.write("\n")
-            print_dwordx(file, grfid)
-        file.write("\n\n")
+            file.newline()
+            file.print_dwordx(grfid)
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return True

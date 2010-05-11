@@ -10,15 +10,16 @@ class Action2Real(Action2):
     def write(self, file):
         size = 2 + 2 * len(self.loaded_list) + 2 * len(self.loading_list)
         Action2.write(self, file, size)
-        print_byte(file, len(self.loaded_list))
-        print_byte(file, len(self.loading_list))
-        file.write("\n")
+        file.print_byte(len(self.loaded_list))
+        file.print_byte(len(self.loading_list))
+        file.newline()
         for i in self.loaded_list:
-            print_word(file, i)
-        file.write("\n")
+            file.print_word(i)
+        file.newline()
         for i in self.loading_list:
-            print_word(file, i)
-        file.write("\n\n")
+            file.print_word(i)
+        file.newline()
+        file.newline()
 
 real_action2_alias = {
     'loaded': (0, [0x00, 0x01, 0x02, 0x03]),  #vehicles

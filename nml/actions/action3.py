@@ -17,18 +17,20 @@ class Action3:
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
         if self.feature <= 3: size += 2
-        file.write(str(size) + " 03 ")
-        print_bytex(file, self.feature)
-        print_bytex(file, 1 if not self.is_livery_override else 0x81) # a single id
-        print_varx(file, self.id, 3 if self.feature <= 3 else 1)
-        print_byte(file, len(self.cid_mappings))
-        file.write("\n")
+        file.print_decimal(size, 2)
+        file.print_bytex(3)
+        file.print_bytex(self.feature)
+        file.print_bytex(1 if not self.is_livery_override else 0x81) # a single id
+        file.print_varx(self.id, 3 if self.feature <= 3 else 1)
+        file.print_byte(len(self.cid_mappings))
+        file.newline()
         for cargo, cid in self.cid_mappings:
             cargo.write(file, 1)
-            print_wordx(file, cid)
-            file.write("\n")
-        print_wordx(file, self.def_cid)
-        file.write("\n\n")
+            file.print_wordx(cid)
+            file.newline()
+        file.print_wordx(self.def_cid)
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return True

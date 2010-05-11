@@ -8,9 +8,11 @@ class Action10:
         pass
     
     def write(self, file):
-        file.write("2 10 ")
-        print_bytex(file, self.label)
-        file.write("\n\n")
+        file.print_decimal(2, 2)
+        file.print_bytex(0x10)
+        file.print_bytex(self.label)
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return True

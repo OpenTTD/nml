@@ -15,13 +15,15 @@ class Action4:
     def write(self, file):
         # +3 after string size is for final 0 and thorn at the start
         size = 4 + self.size + get_string_size(self.text) + 3
-        file.write(str(size) + " 04 ")
-        print_bytex(file, self.feature)
-        print_bytex(file, self.lang)
-        file.write("01 ")
-        print_varx(file, self.id, self.size)
-        print_string(file, self.text)
-        file.write("\n\n")
+        file.print_decimal(size, 2)
+        file.print_bytex(4)
+        file.print_bytex(self.feature)
+        file.print_bytex(self.lang)
+        file.print_bytex(1)
+        file.print_varx(self.id, self.size)
+        file.print_string(self.text)
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return True

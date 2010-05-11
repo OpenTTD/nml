@@ -31,7 +31,7 @@ class ConstantNumeric:
     def debug_print(self, indentation):
         print indentation*' ' + 'Int:', self.value
     def write(self, file, size):
-        print_varx(file, self.value, size)
+        file.print_varx(self.value, size)
 
 class BitMask:
     def __init__(self, values):

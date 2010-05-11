@@ -26,21 +26,23 @@ class ActionB:
                 if self.param2 != None:
                     size += 1
         
-        file.write(str(size) + " 0B ")
+        file.print_decimal(size, 2)
+        file.print_bytex(0x0B)
         self.severity.write(file, 1)
-        print_bytex(file, self.lang)
+        file.print_bytex(self.lang)
         if isinstance(self.msg, int):
-            print_bytex(file, self.msg)
+            file.print_bytex(self.msg)
         else:
-            print_bytex(file, 0xFF)
-            print_string(file, self.msg)
+            file.print_bytex(0xFF)
+            file.print_string(self.msg)
         if self.data != None:
-            print_string(file, self.data)
+            file.print_string(self.data)
             if self.param1 != None:
                 self.param1.write(file, 1)
                 if self.param2 != None:
                     self.param2.write(file, 1)
-        file.write("\n\n")
+        file.newline()
+        file.newline()
     
     def skip_action7(self):
         return False
