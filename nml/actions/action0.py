@@ -78,16 +78,17 @@ def parse_property(feature, name, value, id, unit):
         if prop == None: raise ScriptError("Unkown property number: " + name.value)
     else: raise ScriptError("Invalid type as property identifier")
     
-    mul = 1
-    if 'unit_conversion' in prop: mul = prop['unit_conversion']
-    if unit != None:
-        if not 'unit_type' in prop or unit.type != prop['unit_type']:
-            raise ScriptError("Invalid unit for property: " + name)
-        mul = mul / unit.convert
-    if mul != 1:
-        if not (isinstance(value, ConstantNumeric) or isinstance(value, ConstantFloat)):
-            raise ScriptError("Unit conversion specified for property, but no constant value found")
-        value = ConstantNumeric(int(value.value * mul + 0.5))
+    if unit == None or unit.type != 'nfo':
+        mul = 1
+        if 'unit_conversion' in prop: mul = prop['unit_conversion']
+        if unit != None:
+            if not 'unit_type' in prop or unit.type != prop['unit_type']:
+                raise ScriptError("Invalid unit for property: " + name)
+            mul = mul / unit.convert
+        if mul != 1:
+            if not (isinstance(value, ConstantNumeric) or isinstance(value, ConstantFloat)):
+                raise ScriptError("Unit conversion specified for property, but no constant value found")
+            value = ConstantNumeric(int(value.value * mul + 0.5))
     
     if 'custom_function' in prop:
         props = prop['custom_function'](value)

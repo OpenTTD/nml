@@ -127,7 +127,7 @@ def t_NUMBER(t):
     return t
 
 def t_UNIT(t):
-    r'(mph)|(km/h)|(m/s)|(hp)|(ton)'
+    r'(nfo)|(mph)|(km/h)|(m/s)|(hp)|(ton)'
     return t
 
 def t_ID(t):
