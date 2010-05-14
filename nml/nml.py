@@ -31,22 +31,24 @@ def main(argv):
     global _debug
     _debug = 0
     retval = 0
-    usage = """Usage: %prog [options] <filenames>\nWhere <filenames> are one or more nml files to parse"""
+    usage = """Usage: %prog [options] <filename>\nWhere <filename> is the nml file to parse"""
     # that above line should really contain _real_ newlines, but that's really not readable without strange indentation
     parser = optparse.OptionParser(usage=usage)
-    parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="write the AST to stdout")
+    parser.set_defaults(debug=False)
+    parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
+    parser.add_option("-o", "--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
+    parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
     try:
         opts, args = parser.parse_args(argv)
     except optparse.OptionError, err:
         print "Error while parsing arguments: ", err
-        argparser.print_help()
+        parser.print_help()
         sys.exit(2)
     except TypeError, err:
         print "Error while parsing arguments: ", err
-        argparser.print_help()
+        parser.print_help()
         sys.exit(2)
 
-    print opts.debug
     if opts.debug:
         _debug = 1
 
@@ -54,23 +56,25 @@ def main(argv):
     read_lang_files()
     
     if not args:
-        raise "TODO: re-implement writing to stdout"
-        #retval |= nml(sys.stdin, sys.stdout)
-    for arg in args:
-        if not os.access(arg, os.R_OK):
-            print "Failed to open "+arg
-            retval |= 2
-        else:
-            outputfilename = filename_output_from_input(arg, ".nfo")
-            print outputfilename+": parsing "+arg
-            input = codecs.open(arg, 'r', 'utf-8')
-            output_nfo = OutputNFO(outputfilename)
-            output_grf = OutputGRF(filename_output_from_input(arg, ".grf"))
-            outputs = (output_nfo, output_grf)
-            retval |= nml(input, outputs)
-            for output in outputs: output.close()
-            input.close()
-    sys.exit(retval)
+        if not (opts.grf_filename or opts.nfo_filename):
+            parser.print_help()
+            sys.exit(2)
+        input = sys.stdin
+    elif len(args) > 1:
+        raise "Error: only a single nml file can be read per run"
+    else:
+        input_filename = args[0]
+        input = codecs.open(input_filename, 'r', 'utf-8')
+        if not opts.grf_filename:
+            opts.grf_filename = filename_output_from_input(input_filename, ".grf")
+    
+    outputs = []
+    if opts.grf_filename: outputs.append(OutputGRF(opts.grf_filename))
+    if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
+    ret = nml(input, outputs)
+    for output in outputs: output.close()
+    input.close()
+    sys.exit(ret)
 
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
