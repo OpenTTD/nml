@@ -1,5 +1,5 @@
 from string import *
-import sys, codecs, getopt
+import sys, codecs, optparse
 from ast import *
 from tokens import *
 from parser import *
@@ -25,33 +25,31 @@ def p_error(p):
 import ply.yacc as yacc
 parser = yacc.yacc(debug=True)
 
-def usage():
-    print "Usage: "+sys.argv[0]+" [<options>] <filenames>"
-    print """
-    where <filenames> are one or more nml files to parse and available options are
-    -h, --help: show this help text
-    Mind that you must not swap options and arguments. Options MUST go first.
-    """
-
 _debug = 0
 
 def main(argv):
     global _debug
     _debug = 0
     retval = 0
-    
-    try:                  
-        opts, args = getopt.getopt(argv, "hd", ["help","debug"])
-    except getopt.GetoptError:
-        usage()
+    usage = """Usage: %prog [options] <filenames>\nWhere <filenames> are one or more nml files to parse"""
+    # that above line should really contain _real_ newlines, but that's really not readable without strange indentation
+    parser = optparse.OptionParser(usage=usage)
+    parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="write the AST to stdout")
+    try:
+        opts, args = parser.parse_args(argv)
+    except optparse.OptionError, err:
+        print "Error while parsing arguments: ", err
+        argparser.print_help()
         sys.exit(2)
-    for opt, arg in opts:
-        if opt in ("-h", "--help"):
-            usage()
-            sys.exit()
-        elif opt in ("-d", "--debug"):
-            _debug = 1
-    
+    except TypeError, err:
+        print "Error while parsing arguments: ", err
+        argparser.print_help()
+        sys.exit(2)
+
+    print opts.debug
+    if opts.debug:
+        _debug = 1
+
     read_extra_commands()
     read_lang_files()
     
