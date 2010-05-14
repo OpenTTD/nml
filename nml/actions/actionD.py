@@ -52,7 +52,7 @@ class ActionD:
         file.print_sprite_size(size)
         file.print_bytex(0x0D)
         self.target.write(file, 1)
-        file.print_bytex(actionDoperator_to_num(self.op), self.op)
+        file.print_bytex(actionDoperator_to_num[self.op], self.op)
         self.param1.write(file, 1)
         self.param2.write(file, 1)
         if self.data != None: self.data.write(file, 4)
