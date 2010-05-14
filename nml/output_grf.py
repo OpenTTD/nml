@@ -239,7 +239,7 @@ class OutputGRF:
                     all_blue = False
                     break
             if all_blue:
-                sprite = sprite.crop(0, 0, 1, 1)
+                sprite = sprite.crop((0, 0, 1, 1))
                 xoffset = 0
                 yoffset = 0
             else:
