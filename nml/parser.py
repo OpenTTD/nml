@@ -9,6 +9,7 @@ precedence = (
     ('left','XOR'),
     ('left','AND'),
     ('left','COMP_EQ','COMP_NEQ','COMP_LT','COMP_GT'),
+    ('left','SHIFT_LEFT','SHIFT_RIGHT'),
     ('left','PLUS','MINUS'),
     ('left','TIMES','DIVIDE','MODULO'),
 )
