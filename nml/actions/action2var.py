@@ -67,10 +67,10 @@ class Action2Var(Action2):
                  r.result = remove_ref(r.result)
             else:
                  r.result = r.result.value | 0x8000
-        if isinstance(r.default_result, basestring):
-             r.default_result = remove_ref(r.default_result)
+        if isinstance(self.default_result, basestring):
+             self.default_result = remove_ref(self.default_result)
         else:
-             r.default_result = r.default_result.value | 0x8000
+             self.default_result = self.default_result.value | 0x8000
     
     def write(self, file):
         global action2operator_to_num
@@ -98,7 +98,7 @@ class Action2Var(Action2):
             file.print_varx(r.min.value, self.varsize)
             file.print_varx(r.max.value, self.varsize)
             file.newline()
-        file.print_wordx(r.default_result)
+        file.print_wordx(self.default_result)
         file.newline()
         file.newline()
 
