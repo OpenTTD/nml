@@ -71,7 +71,7 @@ def main(argv):
     else:
         input_filename = args[0]
         input = codecs.open(input_filename, 'r', 'utf-8')
-        if not opts.grf_filename:
+        if not (opts.grf_filename or opts.nfo_filename):
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
     
     outputs = []
