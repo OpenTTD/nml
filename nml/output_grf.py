@@ -1,4 +1,5 @@
 import Image
+import nml
 from generic import *
 from lz77 import LZ77
 
@@ -126,8 +127,10 @@ class OutputGRF:
                 l-=1
     
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
-        #self.wsprite_encoderegular_fakecompress(sprite, data, xoffset, yoffset, compression)
-        #return
+        if not nml.compress_grf:
+            self.wsprite_encoderegular_fakecompress(sprite, data, xoffset, yoffset, compression)
+            return
+        
         lz = LZ77(data)
         stream = lz.Encode()
         if (compression & 2) == 0: size = len(data)
@@ -232,7 +235,7 @@ class OutputGRF:
         return (sprite, xoffset, yoffset)
     
     def wsprite(self, sprite, xoffset, yoffset, compression):
-        if compression & 0x40 == 0:
+        if nml.crop_sprites and (compression & 0x40 == 0):
             all_blue = True
             for p in sprite.getdata():
                 if p != 0:

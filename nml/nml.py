@@ -26,18 +26,22 @@ import ply.yacc as yacc
 parser = yacc.yacc(debug=True)
 
 _debug = 0
+crop_sprites = False
+compress_grf = True
 
 def main(argv):
-    global _debug
+    global _debug, crop_sprites, compress_grf
     _debug = 0
     retval = 0
     usage = """Usage: %prog [options] <filename>\nWhere <filename> is the nml file to parse"""
     # that above line should really contain _real_ newlines, but that's really not readable without strange indentation
     parser = optparse.OptionParser(usage=usage)
-    parser.set_defaults(debug=False)
+    parser.set_defaults(debug=False, crop=False, compress=True)
     parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     parser.add_option("-o", "--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
+    parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
+    parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     try:
         opts, args = parser.parse_args(argv)
     except optparse.OptionError, err:
@@ -51,6 +55,8 @@ def main(argv):
 
     if opts.debug:
         _debug = 1
+    crop_sprites = opts.crop
+    compress_grf = opts.compress
 
     read_extra_commands()
     read_lang_files()
