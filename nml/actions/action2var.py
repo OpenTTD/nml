@@ -272,10 +272,17 @@ def parse_varaction2_expression(expr, varsize):
     
     return (extra_actions, mods, var_list, var_list_size)
 
+def make_return_varact2(switch_block):
+    act = Action2Var(switch_block.feature.value, switch_block.name + '@return', 0x89, 4)
+    act.var_list = [VarAction2Var(0x1C, ConstantNumeric(0), ConstantNumeric(0xFFFFFFFF))]
+    act.default_result = 'CB_FAILED'
+    return act
+    
 def parse_varaction2(switch_block):
     global free_parameters
     free_parameters_backup = free_parameters[:]
     action6 = Action6()
+    return_action = None
     varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature.value]
     if feature == None: raise ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
@@ -292,12 +299,18 @@ def parse_varaction2(switch_block):
     varaction2.var_list = var_list
     offset += var_list_size
     
-    #nvar == 0 is a special case, make sure that isn't triggered here
-    if len(switch_block.body.ranges) == 0:
+    #nvar == 0 is a special case, make sure that isn't triggered here, unless we want it to
+    if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
         switch_block.body.ranges.append(nml.ast.SwitchRange(ConstantNumeric(0), ConstantNumeric(0), switch_block.body.default))
     
     for r in switch_block.body.ranges:
-        if isinstance(r.result, basestring):
+        if r.result is None:
+            if return_action is None: return_action = make_return_varact2(switch_block)
+            action2 = add_ref(return_action.name)
+            assert return_action == action2
+            varaction2.references.append(action2)
+            r.result = return_action.name
+        elif isinstance(r.result, basestring):
             if r.result != 'CB_FAILED':
                 action2 = add_ref(r.result)
                 varaction2.references.append(action2)
@@ -312,7 +325,17 @@ def parse_varaction2(switch_block):
         varaction2.ranges.append(r)
     
     default = switch_block.body.default
-    if isinstance(default, basestring):
+    if default is None:
+        if len(switch_block.body.ranges) == 0:
+            #in this case, we can return with nvar == 0 without an extra action2
+            default = 'CB_FAILED'
+        else:
+            if return_action is None: return_action = make_return_varact2(switch_block)
+            action2 = add_ref(return_action.name)
+            assert action2 == return_action
+            varaction2.references.append(action2)
+            default = return_action.name
+    elif isinstance(default, basestring):
         if default != 'CB_FAILED':
             action2 = add_ref(default)
             varaction2.references.append(action2)
@@ -324,5 +347,7 @@ def parse_varaction2(switch_block):
     if len(action6.modifications) > 0: action_list.append(action6)
     
     action_list.append(varaction2)
+    if return_action is not None: action_list.insert(0, return_action)
+    
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

@@ -151,6 +151,8 @@ class SwitchBody:
         print indentation*' ' + 'Default:'
         if isinstance(self.default, basestring):
             print (indentation+2)*' ' + 'Go to switch:', self.default
+        elif self.default is None:
+            print (indentation+2)*' ' + 'Return computed value'
         else:
             self.default.debug_print(indentation + 2)
 
@@ -168,6 +170,8 @@ class SwitchRange:
         print indentation*' ' + 'Result:'
         if isinstance(self.result, basestring):
             print (indentation+2)*' ' + 'Go to switch:', self.result
+        elif self.result is None:
+            print (indentation+2)*' ' + 'Return computed value'
         else:
             self.result.debug_print(indentation + 2)
 
