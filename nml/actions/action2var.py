@@ -292,6 +292,10 @@ def parse_varaction2(switch_block):
     varaction2.var_list = var_list
     offset += var_list_size
     
+    #nvar == 0 is a special case, make sure that isn't triggered here
+    if len(switch_block.body.ranges) == 0:
+        switch_block.body.ranges.append(nml.ast.SwitchRange(ConstantNumeric(0), ConstantNumeric(0), switch_block.body.default))
+    
     for r in switch_block.body.ranges:
         if isinstance(r.result, basestring):
             if r.result != 'CB_FAILED':
