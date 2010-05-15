@@ -12,6 +12,7 @@ reserved = {
     'property' : 'PROPERTY',
     'graphics' : 'GRAPHICS',
     'spriteblock' : 'SPRITEBLOCK', #action 1 + normal action2
+    'template' : 'TEMPLATE', #sprite template for action1
     'spriteset' : 'SPRITESET', #action 1
     'spritegroup' : 'SPRITEGROUP', #action 2
     'ground' : 'GROUND',

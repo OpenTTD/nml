@@ -24,6 +24,7 @@ def p_main_block(t):
     '''main_block : skipable_block
                   | switch
                   | spriteblock
+                  | template_declaration
                   | cargotable'''
     t[0] = t[1]
 
@@ -226,8 +227,24 @@ def p_spriteset_list(t):
     else: t[0] = t[1] + [t[2]]
 
 def p_spriteset(t):
-    'spriteset : SPRITESET LPAREN ID COMMA STRING_LITERAL RPAREN LBRACE real_sprite_list RBRACE'
+    'spriteset : SPRITESET LPAREN ID COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
     t[0] = SpriteSet(t[3], t[5], t[8])
+
+def p_spriteset_contents(t):
+    '''spriteset_contents : real_sprite
+                          | template_usage
+                          | spriteset_contents real_sprite
+                          | spriteset_contents template_usage'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+def p_template_declaration(t):
+    'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE real_sprite_list RBRACE'
+    t[0] = TemplateDeclaration(t[2], t[4], t[7])
+
+def p_template_usage(t):
+    'template_usage : ID LPAREN param_list RPAREN'
+    t[0] = TemplateUsage(t[1], t[3])
 
 def p_real_sprite_list(t):
     '''real_sprite_list : real_sprite
@@ -387,5 +404,5 @@ def p_date(t):
     t[0] = ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1)
 
 def p_replace(t):
-    'replace : REPLACESPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE real_sprite_list RBRACE'
+    'replace : REPLACESPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
     t[0] = ReplaceSprite(t[3], t[5], t[8])

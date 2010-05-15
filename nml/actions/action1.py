@@ -49,17 +49,18 @@ def parse_sprite_block(sprite_block):
     
     for item in sprite_block.spriteset_list:
         if isinstance(item, nml.ast.SpriteSet):
+            real_sprite_list = parse_sprite_list(item.sprite_list)
             spritesets[item.name] = num_sets
             num_sets += 1
     
             if num_ent == -1:
-                num_ent = len(item.sprite_list)
-            elif num_ent != len(item.sprite_list):
+                num_ent = len(real_sprite_list)
+            elif num_ent != len(real_sprite_list):
                 raise ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
     
-            last_sprite = item.sprite_list[len(item.sprite_list) - 1]
-            for sprite in item.sprite_list:
-                action_list.append(RealSpriteAction(sprite, item.pcx, sprite == last_sprite))
+            last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
+            for sprite, id_dict in real_sprite_list:
+                action_list.append(parse_real_sprite(sprite, item.pcx, sprite == last_sprite, id_dict))
     
         elif isinstance(item, nml.ast.SpriteGroup):
             action_list_append.extend(get_real_action2s(item, sprite_block.feature.value, spritesets))

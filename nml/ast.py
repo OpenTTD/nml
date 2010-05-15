@@ -334,6 +334,42 @@ class SpriteBlock:
     def get_action_list(self):
         return parse_sprite_block(self)
 
+class TemplateDeclaration:
+    def __init__(self, name, param_list, sprite_list):
+        self.name = name
+        if name not in sprite_template_map:
+            sprite_template_map[name] = self
+        else:
+            raise ScriptError("Template named '" + name + "' is already defined")
+        self.param_list = param_list
+        self.sprite_list = sprite_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Template declaration:', self.name
+        print (indentation+2)*' ' + 'Parameters:'
+        for param in self.param_list:
+            print (indentation+4)*' ' + param
+        print (indentation+2)*' ' + 'Sprites:'
+        for sprite in self.sprite_list:
+            sprite.debug_print(indentation + 4)
+    
+    def get_action_list(self):
+        return []
+
+class TemplateUsage:
+    def __init__(self, name, param_list):
+        self.name = name
+        self.param_list = param_list
+    
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Template used:', self.name
+        print (indentation+2)*' ' + 'Parameters:'
+        for param in self.param_list:
+            if isinstance(param, basestring):
+                print (indentation+4)*' ' + 'ID:', param
+            else:
+                param.debug_print(indentation + 4)
+
 class SpriteSet:
     def __init__(self, name, pcx, sprite_list):
         self.name = name
@@ -352,41 +388,16 @@ class EmptyRealSprite:
         print indentation*' ' + 'Empty real sprite'
 
 class RealSprite:
-    def __init__(self, param_list):
-        if not 6 <= len(param_list) <= 7:
-            raise ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
-        try:
-            self.xpos  = reduce_constant(param_list[0])
-            self.ypos  = reduce_constant(param_list[1])
-            self.xsize = reduce_constant(param_list[2])
-            self.ysize = reduce_constant(param_list[3])
-            self.xrel  = reduce_constant(param_list[4])
-            self.yrel  = reduce_constant(param_list[5])
-            
-            check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'")
-            check_range(self.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'")
-            check_range(self.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'")
-            check_range(self.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'")
-            check_range(self.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'")
-            check_range(self.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'")
-            
-            if len(param_list) == 7:
-                self.compression = reduce_constant(param_list[6], [real_sprite_compression_flags])
-                self.compression.value |= 0x01
-            else:
-                self.compression = ConstantNumeric(0x01)
-            # only bits 0, 1, 3, and 6 can be set
-            if (self.compression.value & ~0x4B) != 0:
-                raise ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(self.compression.value))
-        except ConstError:
-            raise ScriptError("Real sprite parameters should be compile-time constants.")
+    def __init__(self, param_list = None):
+        self.param_list = param_list
     
     def debug_print(self, indentation):
-        print indentation*' ' + 'Real sprite'
-        print (indentation+2)*' ' + 'position: (', self.xpos.value,  ',', self.ypos.value,  ')'
-        print (indentation+2)*' ' + 'size:     (', self.xsize.value, ',', self.ysize.value, ')'
-        print (indentation+2)*' ' + 'offset:   (', self.xrel.value,  ',', self.yrel.value,  ')'
-        print (indentation+2)*' ' + 'compression: ', self.compression.value
+        print indentation*' ' + 'Real sprite, parameters:'
+        for param in self.param_list:
+            if isinstance(param, basestring):
+                print (indentation+2)*' ' + 'ID:', param
+            else:
+                param.debug_print(indentation + 2)
 
 class SpriteGroup:
     def __init__(self, name, spriteview_list):

@@ -35,10 +35,12 @@ class ActionA:
 def parse_actionA(replaces):
     action_list = []
     
-    action_list.append(ActionA(1, [(len(replaces.sprite_list), replaces.start_id)]))
+    real_sprite_list = parse_sprite_list(replaces.sprite_list)
     
-    last_sprite = replaces.sprite_list[len(replaces.sprite_list) - 1]
-    for sprite in replaces.sprite_list:
-        action_list.append(RealSpriteAction(sprite, replaces.pcx, sprite == last_sprite))
+    action_list.append(ActionA(1, [(len(real_sprite_list), replaces.start_id)]))
+    
+    last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
+    for sprite, id_dict in real_sprite_list:
+        action_list.append(parse_real_sprite(sprite, replaces.pcx, sprite == last_sprite, id_dict))
     
     return action_list
