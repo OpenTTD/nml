@@ -142,7 +142,7 @@ class SwitchBody:
         self.ranges = []
     
     def add_range(self, switch_range):
-        self.ranges.append(switch_range)
+        self.ranges.insert(0, switch_range)
         return self
     
     def debug_print(self, indentation):
