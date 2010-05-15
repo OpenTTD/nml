@@ -199,7 +199,11 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
         shift = reduce_expr(expr.shift, id_dicts)
         mask = reduce_expr(expr.mask, id_dicts)
         param = reduce_expr(expr.param, id_dicts)
-        return Variable(num, shift, mask, param)
+        var = Variable(num, shift, mask, param)
+        var.add = expr.add
+        var.div = expr.div
+        var.mod = expr.mod
+        return var
     elif isinstance(expr, basestring):
         for id_dict in id_dicts:
             id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
