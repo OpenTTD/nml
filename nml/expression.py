@@ -177,11 +177,11 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
                 return expr1
             if expr.op == Operator.ADD and expr1.div == None and expr1.mod == None:
                 if expr1.add == None: expr1.add = expr2
-                else: expr1.add = ConstantNumeric(expr1.add + expr2.value)
+                else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value)
                 return expr1
             if expr.op == Operator.SUB and expr1.div == None and expr1.mod == None:
                 if expr1.add == None: expr1.add = ConstantNumeric(-expr2.value)
-                else: expr1.add = ConstantNumeric(expr1.add - expr2.value)
+                else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value)
                 return expr1
             if expr.op == Operator.DIV and expr1.div == None and expr1.mod == None:
                 if expr1.add == None: expr1.add = ConstantNumeric(0)
