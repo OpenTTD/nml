@@ -1,8 +1,8 @@
 from string import *
 import sys, codecs, optparse
 from ast import *
-from tokens import *
 from parser import *
+from tokens import NMLLexer
 from grfstrings import *
 from generic import ScriptError
 from actions.sprite_count import SpriteCountAction
@@ -12,8 +12,11 @@ from output_nfo import OutputNFO
 from output_grf import OutputGRF
 
 # Build the lexer
-import ply.lex as lex
-lexer = lex.lex()
+lexer = NMLLexer()
+lexer.build()
+
+# provide yacc with the tokens
+tokens = lexer.tokens
 
 def p_error(p):
     if p == None: print "Unexpected EOF"
@@ -91,7 +94,7 @@ def nml(inputfile, outputfiles):
         print "Empty input file"
         return 4
     try:
-        result = parser.parse(script)
+        result = parser.parse(script, lexer=lexer.lexer)
     except:
         print "Error while parsing input file"
         raise

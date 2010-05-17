@@ -1,5 +1,5 @@
 import sys
-
+import ply.lex as lex
 reserved = {
     'grf' : 'GRF',
     'var' : 'VARIABLE',
@@ -77,81 +77,86 @@ tokens = list(reserved.values()) + [
     'VARRANGE',
     'UNIT',
 ]
-
-# Tokens
-
-t_PLUS             = r'\+'
-t_MINUS            = r'-'
-t_TIMES            = r'\*'
-t_MODULO           = r'%'
-t_DIVIDE           = r'/'
-t_AND              = r'&'
-t_OR               = r'\|'
-t_XOR              = r'\^'
-t_EQ               = r'='
-t_LPAREN           = r'\('
-t_RPAREN           = r'\)'
-t_SHIFT_LEFT       = r'<<'
-t_SHIFT_RIGHT      = r'>>'
-t_COMP_EQ          = r'=='
-t_COMP_NEQ         = r'!='
-t_COMP_LT          = r'<'
-t_COMP_GT          = r'>'
-t_COMMA            = r','
-t_DOT              = r'\.'
-t_RANGE            = r'\.\.'
-t_LBRACKET         = r'\['
-t_RBRACKET         = r'\]'
-t_LBRACE           = r'{'
-t_RBRACE           = r'}'
-t_TERNARY_OPEN     = r'\?'
-t_COLON            = r':'
-t_SEMICOLON        = r';'
-t_ignore_COMMENT   = r'(/\*(\n|.)*?\*/)|(//.*)'
-
-def t_FLOAT(t):
-    r'\d+\.\d+'
-    t.value = float(t.value)
-    return t
-
-def t_NUMBER(t):
-    r'(0x[0-9a-zA-Z]+)|(\d+)'
-    try:
-        base = 10
-        if len(t.value) >= 2 and t.value[0:2] == "0x":
-            t.value = t.value[2:]
-            base = 16
-        t.value = int(t.value, base)
-    except ValueError:
-        print "Integer value too large", t.value
-        t.value = 0
-    return t
-
-def t_UNIT(t):
-    r'(nfo)|(mph)|(km/h)|(m/s)|(hp)|(ton)'
-    return t
-
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if t.value in var_ranges:
-        t.type = 'VARRANGE'
-        t.value = var_ranges[t.value]
-    else:
-        t.type = reserved.get(t.value,'ID')    # Check for reserved words
-    return t
-
-def t_STRING_LITERAL(t):
-    r'".*?[^\\]"'
-    t.value = t.value[1:-1]
-    return t
-
-# Ignored characters
-t_ignore = " \t\r"
-
-def t_newline(t):
-    r'\n+'
-    t.lexer.lineno += t.value.count("\n")
+class NMLLexer:
+    # Tokens
+    tokens = tokens
     
-def t_error(t):
-    print "Illegal character '%s' at line %d" % (t.value[0], t.lexer.lineno)
-    sys.exit(1)
+    t_PLUS             = r'\+'
+    t_MINUS            = r'-'
+    t_TIMES            = r'\*'
+    t_MODULO           = r'%'
+    t_DIVIDE           = r'/'
+    t_AND              = r'&'
+    t_OR               = r'\|'
+    t_XOR              = r'\^'
+    t_EQ               = r'='
+    t_LPAREN           = r'\('
+    t_RPAREN           = r'\)'
+    t_SHIFT_LEFT       = r'<<'
+    t_SHIFT_RIGHT      = r'>>'
+    t_COMP_EQ          = r'=='
+    t_COMP_NEQ         = r'!='
+    t_COMP_LT          = r'<'
+    t_COMP_GT          = r'>'
+    t_COMMA            = r','
+    t_DOT              = r'\.'
+    t_RANGE            = r'\.\.'
+    t_LBRACKET         = r'\['
+    t_RBRACKET         = r'\]'
+    t_LBRACE           = r'{'
+    t_RBRACE           = r'}'
+    t_TERNARY_OPEN     = r'\?'
+    t_COLON            = r':'
+    t_SEMICOLON        = r';'
+    t_ignore_COMMENT   = r'(/\*(\n|.)*?\*/)|(//.*)'
+
+    def t_FLOAT(self, t):
+        r'\d+\.\d+'
+        t.value = float(t.value)
+        return t
+
+    def t_NUMBER(self, t):
+        r'(0x[0-9a-zA-Z]+)|(\d+)'
+        try:
+            base = 10
+            if len(t.value) >= 2 and t.value[0:2] == "0x":
+                t.value = t.value[2:]
+                base = 16
+            t.value = int(t.value, base)
+        except ValueError:
+            print "Integer value too large", t.value
+            t.value = 0
+        return t
+
+    def t_UNIT(self, t):
+        r'(nfo)|(mph)|(km/h)|(m/s)|(hp)|(ton)'
+        return t
+
+    def t_ID(self, t):
+        r'[a-zA-Z_][a-zA-Z0-9_]*'
+        if t.value in var_ranges:
+            t.type = 'VARRANGE'
+            t.value = var_ranges[t.value]
+        else:
+            t.type = reserved.get(t.value,'ID')    # Check for reserved words
+        return t
+
+    def t_STRING_LITERAL(self, t):
+        r'".*?[^\\]"'
+        t.value = t.value[1:-1]
+        return t
+
+    # Ignored characters
+    t_ignore = " \t\r"
+
+    def t_newline(self, t):
+        r'\n+'
+        t.lexer.lineno += t.value.count("\n")
+        
+    def t_error(self, t):
+        print "Illegal character '%s' at line %d" % (t.value[0], t.lexer.lineno)
+        sys.exit(1)
+    
+    
+    def build(self, **kwargs):
+        self.lexer = lex.lex(module=self, **kwargs)
