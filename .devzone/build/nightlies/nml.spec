@@ -20,6 +20,7 @@ BuildRequires:  python-base
 BuildRequires:  python-devel
 %endif
 Provides:       nml2nfo
+Requires:       python-ply python-imaging
 
 %description
 A tool to convert a meta-language to nfo, making newgrf coding easier.
