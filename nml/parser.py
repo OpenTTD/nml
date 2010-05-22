@@ -151,28 +151,25 @@ def p_switch(t):
     t[0] = Switch(t[3], t[5], t[7], t[9], t[12])
 
 def p_switch_body(t):
-    '''switch_body : RETURN expression SEMICOLON
-                   | RETURN SEMICOLON
-                   | ID SEMICOLON
-                   | string SEMICOLON
+    '''switch_body : switch_value
                    | switch_range switch_body'''
-    if t[1] == 'return': t[0] = SwitchBody(t[2] if len(t) == 4 else None)
-    elif t[2] == ';': t[0] = SwitchBody(t[1])
+    if len(t) == 2: t[0] = SwitchBody(t[1])
     else: t[0] = t[2].add_range(t[1])
 
 def p_switch_range(t):
-    '''switch_range : expression COLON RETURN expression SEMICOLON
-                    | expression COLON RETURN SEMICOLON
-                    | expression COLON ID SEMICOLON
-                    | expression COLON string SEMICOLON
-                    | expression RANGE expression COLON RETURN expression SEMICOLON
-                    | expression RANGE expression COLON RETURN SEMICOLON
-                    | expression RANGE expression COLON ID SEMICOLON
-                    | expression RANGE expression COLON string SEMICOLON'''
-    if len(t) == 6: t[0] = SwitchRange(t[1], t[1], t[4])
-    elif len(t) == 5: t[0] = SwitchRange(t[1], t[1], None if t[3] == 'return' else t[3])
-    elif len(t) == 8: t[0] = SwitchRange(t[1], t[3], t[6])
-    else: t[0] = SwitchRange(t[1], t[3], None if t[5] == 'return' else t[5])
+    '''switch_range : expression COLON switch_value
+                    | expression RANGE expression COLON switch_value'''
+    if len(t) == 4: t[0] = SwitchRange(t[1], t[1], t[3])
+    else: t[0] = SwitchRange(t[1], t[3], t[5])
+
+def p_switch_value(t):
+    '''switch_value : RETURN expression SEMICOLON
+                    | RETURN SEMICOLON
+                    | ID SEMICOLON
+                    | string SEMICOLON'''
+    if len(t) == 4: t[0] = t[2]
+    elif t[1] == 'return': t[0] = None
+    else: t[0] = t[1]
 
 def p_item(t):
     '''item : ITEM LPAREN expression RPAREN LBRACE skipable_script RBRACE
