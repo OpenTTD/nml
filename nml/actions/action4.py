@@ -8,10 +8,10 @@ class Action4:
         self.size = size
         self.id = id
         self.text = text
-    
+
     def prepare_output(self):
         if self.size == 2: self.lang = self.lang | 0x80
-    
+
     def write(self, file):
         # +3 after string size is for final 0 and thorn at the start
         size = 4 + self.size + get_string_size(self.text) + 3
@@ -24,13 +24,13 @@ class Action4:
         file.print_string(self.text)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return True
-    
+
     def skip_action9(self):
         return False
-    
+
     def skip_needed(self):
         return True
 
@@ -54,9 +54,9 @@ def get_string_action4s(feature, string_range, string, id = None):
         size = 3
     else:
         size = 1
-    
+
     actions = []
     for translation in grf_strings[string.name]:
         actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
-    
+
     return (id, size == 2, actions)

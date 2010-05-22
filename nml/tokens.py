@@ -80,7 +80,7 @@ tokens = list(reserved.values()) + [
 class NMLLexer(object):
     # Tokens
     tokens = tokens
-    
+
     t_PLUS             = r'\+'
     t_MINUS            = r'-'
     t_TIMES            = r'\*'
@@ -152,11 +152,11 @@ class NMLLexer(object):
     def t_newline(self, t):
         r'\n+'
         t.lexer.lineno += t.value.count("\n")
-        
+
     def t_error(self, t):
         print "Illegal character '%s' at line %d" % (t.value[0], t.lexer.lineno)
         sys.exit(1)
-    
-    
+
+
     def build(self, **kwargs):
         self.lexer = lex.lex(module=self, **kwargs)

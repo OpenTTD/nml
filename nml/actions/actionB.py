@@ -12,10 +12,10 @@ class ActionB:
         self.data = data
         self.param1 = param1
         self.param2 = param2
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         size = 4
         if not isinstance(self.msg, int): size += get_string_size(self.msg) + 3
@@ -25,7 +25,7 @@ class ActionB:
                 size += 1
                 if self.param2 != None:
                     size += 1
-        
+
         file.print_sprite_size(size)
         file.print_bytex(0x0B)
         self.severity.write(file, 1)
@@ -43,13 +43,13 @@ class ActionB:
                     self.param2.write(file, 1)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return False
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True
 
@@ -75,7 +75,7 @@ def parse_error_block(error):
     free_parameters_backup = free_parameters[:]
     action_list = []
     action6 = Action6()
-    
+
     if isinstance(error.severity, ConstantNumeric):
         severity = error.severity
     elif isinstance(error.severity, Parameter) and isinstance(error.severity.num, ConstantNumeric):
@@ -86,10 +86,10 @@ def parse_error_block(error):
         action_list.extend(tmp_param_actions)
         action6.modify_bytes(tmp_param, 1, 1)
         severity = ConstantNumeric(0)
-    
+
     if not isinstance(error.msg, basestring):
         raise ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
-    
+
     langs = [0x7F]
     if error.msg in default_error_msg:
         custom_msg = False
@@ -98,13 +98,13 @@ def parse_error_block(error):
         custom_msg = True
         for translation in grf_strings[error.msg]:
             langs.append(translation['lang'])
-    
+
     if error.data != None:
         if not isinstance(error.data, basestring):
             raise ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
         for translation in grf_strings[error.data]:
             langs.append(translation['lang'])
-    
+
     params = []
     for expr in error.params:
         if expr is None:
@@ -115,9 +115,9 @@ def parse_error_block(error):
             tmp_param, tmp_param_actions = get_tmp_parameter(expr)
             action_list.extend(tmp_param_actions)
             params.append(ConstantNumeric(tmp_param))
-    
+
     assert len(params) == 2
-    
+
     langs = set(langs)
     for lang in langs:
         if custom_msg:
@@ -125,6 +125,6 @@ def parse_error_block(error):
         data = None if error.data == None else get_translation(error.data, lang)
         if len(action6.modifications) > 0: action_list.append(action6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
-    
+
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

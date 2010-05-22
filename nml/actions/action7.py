@@ -21,10 +21,10 @@ class SkipAction:
         self.condtype = condtype
         self.value = value
         self.label = label
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         size = 5 + self.varsize
         file.print_sprite_size(size)
@@ -36,13 +36,13 @@ class SkipAction:
         file.print_bytex(self.label)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return self.feature == 7
-    
+
     def skip_action9(self):
         return self.feature == 9 or self.label == 0
-    
+
     def skip_needed(self):
         return True
 
@@ -89,7 +89,7 @@ def cond_skip_actions(action_list, param):
         start = i + 1
         length = 0
         allow7, allow9 = True, True
-    
+
     if length > 0:
         feature = 7 if allow7 else 9
         if length < 0x10:
@@ -112,13 +112,13 @@ def parse_conditional_block(cond):
     #to the end of the blocks since action7/action9 can't always
     #be mixed
     param_skip_all, action_list = get_tmp_parameter(ConstantNumeric(0xFFFFFFFF))
-    
+
     blocks = []
     while cond != None:
         end_label = free_labels.pop()
         blocks.append({'expr': cond.expr, 'statements': cond.block})
         cond = cond.else_block
-    
+
     #use parse_conditional here, we also need to know if all generated
     #actions (like action6) can be skipped safely
     for block in blocks:
@@ -126,13 +126,13 @@ def parse_conditional_block(cond):
         block['action_list'] = [ActionD(ConstantNumeric(param_skip_all), ConstantNumeric(0xFF), ActionDOperator.EQUAL, ConstantNumeric(0), ConstantNumeric(0))]
         for stmt in block['statements']:
             block['action_list'].extend(stmt.get_action_list())
-    
+
     #Main problem: action10 can't be skipped by action9, so we're
     #nearly forced to use action7, but action7 can't safely skip action6
     #Solution: use temporary parameter, set to 0 for not skip, !=0 for skip.
     #then skip every block of actions (as large as possible) with either
     #action7 or action9, depending on which of the two works.
-    
+
     for i in range(0, len(blocks)):
         block = blocks[i]
         param = block['param_dst']
@@ -144,7 +144,7 @@ def parse_conditional_block(cond):
             else:
                 action_list.append(ActionD(ConstantNumeric(block['param_dst']), ConstantNumeric(block['param_dst']), ActionDOperator.AND, ConstantNumeric(param_skip_all)))
         action_list.extend(cond_skip_actions(block['action_list'], param))
-    
+
     free_labels.extend([item for item in free_labels_backup if not item in free_labels])
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list
@@ -155,16 +155,16 @@ def parse_loop_block(loop):
     free_labels_backup = free_labels[:]
     begin_label = free_while_labels.pop()
     action_list = [Action10(begin_label)]
-    
+
     cond_param, cond_actions = parse_conditional(loop.expr)
     block_actions = []
     for stmt in loop.block:
         block_actions.extend(stmt.get_action_list())
-    
+
     action_list.extend(cond_actions)
     block_actions.append(UnconditionalSkipAction(9, begin_label))
     action_list.extend(cond_skip_actions(block_actions, cond_param))
-    
+
     free_labels.extend([item for item in free_labels_backup if not item in free_labels])
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

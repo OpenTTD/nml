@@ -98,9 +98,9 @@ properties[0x02] = {
     'ocean_speed_fraction' : {'size': 1, 'num': 0x14},
     'canal_speed_fraction' : {'size': 1, 'num': 0x15},
     'retire_early' : {'size': 1, 'num': 0x16},
-    'misc_flags' : {'size': 1, 'num': 0x17},    
+    'misc_flags' : {'size': 1, 'num': 0x17},
     'refittable_cargo_classes' : {'size': 2, 'num': 0x18},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},    
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
     'introduction_date' : {'size': 4, 'num': 0x1A},
 }
 properties[0x02].update(general_veh_props)

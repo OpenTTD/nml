@@ -10,10 +10,10 @@ class Action1:
         self.feature = feature
         self.num_sets = num_sets
         self.num_ent = num_ent
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
         file.print_sprite_size(6)
@@ -23,13 +23,13 @@ class Action1:
         file.print_varx(self.num_ent, 3)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return True
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True
 
@@ -43,31 +43,31 @@ def parse_sprite_block(sprite_block):
     spritesets = {} #map names to action1 entries
     num_sets = 0
     num_ent = -1
-    
+
     if sprite_block.feature.value not in action1_features:
         raise ScriptError("Sprite blocks are not supported for this feature: 0x" + to_hex(sprite_block.feature.value, 2))
-    
+
     for item in sprite_block.spriteset_list:
         if isinstance(item, nml.ast.SpriteSet):
             real_sprite_list = parse_sprite_list(item.sprite_list)
             spritesets[item.name] = num_sets
             num_sets += 1
-    
+
             if num_ent == -1:
                 num_ent = len(real_sprite_list)
             elif num_ent != len(real_sprite_list):
                 raise ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
-    
+
             last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
             for sprite, id_dict in real_sprite_list:
                 action_list.append(parse_real_sprite(sprite, item.pcx, sprite == last_sprite, id_dict))
-    
+
         elif isinstance(item, nml.ast.SpriteGroup):
             action_list_append.extend(get_real_action2s(item, sprite_block.feature.value, spritesets))
         else:
             assert isinstance(item, nml.ast.LayoutSpriteGroup)
             action_list_append.extend(get_layout_action2s(item, sprite_block.feature.value, spritesets))
-    
+
     action_list[0] = Action1(sprite_block.feature, num_sets, num_ent)
     action_list.extend(action_list_append)
     return action_list

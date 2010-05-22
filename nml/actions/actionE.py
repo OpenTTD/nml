@@ -6,10 +6,10 @@ from actionD import *
 class ActionE:
     def __init__(self, grfid_list):
         self.grfid_list = [bswap32(grfid.value) for grfid in grfid_list]
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         size = 2 + 4 * len(self.grfid_list)
         file.print_sprite_size(size)
@@ -20,13 +20,13 @@ class ActionE:
             file.print_dwordx(grfid)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return True
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True
 
@@ -55,9 +55,9 @@ def parse_deactivate_block(block):
                 action6.modify_bytes(param, 1, offset + 3 - i)
             grfid_list.append(ConstantNumeric(0))
         offset += 4
-    
+
     if len(action6.modifications) != 0: action_list.append(action6)
     action_list.append(ActionE(grfid_list))
-    
+
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

@@ -13,15 +13,15 @@ class OutputNFO(object):
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
 ''')
-    
+
     def close(self):
         self.file.close()
-    
+
     def print_byte(self, value):
         if -0x80 < value < 0 : value += 0x100
         assert value >= 0 and value <= 0xFF
         self.file.write("\\b" + str(value) + " ")
-    
+
     def print_bytex(self, value, pretty_print = None):
         if pretty_print != None:
             self.file.write(pretty_print + " ")
@@ -29,27 +29,27 @@ class OutputNFO(object):
         if -0x80 < value < 0: value += 0x100
         assert value >= 0 and value <= 0xFF
         self.file.write(to_hex(value, 2) + " ")
-    
+
     def print_word(self, value):
         if -0x8000 < value < 0: value += 0x10000
         assert value >= 0 and value <= 0xFFFF
         self.file.write("\\w" + str(value) + " ")
-    
+
     def print_wordx(self, value):
         if -0x8000 < value < 0: value += 0x10000
         assert value >= 0 and value <= 0xFFFF
         self.file.write("\\wx" + to_hex(value, 4) + " ")
-    
+
     def print_dword(self, value):
         if -0x80000000 < value < 0: value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
         self.file.write("\\d" + str(value) + " ")
-    
+
     def print_dwordx(self, value):
         if -0x80000000 < value < 0: value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
         self.file.write("\\dx" + to_hex(value, 8) + " ")
-    
+
     def print_varx(self, value, size):
         if size == 1:
             self.print_bytex(value)
@@ -62,28 +62,28 @@ class OutputNFO(object):
             self.print_dwordx(value)
         else:
             assert False
-    
+
     def print_string(self, value, final_zero = True, force_ascii = False):
         self.file.write('"')
         if not force_ascii: self.file.write(u'Þ')
         self.file.write(value)
         self.file.write('" ')
         if final_zero: self.file.write('00 ')
-    
+
     def print_decimal(self, value, size = None):
         self.file.write(str(value) + " ")
-    
+
     def print_sprite_size(self, size):
         self.print_decimal(size)
-    
+
     def newline(self):
         self.file.write("\n")
-    
+
     def next_sprite(self, is_real_sprite):
         self.print_decimal(self.sprite_num, 2)
         if not is_real_sprite: self.file.write("* ")
         self.sprite_num += 1
-    
+
     def print_sprite(self, filename, sprite_info):
         self.file.write(filename + " ")
         self.print_decimal(sprite_info.xpos.value)
@@ -93,6 +93,6 @@ class OutputNFO(object):
         self.print_decimal(sprite_info.xsize.value)
         self.print_decimal(sprite_info.xrel.value)
         self.print_decimal(sprite_info.yrel.value)
-    
+
     def print_empty_realsprite(self):
         self.file.write("* 1 0")

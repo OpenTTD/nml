@@ -188,7 +188,7 @@ def p_property_assignment(t):
                            | ID COLON expression UNIT SEMICOLON
                            | ID COLON string SEMICOLON
                            | ID COLON array SEMICOLON
-                           | NUMBER COLON expression 
+                           | NUMBER COLON expression
                            | NUMBER COLON expression UNIT SEMICOLON
                            | NUMBER COLON string SEMICOLON
                            | NUMBER COLON array SEMICOLON'''

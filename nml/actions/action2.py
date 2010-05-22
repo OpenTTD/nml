@@ -12,26 +12,26 @@ class Action2:
         self.feature = feature
         self.name = name
         self.num_refs = 0
-    
+
     def prepare_output(self):
         global free_action2_ids
         if self.num_refs == 0:
             self.id = free_action2_ids[0]
         else:
             self.id = free_action2_ids.pop()
-    
+
     def write(self, file, size):
         file.print_sprite_size(size + 3)
         file.print_bytex(2)
         file.print_bytex(self.feature)
         file.print_bytex(self.id)
-    
+
     def skip_action7(self):
         return False
-    
+
     def skip_action9(self):
         return False
-    
+
     def skip_needed(self):
         return True
 

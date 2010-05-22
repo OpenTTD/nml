@@ -47,7 +47,7 @@ class Action2Var(Action2):
         self.tmp_locations = range(0x80, 0x100)
         self.references = []
         self.ranges = []
-    
+
     def resolve_tmp_storage(self):
         self.references = set(self.references)
         for var in self.var_list:
@@ -56,12 +56,12 @@ class Action2Var(Action2):
                 for action2 in self.references:
                     if var.mask.value in action2.tmp_locations:
                         action2.tmp_locations.remove(var.mask.value)
-    
+
     def prepare_output(self):
         Action2.prepare_output(self)
         for i in range(0, len(self.var_list) - 1, 2):
             self.var_list[i].shift.value |= 0x20
-        
+
         for r in self.ranges:
             if isinstance(r.result, basestring):
                  r.result = remove_ref(r.result)
@@ -71,7 +71,7 @@ class Action2Var(Action2):
              self.default_result = remove_ref(self.default_result)
         else:
              self.default_result = self.default_result.value | 0x8000
-    
+
     def write(self, file):
         global action2operator_to_num
         #type_byte, num_ranges, default_result = 4
@@ -81,7 +81,7 @@ class Action2Var(Action2):
                 size += 1
             else:
                 size += var.get_size(self.varsize)
-        
+
         Action2.write(self, file, size)
         file.print_bytex(self.type_byte)
         file.newline()
@@ -127,7 +127,7 @@ class VarAction2Var:
         self.add = None
         self.div = None
         self.mod = None
-    
+
     def write(self, file, size):
         file.print_bytex(self.var_num)
         if self.parameter != None: self.parameter.write(file, 1)
@@ -146,7 +146,7 @@ class VarAction2Var:
             else:
                 #no div or add, just divide by 1
                 file.print_varx(1, size)
-    
+
     def get_size(self, varsize):
         #var number [+ parameter] + shift num + and mask
         size = 2 + varsize
@@ -158,7 +158,7 @@ class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
         VarAction2Var.__init__(self, 0x1A, ConstantNumeric(0), ConstantNumeric(0))
         #mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
-    
+
     def get_size(self, varsize):
         return 2 + varsize
 
@@ -172,12 +172,12 @@ class VarAction2LoadTempVar(VarAction2Var):
         VarAction2Var.__init__(self, 0x7D, ConstantNumeric(0), ConstantNumeric(0))
         assert isinstance(tmp_var, VarAction2StoreTempVar)
         self.tmp_var = tmp_var
-    
+
     def write(self, file, size):
         self.parameter = self.tmp_var.mask
         self.mask = ConstantNumeric(get_mask(size))
         VarAction2Var.write(self, file, size)
-    
+
     def get_size(self, varsize):
         return 3 + varsize
 
@@ -192,12 +192,12 @@ def parse_varaction2_expression(expr, varsize):
     mods = []
     var_list = []
     var_list_size = 0
-    
+
     if isinstance(expr, ConstantNumeric):
         var = VarAction2Var(0x1A, ConstantNumeric(0), expr)
         var_list.append(var)
         var_list_size += var.get_size(varsize)
-    
+
     elif isinstance(expr, Parameter):
         if isinstance(expr.num, ConstantNumeric):
             param_num = expr.num.value
@@ -209,7 +209,7 @@ def parse_varaction2_expression(expr, varsize):
         var_list.append(var)
         var_list_size += var.get_size(varsize)
         target = ConstantNumeric(0)
-    
+
     elif isinstance(expr, Variable):
         if not isinstance(expr.num, ConstantNumeric):
             raise ScriptError("Variable number must be a constant number")
@@ -219,10 +219,10 @@ def parse_varaction2_expression(expr, varsize):
         var.add, var.div, var.mod = expr.add, expr.div, expr.mod
         var_list.append(var)
         var_list_size += var.get_size(varsize)
-    
+
     elif isinstance(expr, BinOp):
         op = convert_op_to_action2(expr.op)
-        
+
         #parse expression 2 first in case we need to temporary store the result
         if not isinstance(expr.expr2, BinOp):
             expr2 = expr.expr2
@@ -240,7 +240,7 @@ def parse_varaction2_expression(expr, varsize):
             #the +2 is for both operators
             var_list_size += tmp_var_list_size + 2 + tmp_var.get_size(varsize)
             expr2 = VarAction2LoadTempVar(tmp_var)
-        
+
         #parse expr1
         tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr1, varsize)
         extra_actions.extend(tmp_actions)
@@ -249,10 +249,10 @@ def parse_varaction2_expression(expr, varsize):
         mods.extend(tmp_mods)
         var_list.extend(tmp_var_list)
         var_list_size += tmp_var_list_size
-        
+
         var_list.append(op)
         var_list_size += 1
-        
+
         if isinstance(expr2, VarAction2LoadTempVar):
             var_list.append(expr2)
             var_list_size += expr2.get_size(varsize)
@@ -266,10 +266,10 @@ def parse_varaction2_expression(expr, varsize):
             mods.extend(tmp_mods)
             var_list.extend(tmp_var_list)
             var_list_size += tmp_var_list_size
-    
+
     else:
         raise ScriptError("Invalid expression type in varaction2 expression")
-    
+
     return (extra_actions, mods, var_list, var_list_size)
 
 def make_return_varact2(switch_block):
@@ -277,7 +277,7 @@ def make_return_varact2(switch_block):
     act.var_list = [VarAction2Var(0x1C, ConstantNumeric(0), ConstantNumeric(0xFFFFFFFF))]
     act.default_result = 'CB_FAILED'
     return act
-    
+
 def parse_varaction2(switch_block):
     global free_parameters
     free_parameters_backup = free_parameters[:]
@@ -287,22 +287,22 @@ def parse_varaction2(switch_block):
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature.value]
     if feature == None: raise ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name, switch_block.var_range, varsize)
-    
+
     func = lambda x: Variable(ConstantNumeric(x['var']), ConstantNumeric(x['start']), ConstantNumeric((1 << x['size']) - 1))
     expr = reduce_expr(switch_block.expr, [(varact2vars[feature], func), (varact2_globalvars, func), global_constants.const_table, cargo_numbers])
-    
+
     offset = 4 #first var
-    
+
     action_list, mods, var_list, var_list_size = parse_varaction2_expression(expr, varsize)
     for mod in mods:
         action6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = var_list
     offset += var_list_size
-    
+
     #nvar == 0 is a special case, make sure that isn't triggered here, unless we want it to
     if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
         switch_block.body.ranges.append(nml.ast.SwitchRange(ConstantNumeric(0), ConstantNumeric(0), switch_block.body.default))
-    
+
     for r in switch_block.body.ranges:
         if r.result is None:
             if return_action is None: return_action = make_return_varact2(switch_block)
@@ -316,14 +316,14 @@ def parse_varaction2(switch_block):
                 varaction2.references.append(action2)
         elif not isinstance(r.result, ConstantNumeric):
             raise ScriptError("Result of varaction2 range must be another action2 or a constant number")
-        
+
         if not isinstance(r.min, ConstantNumeric):
             raise ScriptError("Min value of varaction2 range must be a constant number")
         if not isinstance(r.max, ConstantNumeric):
             raise ScriptError("Max value of varaction2 range must be a constant number")
-        
+
         varaction2.ranges.append(r)
-    
+
     default = switch_block.body.default
     if default is None:
         if len(switch_block.body.ranges) == 0:
@@ -341,13 +341,13 @@ def parse_varaction2(switch_block):
             varaction2.references.append(action2)
     elif not isinstance(default, ConstantNumeric):
         raise ScriptError("Default result of varaction2 must be another action2 or a constant number")
-    
+
     varaction2.default_result = default
-    
+
     if len(action6.modifications) > 0: action_list.append(action6)
-    
+
     action_list.append(varaction2)
     if return_action is not None: action_list.insert(0, return_action)
-    
+
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list

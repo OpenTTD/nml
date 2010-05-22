@@ -6,13 +6,13 @@ free_parameters.reverse()
 class Action6:
     def __init__(self):
         self.modifications = []
-        
+
     def modify_bytes(self, param, num_bytes, offset):
         self.modifications.append( (param, num_bytes, offset) )
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         size = 2 + 5 * len(self.modifications)
         file.print_sprite_size(size)
@@ -27,13 +27,13 @@ class Action6:
         file.print_bytex(0xFF)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return False
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True
 

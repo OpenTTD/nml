@@ -6,10 +6,10 @@ class Action8:
         self.grfid = grfid
         self.name = name
         self.description = description
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         name = get_translation(self.name.name)
         desc = get_translation(self.description.name)
@@ -21,12 +21,12 @@ class Action8:
         file.print_string(name)
         file.print_string(desc)
         file.newline()
-    
+
     def skip_action7(self):
         return False
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True

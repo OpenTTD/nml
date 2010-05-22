@@ -7,10 +7,10 @@ class RealSpriteAction:
         self.sprite = sprite
         self.pcx = pcx
         self.last = last
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         if isinstance(self.sprite, nml.ast.EmptyRealSprite):
             file.print_empty_realsprite()
@@ -19,13 +19,13 @@ class RealSpriteAction:
         file.print_sprite(self.pcx, self.sprite)
         file.newline()
         if self.last: file.newline()
-    
+
     def skip_action7(self):
         return True
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True
 
@@ -42,28 +42,28 @@ real_sprite_compression_flags = {
 def parse_real_sprite(sprite, pcx, last, id_dict):
     if isinstance(sprite, nml.ast.EmptyRealSprite):
         return RealSpriteAction(sprite, pcx, last)
-    
+
     assert isinstance(sprite, nml.ast.RealSprite)
     if not 6 <= len(sprite.param_list) <= 7:
         raise ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
     try:
         # create new sprite struct, needed for template expansion
         new_sprite = nml.ast.RealSprite()
-        
+
         new_sprite.xpos  = reduce_constant(sprite.param_list[0], [id_dict])
         new_sprite.ypos  = reduce_constant(sprite.param_list[1], [id_dict])
         new_sprite.xsize = reduce_constant(sprite.param_list[2], [id_dict])
         new_sprite.ysize = reduce_constant(sprite.param_list[3], [id_dict])
         new_sprite.xrel  = reduce_constant(sprite.param_list[4], [id_dict])
         new_sprite.yrel  = reduce_constant(sprite.param_list[5], [id_dict])
-        
+
         check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'")
         check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'")
         check_range(new_sprite.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'")
         check_range(new_sprite.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'")
         check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'")
         check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'")
-        
+
         if len(sprite.param_list) == 7:
             new_sprite.compression = reduce_constant(sprite.param_list[6], [real_sprite_compression_flags, id_dict])
             new_sprite.compression.value |= 0x01
@@ -74,7 +74,7 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
             raise ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value))
     except ConstError:
         raise ScriptError("Real sprite parameters should be compile-time constants.")
-    
+
     return RealSpriteAction(new_sprite, pcx, last)
 
 sprite_template_map = {}

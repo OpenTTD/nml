@@ -11,10 +11,10 @@ class Action0:
         self.id = id
         self.prop_list = []
         self.num_ids = None
-    
+
     def prepare_output(self):
         if self.num_ids == None: self.num_ids = 1
-    
+
     def write(self, file):
         size = 7
         for prop in self.prop_list: size += prop.get_size()
@@ -29,13 +29,13 @@ class Action0:
         for prop in self.prop_list:
             prop.write(file)
         file.newline()
-    
+
     def skip_action7(self):
         return True
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True
 
@@ -51,12 +51,12 @@ class Action0Property:
         self.num = num
         self.value = value
         self.size = size
-        
+
     def write(self, file):
         file.print_bytex(self.num)
         self.value.write(file, self.size)
         file.newline()
-    
+
     def get_size(self):
         return self.size + 1
 
@@ -67,7 +67,7 @@ def parse_property(feature, name, value, id, unit):
     action_list = []
     action_list_append = []
     mods = []
-    
+
     if isinstance(name, basestring):
         if not name in properties[feature]: raise ScriptError("Unkown property name: " + name)
         prop = properties[feature][name]
@@ -77,7 +77,7 @@ def parse_property(feature, name, value, id, unit):
             prop = p
         if prop == None: raise ScriptError("Unkown property number: " + name.value)
     else: raise ScriptError("Invalid type as property identifier")
-    
+
     if unit == None or unit.type != 'nfo':
         mul = 1
         if 'unit_conversion' in prop: mul = prop['unit_conversion']
@@ -89,7 +89,7 @@ def parse_property(feature, name, value, id, unit):
             if not (isinstance(value, ConstantNumeric) or isinstance(value, ConstantFloat)):
                 raise ScriptError("Unit conversion specified for property, but no constant value found")
             value = ConstantNumeric(int(value.value * mul + 0.5))
-    
+
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
     else:
@@ -116,7 +116,7 @@ def parse_property(feature, name, value, id, unit):
             props = [Action0Property(prop['num'], value, prop['size'])]
         else:
             props = []
-    
+
     return (props, action_list, mods, action_list_append)
 
 def parse_property_block(prop_list, feature, id):
@@ -132,7 +132,7 @@ def parse_property_block(prop_list, feature, id):
         action6.modify_bytes(tmp_param, 2, 5)
         action_list.extend(tmp_param_actions)
         action0 = Action0(feature, 0)
-    
+
     offset = 7
     for prop in prop_list:
         properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id.value, prop.unit)
@@ -143,25 +143,25 @@ def parse_property_block(prop_list, feature, id):
         for p in properties:
             offset += p.get_size()
         action0.prop_list.extend(properties)
-    
+
     if len(action6.modifications) > 0: action_list.append(action6)
     action_list.append(action0)
     action_list.extend(action_list_append)
-    
+
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list
 
 class CargoListProp:
     def __init__(self, cargo_list):
         self.cargo_list = cargo_list
-    
+
     def write(self, file):
         file.print_bytex(0x09)
         for i in range(0, len(self.cargo_list)):
             if i > 0 and i % 5 == 0: file.write("\n")
             file.print_string(self.cargo_list[i], False, True)
         file.newline()
-    
+
     def get_size(self):
         return len(self.cargo_list) * 4 + 1
 

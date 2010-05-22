@@ -63,9 +63,9 @@ def main(argv):
 
     read_extra_commands()
     read_lang_files()
-    
+
     outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename)
-    
+
     if not args:
         if not outputfile_given:
             parser.print_help()
@@ -78,7 +78,7 @@ def main(argv):
         input = codecs.open(input_filename, 'r', 'utf-8')
         if not outputfile_given:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
-    
+
     outputs = []
     if opts.grf_filename:
         try:
@@ -108,35 +108,35 @@ def nml(inputfile, outputfiles, nml_output):
         print "Error while parsing input file"
         raise
         return 8
-    
+
     if _debug > 0:
         print_script(result, 0)
-    
+
     if nml_output is not None:
         for b in result:
             nml_output.write(str(b))
             nml_output.write('\n')
-    
+
     actions = []
     for block in result:
         actions.extend(block.get_action_list())
-    
+
     has_action8 = False
     for i in range(len(actions) - 1, -1, -1):
         if isinstance(actions[i], Action2Var):
             actions[i].resolve_tmp_storage()
         elif isinstance(actions[i], Action8):
             has_action8 = True
-    
+
     if has_action8:
         actions = [SpriteCountAction(len(actions))] + actions
-    
+
     for action in actions:
         action.prepare_output()
     for outputfile in outputfiles:
         for action in actions:
             outputfile.next_sprite(isinstance(action, RealSpriteAction))
-            action.write(outputfile)    
+            action.write(outputfile)
     return 0
 
 if __name__ == "__main__":

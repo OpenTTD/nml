@@ -80,7 +80,7 @@ class BinOp(object):
         self.op = op
         self.expr1 = expr1
         self.expr2 = expr2
-    
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Binary operator, op = ', self.op
         if isinstance(self.expr1, basestring):
@@ -100,7 +100,7 @@ class TernaryOp(object):
         self.guard = guard
         self.expr1 = expr1
         self.expr2 = expr2
-    
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Ternary operator'
         print indentation*' ' + 'Guard:'
@@ -114,7 +114,7 @@ class Assignment(object):
     def __init__(self, name, value):
         self.name = name
         self.value = value
-    
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Assignment, name = ', self.name
         self.value.debug_print(indentation + 2)
@@ -137,7 +137,7 @@ class Variable(object):
         self.add = None
         self.div = None
         self.mod = None
-    
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Action2 variable'
         self.num.debug_print(indentation + 2)

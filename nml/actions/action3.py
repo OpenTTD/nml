@@ -9,11 +9,11 @@ class Action3:
         self.feature = feature
         self.id = id
         self.cid_mappings = []
-    
+
     def prepare_output(self):
         self.cid_mappings = [(cargo, remove_ref(cid)) for cargo, cid in self.cid_mappings]
         self.def_cid = remove_ref(self.def_cid)
-    
+
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
         if self.feature <= 3: size += 2
@@ -31,13 +31,13 @@ class Action3:
         file.print_wordx(self.def_cid)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return True
-    
+
     def skip_action9(self):
         return No
-    
+
     def skip_needed(self):
         return True
 
@@ -53,18 +53,18 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         action6.modify_bytes(tmp_param, size, offset)
         action_list.extend(tmp_param_actions)
         action3 = Action3(feature, 0)
-    
+
     action3.is_livery_override = is_livery_override
-    
+
     add_ref(default_graphics)
     action3.def_cid = default_graphics
-    
+
     for graphics in graphics_list:
         add_ref(graphics.action2_id)
         cargo_id = reduce_constant(graphics.cargo_id, [cargo_numbers])
         action3.cid_mappings.append( (cargo_id, graphics.action2_id) )
-    
+
     if len(action6.modifications) > 0: action_list.append(action6)
     action_list.append(action3)
-    
+
     return action_list

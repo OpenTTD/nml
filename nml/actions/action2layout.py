@@ -10,7 +10,7 @@ class Action2Layout(Action2):
         self.sprite_list = sprite_list
         #required by grf specs
         assert len(sprite_list) != 0
-    
+
     def write(self, file):
         size = 5
         for sprite in self.sprite_list:
@@ -18,7 +18,7 @@ class Action2Layout(Action2):
                 size += 7
             else:
                 size += 10
-        
+
         Action2.write(self, file, size)
         file.print_byte(len(self.sprite_list))
         file.print_dwordx(self.ground_sprite.get_sprite_number())
@@ -50,8 +50,8 @@ class Action2LayoutSpriteType:
     CHILD = 'childsprite'
 
 class Action2LayoutSprite:
-    
-    
+
+
     def __init__(self, type):
         self.type = type
         self._bounding_box = {
@@ -59,12 +59,12 @@ class Action2LayoutSprite:
             'yoffset': {'value': 0, 'is_set': False},
             'zoffset': {'value': 0, 'is_set': False},
             'xextent': {'value': 16, 'is_set': False},
-            'yextent': {'value': 16, 'is_set': False}, 
+            'yextent': {'value': 16, 'is_set': False},
             'zextent': {'value': 16, 'is_set': False}
         }
         self._sprite_number = -1
         self._recolor_type = Action2LayoutRecolorMode.NONE
-        self._recolor_sprite = 0        
+        self._recolor_sprite = 0
         self._draw_transparant = False
         self._draw_transparant_set = False
 
@@ -74,7 +74,7 @@ class Action2LayoutSprite:
         res |= self._recolor_sprite << 16
         if self._draw_transparant: res |= 1 << 30
         return res
-    
+
     def validate(self):
         if self._sprite_number == -1:
             raise ScriptError("No sprite or ttdsprite specified. This parameter is required.")
@@ -87,7 +87,7 @@ class Action2LayoutSprite:
             if not ttd: self._sprite_number |= 1 << 31
         else:
             raise ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite")
-    
+
     def set_recolor_sprite(self, type, number):
         if self._recolor_type == Action2LayoutRecolorMode.NONE:
             if number >> 14 != 0:
@@ -96,19 +96,19 @@ class Action2LayoutSprite:
             self._recolor_sprite = number
         else:
             raise ScriptError("Only one recolor sprite may be set per per ground/building/childsprite")
-    
+
     def set_draw_transparant(self, value):
         if self._draw_transparant_set:
             raise ScriptError("'always_draw' may be set only once per sprite")
         self._draw_transparant_set = True
-        #bit has no effect for ground sprites but should be left empty, so ignore it 
+        #bit has no effect for ground sprites but should be left empty, so ignore it
         if self.type != Action2LayoutSpriteType.GROUND:
             self._draw_transparant = value
-        
+
 
     def is_bounding_box_param(self, name):
         return name in self._bounding_box
-    
+
     def set_bounding_box_param(self, name, value):
         assert name in self._bounding_box
         if self.type == Action2LayoutSpriteType.GROUND:
@@ -121,18 +121,18 @@ class Action2LayoutSprite:
                 raise ScriptError(name + " can not be set for child sprites")
             if value < 0 or value > 255:
                 raise ScriptError(name + " has to be in range 0..255, encountered " + str(value))
-        
+
         if self._bounding_box[name]['is_set']:
             raise ScriptError(name + " may be set only once per sprite")
-        
-                
+
+
         if name == 'zoffset' and value != 0:
             raise ScriptError("zoffset should always be 0, encountered " + str(value))
-                
+
         self._bounding_box[name]['value'] = value
         self._bounding_box[name]['is_set'] = True
 
-    
+
     def get_bounding_box_param(self, name):
         assert name in self._bounding_box
         return self._bounding_box[name]['value']
@@ -145,12 +145,12 @@ def set_sprite_property(sprite, name, value, spritesets):
         if value not in spritesets:
             raise ScriptError("Unknown sprite set: " + value)
         sprite.set_sprite(False, spritesets[value])
-    
+
     elif name == 'ttdsprite':
         if not isinstance(value, nml.ast.ConstantNumeric):
             raise ScriptError("Value of 'ttdsprite' should be a compile-time constant")
         sprite.set_sprite(True, value.value)
-    
+
     elif name == 'recolor':
         if isinstance(value, basestring):
             if value == 'TRANSPARANT':
@@ -161,13 +161,13 @@ def set_sprite_property(sprite, name, value, spritesets):
             sprite.set_recolor_sprite(Action2LayoutRecolorMode.RECOLOR, value.value)
         else:
             raise ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number")
-    
+
     elif name == 'always_draw':
         if isinstance(value, nml.ast.ConstantNumeric):
             sprite.set_draw_transparant(value.value != 0)
         else:
             raise ScriptError("Value of 'always_draw' should be a compile-time constant")
-    
+
     else:
         if sprite.is_bounding_box_param(name):
             if isinstance(value, nml.ast.ConstantNumeric):
@@ -183,10 +183,10 @@ def get_layout_action2s(spritegroup, feature, spritesets):
     global layout_action2_features
     ground_sprite = None
     building_sprites = []
-    
+
     if feature not in layout_action2_features:
         raise ScriptError("Sprite groups that define tile layouts are not supported for this feature: 0x" + to_hex(feature, 2))
-    
+
     for layout_sprite in spritegroup.layout_sprite_list:
         sprite = Action2LayoutSprite(layout_sprite.type)
         for param in layout_sprite.param_list:
@@ -198,10 +198,10 @@ def get_layout_action2s(spritegroup, feature, spritesets):
             ground_sprite = sprite
         else:
             building_sprites.append(sprite)
-    
+
     if ground_sprite is None:
         raise ScriptError("Sprite group requires exactly one ground sprite")
     if len(building_sprites) == 0:
-        raise ScriptError("At least one non-ground sprite must be specified per sprite group")    
-        
+        raise ScriptError("At least one non-ground sprite must be specified per sprite group")
+
     return [Action2Layout(feature, spritegroup.name, ground_sprite, building_sprites)]

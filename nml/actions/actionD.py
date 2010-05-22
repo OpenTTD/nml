@@ -1,6 +1,6 @@
 import nml
 from nml.expression import *
-from nml.generic import ScriptError	
+from nml.generic import ScriptError
 from action6 import *
 
 class ActionDOperator:
@@ -41,10 +41,10 @@ class ActionD:
         self.op = op
         self.param2 = param2
         self.data = data
-    
+
     def prepare_output(self):
         pass
-    
+
     def write(self, file):
         global actionDoperator_to_num
         size = 5
@@ -58,13 +58,13 @@ class ActionD:
         if self.data != None: self.data.write(file, 4)
         file.newline()
         file.newline()
-    
+
     def skip_action7(self):
         return False
-    
+
     def skip_action9(self):
         return True
-    
+
     def skip_needed(self):
         return True
 
@@ -98,7 +98,7 @@ def parse_actionD(assignment):
         action6.modify_bytes(tmp_param, 1, 1)
         target = ConstantNumeric(0)
         action_list.extend(tmp_param_actions)
-    
+
     data = None
     #print assignment.value
     if isinstance(assignment.value, ConstantNumeric):
@@ -120,7 +120,7 @@ def parse_actionD(assignment):
     elif isinstance(assignment.value, BinOp):
         expr = assignment.value
         op = convert_op_to_actiond(expr.op)
-        
+
         if isinstance(expr.expr1, ConstantNumeric):
             param1 = ConstantNumeric(0xFF)
             data = expr.expr1
@@ -130,7 +130,7 @@ def parse_actionD(assignment):
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr1)
             action_list.extend(tmp_param_actions)
             param1 = ConstantNumeric(tmp_param)
-        
+
         # We can use the data only for one for the parameters.
         # If the first parameter uses "data" we need a temp parameter for this one
         if isinstance(expr.expr2, ConstantNumeric) and data == None:
@@ -142,11 +142,11 @@ def parse_actionD(assignment):
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr2)
             action_list.extend(tmp_param_actions)
             param2 = ConstantNumeric(tmp_param)
-        
+
     else: raise ScriptError("Invalid expression in argument assignment")
-    
+
     if len(action6.modifications) > 0: action_list.append(action6)
-    
+
     action_list.append(ActionD(target, param1, op, param2, data))
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list
