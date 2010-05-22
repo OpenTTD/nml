@@ -123,16 +123,24 @@ def p_parameter(t):
     t[0] = Parameter(t[3])
 
 def p_conditional(t):
-    'conditional : IF LPAREN expression RPAREN LBRACE skipable_script RBRACE else_block'
-    t[0] = Conditional(t[3], t[6], t[8])
+    '''conditional : if_else_parts
+                   | if_else_parts ELSE LBRACE skipable_script RBRACE'''
+    if len(t) > 2:
+        parts = t[1] + [Conditional(None, t[4], None)]
+    else:
+        parts = t[1]
 
-def p_else_block(t):
-    '''else_block :
-                  | ELSE LBRACE skipable_script RBRACE
-                  | ELSE conditional'''
-    if len(t) == 1: t[0] = None
-    elif len(t) == 5: t[0] = Conditional(None, t[3], None)
-    else: t[0] = t[2]
+    last = None
+    for part in parts:
+        if last is None: t[0] = part
+        else: last.else_block = part
+        last = part
+
+def p_if_else_parts(t):
+    '''if_else_parts : IF LPAREN expression RPAREN LBRACE skipable_script RBRACE
+                     | if_else_parts ELSE IF LPAREN expression RPAREN LBRACE skipable_script RBRACE'''
+    if len(t) == 8: t[0] = [Conditional(t[3], t[6], None)]
+    else: t[0] = t[1] + [Conditional(t[4], t[7], None)]
 
 def p_loop(t):
     'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'
