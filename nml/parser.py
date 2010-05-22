@@ -151,16 +151,17 @@ def p_switch(t):
     t[0] = Switch(t[3], t[5], t[7], t[9], t[12])
 
 def p_switch_body(t):
-    '''switch_body : switch_value
-                   | switch_range switch_body'''
-    if len(t) == 2: t[0] = SwitchBody(t[1])
-    else: t[0] = t[2].add_range(t[1])
+    'switch_body : switch_ranges switch_value'
+    t[0] = SwitchBody(t[2])
+    for sw_range in t[1]: t[0].add(sw_range)
 
-def p_switch_range(t):
-    '''switch_range : expression COLON switch_value
-                    | expression RANGE expression COLON switch_value'''
-    if len(t) == 4: t[0] = SwitchRange(t[1], t[1], t[3])
-    else: t[0] = SwitchRange(t[1], t[3], t[5])
+def p_switch_ranges(t):
+    '''switch_ranges :
+                     | switch_ranges expression COLON switch_value
+                     | switch_ranges expression RANGE expression COLON switch_value'''
+    if len(t) == 1: t[0] = []
+    elif len(t) == 5: t[0] = t[1] + [SwitchRange(t[2], t[2], t[4])]
+    else: t[0] = t[1] + [SwitchRange(t[2], t[4], t[6])]
 
 def p_switch_value(t):
     '''switch_value : RETURN expression SEMICOLON
