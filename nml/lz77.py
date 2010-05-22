@@ -4,6 +4,7 @@ class BMH(object):
         self.data = data
         self.skip = 256 * [len(self.data)]
         for k in range(len(self.data) - 1): self.skip[data[k]] = len(self.data) - k - 1
+
     def find(self, text):
         n = len(text)
         if len(self.data) > n: return -1
@@ -24,6 +25,7 @@ class LZ77(object):
         self.stream = data
         self.remaining = len(self.stream)
         self.search = BMH()
+
     def Encode(self):
         output = []
         literal_bytes = []

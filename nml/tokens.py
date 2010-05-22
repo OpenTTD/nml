@@ -1,5 +1,6 @@
 import sys
 import ply.lex as lex
+
 reserved = {
     'grf' : 'GRF',
     'var' : 'VARIABLE',
@@ -8,7 +9,7 @@ reserved = {
     'if' : 'IF',
     'else' : 'ELSE',
     'while' : 'WHILE', # reserved
-    'item' : 'ITEM', #action 0/3
+    'item' : 'ITEM', # action 0/3
     'property' : 'PROPERTY',
     'graphics' : 'GRAPHICS',
     'spriteblock' : 'SPRITEBLOCK', #action 1 + normal action2
@@ -21,9 +22,9 @@ reserved = {
     'switch' : 'SWITCH', #deterministic varaction2
     'random' : 'RANDOM', #random action2
     'error' : 'ERROR', #action B
-    'replace' : 'REPLACESPRITE',#action A
-    'replacenew' : 'REPLACENEWSPRITE',#action 5
-    'deactivate' : 'DEACTIVATE',#action E
+    'replace' : 'REPLACESPRITE', #action A
+    'replacenew' : 'REPLACENEWSPRITE', #action 5
+    'deactivate' : 'DEACTIVATE', #action E
     'string' : 'STRING',
     'return' : 'RETURN',
     'min' : 'MIN',
@@ -77,6 +78,7 @@ tokens = list(reserved.values()) + [
     'VARRANGE',
     'UNIT',
 ]
+
 class NMLLexer(object):
     # Tokens
     tokens = tokens
