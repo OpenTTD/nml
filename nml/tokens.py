@@ -118,7 +118,7 @@ class NMLLexer(object):
         return t
 
     def t_NUMBER(self, t):
-        r'(0x[0-9a-zA-Z]+)|(\d+)'
+        r'(0x[0-9a-fA-F]+)|(\d+)'
         try:
             base = 10
             if len(t.value) >= 2 and t.value[0:2] == "0x":
