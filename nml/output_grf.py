@@ -4,7 +4,7 @@ from generic import *
 from lz77 import LZ77
 
 
-class OutputGRF:
+class OutputGRF(object):
     def __init__(self, filename):
         self.file = open(filename, 'wb')
     

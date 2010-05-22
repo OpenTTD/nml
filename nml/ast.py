@@ -39,7 +39,7 @@ feature_ids = {
     'FEAT_AIRPORTTILES': 0x11,
 }
 
-class ParameterAssignment:
+class ParameterAssignment(object):
     def __init__(self, param, value):
         self.param = param
         self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
@@ -56,7 +56,7 @@ class ParameterAssignment:
         return 'param[%s] = %s;\n' % (str(self.param), str(self.value))
 
 ########### code blocks ###########
-class GRF:
+class GRF(object):
     def __init__(self, alist):
         self.name = None
         self.desc = None
@@ -96,7 +96,7 @@ class GRF:
         ret += '}\n'
         return ret
 
-class Conditional:
+class Conditional(object):
     def __init__(self, expr, block, else_block = None):
         self.expr = expr
         self.block = block
@@ -129,7 +129,7 @@ class Conditional:
             ret += '}\n'
         return ret
 
-class Loop:
+class Loop(object):
     def __init__(self, expr, block):
         self.expr = expr
         self.block = block
@@ -151,7 +151,7 @@ class Loop:
         ret += '}\n'
         return ret
 
-class Switch:
+class Switch(object):
     def __init__(self, feature, var_range, name, expr, body):
         self.feature = reduce_constant(feature, [feature_ids])
         self.var_range = var_range
@@ -174,7 +174,7 @@ class Switch:
         return 'switch(%s, %s, %s, %s) {\n%s}\n' % (str(self.feature), var_range, str(self.name), str(self.expr), str(self.body))
         
 
-class SwitchBody:
+class SwitchBody(object):
     def __init__(self, default):
         self.default = default
         self.ranges = []
@@ -206,7 +206,7 @@ class SwitchBody:
             ret += '\t%s;\n' % str(self.default)
         return ret
 
-class SwitchRange:
+class SwitchRange(object):
     def __init__(self, min, max, result):
         self.min = reduce_constant(min)
         self.max = reduce_constant(max)
@@ -235,7 +235,7 @@ class SwitchRange:
             ret += ': return %s;' % str(self.result)
         return ret
 
-class DeactivateBlock:
+class DeactivateBlock(object):
     def __init__(self, grfid_list):
         self.grfid_list = [reduce_expr(grfid) for grfid in grfid_list]
     
@@ -265,7 +265,7 @@ def validate_item_block(block_list):
 item_feature = None
 item_id = None
 
-class Item:
+class Item(object):
     def __init__(self, feature, body, name = None, id = None):
         global item_names
         self.feature = reduce_constant(feature, [feature_ids])
@@ -302,7 +302,7 @@ class Item:
         ret += '}\n'
         return ret
 
-class Unit:
+class Unit(object):
     def __init__(self, name):
         assert name in unit.units
         self.name = name
@@ -312,7 +312,7 @@ class Unit:
     def __str__(self):
         return self.name
 
-class Property:
+class Property(object):
     def __init__(self, name, value, unit):
         self.name = name
         self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
@@ -331,7 +331,7 @@ class Property:
         unit = '' if self.unit is None else ' ' + str(self.unit)
         return '%s: %s%s;' % (self.name, self.value, unit)
 
-class PropertyBlock:
+class PropertyBlock(object):
     def __init__(self, prop_list):
         self.prop_list = prop_list
     
@@ -351,7 +351,7 @@ class PropertyBlock:
         ret += '}\n'
         return ret
 
-class LiveryOverride:
+class LiveryOverride(object):
     def __init__(self, wagon_id, graphics_block):
         self.graphics_block = graphics_block
         self.wagon_id = wagon_id
@@ -367,7 +367,7 @@ class LiveryOverride:
         wagon_id = reduce_constant(self.wagon_id, [item_names])
         return parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
-class GraphicsBlock:
+class GraphicsBlock(object):
     def __init__(self, default_graphics):
         self.default_graphics = default_graphics
         self.graphics_list = []
@@ -385,7 +385,7 @@ class GraphicsBlock:
         global item_feature, item_id
         return parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
 
-class GraphicsDefinition:
+class GraphicsDefinition(object):
     def __init__(self, cargo_id, action2_id):
         self.cargo_id = cargo_id
         self.action2_id = action2_id
@@ -395,7 +395,7 @@ class GraphicsDefinition:
         print (indentation+2)*' ' + 'Cargo:', self.cargo_id
         print (indentation+2)*' ' + 'Linked to action2:', self.action2_id
 
-class ReplaceSprite:
+class ReplaceSprite(object):
     def __init__(self, start_id, pcx, sprite_list):
         self.start_id = reduce_constant(start_id)
         self.pcx = pcx
@@ -411,7 +411,7 @@ class ReplaceSprite:
     def get_action_list(self):
         return parse_actionA(self)
 
-class SpriteBlock:
+class SpriteBlock(object):
     def __init__(self, feature, spriteset_list):
         self.feature = reduce_constant(feature, [feature_ids])
         self.spriteset_list = spriteset_list
@@ -423,7 +423,7 @@ class SpriteBlock:
     def get_action_list(self):
         return parse_sprite_block(self)
 
-class TemplateDeclaration:
+class TemplateDeclaration(object):
     def __init__(self, name, param_list, sprite_list):
         self.name = name
         if name not in sprite_template_map:
@@ -445,7 +445,7 @@ class TemplateDeclaration:
     def get_action_list(self):
         return []
 
-class TemplateUsage:
+class TemplateUsage(object):
     def __init__(self, name, param_list):
         self.name = name
         self.param_list = param_list
@@ -459,7 +459,7 @@ class TemplateUsage:
             else:
                 param.debug_print(indentation + 4)
 
-class SpriteSet:
+class SpriteSet(object):
     def __init__(self, name, pcx, sprite_list):
         self.name = name
         self.pcx = pcx
@@ -472,11 +472,11 @@ class SpriteSet:
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
-class EmptyRealSprite:
+class EmptyRealSprite(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Empty real sprite'
 
-class RealSprite:
+class RealSprite(object):
     def __init__(self, param_list = None):
         self.param_list = param_list
     
@@ -488,7 +488,7 @@ class RealSprite:
             else:
                 param.debug_print(indentation + 2)
 
-class SpriteGroup:
+class SpriteGroup(object):
     def __init__(self, name, spriteview_list):
         self.name = name
         self.spriteview_list = spriteview_list
@@ -498,7 +498,7 @@ class SpriteGroup:
         for spriteview in self.spriteview_list:
             spriteview.debug_print(indentation + 2)
 
-class SpriteView:
+class SpriteView(object):
     def __init__(self, name, spriteset_list):
         self.name = name
         self.spriteset_list = spriteset_list
@@ -509,7 +509,7 @@ class SpriteView:
         for spriteset in self.spriteset_list:
             print (indentation+4)*' ' + spriteset
 
-class LayoutSpriteGroup:
+class LayoutSpriteGroup(object):
     def __init__(self, name, layout_sprite_list):
         self.name = name
         self.layout_sprite_list = layout_sprite_list
@@ -519,7 +519,7 @@ class LayoutSpriteGroup:
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 2)
 
-class LayoutSprite:
+class LayoutSprite(object):
     def __init__(self, type, param_list):
         self.type = type
         self.param_list = param_list
@@ -529,7 +529,7 @@ class LayoutSprite:
         for layout_param in self.param_list:
             layout_param.debug_print(indentation + 2)
 
-class LayoutParam:
+class LayoutParam(object):
     def __init__(self, name, value):
         self.name = name
         self.value = reduce_expr(value, [global_constants.const_table], False)
@@ -541,7 +541,7 @@ class LayoutParam:
         else:
             self.value.debug_print(indentation + 2)
 
-class Error:
+class Error(object):
     def __init__(self, param_list):
         self.params = []
         if not 2 <= len(param_list) <= 5:
@@ -565,7 +565,7 @@ class Error:
     def get_action_list(self):
         return parse_error_block(self)
 
-class CargoTable:
+class CargoTable(object):
     def __init__(self, cargo_list):
         global cargo_numbers;
         self.cargo_list = cargo_list
@@ -588,7 +588,7 @@ class CargoTable:
         ret += '\n}\n'
         return ret
 
-class SpriteCount:
+class SpriteCount(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite count'
     

@@ -2,7 +2,7 @@
 from generic import *
 import codecs
 
-class OutputNFO:
+class OutputNFO(object):
     def __init__(self, filename):
         self.sprite_num = 0
         self.file = codecs.open(filename, 'w', 'utf-8')

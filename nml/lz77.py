@@ -1,5 +1,5 @@
 # Boyer-Moore-Horspool fast string search.
-class BMH:
+class BMH(object):
     def pattern(self, data):
         self.data = data
         self.skip = 256 * [len(self.data)]
@@ -18,7 +18,7 @@ class BMH:
             k += self.skip[text[k]]
         return -1
 
-class LZ77:
+class LZ77(object):
     def __init__(self, data):
         self.position = 0
         self.stream = data

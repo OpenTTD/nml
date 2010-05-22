@@ -77,7 +77,7 @@ tokens = list(reserved.values()) + [
     'VARRANGE',
     'UNIT',
 ]
-class NMLLexer:
+class NMLLexer(object):
     # Tokens
     tokens = tokens
     

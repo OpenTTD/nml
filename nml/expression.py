@@ -4,7 +4,7 @@ from generic import *
 cargo_numbers = {}
 item_names = {}
 
-class Operator:
+class Operator(object):
     ADD     = 0
     SUB     = 1
     DIV     = 2
@@ -49,7 +49,7 @@ def get_operator_string(op, param1, param2):
     operator_to_string[Operator.SHIFT_RIGHT] = '(%s >> %s)'
     return operator_to_string[op] % (param1, param2)
 
-class ConstantNumeric:
+class ConstantNumeric(object):
     def __init__(self, value):
         self.value = truncate_int32(value)
     def debug_print(self, indentation):
@@ -59,7 +59,7 @@ class ConstantNumeric:
     def __str__(self):
         return str(self.value)
 
-class ConstantFloat:
+class ConstantFloat(object):
     def __init__(self, value):
         self.value = value
     def debug_print(self, indentation):
@@ -67,7 +67,7 @@ class ConstantFloat:
     def __str__(self):
         return str(self.value)
 
-class BitMask:
+class BitMask(object):
     def __init__(self, values):
         self.values = values
     def debug_print(self, indentation):
@@ -75,7 +75,7 @@ class BitMask:
         for value in self.values:
             value.debug_print(indentation + 2)
 
-class BinOp:
+class BinOp(object):
     def __init__(self, op, expr1, expr2):
         self.op = op
         self.expr1 = expr1
@@ -95,7 +95,7 @@ class BinOp:
     def __str__(self):
         return get_operator_string(self.op, str(self.expr1), str(self.expr2))
 
-class TernaryOp:
+class TernaryOp(object):
     def __init__(self, guard, expr1, expr2):
         self.guard = guard
         self.expr1 = expr1
@@ -110,7 +110,7 @@ class TernaryOp:
         print indentation*' ' + 'Expression 2:'
         self.expr2.debug_print(indentation + 2)
 
-class Assignment:
+class Assignment(object):
     def __init__(self, name, value):
         self.name = name
         self.value = value
@@ -119,7 +119,7 @@ class Assignment:
         print indentation*' ' + 'Assignment, name = ', self.name
         self.value.debug_print(indentation + 2)
 
-class Parameter:
+class Parameter(object):
     def __init__(self, num):
         self.num = num
     def debug_print(self, indentation):
@@ -128,7 +128,7 @@ class Parameter:
     def __str__(self):
         return 'param[%s]' % str(self.num)
 
-class Variable:
+class Variable(object):
     def __init__(self, num, shift = None, mask = None, param = None):
         self.num = num
         self.shift = shift if shift != None else ConstantNumeric(0)
@@ -161,7 +161,7 @@ class Variable:
             ret = '(%s %% %s)' % (ret, self.mod)
         return ret
 
-class String:
+class String(object):
     def __init__(self, name, params = []):
         self.name = name
         self.params = params
