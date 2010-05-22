@@ -48,14 +48,14 @@ class ActionD:
     def write(self, file):
         global actionDoperator_to_num
         size = 5
-        if self.data != None: size += 4
+        if self.data is not None: size += 4
         file.print_sprite_size(size)
         file.print_bytex(0x0D)
         self.target.write(file, 1)
         file.print_bytex(actionDoperator_to_num[self.op], self.op)
         self.param1.write(file, 1)
         self.param2.write(file, 1)
-        if self.data != None: self.data.write(file, 4)
+        if self.data is not None: self.data.write(file, 4)
         file.newline()
         file.newline()
 
@@ -133,7 +133,7 @@ def parse_actionD(assignment):
 
         # We can use the data only for one for the parameters.
         # If the first parameter uses "data" we need a temp parameter for this one
-        if isinstance(expr.expr2, ConstantNumeric) and data == None:
+        if isinstance(expr.expr2, ConstantNumeric) and data is None:
             param2 = ConstantNumeric(0xFF)
             data = expr.expr2
         elif isinstance(expr.expr2, Parameter):

@@ -130,18 +130,18 @@ class VarAction2Var:
 
     def write(self, file, size):
         file.print_bytex(self.var_num)
-        if self.parameter != None: self.parameter.write(file, 1)
-        if self.mod != None:
+        if self.parameter is not None: self.parameter.write(file, 1)
+        if self.mod is not None:
             self.shift.value |= 0x80
-        elif self.add != None or self.div != None:
+        elif self.add is not None or self.div is not None:
             self.shift.value |= 0x40
         self.shift.write(file, 1)
         self.mask.write(file, size)
-        if self.add != None:
+        if self.add is not None:
             self.add.write(file, size)
-            if self.div != None:
+            if self.div is not None:
                 self.div.write(file, size)
-            elif self.mod != None:
+            elif self.mod is not None:
                 self.mod.write(file, size)
             else:
                 #no div or add, just divide by 1
@@ -150,8 +150,8 @@ class VarAction2Var:
     def get_size(self, varsize):
         #var number [+ parameter] + shift num + and mask
         size = 2 + varsize
-        if self.parameter != None: size += 1
-        if self.add != None or self.div != None or self.mod != None: size += varsize * 2
+        if self.parameter is not None: size += 1
+        if self.add is not None or self.div is not None or self.mod is not None: size += varsize * 2
         return size
 
 class VarAction2StoreTempVar(VarAction2Var):
@@ -213,7 +213,7 @@ def parse_varaction2_expression(expr, varsize):
     elif isinstance(expr, Variable):
         if not isinstance(expr.num, ConstantNumeric):
             raise ScriptError("Variable number must be a constant number")
-        if not (expr.param == None or isinstance(expr.param, ConstantNumeric)):
+        if not (expr.param is None or isinstance(expr.param, ConstantNumeric)):
             raise ScriptError("Variable parameter must be a constant number")
         var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
         var.add, var.div, var.mod = expr.add, expr.div, expr.mod
@@ -285,7 +285,7 @@ def parse_varaction2(switch_block):
     return_action = None
     varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature.value]
-    if feature == None: raise ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
+    if feature is None: raise ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name, switch_block.var_range, varsize)
 
     func = lambda x: Variable(ConstantNumeric(x['var']), ConstantNumeric(x['start']), ConstantNumeric((1 << x['size']) - 1))

@@ -131,8 +131,8 @@ class Parameter(object):
 class Variable(object):
     def __init__(self, num, shift = None, mask = None, param = None):
         self.num = num
-        self.shift = shift if shift != None else ConstantNumeric(0)
-        self.mask = mask if mask != None else ConstantNumeric(0xFFFFFFFF)
+        self.shift = shift if shift is not None else ConstantNumeric(0)
+        self.mask = mask if mask is not None else ConstantNumeric(0xFFFFFFFF)
         self.param = param
         self.add = None
         self.div = None
@@ -141,23 +141,23 @@ class Variable(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Action2 variable'
         self.num.debug_print(indentation + 2)
-        if self.param != None:
+        if self.param is not None:
             print (indentation+2)*' ' + 'Parameter:'
             if isinstance(self.param, basestring):
                 print (indentation+4)*' ' + 'Procedure call:', self.param
             else:
                 self.param.debug_print(indentation + 4)
-    
+
     def __str__(self):
         ret = 'var[%s, %s, %s' % (str(self.num), str(self.shift), str(self.mask))
-        if self.param != None:
+        if self.param is not None:
             ret += ', %s' & str(self.param)
         ret += ']'
-        if self.add != None:
+        if self.add is not None:
             ret = '(%s + %s)' % (ret, self.add)
-        if self.div != None:
+        if self.div is not None:
             ret = '(%s / %s)' % (ret, self.div)
-        if self.mod != None:
+        if self.mod is not None:
             ret = '(%s %% %s)' % (ret, self.mod)
         return ret
 
@@ -227,20 +227,20 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
             if expr.op == Operator.AND and isinstance(expr1.mask, ConstantNumeric):
                 expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value)
                 return expr1
-            if expr.op == Operator.ADD and expr1.div == None and expr1.mod == None:
-                if expr1.add == None: expr1.add = expr2
+            if expr.op == Operator.ADD and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = expr2
                 else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value)
                 return expr1
-            if expr.op == Operator.SUB and expr1.div == None and expr1.mod == None:
-                if expr1.add == None: expr1.add = ConstantNumeric(-expr2.value)
+            if expr.op == Operator.SUB and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = ConstantNumeric(-expr2.value)
                 else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value)
                 return expr1
-            if expr.op == Operator.DIV and expr1.div == None and expr1.mod == None:
-                if expr1.add == None: expr1.add = ConstantNumeric(0)
+            if expr.op == Operator.DIV and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.div = expr2
                 return expr1
-            if expr.op == Operator.MOD and expr1.div == None and expr1.mod == None:
-                if expr1.add == None: expr1.add = ConstantNumeric(0)
+            if expr.op == Operator.MOD and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
     elif isinstance(expr, Parameter):

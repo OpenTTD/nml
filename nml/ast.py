@@ -74,12 +74,12 @@ class GRF(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
-        if self.grfid != None:
+        if self.grfid is not None:
             print (2+indentation)*' ' + 'grfid:', self.grfid
-        if self.name != None:
+        if self.name is not None:
             print (2+indentation)*' ' + 'Name:'
             self.name.debug_print(indentation + 4)
-        if self.desc != None:
+        if self.desc is not None:
             print (2+indentation)*' ' + 'Description:'
             self.desc.debug_print(indentation + 4)
 
@@ -89,9 +89,9 @@ class GRF(object):
     def __str__(self):
         ret = 'grf {\n'
         ret += '\tgrfid: "%s";\n' % str(self.grfid)
-        if self.name != None:
+        if self.name is not None:
             ret += '\tname: %s;\n' % str(self.name)
-        if self.desc != None:
+        if self.desc is not None:
             ret += '\tdesc: %s;\n' % str(self.desc)
         ret += '}\n'
         return ret
@@ -104,12 +104,12 @@ class Conditional(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Conditional'
-        if self.expr != None:
+        if self.expr is not None:
             print (2+indentation)*' ' + 'Expression:'
             self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Block:'
         print_script(self.block, indentation + 4)
-        if self.else_block != None:
+        if self.else_block is not None:
             print (indentation)*' ' + 'Else block:'
             self.else_block.debug_print(indentation)
 
@@ -118,12 +118,12 @@ class Conditional(object):
 
     def __str__(self):
         ret = ''
-        if self.expr != None:
+        if self.expr is not None:
             ret += 'if (%s) {\n' % str(self.expr)
         for b in self.block:
             ret += str(b)
-        if self.expr != None:
-            if self.else_block != None:
+        if self.expr is not None:
+            if self.else_block is not None:
                 ret += '} else {\n'
                 ret += str(self.else_block)
             ret += '}\n'
@@ -253,7 +253,7 @@ def validate_item_block(block_list):
         if isinstance(block, GraphicsBlock): continue
         if isinstance(block, LiveryOverride): continue
         if isinstance(block, Conditional):
-            while block != None:
+            while block is not None:
                 validate_item_block(block.block)
                 block = block.else_block
             continue
@@ -271,11 +271,11 @@ class Item(object):
         self.feature = reduce_constant(feature, [feature_ids])
         self.body = body
         self.name = name
-        if name != None and name in item_names:
+        if name is not None and name in item_names:
             self.id = ConstantNumeric(item_names[name])
-        elif id == None: self.id = ConstantNumeric(get_free_id(self.feature.value))
+        elif id is None: self.id = ConstantNumeric(get_free_id(self.feature.value))
         else: self.id = reduce_constant(id)
-        if name != None:
+        if name is not None:
             item_names[name] = self.id.value
         validate_item_block(body)
 
@@ -294,7 +294,7 @@ class Item(object):
 
     def __str__(self):
         ret = 'item(%d' % self.feature.value
-        if self.name != None:
+        if self.name is not None:
             ret += ', %s, %s' % (self.name, str(self.id))
         ret += ') {\n'
         for b in self.body:
@@ -317,7 +317,7 @@ class Property(object):
         self.name = name
         self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
         self.unit = unit
-        if unit != None and not (isinstance(self.value, ConstantNumeric) or isinstance(self.value, ConstantFloat)):
+        if unit is not None and not (isinstance(self.value, ConstantNumeric) or isinstance(self.value, ConstantFloat)):
             raise ScriptError("Using a unit for a property is only allowed if the value is constant")
 
     def debug_print(self, indentation):

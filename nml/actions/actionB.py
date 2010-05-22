@@ -19,11 +19,11 @@ class ActionB:
     def write(self, file):
         size = 4
         if not isinstance(self.msg, int): size += get_string_size(self.msg) + 3
-        if self.data != None:
+        if self.data is not None:
             size += get_string_size(self.data) + 3
-            if self.param1 != None:
+            if self.param1 is not None:
                 size += 1
-                if self.param2 != None:
+                if self.param2 is not None:
                     size += 1
 
         file.print_sprite_size(size)
@@ -35,11 +35,11 @@ class ActionB:
         else:
             file.print_bytex(0xFF)
             file.print_string(self.msg)
-        if self.data != None:
+        if self.data is not None:
             file.print_string(self.data)
-            if self.param1 != None:
+            if self.param1 is not None:
                 self.param1.write(file, 1)
-                if self.param2 != None:
+                if self.param2 is not None:
                     self.param2.write(file, 1)
         file.newline()
         file.newline()
@@ -99,7 +99,7 @@ def parse_error_block(error):
         for translation in grf_strings[error.msg]:
             langs.append(translation['lang'])
 
-    if error.data != None:
+    if error.data is not None:
         if not isinstance(error.data, basestring):
             raise ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
         for translation in grf_strings[error.data]:
@@ -122,7 +122,7 @@ def parse_error_block(error):
     for lang in langs:
         if custom_msg:
             msg = get_translation(error.msg, lang)
-        data = None if error.data == None else get_translation(error.data, lang)
+        data = None if error.data is None else get_translation(error.data, lang)
         if len(action6.modifications) > 0: action_list.append(action6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 

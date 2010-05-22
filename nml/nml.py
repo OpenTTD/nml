@@ -18,7 +18,7 @@ lexer.build()
 tokens = lexer.tokens
 
 def p_error(p):
-    if p == None: print "Unexpected EOF"
+    if p is None: print "Unexpected EOF"
     else:
         print p
         print "Syntax error at '%s', line %d" % (p.value, p.lineno)

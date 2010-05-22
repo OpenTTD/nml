@@ -107,7 +107,7 @@ def read_extra_commands():
 def parse_command(command):
     global escapes
     match = re.match(r'^([a-zA-Z_]*)(( \d+)*)$', command)
-    if match == None: raise ScriptError("Failed to parse string command: '" + command + "'")
+    if match is None: raise ScriptError("Failed to parse string command: '" + command + "'")
     cmd_name = match.group(1)
     arguments = match.group(2).split()
     if cmd_name not in escapes: raise ScriptError("Unkown string command: '" + cmd_name + "'")

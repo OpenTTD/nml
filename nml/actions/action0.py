@@ -13,7 +13,7 @@ class Action0:
         self.num_ids = None
 
     def prepare_output(self):
-        if self.num_ids == None: self.num_ids = 1
+        if self.num_ids is None: self.num_ids = 1
 
     def write(self, file):
         size = 7
@@ -75,13 +75,13 @@ def parse_property(feature, name, value, id, unit):
         for p in properties[feature]:
             if 'num' in p and p['num'] != name.value: continue
             prop = p
-        if prop == None: raise ScriptError("Unkown property number: " + name.value)
+        if prop is None: raise ScriptError("Unkown property number: " + name.value)
     else: raise ScriptError("Invalid type as property identifier")
 
-    if unit == None or unit.type != 'nfo':
+    if unit is None or unit.type != 'nfo':
         mul = 1
         if 'unit_conversion' in prop: mul = prop['unit_conversion']
-        if unit != None:
+        if unit is not None:
             if not 'unit_type' in prop or unit.type != prop['unit_type']:
                 raise ScriptError("Invalid unit for property: " + name)
             mul = mul / unit.convert

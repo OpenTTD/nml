@@ -51,7 +51,7 @@ class UnconditionalSkipAction(SkipAction):
         SkipAction.__init__(self, feature, 0x83, 1, (3, r'\7! '), 0xFF, label)
 
 def parse_conditional(expr):
-    if expr == None:
+    if expr is None:
         return (None, [])
     else:
         return get_tmp_parameter(expr)
@@ -85,7 +85,7 @@ def cond_skip_actions(action_list, param):
             label = Action10(target)
         actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
         actions.extend(action_list[start:start+length])
-        if label != None: actions.append(label)
+        if label is not None: actions.append(label)
         start = i + 1
         length = 0
         allow7, allow9 = True, True
@@ -100,7 +100,7 @@ def cond_skip_actions(action_list, param):
             label = Action10(target)
         actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
         actions.extend(action_list[start:start+length])
-        if label != None: actions.append(label)
+        if label is not None: actions.append(label)
     return actions
 
 def parse_conditional_block(cond):
@@ -114,7 +114,7 @@ def parse_conditional_block(cond):
     param_skip_all, action_list = get_tmp_parameter(ConstantNumeric(0xFFFFFFFF))
 
     blocks = []
-    while cond != None:
+    while cond is not None:
         end_label = free_labels.pop()
         blocks.append({'expr': cond.expr, 'statements': cond.block})
         cond = cond.else_block
@@ -139,7 +139,7 @@ def parse_conditional_block(cond):
         if i == 0: action_list.extend(block['cond_actions'])
         else:
             action_list.extend(cond_skip_actions(block['cond_actions'], param_skip_all))
-            if param == None:
+            if param is None:
                 param = param_skip_all
             else:
                 action_list.append(ActionD(ConstantNumeric(block['param_dst']), ConstantNumeric(block['param_dst']), ActionDOperator.AND, ConstantNumeric(param_skip_all)))

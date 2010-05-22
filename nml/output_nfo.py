@@ -23,7 +23,7 @@ class OutputNFO(object):
         self.file.write("\\b" + str(value) + " ")
 
     def print_bytex(self, value, pretty_print = None):
-        if pretty_print != None:
+        if pretty_print is not None:
             self.file.write(pretty_print + " ")
             return
         if -0x80 < value < 0: value += 0x100
