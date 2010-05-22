@@ -227,6 +227,8 @@ class SwitchRange(object):
             ret += '..' + str(self.max)
         if isinstance(self.result, basestring):
             ret += ': %s;' % self.result
+        elif self.result is None:
+            ret += ': return;'
         else:
             ret += ': return %s;' % str(self.result)
         return ret
