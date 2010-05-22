@@ -175,13 +175,9 @@ class Switch(object):
 
 
 class SwitchBody(object):
-    def __init__(self, default):
+    def __init__(self, ranges, default):
+        self.ranges = ranges
         self.default = default
-        self.ranges = []
-
-    def add_range(self, switch_range):
-        self.ranges.insert(0, switch_range)
-        return self
 
     def debug_print(self, indentation):
         for r in self.ranges:

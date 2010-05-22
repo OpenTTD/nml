@@ -152,8 +152,7 @@ def p_switch(t):
 
 def p_switch_body(t):
     'switch_body : switch_ranges switch_value'
-    t[0] = SwitchBody(t[2])
-    for sw_range in t[1]: t[0].add(sw_range)
+    t[0] = SwitchBody(t[1], t[2])
 
 def p_switch_ranges(t):
     '''switch_ranges :
