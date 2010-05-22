@@ -45,6 +45,7 @@ def main(argv):
     parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
     parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
     parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
+    parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
     try:
         opts, args = parser.parse_args(argv)
     except optparse.OptionError, err:
@@ -64,8 +65,10 @@ def main(argv):
     read_extra_commands()
     read_lang_files()
     
+    outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename)
+    
     if not args:
-        if not (opts.grf_filename or opts.nfo_filename):
+        if not outputfile_given:
             parser.print_help()
             sys.exit(2)
         input = sys.stdin
@@ -74,13 +77,14 @@ def main(argv):
     else:
         input_filename = args[0]
         input = codecs.open(input_filename, 'r', 'utf-8')
-        if not (opts.grf_filename or opts.nfo_filename):
+        if not outputfile_given:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
     
     outputs = []
     if opts.grf_filename: outputs.append(OutputGRF(opts.grf_filename))
     if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
-    ret = nml(input, outputs)
+    nml_output = codecs.open(opts.nml_filename, 'w', 'utf-8') if opts.nml_filename else None
+    ret = nml(input, outputs, nml_output)
     for output in outputs: output.close()
     input.close()
     sys.exit(ret)
@@ -88,7 +92,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, outputfiles):
+def nml(inputfile, outputfiles, nml_output):
     script = inputfile.read().strip()
     if script == "":
         print "Empty input file"
@@ -102,6 +106,11 @@ def nml(inputfile, outputfiles):
     
     if _debug > 0:
         print_script(result, 0)
+    
+    if nml_output is not None:
+        for b in result:
+            nml_output.write(str(b))
+            nml_output.write('\n')
     
     actions = []
     for block in result:

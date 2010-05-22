@@ -51,6 +51,9 @@ class ParameterAssignment:
     
     def get_action_list(self):
         return parse_actionD(self)
+    
+    def __str__(self):
+        return 'param[%s] = %s;\n' % (str(self.param), str(self.value))
 
 ########### code blocks ###########
 class GRF:
@@ -82,6 +85,16 @@ class GRF:
     
     def get_action_list(self):
         return [Action8(self.grfid, self.name, self.desc)]
+    
+    def __str__(self):
+        ret = 'grf {\n'
+        ret += '\tgrfid: "%s";\n' % str(self.grfid)
+        if self.name != None:
+            ret += '\tname: %s;\n' % str(self.name)
+        if self.desc != None:
+            ret += '\tdesc: %s;\n' % str(self.desc)
+        ret += '}\n'
+        return ret
 
 class Conditional:
     def __init__(self, expr, block, else_block = None):
@@ -102,6 +115,19 @@ class Conditional:
     
     def get_action_list(self):
         return parse_conditional_block(self)
+    
+    def __str__(self):
+        ret = ''
+        if self.expr != None:
+            ret += 'if (%s) {\n' % str(self.expr)
+        for b in self.block:
+            ret += str(b)
+        if self.expr != None:
+            if self.else_block != None:
+                ret += '} else {\n'
+                ret += str(self.else_block)
+            ret += '}\n'
+        return ret
 
 class Loop:
     def __init__(self, expr, block):
@@ -117,6 +143,13 @@ class Loop:
     
     def get_action_list(self):
         return parse_loop_block(self)
+    
+    def __str__(self):
+        ret = 'while(%s) {\n' % self.expr
+        for b in self.block:
+            ret += str(b)
+        ret += '}\n'
+        return ret
 
 class Switch:
     def __init__(self, feature, var_range, name, expr, body):
@@ -135,6 +168,11 @@ class Switch:
     
     def get_action_list(self):
         return parse_varaction2(self)
+    
+    def __str__(self):
+        var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
+        return 'switch(%s, %s, %s, %s) {\n%s}\n' % (str(self.feature), var_range, str(self.name), str(self.expr), str(self.body))
+        
 
 class SwitchBody:
     def __init__(self, default):
@@ -155,11 +193,23 @@ class SwitchBody:
             print (indentation+2)*' ' + 'Return computed value'
         else:
             self.default.debug_print(indentation + 2)
+    
+    def __str__(self):
+        ret = ''
+        for r in self.ranges:
+            ret += '\t%s\n' % str(r)
+        if self.default is None:
+            ret += '\treturn;\n'
+        elif isinstance(self.default, basestring):
+            ret += '\t%s;\n' % self.default
+        else:
+            ret += '\t%s;\n' % str(self.default)
+        return ret
 
 class SwitchRange:
     def __init__(self, min, max, result):
-        self.min = min
-        self.max = max
+        self.min = reduce_constant(min)
+        self.max = reduce_constant(max)
         self.result = result
     
     def debug_print(self, indentation):
@@ -174,6 +224,16 @@ class SwitchRange:
             print (indentation+2)*' ' + 'Return computed value'
         else:
             self.result.debug_print(indentation + 2)
+    
+    def __str__(self):
+        ret = str(self.min)
+        if self.max.value != self.min.value:
+            ret += '..' + str(self.max)
+        if isinstance(self.result, basestring):
+            ret += ': %s;' % self.result
+        else:
+            ret += ': return %s;' % str(self.result)
+        return ret
 
 class DeactivateBlock:
     def __init__(self, grfid_list):
@@ -231,12 +291,26 @@ class Item:
         for b in self.body:
             action_list.extend(b.get_action_list())
         return action_list
+    
+    def __str__(self):
+        ret = 'item(%d' % self.feature.value
+        if self.name != None:
+            ret += ', %s, %s' % (self.name, str(self.id))
+        ret += ') {\n'
+        for b in self.body:
+            ret += str(b)
+        ret += '}\n'
+        return ret
 
 class Unit:
     def __init__(self, name):
         assert name in unit.units
+        self.name = name
         self.type = unit.units[name]['type']
         self.convert = unit.units[name]['convert']
+    
+    def __str__(self):
+        return self.name
 
 class Property:
     def __init__(self, name, value, unit):
@@ -252,6 +326,10 @@ class Property:
             print (indentation + 2)*' ' + 'String: ', self.value
         else:
             self.value.debug_print(indentation + 2)
+    
+    def __str__(self):
+        unit = '' if self.unit is None else ' ' + str(self.unit)
+        return '%s: %s%s;' % (self.name, self.value, unit)
 
 class PropertyBlock:
     def __init__(self, prop_list):
@@ -265,6 +343,13 @@ class PropertyBlock:
     def get_action_list(self):
         global item_feature, item_id
         return parse_property_block(self.prop_list, item_feature, item_id)
+    
+    def __str__(self):
+        ret = 'property {\n'
+        for prop in self.prop_list:
+            ret += '%s\n' % str(prop)
+        ret += '}\n'
+        return ret
 
 class LiveryOverride:
     def __init__(self, wagon_id, graphics_block):
@@ -496,6 +581,12 @@ class CargoTable:
     
     def get_action_list(self):
         return get_cargolist_action(self.cargo_list)
+    
+    def __str__(self):
+        ret = 'cargotable {\n'
+        ret += ', '.join(self.cargo_list)
+        ret += '\n}\n'
+        return ret
 
 class SpriteCount:
     def debug_print(self, indentation):

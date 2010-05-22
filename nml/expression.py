@@ -25,6 +25,30 @@ class Operator:
     SHIFT_LEFT = 17
     SHIFT_RIGHT = 18
 
+
+def get_operator_string(op, param1, param2):
+    operator_to_string = {}
+    operator_to_string[Operator.ADD] = '(%s + %s)'
+    operator_to_string[Operator.SUB] = '(%s - %s)'
+    operator_to_string[Operator.DIV] = '(%s / %s)'
+    operator_to_string[Operator.MOD] = '(%s %% %s)'
+    operator_to_string[Operator.MUL] = '(%s * %s)'
+    operator_to_string[Operator.AND] = '(%s & %s)'
+    operator_to_string[Operator.OR] = '(%s | %s)'
+    operator_to_string[Operator.XOR] = '(%s ^ %s)'
+    #operator_to_string[Operator.VAL2] = 
+    operator_to_string[Operator.CMP_EQ] = '(%s == %s)'
+    operator_to_string[Operator.CMP_NEQ] = '(%s != %s)'
+    operator_to_string[Operator.CMP_LT] = '(%s < %s)'
+    operator_to_string[Operator.CMP_GT] = '(%s > %s)'
+    operator_to_string[Operator.MIN] = 'min(%s, %s)'
+    operator_to_string[Operator.MAX] = 'max(%s, %s)'
+    operator_to_string[Operator.STO_TMP] = 'STORE_TEMP(%s, %s)'
+    operator_to_string[Operator.STO_PERM] = 'STORE_PERM(%s, %s)'
+    operator_to_string[Operator.SHIFT_LEFT] = '(%s << %s)'
+    operator_to_string[Operator.SHIFT_RIGHT] = '(%s >> %s)'
+    return operator_to_string[op] % (param1, param2)
+
 class ConstantNumeric:
     def __init__(self, value):
         self.value = truncate_int32(value)
@@ -32,12 +56,16 @@ class ConstantNumeric:
         print indentation*' ' + 'Int:', self.value
     def write(self, file, size):
         file.print_varx(self.value, size)
+    def __str__(self):
+        return str(self.value)
 
 class ConstantFloat:
     def __init__(self, value):
         self.value = value
     def debug_print(self, indentation):
         print indentation*' ' + 'Float:', self.value
+    def __str__(self):
+        return str(self.value)
 
 class BitMask:
     def __init__(self, values):
@@ -63,6 +91,9 @@ class BinOp:
             print (indentation+2)*' ' + 'ID:', self.expr2
         else:
             self.expr2.debug_print(indentation + 2)
+    
+    def __str__(self):
+        return get_operator_string(self.op, str(self.expr1), str(self.expr2))
 
 class TernaryOp:
     def __init__(self, guard, expr1, expr2):
@@ -94,6 +125,8 @@ class Parameter:
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter:'
         self.num.debug_print(indentation + 2)
+    def __str__(self):
+        return 'param[%s]' % str(self.num)
 
 class Variable:
     def __init__(self, num, shift = None, mask = None, param = None):
@@ -114,6 +147,19 @@ class Variable:
                 print (indentation+4)*' ' + 'Procedure call:', self.param
             else:
                 self.param.debug_print(indentation + 4)
+    
+    def __str__(self):
+        ret = 'var[%s, %s, %s' % (str(self.num), str(self.shift), str(self.mask))
+        if self.param != None:
+            ret += ', %s' & str(self.param)
+        ret += ']'
+        if self.add != None:
+            ret = '(%s + %s)' % (ret, self.add)
+        if self.div != None:
+            ret = '(%s / %s)' % (ret, self.div)
+        if self.mod != None:
+            ret = '(%s %% %s)' % (ret, self.mod)
+        return ret
 
 class String:
     def __init__(self, name, params = []):
@@ -124,6 +170,12 @@ class String:
         for param in self.params:
             print (indentation+2)*' ' + 'Parameter:'
             param.debug_print(indentation + 4)
+    def __str__(self):
+        ret = 'string(' + self.name
+        for p in self.params:
+            ret += ', ' . str(p)
+        ret += ')'
+        return ret
 
 
 # compile-time expression evaluation
