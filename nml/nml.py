@@ -9,7 +9,6 @@ from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
 from actions.action8 import Action8
 from output_nfo import OutputNFO
-from output_grf import OutputGRF
 
 # Build the lexer
 lexer = NMLLexer()
@@ -81,7 +80,13 @@ def main(argv):
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
     
     outputs = []
-    if opts.grf_filename: outputs.append(OutputGRF(opts.grf_filename))
+    if opts.grf_filename:
+        try:
+            from output_grf import OutputGRF
+            outputs.append(OutputGRF(opts.grf_filename))
+        except ImportError:
+            print "PIL (python-imaging) wasn't found, no support for writing grf files"
+            sys.exit(3)
     if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
     nml_output = codecs.open(opts.nml_filename, 'w', 'utf-8') if opts.nml_filename else None
     ret = nml(input, outputs, nml_output)
