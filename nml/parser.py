@@ -54,10 +54,11 @@ def p_cargotable(t):
 
 def p_cargotable_list(t):
     '''cargotable_list : ID
-                       | ID COMMA cargotable_list'''
-    if len(t[1]) != 4: raise ScriptError("Each cargo identifier should be exactly 4 bytes long")
+                       | cargotable_list COMMA ID'''
+    # t is not a real list, so t[-1] does not work.
+    if len(t[len(t) - 1]) != 4: raise ScriptError("Each cargo identifier should be exactly 4 bytes long")
     if len(t) == 2: t[0] = [t[1]]
-    else: t[0] = [t[1]] + t[3]
+    else: t[0] = t[1] + [t[3]]
 
 def p_deactivate(t):
     'deactivate : DEACTIVATE LPAREN param_list RPAREN SEMICOLON'
