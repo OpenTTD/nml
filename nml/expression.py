@@ -243,6 +243,7 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
+        return BinOp(expr.op, expr1, expr2)
     elif isinstance(expr, Parameter):
         if not isinstance(expr.num, ConstantNumeric):
             return Parameter(reduce_expr(expr.num, id_dicts))
