@@ -1,3 +1,4 @@
+import string
 from expression import *
 from actions.action0 import *
 from actions.action1 import *
@@ -121,7 +122,7 @@ class Conditional(object):
         if self.expr is not None:
             ret += 'if (%s) {\n' % str(self.expr)
         for b in self.block:
-            ret += str(b)
+            ret += '\t' + (string.replace(str(b), '\n', '\n\t'))[0:-1]
         if self.expr is not None:
             if self.else_block is not None:
                 ret += '} else {\n'
@@ -147,7 +148,7 @@ class Loop(object):
     def __str__(self):
         ret = 'while(%s) {\n' % self.expr
         for b in self.block:
-            ret += str(b)
+            ret += '\t' + (string.replace(str(b), '\n', '\n\t'))[0:-1]
         ret += '}\n'
         return ret
 
@@ -296,7 +297,7 @@ class Item(object):
             ret += ', %s, %s' % (self.name, str(self.id))
         ret += ') {\n'
         for b in self.body:
-            ret += str(b)
+            ret += '\t' + (string.replace(str(b), '\n', '\n\t'))[0:-1]
         ret += '}\n'
         return ret
 
@@ -327,7 +328,7 @@ class Property(object):
 
     def __str__(self):
         unit = '' if self.unit is None else ' ' + str(self.unit)
-        return '%s: %s%s;' % (self.name, self.value, unit)
+        return '\t%s: %s%s;' % (self.name, self.value, unit)
 
 class PropertyBlock(object):
     def __init__(self, prop_list):
