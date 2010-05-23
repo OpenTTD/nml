@@ -119,15 +119,11 @@ class NMLLexer(object):
 
     def t_NUMBER(self, t):
         r'(0x[0-9a-fA-F]+)|(\d+)'
-        try:
-            base = 10
-            if len(t.value) >= 2 and t.value[0:2] == "0x":
-                t.value = t.value[2:]
-                base = 16
-            t.value = int(t.value, base)
-        except ValueError:
-            print "Integer value too large", t.value
-            t.value = 0
+        base = 10
+        if len(t.value) >= 2 and t.value[0:2] == "0x":
+            t.value = t.value[2:]
+            base = 16
+        t.value = int(t.value, base)
         return t
 
     def t_UNIT(self, t):
