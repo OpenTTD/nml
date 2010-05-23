@@ -88,7 +88,7 @@ class Action2Var(Action2):
         for var in self.var_list:
             if isinstance(var, basestring):
                 file.newline()
-                file.print_bytex(action2operator_to_num(var), var)
+                file.print_bytex(action2operator_to_num[var], var)
             else:
                 var.write(file, self.varsize)
         file.print_byte(len(self.ranges))
