@@ -140,7 +140,7 @@ def p_if_else_parts(t):
     '''if_else_parts : IF LPAREN expression RPAREN LBRACE skipable_script RBRACE
                      | if_else_parts ELSE IF LPAREN expression RPAREN LBRACE skipable_script RBRACE'''
     if len(t) == 8: t[0] = [Conditional(t[3], t[6], None)]
-    else: t[0] = t[1] + [Conditional(t[4], t[7], None)]
+    else: t[0] = t[1] + [Conditional(t[5], t[8], None)]
 
 def p_loop(t):
     'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'
