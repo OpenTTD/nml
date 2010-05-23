@@ -89,9 +89,11 @@ def p_string(t):
     t[0] = String(t[3][0], t[3][1:])
 
 def p_param_list(t):
-    '''param_list : expression
+    '''param_list :
+                  | expression
                   | param_list COMMA expression'''
-    if len(t) == 2: t[0] = [t[1]]
+    if len(t) == 1: t[0] = []
+    elif len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
 
 def p_const_expression(t):
@@ -319,10 +321,6 @@ def p_layout_param(t):
 def p_real_sprite(t):
     'real_sprite : LBRACKET param_list RBRACKET'
     t[0] = RealSprite(t[2])
-
-def p_real_sprite_empty(t):
-    'real_sprite : LBRACKET  RBRACKET'
-    t[0] = EmptyRealSprite()
 
 #severity, message (one of REQUIRES_TTDPATCH, REQUIRES_DOS_WINDOWS, USED_WITH, INVALID_PARAMETER,
 #MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),

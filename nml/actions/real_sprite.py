@@ -12,7 +12,7 @@ class RealSpriteAction:
         pass
 
     def write(self, file):
-        if isinstance(self.sprite, nml.ast.EmptyRealSprite):
+        if self.sprite.is_empty:
             file.print_empty_realsprite()
             if self.last: file.newline()
             return
@@ -40,11 +40,10 @@ real_sprite_compression_flags = {
 
 
 def parse_real_sprite(sprite, pcx, last, id_dict):
-    if isinstance(sprite, nml.ast.EmptyRealSprite):
+    if len(sprite.param_list) == 0:
+        sprite.is_empty = True
         return RealSpriteAction(sprite, pcx, last)
-
-    assert isinstance(sprite, nml.ast.RealSprite)
-    if not 6 <= len(sprite.param_list) <= 7:
+    elif not 6 <= len(sprite.param_list) <= 7:
         raise ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
     try:
         # create new sprite struct, needed for template expansion

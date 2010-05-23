@@ -471,13 +471,10 @@ class SpriteSet(object):
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
-class EmptyRealSprite(object):
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Empty real sprite'
-
 class RealSprite(object):
     def __init__(self, param_list = None):
         self.param_list = param_list
+        self.is_empty = False
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Real sprite, parameters:'
