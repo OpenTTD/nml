@@ -88,13 +88,16 @@ def p_string(t):
     'string : STRING LPAREN param_list RPAREN'
     t[0] = String(t[3][0], t[3][1:])
 
+def p_expression_list(t):
+    '''expression_list : expression
+                       | expression_list COMMA expression'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[3]]
+
 def p_param_list(t):
     '''param_list :
-                  | expression
-                  | param_list COMMA expression'''
-    if len(t) == 1: t[0] = []
-    elif len(t) == 2: t[0] = [t[1]]
-    else: t[0] = t[1] + [t[3]]
+                  | expression_list'''
+    t[0] = [] if len(t) == 1 else t[1]
 
 def p_const_expression(t):
     'expression : NUMBER'
