@@ -110,7 +110,10 @@ class NMLLexer(object):
     t_TERNARY_OPEN     = r'\?'
     t_COLON            = r':'
     t_SEMICOLON        = r';'
-    t_ignore_COMMENT   = r'(/\*(\n|.)*?\*/)|(//.*)'
+
+    def t_ignore_COMMENT(self, t):
+        r'(/\*(\n|.)*?\*/)|(//.*)'
+        t.lexer.lineno += t.value.count("\n")
 
     def t_FLOAT(self, t):
         r'\d+\.\d+'
