@@ -199,7 +199,7 @@ compile_time_operator = {
     Operator.SHIFT_RIGHT: operator.rshift,
 }
 
-commutative_operators = [
+commutative_operators = set([
     Operator.ADD,
     Operator.MUL,
     Operator.AND,
@@ -209,7 +209,7 @@ commutative_operators = [
     Operator.CMP_NEQ,
     Operator.MIN,
     Operator.MAX,
-]
+])
 
 # note: id_dicts is a *list* of dictionaries or (dictionary, function)-tuples
 def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
