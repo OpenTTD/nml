@@ -161,6 +161,26 @@ class Variable(object):
             ret = '(%s %% %s)' % (ret, self.mod)
         return ret
 
+class FunctionCall(object):
+    def __init__(self, name, params):
+        self.name = name
+        self.params = params
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Call function: ' + self.name
+        for param in self.params:
+            print (indentation+2)*' ' + 'Parameter:'
+            if isinstance(param, basestring):
+                print (indentation+4)*' ' + 'ID:', param
+            else:
+                param.debug_print(indentation + 4)
+    def __str__(self):
+        ret = ''
+        for param in self.params:
+            if ret == '': ret = str(param)
+            else: ret = '%s, %s' % (ret, str(param))
+        ret = '%s(%s)' % (self.name, ret)
+        return ret
+
 class String(object):
     def __init__(self, name, params = []):
         self.name = name
@@ -271,6 +291,16 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
             if val.value >= 32: raise ScriptError("Parameters of 'bit' cannot be greater then 31")
             ret |= 1 << val.value
         return ConstantNumeric(ret)
+    elif isinstance(expr, FunctionCall):
+        param_list = []
+        for param in expr.params:
+            param_list.append(reduce_expr(param, id_dicts))
+        if expr.name in builtin_functions.function_table:
+            return reduce_expr(builtin_functions.function_table[expr.name](expr.name, param_list), id_dicts)
+        else:
+            if len(param_list) != 0:
+                raise ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % expr.name);
+            return Variable(ConstantNumeric(0x7E), param=expr.name)
     return expr
 
 def reduce_constant(expr, id_dicts = []):
@@ -278,3 +308,6 @@ def reduce_constant(expr, id_dicts = []):
     if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
         raise ConstError()
     return expr
+
+#import here to avoid issues with circular imports
+import builtin_functions

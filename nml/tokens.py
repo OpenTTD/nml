@@ -27,15 +27,7 @@ reserved = {
     'deactivate' : 'DEACTIVATE', #action E
     'string' : 'STRING',
     'return' : 'RETURN',
-    'min' : 'MIN',
-    'max' : 'MAX',
-    'STORE_TEMP' : 'STORE_TEMP',
-    'LOAD_TEMP' : 'LOAD_TEMP',
-    'STORE_PERM' : 'STORE_PERM',
-    'LOAD_PERM' : 'LOAD_PERM',
-    'date' : 'DATE',
     'livery_override' : 'LIVERYOVERRIDE',
-    'bitmask' : 'BITMASK',
 }
 
 var_ranges = {

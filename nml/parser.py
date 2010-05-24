@@ -1,6 +1,5 @@
 from ast import *
 from expression import *
-import datetime, calendar
 
 precedence = (
     ('left','COMMA'),
@@ -374,44 +373,9 @@ def p_variable(t):
     'variable : VARIABLE LBRACKET param_list RBRACKET'
     t[0] = Variable(*t[3])
 
-def p_min_max(t):
-    '''expression : MIN LPAREN param_list RPAREN
-                  | MAX LPAREN param_list RPAREN'''
-    args = t[3]
-    if len(args) < 2: raise ScriptError("Min/Max must have at least 2 parameters")
-    op = Operator.MIN if t[1] == 'min' else Operator.MAX
-    t[0] = reduce(lambda x, y: BinOp(op, x, y), args)
-
 def p_function(t):
-    'expression : ID LPAREN RPAREN'
-    t[0] = Variable(ConstantNumeric(0x7E), param=t[1])
-
-def p_store_var(t):
-    '''expression : STORE_TEMP LPAREN expression COMMA expression RPAREN
-                  | STORE_PERM LPAREN expression COMMA expression RPAREN'''
-    op = Operator.STO_TMP if t[1] == 'STORE_TEMP' else Operator.STO_PERM
-    t[0] = BinOp(op, t[3], t[5])
-
-def p_load_tmp_var(t):
-    'expression : LOAD_TEMP LPAREN expression RPAREN'
-    t[0] = Variable(ConstantNumeric(0x7D), param=t[3])
-
-def p_load_perm_var(t):
-    'expression : LOAD_PERM LPAREN expression RPAREN'
-    t[0] = Variable(ConstantNumeric(0x7C), param=t[3])
-
-def p_bit(t):
-    'expression : BITMASK LPAREN param_list RPAREN'
-    t[0] = BitMask(t[3])
-
-def p_date(t):
-    'expression : DATE LPAREN param_list RPAREN '
-    if len(t[3]) != 3: raise ScriptError("'date' must have 3 arguments")
-    year = reduce_constant(t[3][0]).value
-    month = reduce_constant(t[3][1]).value
-    day = reduce_constant(t[3][2]).value
-    date = datetime.date(year, month, day)
-    t[0] = ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1)
+    'expression : ID LPAREN param_list RPAREN'
+    t[0] = FunctionCall(t[1], t[3])
 
 def p_replace(t):
     'replace : REPLACESPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
