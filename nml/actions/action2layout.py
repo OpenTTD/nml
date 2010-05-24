@@ -38,18 +38,18 @@ class Action2Layout(Action2):
             file.newline()
         file.newline()
 
-class Action2LayoutRecolorMode:
+class Action2LayoutRecolorMode(object):
     NONE = 0
     TRANSPARANT = 1
     RECOLOR = 2
 
 #same keywords as in the syntax
-class Action2LayoutSpriteType:
+class Action2LayoutSpriteType(object):
     GROUND = 'ground'
     BUILDING = 'building'
     CHILD = 'childsprite'
 
-class Action2LayoutSprite:
+class Action2LayoutSprite(object):
 
 
     def __init__(self, type):

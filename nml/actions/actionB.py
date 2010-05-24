@@ -4,7 +4,7 @@ from nml.grfstrings import grf_strings, get_translation, get_string_size
 from action6 import *
 from actionD import *
 
-class ActionB:
+class ActionB(object):
     def __init__(self, severity, lang, msg, data, param1, param2):
         self.severity = severity
         self.lang = lang

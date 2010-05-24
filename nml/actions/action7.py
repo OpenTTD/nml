@@ -12,7 +12,7 @@ free_labels.reverse()
 free_while_labels = range(0x80, 0x100)
 free_while_labels.reverse()
 
-class SkipAction:
+class SkipAction(object):
     def __init__(self, feature, var, varsize, condtype, value, label):
         self.feature = feature
         self.label = label

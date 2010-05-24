@@ -5,7 +5,7 @@ from real_sprite import *
 from action2real import *
 from action2layout import *
 
-class Action1:
+class Action1(object):
     def __init__(self, feature, num_sets, num_ent):
         self.feature = feature
         self.num_sets = num_sets

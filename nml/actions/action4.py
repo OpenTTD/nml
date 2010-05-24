@@ -1,7 +1,7 @@
 from nml.generic import *
 from nml.grfstrings import grf_strings, get_string_size
 
-class Action4:
+class Action4(object):
     def __init__(self, feature, lang, size, id, text):
         self.feature = feature
         self.lang = lang

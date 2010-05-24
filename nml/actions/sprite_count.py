@@ -1,6 +1,6 @@
 from nml.generic import *
 
-class SpriteCountAction:
+class SpriteCountAction(object):
     def __init__(self, count):
         self.count = count
 

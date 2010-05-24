@@ -3,7 +3,7 @@ from nml.generic import *
 from action6 import *
 from actionD import *
 
-class ActionE:
+class ActionE(object):
     def __init__(self, grfid_list):
         self.grfid_list = [bswap32(grfid.value) for grfid in grfid_list]
 

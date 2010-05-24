@@ -3,7 +3,7 @@ from nml.expression import *
 from nml.generic import ScriptError
 from action6 import *
 
-class ActionDOperator:
+class ActionDOperator(object):
     EQUAL = r'\D='
     ADD   = r'\D+'
     SUB   = r'\D-'
@@ -34,7 +34,7 @@ actionDoperator_to_num = {
     ActionDOperator.MODS: 0x0C,
 }
 
-class ActionD:
+class ActionD(object):
     def __init__(self, target, param1, op, param2, data = None):
         self.target = target
         self.param1 = param1

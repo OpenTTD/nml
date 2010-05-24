@@ -6,7 +6,7 @@ from action6 import *
 from actionD import *
 from nml import global_constants
 
-class Action2Operator:
+class Action2Operator(object):
     ADD   = r'\2+'
     SUB   = r'\2-'
     MUL   = r'\2*'
@@ -118,7 +118,7 @@ def convert_op_to_action2(op):
     if not op in op_to_act2: raise ScriptError("Unsupported operator in action2 expression: " + op)
     return op_to_act2[op]
 
-class VarAction2Var:
+class VarAction2Var(object):
     def __init__(self, var_num, shift, mask, parameter = None):
         self.var_num = var_num
         self.shift = shift
@@ -181,7 +181,7 @@ class VarAction2LoadTempVar(VarAction2Var):
     def get_size(self, varsize):
         return 3 + varsize
 
-class Modification:
+class Modification(object):
     def __init__(self, param, size, offset):
         self.param = param
         self.size = size

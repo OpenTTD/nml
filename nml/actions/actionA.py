@@ -3,7 +3,7 @@ from real_sprite import *
 from action2real import *
 from action2layout import *
 
-class ActionA:
+class ActionA(object):
     def __init__(self, num_sets, sets):
         self.num_sets = num_sets
         self.sets = sets

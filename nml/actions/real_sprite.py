@@ -2,7 +2,7 @@ import nml.ast
 from nml.generic import *
 from nml.expression import *
 
-class RealSpriteAction:
+class RealSpriteAction(object):
     def __init__(self, sprite, pcx, last = False):
         self.sprite = sprite
         self.pcx = pcx

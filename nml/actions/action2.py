@@ -4,7 +4,7 @@ free_action2_ids = range(1, 255)
 
 action2_map = {}
 
-class Action2:
+class Action2(object):
     def __init__(self, feature, name):
         global action2_map
         assert not name in action2_map

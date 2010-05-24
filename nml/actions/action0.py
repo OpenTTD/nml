@@ -5,7 +5,7 @@ from action6 import *
 from actionD import *
 from nml.expression import *
 
-class Action0:
+class Action0(object):
     def __init__(self, feature, id):
         self.feature = feature
         self.id = id
@@ -46,7 +46,7 @@ def get_free_id(feature):
     first_free_id[feature] += 1
     return first_free_id[feature] - 1
 
-class Action0Property:
+class Action0Property(object):
     def __init__(self, num, value, size):
         self.num = num
         self.value = value
@@ -151,7 +151,7 @@ def parse_property_block(prop_list, feature, id):
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
     return action_list
 
-class CargoListProp:
+class CargoListProp(object):
     def __init__(self, cargo_list):
         self.cargo_list = cargo_list
 

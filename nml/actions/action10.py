@@ -1,6 +1,6 @@
 from nml.generic import *
 
-class Action10:
+class Action10(object):
     def __init__(self, label):
         self.label = label
 

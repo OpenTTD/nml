@@ -4,7 +4,7 @@ from action2 import *
 from action6 import *
 from actionD import *
 
-class Action3:
+class Action3(object):
     def __init__(self, feature, id):
         self.feature = feature
         self.id = id
