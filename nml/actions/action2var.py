@@ -115,7 +115,7 @@ def convert_op_to_action2(op):
         Operator.MIN: Action2Operator.MIN,
         Operator.MAX: Action2Operator.MAX,
     }
-    if not op in op_to_act2: raise ScriptError("Unsupported operator in action2 expression: " + op)
+    if not op in op_to_act2: raise ScriptError("Unsupported operator in action2 expression: " + str(op))
     return op_to_act2[op]
 
 class VarAction2Var(object):
