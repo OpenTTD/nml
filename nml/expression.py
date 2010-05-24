@@ -219,8 +219,8 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
         expr2 = reduce_expr(expr.expr2, id_dicts)
         if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric):
             return ConstantNumeric(compile_time_operator[expr.op](expr1.value, expr2.value))
-        simple_expr1 = isinstance(expr1, ConstantNumeric) or isinstance(expr1, Parameter) or isinstance(expr1, Variable)
-        simple_expr2 = isinstance(expr2, ConstantNumeric) or isinstance(expr2, Parameter) or isinstance(expr2, Variable)
+        simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
+        simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
         if expr.op in commutative_operators and ((simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric))):
             expr1, expr2 = expr2, expr1
         if isinstance(expr1, Variable) and isinstance(expr2, ConstantNumeric):
@@ -275,6 +275,6 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
 
 def reduce_constant(expr, id_dicts = []):
     expr = reduce_expr(expr, id_dicts)
-    if not (isinstance(expr, ConstantNumeric) or isinstance(expr, ConstantFloat)):
+    if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
         raise ConstError()
     return expr

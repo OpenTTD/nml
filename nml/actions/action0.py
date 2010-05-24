@@ -86,7 +86,7 @@ def parse_property(feature, name, value, id, unit):
                 raise ScriptError("Invalid unit for property: " + name)
             mul = mul / unit.convert
         if mul != 1:
-            if not (isinstance(value, ConstantNumeric) or isinstance(value, ConstantFloat)):
+            if not isinstance(value, (ConstantNumeric, ConstantFloat)):
                 raise ScriptError("Unit conversion specified for property, but no constant value found")
             value = ConstantNumeric(int(value.value * mul + 0.5))
 
