@@ -21,6 +21,7 @@ class Action2Operator(object):
     MAX   = r'\2>'
     VAL2  = r'\2r'
     STO_TMP = r'\2sto'
+    STO_PERM = r'10'
 
 action2operator_to_num = {
     Action2Operator.ADD: 0,
@@ -37,6 +38,7 @@ action2operator_to_num = {
     Action2Operator.MAX: 3,
     Action2Operator.VAL2: 0x0F,
     Action2Operator.STO_TMP: 0x0E,
+    Action2Operator.STO_PERM: 0x10,
 }
 
 class Action2Var(Action2):
@@ -114,6 +116,8 @@ def convert_op_to_action2(op):
         Operator.XOR: Action2Operator.XOR,
         Operator.MIN: Action2Operator.MIN,
         Operator.MAX: Action2Operator.MAX,
+        Operator.STO_TMP:  Action2Operator.STO_TMP,
+        Operator.STO_PERM: Action2Operator.STO_PERM,
     }
     if not op in op_to_act2: raise ScriptError("Unsupported operator in action2 expression: " + str(op))
     return op_to_act2[op]

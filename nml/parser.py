@@ -390,7 +390,7 @@ def p_store_var(t):
     '''expression : STORE_TEMP LPAREN expression COMMA expression RPAREN
                   | STORE_PERM LPAREN expression COMMA expression RPAREN'''
     op = Operator.STO_TMP if t[1] == 'STORE_TEMP' else Operator.STO_PERM
-    t[0] = BinOp(op, t[5], t[3])
+    t[0] = BinOp(op, t[3], t[5])
 
 def p_load_tmp_var(t):
     'expression : LOAD_TEMP LPAREN expression RPAREN'
