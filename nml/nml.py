@@ -30,6 +30,16 @@ parser = yacc.yacc(debug=True)
 _debug = 0
 crop_sprites = False
 compress_grf = True
+OutputGRF = None
+def get_output_grf():
+    global OutputGRF
+    if OutputGRF: return OutputGRF
+    try:
+        from output_grf import OutputGRF
+        return OutputGRF
+    except ImportError:
+        print "PIL (python-imaging) wasn't found, no support for writing grf files"
+        sys.exit(3)
 
 def main(argv):
     global _debug, crop_sprites, compress_grf
@@ -38,13 +48,14 @@ def main(argv):
     usage = """Usage: %prog [options] <filename>\nWhere <filename> is the nml file to parse"""
     # that above line should really contain _real_ newlines, but that's really not readable without strange indentation
     parser = optparse.OptionParser(usage=usage)
-    parser.set_defaults(debug=False, crop=False, compress=True)
+    parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
     parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
-    parser.add_option("-o", "--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
+    parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
     parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
     parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
+    parser.add_option("-o", "--output", dest="outputs", action="append", metavar="<file>", help="write output(nfo/grf) to <file>")
     try:
         opts, args = parser.parse_args(argv)
     except optparse.OptionError, err:
@@ -64,7 +75,7 @@ def main(argv):
     read_extra_commands()
     read_lang_files()
 
-    outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename)
+    outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.outputs)
 
     if not args:
         if not outputfile_given:
@@ -80,15 +91,20 @@ def main(argv):
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
     outputs = []
-    if opts.grf_filename:
-        try:
-            from output_grf import OutputGRF
-            outputs.append(OutputGRF(opts.grf_filename))
-        except ImportError:
-            print "PIL (python-imaging) wasn't found, no support for writing grf files"
-            sys.exit(3)
+    if opts.grf_filename: outputs.append(get_output_grf()(opts.grf_filename))
     if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
     nml_output = codecs.open(opts.nml_filename, 'w', 'utf-8') if opts.nml_filename else None
+    for output in opts.outputs:
+        outroot, outext = os.path.splitext(output)
+        outext = outext.lower()
+        if outext == '.grf': outputs.append(get_output_grf()(output))
+        elif outext == '.nfo': outputs.append(OutputNFO(output))
+        elif outext == '.nml':
+            print "Use --output-nml <file> to specify nml output"
+            sys.exit(2)
+        else:
+            print "Unknown output format %s" % outext
+            sys.exit(2)
     ret = nml(input, outputs, nml_output)
     for output in outputs: output.close()
     input.close()
