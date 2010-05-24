@@ -217,7 +217,7 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
     if isinstance(expr, BinOp):
         expr1 = reduce_expr(expr.expr1, id_dicts)
         expr2 = reduce_expr(expr.expr2, id_dicts)
-        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric):
+        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and expr.op in compile_time_operator:
             return ConstantNumeric(compile_time_operator[expr.op](expr1.value, expr2.value))
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
