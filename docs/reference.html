@@ -1,0 +1,288 @@
+<html>
+<head>
+<title>NML documentation</title>
+<style type="text/css">
+pre {
+	background: lightgrey;
+}
+</style>
+</head>
+<body>
+
+<h1>Contents</h1>
+<ul>
+<li><a href="#preface">Preface</a></li>
+<li><a href="#structure">Language structure</a></li>
+<li><a href="#block-syntax">Block syntax</a></li>
+<ul>
+	<li><a href="#block-grf">GRF</a></li>
+	<li><a href="#block-item">Item</a></li>
+	<ul>
+		<li><a href="#block-item-property">Property</a></li>
+		<li><a href="#block-item-graphics">Graphics</a></li>
+		<li><a href="#block-item-livery_override">Livery override</a></li>
+	</ul>
+	<li><a href="#block-spriteblock">Spriteblock</a></li>
+	<ul>
+		<li><a href="#block-spriteblock-spriteset">Spriteset</a></li>
+		<li><a href="#block-spriteblock-spritegroup">Spritegroup</a></li>
+	</ul>
+	<li><a href="#block-switch">Switch</a></li>
+	<li><a href="#block-template">Template</a></li>
+	<li><a href="#block-cargotable">Cargotable</a></li>
+	<li><a href="#block-if">If/else</a></li>
+	<li><a href="#block-while">While</a></li>
+	<li><a href="#block-error">Error</a></li>
+	<li><a href="#block-deactivate">Deactivate</a></li>
+	<li><a href="#block-replace">Replace</a></li>
+	<li><a href="#block-town_names">Town names</a></li>
+	<li><a href="#block-assignment">Parameter assignment</a></li>
+</ul>
+<li><a href="#units">Units</a></li>
+<li><a href="#properties">List of properties</a></li>
+<ul>
+	<li><a href="#property-trains">Trains</a></li>
+	<li><a href="#property-roadvehs">Road vehicles</a></li>
+	<li><a href="#property-ships">Ships</a></li>
+	<li><a href="#property-planes">Planes</a></li>
+	<li><a href="#property-stations">Stations</a></li>
+	<li><a href="#property-canals">Canals</a></li>
+	<li><a href="#property-bridges">Bridges</a></li>
+	<li><a href="#property-houses">Houses</a></li>
+	<li><a href="#property-industrytiles">Industry tiles</a></li>
+	<li><a href="#property-industries">Industries</a></li>
+	<li><a href="#property-cargos">Cargos</a></li>
+	<li><a href="#property-airports">Airports</a></li>
+	<li><a href="#property-railtypes">Railtypes</a></li>
+	<li><a href="#property-airporttiles">Airport tiles</a></li>
+</ul>
+<li><a href="#vars">List of variables</a></li>
+<ul>
+	<li><a href="#vars-trains">Trains</a></li>
+	<li><a href="#vars-roadvehs">Road vehicles</a></li>
+	<li><a href="#vars-ships">Ships</a></li>
+	<li><a href="#vars-planes">Planes</a></li>
+	<li><a href="#vars-stations">Stations</a></li>
+	<li><a href="#vars-canals">Canals</a></li>
+	<li><a href="#vars-bridges">Bridges</a></li>
+	<li><a href="#vars-houses">Houses</a></li>
+	<li><a href="#vars-industrytiles">Industry tiles</a></li>
+	<li><a href="#vars-industries">Industries</a></li>
+	<li><a href="#vars-cargos">Cargos</a></li>
+	<li><a href="#vars-airports">Airports</a></li>
+	<li><a href="#vars-railtypes">Railtypes</a></li>
+	<li><a href="#vars-airporttiles">Airport tiles</a></li>
+</ul>
+</ul>
+
+<h1><a name="preface">Preface</a></h1>
+<p>NewGRF files are files containing sprites and pseudo-sprites that can be
+used to describe extra vehicles, industries, cargoes etc. for use in OpenTTD
+and TTDPatch. The most used tool to encode/decode GRF flies is
+<a href="http://www.ttdpatch.net/grfcodec/">GRFCodec</a>
+(<a href="http://www.openttd.org/download-grfcodec">nightly download</a>).
+GRFCodec can read NFO files and convert them to GRF files
+(<a href="http://www.ttdpatch.net/grfcodec/grf.html">GRF file format</a>).
+NFO is a low-level language that is tied to the GRF spec. It uses hexadecimal
+numbers by default in most places and doesn't have any textual identifiers.
+While the language is very powerful, it's also hard to learn. NML was started
+mainly to provide a higher level language so coding GRF files will become
+accessable to more people.</p>
+
+<h1><a name="structure">Language structure</a></h1>
+<h2>Blocks</h2>
+<p>NML files are mainly composed from blocks. A block starts with the type of
+the block, optional arguments and then the contents enclosed by curly braces.
+Nearly all NML files will start with a <a href="#block-grf">grf-block</a>. The
+grf-block takes no parameters and is one of the simplest blocks there is.
+Following is an example grf-block.
+<pre>grf {
+	grfid : "AB\02\03";
+	name : string(STR_GRF_NAME);
+	desc : string(STR_GRF_DESCRIPTION);
+}</pre>
+Let's look at this code line for line.
+<pre>grf {</pre>
+This block is a grf-block. A grf-block has no parameters. The '{' is the start
+of the block content.
+<pre>	grfid : "AB\02\03";</pre>
+This line sets the grfid of the resulting grf. The value is the letters AB
+followed by a byte with value 2 and then another one with value 3. The
+semicolon marks the end of the statement.
+<pre>	name : string(STR_GRF_NAME);</pre>
+The name of the grf. In NML nearly all strings are put in
+<a href="#language-files">language files</a>. The format of the language files
+is described in another section. For now just assume a string with the name
+<code>STR_GRF_NAME</code> exists. To reference a string from the language file
+you use <code>string(&lt;stringname&gt;)</code> where <code>&lt;stringname&gt;</code>
+should be replaced by the actual name of the string.
+<pre>	desc : string(STR_GRF_DESCRIPTION);</pre>
+This looks a lot like the previous line, only it sets the description instead
+of the name.
+<pre>}</pre>
+This marks the end of the last-opened block, in this case the grf-block.</p>
+
+<h2>Parameters</h2>
+<p>Blocks are not the only item in NML files, you can also do parameter
+assignments. Each NewGRF has 128 parameters available, NML reservers the top 64
+parameters for internal use. If a user sets parameters for your grf, these are
+the starting at parameter 0. Each parameter is available by using
+<code>param[&lt;expression&gt;]</code>. You can set parameter number 4 to 3 by doing:
+<pre>param[4] = 3;</pre>
+
+
+<h1><a name="block-syntax">Block syntax</a></h1>
+In the next sections you'll often see a word enclosed by the less-than and
+greater-than symbols. These words should not be written literally, but instead
+a references to another block/item you should use there. The following words
+will be used:
+
+<dl>
+<dt>&lt;literal-string&gt;</dt>
+<dd>A string enclosed by quotes, for example <code>"this is a literal string"</code></dd>
+
+<dt>&lt;string&gt;</dt>
+<dd>A string defined in the language file, for example <code>string(STR_GRF_NAME)</code></dd>
+
+<dt>&lt;expression&gt;</dt>
+<dd>An expression, this can computation or one of &lt;number&gt;, &lt;float&gt;,
+&lt;parameter&gt;, &lt;variable&gt;, &lt;function-call&gt;</dd>
+
+<dt>&lt;ID&gt;</dt>
+<dd>The name of an item or block. IDs should start with a letter or underscore.
+The rest of the ID may consist of letters, underscores or numbers.</dd>
+
+</dl>
+If something is enclosed by square brackes [] it's optional.
+
+
+<h2><a name="block-grf">GRF</a></h2>
+<pre>grf {
+	grfid: &lt;literal-string&gt;;
+	name: &lt;string&gt;;
+	desc: &lt;string&gt;;
+}</pre>
+Example:
+<pre>grf {
+	grfid: "AB\03\02";
+	name: string(STR_GRF_NAME);
+	desc: string(STR_GRF_DESC);
+}</pre>
+
+<h2><a name="block-item">Item</a></h2>
+<pre>item (&lt;expression&gt; [, &lt;ID&gt; [, &lt;expression&gt;]]) {
+	(&lt;property-block&gt;|&lt;graphics-block&gt;|&lt;livery_override-block&gt;)+
+}</pre>
+The first argument is the feature of the item, the second (optional) argument
+is the name and the third (optional) argument is the numerical id you want to
+use for this item.
+Example:
+<pre>item (FEAT_ROADVEHS, hereford_tram) {
+	property {
+		name:               string(STR_NAME_HEREFORD_TRAM);
+		climates_available: CLIMATE_BIT_ALL;
+		introduction_date:  date(1940,1,1);
+		speed:              60 km/h;
+	}
+}</pre>
+
+<h3><a name="block-item-property">Property</a></h3>
+<pre>property {
+	(&lt;ID&gt;: (&lt;string&gt;|(&lt;expression&gt; [&lt;unit&gt;]));)+
+}</pre>
+This one looks a lot more complicated then it actually is. A property-block
+contains one or more assignments. Each assignment starts with the name of the
+property that is changed followed by a colon. After the colon follow the value
+and you end the line with a semicolon. The type of the value depends on the
+property, some properties require a string as value and some an expression.
+For some properties you can optionally specify a unit that is used to convert
+the value to the unit that is written to the output file. You can only use
+a unit if the expression is constant. <a href="#units">List of valid units</a>
+
+<h3><a name="block-item-graphics">Graphics</a></h3>
+<h3><a name="block-item-livery_override">Livery override</a></h3>
+
+<h2><a name="block-spriteblock">Spriteblock</a></h2>
+<h3><a name="block-spriteblock-spriteset">Spriteset</a></h3>
+<h3><a name="block-spriteblock-spritegroup">Spritegroup</a></h3>
+
+<h2><a name="block-switch">Switch</a></h2>
+<pre>switch (&lt;expression&gt;, (SELF|PARENT), &lt;ID&gt;, &lt;expression&gt;) {
+	(&lt;range&gt;: &lt;return_value&gt;;)*
+	&lt;return_value&gt;;
+}</pre>
+<p><code>&lt;range&gt;</code> can either number or two numbers seperated by
+two dots.</p>
+<p><code>&lt;return_value&gt;</code> can be either a literal <code>return</code>,
+a literal <code>return</code> followed by an expression, an <code>ID</code> that
+is the name of another switchblock or spriteblock or a string. If the
+<code>return_value</code> is just a literal <code>return</code>, then the value
+of the computation is returned. If it's a string or a <code>return</code>
+followed by an expression then that value is returned. Otherwise it's the ID
+of a spriteblock or switch and that block will be evaluated.
+
+<h2><a name="block-template">Template</a></h2>
+
+<h2><a name="block-cargotable">Cargotable</a></h2>
+<pre>cargotable {
+	ID [, ID]*
+}</pre>
+The cargotable is a list of 4-byte long IDs. For example:
+<pre>cargotable {
+	PASS, MAIL, GOOD, COAL
+}</pre>
+
+<h2><a name="block-if">If/else</a></h2>
+
+<h2><a name="block-while">While</a></h2>
+
+<h2><a name="block-error">Error</a></h2>
+
+<h2><a name="block-deactivate">Deactivate</a></h2>
+
+<h2><a name="block-replace">Replace</a></h2>
+
+<h2><a name="block-assignment">Parameter assignment</a></h2>
+<pre>param[&lt;expression&gt;] = &lt;expression&gt;;</pre>
+Set a parameter to the given expression. Neither of the two expessions has to
+be constant, the following is perfectly valid:
+<pre>param[param[2] + 1] = param[3] * param[4];</pre>
+
+
+
+<h1><a name="units">Units</a></h1>
+
+<h1><a name="properties">List of properties</a></h1>
+<h2><a name="property-trains">Trains</a></h2>
+<h2><a name="property-roadvehs">Road vehicles</a></h2>
+<h2><a name="property-ships">Ships</a></h2>
+<h2><a name="property-planes">Planes</a></h2>
+<h2><a name="property-stations">Stations</a></h2>
+<h2><a name="property-canals">Canals</a></h2>
+<h2><a name="property-bridges">Bridges</a></h2>
+<h2><a name="property-houses">Houses</a></h2>
+<h2><a name="property-industrytiles">Industry tiles</a></h2>
+<h2><a name="property-industries">Industries</a></h2>
+<h2><a name="property-cargos">Cargos</a></h2>
+<h2><a name="property-airports">Airports</a></h2>
+<h2><a name="property-railtypes">Railtypes</a></h2>
+<h2><a name="property-airporttiles">Airport tiles</a></h2>
+
+<h1><a name="vars">List of variables</a></h1>
+<h2><a name="vars-trains">Trains</a></h2>
+<h2><a name="vars-roadvehs">Road vehicles</a></h2>
+<h2><a name="vars-ships">Ships</a></h2>
+<h2><a name="vars-planes">Planes</a></h2>
+<h2><a name="vars-stations">Stations</a></h2>
+<h2><a name="vars-canals">Canals</a></h2>
+<h2><a name="vars-bridges">Bridges</a></h2>
+<h2><a name="vars-houses">Houses</a></h2>
+<h2><a name="vars-industrytiles">Industry tiles</a></h2>
+<h2><a name="vars-industries">Industries</a></h2>
+<h2><a name="vars-cargos">Cargos</a></h2>
+<h2><a name="vars-airports">Airports</a></h2>
+<h2><a name="vars-railtypes">Railtypes</a></h2>
+<h2><a name="vars-airporttiles">Airport tiles</a></h2>
+
+</body>
+</html>
