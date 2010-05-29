@@ -25,6 +25,7 @@ reserved = {
     'replace' : 'REPLACESPRITE', #action A
     'replacenew' : 'REPLACENEWSPRITE', #action 5
     'deactivate' : 'DEACTIVATE', #action E
+    'town_names' : 'TOWN_NAMES', # action F
     'string' : 'STRING',
     'return' : 'RETURN',
     'livery_override' : 'LIVERYOVERRIDE',

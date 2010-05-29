@@ -24,6 +24,7 @@ def p_main_block(t):
                   | switch
                   | spriteblock
                   | template_declaration
+                  | town_names
                   | cargotable'''
     t[0] = t[1]
 
@@ -323,6 +324,39 @@ def p_layout_param(t):
 def p_real_sprite(t):
     'real_sprite : LBRACKET param_list RBRACKET'
     t[0] = RealSprite(t[2])
+
+#
+# Town names
+#
+def p_town_names(t):
+    '''town_names : TOWN_NAMES LPAREN expression RPAREN LBRACE town_names_param_list RBRACE
+                  | TOWN_NAMES LBRACE town_names_param_list RBRACE'''
+    if len(t) == 8: t[0] = TownNames(t[3], t[6])
+    else: t[0] = TownNames(None, t[3])
+
+def p_town_names_param_list(t):
+    '''town_names_param_list : town_names_param
+                             | town_names_param_list town_names_param'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+def p_town_names_param(t):
+    '''town_names_param : ID COLON string SEMICOLON
+                        | LBRACE town_names_part_list RBRACE'''
+    if len(t) == 5: t[0] = TownNamesParam(t[1], t[3])
+    else: t[0] = TownNamesPart(t[2])
+
+def p_town_names_part_list(t):
+    '''town_names_part_list : town_names_part
+                            | town_names_part_list COMMA town_names_part'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[3]]
+
+def p_town_names_part(t):
+    '''town_names_part : TOWN_NAMES LPAREN expression COMMA expression RPAREN
+                       | ID LPAREN STRING_LITERAL COMMA expression RPAREN'''
+    if t[1] == 'town_names': t[0] = TownNamesEntryDefinition(t[3], t[5])
+    else: t[0] = TownNamesEntryText(t[1], t[3], t[5])
 
 #severity, message (one of REQUIRES_TTDPATCH, REQUIRES_DOS_WINDOWS, USED_WITH, INVALID_PARAMETER,
 #MUST_LOAD_BEFORE, MUST_LOAD_AFTER, REQUIRES_OPENTTD, or a custom string),
