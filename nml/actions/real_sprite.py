@@ -14,6 +14,7 @@ class RealSpriteAction(object):
     def write(self, file):
         if self.sprite.is_empty:
             file.print_empty_realsprite()
+            file.newline()
             if self.last: file.newline()
             return
         file.print_sprite(self.pcx, self.sprite)
