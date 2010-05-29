@@ -5,7 +5,8 @@ grf_strings = {}
 
 def get_translation(string, lang = 0x7F):
     global grf_strings
-    assert string in grf_strings
+    if string not in grf_strings:
+        raise ScriptError('String "%s" is not translatable' % string)
     def_trans = None
     for translation in grf_strings[string]:
         if translation['lang'] == lang:
