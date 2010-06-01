@@ -43,6 +43,7 @@ def p_skipable_block(t):
                       | error_block
                       | deactivate
                       | replace
+                      | font_glyph
                       | property_block
                       | graphics_block
                       | liveryoverride_block'''
@@ -414,3 +415,7 @@ def p_function(t):
 def p_replace(t):
     'replace : REPLACESPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
     t[0] = ReplaceSprite(t[3], t[5], t[8])
+
+def p_font_glpyh(t):
+    'font_glyph : FONTGLYPH LPAREN expression COMMA expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
+    t[0] = FontGlyphBlock(t[3], t[5], t[7], t[10])

@@ -12,6 +12,7 @@ from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
 from actions import actionF
+from actions import action12
 from actions.sprite_count import SpriteCountAction
 import global_constants
 import unit
@@ -410,6 +411,24 @@ class ReplaceSprite(object):
 
     def get_action_list(self):
         return parse_actionA(self)
+
+class FontGlyphBlock(object):
+    def __init__(self, font_size, base_char, pcx, sprite_list):
+        self.font_size = font_size
+        self.base_char = base_char
+        self.pcx = pcx
+        self.sprite_list = sprite_list
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Load font glpyhs, starting at', self.base_char
+        print (indentation+2)*' ' + 'Font size:  ', self.font_size
+        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print (indentation+2)*' ' + 'Sprites:'
+        for sprite in self.sprite_list:
+            sprite.debug_print(indentation + 4)
+
+    def get_action_list(self):
+        return action12.parse_action12(self)
 
 class SpriteBlock(object):
     def __init__(self, feature, spriteset_list):

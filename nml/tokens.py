@@ -24,6 +24,7 @@ reserved = {
     'error' : 'ERROR', #action B
     'replace' : 'REPLACESPRITE', #action A
     'replacenew' : 'REPLACENEWSPRITE', #action 5
+    'font_glyph' : 'FONTGLYPH', #action 12
     'deactivate' : 'DEACTIVATE', #action E
     'town_names' : 'TOWN_NAMES', # action F
     'string' : 'STRING',
