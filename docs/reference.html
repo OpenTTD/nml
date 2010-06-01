@@ -268,7 +268,18 @@ The second parameter <code>&lt;image-file&gt;</code> specifies the image file th
 the new sprites. A series of real sprites has to be specified between the curly braces
 (<code>{</code> and <code>}</code>). The first sprite in this list replaces sprite with id
 <code>sprite-id</code>, the second replaces <code>sprite-id + 1</code> and so on.
-Sprite templates can be used as well.</p>
+Sprite templates can be used as well. For example:
+<pre>
+// Rail overlays for crossings
+replace (1005, "src/gfx/rails_overlays.png") {
+		[ 20,198, 40,21, -20,  5]
+		[ 71,198, 40,21, -20,  5]
+		[117,198, 40, 7, -20,  5]
+		[165,198, 40, 7, -20, 21]
+		[216,198, 12,19,  10,  5]
+		[248,198, 12,19, -24, 11]
+}
+</pre></p>
 
 <h3><a name="block-replacement-replacenew">Replace new sprites</a></h3>
 <p>Over time, several features have been added to TTDPatch and OpenTTD that require new
