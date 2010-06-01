@@ -5,6 +5,7 @@ from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
 from actions.action3 import *
+from actions import action5
 from actions.action7 import *
 from actions.action8 import *
 from actions.actionA import *
@@ -411,6 +412,24 @@ class ReplaceSprite(object):
 
     def get_action_list(self):
         return parse_actionA(self)
+
+class ReplaceNewSprite(object):
+    def __init__(self, type, pcx, offset, sprite_list):
+        self.type = type
+        self.pcx = pcx
+        self.offset = offset
+        self.sprite_list = sprite_list
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Replace sprites for new features of type', self.type
+        print (indentation+2)*' ' + 'Offset:  ', self.offset
+        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print (indentation+2)*' ' + 'Sprites:'
+        for sprite in self.sprite_list:
+            sprite.debug_print(indentation + 4)
+
+    def get_action_list(self):
+        return action5.parse_action5(self)
 
 class FontGlyphBlock(object):
     def __init__(self, font_size, base_char, pcx, sprite_list):
