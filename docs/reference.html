@@ -34,7 +34,12 @@ pre {
 	<li><a href="#block-while">While</a></li>
 	<li><a href="#block-error">Error</a></li>
 	<li><a href="#block-deactivate">Deactivate</a></li>
-	<li><a href="#block-replace">Replace</a></li>
+	<li><a href="#block-replacement">Sprite replacement</a></li>
+	<ul>
+		<li><a href="#block-replacement-replace">Replace TTD sprites</a></li>
+		<li><a href="#block-replacement-replacenew">Replace new sprites</a></li>
+		<li><a href="#block-replacement-fontglpyh">Add font glpyhs</a></li>
+	</ul>
 	<li><a href="#block-town_names">Town names</a></li>
 	<ul>
 		<li><a href="#block-town_names-parts">Town names parts</a></li>
@@ -243,7 +248,111 @@ The cargotable is a list of 4-byte long IDs. For example:
 
 <h2><a name="block-deactivate">Deactivate</a></h2>
 
-<h2><a name="block-replace">Replace</a></h2>
+<h2><a name="block-replacement">Sprite replacement</a></h2>
+<p>This section covers the three available methods to replace sprites.
+Which one to use depends on the type of sprites you want to replace. The following
+sections will outline the detailed functionality of these blocks and when to use them.</p>
+
+<h3><a name="block-replacement-replace">Replace TTD sprites</a></h3>
+<p>Using a <code>replace</code> block, it is possible to replace TTD's built-in sprites.
+The syntax is as follows:</p>
+<pre>replace(&lt;sprite-id&gt;, &lt;image-file&gt;) {
+	&lt;real-sprites&gt;...
+}</pre>
+<p>The first parameter <code>&lt;sprite-id&gt;</code> should be a compile-time constant
+that indicates the sprite number of the first sprite to replace. Sprite numbers are
+equal to the sprite numbers in the base graphics file. The 
+<a href="http://mz.openttdcoop.org/opengfx/authors/script.php?feature=spritesbyfile&amp;q=ogfx1_base">
+OpenGFX author overview</a> can be used as a reference to look up these sprite numbers.
+The second parameter <code>&lt;image-file&gt;</code> specifies the image file that contains
+the new sprites. A series of real sprites has to be specified between the curly braces
+(<code>{</code> and <code>}</code>). The first sprite in this list replaces sprite with id
+<code>sprite-id</code>, the second replaces <code>sprite-id + 1</code> and so on.
+Sprite templates can be used as well.</p>
+
+<h3><a name="block-replacement-replacenew">Replace new sprites</a></h3>
+<p>Over time, several features have been added to TTDPatch and OpenTTD that require new
+sprites. As these sprites are not present in the original base graphics, they cannot
+be replaced using a normal <code>replace</code> block. Instead, a <code>replacenew</code>
+block has to be used. The semantics are like this:</p>
+<pre>replacenew(&lt;type&gt;, &lt;image-file&gt;[, &lt;offset&gt;]) {
+	&lt;real-sprites&gt;...
+}</pre>
+The <code>&lt;type&gt;</code> parameter indicates the type of sprites that will be replaced.
+It should be an identifier from the first column of the following table.
+
+<!-- This table could use some information regarding versioning, descriptions
+ and references to which sprites are actually needed. However this is a lot
+ of work (even TTDP wiki doesn't list all info) and this is not really a
+ high priority job -->
+<table>
+	<tr><th>Type</th><th>Number of sprites</th></tr>
+	<tr><td>PRE_SIGNAL</td><td>48</td></tr>
+	<tr><td>PRE_SIGNAL_SEMAPHORE</td><td>112</td></tr>
+	<tr><td>PRE_SIGNAL_SEMAPHORE_PBS</td><td>240</td></tr>
+	<tr><td>CATERNARY</td><td>48</td></tr>
+	<tr><td>FOUNDATIONS_SLOPES</td><td>74</td></tr>
+	<tr><td>FOUNDATIONS_SLOPES_HALFTILES</td><td>90</td></tr>
+	<tr><td>TTDP_GUI_25</td><td>73</td></tr>
+	<tr><td>TTDP_GUI</td><td>93</td></tr>
+	<tr><td>CANALS</td><td>65</td></tr>
+	<tr><td>ONE_WAY_ROAD</td><td>6</td></tr>
+	<tr><td>COLORMAP_2CC</td><td>256</td></tr>
+	<tr><td>TRAMWAY</td><td>113</td></tr>
+	<tr><td>SNOWY_TEMPERATE_TREES</td><td>133</td></tr>
+	<tr><td>COAST_TILES</td><td>16</td></tr>
+	<tr><td>COAST_TILES_BASEGFX</td><td>10</td></tr>
+	<tr><td>COAST_TILES_DIAGONAL</td><td>18</td></tr>
+	<tr><td>NEW_SIGNALS</td><td>any (a)</td></tr>
+	<tr><td>SLOPED_RAILS</td><td>12</td></tr>
+	<tr><td>AIRPORTS</td><td>15</td></tr>
+	<tr><td>ROAD_STOPS</td><td>8</td></tr>
+	<tr><td>AQUEDUCTS</td><td>8</td></tr>
+	<tr><td>AUTORAIL</td><td>55</td></tr>
+	<tr><td>FLAGS</td><td>36 (b)</td></tr>
+	<tr><td>OTTD_GUI</td><td>154 (b)</td></tr>
+</table>
+
+<p>(a) Any number of sprites is allowed here, however both OpenTTD and
+NML don't (yet) support the other features required to use these sprites.</p>
+
+<p>(b) Any number of sprites can be specified up to the stated maximum.
+Furthermore the <code>offset</code> variable can be used, see below for
+more info.</p>
+
+<p>The amount of sprites has to be equal to the number list has to be
+equal to the number given in the table, except in the cases of (a) and (b).
+Having less sprites results in an error. Having more sprites is allowed
+to provide future compatibility, but a warning will be issued.</p>
+
+<p>Parameter two <code>&lt;image-file&gt;</code> is a literal (quoted) string
+that specifies the file where the sprites are located.</p>
+<p>Parameter <code>&lt;offset&gt;</code> is optional and has a default value of 0.
+Values greater than zero are only allowed in the case of the sprite types marked
+with (b). Setting this value sets an offset into the block of sprites, so only a
+subset of the sprites (starting at <code>offset</code>) will be replaced.</p>
+
+<h3><a name="block-replacement-fontglpyh">Add font glpyhs</a></h3>
+<p>A <code>font-glpyh</code> block makes it possible to provide sprites
+for glyphs that don't have sprites in normal TTD. The syntax is as follows:</p>
+
+<pre>font_glpyh (&lt;font-size&gt;, &lt;base-char&gt;, &lt;image-file&gt;) {
+	&lt;real-sprites&gt;...
+}</pre>
+
+<p>The first parameter (<code>&lt;font-size&gt;</code>) should be an identifier
+of the font size to use. Valid values are <code>SMALL</code>, <code>NORMAL</code>
+and <code>LARGE</code>.</p>
+<p>The second parameter (<code>&lt;base-char&gt;</code>) is the number
+corresponding to the first character to provide a sprite for. Valid values are
+all unicode code points in the Basic Multilingual Plane (0-0xFFFF)</p>
+<p>Parameter three <code>&lt;image-file&gt;</code> is a literal (quoted) string
+that specifies the file where the sprites are located.</p>
+<p><code>&lt;real-sprites&gt;</code> should be a list of real sprites. The first
+real sprite will be used for the character with code <code>base-char;</code>, the
+second for <code>base-char + 1</code> and so on. These sprites should only use
+color palette indices 0 (transparant), 1 (foreground) and 2 (shadow). If the
+shadow color is used, sprite compression flag 'TILE' must NOT be set.</p>
 
 <h2><a name="block-town_names">Town names</a></h2>
 To define randomly generated town names, the <tt>town_names</tt> block should
