@@ -27,6 +27,9 @@ reserved = {
     'font_glyph' : 'FONTGLYPH', #action 12
     'deactivate' : 'DEACTIVATE', #action E
     'town_names' : 'TOWN_NAMES', # action F
+    'sounds' : 'SOUNDS', # action 11
+    'load_soundfile' : 'LOAD_SOUNDFILE', # action 11
+    'import_sound' : 'IMPORT_SOUND',   # action 11
     'string' : 'STRING',
     'return' : 'RETURN',
     'livery_override' : 'LIVERYOVERRIDE',

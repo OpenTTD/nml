@@ -1,5 +1,6 @@
 from ast import *
 from expression import *
+from actions import action11
 
 #operator precedence (lower in the list = higher priority)
 precedence = (
@@ -29,6 +30,7 @@ def p_main_block(t):
                   | spriteblock
                   | template_declaration
                   | town_names
+                  | sounds
                   | cargotable'''
     t[0] = t[1]
 
@@ -132,7 +134,7 @@ def p_function(t):
     t[0] = FunctionCall(t[1], t[3])
 
 #
-# Commondly used non-terminals that are not expressions
+# Commonly used non-terminals that are not expressions
 #
 def p_array(t):
     'array : LBRACKET expression_list RBRACKET'
@@ -425,6 +427,25 @@ def p_town_names_part(t):
                        | ID LPAREN STRING_LITERAL COMMA expression RPAREN'''
     if t[1] == 'town_names': t[0] = TownNamesEntryDefinition(t[3], t[5])
     else: t[0] = TownNamesEntryText(t[1], t[3], t[5])
+
+#
+# Sounds
+#
+def p_sounds(t):
+    '''sounds : SOUNDS LBRACE sound_list RBRACE'''
+    t[0] = action11.Action11(t[3])
+
+def p_sound_list(t):
+    '''sound_list : sound
+                  | sound_list sound'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
+
+def p_sound(t):
+    '''sound : LOAD_SOUNDFILE LPAREN STRING_LITERAL RPAREN SEMICOLON
+             | IMPORT_SOUND LPAREN expression COMMA expression RPAREN SEMICOLON'''
+    if len(t) == 6: t[0] = action11.LoadBinaryFile(t[3])
+    else: t[0] = action11.ImportSound(t[3], t[5])
 
 #
 # Various misc. main script blocks that don't belong anywhere else
