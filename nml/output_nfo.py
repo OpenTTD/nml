@@ -96,3 +96,6 @@ class OutputNFO(object):
 
     def print_empty_realsprite(self):
         self.file.write("* 1 0")
+
+    def print_named_filedata(self, filename):
+        self.file.write("** " + filename)

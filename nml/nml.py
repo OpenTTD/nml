@@ -8,6 +8,7 @@ from generic import ScriptError
 from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
 from actions.action8 import Action8
+from actions.action11 import LoadBinaryFile
 from output_nfo import OutputNFO
 
 # Build the lexer
@@ -151,7 +152,7 @@ def nml(inputfile, outputfiles, nml_output):
         action.prepare_output()
     for outputfile in outputfiles:
         for action in actions:
-            outputfile.next_sprite(isinstance(action, RealSpriteAction))
+            outputfile.next_sprite(isinstance(action, (RealSpriteAction, LoadBinaryFile)))
             action.write(outputfile)
     return 0
 

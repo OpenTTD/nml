@@ -1,5 +1,6 @@
 import Image
 import nml
+import os
 from generic import *
 from lz77 import LZ77
 
@@ -253,3 +254,20 @@ class OutputGRF(object):
             self.wsprite_encoderegular(sprite, list(sprite.getdata()), xoffset, yoffset, compression)
         else:
             raise "Invalid sprite compression"
+
+    def print_named_filedata(self, filename):
+        name = os.path.split(filename)[1]
+        size = os.path.getsize(filename)
+        total = 2 + len(name) + 1 + size
+        self.print_sprite_size(total)
+        self.print_bytex(0xff)
+        self.print_bytex(len(name))
+        self.print_string(name, force_ascii = True, final_zero = True)  # ASCII filenames seems sufficient.
+        fp = open(filename, 'rb')
+        while True:
+            data = fp.read(1024)
+            if len(data) == 0: break
+            for d in data:
+                self.print_bytex(ord(d))
+        fp.close()
+

@@ -42,15 +42,14 @@ class LoadBinaryFile(object):
     '''
     def __init__(self, fname):
         self.fname = fname
-        self.size = None
 
     def prepare_output(self):
         if not os.path.isfile(self.fname):
             raise ScriptError('File "%s" does not exist.')
-        self.size = os.path.getsize(self.fname)
-        if self.size == 0:
+        size = os.path.getsize(self.fname)
+        if size == 0:
             raise ScriptError("Expected a sound file with non-zero length.")
-        if self.size > 0x10000:
+        if size > 0x10000:
             raise ScriptError("Sound file too big (max 64KB).")
 
     def debug_print(self, indentation):
@@ -62,19 +61,7 @@ class LoadBinaryFile(object):
         print indentation*' ' + 'load binary file %r (filename %r), %s bytes' % (self.fname, name, size)
 
     def write(self, file):
-        name = os.path.split(self.fname)[1]
-        size = 2 + len(name) + 1 + self.size
-        file.print_sprite_size(size)
-        file.print_bytex(0xff)
-        file.print_bytex(len(name))
-        file.print_string(name, force_ascii = True, final_zero = True)  # ASCII filenames seems sufficient.
-        fp = open(self.fname, 'rb')
-        while True:
-            data = fp.read(1024)
-            if len(data) == 0: break
-            for d in data:
-                file.print_bytex(ord(d))
-        fp.close()
+        file.print_named_filedata(self.fname)
         file.newline()
 
 class ImportSound(object):
