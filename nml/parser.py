@@ -165,11 +165,16 @@ def p_expression_list(t):
                        | non_empty_expression_list'''
     t[0] = [] if len(t) == 1 else t[1]
 
-def p_id_list(t):
-    '''id_list : ID
-               | id_list COMMA ID'''
+def p_non_empty_id_list(t):
+    '''non_empty_id_list : ID
+                         | non_empty_id_list COMMA ID'''
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
+
+def p_id_list(t):
+    '''id_list :
+               | non_empty_id_list'''
+    t[0] = [] if len(t) == 1 else t[1]
 
 def p_id_array(t):
     'id_array : LBRACKET id_list RBRACKET'
