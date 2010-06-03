@@ -5,18 +5,11 @@ const_table = {
     'CLIMATE_TROPICAL'      : 0x02,
     'CLIMATE_TOYLAND'       : 0x03,
 
-    'CLIMATE_BIT_NONE'      : 0x00,
-    'CLIMATE_BIT_TEMPERATE' : 0x01,
-    'CLIMATE_BIT_ARCTIC'    : 0x02,
-    'CLIMATE_BIT_TROPICAL'  : 0x04,
-    'CLIMATE_BIT_TOYLAND'   : 0x08,
-    'CLIMATE_BIT_ALL'       : 0x0F,
+    'CLIMATES_NONE'         : 0x00,
+    'CLIMATES_ALL'          : 0x0F,
 
     #never expire
     'VEHICLE_NEVER_EXPIRES' : 0xFF,
-
-    #days up to 1920-01-01
-    'DATE_1920' : 701265,
 
     #cargo classes
     'CC_NONE'         : 0x0000,
