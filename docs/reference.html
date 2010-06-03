@@ -208,8 +208,81 @@ the value to the unit that is written to the output file. You can only use
 a unit if the expression is constant. <a href="#units">List of valid units</a>
 
 <h3><a name="block-item-graphics">Graphics</a></h3>
+In general the layout for defining graphics is like
+<pre>
+spriteblock(FEATURE) {
+	spriteset (SPRITESET_NAME, graphics_file) {
+		[left_X, upper_Y, width, height, offset_X, offset_Y]
+		...
+	}
+	spritegroup spritegroup_name {
+		loading: spriteset_name
+		loaded: spriteset_name
+	}
+}
+</pre>
+An example which defines two graphics for a train engine:
+<pre>
+spriteblock(FEAT_TRAINS) {
+	spriteset(turbotrain_engine_set, "sprites/pcx/opengfx_trains_start.pcx") {
+		[142,112,  8,22,   -3,-10]
+		[158,112, 21,15,  -14, -7]
+		[190,112, 31,12,  -16, -8]
+		[238,112, 21,16,   -6, -7]
+		[270,112,  8,24,   -3,-10]
+		[286,112, 21,16,  -15, -6]
+		[318,112, 32,12,  -16, -8]
+		[366,112, 21,15,   -6, -7]
+	}
+	spritegroup turbotrain_engine_group {
+		loading: turbotrain_engine_set;
+		loaded: turbotrain_engine_set;
+	}
+}
+spriteblock(FEAT_TRAINS) {
+	spriteset(turbotrain_passenger_set, "sprites/pcx/opengfx_trains_start.pcx") {
+		[142,139,  8,21,   -3,-10]
+		[158,139, 20,15,  -13, -7]
+		[190,139, 28,10,  -12, -6]
+		[238,139, 20,16,   -6, -7]
+		[270,139,  8,21,   -3,-10]
+		[286,139, 20,15,  -15, -6]
+		[318,139, 28,10,  -16, -6]
+		[366,139, 20,16,   -6, -7]
+	}
+	spritegroup turbotrain_passenger_group {
+		loading: turbotrain_passenger_set;
+		loaded: turbotrain_passenger_set;
+	}
+}
+</pre>
 <h3><a name="block-item-livery_override">Livery override</a></h3>
-
+A livery override block offers the possibility to change the look of an engine or wagon depending on wagons coupled to them, e.g. 
+allowing a freight engine to be differently coloured than a passenger engine. The spritegroup needs to be defined before it can
+be used in a livery override. A livery override block is always part of the engine definition and looks like
+<pre>
+livery_override (vehicleID) {
+	spritegroup_name
+}
+</pre>
+Concerning this example it is assumed that it is preceeded by the graphics definitions given as example in the <a href="#block-item-graphics">graphics definition</a>
+and that a vehicleID "passenger_wagon" is defined. The engine will get different looks (spritegroup "turbotrain_passenger_group") in this example, if the passenger
+wagon is attached. For all other wagons it will show sprites from "turbotrain_engine_group".
+<pre>
+// Turbotrain engine:
+item(FEAT_TRAINS, turbotrain, 20) {
+	property {
+		sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
+		misc_flags:                   TRAIN_FLAG_MU;          // We use special sprites for passenger wagons
+	}
+	graphics {
+		turbotrain_engine_group;
+	}
+	livery_override(passenger_wagon) { 
+		turbotrain_passenger_group;
+	}
+}
+</pre>
 <h2><a name="block-spriteblock">Spriteblock</a></h2>
 <h3><a name="block-spriteblock-spriteset">Spriteset</a></h3>
 <h3><a name="block-spriteblock-spritegroup">Spritegroup</a></h3>
@@ -438,6 +511,31 @@ be constant, the following is perfectly valid:
 <h1><a name="properties">List of properties</a></h1>
 <h2><a name="property-trains">Trains</a></h2>
 <h2><a name="property-roadvehs">Road vehicles</a></h2>
+<table>
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+<tr><td> name</td><td>                      string(STR_NAME_HEREFORD_TRAM);
+<tr><td> climates_available</td><td>           CLIMATE_BIT_XXX</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND]</td></tr>
+<tr><td> model_life</td><td>                   0 ... 255 (years)</td><td></td></tr>
+<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td></td></tr>
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr> 
+<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>  
+<tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [</td></tr> 
+<tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base cost</td></tr> 
+<tr><td> cost_factor</td><td>                  0 ... 255</td><td>mutliplicator to the base cost</td></tr> 
+<tr><td> speed</td><td>                        0 ... 65000km/h (speed units)</td><td></td></tr> ;
+<tr><td> power</td><td>                        0 ... 65000kN (power units)</td><td></td></tr> 
+<tr><td> weight</td><td>                       0 ... 65000t (mass units)</td><td></td></tr> 
+<tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr> 
+<tr><td> loading_speed</td><td>                0 ... 255 (1)</td><td>relative loading speed in artibrary units</td></tr> 
+<tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td></td></tr> 
+<tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr> 
+<tr><td> cargo_capacity</td><td>               0 ... 65000</td><td></td></tr> 
+<tr><td> refittable_cargo_classes</td><td>     bit set of cargo classes</td><td></td></tr> 
+<tr><td> non_refittable_cargo_classes</td><td> bit set of cargo classes</td><td></td></tr>
+<tr><td> misc_flags</td><td>                   ROADVEH_FLAG_XXX</td><td>road vehicle flags</td></tr>
+<tr><td> cargo_type</td><td>                   default cargo as cargo label</td><td></td></tr> 
+
+</table>
 <h2><a name="property-ships">Ships</a></h2>
 <h2><a name="property-planes">Planes</a></h2>
 <h2><a name="property-stations">Stations</a></h2>
