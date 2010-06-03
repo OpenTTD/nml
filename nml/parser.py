@@ -124,18 +124,18 @@ def p_unary_minus(t):
     t[0] = BinOp(code_to_op[t[1]], ConstantNumeric(0), t[2])
 
 def p_variable(t):
-    'variable : VARIABLE LBRACKET param_list RBRACKET'
+    'variable : VARIABLE LBRACKET expression_list RBRACKET'
     t[0] = Variable(*t[3])
 
 def p_function(t):
-    'expression : ID LPAREN param_list RPAREN'
+    'expression : ID LPAREN expression_list RPAREN'
     t[0] = FunctionCall(t[1], t[3])
 
 #
 # Commondly used non-terminals that are not expressions
 #
 def p_array(t):
-    'array : LBRACKET param_list RBRACKET'
+    'array : LBRACKET expression_list RBRACKET'
     t[0] = t[2]
 
 def p_assignment_list(t):
@@ -151,18 +151,18 @@ def p_assignment(t):
     t[0] = Assignment(t[1], t[3])
 
 def p_string(t):
-    'string : STRING LPAREN param_list RPAREN'
+    'string : STRING LPAREN expression_list RPAREN'
     t[0] = String(t[3][0], t[3][1:])
 
-def p_expression_list(t):
-    '''expression_list : expression
-                       | expression_list COMMA expression'''
+def p_non_empty_expression_list(t):
+    '''non_empty_expression_list : expression
+                                 | non_empty_expression_list COMMA expression'''
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
 
-def p_param_list(t):
-    '''param_list :
-                  | expression_list'''
+def p_expression_list(t):
+    '''expression_list :
+                       | non_empty_expression_list'''
     t[0] = [] if len(t) == 1 else t[1]
 
 def p_id_list(t):
@@ -285,7 +285,7 @@ def p_switch_value(t):
 # Real sprites and related stuff
 #
 def p_real_sprite(t):
-    'real_sprite : LBRACKET param_list RBRACKET'
+    'real_sprite : LBRACKET expression_list RBRACKET'
     t[0] = RealSprite(t[2])
 
 def p_real_sprite_list(t):
@@ -299,7 +299,7 @@ def p_template_declaration(t):
     t[0] = TemplateDeclaration(t[2], t[4], t[7])
 
 def p_template_usage(t):
-    'template_usage : ID LPAREN param_list RPAREN'
+    'template_usage : ID LPAREN expression_list RPAREN'
     t[0] = TemplateUsage(t[1], t[3])
 
 def p_spriteset_contents(t):
@@ -429,7 +429,7 @@ def p_param_assignment(t):
     t[0] = ParameterAssignment(t[1].num, t[3])
 
 def p_error_block(t):
-    'error_block : ERROR LPAREN param_list RPAREN SEMICOLON'
+    'error_block : ERROR LPAREN expression_list RPAREN SEMICOLON'
     t[0] = Error(t[3])
 
 def p_cargotable(t):
@@ -445,7 +445,7 @@ def p_cargotable_list(t):
     else: t[0] = t[1] + [t[3]]
 
 def p_deactivate(t):
-    'deactivate : DEACTIVATE LPAREN param_list RPAREN SEMICOLON'
+    'deactivate : DEACTIVATE LPAREN expression_list RPAREN SEMICOLON'
     t[0] = DeactivateBlock(t[3])
 
 def p_grf_block(t):
