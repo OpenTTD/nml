@@ -151,8 +151,12 @@ def parse_grf_string(orig_string):
             ret += c
     return ret
 
-def read_lang_files():
-    for filename in glob.glob("lang/*.lng"):
+def read_lang_files(lang_dir):
+    """
+    @param lang_dir: Name of the direcotry containing the language files.
+    @type  lang_dir: C{str}
+    """
+    for filename in glob.glob(lang_dir + os.sep + "*.lng"):
         lang = -1
         for line in codecs.open(filename, "r", "utf-8"):
             line = line.strip()
