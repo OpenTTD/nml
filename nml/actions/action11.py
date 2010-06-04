@@ -45,7 +45,7 @@ class LoadBinaryFile(object):
         self.fname = fname
 
     def prepare_output(self):
-        if not os.path.isfile(self.fname):
+        if not os.access(self.fname, os.R_OK):
             raise ScriptError('File "%s" does not exist.' % self.fname)
         size = os.path.getsize(self.fname)
         if size == 0:

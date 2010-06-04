@@ -88,6 +88,8 @@ def main(argv):
         raise "Error: only a single nml file can be read per run"
     else:
         input_filename = args[0]
+        if not os.access(input_filename, os.R_OK):
+            raise ScriptError('Input file "%s" does not exist' % input_filename)
         input = codecs.open(input_filename, 'r', 'utf-8')
         if not outputfile_given:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
