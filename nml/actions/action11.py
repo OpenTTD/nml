@@ -3,6 +3,7 @@ Action 11 support classes (sounds).
 """
 import os
 from nml import expression
+from nml.generic import ScriptError
 
 class Action11(object):
     def __init__(self, sounds):
@@ -45,7 +46,7 @@ class LoadBinaryFile(object):
 
     def prepare_output(self):
         if not os.path.isfile(self.fname):
-            raise ScriptError('File "%s" does not exist.')
+            raise ScriptError('File "%s" does not exist.' % self.fname)
         size = os.path.getsize(self.fname)
         if size == 0:
             raise ScriptError("Expected a sound file with non-zero length.")
