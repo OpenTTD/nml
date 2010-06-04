@@ -45,6 +45,7 @@ pre {
 		<li><a href="#block-town_names-parts">Town names parts</a></li>
 	</ul>
 	<li><a href="#block-assignment">Parameter assignment</a></li>
+	<li><a href="#block-sounds">Sound support</a></li>
 </ul>
 <li><a href="#units">Units</a></li>
 <li><a href="#properties">List of properties</a></li>
@@ -504,7 +505,28 @@ Set a parameter to the given expression. Neither of the two expessions has to
 be constant, the following is perfectly valid:
 <pre>param[param[2] + 1] = param[3] * param[4];</pre>
 
-
+<h2><a name="block-sounds">Sound support</a></h2>
+Sounds are supported by means of the <code>sounds</code> block.
+An example of a sounds block that defines two new sounds is
+<pre>sounds {
+        load_soundfile("whistle.wav");
+        import_sound(0x87654321, 3);
+}</pre>The block starts with the keywords <code>sounds</code>, followed by one
+or more sound definitions. A sound definition either loads a sound file (like
+the <code>load_soundfile("whistle.wav");</code> which includes the
+<i>whistle.wav</i> file), or it refers to a sound from another NewGRF file
+(like the <code>import_sound(0x87654321, 3);</code> which imports the fourth
+sound from the NewGRF file with ID <code>0x87654321</code>). Importing sounds
+does not make copies of the data, thus saving memory space.
+<p>You can have at most one <code>sounds</code> block in a NewGRF file. When
+using a sound from a sound block, the first sound gets number <code>73</code>,
+the second sound gets number <code>74</code>, and so on. Note that this is
+different from the numbering that you use when importing a sound from
+another NewGRF, as counting starts at <code>0</code> in that case.
+<p>All loaded sound files must be
+8-bit mono sound files in WAV format, PCM encoding. There are two allowed
+frequencies: 11025 Hz and 22050 Hz. Due to some limitations of the NewGRF format,
+the file size cannot exceed 64KB.
 
 <h1><a name="units">Units</a></h1>
 
