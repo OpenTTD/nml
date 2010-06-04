@@ -1,4 +1,4 @@
-import os, string, codecs, re, glob
+import os, codecs, re, glob
 from generic import ScriptError
 
 grf_strings = {}
@@ -102,7 +102,7 @@ def read_extra_commands(custom_tags_file):
         if len(line) == 0 or line[0] == "#":
             pass
         else:
-            i = string.index(line, ':')
+            i = line.index(':')
             name = line[:i].strip()
             value = line[i+1:]
             if name in escapes:
@@ -167,7 +167,7 @@ def read_lang_files(lang_dir):
                 lang = int(line[6:8], 16)
             else:
                 assert lang != -1, "Language id not set"
-                i = string.index(line, ':')
+                i = line.index(':')
                 name = line[:i].strip()
                 value = line[i+1:]
                 if not name in grf_strings:

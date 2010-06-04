@@ -1,4 +1,3 @@
-from string import *
 import sys, codecs, optparse
 from ast import *
 from parser import *
