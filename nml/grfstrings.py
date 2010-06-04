@@ -88,12 +88,16 @@ escapes = {
 'SHIP':           {'escape': r'\UE0B8', 'num_params': 0},
 }
 
-def read_extra_commands():
+def read_extra_commands(custom_tags_file):
+    """
+    @param custom_tags_file: Filename of the custom tags file.
+    @type  custom_tags_file: C{str}
+    """
     global escapes
-    if not os.access("custom_tags.txt", os.R_OK):
+    if not os.access(custom_tags_file, os.R_OK):
         #Failed to open custom_tags.txt, ignore this
         return
-    for line in codecs.open("custom_tags.txt", "r", "utf-8"):
+    for line in codecs.open(custom_tags_file, "r", "utf-8"):
         line = line.strip()
         if len(line) == 0 or line[0] == "#":
             pass

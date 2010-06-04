@@ -57,6 +57,7 @@ def main(argv):
     parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
     parser.add_option("-o", "--output", dest="outputs", action="append", metavar="<file>", help="write output(nfo/grf) to <file>")
+    parser.add_option("-t", "--custom-tags", dest="custom_tags", default="custom_tags.txt",  metavar="<file>", help="Load custom tags from <file> [default: %default]")
     try:
         opts, args = parser.parse_args(argv)
     except optparse.OptionError, err:
@@ -73,7 +74,7 @@ def main(argv):
     crop_sprites = opts.crop
     compress_grf = opts.compress
 
-    read_extra_commands()
+    read_extra_commands(opts.custom_tags)
     read_lang_files()
 
     outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.outputs)
