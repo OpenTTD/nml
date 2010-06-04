@@ -258,7 +258,7 @@ spriteblock(FEAT_TRAINS) {
 }
 </pre>
 <h3><a name="block-item-livery_override">Livery override</a></h3>
-A livery override block offers the possibility to change the look of an engine or wagon depending on wagons coupled to them, e.g. 
+A livery override block offers the possibility to change the look of an engine or wagon depending on wagons coupled to them, e.g.
 allowing a freight engine to be differently coloured than a passenger engine. The spritegroup needs to be defined before it can
 be used in a livery override. A livery override block is always part of the engine definition and looks like
 <pre>
@@ -279,7 +279,7 @@ item(FEAT_TRAINS, turbotrain, 20) {
 	graphics {
 		turbotrain_engine_group;
 	}
-	livery_override(passenger_wagon) { 
+	livery_override(passenger_wagon) {
 		turbotrain_passenger_group;
 	}
 }
@@ -316,15 +316,15 @@ The cargotable is a list of 4-byte long IDs. For example:
 
 <h2><a name="block-if">If/else</a></h2>
 <pre>
-if (expression) { 
-	block; 
-} else { 
-	block; 
+if (expression) {
+	block;
+} else {
+	block;
 }
 </pre>
 For example:
 <pre>
-if (param[1] == 1) { 
+if (param[1] == 1) {
 	param[2] = 3
 } else {
 	param[2] = 5
@@ -350,7 +350,7 @@ The syntax is as follows:</p>
 }</pre>
 <p>The first parameter <code>&lt;sprite-id&gt;</code> should be a compile-time constant
 that indicates the sprite number of the first sprite to replace. Sprite numbers are
-equal to the sprite numbers in the base graphics file. The 
+equal to the sprite numbers in the base graphics file. The
 <a href="http://mz.openttdcoop.org/opengfx/authors/script.php?feature=spritesbyfile&amp;q=ogfx1_base">
 OpenGFX author overview</a> can be used as a reference to look up these sprite numbers.
 The second parameter <code>&lt;image-file&gt;</code> specifies the image file that contains
@@ -535,27 +535,27 @@ the file size cannot exceed 64KB.
 <h2><a name="property-roadvehs">Road vehicles</a></h2>
 <table>
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
-<tr><td> name</td><td>                      string(STR_NAME_HEREFORD_TRAM);
+<tr><td> name</td><td>                         string(STR_NAME_HEREFORD_TRAM)</td><td></td></tr>
 <tr><td> climates_available</td><td>           CLIMATE_BIT_XXX</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND]</td></tr>
 <tr><td> model_life</td><td>                   0 ... 255 (years)</td><td></td></tr>
 <tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td></td></tr>
-<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr> 
-<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>  
-<tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [</td></tr> 
-<tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base cost</td></tr> 
-<tr><td> cost_factor</td><td>                  0 ... 255</td><td>mutliplicator to the base cost</td></tr> 
-<tr><td> speed</td><td>                        0 ... 65000km/h (speed units)</td><td></td></tr> ;
-<tr><td> power</td><td>                        0 ... 65000kN (power units)</td><td></td></tr> 
-<tr><td> weight</td><td>                       0 ... 65000t (mass units)</td><td></td></tr> 
-<tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr> 
-<tr><td> loading_speed</td><td>                0 ... 255 (1)</td><td>relative loading speed in artibrary units</td></tr> 
-<tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td></td></tr> 
-<tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr> 
-<tr><td> cargo_capacity</td><td>               0 ... 65000</td><td></td></tr> 
-<tr><td> refittable_cargo_classes</td><td>     bit set of cargo classes</td><td></td></tr> 
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
+<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
+<tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
+<tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base cost</td></tr>
+<tr><td> cost_factor</td><td>                  0 ... 255</td><td>mutliplicator to the base cost</td></tr>
+<tr><td> speed</td><td>                        0 ... 65000km/h (speed units)</td><td></td></tr>
+<tr><td> power</td><td>                        0 ... 65000kN (power units)</td><td></td></tr>
+<tr><td> weight</td><td>                       0 ... 65000t (mass units)</td><td></td></tr>
+<tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr>
+<tr><td> loading_speed</td><td>                0 ... 255 (1)</td><td>relative loading speed in artibrary units</td></tr>
+<tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td></td></tr>
+<tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr>
+<tr><td> cargo_capacity</td><td>               0 ... 65000</td><td></td></tr>
+<tr><td> refittable_cargo_classes</td><td>     bit set of cargo classes</td><td></td></tr>
 <tr><td> non_refittable_cargo_classes</td><td> bit set of cargo classes</td><td></td></tr>
 <tr><td> misc_flags</td><td>                   ROADVEH_FLAG_XXX</td><td>road vehicle flags</td></tr>
-<tr><td> cargo_type</td><td>                   default cargo as cargo label</td><td></td></tr> 
+<tr><td> cargo_type</td><td>                   default cargo as cargo label</td><td></td></tr>
 
 </table>
 <h2><a name="property-ships">Ships</a></h2>
