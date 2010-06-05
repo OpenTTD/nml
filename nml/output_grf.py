@@ -97,6 +97,8 @@ class OutputGRF(object):
 
     def print_sprite(self, filename, sprite_info):
         im = Image.open(filename)
+        if im.mode != "P":
+            raise "Image file '%s' does not have a palette" % str(filename)
         x = sprite_info.xpos.value
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
