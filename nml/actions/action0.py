@@ -158,7 +158,7 @@ class CargoListProp(object):
     def write(self, file):
         file.print_bytex(0x09)
         for i in range(0, len(self.cargo_list)):
-            if i > 0 and i % 5 == 0: file.write("\n")
+            if i > 0 and i % 5 == 0: file.newline()
             file.print_string(self.cargo_list[i], False, True)
         file.newline()
 
