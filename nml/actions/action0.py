@@ -1,4 +1,4 @@
-from nml.actions.action0properties import properties
+from nml.actions.action0properties import Action0Property, properties
 from nml.generic import *
 from action4 import *
 from action6 import *
@@ -45,20 +45,6 @@ def get_free_id(feature):
     global first_free_id
     first_free_id[feature] += 1
     return first_free_id[feature] - 1
-
-class Action0Property(object):
-    def __init__(self, num, value, size):
-        self.num = num
-        self.value = value
-        self.size = size
-
-    def write(self, file):
-        file.print_bytex(self.num)
-        self.value.write(file, self.size)
-        file.newline()
-
-    def get_size(self):
-        return self.size + 1
 
 
 def parse_property(feature, name, value, id, unit):

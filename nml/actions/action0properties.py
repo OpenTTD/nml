@@ -1,6 +1,19 @@
-import action0
 from nml.generic import ScriptError
 from nml.expression import ConstantNumeric
+
+class Action0Property(object):
+    def __init__(self, num, value, size):
+        self.num = num
+        self.value = value
+        self.size = size
+
+    def write(self, file):
+        file.print_bytex(self.num)
+        self.value.write(file, self.size)
+        file.newline()
+
+    def get_size(self):
+        return self.size + 1
 
 properties = 0x12 * [None]
 
@@ -8,7 +21,7 @@ def train_weight_prop(value):
     if not isinstance(value, ConstantNumeric): raise ScriptError("Train weight must be a constant number")
     low_byte = ConstantNumeric(value.value & 0xFF)
     high_byte = ConstantNumeric(value.value >> 8)
-    return [action0.Action0Property(0x16, low_byte, 1), action0.Action0Property(0x24, high_byte, 1)]
+    return [Action0Property(0x16, low_byte, 1), Action0Property(0x24, high_byte, 1)]
 
 general_veh_props = {
     'reliability_decay' : {'size': 1, 'num': 0x02},
@@ -57,7 +70,7 @@ def roadveh_speed_prop(value):
     if not isinstance(value, ConstantNumeric): raise ScriptError("Road vehicle speed must be a constant number")
     prop08 = ConstantNumeric(min(value.value, 0xFF))
     prop15 = ConstantNumeric(value.value / 4)
-    return [action0.Action0Property(0x08, prop08, 1), action0.Action0Property(0x15, prop15, 1)]
+    return [Action0Property(0x08, prop08, 1), Action0Property(0x15, prop15, 1)]
 
 properties[0x01] = {
     'speed': {'custom_function': roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': 7.1581952},
