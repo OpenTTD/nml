@@ -189,7 +189,7 @@ Example:
 <pre>item (FEAT_ROADVEHS, hereford_tram) {
 	property {
 		name:               string(STR_NAME_HEREFORD_TRAM);
-		climates_available: CLIMATE_BIT_ALL;
+		climates_available: CLIMATES_ALL;
 		introduction_date:  date(1940,1,1);
 		speed:              60 km/h;
 	}
@@ -536,7 +536,7 @@ the file size cannot exceed 64KB.
 <table>
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
 <tr><td> name</td><td>                         string(STR_NAME_HEREFORD_TRAM)</td><td></td></tr>
-<tr><td> climates_available</td><td>           CLIMATE_BIT_XXX</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND]</td></tr>
+<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATES_NONE or CLIMATES_ALL</td></tr>
 <tr><td> model_life</td><td>                   0 ... 255 (years)</td><td></td></tr>
 <tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td></td></tr>
 <tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
