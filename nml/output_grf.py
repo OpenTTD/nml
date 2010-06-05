@@ -1,13 +1,14 @@
 import Image
-import nml
 import os
 from generic import *
 from lz77 import LZ77
 
 
 class OutputGRF(object):
-    def __init__(self, filename):
+    def __init__(self, filename, compress_grf, crop_sprites):
         self.file = open(filename, 'wb')
+        self.compress_grf = compress_grf
+        self.crop_sprites = crop_sprites
 
     def close(self):
         self.print_word(0)
@@ -128,7 +129,7 @@ class OutputGRF(object):
                 l-=1
 
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
-        if not nml.compress_grf:
+        if not self.compress_grf:
             self.wsprite_encoderegular_fakecompress(sprite, data, xoffset, yoffset, compression)
             return
 
@@ -236,7 +237,7 @@ class OutputGRF(object):
         return (sprite, xoffset, yoffset)
 
     def wsprite(self, sprite, xoffset, yoffset, compression):
-        if nml.crop_sprites and (compression & 0x40 == 0):
+        if self.crop_sprites and (compression & 0x40 == 0):
             all_blue = True
             for p in sprite.getdata():
                 if p != 0:

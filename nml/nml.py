@@ -28,8 +28,6 @@ import ply.yacc as yacc
 parser = yacc.yacc(debug=False)
 
 _debug = 0
-crop_sprites = False
-compress_grf = True
 OutputGRF = None
 def get_output_grf():
     global OutputGRF
@@ -42,7 +40,7 @@ def get_output_grf():
         sys.exit(3)
 
 def main(argv):
-    global _debug, crop_sprites, compress_grf
+    global _debug
     _debug = 0
     retval = 0
     usage = """Usage: %prog [options] <filename>\nWhere <filename> is the nml file to parse"""
@@ -71,8 +69,6 @@ def main(argv):
 
     if opts.debug:
         _debug = 1
-    crop_sprites = opts.crop
-    compress_grf = opts.compress
 
     read_extra_commands(opts.custom_tags)
     read_lang_files(opts.lang_dir)
@@ -95,13 +91,13 @@ def main(argv):
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
     outputs = []
-    if opts.grf_filename: outputs.append(get_output_grf()(opts.grf_filename))
+    if opts.grf_filename: outputs.append(get_output_grf()(opts.grf_filename, opts.compress, opts.crop))
     if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
     nml_output = codecs.open(opts.nml_filename, 'w', 'utf-8') if opts.nml_filename else None
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
-        if outext == '.grf': outputs.append(get_output_grf()(output))
+        if outext == '.grf': outputs.append(get_output_grf()(output, opts.compress, opts.crop))
         elif outext == '.nfo': outputs.append(OutputNFO(output))
         elif outext == '.nml':
             print "Use --output-nml <file> to specify nml output"
