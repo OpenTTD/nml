@@ -627,7 +627,7 @@ class TownNames(object):
             if not isinstance(value, ConstantNumeric):
                 raise ScriptError("ID should be an integer number.")
 
-            self.id_number = vale.value
+            self.id_number = value.value
             if self.id_number < 0 or self.id_number > 0x7f:
                 raise ScriptError("ID must be a number between 0 and 0x7f (inclusive)")
 
