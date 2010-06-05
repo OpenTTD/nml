@@ -710,7 +710,10 @@ class TownNames(object):
         if isinstance(self.name, basestring):
             name_text = "name = " + repr(self.name)
             if self.id_number is not None: name_text += " (allocated number is 0x%x)" % self.id_number
-        else: name_text = "number = 0x%x" % self.id_number
+        elif self.id_number is not None:
+            name_text = "number = 0x%x" % self.id_number
+        else:
+            name_text = "(unnamed)"
 
         print indentation*' ' + 'Town name ' + name_text
         if self.style_name is not None:
