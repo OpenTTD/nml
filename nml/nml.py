@@ -25,7 +25,7 @@ def p_error(p):
     sys.exit(2)
 
 import ply.yacc as yacc
-parser = yacc.yacc(debug=True)
+parser = yacc.yacc(debug=False)
 
 _debug = 0
 crop_sprites = False
