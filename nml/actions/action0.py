@@ -71,7 +71,7 @@ def parse_property(feature, name, value, id, unit):
             if not 'unit_type' in prop or unit.type != prop['unit_type']:
                 raise ScriptError("Invalid unit for property: " + name)
             mul = mul / unit.convert
-        if mul != 1:
+        if mul != 1 or isinstance(value, ConstantFloat): #always round floats
             if not isinstance(value, (ConstantNumeric, ConstantFloat)):
                 raise ScriptError("Unit conversion specified for property, but no constant value found")
             value = ConstantNumeric(int(value.value * mul + 0.5))
