@@ -362,6 +362,7 @@ class LiveryOverride(object):
         self.wagon_id.debug_print(indentation + 2)
         for graphics in self.graphics_block.graphics_list:
             graphics.debug_print(indentation + 2)
+        print (indentation+2)*' ' + 'Default graphics:', self.graphics_block.default_graphics
 
     def get_action_list(self):
         global item_feature, item_names
@@ -381,6 +382,7 @@ class GraphicsBlock(object):
         print indentation*' ' + 'Graphics block:'
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
+        print (indentation+2)*' ' + 'Default graphics:', self.default_graphics
 
     def get_action_list(self):
         global item_feature, item_id
