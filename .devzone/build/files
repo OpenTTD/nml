@@ -1,2 +1,3 @@
 /usr/src/packages/RPMS/noarch/nml-*.noarch.rpm
-/usr/src/packages/BUILD/nml/dist/*
+%{BUILD}/dist/*
+E;%{BUILD}/*-build.test.log
