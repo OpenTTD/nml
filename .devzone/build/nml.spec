@@ -39,7 +39,8 @@ mv dist/nml-`%{__python} setup.py -V`.tar.gz dist/nml-%{version}.src.tar.gz
 %clean
 
 %check
-make -C regression/ >%{name}-%{version}-build.test.log
+cd regression
+make >%{name}-%{version}-build.test.log
 
 %files -f INSTALLED_FILES 
 %defattr(-,root,root,-)
