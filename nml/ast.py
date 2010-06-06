@@ -703,7 +703,9 @@ class TownNames(object):
 
     def write_parts(self, file):
         file.print_bytex(len(self.parts))
-        for part in self.parts: part.write(file)
+        for part in self.parts:
+            part.write(file)
+            file.newline()
 
 
     def debug_print(self, indentation):

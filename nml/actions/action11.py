@@ -8,6 +8,7 @@ from nml.generic import ScriptError
 class Action11(object):
     def __init__(self, sounds):
         self.sounds = sounds
+        self.sounds[-1].last = True
 
     def prepare_output(self):
         if len(self.sounds) == 0:
@@ -43,6 +44,7 @@ class LoadBinaryFile(object):
     '''
     def __init__(self, fname):
         self.fname = fname
+        self.last = False
 
     def prepare_output(self):
         if not os.access(self.fname, os.R_OK):
@@ -64,6 +66,7 @@ class LoadBinaryFile(object):
     def write(self, file):
         file.print_named_filedata(self.fname)
         file.newline()
+        if self.last: file.newline()
 
 class ImportSound(object):
     """
@@ -87,6 +90,7 @@ class ImportSound(object):
         if not isinstance(number, expression.ConstantNumeric):
             raise ScriptError("sound number of the imported sound is not a number.")
         self.number = number.value
+        self.last = False
 
     def prepare_output(self):
         pass
@@ -103,3 +107,4 @@ class ImportSound(object):
         file.print_dwordx(self.grfid)
         file.print_wordx(self.number)
         file.newline()
+        if self.last: file.newline()

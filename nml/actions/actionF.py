@@ -45,6 +45,7 @@ class ActionF(object):
         id = self.town_names_data.get_id()
         file.print_bytex(id)
         self.town_names_data.write_styles(file)
+        file.newline()
         self.town_names_data.write_parts(file)
         file.newline()
 
