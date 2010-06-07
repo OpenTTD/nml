@@ -1,12 +1,12 @@
 import os, codecs, re, glob
-from generic import ScriptError
+from nml import generic
 
 grf_strings = {}
 
 def get_translation(string, lang = 0x7F):
     global grf_strings
     if string not in grf_strings:
-        raise ScriptError('String "%s" is not translatable' % string)
+        raise generic.ScriptError('String "%s" is not translatable' % string)
     def_trans = None
     for translation in grf_strings[string]:
         if translation['lang'] == lang:
@@ -112,12 +112,12 @@ def read_extra_commands(custom_tags_file):
 def parse_command(command):
     global escapes
     match = re.match(r'^([a-zA-Z_]*)(( \d+)*)$', command)
-    if match is None: raise ScriptError("Failed to parse string command: '" + command + "'")
+    if match is None: raise generic.ScriptError("Failed to parse string command: '" + command + "'")
     cmd_name = match.group(1)
     arguments = match.group(2).split()
-    if cmd_name not in escapes: raise ScriptError("Unkown string command: '" + cmd_name + "'")
+    if cmd_name not in escapes: raise generic.ScriptError("Unkown string command: '" + cmd_name + "'")
     escape = escapes[cmd_name]
-    if escape['num_params'] != len(arguments): raise ScriptError("Wrong number of arguments in command: '" + command + "'")
+    if escape['num_params'] != len(arguments): raise generic.ScriptError("Wrong number of arguments in command: '" + command + "'")
     ret = escape['escape']
     if len(arguments) > 0:
         ret += '" '
@@ -144,7 +144,7 @@ def parse_grf_string(orig_string):
                     ret += parse_command(orig_string[i+1:j])
                     ignore = j - i
                     break
-            if not has_end: raise ScriptError("Command block without ending '}'")
+            if not has_end: raise generic.ScriptError("Command block without ending '}'")
         elif c in special_chars:
             ret += special_chars[c]
         else:

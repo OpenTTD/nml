@@ -1,5 +1,5 @@
 from nml.expression import *
-from nml.generic import *
+from nml import generic
 from nml.grfstrings import grf_strings, get_translation, get_string_size
 from action6 import *
 from actionD import *
@@ -88,7 +88,7 @@ def parse_error_block(error):
         severity = ConstantNumeric(0)
 
     if not isinstance(error.msg, basestring):
-        raise ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
+        raise generic.ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
 
     langs = [0x7F]
     if error.msg in default_error_msg:
@@ -101,7 +101,7 @@ def parse_error_block(error):
 
     if error.data is not None:
         if not isinstance(error.data, basestring):
-            raise ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
+            raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
         for translation in grf_strings[error.data]:
             langs.append(translation['lang'])
 

@@ -1,5 +1,5 @@
 import nml.ast
-from nml.generic import *
+from nml import generic
 from nml.expression import *
 from real_sprite import *
 from action2real import *
@@ -45,7 +45,7 @@ def parse_sprite_block(sprite_block):
     num_ent = -1
 
     if sprite_block.feature.value not in action1_features:
-        raise ScriptError("Sprite blocks are not supported for this feature: 0x" + to_hex(sprite_block.feature.value, 2))
+        raise generic.ScriptError("Sprite blocks are not supported for this feature: 0x" + generic.to_hex(sprite_block.feature.value, 2))
 
     for item in sprite_block.spriteset_list:
         if isinstance(item, nml.ast.SpriteSet):
@@ -56,7 +56,7 @@ def parse_sprite_block(sprite_block):
             if num_ent == -1:
                 num_ent = len(real_sprite_list)
             elif num_ent != len(real_sprite_list):
-                raise ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
+                raise generic.ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
 
             last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
             for sprite, id_dict in real_sprite_list:

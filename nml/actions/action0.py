@@ -1,5 +1,5 @@
 from nml.actions.action0properties import Action0Property, properties
-from nml.generic import *
+from nml import generic
 from action4 import *
 from action6 import *
 from actionD import *
@@ -55,25 +55,25 @@ def parse_property(feature, name, value, id, unit):
     mods = []
 
     if isinstance(name, basestring):
-        if not name in properties[feature]: raise ScriptError("Unkown property name: " + name)
+        if not name in properties[feature]: raise generic.ScriptError("Unkown property name: " + name)
         prop = properties[feature][name]
     elif isinstance(name, ConstantNumeric):
         for p in properties[feature]:
             if 'num' in p and p['num'] != name.value: continue
             prop = p
-        if prop is None: raise ScriptError("Unkown property number: " + name.value)
-    else: raise ScriptError("Invalid type as property identifier")
+        if prop is None: raise generic.ScriptError("Unkown property number: " + name.value)
+    else: raise generic.ScriptError("Invalid type as property identifier")
 
     if unit is None or unit.type != 'nfo':
         mul = 1
         if 'unit_conversion' in prop: mul = prop['unit_conversion']
         if unit is not None:
             if not 'unit_type' in prop or unit.type != prop['unit_type']:
-                raise ScriptError("Invalid unit for property: " + name)
+                raise generic.ScriptError("Invalid unit for property: " + name)
             mul = mul / unit.convert
         if mul != 1 or isinstance(value, ConstantFloat): #always round floats
             if not isinstance(value, (ConstantNumeric, ConstantFloat)):
-                raise ScriptError("Unit conversion specified for property, but no constant value found")
+                raise generic.ScriptError("Unit conversion specified for property, but no constant value found")
             value = ConstantNumeric(int(value.value * mul + 0.5))
 
     if 'custom_function' in prop:
@@ -85,7 +85,7 @@ def parse_property(feature, name, value, id, unit):
             mods.append((value.num.value, prop['size'], 1))
             value = ConstantNumeric(0)
         elif isinstance(value, String):
-            if not 'string' in prop: raise ScriptError("String used as value for non-string property: " + str(prop['num']))
+            if not 'string' in prop: raise generic.ScriptError("String used as value for non-string property: " + str(prop['num']))
             string_range = prop['string']
             stringid, prepend, string_actions = get_string_action4s(feature, string_range, value, id)
             value = ConstantNumeric(stringid)

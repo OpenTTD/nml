@@ -3,7 +3,7 @@ from ast import *
 from parser import *
 from tokens import NMLLexer
 from grfstrings import *
-from generic import ScriptError
+from nml import generic
 from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
 from actions.action8 import Action8
@@ -85,7 +85,7 @@ def main(argv):
     else:
         input_filename = args[0]
         if not os.access(input_filename, os.R_OK):
-            raise ScriptError('Input file "%s" does not exist' % input_filename)
+            raise generic.ScriptError('Input file "%s" does not exist' % input_filename)
         input = codecs.open(input_filename, 'r', 'utf-8')
         if not outputfile_given:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")

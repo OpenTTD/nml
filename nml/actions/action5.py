@@ -1,4 +1,4 @@
-from nml.generic import *
+from nml import generic
 from real_sprite import *
 import warnings
 
@@ -77,27 +77,27 @@ def parse_action5(replaces):
     num_sprites = len(real_sprite_list)
 
     if not isinstance(replaces.type, basestring):
-        raise ScriptError("replacenew parameter 'type' must be an identifier of a sprite replacement type")
+        raise generic.ScriptError("replacenew parameter 'type' must be an identifier of a sprite replacement type")
     if replaces.type not in action5_table:
-        raise ScriptError(replaces.type + " is not a valid sprite replacement type")
+        raise generic.ScriptError(replaces.type + " is not a valid sprite replacement type")
     type_id, num_required, block_type = action5_table[replaces.type]
 
     try:
         offset = reduce_constant(replaces.offset).value
     except ConstError:
-        raise ScriptError("replacenew parameter 'offset' must be a compile-time constant")
-    check_range(offset, 0, 0xFFFF, "replacenew parameter 'offset'")
+        raise generic.ScriptError("replacenew parameter 'offset' must be a compile-time constant")
+    generic.check_range(offset, 0, 0xFFFF, "replacenew parameter 'offset'")
 
     if block_type == Action5BlockType.FIXED:
         if num_sprites < num_required:
-            raise ScriptError("Invalid sprite count for sprite replacement type '%s', expcected %d, got %d" % (replaces.type, num_required, num_sprites))
+            raise generic.ScriptError("Invalid sprite count for sprite replacement type '%s', expcected %d, got %d" % (replaces.type, num_required, num_sprites))
         elif num_sprites > num_required:
             warnings.warn("Too many sprites specified for sprite replacement type '%s', expcected %d, got %d, extra sprites may be ignored" % (replaces.type, num_required, num_sprites))
         if offset != 0:
-            raise ScriptError("replacenew parameter 'offset' must be zero for sprite replacement type '%s'" % replaces.type)
+            raise generic.ScriptError("replacenew parameter 'offset' must be zero for sprite replacement type '%s'" % replaces.type)
     elif block_type == Action5BlockType.ANY:
         if offset != 0:
-            raise ScriptError("replacenew parameter 'offset' must be zero for sprite replacement type '%s'" % replaces.type)
+            raise generic.ScriptError("replacenew parameter 'offset' must be zero for sprite replacement type '%s'" % replaces.type)
     elif block_type == Action5BlockType.OFFSET:
         if num_sprites + offset > num_required:
             warnings.warn("Exceeding the limit of %d spriets for sprite replacement type '%s', extra sprites may be ignored" % (num_required, replaces.type))

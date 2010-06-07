@@ -1,5 +1,3 @@
-from nml.generic import *
-
 free_parameters = range(0x40, 0x80)
 free_parameters.reverse()
 

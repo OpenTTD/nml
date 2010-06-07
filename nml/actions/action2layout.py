@@ -1,6 +1,6 @@
 import nml.ast
 from action2 import *
-from nml.generic import *
+from nml import generic
 
 class Action2Layout(Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
@@ -77,29 +77,29 @@ class Action2LayoutSprite(object):
 
     def validate(self):
         if self._sprite_number == -1:
-            raise ScriptError("No sprite or ttdsprite specified. This parameter is required.")
+            raise generic.ScriptError("No sprite or ttdsprite specified. This parameter is required.")
 
     def set_sprite(self, ttd, number):
         if self._sprite_number == -1:
             if number >> 14 != 0:
-                raise ScriptError("Sprite number too big, maximum is " + str((1 << 14) - 1))
+                raise generic.ScriptError("Sprite number too big, maximum is " + str((1 << 14) - 1))
             self._sprite_number = number
             if not ttd: self._sprite_number |= 1 << 31
         else:
-            raise ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite")
+            raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite")
 
     def set_recolor_sprite(self, type, number):
         if self._recolor_type == Action2LayoutRecolorMode.NONE:
             if number >> 14 != 0:
-                raise ScriptError("Recolor sprite number too big, maximum is " + str((1 << 14) - 1))
+                raise generic.ScriptError("Recolor sprite number too big, maximum is " + str((1 << 14) - 1))
             self._recolor_type = type
             self._recolor_sprite = number
         else:
-            raise ScriptError("Only one recolor sprite may be set per per ground/building/childsprite")
+            raise generic.ScriptError("Only one recolor sprite may be set per per ground/building/childsprite")
 
     def set_draw_transparant(self, value):
         if self._draw_transparant_set:
-            raise ScriptError("'always_draw' may be set only once per sprite")
+            raise generic.ScriptError("'always_draw' may be set only once per sprite")
         self._draw_transparant_set = True
         #bit has no effect for ground sprites but should be left empty, so ignore it
         if self.type != Action2LayoutSpriteType.GROUND:
@@ -112,22 +112,22 @@ class Action2LayoutSprite(object):
     def set_bounding_box_param(self, name, value):
         assert name in self._bounding_box
         if self.type == Action2LayoutSpriteType.GROUND:
-            raise ScriptError(name + " can not be set for ground sprites")
+            raise generic.ScriptError(name + " can not be set for ground sprites")
         if name == 'xoffset' or name == 'yoffset':
             if value > 127 or value < -128:
-                raise ScriptError(name + " has to be in range -128..127, encountered " + str(value))
+                raise generic.ScriptError(name + " has to be in range -128..127, encountered " + str(value))
         else:
             if self.type == Action2LayoutSpriteType.CHILD:
-                raise ScriptError(name + " can not be set for child sprites")
+                raise generic.ScriptError(name + " can not be set for child sprites")
             if value < 0 or value > 255:
-                raise ScriptError(name + " has to be in range 0..255, encountered " + str(value))
+                raise generic.ScriptError(name + " has to be in range 0..255, encountered " + str(value))
 
         if self._bounding_box[name]['is_set']:
-            raise ScriptError(name + " may be set only once per sprite")
+            raise generic.ScriptError(name + " may be set only once per sprite")
 
 
         if name == 'zoffset' and value != 0:
-            raise ScriptError("zoffset should always be 0, encountered " + str(value))
+            raise generic.ScriptError("zoffset should always be 0, encountered " + str(value))
 
         self._bounding_box[name]['value'] = value
         self._bounding_box[name]['is_set'] = True
@@ -141,14 +141,14 @@ def set_sprite_property(sprite, name, value, spritesets):
 
     if name == 'sprite':
         if not isinstance(value, basestring):
-            raise ScriptError("Value of 'sprite' should be a spriteset identifier")
+            raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier")
         if value not in spritesets:
-            raise ScriptError("Unknown sprite set: " + value)
+            raise generic.ScriptError("Unknown sprite set: " + value)
         sprite.set_sprite(False, spritesets[value])
 
     elif name == 'ttdsprite':
         if not isinstance(value, nml.ast.ConstantNumeric):
-            raise ScriptError("Value of 'ttdsprite' should be a compile-time constant")
+            raise generic.ScriptError("Value of 'ttdsprite' should be a compile-time constant")
         sprite.set_sprite(True, value.value)
 
     elif name == 'recolor':
@@ -156,26 +156,26 @@ def set_sprite_property(sprite, name, value, spritesets):
             if value == 'TRANSPARANT':
                 sprite.set_recolor_sprite(Action2LayoutRecolorMode.TRANSPARANT, 0)
             else:
-                raise ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number, encountered " + value )
+                raise generic.ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number, encountered " + value )
         elif isinstance(value, nml.ast.ConstantNumeric):
             sprite.set_recolor_sprite(Action2LayoutRecolorMode.RECOLOR, value.value)
         else:
-            raise ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number")
+            raise generic.ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number")
 
     elif name == 'always_draw':
         if isinstance(value, nml.ast.ConstantNumeric):
             sprite.set_draw_transparant(value.value != 0)
         else:
-            raise ScriptError("Value of 'always_draw' should be a compile-time constant")
+            raise generic.ScriptError("Value of 'always_draw' should be a compile-time constant")
 
     else:
         if sprite.is_bounding_box_param(name):
             if isinstance(value, nml.ast.ConstantNumeric):
                 sprite.set_bounding_box_param(name, value.value)
             else:
-                raise ScriptError("Value of '" + name + "' should be a compile-time constant")
+                raise generic.ScriptError("Value of '" + name + "' should be a compile-time constant")
         else:
-            raise ScriptError("Unknown sprite layout parameter: " + name)
+            raise generic.ScriptError("Unknown sprite layout parameter: " + name)
 
 layout_action2_features = [0x07, 0x09, 0x11] #houses, industry and airport tiles
 
@@ -185,7 +185,7 @@ def get_layout_action2s(spritegroup, feature, spritesets):
     building_sprites = []
 
     if feature not in layout_action2_features:
-        raise ScriptError("Sprite groups that define tile layouts are not supported for this feature: 0x" + to_hex(feature, 2))
+        raise generic.ScriptError("Sprite groups that define tile layouts are not supported for this feature: 0x" + generic.to_hex(feature, 2))
 
     for layout_sprite in spritegroup.layout_sprite_list:
         sprite = Action2LayoutSprite(layout_sprite.type)
@@ -194,14 +194,14 @@ def get_layout_action2s(spritegroup, feature, spritesets):
         sprite.validate()
         if sprite.type == Action2LayoutSpriteType.GROUND:
             if ground_sprite is not None:
-                raise ScriptError("Sprite group can have no more than one ground sprite")
+                raise generic.ScriptError("Sprite group can have no more than one ground sprite")
             ground_sprite = sprite
         else:
             building_sprites.append(sprite)
 
     if ground_sprite is None:
-        raise ScriptError("Sprite group requires exactly one ground sprite")
+        raise generic.ScriptError("Sprite group requires exactly one ground sprite")
     if len(building_sprites) == 0:
-        raise ScriptError("At least one non-ground sprite must be specified per sprite group")
+        raise generic.ScriptError("At least one non-ground sprite must be specified per sprite group")
 
     return [Action2Layout(feature, spritegroup.name, ground_sprite, building_sprites)]

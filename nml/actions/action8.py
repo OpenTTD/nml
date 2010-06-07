@@ -1,4 +1,3 @@
-from nml.generic import *
 from nml.grfstrings import get_translation, get_string_size
 
 class Action8(object):

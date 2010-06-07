@@ -1,10 +1,9 @@
 from nml.expression import *
-from nml.generic import *
 from action2 import *
 from action2var_variables import *
 from action6 import *
 from actionD import *
-from nml import global_constants
+from nml import generic, global_constants
 
 class Action2Operator(object):
     ADD   = r'\2+'
@@ -119,7 +118,7 @@ def convert_op_to_action2(op):
         Operator.STO_TMP:  Action2Operator.STO_TMP,
         Operator.STO_PERM: Action2Operator.STO_PERM,
     }
-    if not op in op_to_act2: raise ScriptError("Unsupported operator in action2 expression: " + str(op))
+    if not op in op_to_act2: raise generic.ScriptError("Unsupported operator in action2 expression: " + str(op))
     return op_to_act2[op]
 
 class VarAction2Var(object):
@@ -216,9 +215,9 @@ def parse_varaction2_expression(expr, varsize):
 
     elif isinstance(expr, Variable):
         if not isinstance(expr.num, ConstantNumeric):
-            raise ScriptError("Variable number must be a constant number")
+            raise generic.ScriptError("Variable number must be a constant number")
         if not (expr.param is None or isinstance(expr.param, ConstantNumeric)):
-            raise ScriptError("Variable parameter must be a constant number")
+            raise generic.ScriptError("Variable parameter must be a constant number")
         var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
         var.add, var.div, var.mod = expr.add, expr.div, expr.mod
         var_list.append(var)
@@ -272,7 +271,7 @@ def parse_varaction2_expression(expr, varsize):
             var_list_size += tmp_var_list_size
 
     else:
-        raise ScriptError("Invalid expression type in varaction2 expression")
+        raise generic.ScriptError("Invalid expression type in varaction2 expression")
 
     return (extra_actions, mods, var_list, var_list_size)
 
@@ -289,7 +288,7 @@ def parse_varaction2(switch_block):
     return_action = None
     varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature.value]
-    if feature is None: raise ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
+    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name, switch_block.var_range, varsize)
 
     func = lambda x: Variable(ConstantNumeric(x['var']), ConstantNumeric(x['start']), ConstantNumeric((1 << x['size']) - 1))
@@ -319,12 +318,12 @@ def parse_varaction2(switch_block):
                 action2 = add_ref(r.result)
                 varaction2.references.append(action2)
         elif not isinstance(r.result, ConstantNumeric):
-            raise ScriptError("Result of varaction2 range must be another action2 or a constant number")
+            raise generic.ScriptError("Result of varaction2 range must be another action2 or a constant number")
 
         if not isinstance(r.min, ConstantNumeric):
-            raise ScriptError("Min value of varaction2 range must be a constant number")
+            raise generic.ScriptError("Min value of varaction2 range must be a constant number")
         if not isinstance(r.max, ConstantNumeric):
-            raise ScriptError("Max value of varaction2 range must be a constant number")
+            raise generic.ScriptError("Max value of varaction2 range must be a constant number")
 
         varaction2.ranges.append(r)
 
@@ -344,7 +343,7 @@ def parse_varaction2(switch_block):
             action2 = add_ref(default)
             varaction2.references.append(action2)
     elif not isinstance(default, ConstantNumeric):
-        raise ScriptError("Default result of varaction2 must be another action2 or a constant number")
+        raise generic.ScriptError("Default result of varaction2 must be another action2 or a constant number")
 
     varaction2.default_result = default
 

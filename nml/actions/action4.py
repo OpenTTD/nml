@@ -1,4 +1,4 @@
-from nml.generic import *
+from nml import generic
 from nml.grfstrings import grf_strings, get_string_size
 
 class Action4(object):
@@ -44,7 +44,7 @@ string_ranges = {
 
 def get_string_action4s(feature, string_range, string, id = None):
     global grf_strings, string_ranges
-    if not string.name in grf_strings: raise ScriptError("Unkown string: " + string.name)
+    if not string.name in grf_strings: raise generic.ScriptError("Unkown string: " + string.name)
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:

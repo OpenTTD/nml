@@ -1,4 +1,3 @@
-from nml.generic import *
 from nml.expression import *
 from action2 import *
 from action6 import *

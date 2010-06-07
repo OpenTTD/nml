@@ -1,4 +1,5 @@
 from ast import *
+from nml import generic
 from expression import *
 from actions import action11
 
@@ -466,7 +467,7 @@ def p_cargotable_list(t):
     '''cargotable_list : ID
                        | cargotable_list COMMA ID'''
     # t is not a real list, so t[-1] does not work.
-    if len(t[len(t) - 1]) != 4: raise ScriptError("Each cargo identifier should be exactly 4 bytes long")
+    if len(t[len(t) - 1]) != 4: raise generic.ScriptError("Each cargo identifier should be exactly 4 bytes long")
     if len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[3]]
 

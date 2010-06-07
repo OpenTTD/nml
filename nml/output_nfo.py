@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from generic import *
+from nml import generic
 import codecs
 
 class OutputNFO(object):
@@ -28,7 +28,7 @@ class OutputNFO(object):
             return
         if -0x80 < value < 0: value += 0x100
         assert value >= 0 and value <= 0xFF
-        self.file.write(to_hex(value, 2) + " ")
+        self.file.write(generic.to_hex(value, 2) + " ")
 
     def print_word(self, value):
         if -0x8000 < value < 0: value += 0x10000
@@ -38,7 +38,7 @@ class OutputNFO(object):
     def print_wordx(self, value):
         if -0x8000 < value < 0: value += 0x10000
         assert value >= 0 and value <= 0xFFFF
-        self.file.write("\\wx" + to_hex(value, 4) + " ")
+        self.file.write("\\wx" + generic.to_hex(value, 4) + " ")
 
     def print_dword(self, value):
         if -0x80000000 < value < 0: value += 0x100000000
@@ -48,7 +48,7 @@ class OutputNFO(object):
     def print_dwordx(self, value):
         if -0x80000000 < value < 0: value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
-        self.file.write("\\dx" + to_hex(value, 8) + " ")
+        self.file.write("\\dx" + generic.to_hex(value, 8) + " ")
 
     def print_varx(self, value, size):
         if size == 1:

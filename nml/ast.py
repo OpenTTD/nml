@@ -1,3 +1,4 @@
+from nml import generic
 from expression import *
 from actions.action0 import *
 from actions.action1 import *
@@ -67,13 +68,13 @@ class GRF(object):
         for assignment in alist:
             if assignment.name == "grfid":
                 if not isinstance(assignment.value, basestring):
-                    raise ScriptError("GRFID must be a string literal")
+                    raise generic.ScriptError("GRFID must be a string literal")
             elif not isinstance(assignment.value, String):
-                raise ScriptError("Assignments in GRF-block must be constant strings")
+                raise generic.ScriptError("Assignments in GRF-block must be constant strings")
             if assignment.name == "name": self.name = assignment.value
             elif assignment.name == "desc": self.desc = assignment.value
             elif assignment.name == "grfid": self.grfid = assignment.value
-            else: raise ScriptError("Unkown item in GRF-block: " + assignment.name)
+            else: raise generic.ScriptError("Unkown item in GRF-block: " + assignment.name)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
@@ -261,7 +262,7 @@ def validate_item_block(block_list):
         if isinstance(block, Loop):
             validate_item_block(block.body)
             continue
-        raise ScriptError("Invalid block type inside 'Item'-block")
+        raise generic.ScriptError("Invalid block type inside 'Item'-block")
 
 item_feature = None
 item_id = None
@@ -319,7 +320,7 @@ class Property(object):
         self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
         self.unit = unit
         if unit is not None and not (isinstance(self.value, ConstantNumeric) or isinstance(self.value, ConstantFloat)):
-            raise ScriptError("Using a unit for a property is only allowed if the value is constant")
+            raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant")
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Property:', self.name
@@ -468,7 +469,7 @@ class TemplateDeclaration(object):
         if name not in sprite_template_map:
             sprite_template_map[name] = self
         else:
-            raise ScriptError("Template named '" + name + "' is already defined")
+            raise generic.ScriptError("Template named '" + name + "' is already defined")
         self.param_list = param_list
         self.sprite_list = sprite_list
 
@@ -612,29 +613,29 @@ class TownNames(object):
             if isinstance(param, TownNamesPart): self.parts.append(param)
             else:
                 if param.key != 'styles':
-                    raise ScriptError("Expected 'styles' keyword.")
+                    raise generic.ScriptError("Expected 'styles' keyword.")
                 if len(param.value.params) > 0:
-                    raise ScriptError("Parameters of the 'styles' were not expected.")
+                    raise generic.ScriptError("Parameters of the 'styles' were not expected.")
                 if self.style_name is not None:
-                    raise ScriptError("'styles' is already defined.")
+                    raise generic.ScriptError("'styles' is already defined.")
                 self.style_name = param.value.name
 
         if len(self.parts) == 0:
-            raise ScriptError("Missing name parts in a town_names item.")
+            raise generic.ScriptError("Missing name parts in a town_names item.")
 
         # 'name' is actually a number.
         # Allocate it now, before the self.prepare_output() call (to prevent names to grab it).
         if self.name is not None and not isinstance(self.name, basestring):
             value = reduce_constant(self.name)
             if not isinstance(value, ConstantNumeric):
-                raise ScriptError("ID should be an integer number.")
+                raise generic.ScriptError("ID should be an integer number.")
 
             self.id_number = value.value
             if self.id_number < 0 or self.id_number > 0x7f:
-                raise ScriptError("ID must be a number between 0 and 0x7f (inclusive)")
+                raise generic.ScriptError("ID must be a number between 0 and 0x7f (inclusive)")
 
             if self.id_number not in actionF.free_numbers:
-                raise ScriptError("town names ID 0x%x is already used." % self.id_number)
+                raise generic.ScriptError("town names ID 0x%x is already used." % self.id_number)
             actionF.free_numbers.remove(self.id_number)
 
     def prepare_output(self):
@@ -650,7 +651,7 @@ class TownNames(object):
             self.id_number = actionF.get_free_id()
             if isinstance(self.name, basestring):
                 if self.name in actionF.named_numbers:
-                    raise ScriptError('Cannot define town name "%s", it is already in use' % self.name)
+                    raise generic.ScriptError('Cannot define town name "%s", it is already in use' % self.name)
                 actionF.named_numbers[self.name] = self.id_number # Add name to the set 'safe' names.
         else: actionF.numbered_numbers.add(self.id_number) # Add number to the set of 'safe' numbers.
 
@@ -666,16 +667,16 @@ class TownNames(object):
         self.free_bit = startbit
 
         if startbit > 32:
-            raise ScriptError("Not enough random bits for the town name generation (%d needed, 32 available)" % startbit)
+            raise generic.ScriptError("Not enough random bits for the town name generation (%d needed, 32 available)" % startbit)
 
         # Pull style names if needed.
         if self.style_name is not None:
             if self.style_name not in grf_strings:
-                raise ScriptError("Unknown string: " + self.style_name)
+                raise generic.ScriptError("Unknown string: " + self.style_name)
             self.style_names = [(transl['lang'], transl['text']) for transl in grf_strings[self.style_name]]
             self.style_names.sort()
             if len(self.style_names) == 0:
-                raise ScriptError('Style "%s" defined, but no translations found for it' % self.style_name)
+                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name)
         else: self.style_names = []
 
 
@@ -737,7 +738,7 @@ class TownNamesPart(object):
     def __init__(self, pieces):
         self.pieces = pieces
         if len(self.pieces) == 0:
-            raise ScriptError("Expected names and/or town_name references in the part.")
+            raise generic.ScriptError("Expected names and/or town_name references in the part.")
 
         self.total = sum(piece.probability.value for piece in self.pieces)
         self.startbit = None
@@ -773,9 +774,9 @@ class TownNamesPart(object):
         @return: Set of referenced C{town_names} block numbers.
         '''
         if len(self.pieces) == 0:
-            raise ScriptError("Expected at least one value in a part.")
+            raise generic.ScriptError("Expected at least one value in a part.")
         if len(self.pieces) > 255:
-            raise ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces))
+            raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces))
         blocks = set()
         for piece in self.pieces:
             block = piece.resolve_townname_id()
@@ -819,15 +820,15 @@ class TownNamesEntryDefinition(object):
         if not isinstance(self.def_number, basestring):
             self.def_number = reduce_constant(self.def_number)
             if not isinstance(self.def_number, ConstantNumeric):
-                raise ScriptError("Reference to other town name ID should be an integer number.")
+                raise generic.ScriptError("Reference to other town name ID should be an integer number.")
             if self.def_number.value < 0 or self.def_number.value > 0x7f:
-                raise ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).")
+                raise generic.ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).")
 
         self.probability = reduce_constant(probability)
         if not isinstance(self.probability, ConstantNumeric):
-            raise ScriptError("Probability should be an integer number.")
+            raise generic.ScriptError("Probability should be an integer number.")
         if self.probability.value < 0 or self.probability.value > 0x7f:
-            raise ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
+            raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
 
     def debug_print(self, indentation, total):
         if isinstance(self.def_number, basestring): name_text = "name '" + self.def_number + "'"
@@ -846,11 +847,11 @@ class TownNamesEntryDefinition(object):
         if isinstance(self.def_number, basestring):
             self.number = actionF.named_numbers.get(self.def_number)
             if self.number is None:
-                raise ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number)
+                raise generic.ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number)
         else:
             self.number = self.def_number.value
             if self.number not in actionF.numbered_numbers:
-                raise ScriptError('Town names number "%s" is not defined or points to a next town_names node' % self.number)
+                raise generic.ScriptError('Town names number "%s" is not defined or points to a next town_names node' % self.number)
         return self.number
 
     def write(self, file):
@@ -863,17 +864,17 @@ class TownNamesEntryText(object):
     """
     def __init__(self, id, text, probability):
         if id != 'text':
-            raise ScriptError("Expected 'text' prefix.")
+            raise generic.ScriptError("Expected 'text' prefix.")
 
         self.text = text
         if not isinstance(self.text, basestring):
-            raise ScriptError("Expected string literal for the name.")
+            raise generic.ScriptError("Expected string literal for the name.")
 
         self.probability = reduce_constant(probability)
         if not isinstance(self.probability, ConstantNumeric):
-            raise ScriptError("Probability should be an integer number.")
+            raise generic.ScriptError("Probability should be an integer number.")
         if self.probability.value < 0 or self.probability.value > 0x7f:
-            raise ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
+            raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
 
     def debug_print(self, indentation, total):
         print indentation*' ' + ('Text %s with probability %d/%d' % (self.text, self.probability.value, total))
@@ -898,7 +899,7 @@ class Error(object):
     def __init__(self, param_list):
         self.params = []
         if not 2 <= len(param_list) <= 5:
-            raise ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)))
+            raise generic.ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)))
         self.severity = reduce_expr(param_list[0], [error_severity])
         self.msg      = param_list[1]
         self.data     = param_list[2] if len(param_list) >= 3 else None

@@ -1,5 +1,5 @@
 import operator
-from generic import *
+from nml import generic
 
 cargo_numbers = {}
 item_names = {}
@@ -51,7 +51,7 @@ def get_operator_string(op, param1, param2):
 
 class ConstantNumeric(object):
     def __init__(self, value):
-        self.value = truncate_int32(value)
+        self.value = generic.truncate_int32(value)
     def debug_print(self, indentation):
         print indentation*' ' + 'Int:', self.value
     def write(self, file, size):
@@ -282,13 +282,13 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
             id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
             if expr in id_d:
                 return func(id_d[expr])
-        if unkown_id_fatal: raise ScriptError("Unrecognized identifier '" + expr + "' encountered")
+        if unkown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + expr + "' encountered")
     elif isinstance(expr, BitMask):
         ret = 0
         for orig_expr in expr.values:
             val = reduce_expr(orig_expr, id_dicts)
-            if not isinstance(val, ConstantNumeric): raise ScriptError("Parameters of 'bit' should be a constant")
-            if val.value >= 32: raise ScriptError("Parameters of 'bit' cannot be greater then 31")
+            if not isinstance(val, ConstantNumeric): raise generic.ScriptError("Parameters of 'bit' should be a constant")
+            if val.value >= 32: raise generic.ScriptError("Parameters of 'bit' cannot be greater then 31")
             ret |= 1 << val.value
         return ConstantNumeric(ret)
     elif isinstance(expr, FunctionCall):
@@ -299,14 +299,14 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
             return reduce_expr(builtin_functions.function_table[expr.name](expr.name, param_list), id_dicts)
         else:
             if len(param_list) != 0:
-                raise ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % expr.name);
+                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % expr.name);
             return Variable(ConstantNumeric(0x7E), param=expr.name)
     return expr
 
 def reduce_constant(expr, id_dicts = []):
     expr = reduce_expr(expr, id_dicts)
     if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
-        raise ConstError()
+        raise generic.ConstError()
     return expr
 
 #import here to avoid issues with circular imports

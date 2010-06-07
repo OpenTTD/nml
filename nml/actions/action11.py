@@ -2,8 +2,7 @@
 Action 11 support classes (sounds).
 """
 import os
-from nml import expression
-from nml.generic import ScriptError
+from nml import generic, expression
 
 class Action11(object):
     def __init__(self, sounds):
@@ -12,7 +11,7 @@ class Action11(object):
 
     def prepare_output(self):
         if len(self.sounds) == 0:
-            raise ScriptError('Expected at least one sound.')
+            raise generic.ScriptError('Expected at least one sound.')
         for sound in self.sounds: sound.prepare_output()
 
     def write(self, file):
@@ -48,12 +47,12 @@ class LoadBinaryFile(object):
 
     def prepare_output(self):
         if not os.access(self.fname, os.R_OK):
-            raise ScriptError('File "%s" does not exist.' % self.fname)
+            raise generic.ScriptError('File "%s" does not exist.' % self.fname)
         size = os.path.getsize(self.fname)
         if size == 0:
-            raise ScriptError("Expected a sound file with non-zero length.")
+            raise generic.ScriptError("Expected a sound file with non-zero length.")
         if size > 0x10000:
-            raise ScriptError("Sound file too big (max 64KB).")
+            raise generic.ScriptError("Sound file too big (max 64KB).")
 
     def debug_print(self, indentation):
         name = os.path.split(self.fname)[1]
@@ -83,12 +82,12 @@ class ImportSound(object):
     def __init__(self, grfid, number):
         grfid = expression.reduce_constant(grfid)
         if not isinstance(grfid, expression.ConstantNumeric):
-            raise ScriptError("grf id of the imported sound is not a number.")
+            raise generic.ScriptError("grf id of the imported sound is not a number.")
         self.grfid = grfid.value
 
         number = expression.reduce_constant(number)
         if not isinstance(number, expression.ConstantNumeric):
-            raise ScriptError("sound number of the imported sound is not a number.")
+            raise generic.ScriptError("sound number of the imported sound is not a number.")
         self.number = number.value
         self.last = False
 

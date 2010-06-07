@@ -1,6 +1,6 @@
 import nml
 from nml.expression import *
-from nml.generic import ScriptError
+from nml import generic
 from action6 import *
 
 class ActionDOperator(object):
@@ -76,7 +76,7 @@ def convert_op_to_actiond(op):
     if op == Operator.MUL: return ActionDOperator.MULS
     if op == Operator.DIV: return ActionDOperator.DIVS
     if op == Operator.MOD: return ActionDOperator.MODS
-    raise ScriptError("Unsupported operator in parameter assignment: " + str(op))
+    raise generic.ScriptError("Unsupported operator in parameter assignment: " + str(op))
 
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
@@ -143,7 +143,7 @@ def parse_actionD(assignment):
             action_list.extend(tmp_param_actions)
             param2 = ConstantNumeric(tmp_param)
 
-    else: raise ScriptError("Invalid expression in argument assignment")
+    else: raise generic.ScriptError("Invalid expression in argument assignment")
 
     if len(action6.modifications) > 0: action_list.append(action6)
 

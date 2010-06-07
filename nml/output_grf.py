@@ -1,6 +1,5 @@
 import Image
 import os
-from generic import *
 from lz77 import LZ77
 
 
