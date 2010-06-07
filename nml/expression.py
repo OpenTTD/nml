@@ -1,4 +1,5 @@
 import operator
+import datetime, calendar
 from nml import generic
 
 cargo_numbers = {}
@@ -91,7 +92,7 @@ class BinOp(object):
             print (indentation+2)*' ' + 'ID:', self.expr2
         else:
             self.expr2.debug_print(indentation + 2)
-    
+
     def __str__(self):
         return get_operator_string(self.op, str(self.expr1), str(self.expr2))
 
@@ -197,8 +198,56 @@ class String(object):
         ret += ')'
         return ret
 
-
+#
 # compile-time expression evaluation
+#
+
+def builtin_min(name, args):
+    if len(args) < 2:
+        raise generic.ScriptError("min() requires at least 2 arguments")
+    return reduce(lambda x, y: BinOp(Operator.MIN, x, y), args)
+
+def builtin_max(name, args):
+    if len(args) < 2:
+        raise generic.ScriptError("max() requires at least 2 arguments")
+    return reduce(lambda x, y: BinOp(Operator.MAX, x, y), args)
+
+def builtin_date(name, args):
+    if len(args) != 3:
+        raise generic.ScriptError("date() requires exactly 3 arguments")
+    try:
+        year = reduce_constant(args[0]).value
+        month = reduce_constant(args[1]).value
+        day = reduce_constant(args[2]).value
+    except ConstError:
+        raise generic.ScriptError("Parameters of date() should be compile-time constants")
+    date = datetime.date(year, month, day)
+    return ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1)
+
+def builtin_store(name, args):
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have exactly two parameters")
+    op = Operator.STO_TMP if name == 'STORE_TEMP' else Operator.STO_PERM
+    return BinOp(op, args[0], args[1])
+
+def builtin_load(name, args):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have one parameter")
+    var_num = 0x7D if name == "LOAD_TEMP" else 0x7C
+    return Variable(ConstantNumeric(var_num), param=args[0])
+
+function_table = {
+    'min' : builtin_min,
+    'max' : builtin_max,
+    'date' : builtin_date,
+    'bitmask' : lambda name, args: BitMask(args),
+    'STORE_TEMP' : builtin_store,
+    'STORE_PERM' : builtin_store,
+    'LOAD_TEMP' : builtin_load,
+    'LOAD_PERM' : builtin_load,
+}
+
+
 compile_time_operator = {
     Operator.ADD:     operator.add,
     Operator.SUB:     operator.sub,
@@ -295,8 +344,8 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
         param_list = []
         for param in expr.params:
             param_list.append(reduce_expr(param, id_dicts))
-        if expr.name in builtin_functions.function_table:
-            return reduce_expr(builtin_functions.function_table[expr.name](expr.name, param_list), id_dicts)
+        if expr.name in function_table:
+            return reduce_expr(function_table[expr.name](expr.name, param_list), id_dicts)
         else:
             if len(param_list) != 0:
                 raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % expr.name);
@@ -308,6 +357,3 @@ def reduce_constant(expr, id_dicts = []):
     if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
         raise generic.ConstError()
     return expr
-
-#import here to avoid issues with circular imports
-import builtin_functions
