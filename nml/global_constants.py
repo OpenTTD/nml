@@ -5,8 +5,8 @@ const_table = {
     'CLIMATE_TROPICAL'      : 0x02,
     'CLIMATE_TOYLAND'       : 0x03,
 
-    'CLIMATES_NONE'         : 0x00,
-    'CLIMATES_ALL'          : 0x0F,
+    'CLIMATE_NONE'          : 0x00,
+    'CLIMATE_ALL'           : 0x0F,
 
     #never expire
     'VEHICLE_NEVER_EXPIRES' : 0xFF,
