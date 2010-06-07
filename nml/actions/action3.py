@@ -35,7 +35,7 @@ class Action3(object):
         return True
 
     def skip_action9(self):
-        return No
+        return False
 
     def skip_needed(self):
         return True
