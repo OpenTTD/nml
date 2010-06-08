@@ -16,7 +16,7 @@ class Action11(object):
 
     def write(self, file):
         file.print_sprite_size(3)
-        file.print_byte(0x11)
+        file.print_bytex(0x11)
         file.print_word(len(self.sounds))
         file.newline()
 
