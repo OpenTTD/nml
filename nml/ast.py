@@ -66,20 +66,20 @@ class GRF(object):
         self.desc = None
         self.grfid = None
         for assignment in alist:
-            if assignment.name == "grfid":
-                if not isinstance(assignment.value, basestring):
+            if assignment.name.value == "grfid":
+                if not isinstance(assignment.value, StringLiteral):
                     raise generic.ScriptError("GRFID must be a string literal")
             elif not isinstance(assignment.value, String):
                 raise generic.ScriptError("Assignments in GRF-block must be constant strings")
-            if assignment.name == "name": self.name = assignment.value
-            elif assignment.name == "desc": self.desc = assignment.value
-            elif assignment.name == "grfid": self.grfid = assignment.value
+            if assignment.name.value == "name": self.name = assignment.value
+            elif assignment.name.value == "desc": self.desc = assignment.value
+            elif assignment.name.value == "grfid": self.grfid = assignment.value
             else: raise generic.ScriptError("Unkown item in GRF-block: " + assignment.name)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
         if self.grfid is not None:
-            print (2+indentation)*' ' + 'grfid:', self.grfid
+            print (2+indentation)*' ' + 'grfid:', self.grfid.value
         if self.name is not None:
             print (2+indentation)*' ' + 'Name:'
             self.name.debug_print(indentation + 4)
@@ -92,7 +92,7 @@ class GRF(object):
 
     def __str__(self):
         ret = 'grf {\n'
-        ret += '\tgrfid: "%s";\n' % str(self.grfid)
+        ret += '\tgrfid: %s;\n' % str(self.grfid)
         if self.name is not None:
             ret += '\tname: %s;\n' % str(self.name)
         if self.desc is not None:
@@ -164,7 +164,7 @@ class Switch(object):
         self.body = body
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name
+        print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
@@ -187,8 +187,9 @@ class SwitchBody(object):
         for r in self.ranges:
             r.debug_print(indentation)
         print indentation*' ' + 'Default:'
-        if isinstance(self.default, basestring):
-            print (indentation+2)*' ' + 'Go to switch:', self.default
+        if isinstance(self.default, Identifier):
+            print (indentation+2)*' ' + 'Go to switch:'
+            self.default.debug_print(indentation + 4);
         elif self.default is None:
             print (indentation+2)*' ' + 'Return computed value'
         else:
@@ -200,8 +201,6 @@ class SwitchBody(object):
             ret += '\t%s\n' % str(r)
         if self.default is None:
             ret += '\treturn;\n'
-        elif isinstance(self.default, basestring):
-            ret += '\t%s;\n' % self.default
         else:
             ret += '\t%s;\n' % str(self.default)
         return ret
@@ -218,8 +217,9 @@ class SwitchRange(object):
         print indentation*' ' + 'Max:'
         self.max.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        if isinstance(self.result, basestring):
-            print (indentation+2)*' ' + 'Go to switch:', self.result
+        if isinstance(self.result, Identifier):
+            print (indentation+2)*' ' + 'Go to switch:'
+            self.result.debug_print(indentation + 4);
         elif self.result is None:
             print (indentation+2)*' ' + 'Return computed value'
         else:
@@ -273,12 +273,12 @@ class Item(object):
         self.feature = reduce_constant(feature, [feature_ids])
         self.body = body
         self.name = name
-        if name is not None and name in item_names:
-            self.id = ConstantNumeric(item_names[name])
+        if name is not None and name.value in item_names:
+            self.id = ConstantNumeric(item_names[name.value])
         elif id is None: self.id = ConstantNumeric(get_free_id(self.feature.value))
         else: self.id = reduce_constant(id)
         if name is not None:
-            item_names[name] = self.id.value
+            item_names[name.value] = self.id.value
         validate_item_block(body)
 
     def debug_print(self, indentation):
@@ -297,7 +297,7 @@ class Item(object):
     def __str__(self):
         ret = 'item(%d' % self.feature.value
         if self.name is not None:
-            ret += ', %s, %s' % (self.name, str(self.id))
+            ret += ', %s, %s' % (str(self.name), str(self.id))
         ret += ') {\n'
         for b in self.body:
             ret += '\t' + str(b).replace('\n', '\n\t')[0:-1]
@@ -323,11 +323,8 @@ class Property(object):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant")
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Property:', self.name
-        if isinstance(self.value, basestring):
-            print (indentation + 2)*' ' + 'String: ', self.value
-        else:
-            self.value.debug_print(indentation + 2)
+        print indentation*' ' + 'Property:', self.name.value
+        self.value.debug_print(indentation + 2)
 
     def __str__(self):
         unit = '' if self.unit is None else ' ' + str(self.unit)
@@ -396,8 +393,8 @@ class GraphicsDefinition(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics:'
-        print (indentation+2)*' ' + 'Cargo:', self.cargo_id
-        print (indentation+2)*' ' + 'Linked to action2:', self.action2_id
+        print (indentation+2)*' ' + 'Cargo:', self.cargo_id.value
+        print (indentation+2)*' ' + 'Linked to action2:', self.action2_id.value
 
 class ReplaceSprite(object):
     def __init__(self, start_id, pcx, sprite_list):
@@ -407,7 +404,7 @@ class ReplaceSprite(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites starting at', self.start_id
-        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print (indentation+2)*' ' + 'Source:', self.pcx.value
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -425,7 +422,7 @@ class ReplaceNewSprite(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites for new features of type', self.type
         print (indentation+2)*' ' + 'Offset:  ', self.offset
-        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print (indentation+2)*' ' + 'Source:  ', self.pcx.value
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -443,7 +440,7 @@ class FontGlyphBlock(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Load font glpyhs, starting at', self.base_char
         print (indentation+2)*' ' + 'Font size:  ', self.font_size
-        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print (indentation+2)*' ' + 'Source:  ', self.pcx.value
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -466,18 +463,18 @@ class SpriteBlock(object):
 class TemplateDeclaration(object):
     def __init__(self, name, param_list, sprite_list):
         self.name = name
-        if name not in sprite_template_map:
-            sprite_template_map[name] = self
+        if name.value not in sprite_template_map:
+            sprite_template_map[name.value] = self
         else:
-            raise generic.ScriptError("Template named '" + name + "' is already defined")
+            raise generic.ScriptError("Template named '" + name.value + "' is already defined")
         self.param_list = param_list
         self.sprite_list = sprite_list
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Template declaration:', self.name
+        print indentation*' ' + 'Template declaration:', self.name.value
         print (indentation+2)*' ' + 'Parameters:'
         for param in self.param_list:
-            print (indentation+4)*' ' + param
+            param.debug_print(indentation + 4)
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -491,13 +488,10 @@ class TemplateUsage(object):
         self.param_list = param_list
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Template used:', self.name
+        print indentation*' ' + 'Template used:', self.name.value
         print (indentation+2)*' ' + 'Parameters:'
         for param in self.param_list:
-            if isinstance(param, basestring):
-                print (indentation+4)*' ' + 'ID:', param
-            else:
-                param.debug_print(indentation + 4)
+            param.debug_print(indentation + 4)
 
 class SpriteSet(object):
     def __init__(self, name, pcx, sprite_list):
@@ -506,8 +500,8 @@ class SpriteSet(object):
         self.sprite_list = sprite_list
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite set:', self.name
-        print (indentation+2)*' ' + 'Source:  ', self.pcx
+        print indentation*' ' + 'Sprite set:', self.name.value
+        print (indentation+2)*' ' + 'Source:  ', self.pcx.value
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -520,10 +514,7 @@ class RealSprite(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Real sprite, parameters:'
         for param in self.param_list:
-            if isinstance(param, basestring):
-                print (indentation+2)*' ' + 'ID:', param
-            else:
-                param.debug_print(indentation + 2)
+            param.debug_print(indentation + 2)
 
 class SpriteGroup(object):
     def __init__(self, name, spriteview_list):
@@ -531,7 +522,7 @@ class SpriteGroup(object):
         self.spriteview_list = spriteview_list
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite group:', self.name
+        print indentation*' ' + 'Sprite group:', self.name.value
         for spriteview in self.spriteview_list:
             spriteview.debug_print(indentation + 2)
 
@@ -541,10 +532,10 @@ class SpriteView(object):
         self.spriteset_list = spriteset_list
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite view:', self.name
+        print indentation*' ' + 'Sprite view:', self.name.value
         print (indentation+2)*' ' + 'Sprite sets:'
         for spriteset in self.spriteset_list:
-            print (indentation+4)*' ' + spriteset
+            spriteset.debug_print(indentation + 4)
 
 class LayoutSpriteGroup(object):
     def __init__(self, name, layout_sprite_list):
@@ -552,7 +543,7 @@ class LayoutSpriteGroup(object):
         self.layout_sprite_list = layout_sprite_list
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Tile layout sprite group:', self.name
+        print indentation*' ' + 'Tile layout sprite group:', self.name.value
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 2)
 
@@ -572,7 +563,7 @@ class LayoutParam(object):
         self.value = reduce_expr(value, [global_constants.const_table], False)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Layout parameter:', self.name
+        print indentation*' ' + 'Layout parameter:', self.name.value
         if isinstance(self.value, basestring):
             print (indentation + 2)*' ' + 'String: ', self.value
         else:
@@ -584,16 +575,16 @@ class TownNames(object):
     town_names ast node.
 
     @ivar name: Name ID of the town_name.
-    @type name: C{None}, C{basestring}, or L{ConstantNumeric}
+    @type name: C{None}, L{Identifier}, or L{ConstantNumeric}
 
     @ivar id_number: Allocated ID number for this town_name action F node.
     @type id_number: C{None} or C{int}
 
     @ivar style_name: Name of the translated string containing the name of the style, if any.
-    @type style_name: C{None} or C{basestring}
+    @type style_name: C{None} or L{Identifier}
 
     @ivar style_names: List translations of L{style_name}, pairs (languageID, text).
-    @type style_names: C{list} of (C{int}, C{basestring})
+    @type style_names: C{list} of (C{int}, L{Identifier})
 
     @ivar parts: Parts of the names.
     @type parts: C{list} of L{TownNamesPart}
@@ -612,20 +603,20 @@ class TownNames(object):
         for param in param_list:
             if isinstance(param, TownNamesPart): self.parts.append(param)
             else:
-                if param.key != 'styles':
+                if param.key.value != 'styles':
                     raise generic.ScriptError("Expected 'styles' keyword.")
                 if len(param.value.params) > 0:
                     raise generic.ScriptError("Parameters of the 'styles' were not expected.")
                 if self.style_name is not None:
                     raise generic.ScriptError("'styles' is already defined.")
-                self.style_name = param.value.name
+                self.style_name = param.value.name.value
 
         if len(self.parts) == 0:
             raise generic.ScriptError("Missing name parts in a town_names item.")
 
         # 'name' is actually a number.
         # Allocate it now, before the self.prepare_output() call (to prevent names to grab it).
-        if self.name is not None and not isinstance(self.name, basestring):
+        if self.name is not None and not isinstance(self.name, Identifier):
             value = reduce_constant(self.name)
             if not isinstance(value, ConstantNumeric):
                 raise generic.ScriptError("ID should be an integer number.")
@@ -647,12 +638,12 @@ class TownNames(object):
             blocks.update(part.resolve_townname_id())
 
         # Allocate a number for this action F.
-        if self.name is None or isinstance(self.name, basestring):
+        if self.name is None or isinstance(self.name, Identifier):
             self.id_number = actionF.get_free_id()
-            if isinstance(self.name, basestring):
-                if self.name in actionF.named_numbers:
+            if isinstance(self.name, Identifier):
+                if self.name.value in actionF.named_numbers:
                     raise generic.ScriptError('Cannot define town name "%s", it is already in use' % self.name)
-                actionF.named_numbers[self.name] = self.id_number # Add name to the set 'safe' names.
+                actionF.named_numbers[self.name.value] = self.id_number # Add name to the set 'safe' names.
         else: actionF.numbered_numbers.add(self.id_number) # Add number to the set of 'safe' numbers.
 
         actionF.town_names_blocks[self.id_number] = self # Add self to the available blocks.
@@ -806,7 +797,7 @@ class TownNamesEntryDefinition(object):
     An entry in a part referring to a non-final town name, with a given probability.
 
     @ivar def_number: Name or number referring to a previous town_names node.
-    @type def_number: C{basestring} or L{ConstantNumeric}
+    @type def_number: L{Identifier} or L{ConstantNumeric}
 
     @ivar number: Actual ID to use.
     @type number: C{None} or C{int}
@@ -817,7 +808,7 @@ class TownNamesEntryDefinition(object):
     def __init__(self, def_number, probability):
         self.def_number = def_number
         self.number = None
-        if not isinstance(self.def_number, basestring):
+        if not isinstance(self.def_number, Identifier):
             self.def_number = reduce_constant(self.def_number)
             if not isinstance(self.def_number, ConstantNumeric):
                 raise generic.ScriptError("Reference to other town name ID should be an integer number.")
@@ -831,7 +822,7 @@ class TownNamesEntryDefinition(object):
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
 
     def debug_print(self, indentation, total):
-        if isinstance(self.def_number, basestring): name_text = "name '" + self.def_number + "'"
+        if isinstance(self.def_number, Identifier): name_text = "name '" + self.def_number.value + "'"
         else: name_text = "number 0x%x" % self.def_number.value
         print indentation*' ' + ('Insert town_name ID %s with probability %d/%d' % (name_text, self.probability.value, total))
 
@@ -844,10 +835,10 @@ class TownNamesEntryDefinition(object):
 
         @return: Number of the referenced C{town_names} block.
         '''
-        if isinstance(self.def_number, basestring):
-            self.number = actionF.named_numbers.get(self.def_number)
+        if isinstance(self.def_number, Identifier):
+            self.number = actionF.named_numbers.get(self.def_number.value)
             if self.number is None:
-                raise generic.ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number)
+                raise generic.ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number.value)
         else:
             self.number = self.def_number.value
             if self.number not in actionF.numbered_numbers:
@@ -863,11 +854,11 @@ class TownNamesEntryText(object):
     An entry in a part, a text-string with a given probability.
     """
     def __init__(self, id, text, probability):
-        if id != 'text':
+        if id.value != 'text':
             raise generic.ScriptError("Expected 'text' prefix.")
 
         self.text = text
-        if not isinstance(self.text, basestring):
+        if not isinstance(self.text, StringLiteral):
             raise generic.ScriptError("Expected string literal for the name.")
 
         self.probability = reduce_constant(probability)
@@ -877,10 +868,10 @@ class TownNamesEntryText(object):
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
 
     def debug_print(self, indentation, total):
-        print indentation*' ' + ('Text %s with probability %d/%d' % (self.text, self.probability.value, total))
+        print indentation*' ' + ('Text %s with probability %d/%d' % (self.text.value, self.probability.value, total))
 
     def get_length(self):
-        return 1 + 2 + get_string_size(self.text) + 1 # probability, text, 0
+        return 1 + 2 + get_string_size(self.text.value) + 1 # probability, text, 0
 
     def resolve_townname_id(self):
         '''
@@ -892,7 +883,7 @@ class TownNamesEntryText(object):
 
     def write(self, file):
         file.print_bytex(self.probability.value)
-        file.print_string(self.text, final_zero = True)
+        file.print_string(self.text.value, final_zero = True)
 
 
 class Error(object):
@@ -907,10 +898,13 @@ class Error(object):
         self.params.append(reduce_expr(param_list[4]) if len(param_list) >= 5 else None)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Error, msg = ', self.msg
+        print indentation*' ' + 'Error message'
+        print (indentation+2)*' ' + 'Message:'
+        self.msg.debug_print(indentation + 4)
         print (indentation+2)*' ' + 'Severity:'
         self.severity.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Data: ', self.data
+        print (indentation+2)*' ' + 'Data: '
+        if self.data is not None: self.data.debug_print(indentation + 4)
         print (indentation+2)*' ' + 'Param1: '
         if self.params[0] is not None: self.params[0].debug_print(indentation + 4)
         print (indentation+2)*' ' + 'Param2: '
@@ -925,20 +919,20 @@ class CargoTable(object):
         self.cargo_list = cargo_list
         i = 0
         for cargo in cargo_list:
-            cargo_numbers[cargo] = i
+            cargo_numbers[cargo.value] = i
             i += 1
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Cargo table'
         for cargo in self.cargo_list:
-            print (indentation+2)*' ' + 'Cargo:', cargo
+            print (indentation+2)*' ' + 'Cargo:', cargo.value
 
     def get_action_list(self):
         return get_cargolist_action(self.cargo_list)
 
     def __str__(self):
         ret = 'cargotable {\n'
-        ret += ', '.join(self.cargo_list)
+        ret += ', '.join([cargo.value for cargo in self.cargo_list])
         ret += '\n}\n'
         return ret
 
