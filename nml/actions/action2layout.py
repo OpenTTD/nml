@@ -1,6 +1,7 @@
 import nml.ast
 from action2 import *
 from nml import generic
+from nml.expression import *
 
 class Action2Layout(Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
@@ -140,11 +141,11 @@ class Action2LayoutSprite(object):
 def set_sprite_property(sprite, name, value, spritesets):
 
     if name == 'sprite':
-        if not isinstance(value, basestring):
+        if not isinstance(value, Identifier):
             raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier")
-        if value not in spritesets:
-            raise generic.ScriptError("Unknown sprite set: " + value)
-        sprite.set_sprite(False, spritesets[value])
+        if value.value not in spritesets:
+            raise generic.ScriptError("Unknown sprite set: " + str(value))
+        sprite.set_sprite(False, spritesets[value.value])
 
     elif name == 'ttdsprite':
         if not isinstance(value, nml.ast.ConstantNumeric):
@@ -152,11 +153,11 @@ def set_sprite_property(sprite, name, value, spritesets):
         sprite.set_sprite(True, value.value)
 
     elif name == 'recolor':
-        if isinstance(value, basestring):
-            if value == 'TRANSPARANT':
+        if isinstance(value, Identifier):
+            if value.value == 'TRANSPARANT':
                 sprite.set_recolor_sprite(Action2LayoutRecolorMode.TRANSPARANT, 0)
             else:
-                raise generic.ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number, encountered " + value )
+                raise generic.ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number, encountered " + str(value))
         elif isinstance(value, nml.ast.ConstantNumeric):
             sprite.set_recolor_sprite(Action2LayoutRecolorMode.RECOLOR, value.value)
         else:
@@ -190,7 +191,7 @@ def get_layout_action2s(spritegroup, feature, spritesets):
     for layout_sprite in spritegroup.layout_sprite_list:
         sprite = Action2LayoutSprite(layout_sprite.type)
         for param in layout_sprite.param_list:
-            set_sprite_property(sprite, param.name, param.value, spritesets)
+            set_sprite_property(sprite, param.name.value, param.value, spritesets)
         sprite.validate()
         if sprite.type == Action2LayoutSpriteType.GROUND:
             if ground_sprite is not None:
@@ -204,4 +205,4 @@ def get_layout_action2s(spritegroup, feature, spritesets):
     if len(building_sprites) == 0:
         raise generic.ScriptError("At least one non-ground sprite must be specified per sprite group")
 
-    return [Action2Layout(feature, spritegroup.name, ground_sprite, building_sprites)]
+    return [Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)]

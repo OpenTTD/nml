@@ -46,24 +46,24 @@ class LoadBinaryFile(object):
         self.last = False
 
     def prepare_output(self):
-        if not os.access(self.fname, os.R_OK):
-            raise generic.ScriptError('File "%s" does not exist.' % self.fname)
-        size = os.path.getsize(self.fname)
+        if not os.access(self.fname.value, os.R_OK):
+            raise generic.ScriptError('File "%s" does not exist.' % self.fname.value)
+        size = os.path.getsize(self.fname.value)
         if size == 0:
             raise generic.ScriptError("Expected a sound file with non-zero length.")
         if size > 0x10000:
             raise generic.ScriptError("Sound file too big (max 64KB).")
 
     def debug_print(self, indentation):
-        name = os.path.split(self.fname)[1]
-        if os.path.isfile(self.fname):
-            size = str(os.path.getsize(self.fname))
+        name = os.path.split(self.fname.value)[1]
+        if os.path.isfile(self.fname.value):
+            size = str(os.path.getsize(self.fname.value))
         else:
             size = '???'
-        print indentation*' ' + 'load binary file %r (filename %r), %s bytes' % (self.fname, name, size)
+        print indentation*' ' + 'load binary file %r (filename %r), %s bytes' % (self.fname.value, name, size)
 
     def write(self, file):
-        file.print_named_filedata(self.fname)
+        file.print_named_filedata(self.fname.value)
         file.newline()
         if self.last: file.newline()
 

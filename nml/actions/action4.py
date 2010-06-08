@@ -44,7 +44,7 @@ string_ranges = {
 
 def get_string_action4s(feature, string_range, string, id = None):
     global grf_strings, string_ranges
-    if not string.name in grf_strings: raise generic.ScriptError("Unkown string: " + string.name)
+    if not string.name.value in grf_strings: raise generic.ScriptError("Unkown string: " + string.name.value)
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:
@@ -56,7 +56,7 @@ def get_string_action4s(feature, string_range, string, id = None):
         size = 1
 
     actions = []
-    for translation in grf_strings[string.name]:
+    for translation in grf_strings[string.name.value]:
         actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
 
     return (id, size == 2, actions)

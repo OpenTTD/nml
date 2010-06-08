@@ -55,13 +55,13 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
 
     action3.is_livery_override = is_livery_override
 
-    add_ref(default_graphics)
-    action3.def_cid = default_graphics
+    add_ref(default_graphics.value)
+    action3.def_cid = default_graphics.value
 
     for graphics in graphics_list:
-        add_ref(graphics.action2_id)
+        add_ref(graphics.action2_id.value)
         cargo_id = reduce_constant(graphics.cargo_id, [cargo_numbers])
-        action3.cid_mappings.append( (cargo_id, graphics.action2_id) )
+        action3.cid_mappings.append( (cargo_id, graphics.action2_id.value) )
 
     if len(action6.modifications) > 0: action_list.append(action6)
     action_list.append(action3)

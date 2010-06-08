@@ -72,7 +72,7 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         # only bits 0, 1, 3, and 6 can be set
         if (new_sprite.compression.value & ~0x4B) != 0:
             raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value))
-    except ConstError:
+    except generic.ConstError:
         raise generic.ScriptError("Real sprite parameters should be compile-time constants.")
 
     return RealSpriteAction(new_sprite, pcx, last)
@@ -87,9 +87,9 @@ def parse_sprite_list(sprite_list):
         else:
             #expand template
             assert isinstance(sprite, nml.ast.TemplateUsage)
-            if sprite.name not in sprite_template_map:
-                raise generic.ScriptError("Encountered unknown template identifier: " + name)
-            template = sprite_template_map[sprite.name]
+            if sprite.name.value not in sprite_template_map:
+                raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
+            template = sprite_template_map[sprite.name.value]
             if len(sprite.param_list) != len(template.param_list):
                 raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(sprite.param_list)))
             param_dict = {}
@@ -97,7 +97,7 @@ def parse_sprite_list(sprite_list):
                 i = 0
                 for param in sprite.param_list:
                     param = reduce_constant(param, [real_sprite_compression_flags])
-                    param_dict[template.param_list[i]] = param.value
+                    param_dict[template.param_list[i].value] = param.value
                     i += 1
             except ConstError:
                 raise generic.ScriptError("Template parameters should be compile-time constants")

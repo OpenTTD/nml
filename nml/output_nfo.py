@@ -85,7 +85,7 @@ class OutputNFO(object):
         self.sprite_num += 1
 
     def print_sprite(self, filename, sprite_info):
-        self.file.write(filename + " ")
+        self.file.write(filename.value + " ")
         self.print_decimal(sprite_info.xpos.value)
         self.print_decimal(sprite_info.ypos.value)
         self.print_bytex(sprite_info.compression.value)

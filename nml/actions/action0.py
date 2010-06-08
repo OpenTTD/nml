@@ -54,9 +54,9 @@ def parse_property(feature, name, value, id, unit):
     action_list_append = []
     mods = []
 
-    if isinstance(name, basestring):
-        if not name in properties[feature]: raise generic.ScriptError("Unkown property name: " + name)
-        prop = properties[feature][name]
+    if isinstance(name, Identifier):
+        if not name.value in properties[feature]: raise generic.ScriptError("Unkown property name: " + name.value)
+        prop = properties[feature][name.value]
     elif isinstance(name, ConstantNumeric):
         for p in properties[feature]:
             if 'num' in p and p['num'] != name.value: continue
@@ -69,7 +69,7 @@ def parse_property(feature, name, value, id, unit):
         if 'unit_conversion' in prop: mul = prop['unit_conversion']
         if unit is not None:
             if not 'unit_type' in prop or unit.type != prop['unit_type']:
-                raise generic.ScriptError("Invalid unit for property: " + name)
+                raise generic.ScriptError("Invalid unit for property: " + name.value)
             mul = mul / unit.convert
         if mul != 1 or isinstance(value, ConstantFloat): #always round floats
             if not isinstance(value, (ConstantNumeric, ConstantFloat)):
@@ -145,7 +145,7 @@ class CargoListProp(object):
         file.print_bytex(0x09)
         for i in range(0, len(self.cargo_list)):
             if i > 0 and i % 5 == 0: file.newline()
-            file.print_string(self.cargo_list[i], False, True)
+            file.print_string(self.cargo_list[i].value, False, True)
         file.newline()
 
     def get_size(self):

@@ -10,13 +10,13 @@ class Action8(object):
         pass
 
     def write(self, file):
-        name = get_translation(self.name.name)
-        desc = get_translation(self.description.name)
+        name = get_translation(self.name.name.value)
+        desc = get_translation(self.description.name.value)
         size = 6 + get_string_size(name) + 3 + get_string_size(desc) + 3
         file.print_sprite_size(size)
         file.print_bytex(8)
         file.print_bytex(7)
-        file.print_string(self.grfid, False, True)
+        file.print_string(self.grfid.value, False, True)
         file.print_string(name)
         file.print_string(desc)
         file.newline()

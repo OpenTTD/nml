@@ -87,22 +87,22 @@ def parse_error_block(error):
         action6.modify_bytes(tmp_param, 1, 1)
         severity = ConstantNumeric(0)
 
-    if not isinstance(error.msg, basestring):
+    if not isinstance(error.msg, Identifier):
         raise generic.ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
 
     langs = [0x7F]
-    if error.msg in default_error_msg:
+    if error.msg.value in default_error_msg:
         custom_msg = False
-        msg = default_error_msg[error.msg]
+        msg = default_error_msg[error.msg.value]
     else:
         custom_msg = True
-        for translation in grf_strings[error.msg]:
+        for translation in grf_strings[error.msg.value]:
             langs.append(translation['lang'])
 
     if error.data is not None:
-        if not isinstance(error.data, basestring):
+        if not isinstance(error.data, Identifier):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
-        for translation in grf_strings[error.data]:
+        for translation in grf_strings[error.data.value]:
             langs.append(translation['lang'])
 
     params = []
@@ -121,8 +121,8 @@ def parse_error_block(error):
     langs = set(langs)
     for lang in langs:
         if custom_msg:
-            msg = get_translation(error.msg, lang)
-        data = None if error.data is None else get_translation(error.data, lang)
+            msg = get_translation(error.msg.value, lang)
+        data = None if error.data is None else get_translation(error.data.value, lang)
         if len(action6.modifications) > 0: action_list.append(action6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 

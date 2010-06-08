@@ -50,7 +50,7 @@ def parse_sprite_block(sprite_block):
     for item in sprite_block.spriteset_list:
         if isinstance(item, nml.ast.SpriteSet):
             real_sprite_list = parse_sprite_list(item.sprite_list)
-            spritesets[item.name] = num_sets
+            spritesets[item.name.value] = num_sets
             num_sets += 1
 
             if num_ent == -1:

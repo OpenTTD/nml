@@ -64,14 +64,14 @@ class Action2Var(Action2):
             self.var_list[i].shift.value |= 0x20
 
         for r in self.ranges:
-            if isinstance(r.result, basestring):
-                 r.result = remove_ref(r.result)
+            if isinstance(r.result, Identifier):
+                r.result = remove_ref(r.result.value)
             else:
-                 r.result = r.result.value | 0x8000
-        if isinstance(self.default_result, basestring):
-             self.default_result = remove_ref(self.default_result)
+                r.result = r.result.value | 0x8000
+        if isinstance(self.default_result, Identifier):
+            self.default_result = remove_ref(self.default_result.value)
         else:
-             self.default_result = self.default_result.value | 0x8000
+            self.default_result = self.default_result.value | 0x8000
 
     def write(self, file):
         global action2operator_to_num
@@ -276,9 +276,9 @@ def parse_varaction2_expression(expr, varsize):
     return (extra_actions, mods, var_list, var_list_size)
 
 def make_return_varact2(switch_block):
-    act = Action2Var(switch_block.feature.value, switch_block.name + '@return', 0x89, 4)
+    act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89, 4)
     act.var_list = [VarAction2Var(0x1C, ConstantNumeric(0), ConstantNumeric(0xFFFFFFFF))]
-    act.default_result = 'CB_FAILED'
+    act.default_result = Identifier('CB_FAILED')
     return act
 
 def parse_varaction2(switch_block):
@@ -289,7 +289,7 @@ def parse_varaction2(switch_block):
     varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature.value]
     if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
-    varaction2 = Action2Var(switch_block.feature.value, switch_block.name, switch_block.var_range, varsize)
+    varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
 
     func = lambda x: Variable(ConstantNumeric(x['var']), ConstantNumeric(x['start']), ConstantNumeric((1 << x['size']) - 1))
     expr = reduce_expr(switch_block.expr, [(varact2vars[feature], func), (varact2_globalvars, func), global_constants.const_table, cargo_numbers])
@@ -312,10 +312,10 @@ def parse_varaction2(switch_block):
             action2 = add_ref(return_action.name)
             assert return_action == action2
             varaction2.references.append(action2)
-            r.result = return_action.name
-        elif isinstance(r.result, basestring):
-            if r.result != 'CB_FAILED':
-                action2 = add_ref(r.result)
+            r.result = Identifier(return_action.name)
+        elif isinstance(r.result, Identifier):
+            if r.result.value != 'CB_FAILED':
+                action2 = add_ref(r.result.value)
                 varaction2.references.append(action2)
         elif not isinstance(r.result, ConstantNumeric):
             raise generic.ScriptError("Result of varaction2 range must be another action2 or a constant number")
@@ -331,16 +331,16 @@ def parse_varaction2(switch_block):
     if default is None:
         if len(switch_block.body.ranges) == 0:
             #in this case, we can return with nvar == 0 without an extra action2
-            default = 'CB_FAILED'
+            default = Identifier('CB_FAILED')
         else:
             if return_action is None: return_action = make_return_varact2(switch_block)
             action2 = add_ref(return_action.name)
             assert action2 == return_action
             varaction2.references.append(action2)
-            default = return_action.name
-    elif isinstance(default, basestring):
-        if default != 'CB_FAILED':
-            action2 = add_ref(default)
+            default = Identifier(return_action.name)
+    elif isinstance(default, Identifier):
+        if default.value != 'CB_FAILED':
+            action2 = add_ref(default.value)
             varaction2.references.append(action2)
     elif not isinstance(default, ConstantNumeric):
         raise generic.ScriptError("Default result of varaction2 must be another action2 or a constant number")
