@@ -95,7 +95,7 @@ def parse_property(feature, name, value, id, unit):
                 action_list_append.extend(string_actions)
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(value)
-            mods.append((tmp_param, size, 1))
+            mods.append((tmp_param, prop['size'], 1))
             action_list.extend(tmp_param_actions)
             value = ConstantNumeric(0)
         if prop['num'] != -1:
