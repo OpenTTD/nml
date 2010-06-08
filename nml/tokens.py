@@ -1,5 +1,6 @@
 import sys
 import ply.lex as lex
+import expression
 
 reserved = {
     'grf' : 'GRF',
@@ -136,12 +137,16 @@ class NMLLexer(object):
             t.type = 'VARRANGE'
             t.value = var_ranges[t.value]
         else:
-            t.type = reserved.get(t.value,'ID')    # Check for reserved words
+            if t.value in reserved: # Check for reserved words
+                t.type = reserved[t.value];
+            else:
+                t.type = 'ID'
+                t.value = expression.Identifier(t.value)
         return t
 
     def t_STRING_LITERAL(self, t):
         r'"([^"\\]|\\.)*"'
-        t.value = t.value[1:-1]
+        t.value = expression.StringLiteral(t.value[1:-1])
         return t
 
     # Ignored characters

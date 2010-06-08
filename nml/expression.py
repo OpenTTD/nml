@@ -84,14 +84,8 @@ class BinOp(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Binary operator, op = ', self.op
-        if isinstance(self.expr1, basestring):
-            print (indentation+2)*' ' + 'ID:', self.expr1
-        else:
-            self.expr1.debug_print(indentation + 2)
-        if isinstance(self.expr2, basestring):
-            print (indentation+2)*' ' + 'ID:', self.expr2
-        else:
-            self.expr2.debug_print(indentation + 2)
+        self.expr1.debug_print(indentation + 2)
+        self.expr2.debug_print(indentation + 2)
 
     def __str__(self):
         return get_operator_string(self.op, str(self.expr1), str(self.expr2))
@@ -167,13 +161,10 @@ class FunctionCall(object):
         self.name = name
         self.params = params
     def debug_print(self, indentation):
-        print indentation*' ' + 'Call function: ' + self.name
+        print indentation*' ' + 'Call function: ' + self.name.value
         for param in self.params:
             print (indentation+2)*' ' + 'Parameter:'
-            if isinstance(param, basestring):
-                print (indentation+4)*' ' + 'ID:', param
-            else:
-                param.debug_print(indentation + 4)
+            param.debug_print(indentation + 4)
     def __str__(self):
         ret = ''
         for param in self.params:
@@ -187,16 +178,33 @@ class String(object):
         self.name = name
         self.params = params
     def debug_print(self, indentation):
-        print indentation*' ' + 'String: ' + self.name
+        print indentation*' ' + 'String:'
+        self.name.debug_print(indentation + 2)
         for param in self.params:
             print (indentation+2)*' ' + 'Parameter:'
             param.debug_print(indentation + 4)
     def __str__(self):
-        ret = 'string(' + self.name
+        ret = 'string(' + self.name.value
         for p in self.params:
             ret += ', ' . str(p)
         ret += ')'
         return ret
+
+class Identifier(object):
+    def __init__(self, value):
+        self.value = value
+    def debug_print(self, indentation):
+        print indentation*' ' + 'ID: ' + self.value
+    def __str__(self):
+        return self.value
+
+class StringLiteral(object):
+    def __init__(self, value):
+        self.value = value
+    def debug_print(self, indentation):
+        print indentatation*' ' + 'String literal: "%s"' % self.value
+    def __str__(self):
+        return '"%s"' % self.value
 
 #
 # compile-time expression evaluation
@@ -326,12 +334,12 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
         var.div = expr.div
         var.mod = expr.mod
         return var
-    elif isinstance(expr, basestring):
+    elif isinstance(expr, Identifier):
         for id_dict in id_dicts:
             id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
-            if expr in id_d:
-                return func(id_d[expr])
-        if unkown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + expr + "' encountered")
+            if expr.value in id_d:
+                return func(id_d[expr.value])
+        if unkown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + expr.value + "' encountered")
     elif isinstance(expr, BitMask):
         ret = 0
         for orig_expr in expr.values:
@@ -344,12 +352,12 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
         param_list = []
         for param in expr.params:
             param_list.append(reduce_expr(param, id_dicts))
-        if expr.name in function_table:
-            return reduce_expr(function_table[expr.name](expr.name, param_list), id_dicts)
+        if expr.name.value in function_table:
+            return reduce_expr(function_table[expr.name.value](expr.name.value, param_list), id_dicts)
         else:
             if len(param_list) != 0:
-                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % expr.name);
-            return Variable(ConstantNumeric(0x7E), param=expr.name)
+                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % expr.name.value);
+            return Variable(ConstantNumeric(0x7E), param=expr.name.value)
     return expr
 
 def reduce_constant(expr, id_dicts = []):
