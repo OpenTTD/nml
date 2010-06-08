@@ -124,7 +124,7 @@ def parse_actionD(assignment):
         if isinstance(expr.expr1, ConstantNumeric):
             param1 = ConstantNumeric(0xFF)
             data = expr.expr1
-        elif isinstance(expr.expr1, Parameter):
+        elif isinstance(expr.expr1, Parameter) and isinstance(expr.expr1.num, ConstantNumeric):
             param1 = expr.expr1.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr1)
@@ -136,7 +136,7 @@ def parse_actionD(assignment):
         if isinstance(expr.expr2, ConstantNumeric) and data is None:
             param2 = ConstantNumeric(0xFF)
             data = expr.expr2
-        elif isinstance(expr.expr2, Parameter):
+        elif isinstance(expr.expr2, Parameter) and isinstance(expr.expr2.num, ConstantNumeric):
             param2 = expr.expr2.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr2)
