@@ -1,0 +1,67 @@
+/*
+A simple vehicle from OpenGFX+
+Code is modified in some places for testing reasons.
+*/
+
+//Add action8, so we can test the vehicle in-game
+grf {
+	grfid: "test";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+}
+
+
+cargotable {
+    PASS, MAIL, GOOD, IORE, GOLD, FOOD
+}
+
+
+// Foster Express tram
+spriteblock(FEAT_ROADVEHS) {
+	spriteset(foster_express_set, "opengfx_generic_trams1.pcx") {
+		[ 48,56,  8,18,   -3,-10]
+		[ 64,56, 20,19,  -14, -5]
+		[ 96,56, 28,15,  -14, -8]
+		[144,56, 20,19,   -6, -7]
+		[176,56,  8,18,   -3,-10]
+		[192,56, 20,19,  -14, -9]
+		[224,56, 28,15,  -14, -8]
+		[272,56, 20,19,   -6, -7]
+	}
+	spritegroup foster_express_group {
+		loading: foster_express_set;
+		loaded: foster_express_set;
+	}
+}
+
+param[0] = 9;
+
+// Trams:
+item(FEAT_ROADVEHS, foster_express_tram, 89) {
+	property {
+		name:                         string(STR_NAME_FOSTER_EXPRESS_TRAM);
+		climates_available:           bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC);
+		model_life:                   40;                       // years
+		vehicle_life:                 30;                       // years
+		introduction_date:            date(1965,1,1);
+		reliability_decay:            1;
+		running_cost_base:            RUNNING_COST_ROADVEH;     // Default road vehicle running cost base
+		running_cost_factor:          135;
+		cost_factor:                  143;
+		speed:                        75 km/h;
+		power:                        220 hp;
+		weight:                       22 ton;
+		sprite_id:                    SPRITE_ID_NEW_ROADVEH;    // We have our own sprites
+		loading_speed:                16;                       // loading speed
+		tractive_effort_coefficient:  0.3;
+		air_drag_coefficient:         0.5;
+		cargo_capacity:               param[0] * 5;             // passengers
+		refittable_cargo_classes:     CC_PASSENGERS | CC_MAIL;
+		non_refittable_cargo_classes: CC_NONE;                  // Disallow other cargos
+		misc_flags:                   ROADVEH_FLAG_TRAM;        // This is a tram
+		cargo_type:                   PASS;
+	}
+	graphics {
+		foster_express_group;
+	}
+}

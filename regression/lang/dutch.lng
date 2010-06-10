@@ -1,4 +1,6 @@
 lang: 1F
-STR_REGRESSION_ERROR  :De wissels zijn bevroren, onze excuses voor het ongemak.
-STR_REGRESSION_CARE   :zorg
-STR_ANSWER            :42
+STR_REGRESSION_ERROR           :De wissels zijn bevroren, onze excuses voor het ongemak.
+STR_REGRESSION_CARE            :zorg
+STR_ANSWER                     :42
+STR_NAME_FOSTER_EXPRESS_TRAM   :Foster Sneltram
+

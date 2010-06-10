@@ -1,7 +1,8 @@
 lang: 7F
-STR_NULL              :
-STR_REGRESSION_NAME   :NML regression test
-STR_REGRESSION_DESC   :A test newgrf testing NML
-STR_REGRESSION_ERROR  :Something bad (tm) has happened.
-STR_REGRESSION_CARE   :care
-STR_ANSWER            :42
+STR_NULL                       :
+STR_REGRESSION_NAME            :NML regression test
+STR_REGRESSION_DESC            :A test newgrf testing NML
+STR_REGRESSION_ERROR           :Something bad (tm) has happened.
+STR_REGRESSION_CARE            :care
+STR_ANSWER                     :42
+STR_NAME_FOSTER_EXPRESS_TRAM   :Foster Express Tram
