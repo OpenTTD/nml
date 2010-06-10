@@ -1,0 +1,7 @@
+/*
+Test deactivate(grfids...), which deactivates other grfs
+The nfo / grf equivalent of this is ActionE
+Note that grfs are in big-endian, therefore byte-swapping is required
+If the grfid is not a compile-time constant, this is done at runtime.
+*/
+deactivate(0x12345678, param[0]);
