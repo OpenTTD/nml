@@ -74,7 +74,7 @@ class GRF(object):
             if assignment.name.value == "name": self.name = assignment.value
             elif assignment.name.value == "desc": self.desc = assignment.value
             elif assignment.name.value == "grfid": self.grfid = assignment.value
-            else: raise generic.ScriptError("Unkown item in GRF-block: " + assignment.name)
+            else: raise generic.ScriptError("Unknown item in GRF-block: " + assignment.name)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'

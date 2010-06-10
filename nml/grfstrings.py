@@ -115,7 +115,7 @@ def parse_command(command):
     if match is None: raise generic.ScriptError("Failed to parse string command: '" + command + "'")
     cmd_name = match.group(1)
     arguments = match.group(2).split()
-    if cmd_name not in escapes: raise generic.ScriptError("Unkown string command: '" + cmd_name + "'")
+    if cmd_name not in escapes: raise generic.ScriptError("Unknown string command: '" + cmd_name + "'")
     escape = escapes[cmd_name]
     if escape['num_params'] != len(arguments): raise generic.ScriptError("Wrong number of arguments in command: '" + command + "'")
     ret = escape['escape']

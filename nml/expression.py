@@ -289,7 +289,7 @@ commutative_operators = set([
 ])
 
 # note: id_dicts is a *list* of dictionaries or (dictionary, function)-tuples
-def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
+def reduce_expr(expr, id_dicts = [], unknown_id_fatal = True):
     global compile_time_operator
     if isinstance(expr, BinOp):
         expr1 = reduce_expr(expr.expr1, id_dicts)
@@ -339,7 +339,7 @@ def reduce_expr(expr, id_dicts = [], unkown_id_fatal = True):
             id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
             if expr.value in id_d:
                 return func(id_d[expr.value])
-        if unkown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + expr.value + "' encountered")
+        if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + expr.value + "' encountered")
     elif isinstance(expr, BitMask):
         ret = 0
         for orig_expr in expr.values:

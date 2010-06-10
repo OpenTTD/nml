@@ -55,13 +55,13 @@ def parse_property(feature, name, value, id, unit):
     mods = []
 
     if isinstance(name, Identifier):
-        if not name.value in properties[feature]: raise generic.ScriptError("Unkown property name: " + name.value)
+        if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value)
         prop = properties[feature][name.value]
     elif isinstance(name, ConstantNumeric):
         for p in properties[feature]:
             if 'num' in p and p['num'] != name.value: continue
             prop = p
-        if prop is None: raise generic.ScriptError("Unkown property number: " + name.value)
+        if prop is None: raise generic.ScriptError("Unknown property number: " + name.value)
     else: raise generic.ScriptError("Invalid type as property identifier")
 
     if unit is None or unit.type != 'nfo':
