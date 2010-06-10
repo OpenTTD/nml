@@ -3,6 +3,17 @@
 // Escapes: 2+ = 71 = D= = DR 2- = 70 = D+ = DF 2< = 7= = D- = DC 2> = 7! = Du* = DM 2u< = 7< = D* = DnF 2u> = 7> = Du<< = DnC 2/ = 7G = D<< = DO 2% = 7g = D& 2u/ = 7gG = D| 2u% = 7GG = Du/ 2* = 7gg = D/ 2& = 7c = Du% 2| = 7C = D% 2^ 2sto = 2s 2rst = 2r 2+ 2ror = 2rot
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d1 
+0 * 11 0B 00 1F 02 "Þzorg" 00 
 
-1 * 56 08 07 "test" "ÞNML regression test" 00 "ÞA test newgrf testing NML" 00 
+1 * 11 0B 00 7F 02 "Þcare" 00 
+
+2 * 9 0D 40 \D= FF 00 \dx0000000E 
+
+3 * 9 0D 42 \D* FF 02 \dx0000000C 
+
+4 * 5 0D 41 \D+ 42 01 
+
+5 * 70 0B 03 1F FF "ÞDe wissels zijn bevroren, onze excuses voor het ongemak." 00 "Þ42" 00 40 41 
+
+6 * 46 0B 03 7F FF "ÞSomething bad (tm) has happened." 00 "Þ42" 00 40 41 
+
