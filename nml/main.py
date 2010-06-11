@@ -39,8 +39,9 @@ def get_output_grf():
         sys.exit(3)
 
 def main(argv):
-    usage = """Usage: %prog [options] <filename>\nWhere <filename> is the nml file to parse"""
-    # that above line should really contain _real_ newlines, but that's really not readable without strange indentation
+    usage = "Usage: %prog [options] <filename>\n" \
+            "Where <filename> is the nml file to parse"
+
     parser = optparse.OptionParser(usage=usage)
     parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
     parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
