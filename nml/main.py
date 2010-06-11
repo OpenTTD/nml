@@ -100,8 +100,12 @@ def main(argv):
             print "Unknown output format %s" % outext
             sys.exit(2)
     ret = nml(input, opts.debug, outputs, nml_output)
+
     for output in outputs: output.close()
+    if nml_output is not None:
+        nml_output.close()
     input.close()
+
     sys.exit(ret)
 
 def filename_output_from_input(name, ext):
