@@ -27,7 +27,6 @@ def p_error(p):
 import ply.yacc as yacc
 parser = yacc.yacc(debug=False)
 
-_debug = 0
 OutputGRF = None
 def get_output_grf():
     global OutputGRF
@@ -40,8 +39,6 @@ def get_output_grf():
         sys.exit(3)
 
 def main(argv):
-    global _debug
-    _debug = 0
     retval = 0
     usage = """Usage: %prog [options] <filename>\nWhere <filename> is the nml file to parse"""
     # that above line should really contain _real_ newlines, but that's really not readable without strange indentation
@@ -66,9 +63,6 @@ def main(argv):
         print "Error while parsing arguments: ", err
         parser.print_help()
         sys.exit(2)
-
-    if opts.debug:
-        _debug = 1
 
     read_extra_commands(opts.custom_tags)
     read_lang_files(opts.lang_dir)
@@ -105,7 +99,7 @@ def main(argv):
         else:
             print "Unknown output format %s" % outext
             sys.exit(2)
-    ret = nml(input, outputs, nml_output)
+    ret = nml(input, opts.debug, outputs, nml_output)
     for output in outputs: output.close()
     input.close()
     sys.exit(ret)
@@ -113,7 +107,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, outputfiles, nml_output):
+def nml(inputfile, output_debug, outputfiles, nml_output):
     script = inputfile.read().strip()
     if script == "":
         print "Empty input file"
@@ -125,7 +119,7 @@ def nml(inputfile, outputfiles, nml_output):
         raise
         return 8
 
-    if _debug > 0:
+    if output_debug > 0:
         print_script(result, 0)
 
     if nml_output is not None:
