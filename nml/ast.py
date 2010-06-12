@@ -4,10 +4,9 @@ from actions.action0 import *
 from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
-from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
-from nml.actions import action3, action5, action7, action8, actionA, actionF, action12
+from nml.actions import action3, action5, action7, action8, actionA, actionB, actionF, action12
 from actions.sprite_count import SpriteCountAction
 import global_constants
 import unit
@@ -885,7 +884,7 @@ class Error(object):
         self.params = []
         if not 2 <= len(param_list) <= 5:
             raise generic.ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)))
-        self.severity = reduce_expr(param_list[0], [error_severity])
+        self.severity = reduce_expr(param_list[0], [actionB.error_severity])
         self.msg      = param_list[1]
         self.data     = param_list[2] if len(param_list) >= 3 else None
         self.params.append(reduce_expr(param_list[3]) if len(param_list) >= 4 else None)
@@ -905,7 +904,7 @@ class Error(object):
         if self.params[1] is not None: self.params[1].debug_print(indentation + 4)
 
     def get_action_list(self):
-        return parse_error_block(self)
+        return actionB.parse_error_block(self)
 
 class CargoTable(object):
     def __init__(self, cargo_list):
