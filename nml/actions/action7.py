@@ -1,7 +1,7 @@
 from nml.expression import *
 from action6 import *
 from actionD import *
-from action10 import *
+from nml.actions import action10
 
 #a jump is always to the next action10 with a given id, so they
 #can be freely reused
@@ -81,7 +81,7 @@ def cond_skip_actions(action_list, param):
             label = None
         else:
             target = free_labels.pop()
-            label = Action10(target)
+            label = action10.Action10(target)
         actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
@@ -96,7 +96,7 @@ def cond_skip_actions(action_list, param):
             label = None
         else:
             target = free_labels.pop()
-            label = Action10(target)
+            label = action10.Action10(target)
         actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
@@ -153,7 +153,7 @@ def parse_loop_block(loop):
     free_parameters_backup = free_parameters[:]
     free_labels_backup = free_labels[:]
     begin_label = free_while_labels.pop()
-    action_list = [Action10(begin_label)]
+    action_list = [action10.Action10(begin_label)]
 
     cond_param, cond_actions = parse_conditional(loop.expr)
     block_actions = []
