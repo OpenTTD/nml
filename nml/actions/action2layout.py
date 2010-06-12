@@ -1,11 +1,11 @@
 import nml.ast
-from action2 import *
 from nml import generic
+from nml.actions import action2
 from nml.expression import *
 
-class Action2Layout(Action2):
+class Action2Layout(action2.Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
-        Action2.__init__(self, feature, name)
+        action2.Action2.__init__(self, feature, name)
         assert ground_sprite.type == Action2LayoutSpriteType.GROUND
         self.ground_sprite = ground_sprite
         self.sprite_list = sprite_list
@@ -20,7 +20,7 @@ class Action2Layout(Action2):
             else:
                 size += 10
 
-        Action2.write(self, file, size)
+        action2.Action2.write(self, file, size)
         file.print_byte(len(self.sprite_list))
         file.print_dwordx(self.ground_sprite.get_sprite_number())
         file.newline()

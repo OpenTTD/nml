@@ -1,5 +1,5 @@
 from nml.expression import *
-from action2 import *
+from nml.actions import action2
 from action6 import *
 from actionD import *
 
@@ -10,8 +10,8 @@ class Action3(object):
         self.cid_mappings = []
 
     def prepare_output(self):
-        self.cid_mappings = [(cargo, remove_ref(cid)) for cargo, cid in self.cid_mappings]
-        self.def_cid = remove_ref(self.def_cid)
+        self.cid_mappings = [(cargo, action2.remove_ref(cid)) for cargo, cid in self.cid_mappings]
+        self.def_cid = action2.remove_ref(self.def_cid)
 
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
@@ -55,11 +55,11 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
 
     act3.is_livery_override = is_livery_override
 
-    add_ref(default_graphics.value)
+    action2.add_ref(default_graphics.value)
     act3.def_cid = default_graphics.value
 
     for graphics in graphics_list:
-        add_ref(graphics.action2_id.value)
+        action2.add_ref(graphics.action2_id.value)
         cargo_id = reduce_constant(graphics.cargo_id, [cargo_numbers])
         act3.cid_mappings.append( (cargo_id, graphics.action2_id.value) )
 

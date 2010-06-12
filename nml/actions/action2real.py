@@ -1,15 +1,15 @@
-from action2 import *
 from nml import generic
+from nml.actions import action2
 
-class Action2Real(Action2):
+class Action2Real(action2.Action2):
     def __init__(self, feature, name, loaded_list, loading_list):
-        Action2.__init__(self, feature, name)
+        action2.Action2.__init__(self, feature, name)
         self.loaded_list = loaded_list
         self.loading_list = loading_list
 
     def write(self, file):
         size = 2 + 2 * len(self.loaded_list) + 2 * len(self.loading_list)
-        Action2.write(self, file, size)
+        action2.Action2.write(self, file, size)
         file.print_byte(len(self.loaded_list))
         file.print_byte(len(self.loading_list))
         file.newline()

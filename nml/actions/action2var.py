@@ -1,5 +1,5 @@
 from nml.expression import *
-from action2 import *
+from nml.actions import action2
 from action2var_variables import *
 from action6 import *
 from actionD import *
@@ -40,9 +40,9 @@ action2operator_to_num = {
     Action2Operator.STO_PERM: 0x10,
 }
 
-class Action2Var(Action2):
+class Action2Var(action2.Action2):
     def __init__(self, feature, name, type_byte, varsize):
-        Action2.__init__(self, feature, name)
+        action2.Action2.__init__(self, feature, name)
         self.type_byte = type_byte
         self.varsize = varsize
         self.tmp_locations = range(0x80, 0x100)
@@ -59,17 +59,17 @@ class Action2Var(Action2):
                         act2.tmp_locations.remove(var.mask.value)
 
     def prepare_output(self):
-        Action2.prepare_output(self)
+        action2.Action2.prepare_output(self)
         for i in range(0, len(self.var_list) - 1, 2):
             self.var_list[i].shift.value |= 0x20
 
         for r in self.ranges:
             if isinstance(r.result, Identifier):
-                r.result = remove_ref(r.result.value)
+                r.result = action2.remove_ref(r.result.value)
             else:
                 r.result = r.result.value | 0x8000
         if isinstance(self.default_result, Identifier):
-            self.default_result = remove_ref(self.default_result.value)
+            self.default_result = action2.remove_ref(self.default_result.value)
         else:
             self.default_result = self.default_result.value | 0x8000
 
@@ -83,7 +83,7 @@ class Action2Var(Action2):
             else:
                 size += var.get_size(self.varsize)
 
-        Action2.write(self, file, size)
+        action2.Action2.write(self, file, size)
         file.print_bytex(self.type_byte)
         file.newline()
         for var in self.var_list:
@@ -309,13 +309,13 @@ def parse_varaction2(switch_block):
     for r in switch_block.body.ranges:
         if r.result is None:
             if return_action is None: return_action = make_return_varact2(switch_block)
-            act2 = add_ref(return_action.name)
+            act2 = action2.add_ref(return_action.name)
             assert return_action == act2
             varaction2.references.append(act2)
             r.result = Identifier(return_action.name)
         elif isinstance(r.result, Identifier):
             if r.result.value != 'CB_FAILED':
-                act2 = add_ref(r.result.value)
+                act2 = action2.add_ref(r.result.value)
                 varaction2.references.append(act2)
         elif not isinstance(r.result, ConstantNumeric):
             raise generic.ScriptError("Result of varaction2 range must be another action2 or a constant number")
@@ -334,13 +334,13 @@ def parse_varaction2(switch_block):
             default = Identifier('CB_FAILED')
         else:
             if return_action is None: return_action = make_return_varact2(switch_block)
-            act2 = add_ref(return_action.name)
+            act2 = action2.add_ref(return_action.name)
             assert act2 == return_action
             varaction2.references.append(act2)
             default = Identifier(return_action.name)
     elif isinstance(default, Identifier):
         if default.value != 'CB_FAILED':
-            act2 = add_ref(default.value)
+            act2 = action2.add_ref(default.value)
             varaction2.references.append(act2)
     elif not isinstance(default, ConstantNumeric):
         raise generic.ScriptError("Default result of varaction2 must be another action2 or a constant number")
