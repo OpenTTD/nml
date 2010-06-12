@@ -4,8 +4,7 @@ from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
 from actions.actionD import *
-from actions.actionE import *
-from nml.actions import action0, action3, action5, action7, action8, actionA, actionB, actionF, action12
+from nml.actions import action0, action3, action5, action7, action8, actionA, actionB, actionE, actionF, action12
 from actions.sprite_count import SpriteCountAction
 
 def print_script(script, indent):
@@ -237,7 +236,7 @@ class DeactivateBlock(object):
             grfid.debug_print(indentation + 2)
 
     def get_action_list(self):
-        return parse_deactivate_block(self)
+        return actionE.parse_deactivate_block(self)
 
 def validate_item_block(block_list):
     for block in block_list:
