@@ -7,13 +7,11 @@ from actions.action2var import *
 from actions.action3 import *
 from actions import action5
 from actions.action7 import *
-from actions.action8 import *
 from actions.actionA import *
 from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
-from actions import actionF
-from actions import action12
+from nml.actions import action8, actionF, action12
 from actions.sprite_count import SpriteCountAction
 import global_constants
 import unit
@@ -88,7 +86,7 @@ class GRF(object):
             self.desc.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return [Action8(self.grfid, self.name, self.desc)]
+        return [action8.Action8(self.grfid, self.name, self.desc)]
 
     def __str__(self):
         ret = 'grf {\n'
