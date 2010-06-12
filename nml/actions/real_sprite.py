@@ -99,7 +99,7 @@ def parse_sprite_list(sprite_list):
                     param = reduce_constant(param, [real_sprite_compression_flags])
                     param_dict[template.param_list[i].value] = param.value
                     i += 1
-            except ConstError:
+            except generic.ConstError:
                 raise generic.ScriptError("Template parameters should be compile-time constants")
             for sprite in template.sprite_list:
                 real_sprite_list.append((sprite, param_dict))

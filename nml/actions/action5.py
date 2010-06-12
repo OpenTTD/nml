@@ -84,7 +84,7 @@ def parse_action5(replaces):
 
     try:
         offset = reduce_constant(replaces.offset).value
-    except ConstError:
+    except generic.ConstError:
         raise generic.ScriptError("replacenew parameter 'offset' must be a compile-time constant")
     generic.check_range(offset, 0, 0xFFFF, "replacenew parameter 'offset'")
 

@@ -43,10 +43,9 @@ def parse_action12(font_glpyhs):
     action_list = []
 
     try:
-        
         font_size = reduce_constant(font_glpyhs.font_size, [font_sizes])
         base_char = reduce_constant(font_glpyhs.base_char)
-    except ConstError:
+    except generic.ConstError:
         raise generic.ScriptError("Parameters of font_glpyh have to be compile-time constants")
     if font_size.value not in font_sizes.values():
         raise generic.ScriptError("Invalid value for parameter 'font_size' in font_glpyh, valid values are 0, 1, 2")

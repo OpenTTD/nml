@@ -227,7 +227,7 @@ def builtin_date(name, args):
         year = reduce_constant(args[0]).value
         month = reduce_constant(args[1]).value
         day = reduce_constant(args[2]).value
-    except ConstError:
+    except generic.ConstError:
         raise generic.ScriptError("Parameters of date() should be compile-time constants")
     date = datetime.date(year, month, day)
     return ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1)
