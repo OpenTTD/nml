@@ -1,10 +1,9 @@
 from nml import generic, global_constants, grfstrings, unit
 from expression import *
-from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
 from actions.actionD import *
-from nml.actions import action0, action3, action5, action7, action8, actionA, actionB, actionE, actionF, action12
+from nml.actions import action0, action1, action3, action5, action7, action8, actionA, actionB, actionE, actionF, action12
 from actions.sprite_count import SpriteCountAction
 
 def print_script(script, indent):
@@ -447,7 +446,7 @@ class SpriteBlock(object):
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 2)
     def get_action_list(self):
-        return parse_sprite_block(self)
+        return action1.parse_sprite_block(self)
 
 class TemplateDeclaration(object):
     def __init__(self, name, param_list, sprite_list):
