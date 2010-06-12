@@ -1,12 +1,11 @@
 from nml import generic, global_constants, grfstrings, unit
 from expression import *
-from actions.action0 import *
 from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
 from actions.actionD import *
 from actions.actionE import *
-from nml.actions import action3, action5, action7, action8, actionA, actionB, actionF, action12
+from nml.actions import action0, action3, action5, action7, action8, actionA, actionB, actionF, action12
 from actions.sprite_count import SpriteCountAction
 
 def print_script(script, indent):
@@ -266,7 +265,7 @@ class Item(object):
         self.name = name
         if name is not None and name.value in item_names:
             self.id = ConstantNumeric(item_names[name.value])
-        elif id is None: self.id = ConstantNumeric(get_free_id(self.feature.value))
+        elif id is None: self.id = ConstantNumeric(action0.get_free_id(self.feature.value))
         else: self.id = reduce_constant(id)
         if name is not None:
             item_names[name.value] = self.id.value
@@ -332,7 +331,7 @@ class PropertyBlock(object):
 
     def get_action_list(self):
         global item_feature, item_id
-        return parse_property_block(self.prop_list, item_feature, item_id)
+        return action0.parse_property_block(self.prop_list, item_feature, item_id)
 
     def __str__(self):
         ret = 'property {\n'
@@ -915,7 +914,7 @@ class CargoTable(object):
             print (indentation+2)*' ' + 'Cargo:', cargo.value
 
     def get_action_list(self):
-        return get_cargolist_action(self.cargo_list)
+        return action0.get_cargolist_action(self.cargo_list)
 
     def __str__(self):
         ret = 'cargotable {\n'
