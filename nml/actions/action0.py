@@ -1,6 +1,6 @@
 from nml.actions.action0properties import Action0Property, properties
 from nml import generic
-from action4 import *
+from nml.actions import action4
 from action6 import *
 from actionD import *
 from nml.expression import *
@@ -87,7 +87,7 @@ def parse_property(feature, name, value, id, unit):
         elif isinstance(value, String):
             if not 'string' in prop: raise generic.ScriptError("String used as value for non-string property: " + str(prop['num']))
             string_range = prop['string']
-            stringid, prepend, string_actions = get_string_action4s(feature, string_range, value, id)
+            stringid, prepend, string_actions = action4.get_string_action4s(feature, string_range, value, id)
             value = ConstantNumeric(stringid)
             if prepend:
                 action_list.extend(string_actions)
