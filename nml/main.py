@@ -41,26 +41,26 @@ def main(argv):
     usage = "Usage: %prog [options] <filename>\n" \
             "Where <filename> is the nml file to parse"
 
-    parser = optparse.OptionParser(usage=usage)
-    parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
-    parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
-    parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
-    parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
-    parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
-    parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
-    parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
-    parser.add_option("-o", "--output", dest="outputs", action="append", metavar="<file>", help="write output(nfo/grf) to <file>")
-    parser.add_option("-t", "--custom-tags", dest="custom_tags", default="custom_tags.txt",  metavar="<file>", help="Load custom tags from <file> [default: %default]")
-    parser.add_option("-l", "--lang-dir", dest="lang_dir", default="lang",  metavar="<dir>", help="Load language files from directory <dir> [default: %default]")
+    opt_parser = optparse.OptionParser(usage=usage)
+    opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
+    opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
+    opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
+    opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
+    opt_parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
+    opt_parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
+    opt_parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
+    opt_parser.add_option("-o", "--output", dest="outputs", action="append", metavar="<file>", help="write output(nfo/grf) to <file>")
+    opt_parser.add_option("-t", "--custom-tags", dest="custom_tags", default="custom_tags.txt",  metavar="<file>", help="Load custom tags from <file> [default: %default]")
+    opt_parser.add_option("-l", "--lang-dir", dest="lang_dir", default="lang",  metavar="<dir>", help="Load language files from directory <dir> [default: %default]")
     try:
-        opts, args = parser.parse_args(argv)
+        opts, args = opt_parser.parse_args(argv)
     except optparse.OptionError, err:
         print "Error while parsing arguments: ", err
-        parser.print_help()
+        opt_parser.print_help()
         sys.exit(2)
     except TypeError, err:
         print "Error while parsing arguments: ", err
-        parser.print_help()
+        opt_parser.print_help()
         sys.exit(2)
 
     grfstrings.read_extra_commands(opts.custom_tags)
@@ -70,7 +70,7 @@ def main(argv):
 
     if not args:
         if not outputfile_given:
-            parser.print_help()
+            opt_parser.print_help()
             sys.exit(2)
         input = sys.stdin
     elif len(args) > 1:
