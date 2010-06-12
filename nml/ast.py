@@ -4,14 +4,12 @@ from actions.action0 import *
 from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
-from actions.action3 import *
-from actions import action5
 from actions.action7 import *
 from actions.actionA import *
 from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
-from nml.actions import action8, actionF, action12
+from nml.actions import action3, action5, action8, actionF, action12
 from actions.sprite_count import SpriteCountAction
 import global_constants
 import unit
@@ -363,7 +361,7 @@ class LiveryOverride(object):
     def get_action_list(self):
         global item_feature, item_names
         wagon_id = reduce_constant(self.wagon_id, [item_names])
-        return parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
+        return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
 class GraphicsBlock(object):
     def __init__(self, default_graphics):
@@ -382,7 +380,7 @@ class GraphicsBlock(object):
 
     def get_action_list(self):
         global item_feature, item_id
-        return parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
+        return action3.parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
 
 class GraphicsDefinition(object):
     def __init__(self, cargo_id, action2_id):
