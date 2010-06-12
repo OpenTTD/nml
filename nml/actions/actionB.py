@@ -1,7 +1,7 @@
 from nml.expression import *
 from nml import generic, grfstrings
 from action6 import *
-from actionD import *
+from nml.actions import actionD
 
 class ActionB(object):
     def __init__(self, severity, lang, msg, data, param1, param2):
@@ -81,7 +81,7 @@ def parse_error_block(error):
         action6.modify_bytes(error.severity.num.value, 1, 1)
         severity = ConstantNumeric(0)
     else:
-        tmp_param, tmp_param_actions = get_tmp_parameter(error.severity)
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(error.severity)
         action_list.extend(tmp_param_actions)
         action6.modify_bytes(tmp_param, 1, 1)
         severity = ConstantNumeric(0)
@@ -111,7 +111,7 @@ def parse_error_block(error):
         elif isinstance(expr, Parameter) and isinstance(expr.num, ConstantNumeric):
             params.append(expr.num)
         else:
-            tmp_param, tmp_param_actions = get_tmp_parameter(expr)
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
             action_list.extend(tmp_param_actions)
             params.append(ConstantNumeric(tmp_param))
 

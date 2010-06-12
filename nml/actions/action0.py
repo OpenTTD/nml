@@ -1,8 +1,7 @@
 from nml.actions.action0properties import Action0Property, properties
 from nml import generic
-from nml.actions import action4
+from nml.actions import action4, actionD
 from action6 import *
-from actionD import *
 from nml.expression import *
 
 class Action0(object):
@@ -94,7 +93,7 @@ def parse_property(feature, name, value, id, unit):
             else:
                 action_list_append.extend(string_actions)
         else:
-            tmp_param, tmp_param_actions = get_tmp_parameter(value)
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
             mods.append((tmp_param, prop['size'], 1))
             action_list.extend(tmp_param_actions)
             value = ConstantNumeric(0)
@@ -114,7 +113,7 @@ def parse_property_block(prop_list, feature, id):
     if isinstance(id, ConstantNumeric):
         action0 = Action0(feature, id.value)
     else:
-        tmp_param, tmp_param_actions = get_tmp_parameter(id)
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
         action6.modify_bytes(tmp_param, 2, 5)
         action_list.extend(tmp_param_actions)
         action0 = Action0(feature, 0)

@@ -1,6 +1,6 @@
 from nml.expression import *
 from action6 import *
-from actionD import *
+from nml.actions import actionD
 
 class ActionE(object):
     def __init__(self, grfid_list):
@@ -43,14 +43,14 @@ def parse_deactivate_block(block):
         if isinstance(grfid, ConstantNumeric):
             grfid_list.append(grfid)
         else:
-            tmp_param, tmp_param_actions = get_tmp_parameter(grfid)
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(grfid)
             action_list.extend(tmp_param_actions)
             for i in range(0, 4):
                 if i == 0:
                     param = tmp_param
                 else:
                     param = free_parameters.pop()
-                    action_list.append(ActionD(ConstantNumeric(param), ConstantNumeric(tmp_param), ActionDOperator.SHFTU, ConstantNumeric(0xFF), ConstantNumeric(-8 * i)))
+                    action_list.append(actionD.ActionD(ConstantNumeric(param), ConstantNumeric(tmp_param), actionD.ActionDOperator.SHFTU, ConstantNumeric(0xFF), ConstantNumeric(-8 * i)))
                 action6.modify_bytes(param, 1, offset + 3 - i)
             grfid_list.append(ConstantNumeric(0))
         offset += 4

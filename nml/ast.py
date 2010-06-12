@@ -2,8 +2,7 @@ from nml import generic, global_constants, grfstrings, unit
 from expression import *
 from actions.real_sprite import *
 from actions.action2var import *
-from actions.actionD import *
-from nml.actions import action0, action1, action3, action5, action7, action8, actionA, actionB, actionE, actionF, action12
+from nml.actions import action0, action1, action3, action5, action7, action8, actionA, actionB, actionD, actionE, actionF, action12
 from actions.sprite_count import SpriteCountAction
 
 def print_script(script, indent):
@@ -42,7 +41,7 @@ class ParameterAssignment(object):
         self.value.debug_print(indentation + 2)
 
     def get_action_list(self):
-        return parse_actionD(self)
+        return actionD.parse_actionD(self)
 
     def __str__(self):
         return 'param[%s] = %s;\n' % (str(self.param), str(self.value))

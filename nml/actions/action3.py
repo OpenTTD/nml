@@ -1,7 +1,6 @@
 from nml.expression import *
-from nml.actions import action2
+from nml.actions import action2, actionD
 from action6 import *
-from actionD import *
 
 class Action3(object):
     def __init__(self, feature, id):
@@ -46,7 +45,7 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
     if isinstance(id, ConstantNumeric):
         act3 = Action3(feature, id.value)
     else:
-        tmp_param, tmp_param_actions = get_tmp_parameter(id)
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
         size = 3 if feature <= 3 else 1
         offset = 4 if feature <= 3 else 3
         act6.modify_bytes(tmp_param, size, offset)

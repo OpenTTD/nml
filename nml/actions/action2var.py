@@ -1,8 +1,7 @@
 from nml.expression import *
-from nml.actions import action2
+from nml.actions import action2, actionD
 from action2var_variables import *
 from action6 import *
-from actionD import *
 from nml import generic, global_constants
 
 class Action2Operator(object):
@@ -205,7 +204,7 @@ def parse_varaction2_expression(expr, varsize):
         if isinstance(expr.num, ConstantNumeric):
             param_num = expr.num.value
         else:
-            param_num, tmp_param_actions = get_tmp_parameter(expr)
+            param_num, tmp_param_actions = actionD.get_tmp_parameter(expr)
             extra_actions.extend(tmp_param_actions)
         mods.append(Modification(param_num, varsize, var_list_size + 2))
         var = VarAction2Var(0x1A, ConstantNumeric(0), ConstantNumeric(0))
