@@ -4,11 +4,10 @@ from actions.action0 import *
 from actions.action1 import *
 from actions.real_sprite import *
 from actions.action2var import *
-from actions.actionA import *
 from actions.actionB import *
 from actions.actionD import *
 from actions.actionE import *
-from nml.actions import action3, action5, action7, action8, actionF, action12
+from nml.actions import action3, action5, action7, action8, actionA, actionF, action12
 from actions.sprite_count import SpriteCountAction
 import global_constants
 import unit
@@ -405,7 +404,7 @@ class ReplaceSprite(object):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return parse_actionA(self)
+        return actionA.parse_actionA(self)
 
 class ReplaceNewSprite(object):
     def __init__(self, type, pcx, offset, sprite_list):
