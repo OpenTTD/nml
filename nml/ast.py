@@ -915,10 +915,8 @@ class CargoTable(object):
     def __init__(self, cargo_list):
         global cargo_numbers;
         self.cargo_list = cargo_list
-        i = 0
-        for cargo in cargo_list:
+        for i, cargo in enumerate(cargo_list):
             cargo_numbers[cargo.value] = i
-            i += 1
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Cargo table'

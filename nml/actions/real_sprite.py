@@ -94,11 +94,9 @@ def parse_sprite_list(sprite_list):
                 raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(sprite.param_list)))
             param_dict = {}
             try:
-                i = 0
-                for param in sprite.param_list:
+                for i, param in enumerate(sprite.param_list):
                     param = reduce_constant(param, [real_sprite_compression_flags])
                     param_dict[template.param_list[i].value] = param.value
-                    i += 1
             except generic.ConstError:
                 raise generic.ScriptError("Template parameters should be compile-time constants")
             for sprite in template.sprite_list:
