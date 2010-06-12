@@ -42,28 +42,28 @@ class Action3(object):
 
 def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
     action_list = []
-    action6 = Action6()
+    act6 = Action6()
     if isinstance(id, ConstantNumeric):
-        action3 = Action3(feature, id.value)
+        act3 = Action3(feature, id.value)
     else:
         tmp_param, tmp_param_actions = get_tmp_parameter(id)
         size = 3 if feature <= 3 else 1
         offset = 4 if feature <= 3 else 3
-        action6.modify_bytes(tmp_param, size, offset)
+        act6.modify_bytes(tmp_param, size, offset)
         action_list.extend(tmp_param_actions)
-        action3 = Action3(feature, 0)
+        act3 = Action3(feature, 0)
 
-    action3.is_livery_override = is_livery_override
+    act3.is_livery_override = is_livery_override
 
     add_ref(default_graphics.value)
-    action3.def_cid = default_graphics.value
+    act3.def_cid = default_graphics.value
 
     for graphics in graphics_list:
         add_ref(graphics.action2_id.value)
         cargo_id = reduce_constant(graphics.cargo_id, [cargo_numbers])
-        action3.cid_mappings.append( (cargo_id, graphics.action2_id.value) )
+        act3.cid_mappings.append( (cargo_id, graphics.action2_id.value) )
 
-    if len(action6.modifications) > 0: action_list.append(action6)
-    action_list.append(action3)
+    if len(act6.modifications) > 0: action_list.append(act6)
+    action_list.append(act3)
 
     return action_list

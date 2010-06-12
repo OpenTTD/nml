@@ -44,8 +44,8 @@ def add_ref(name):
 def remove_ref(name):
     if name == 'CB_FAILED': return 0
     global action2_map, free_action2_ids
-    action2 = action2_map[name]
-    id = action2.id
-    action2.num_refs -= 1
-    if action2.num_refs == 0: free_action2_ids.append(action2.id)
+    act2 = action2_map[name]
+    id = act2.id
+    act2.num_refs -= 1
+    if act2.num_refs == 0: free_action2_ids.append(act2.id)
     return id

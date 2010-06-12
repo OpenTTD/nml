@@ -54,9 +54,9 @@ class Action2Var(Action2):
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):
                 var.mask = ConstantNumeric(self.tmp_locations.pop())
-                for action2 in self.references:
-                    if var.mask.value in action2.tmp_locations:
-                        action2.tmp_locations.remove(var.mask.value)
+                for act2 in self.references:
+                    if var.mask.value in act2.tmp_locations:
+                        act2.tmp_locations.remove(var.mask.value)
 
     def prepare_output(self):
         Action2.prepare_output(self)
@@ -284,7 +284,7 @@ def make_return_varact2(switch_block):
 def parse_varaction2(switch_block):
     global free_parameters
     free_parameters_backup = free_parameters[:]
-    action6 = Action6()
+    act6 = Action6()
     return_action = None
     varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else varact2parent_scope[switch_block.feature.value]
@@ -298,7 +298,7 @@ def parse_varaction2(switch_block):
 
     action_list, mods, var_list, var_list_size = parse_varaction2_expression(expr, varsize)
     for mod in mods:
-        action6.modify_bytes(mod.param, mod.size, mod.offset + offset)
+        act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = var_list
     offset += var_list_size
 
@@ -309,14 +309,14 @@ def parse_varaction2(switch_block):
     for r in switch_block.body.ranges:
         if r.result is None:
             if return_action is None: return_action = make_return_varact2(switch_block)
-            action2 = add_ref(return_action.name)
-            assert return_action == action2
-            varaction2.references.append(action2)
+            act2 = add_ref(return_action.name)
+            assert return_action == act2
+            varaction2.references.append(act2)
             r.result = Identifier(return_action.name)
         elif isinstance(r.result, Identifier):
             if r.result.value != 'CB_FAILED':
-                action2 = add_ref(r.result.value)
-                varaction2.references.append(action2)
+                act2 = add_ref(r.result.value)
+                varaction2.references.append(act2)
         elif not isinstance(r.result, ConstantNumeric):
             raise generic.ScriptError("Result of varaction2 range must be another action2 or a constant number")
 
@@ -334,20 +334,20 @@ def parse_varaction2(switch_block):
             default = Identifier('CB_FAILED')
         else:
             if return_action is None: return_action = make_return_varact2(switch_block)
-            action2 = add_ref(return_action.name)
-            assert action2 == return_action
-            varaction2.references.append(action2)
+            act2 = add_ref(return_action.name)
+            assert act2 == return_action
+            varaction2.references.append(act2)
             default = Identifier(return_action.name)
     elif isinstance(default, Identifier):
         if default.value != 'CB_FAILED':
-            action2 = add_ref(default.value)
-            varaction2.references.append(action2)
+            act2 = add_ref(default.value)
+            varaction2.references.append(act2)
     elif not isinstance(default, ConstantNumeric):
         raise generic.ScriptError("Default result of varaction2 must be another action2 or a constant number")
 
     varaction2.default_result = default
 
-    if len(action6.modifications) > 0: action_list.append(action6)
+    if len(act6.modifications) > 0: action_list.append(act6)
 
     action_list.append(varaction2)
     if return_action is not None: action_list.insert(0, return_action)
