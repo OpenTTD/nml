@@ -1,4 +1,4 @@
-from nml import generic
+from nml import generic, global_constants, grfstrings, unit
 from expression import *
 from actions.action0 import *
 from actions.action1 import *
@@ -8,8 +8,6 @@ from actions.actionD import *
 from actions.actionE import *
 from nml.actions import action3, action5, action7, action8, actionA, actionB, actionF, action12
 from actions.sprite_count import SpriteCountAction
-import global_constants
-import unit
 
 def print_script(script, indent):
     for r in script:
@@ -623,8 +621,6 @@ class TownNames(object):
             actionF.free_numbers.remove(self.id_number)
 
     def prepare_output(self):
-        global grf_strings
-
         # Resolve references to earlier townname actions
         blocks = set()
         for part in self.parts:
@@ -655,9 +651,9 @@ class TownNames(object):
 
         # Pull style names if needed.
         if self.style_name is not None:
-            if self.style_name not in grf_strings:
+            if self.style_name not in grfstrings.grf_strings:
                 raise generic.ScriptError("Unknown string: " + self.style_name)
-            self.style_names = [(transl['lang'], transl['text']) for transl in grf_strings[self.style_name]]
+            self.style_names = [(transl['lang'], transl['text']) for transl in grfstrings.grf_strings[self.style_name]]
             self.style_names.sort()
             if len(self.style_names) == 0:
                 raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name)
@@ -672,7 +668,7 @@ class TownNames(object):
         if len(self.style_names) == 0: return 0
         size = 0
         for _lang, txt in self.style_names:
-            size += 1 + 2 + get_string_size(txt) + 1 # Language ID, text, 0 byte
+            size += 1 + 2 + grfstrings.get_string_size(txt) + 1 # Language ID, text, 0 byte
         return size + 1 # Terminating 0
 
     def write_styles(self, file):
@@ -864,7 +860,7 @@ class TownNamesEntryText(object):
         print indentation*' ' + ('Text %s with probability %d/%d' % (self.text.value, self.probability.value, total))
 
     def get_length(self):
-        return 1 + 2 + get_string_size(self.text.value) + 1 # probability, text, 0
+        return 1 + 2 + grfstrings.get_string_size(self.text.value) + 1 # probability, text, 0
 
     def resolve_townname_id(self):
         '''

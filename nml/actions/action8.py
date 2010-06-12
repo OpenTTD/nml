@@ -1,4 +1,4 @@
-from nml.grfstrings import get_translation, get_string_size
+from nml import grfstrings
 
 class Action8(object):
     def __init__(self, grfid, name, description):
@@ -10,9 +10,9 @@ class Action8(object):
         pass
 
     def write(self, file):
-        name = get_translation(self.name.name.value)
-        desc = get_translation(self.description.name.value)
-        size = 6 + get_string_size(name) + 3 + get_string_size(desc) + 3
+        name = grfstrings.get_translation(self.name.name.value)
+        desc = grfstrings.get_translation(self.description.name.value)
+        size = 6 + grfstrings.get_string_size(name) + 3 + grfstrings.get_string_size(desc) + 3
         file.print_sprite_size(size)
         file.print_bytex(8)
         file.print_bytex(7)

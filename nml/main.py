@@ -2,8 +2,7 @@ import sys, os, codecs, optparse
 from ast import *
 from parser import *
 from tokens import NMLLexer
-from grfstrings import *
-from nml import generic
+from nml import generic, grfstrings
 from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
 from nml.actions import action8
@@ -64,8 +63,8 @@ def main(argv):
         parser.print_help()
         sys.exit(2)
 
-    read_extra_commands(opts.custom_tags)
-    read_lang_files(opts.lang_dir)
+    grfstrings.read_extra_commands(opts.custom_tags)
+    grfstrings.read_lang_files(opts.lang_dir)
 
     outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.outputs)
 

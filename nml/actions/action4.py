@@ -1,5 +1,4 @@
-from nml import generic
-from nml.grfstrings import grf_strings, get_string_size
+from nml import generic, grfstrings
 
 class Action4(object):
     def __init__(self, feature, lang, size, id, text):
@@ -14,7 +13,7 @@ class Action4(object):
 
     def write(self, file):
         # +3 after string size is for final 0 and thorn at the start
-        size = 4 + self.size + get_string_size(self.text) + 3
+        size = 4 + self.size + grfstrings.get_string_size(self.text) + 3
         file.print_sprite_size(size)
         file.print_bytex(4)
         file.print_bytex(self.feature)
@@ -43,8 +42,8 @@ string_ranges = {
 }
 
 def get_string_action4s(feature, string_range, string, id = None):
-    global grf_strings, string_ranges
-    if not string.name.value in grf_strings: raise generic.ScriptError("Unknown string: " + string.name.value)
+    global string_ranges
+    if not string.name.value in grfstrings.grf_strings: raise generic.ScriptError("Unknown string: " + string.name.value)
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:
@@ -56,7 +55,7 @@ def get_string_action4s(feature, string_range, string, id = None):
         size = 1
 
     actions = []
-    for translation in grf_strings[string.name.value]:
+    for translation in grfstrings.grf_strings[string.name.value]:
         actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
 
     return (id, size == 2, actions)

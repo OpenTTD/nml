@@ -1,6 +1,5 @@
 from nml.expression import *
-from nml import generic
-from nml.grfstrings import grf_strings, get_translation, get_string_size
+from nml import generic, grfstrings
 from action6 import *
 from actionD import *
 
@@ -18,9 +17,9 @@ class ActionB(object):
 
     def write(self, file):
         size = 4
-        if not isinstance(self.msg, int): size += get_string_size(self.msg) + 3
+        if not isinstance(self.msg, int): size += grfstrings.get_string_size(self.msg) + 3
         if self.data is not None:
-            size += get_string_size(self.data) + 3
+            size += grfstrings.get_string_size(self.data) + 3
             if self.param1 is not None:
                 size += 1
                 if self.param2 is not None:
@@ -71,7 +70,7 @@ error_severity = {
 }
 
 def parse_error_block(error):
-    global free_parameters, default_error_msg, grf_strings
+    global free_parameters, default_error_msg
     free_parameters_backup = free_parameters[:]
     action_list = []
     action6 = Action6()
@@ -96,13 +95,13 @@ def parse_error_block(error):
         msg = default_error_msg[error.msg.value]
     else:
         custom_msg = True
-        for translation in grf_strings[error.msg.value]:
+        for translation in grfstrings.grf_strings[error.msg.value]:
             langs.append(translation['lang'])
 
     if error.data is not None:
         if not isinstance(error.data, Identifier):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
-        for translation in grf_strings[error.data.value]:
+        for translation in grfstrings.grf_strings[error.data.value]:
             langs.append(translation['lang'])
 
     params = []
@@ -121,8 +120,8 @@ def parse_error_block(error):
     langs = set(langs)
     for lang in langs:
         if custom_msg:
-            msg = get_translation(error.msg.value, lang)
-        data = None if error.data is None else get_translation(error.data.value, lang)
+            msg = grfstrings.get_translation(error.msg.value, lang)
+        data = None if error.data is None else grfstrings.get_translation(error.data.value, lang)
         if len(action6.modifications) > 0: action_list.append(action6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 
