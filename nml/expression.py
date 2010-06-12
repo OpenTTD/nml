@@ -186,7 +186,7 @@ class String(object):
     def __str__(self):
         ret = 'string(' + self.name.value
         for p in self.params:
-            ret += ', ' . str(p)
+            ret += ', ' + str(p)
         ret += ')'
         return ret
 
@@ -202,7 +202,7 @@ class StringLiteral(object):
     def __init__(self, value):
         self.value = value
     def debug_print(self, indentation):
-        print indentatation*' ' + 'String literal: "%s"' % self.value
+        print indentation*' ' + 'String literal: "%s"' % self.value
     def __str__(self):
         return '"%s"' % self.value
 
