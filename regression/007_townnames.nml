@@ -1,0 +1,37 @@
+
+// named town-name
+town_names(A) {
+    {
+      text("small", 10),
+      text("medium", 10),
+      text("big", 2),
+      text("", 1)
+    }
+
+    {
+      text("village", 13),
+      text("town", 10),
+      text("city", 1)
+    }
+}
+
+// specified number
+town_names(1) {
+    {
+      text("tiny village", 1)
+    }
+}
+
+// main
+town_names {
+    styles: string(STR_STATIONS);
+
+    {
+      text("MainCapital", 10),
+      town_names(A,  5),
+      town_names(1,  1)
+    }
+}
+
+
+
