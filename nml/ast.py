@@ -33,7 +33,7 @@ feature_ids = {
 class ParameterAssignment(object):
     def __init__(self, param, value):
         self.param = param
-        self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
+        self.value = value.reduce([global_constants.const_table, cargo_numbers])
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
@@ -226,7 +226,7 @@ class SwitchRange(object):
 
 class DeactivateBlock(object):
     def __init__(self, grfid_list):
-        self.grfid_list = [reduce_expr(grfid) for grfid in grfid_list]
+        self.grfid_list = [grfid.reduce() for grfid in grfid_list]
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Deactivate other newgrfs:'
@@ -304,7 +304,7 @@ class Unit(object):
 class Property(object):
     def __init__(self, name, value, unit):
         self.name = name
-        self.value = reduce_expr(value, [global_constants.const_table, cargo_numbers])
+        self.value = value.reduce([global_constants.const_table, cargo_numbers])
         self.unit = unit
         if unit is not None and not (isinstance(self.value, ConstantNumeric) or isinstance(self.value, ConstantFloat)):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant")
@@ -547,7 +547,7 @@ class LayoutSprite(object):
 class LayoutParam(object):
     def __init__(self, name, value):
         self.name = name
-        self.value = reduce_expr(value, [global_constants.const_table], False)
+        self.value = value.reduce([global_constants.const_table], False)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Layout parameter:', self.name.value
@@ -876,11 +876,11 @@ class Error(object):
         self.params = []
         if not 2 <= len(param_list) <= 5:
             raise generic.ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)))
-        self.severity = reduce_expr(param_list[0], [actionB.error_severity])
+        self.severity = param_list[0].reduce([actionB.error_severity])
         self.msg      = param_list[1]
         self.data     = param_list[2] if len(param_list) >= 3 else None
-        self.params.append(reduce_expr(param_list[3]) if len(param_list) >= 4 else None)
-        self.params.append(reduce_expr(param_list[4]) if len(param_list) >= 5 else None)
+        self.params.append(param_list[3].reduce() if len(param_list) >= 4 else None)
+        self.params.append(param_list[4].reduce() if len(param_list) >= 5 else None)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Error message'

@@ -402,12 +402,8 @@ commutative_operators = set([
     Operator.MAX,
 ])
 
-# note: id_dicts is a *list* of dictionaries or (dictionary, function)-tuples
-def reduce_expr(expr, id_dicts = [], unknown_id_fatal = True):
-    return expr.reduce(id_dicts, unknown_id_fatal)
-
 def reduce_constant(expr, id_dicts = []):
-    expr = reduce_expr(expr, id_dicts)
+    expr = expr.reduce(id_dicts)
     if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
         raise generic.ConstError()
     return expr
