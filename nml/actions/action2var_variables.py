@@ -1,5 +1,5 @@
 
-varact2vars = 12 * [{}]
+varact2vars = 0x12 * [{}]
 varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x08, None, 0x08, 0x08, None, 0x0A, 0x08, None, None, None, None, None, None]
 
 varact2_globalvars = {
@@ -56,7 +56,14 @@ veh_vars = {
     'build_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
 }
 
+varact2vars_railtype = {
+	'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
+	'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
+	'level_crossing_status': {'var': 0x42, 'start': 0, 'size': 8},
+}
+
 varact2vars[0x00] = veh_vars
 varact2vars[0x01] = veh_vars
 varact2vars[0x02] = veh_vars
 varact2vars[0x03] = veh_vars
+varact2vars[0x10] = varact2vars_railtype

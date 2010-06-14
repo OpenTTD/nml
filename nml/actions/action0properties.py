@@ -1,5 +1,5 @@
 from nml import generic
-from nml.expression import ConstantNumeric
+from nml.expression import ConstantNumeric, Array, StringLiteral
 
 class Action0Property(object):
     def __init__(self, num, value, size):
@@ -187,4 +187,44 @@ properties[0x0A] = {
     'callback_flags_2': {'size': 1, 'num': 0x22},
     'remove_cost_multiplier': {'size': 4, 'num': 0x23},
     'nearby_station_name': {'size': 2, 'num': 0x24, 'string': 0xDC},
+}
+
+class RailtypeListProp(object):
+    def __init__(self, prop_num, railtype_list):
+        self.prop_num = prop_num
+        self.railtype_list = railtype_list
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        file.print_byte(len(self.railtype_list))
+        for railtype in self.railtype_list:
+            railtype.write(file, 4)
+        file.newline()
+
+    def get_size(self):
+        return len(self.railtype_list) * 4 + 1
+
+def railtype_list(value, prop_num):
+    if not isinstance(value, Array):
+        raise generic.ScriptError("Railtype list must be an array of literal strings")
+    for val in value.values:
+        if not isinstance(val, StringLiteral): raise generic.ScriptError("Railtype list must be an array of literal strings")
+    return [RailtypeListProp(prop_num, value.values)]
+
+properties[0x10] = {
+    'label': {'size': 4, 'num': 0x08, 'string_literal': 4},
+    'name': {'size': 2, 'num': 0x09, 'string': 0xDC},
+    'menu_text': {'size': 2, 'num': 0x0A, 'string': 0xDC},
+    'build_window_caption': {'size': 2, 'num': 0x0B, 'string': 0xDC},
+    'autoreplace_text': {'size': 2, 'num': 0x0C, 'string': 0xDC},
+    'new_engine_text': {'size': 2, 'num': 0x0D, 'string': 0xDC},
+    'compatible_railtype_list': {'custom_function': lambda x: railtype_list(x, 0x0E)},
+    'powered_railtype_list': {'custom_function': lambda x: railtype_list(x, 0x0F)},
+    'railtype_flags': {'size': 1, 'num': 0x10},
+    'curve_speed_multiplier': {'size': 1, 'num': 0x11},
+    'station_graphics': {'size': 1, 'num': 0x12},
+    'construction_cost': {'size': 2, 'num': 0x13},
+    'speed_limit': {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': 3.5790976},
+    'acceleration_model': {'size': 1, 'num': 0x15},
+    'map_color': {'size': 1, 'num': 0x16},
 }

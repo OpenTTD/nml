@@ -134,13 +134,13 @@ def p_function(t):
     'expression : ID LPAREN expression_list RPAREN'
     t[0] = FunctionCall(t[1], t[3])
 
-def p_expression_array(t):
-    'expression : array'
-    t[0] = t[1]
-
 def p_array(t):
     'array : LBRACKET expression_list RBRACKET'
     t[0] = t[2]
+
+def p_expression_string(t):
+    'expression : STRING_LITERAL'
+    t[0] = t[1]
 
 #
 # Commonly used non-terminals that are not expressions
@@ -153,8 +153,7 @@ def p_assignment_list(t):
 
 def p_assignment(t):
     '''assignment : ID COLON string SEMICOLON
-                  | ID COLON expression SEMICOLON
-                  | ID COLON STRING_LITERAL SEMICOLON'''
+                  | ID COLON expression SEMICOLON'''
     t[0] = Assignment(t[1], t[3])
 
 def p_string(t):
@@ -217,8 +216,9 @@ def p_property_assignment(t):
                            | NUMBER COLON expression UNIT SEMICOLON
                            | NUMBER COLON string SEMICOLON
                            | NUMBER COLON array SEMICOLON'''
+    val = Array(t[3]) if isinstance(t[3], list) else t[3]
     unit = None if len(t) == 5 else Unit(t[4])
-    t[0] = Property(t[1], t[3], unit)
+    t[0] = Property(t[1], val, unit)
 
 def p_graphics_block(t):
     'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'

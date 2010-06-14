@@ -317,6 +317,10 @@ class StringLiteral(object):
     def __str__(self):
         return '"%s"' % self.value
 
+    def write(self, file, size):
+        assert(len(self.value) == size)
+        file.print_string(self.value, final_zero = False, force_ascii = True)
+
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 

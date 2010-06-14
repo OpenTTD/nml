@@ -77,6 +77,11 @@ def parse_property(feature, name, value, id, unit):
 
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
+    elif 'string_literal' in prop:
+        if not isinstance(value, StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop['num'])
+        if len(value.value) != prop['string_literal']:
+            raise generic.ScriptError("Value for property %d must be of length %d" % (prop['num'], prop['string_literal']))
+        props = [Action0Property(prop['num'], value, prop['size'])]
     else:
         if isinstance(value, ConstantNumeric):
             pass
