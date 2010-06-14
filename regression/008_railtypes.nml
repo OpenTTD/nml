@@ -1,0 +1,8 @@
+
+item(FEAT_RAILTYPES, normal_rail, 0) {
+	property {
+		label: "RAIL";
+		speed_limit: 40km/h;
+		compatible_railtype_list: ["ELRL"];
+	}
+}
