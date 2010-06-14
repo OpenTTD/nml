@@ -202,7 +202,7 @@ class RailtypeListProp(object):
         file.newline()
 
     def get_size(self):
-        return len(self.railtype_list) * 4 + 1
+        return len(self.railtype_list) * 4 + 2
 
 def railtype_list(value, prop_num):
     if not isinstance(value, Array):
