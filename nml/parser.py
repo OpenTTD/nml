@@ -134,13 +134,17 @@ def p_function(t):
     'expression : ID LPAREN expression_list RPAREN'
     t[0] = FunctionCall(t[1], t[3])
 
-#
-# Commonly used non-terminals that are not expressions
-#
+def p_expression_array(t):
+    'expression : array'
+    t[0] = t[1]
+
 def p_array(t):
     'array : LBRACKET expression_list RBRACKET'
     t[0] = t[2]
 
+#
+# Commonly used non-terminals that are not expressions
+#
 def p_assignment_list(t):
     '''assignment_list : assignment
                        | assignment_list assignment'''
