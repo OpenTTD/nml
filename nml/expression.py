@@ -53,28 +53,49 @@ def get_operator_string(op, param1, param2):
 class ConstantNumeric(object):
     def __init__(self, value):
         self.value = generic.truncate_int32(value)
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Int:', self.value
+
     def write(self, file, size):
         file.print_varx(self.value, size)
+
     def __str__(self):
         return str(self.value)
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
 
 class ConstantFloat(object):
     def __init__(self, value):
         self.value = value
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Float:', self.value
+
     def __str__(self):
         return str(self.value)
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
 
 class BitMask(object):
     def __init__(self, values):
         self.values = values
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Get bitmask:'
         for value in self.values:
             value.debug_print(indentation + 2)
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        ret = 0
+        for orig_expr in self.values:
+            val = orig_expr.reduce(id_dicts) # unknown ids are always fatal as they're not compile time constant
+            if not isinstance(val, ConstantNumeric): raise generic.ScriptError("Parameters of 'bitmask' should be a constant")
+            if val.value >= 32: raise generic.ScriptError("Parameters of 'bitmask' cannot be greater then 31")
+            ret |= 1 << val.value
+        return ConstantNumeric(ret)
 
 class BinOp(object):
     def __init__(self, op, expr1, expr2):
@@ -89,6 +110,37 @@ class BinOp(object):
 
     def __str__(self):
         return get_operator_string(self.op, str(self.expr1), str(self.expr2))
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        expr1 = self.expr1.reduce(id_dicts)
+        expr2 = self.expr2.reduce(id_dicts)
+        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op in compile_time_operator:
+            return ConstantNumeric(compile_time_operator[self.op](expr1.value, expr2.value))
+        simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
+        simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
+        if self.op in commutative_operators and ((simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric))):
+            expr1, expr2 = expr2, expr1
+        if isinstance(expr1, Variable) and isinstance(expr2, ConstantNumeric):
+            if self.op == Operator.AND and isinstance(expr1.mask, ConstantNumeric):
+                expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value)
+                return expr1
+            if self.op == Operator.ADD and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = expr2
+                else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value)
+                return expr1
+            if self.op == Operator.SUB and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = ConstantNumeric(-expr2.value)
+                else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value)
+                return expr1
+            if self.op == Operator.DIV and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = ConstantNumeric(0)
+                expr1.div = expr2
+                return expr1
+            if self.op == Operator.MOD and expr1.div is None and expr1.mod is None:
+                if expr1.add is None: expr1.add = ConstantNumeric(0)
+                expr1.mod = expr2
+                return expr1
+        return BinOp(self.op, expr1, expr2)
 
 class TernaryOp(object):
     def __init__(self, guard, expr1, expr2):
@@ -105,6 +157,17 @@ class TernaryOp(object):
         print indentation*' ' + 'Expression 2:'
         self.expr2.debug_print(indentation + 2)
 
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        guard = self.guard.reduce(self.guard)
+        expr1 = self.expr1.reduce(id_dicts)
+        expr2 = self.expr2.reduce(id_dicts)
+        if isinstance(guard, ConstantNumeric):
+            if guard.value != 0:
+                return expr1
+            else:
+                return expr2
+        return TernaryOp(guard, expr1, expr2)
+
 class Assignment(object):
     def __init__(self, name, value):
         self.name = name
@@ -117,11 +180,17 @@ class Assignment(object):
 class Parameter(object):
     def __init__(self, num):
         self.num = num
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter:'
         self.num.debug_print(indentation + 2)
+
     def __str__(self):
         return 'param[%s]' % str(self.num)
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        num = self.num.reduce(id_dicts)
+        return Parameter(num)
 
 class Variable(object):
     def __init__(self, num, shift = None, mask = None, param = None):
@@ -156,15 +225,28 @@ class Variable(object):
             ret = '(%s %% %s)' % (ret, self.mod)
         return ret
 
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        num = self.num.reduce(id_dicts)
+        shift = self.shift.reduce(id_dicts)
+        mask = self.mask.reduce(id_dicts)
+        param = self.param.reduce(id_dicts)
+        var = Variable(num, shift, mask, param)
+        var.add = self.add
+        var.div = self.div
+        var.mod = self.mod
+        return var
+
 class FunctionCall(object):
     def __init__(self, name, params):
         self.name = name
         self.params = params
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Call function: ' + self.name.value
         for param in self.params:
             print (indentation+2)*' ' + 'Parameter:'
             param.debug_print(indentation + 4)
+
     def __str__(self):
         ret = ''
         for param in self.params:
@@ -173,16 +255,31 @@ class FunctionCall(object):
         ret = '%s(%s)' % (self.name, ret)
         return ret
 
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        param_list = []
+        for param in self.params:
+            param_list.append(param.reduce(id_dicts))
+        if self.name.value in function_table:
+            func = function_table[self.name.value]
+            val = func(self.name.value, param_list)
+            return val.reduce(id_dicts)
+        else:
+            if len(param_list) != 0:
+                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % self.name.value);
+            return Variable(ConstantNumeric(0x7E), param=self.name.value)
+
 class String(object):
     def __init__(self, name, params = []):
         self.name = name
         self.params = params
+
     def debug_print(self, indentation):
         print indentation*' ' + 'String:'
         self.name.debug_print(indentation + 2)
         for param in self.params:
             print (indentation+2)*' ' + 'Parameter:'
             param.debug_print(indentation + 4)
+
     def __str__(self):
         ret = 'string(' + self.name.value
         for p in self.params:
@@ -190,21 +287,38 @@ class String(object):
         ret += ')'
         return ret
 
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
+
 class Identifier(object):
     def __init__(self, value):
         self.value = value
+
     def debug_print(self, indentation):
         print indentation*' ' + 'ID: ' + self.value
+
     def __str__(self):
         return self.value
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        for id_dict in id_dicts:
+            id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
+            if self.value in id_d:
+                return func(id_d[self.value])
+        if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered")
 
 class StringLiteral(object):
     def __init__(self, value):
         self.value = value
+
     def debug_print(self, indentation):
         print indentation*' ' + 'String literal: "%s"' % self.value
+
     def __str__(self):
         return '"%s"' % self.value
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
 
 #
 # compile-time expression evaluation
@@ -290,75 +404,7 @@ commutative_operators = set([
 
 # note: id_dicts is a *list* of dictionaries or (dictionary, function)-tuples
 def reduce_expr(expr, id_dicts = [], unknown_id_fatal = True):
-    global compile_time_operator
-    if isinstance(expr, BinOp):
-        expr1 = reduce_expr(expr.expr1, id_dicts)
-        expr2 = reduce_expr(expr.expr2, id_dicts)
-        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and expr.op in compile_time_operator:
-            return ConstantNumeric(compile_time_operator[expr.op](expr1.value, expr2.value))
-        simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
-        simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
-        if expr.op in commutative_operators and ((simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric))):
-            expr1, expr2 = expr2, expr1
-        if isinstance(expr1, Variable) and isinstance(expr2, ConstantNumeric):
-            if expr.op == Operator.AND and isinstance(expr1.mask, ConstantNumeric):
-                expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value)
-                return expr1
-            if expr.op == Operator.ADD and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = expr2
-                else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value)
-                return expr1
-            if expr.op == Operator.SUB and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = ConstantNumeric(-expr2.value)
-                else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value)
-                return expr1
-            if expr.op == Operator.DIV and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = ConstantNumeric(0)
-                expr1.div = expr2
-                return expr1
-            if expr.op == Operator.MOD and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = ConstantNumeric(0)
-                expr1.mod = expr2
-                return expr1
-        return BinOp(expr.op, expr1, expr2)
-    elif isinstance(expr, Parameter):
-        if not isinstance(expr.num, ConstantNumeric):
-            return Parameter(reduce_expr(expr.num, id_dicts))
-    elif isinstance(expr, Variable):
-        num = reduce_expr(expr.num, id_dicts)
-        shift = reduce_expr(expr.shift, id_dicts)
-        mask = reduce_expr(expr.mask, id_dicts)
-        param = reduce_expr(expr.param, id_dicts)
-        var = Variable(num, shift, mask, param)
-        var.add = expr.add
-        var.div = expr.div
-        var.mod = expr.mod
-        return var
-    elif isinstance(expr, Identifier):
-        for id_dict in id_dicts:
-            id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
-            if expr.value in id_d:
-                return func(id_d[expr.value])
-        if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + expr.value + "' encountered")
-    elif isinstance(expr, BitMask):
-        ret = 0
-        for orig_expr in expr.values:
-            val = reduce_expr(orig_expr, id_dicts)
-            if not isinstance(val, ConstantNumeric): raise generic.ScriptError("Parameters of 'bit' should be a constant")
-            if val.value >= 32: raise generic.ScriptError("Parameters of 'bit' cannot be greater then 31")
-            ret |= 1 << val.value
-        return ConstantNumeric(ret)
-    elif isinstance(expr, FunctionCall):
-        param_list = []
-        for param in expr.params:
-            param_list.append(reduce_expr(param, id_dicts))
-        if expr.name.value in function_table:
-            return reduce_expr(function_table[expr.name.value](expr.name.value, param_list), id_dicts)
-        else:
-            if len(param_list) != 0:
-                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % expr.name.value);
-            return Variable(ConstantNumeric(0x7E), param=expr.name.value)
-    return expr
+    return expr.reduce(id_dicts, unknown_id_fatal)
 
 def reduce_constant(expr, id_dicts = []):
     expr = reduce_expr(expr, id_dicts)
