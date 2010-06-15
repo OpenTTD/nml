@@ -291,7 +291,7 @@ def parse_varaction2(switch_block):
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
 
     func = lambda x: Variable(ConstantNumeric(x['var']), ConstantNumeric(x['start']), ConstantNumeric((1 << x['size']) - 1))
-    expr = reduce_expr(switch_block.expr, [(varact2vars[feature], func), (varact2_globalvars, func), global_constants.const_table, cargo_numbers])
+    expr = switch_block.expr.reduce([(varact2vars[feature], func), (varact2_globalvars, func), global_constants.const_table, cargo_numbers])
 
     offset = 4 #first var
 
