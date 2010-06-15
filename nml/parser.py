@@ -1,7 +1,7 @@
 from ast import *
 from nml import generic
 from expression import *
-from actions import action1, action11
+from actions import action1, actionD, action11
 
 #operator precedence (lower in the list = higher priority)
 precedence = (
@@ -468,7 +468,7 @@ def p_sound(t):
 #
 def p_param_assignment(t):
     'param_assignment : param EQ expression SEMICOLON'
-    t[0] = ParameterAssignment(t[1].num, t[3])
+    t[0] = actionD.ParameterAssignment(t[1].num, t[3])
 
 def p_error_block(t):
     'error_block : ERROR LPAREN expression_list RPAREN SEMICOLON'

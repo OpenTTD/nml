@@ -30,22 +30,6 @@ feature_ids = {
     'FEAT_AIRPORTTILES': 0x11,
 }
 
-class ParameterAssignment(object):
-    def __init__(self, param, value):
-        self.param = param
-        self.value = value.reduce([global_constants.const_table, cargo_numbers])
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Parameter assignment'
-        self.param.debug_print(indentation + 2)
-        self.value.debug_print(indentation + 2)
-
-    def get_action_list(self):
-        return actionD.parse_actionD(self)
-
-    def __str__(self):
-        return 'param[%s] = %s;\n' % (str(self.param), str(self.value))
-
 ########### code blocks ###########
 class GRF(object):
     def __init__(self, alist):

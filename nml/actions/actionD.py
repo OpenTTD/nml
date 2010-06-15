@@ -1,6 +1,5 @@
-import nml
 from nml.expression import *
-from nml import generic
+from nml import generic, global_constants
 from action6 import *
 
 class ActionDOperator(object):
@@ -68,6 +67,22 @@ class ActionD(object):
     def skip_needed(self):
         return True
 
+class ParameterAssignment(object):
+    def __init__(self, param, value):
+        self.param = param
+        self.value = value.reduce([global_constants.const_table, cargo_numbers])
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Parameter assignment'
+        self.param.debug_print(indentation + 2)
+        self.value.debug_print(indentation + 2)
+
+    def get_action_list(self):
+        return parse_actionD(self)
+
+    def __str__(self):
+        return 'param[%s] = %s;\n' % (str(self.param), str(self.value))
+
 def convert_op_to_actiond(op):
     if op == Operator.ADD: return ActionDOperator.ADD
     if op == Operator.SUB: return ActionDOperator.SUB
@@ -81,7 +96,7 @@ def convert_op_to_actiond(op):
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
     param = free_parameters.pop()
-    actions = parse_actionD(nml.ast.ParameterAssignment(ConstantNumeric(param), expr))
+    actions = parse_actionD(ParameterAssignment(ConstantNumeric(param), expr))
     return (param, actions)
 
 def parse_actionD(assignment):
@@ -127,13 +142,13 @@ def parse_actionD(assignment):
             op = Operator.CMP_LT
 
         if op == Operator.CMP_LT:
-            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
             op = ActionDOperator.SHFTU
             expr1 = Parameter(assignment.param)
             expr2 = ConstantNumeric(-31)
 
         elif op == Operator.CMP_NEQ:
-            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
             op = ActionDOperator.DIVU
             # We rely here on the (ondocumented) behavior of both OpenTTD and TTDPatch
             # that expr/0==expr. What we do is compute A/A, which will result in 1 if
@@ -144,8 +159,8 @@ def parse_actionD(assignment):
         elif op == Operator.CMP_EQ:
             # We compute A==B by doing not(A - B) which will result in a value != 0
             # if A is equal to B
-            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
-            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, ConstantNumeric(-1), Parameter(assignment.param)))))
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, BinOp(Operator.SUB, ConstantNumeric(-1), Parameter(assignment.param)))))
             # Clamp the value to 0/1, see above for details
             op = ActionDOperator.DIVU
             expr1 = Parameter(assignment.param)
