@@ -176,38 +176,6 @@ class SwitchBody(object):
             ret += '\t%s;\n' % str(self.default)
         return ret
 
-class SwitchRange(object):
-    def __init__(self, min, max, result):
-        self.min = reduce_constant(min)
-        self.max = reduce_constant(max)
-        self.result = result
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Min:'
-        self.min.debug_print(indentation + 2)
-        print indentation*' ' + 'Max:'
-        self.max.debug_print(indentation + 2)
-        print indentation*' ' + 'Result:'
-        if isinstance(self.result, Identifier):
-            print (indentation+2)*' ' + 'Go to switch:'
-            self.result.debug_print(indentation + 4);
-        elif self.result is None:
-            print (indentation+2)*' ' + 'Return computed value'
-        else:
-            self.result.debug_print(indentation + 2)
-
-    def __str__(self):
-        ret = str(self.min)
-        if self.max.value != self.min.value:
-            ret += '..' + str(self.max)
-        if isinstance(self.result, basestring):
-            ret += ': %s;' % self.result
-        elif self.result is None:
-            ret += ': return;'
-        else:
-            ret += ': return %s;' % str(self.result)
-        return ret
-
 class DeactivateBlock(object):
     def __init__(self, grfid_list):
         self.grfid_list = [grfid.reduce() for grfid in grfid_list]

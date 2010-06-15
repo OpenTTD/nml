@@ -1,7 +1,7 @@
 from ast import *
 from nml import generic
 from expression import *
-from actions import action1, actionD, action11
+from actions import action1, action2var, actionD, action11
 
 #operator precedence (lower in the list = higher priority)
 precedence = (
@@ -292,8 +292,8 @@ def p_switch_ranges(t):
                      | switch_ranges expression COLON switch_value
                      | switch_ranges expression RANGE expression COLON switch_value'''
     if len(t) == 1: t[0] = []
-    elif len(t) == 5: t[0] = t[1] + [SwitchRange(t[2], t[2], t[4])]
-    else: t[0] = t[1] + [SwitchRange(t[2], t[4], t[6])]
+    elif len(t) == 5: t[0] = t[1] + [action2var.SwitchRange(t[2], t[2], t[4])]
+    else: t[0] = t[1] + [action2var.SwitchRange(t[2], t[4], t[6])]
 
 def p_switch_value(t):
     '''switch_value : RETURN expression SEMICOLON
