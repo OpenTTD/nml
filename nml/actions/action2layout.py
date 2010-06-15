@@ -1,7 +1,5 @@
-import nml.ast
-from nml import generic
+from nml import generic, expression
 from nml.actions import action2
-from nml.expression import *
 
 class Action2Layout(action2.Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
@@ -141,37 +139,37 @@ class Action2LayoutSprite(object):
 def set_sprite_property(sprite, name, value, spritesets):
 
     if name == 'sprite':
-        if not isinstance(value, Identifier):
+        if not isinstance(value, expression.Identifier):
             raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier")
         if value.value not in spritesets:
             raise generic.ScriptError("Unknown sprite set: " + str(value))
         sprite.set_sprite(False, spritesets[value.value])
 
     elif name == 'ttdsprite':
-        if not isinstance(value, nml.ast.ConstantNumeric):
+        if not isinstance(value, expression.ConstantNumeric):
             raise generic.ScriptError("Value of 'ttdsprite' should be a compile-time constant")
         sprite.set_sprite(True, value.value)
 
     elif name == 'recolor':
-        if isinstance(value, Identifier):
+        if isinstance(value, expression.Identifier):
             if value.value == 'TRANSPARANT':
                 sprite.set_recolor_sprite(Action2LayoutRecolorMode.TRANSPARANT, 0)
             else:
                 raise generic.ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number, encountered " + str(value))
-        elif isinstance(value, nml.ast.ConstantNumeric):
+        elif isinstance(value, expression.ConstantNumeric):
             sprite.set_recolor_sprite(Action2LayoutRecolorMode.RECOLOR, value.value)
         else:
             raise generic.ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number")
 
     elif name == 'always_draw':
-        if isinstance(value, nml.ast.ConstantNumeric):
+        if isinstance(value, expression.ConstantNumeric):
             sprite.set_draw_transparant(value.value != 0)
         else:
             raise generic.ScriptError("Value of 'always_draw' should be a compile-time constant")
 
     else:
         if sprite.is_bounding_box_param(name):
-            if isinstance(value, nml.ast.ConstantNumeric):
+            if isinstance(value, expression.ConstantNumeric):
                 sprite.set_bounding_box_param(name, value.value)
             else:
                 raise generic.ScriptError("Value of '" + name + "' should be a compile-time constant")
