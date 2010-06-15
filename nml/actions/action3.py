@@ -10,7 +10,7 @@ class Action3(object):
 
     def prepare_output(self):
         self.cid_mappings = [(cargo, action2.remove_ref(cid)) for cargo, cid in self.cid_mappings]
-        self.def_cid = action2.remove_ref(self.def_cid)
+        if self.def_cid != 0: self.def_cid = action2.remove_ref(self.def_cid)
 
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
@@ -54,8 +54,11 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
 
     act3.is_livery_override = is_livery_override
 
-    action2.add_ref(default_graphics.value)
-    act3.def_cid = default_graphics.value
+    if default_graphics is None:
+        act3.def_cid = 0
+    else:
+        action2.add_ref(default_graphics.value)
+        act3.def_cid = default_graphics.value
 
     for graphics in graphics_list:
         action2.add_ref(graphics.action2_id.value)

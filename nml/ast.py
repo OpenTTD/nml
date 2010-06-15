@@ -355,13 +355,9 @@ class LiveryOverride(object):
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
 class GraphicsBlock(object):
-    def __init__(self, default_graphics):
+    def __init__(self, graphics_list, default_graphics):
+        self.graphics_list = graphics_list
         self.default_graphics = default_graphics
-        self.graphics_list = []
-
-    def append_definition(self, graphics_assignment):
-        self.graphics_list.append(graphics_assignment)
-        return self
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics block:'

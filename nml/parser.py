@@ -229,14 +229,25 @@ def p_liveryoverride_block(t):
     t[0] = LiveryOverride(t[3], t[6])
 
 def p_graphics_list(t):
-    '''graphics_list : ID SEMICOLON
-                     | graphics_assignment graphics_list'''
-    if isinstance(t[1], Identifier): t[0] = GraphicsBlock(t[1])
-    else: t[0] = t[2].append_definition(t[1])
+    '''graphics_list : graphics_assignment_list
+                     | graphics_assignment_list ID SEMICOLON
+                     | ID SEMICOLON'''
+    if len(t) == 2:
+        t[0] = GraphicsBlock(t[1], None)
+    elif len(t) == 4:
+        t[0] = GraphicsBlock(t[1], t[2])
+    else:
+        t[0] = GraphicsBlock(None, t[1])
 
 def p_graphics_assignment(t):
     'graphics_assignment : expression COLON ID SEMICOLON'
     t[0] = GraphicsDefinition(t[1], t[3])
+
+def p_graphics_assignment_list(t):
+    '''graphics_assignment_list : graphics_assignment
+                                | graphics_assignment_list graphics_assignment'''
+    if len(t) == 2: t[0] = [t[1]]
+    else: t[0] = t[1] + [t[2]]
 
 #
 # Program flow control (if/else/while)
