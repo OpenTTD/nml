@@ -118,28 +118,62 @@ def parse_actionD(assignment):
             param1 = ConstantNumeric(0)
         param2 = ConstantNumeric(0)
     elif isinstance(assignment.value, BinOp):
-        expr = assignment.value
-        op = convert_op_to_actiond(expr.op)
+        op = assignment.value.op
+        expr1 = assignment.value.expr1
+        expr2 = assignment.value.expr2
 
-        if isinstance(expr.expr1, ConstantNumeric):
-            param1 = ConstantNumeric(0xFF)
-            data = expr.expr1
-        elif isinstance(expr.expr1, Parameter) and isinstance(expr.expr1.num, ConstantNumeric):
-            param1 = expr.expr1.num
+        if op == Operator.CMP_GT:
+            expr1, expr2 = expr2, expr1
+            op = Operator.CMP_LT
+
+        if op == Operator.CMP_LT:
+            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
+            op = ActionDOperator.SHFTU
+            expr1 = Parameter(assignment.param)
+            expr2 = ConstantNumeric(-31)
+
+        elif op == Operator.CMP_NEQ:
+            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
+            op = ActionDOperator.DIVU
+            # We rely here on the (ondocumented) behavior of both OpenTTD and TTDPatch
+            # that expr/0==expr. What we do is compute A/A, which will result in 1 if
+            # A != 0 and in 0 if A == 0
+            expr1 = Parameter(assignment.param)
+            expr2 = Parameter(assignment.param)
+
+        elif op == Operator.CMP_EQ:
+            # We compute A==B by doing not(A - B) which will result in a value != 0
+            # if A is equal to B
+            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
+            action_list.extend(parse_actionD(nml.ast.ParameterAssignment(assignment.param, BinOp(Operator.SUB, ConstantNumeric(-1), Parameter(assignment.param)))))
+            # Clamp the value to 0/1, see above for details
+            op = ActionDOperator.DIVU
+            expr1 = Parameter(assignment.param)
+            expr2 = Parameter(assignment.param)
+
         else:
-            tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr1)
+            op = convert_op_to_actiond(op)
+
+
+        if isinstance(expr1, ConstantNumeric):
+            param1 = ConstantNumeric(0xFF)
+            data = expr1
+        elif isinstance(expr1, Parameter) and isinstance(expr1.num, ConstantNumeric):
+            param1 = expr1.num
+        else:
+            tmp_param, tmp_param_actions = get_tmp_parameter(expr1)
             action_list.extend(tmp_param_actions)
             param1 = ConstantNumeric(tmp_param)
 
         # We can use the data only for one for the parameters.
         # If the first parameter uses "data" we need a temp parameter for this one
-        if isinstance(expr.expr2, ConstantNumeric) and data is None:
+        if isinstance(expr2, ConstantNumeric) and data is None:
             param2 = ConstantNumeric(0xFF)
-            data = expr.expr2
-        elif isinstance(expr.expr2, Parameter) and isinstance(expr.expr2.num, ConstantNumeric):
-            param2 = expr.expr2.num
+            data = expr2
+        elif isinstance(expr2, Parameter) and isinstance(expr2.num, ConstantNumeric):
+            param2 = expr2.num
         else:
-            tmp_param, tmp_param_actions = get_tmp_parameter(expr.expr2)
+            tmp_param, tmp_param_actions = get_tmp_parameter(expr2)
             action_list.extend(tmp_param_actions)
             param2 = ConstantNumeric(tmp_param)
 
