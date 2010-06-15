@@ -1,4 +1,3 @@
-import nml.ast
 from nml import generic
 from nml.expression import *
 from real_sprite import *
@@ -33,6 +32,39 @@ class Action1(object):
     def skip_needed(self):
         return True
 
+class SpriteSet(object):
+    def __init__(self, name, pcx, sprite_list):
+        self.name = name
+        self.pcx = pcx
+        self.sprite_list = sprite_list
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite set:', self.name.value
+        print (indentation+2)*' ' + 'Source:  ', self.pcx.value
+        print (indentation+2)*' ' + 'Sprites:'
+        for sprite in self.sprite_list:
+            sprite.debug_print(indentation + 4)
+
+class SpriteGroup(object):
+    def __init__(self, name, spriteview_list):
+        self.name = name
+        self.spriteview_list = spriteview_list
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite group:', self.name.value
+        for spriteview in self.spriteview_list:
+            spriteview.debug_print(indentation + 2)
+
+class LayoutSpriteGroup(object):
+    def __init__(self, name, layout_sprite_list):
+        self.name = name
+        self.layout_sprite_list = layout_sprite_list
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Tile layout sprite group:', self.name.value
+        for layout_sprite in self.layout_sprite_list:
+            layout_sprite.debug_print(indentation + 2)
+
 #vehicles, stations, canals, cargos, airports, railtypes, houses, industry tiles, airport tiles
 action1_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11]
 
@@ -48,7 +80,7 @@ def parse_sprite_block(sprite_block):
         raise generic.ScriptError("Sprite blocks are not supported for this feature: 0x" + generic.to_hex(sprite_block.feature.value, 2))
 
     for item in sprite_block.spriteset_list:
-        if isinstance(item, nml.ast.SpriteSet):
+        if isinstance(item, SpriteSet):
             real_sprite_list = parse_sprite_list(item.sprite_list)
             spritesets[item.name.value] = num_sets
             num_sets += 1
@@ -62,10 +94,10 @@ def parse_sprite_block(sprite_block):
             for sprite, id_dict in real_sprite_list:
                 action_list.append(parse_real_sprite(sprite, item.pcx, sprite == last_sprite, id_dict))
 
-        elif isinstance(item, nml.ast.SpriteGroup):
+        elif isinstance(item, SpriteGroup):
             action_list_append.extend(get_real_action2s(item, sprite_block.feature.value, spritesets))
         else:
-            assert isinstance(item, nml.ast.LayoutSpriteGroup)
+            assert isinstance(item, LayoutSpriteGroup)
             action_list_append.extend(get_layout_action2s(item, sprite_block.feature.value, spritesets))
 
     action_list[0] = Action1(sprite_block.feature, num_sets, num_ent)

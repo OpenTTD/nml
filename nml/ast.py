@@ -476,19 +476,6 @@ class TemplateUsage(object):
         for param in self.param_list:
             param.debug_print(indentation + 4)
 
-class SpriteSet(object):
-    def __init__(self, name, pcx, sprite_list):
-        self.name = name
-        self.pcx = pcx
-        self.sprite_list = sprite_list
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite set:', self.name.value
-        print (indentation+2)*' ' + 'Source:  ', self.pcx.value
-        print (indentation+2)*' ' + 'Sprites:'
-        for sprite in self.sprite_list:
-            sprite.debug_print(indentation + 4)
-
 class RealSprite(object):
     def __init__(self, param_list = None):
         self.param_list = param_list
@@ -498,16 +485,6 @@ class RealSprite(object):
         print indentation*' ' + 'Real sprite, parameters:'
         for param in self.param_list:
             param.debug_print(indentation + 2)
-
-class SpriteGroup(object):
-    def __init__(self, name, spriteview_list):
-        self.name = name
-        self.spriteview_list = spriteview_list
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite group:', self.name.value
-        for spriteview in self.spriteview_list:
-            spriteview.debug_print(indentation + 2)
 
 class SpriteView(object):
     def __init__(self, name, spriteset_list):
@@ -519,16 +496,6 @@ class SpriteView(object):
         print (indentation+2)*' ' + 'Sprite sets:'
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 4)
-
-class LayoutSpriteGroup(object):
-    def __init__(self, name, layout_sprite_list):
-        self.name = name
-        self.layout_sprite_list = layout_sprite_list
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Tile layout sprite group:', self.name.value
-        for layout_sprite in self.layout_sprite_list:
-            layout_sprite.debug_print(indentation + 2)
 
 class LayoutSprite(object):
     def __init__(self, type, param_list):

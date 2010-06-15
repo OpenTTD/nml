@@ -1,7 +1,7 @@
 from ast import *
 from nml import generic
 from expression import *
-from actions import action11
+from actions import action1, action11
 
 #operator precedence (lower in the list = higher priority)
 precedence = (
@@ -364,16 +364,16 @@ def p_spriteset_list(t):
 
 def p_spriteset(t):
     'spriteset : SPRITESET LPAREN ID COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
-    t[0] = SpriteSet(t[3], t[5], t[8])
+    t[0] = action1.SpriteSet(t[3], t[5], t[8])
 
 
 def p_spritegroup_normal(t):
     'spritegroup : SPRITEGROUP ID LBRACE spriteview_list RBRACE'
-    t[0] = SpriteGroup(t[2], t[4])
+    t[0] = action1.SpriteGroup(t[2], t[4])
 
 def p_spritegroup_layout(t):
     'spritegroup : SPRITEGROUP ID LBRACE layout_sprite_list RBRACE'
-    t[0] = LayoutSpriteGroup(t[2], t[4])
+    t[0] = action1.LayoutSpriteGroup(t[2], t[4])
 
 def p_spriteview_list(t):
     '''spriteview_list : ID SEMICOLON
