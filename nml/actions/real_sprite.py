@@ -1,5 +1,4 @@
-from nml import generic
-from nml.expression import *
+from nml import generic, expression
 
 class RealSprite(object):
     def __init__(self, param_list = None):
@@ -70,12 +69,12 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         # create new sprite struct, needed for template expansion
         new_sprite = RealSprite()
 
-        new_sprite.xpos  = reduce_constant(sprite.param_list[0], [id_dict])
-        new_sprite.ypos  = reduce_constant(sprite.param_list[1], [id_dict])
-        new_sprite.xsize = reduce_constant(sprite.param_list[2], [id_dict])
-        new_sprite.ysize = reduce_constant(sprite.param_list[3], [id_dict])
-        new_sprite.xrel  = reduce_constant(sprite.param_list[4], [id_dict])
-        new_sprite.yrel  = reduce_constant(sprite.param_list[5], [id_dict])
+        new_sprite.xpos  = expression.reduce_constant(sprite.param_list[0], [id_dict])
+        new_sprite.ypos  = expression.reduce_constant(sprite.param_list[1], [id_dict])
+        new_sprite.xsize = expression.reduce_constant(sprite.param_list[2], [id_dict])
+        new_sprite.ysize = expression.reduce_constant(sprite.param_list[3], [id_dict])
+        new_sprite.xrel  = expression.reduce_constant(sprite.param_list[4], [id_dict])
+        new_sprite.yrel  = expression.reduce_constant(sprite.param_list[5], [id_dict])
 
         generic.check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'")
         generic.check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'")
@@ -85,10 +84,10 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'")
 
         if len(sprite.param_list) == 7:
-            new_sprite.compression = reduce_constant(sprite.param_list[6], [real_sprite_compression_flags, id_dict])
+            new_sprite.compression = expression.reduce_constant(sprite.param_list[6], [real_sprite_compression_flags, id_dict])
             new_sprite.compression.value |= 0x01
         else:
-            new_sprite.compression = ConstantNumeric(0x01)
+            new_sprite.compression = expression.ConstantNumeric(0x01)
         # only bits 0, 1, 3, and 6 can be set
         if (new_sprite.compression.value & ~0x4B) != 0:
             raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value))
@@ -115,7 +114,7 @@ def parse_sprite_list(sprite_list):
             param_dict = {}
             try:
                 for i, param in enumerate(sprite.param_list):
-                    param = reduce_constant(param, [real_sprite_compression_flags])
+                    param = expression.reduce_constant(param, [real_sprite_compression_flags])
                     param_dict[template.param_list[i].value] = param.value
             except generic.ConstError:
                 raise generic.ScriptError("Template parameters should be compile-time constants")

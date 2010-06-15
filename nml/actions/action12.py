@@ -1,5 +1,5 @@
-from nml import generic
-from real_sprite import *
+from nml import generic, expression
+from nml.actions import real_sprite
 
 class Action12(object):
 
@@ -43,8 +43,8 @@ def parse_action12(font_glpyhs):
     action_list = []
 
     try:
-        font_size = reduce_constant(font_glpyhs.font_size, [font_sizes])
-        base_char = reduce_constant(font_glpyhs.base_char)
+        font_size = expression.reduce_constant(font_glpyhs.font_size, [font_sizes])
+        base_char = expression.reduce_constant(font_glpyhs.base_char)
     except generic.ConstError:
         raise generic.ScriptError("Parameters of font_glpyh have to be compile-time constants")
     if font_size.value not in font_sizes.values():
@@ -52,7 +52,7 @@ def parse_action12(font_glpyhs):
     if not (0 <= base_char.value <= 0xFFFF):
         raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF")
 
-    real_sprite_list = parse_sprite_list(font_glpyhs.sprite_list)
+    real_sprite_list = real_sprite.parse_sprite_list(font_glpyhs.sprite_list)
     num_sprites = len(real_sprite_list);
     char = base_char.value
     last_char = char + num_sprites
@@ -73,6 +73,6 @@ def parse_action12(font_glpyhs):
 
     last_sprite = real_sprite_list[num_sprites - 1][0]
     for sprite, id_dict in real_sprite_list:
-        action_list.append(parse_real_sprite(sprite, font_glpyhs.pcx, sprite == last_sprite, id_dict))
+        action_list.append(real_sprite.parse_real_sprite(sprite, font_glpyhs.pcx, sprite == last_sprite, id_dict))
 
     return action_list

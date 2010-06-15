@@ -1,5 +1,5 @@
-from nml import generic
-from real_sprite import *
+from nml import generic, expression
+from nml.actions import real_sprite
 import warnings
 
 class Action5(object):
@@ -73,17 +73,17 @@ action5_table = {
 def parse_action5(replaces):
     action_list = []
 
-    real_sprite_list = parse_sprite_list(replaces.sprite_list)
+    real_sprite_list = real_sprite.parse_sprite_list(replaces.sprite_list)
     num_sprites = len(real_sprite_list)
 
-    if not isinstance(replaces.type, Identifier):
+    if not isinstance(replaces.type, expression.Identifier):
         raise generic.ScriptError("replacenew parameter 'type' must be an identifier of a sprite replacement type")
     if replaces.type.value not in action5_table:
         raise generic.ScriptError(replaces.type.value + " is not a valid sprite replacement type")
     type_id, num_required, block_type = action5_table[replaces.type.value]
 
     try:
-        offset = reduce_constant(replaces.offset).value
+        offset = expression.reduce_constant(replaces.offset).value
     except generic.ConstError:
         raise generic.ScriptError("replacenew parameter 'offset' must be a compile-time constant")
     generic.check_range(offset, 0, 0xFFFF, "replacenew parameter 'offset'")
@@ -108,6 +108,6 @@ def parse_action5(replaces):
 
     last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
     for sprite, id_dict in real_sprite_list:
-        action_list.append(parse_real_sprite(sprite, replaces.pcx, sprite == last_sprite, id_dict))
+        action_list.append(real_sprite.parse_real_sprite(sprite, replaces.pcx, sprite == last_sprite, id_dict))
 
     return action_list

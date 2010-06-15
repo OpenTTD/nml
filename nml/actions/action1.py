@@ -1,8 +1,5 @@
 from nml import generic
-from nml.expression import *
-from real_sprite import *
-from action2real import *
-from action2layout import *
+from nml.actions import action2real, action2layout, real_sprite
 
 class Action1(object):
     def __init__(self, feature, num_sets, num_ent):
@@ -81,7 +78,7 @@ def parse_sprite_block(sprite_block):
 
     for item in sprite_block.spriteset_list:
         if isinstance(item, SpriteSet):
-            real_sprite_list = parse_sprite_list(item.sprite_list)
+            real_sprite_list = real_sprite.parse_sprite_list(item.sprite_list)
             spritesets[item.name.value] = num_sets
             num_sets += 1
 
@@ -92,13 +89,13 @@ def parse_sprite_block(sprite_block):
 
             last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
             for sprite, id_dict in real_sprite_list:
-                action_list.append(parse_real_sprite(sprite, item.pcx, sprite == last_sprite, id_dict))
+                action_list.append(real_sprite.parse_real_sprite(sprite, item.pcx, sprite == last_sprite, id_dict))
 
         elif isinstance(item, SpriteGroup):
-            action_list_append.extend(get_real_action2s(item, sprite_block.feature.value, spritesets))
+            action_list_append.extend(action2real.get_real_action2s(item, sprite_block.feature.value, spritesets))
         else:
             assert isinstance(item, LayoutSpriteGroup)
-            action_list_append.extend(get_layout_action2s(item, sprite_block.feature.value, spritesets))
+            action_list_append.extend(action2layout.get_layout_action2s(item, sprite_block.feature.value, spritesets))
 
     action_list[0] = Action1(sprite_block.feature, num_sets, num_ent)
     action_list.extend(action_list_append)
