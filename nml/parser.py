@@ -235,7 +235,7 @@ def p_graphics_list(t):
     else: t[0] = t[2].append_definition(t[1])
 
 def p_graphics_assignment(t):
-    'graphics_assignment : ID COLON ID SEMICOLON'
+    'graphics_assignment : expression COLON ID SEMICOLON'
     t[0] = GraphicsDefinition(t[1], t[3])
 
 #
