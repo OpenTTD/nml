@@ -1,6 +1,7 @@
 from nml.expression import *
 from nml.actions import action2, actionD
 from action6 import *
+from nml.generic import ScriptError
 
 class Action3(object):
     def __init__(self, feature, id):
@@ -60,12 +61,35 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         action2.add_ref(default_graphics.value)
         act3.def_cid = default_graphics.value
 
+    if len(graphics_list) != 0 and feature not in [0, 1, 2, 3, 4, 0x10]:
+        raise ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations and railtypes")
+
     for graphics in graphics_list:
         action2.add_ref(graphics.action2_id.value)
-        cargo_id = reduce_constant(graphics.cargo_id, [cargo_numbers])
+        cargo_id = reduce_constant(graphics.cargo_id, get_cargo_id_list(feature))
         act3.cid_mappings.append( (cargo_id, graphics.action2_id.value) )
 
     if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(act3)
 
     return action_list
+
+railtype_sprites = {
+    'GUI'             : 0x00,
+    'TRACKOVERLAY'    : 0x01,
+    'UNDERLAY'        : 0x02,
+    'TUNNELS'         : 0x03,
+    'CATENARY_WIRE'   : 0x04, 
+    'CATENARY_PYLONS' : 0x05,
+    'BRIDGE_SURFACES' : 0x06,
+    'LEVEL_CROSSINGS' : 0x07,
+    'DEPOTS'          : 0x08,
+    'FENCES'          : 0x09,
+}
+
+def get_cargo_id_list(feature):
+    if feature >= 0 and feature <= 4:
+        return [cargo_numbers]
+    if feature == 0x10:
+        return [railtype_sprites]
+    return []
