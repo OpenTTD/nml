@@ -417,27 +417,6 @@ class TemplateDeclaration(object):
     def get_action_list(self):
         return []
 
-class TemplateUsage(object):
-    def __init__(self, name, param_list):
-        self.name = name
-        self.param_list = param_list
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Template used:', self.name.value
-        print (indentation+2)*' ' + 'Parameters:'
-        for param in self.param_list:
-            param.debug_print(indentation + 4)
-
-class RealSprite(object):
-    def __init__(self, param_list = None):
-        self.param_list = param_list
-        self.is_empty = False
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Real sprite, parameters:'
-        for param in self.param_list:
-            param.debug_print(indentation + 2)
-
 class SpriteView(object):
     def __init__(self, name, spriteset_list):
         self.name = name

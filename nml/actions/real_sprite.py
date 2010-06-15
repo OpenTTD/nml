@@ -1,6 +1,15 @@
-import nml.ast
 from nml import generic
 from nml.expression import *
+
+class RealSprite(object):
+    def __init__(self, param_list = None):
+        self.param_list = param_list
+        self.is_empty = False
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Real sprite, parameters:'
+        for param in self.param_list:
+            param.debug_print(indentation + 2)
 
 class RealSpriteAction(object):
     def __init__(self, sprite, pcx, last = False):
@@ -30,6 +39,17 @@ class RealSpriteAction(object):
     def skip_needed(self):
         return True
 
+class TemplateUsage(object):
+    def __init__(self, name, param_list):
+        self.name = name
+        self.param_list = param_list
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Template used:', self.name.value
+        print (indentation+2)*' ' + 'Parameters:'
+        for param in self.param_list:
+            param.debug_print(indentation + 4)
+
 real_sprite_compression_flags = {
     'NORMAL'       : 0x00,
     'TILE'         : 0x08,
@@ -48,7 +68,7 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
     try:
         # create new sprite struct, needed for template expansion
-        new_sprite = nml.ast.RealSprite()
+        new_sprite = RealSprite()
 
         new_sprite.xpos  = reduce_constant(sprite.param_list[0], [id_dict])
         new_sprite.ypos  = reduce_constant(sprite.param_list[1], [id_dict])
@@ -82,11 +102,11 @@ sprite_template_map = {}
 def parse_sprite_list(sprite_list):
     real_sprite_list = []
     for sprite in sprite_list:
-        if isinstance(sprite, nml.ast.RealSprite):
+        if isinstance(sprite, RealSprite):
             real_sprite_list.append((sprite, {}))
         else:
             #expand template
-            assert isinstance(sprite, nml.ast.TemplateUsage)
+            assert isinstance(sprite, TemplateUsage)
             if sprite.name.value not in sprite_template_map:
                 raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
             template = sprite_template_map[sprite.name.value]

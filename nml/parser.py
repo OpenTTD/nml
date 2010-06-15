@@ -1,7 +1,7 @@
 from ast import *
 from nml import generic
 from expression import *
-from actions import action1, action2var, actionD, action11
+from actions import action1, action2var, actionD, action11, real_sprite
 
 #operator precedence (lower in the list = higher priority)
 precedence = (
@@ -309,7 +309,7 @@ def p_switch_value(t):
 #
 def p_real_sprite(t):
     'real_sprite : LBRACKET expression_list RBRACKET'
-    t[0] = RealSprite(t[2])
+    t[0] = real_sprite.RealSprite(t[2])
 
 def p_real_sprite_list(t):
     '''real_sprite_list : real_sprite
@@ -323,7 +323,7 @@ def p_template_declaration(t):
 
 def p_template_usage(t):
     'template_usage : ID LPAREN expression_list RPAREN'
-    t[0] = TemplateUsage(t[1], t[3])
+    t[0] = real_sprite.TemplateUsage(t[1], t[3])
 
 def p_spriteset_contents(t):
     '''spriteset_contents : real_sprite
