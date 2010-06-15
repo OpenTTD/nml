@@ -237,7 +237,7 @@ def p_graphics_list(t):
     elif len(t) == 4:
         t[0] = GraphicsBlock(t[1], t[2])
     else:
-        t[0] = GraphicsBlock(None, t[1])
+        t[0] = GraphicsBlock([], t[1])
 
 def p_graphics_assignment(t):
     'graphics_assignment : expression COLON ID SEMICOLON'
