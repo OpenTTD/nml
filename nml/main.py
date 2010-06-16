@@ -1,29 +1,11 @@
 import sys, os, codecs, optparse
-from parser import *
-from tokens import NMLLexer
-from nml import generic, grfstrings
+from nml import ast, generic, grfstrings, parser
 from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
 from nml.actions import action2var, action8
 from actions.action11 import LoadBinaryFile
 from output_nfo import OutputNFO
 
-# Build the lexer
-lexer = NMLLexer()
-lexer.build()
-
-# provide yacc with the tokens
-tokens = lexer.tokens
-
-def p_error(p):
-    if p is None: print "Unexpected EOF"
-    else:
-        print p
-        print "Syntax error at '%s', line %d" % (p.value, p.lineno)
-    sys.exit(2)
-
-import ply.yacc as yacc
-parser = yacc.yacc(debug=False)
 
 OutputGRF = None
 def get_output_grf():
@@ -114,15 +96,16 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
     if script == "":
         print "Empty input file"
         return 4
+    nml_parser = parser.NMLParser()
     try:
-        result = parser.parse(script, lexer=lexer.lexer)
+        result = nml_parser.parse(script)
     except:
         print "Error while parsing input file"
         raise
         return 8
 
     if output_debug > 0:
-        print_script(result, 0)
+        ast.print_script(result, 0)
 
     if nml_output is not None:
         for b in result:
