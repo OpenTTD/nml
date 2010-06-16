@@ -69,12 +69,12 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         # create new sprite struct, needed for template expansion
         new_sprite = RealSprite()
 
-        new_sprite.xpos  = expression.reduce_constant(sprite.param_list[0], [id_dict])
-        new_sprite.ypos  = expression.reduce_constant(sprite.param_list[1], [id_dict])
-        new_sprite.xsize = expression.reduce_constant(sprite.param_list[2], [id_dict])
-        new_sprite.ysize = expression.reduce_constant(sprite.param_list[3], [id_dict])
-        new_sprite.xrel  = expression.reduce_constant(sprite.param_list[4], [id_dict])
-        new_sprite.yrel  = expression.reduce_constant(sprite.param_list[5], [id_dict])
+        new_sprite.xpos  = sprite.param_list[0].reduce_constant([id_dict])
+        new_sprite.ypos  = sprite.param_list[1].reduce_constant([id_dict])
+        new_sprite.xsize = sprite.param_list[2].reduce_constant([id_dict])
+        new_sprite.ysize = sprite.param_list[3].reduce_constant([id_dict])
+        new_sprite.xrel  = sprite.param_list[4].reduce_constant([id_dict])
+        new_sprite.yrel  = sprite.param_list[5].reduce_constant([id_dict])
 
         generic.check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'")
         generic.check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'")
@@ -84,7 +84,7 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'")
 
         if len(sprite.param_list) == 7:
-            new_sprite.compression = expression.reduce_constant(sprite.param_list[6], [real_sprite_compression_flags, id_dict])
+            new_sprite.compression = sprite.param_list[6].reduce_constant([real_sprite_compression_flags, id_dict])
             new_sprite.compression.value |= 0x01
         else:
             new_sprite.compression = expression.ConstantNumeric(0x01)
@@ -114,7 +114,7 @@ def parse_sprite_list(sprite_list):
             param_dict = {}
             try:
                 for i, param in enumerate(sprite.param_list):
-                    param = expression.reduce_constant(param, [real_sprite_compression_flags])
+                    param = param.reduce_constant([real_sprite_compression_flags])
                     param_dict[template.param_list[i].value] = param.value
             except generic.ConstError:
                 raise generic.ScriptError("Template parameters should be compile-time constants")

@@ -128,7 +128,7 @@ class Loop(object):
 
 class Switch(object):
     def __init__(self, feature, var_range, name, expr, body):
-        self.feature = reduce_constant(feature, [feature_ids])
+        self.feature = feature.reduce_constant([feature_ids])
         self.var_range = var_range
         self.name = name
         self.expr = expr
@@ -209,13 +209,13 @@ item_id = None
 class Item(object):
     def __init__(self, feature, body, name = None, id = None):
         global item_names
-        self.feature = reduce_constant(feature, [feature_ids])
+        self.feature = feature.reduce_constant([feature_ids])
         self.body = body
         self.name = name
         if name is not None and name.value in item_names:
             self.id = ConstantNumeric(item_names[name.value])
         elif id is None: self.id = ConstantNumeric(action0.get_free_id(self.feature.value))
-        else: self.id = reduce_constant(id)
+        else: self.id = id.reduce_constant()
         if name is not None:
             item_names[name.value] = self.id.value
         validate_item_block(body)
@@ -303,7 +303,7 @@ class LiveryOverride(object):
 
     def get_action_list(self):
         global item_feature, item_names
-        wagon_id = reduce_constant(self.wagon_id, [item_names])
+        wagon_id = self.wagon_id.reduce_constant([item_names])
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
 class GraphicsBlock(object):
@@ -333,7 +333,7 @@ class GraphicsDefinition(object):
 
 class ReplaceSprite(object):
     def __init__(self, start_id, pcx, sprite_list):
-        self.start_id = reduce_constant(start_id)
+        self.start_id = start_id.reduce_constant()
         self.pcx = pcx
         self.sprite_list = sprite_list
 
@@ -385,7 +385,7 @@ class FontGlyphBlock(object):
 
 class SpriteBlock(object):
     def __init__(self, feature, spriteset_list):
-        self.feature = reduce_constant(feature, [feature_ids])
+        self.feature = feature.reduce_constant([feature_ids])
         self.spriteset_list = spriteset_list
 
     def debug_print(self, indentation):
@@ -498,7 +498,7 @@ class TownNames(object):
         # 'name' is actually a number.
         # Allocate it now, before the self.prepare_output() call (to prevent names to grab it).
         if self.name is not None and not isinstance(self.name, Identifier):
-            value = reduce_constant(self.name)
+            value = self.name.reduce_constant()
             if not isinstance(value, ConstantNumeric):
                 raise generic.ScriptError("ID should be an integer number.")
 
@@ -688,13 +688,13 @@ class TownNamesEntryDefinition(object):
         self.def_number = def_number
         self.number = None
         if not isinstance(self.def_number, Identifier):
-            self.def_number = reduce_constant(self.def_number)
+            self.def_number = self.def_number.reduce_constant()
             if not isinstance(self.def_number, ConstantNumeric):
                 raise generic.ScriptError("Reference to other town name ID should be an integer number.")
             if self.def_number.value < 0 or self.def_number.value > 0x7f:
                 raise generic.ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).")
 
-        self.probability = reduce_constant(probability)
+        self.probability = probability.reduce_constant()
         if not isinstance(self.probability, ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.")
         if self.probability.value < 0 or self.probability.value > 0x7f:
@@ -740,7 +740,7 @@ class TownNamesEntryText(object):
         if not isinstance(self.text, StringLiteral):
             raise generic.ScriptError("Expected string literal for the name.")
 
-        self.probability = reduce_constant(probability)
+        self.probability = probability.reduce_constant()
         if not isinstance(self.probability, ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.")
         if self.probability.value < 0 or self.probability.value > 0x7f:

@@ -80,12 +80,12 @@ class ImportSound(object):
     @type number: C{int}
     """
     def __init__(self, grfid, number):
-        grfid = expression.reduce_constant(grfid)
+        grfid = grfid.reduce_constant()
         if not isinstance(grfid, expression.ConstantNumeric):
             raise generic.ScriptError("grf id of the imported sound is not a number.")
         self.grfid = grfid.value
 
-        number = expression.reduce_constant(number)
+        number = number.reduce_constant()
         if not isinstance(number, expression.ConstantNumeric):
             raise generic.ScriptError("sound number of the imported sound is not a number.")
         self.number = number.value

@@ -191,8 +191,8 @@ class Modification(object):
 
 class SwitchRange(object):
     def __init__(self, min, max, result):
-        self.min = reduce_constant(min)
-        self.max = reduce_constant(max)
+        self.min = min.reduce_constant()
+        self.max = max.reduce_constant()
         self.result = result
 
     def debug_print(self, indentation):

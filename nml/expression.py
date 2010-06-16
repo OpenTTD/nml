@@ -51,7 +51,11 @@ def get_operator_string(op, param1, param2):
     return operator_to_string[op] % (param1, param2)
 
 class Expression(object):
-    pass
+    def reduce_constant(self, id_dicts = []):
+        expr = self.reduce(id_dicts)
+        if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
+            raise generic.ConstError()
+        return expr
 
 class ConstantNumeric(Expression):
     def __init__(self, value):
@@ -360,9 +364,9 @@ def builtin_date(name, args):
     if len(args) != 3:
         raise generic.ScriptError("date() requires exactly 3 arguments")
     try:
-        year = reduce_constant(args[0]).value
-        month = reduce_constant(args[1]).value
-        day = reduce_constant(args[2]).value
+        year = args[0].reduce_constant().value
+        month = args[1].reduce_constant().value
+        day = args[2].reduce_constant().value
     except generic.ConstError:
         raise generic.ScriptError("Parameters of date() should be compile-time constants")
     date = datetime.date(year, month, day)
@@ -423,9 +427,3 @@ commutative_operators = set([
     Operator.MIN,
     Operator.MAX,
 ])
-
-def reduce_constant(expr, id_dicts = []):
-    expr = expr.reduce(id_dicts)
-    if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
-        raise generic.ConstError()
-    return expr

@@ -66,7 +66,7 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
 
     for graphics in graphics_list:
         action2.add_ref(graphics.action2_id.value)
-        cargo_id = reduce_constant(graphics.cargo_id, get_cargo_id_list(feature))
+        cargo_id = graphics.cargo_id.reduce_constant(get_cargo_id_list(feature))
         act3.cid_mappings.append( (cargo_id, graphics.action2_id.value) )
 
     if len(act6.modifications) > 0: action_list.append(act6)

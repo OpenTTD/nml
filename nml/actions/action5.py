@@ -83,7 +83,7 @@ def parse_action5(replaces):
     type_id, num_required, block_type = action5_table[replaces.type.value]
 
     try:
-        offset = expression.reduce_constant(replaces.offset).value
+        offset = replaces.offset.reduce_constant().value
     except generic.ConstError:
         raise generic.ScriptError("replacenew parameter 'offset' must be a compile-time constant")
     generic.check_range(offset, 0, 0xFFFF, "replacenew parameter 'offset'")
