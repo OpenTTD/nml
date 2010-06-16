@@ -61,7 +61,6 @@ tokens = list(reserved.values()) + [
     'COMP_LT',
     'COMP_GT',
     'COMMA',
-    'DOT',
     'RANGE',
     'LBRACKET',
     'RBRACKET',
@@ -99,7 +98,6 @@ class NMLLexer(object):
     t_COMP_LT          = r'<'
     t_COMP_GT          = r'>'
     t_COMMA            = r','
-    t_DOT              = r'\.'
     t_RANGE            = r'\.\.'
     t_LBRACKET         = r'\['
     t_RBRACKET         = r'\]'
