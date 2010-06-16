@@ -54,7 +54,7 @@ def parse_conditional(expr):
     else:
         return actionD.get_tmp_parameter(expr)
 
-def cond_skip_actions(action_list, param):
+def cond_skip_actions(action_list, param, condtype, value):
     actions = []
     start, length = 0, 0
     allow7, allow9 = True, True
@@ -81,7 +81,7 @@ def cond_skip_actions(action_list, param):
         else:
             target = free_labels.pop()
             label = action10.Action10(target)
-        actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
+        actions.append(SkipAction(feature, param, 4, condtype, value, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
         start = i + 1
@@ -96,7 +96,7 @@ def cond_skip_actions(action_list, param):
         else:
             target = free_labels.pop()
             label = action10.Action10(target)
-        actions.append(SkipAction(feature, param, 4, (2, r'\7='), 0, target))
+        actions.append(SkipAction(feature, param, 4, condtype, value, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
     return actions
@@ -144,12 +144,12 @@ def parse_conditional_block(cond):
         param = block['param_dst']
         if i == 0: action_list.extend(block['cond_actions'])
         else:
-            action_list.extend(cond_skip_actions(block['cond_actions'], param_skip_all))
+            action_list.extend(cond_skip_actions(block['cond_actions'], param_skip_all, (2, r'\7='), 0))
             if param is None:
                 param = param_skip_all
             else:
                 action_list.append(actionD.ActionD(ConstantNumeric(block['param_dst']), ConstantNumeric(block['param_dst']), actionD.ActionDOperator.AND, ConstantNumeric(param_skip_all)))
-        action_list.extend(cond_skip_actions(block['action_list'], param))
+        action_list.extend(cond_skip_actions(block['action_list'], param, (2, r'\7='), 0))
 
     free_labels.extend([item for item in free_labels_backup if not item in free_labels])
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
@@ -169,7 +169,7 @@ def parse_loop_block(loop):
 
     action_list.extend(cond_actions)
     block_actions.append(UnconditionalSkipAction(9, begin_label))
-    action_list.extend(cond_skip_actions(block_actions, cond_param))
+    action_list.extend(cond_skip_actions(block_actions, cond_param, (2, r'\7='), 0))
 
     free_labels.extend([item for item in free_labels_backup if not item in free_labels])
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
