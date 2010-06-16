@@ -313,6 +313,7 @@ class Identifier(Expression):
             if self.value in id_d:
                 return func(id_d[self.value])
         if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered")
+        return self
 
 class StringLiteral(Expression):
     def __init__(self, value):
