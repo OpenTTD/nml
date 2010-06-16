@@ -165,7 +165,7 @@ class TernaryOp(Expression):
         self.expr2.debug_print(indentation + 2)
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        guard = self.guard.reduce(self.guard)
+        guard = self.guard.reduce(id_dicts)
         expr1 = self.expr1.reduce(id_dicts)
         expr2 = self.expr2.reduce(id_dicts)
         if isinstance(guard, ConstantNumeric):
