@@ -95,7 +95,7 @@ def convert_op_to_actiond(op):
 
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
-    param = free_parameters.pop()
+    param = action6.free_parameters.pop()
     actions = parse_actionD(ParameterAssignment(expression.ConstantNumeric(param), expr))
     return (param, actions)
 
@@ -106,8 +106,7 @@ def parse_actionD(assignment):
         actions.extend(cond_block.get_action_list())
         return actions
 
-    global free_parameters
-    free_parameters_backup = free_parameters[:]
+    free_parameters_backup = action6.free_parameters[:]
     action_list = []
     act6 = action6.Action6()
     target = assignment.param
@@ -203,5 +202,5 @@ def parse_actionD(assignment):
     if len(act6.modifications) > 0: action_list.append(act6)
 
     action_list.append(ActionD(target, param1, op, param2, data))
-    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
+    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
     return action_list
