@@ -1,7 +1,5 @@
-from nml.expression import *
-from nml.actions import action2, actionD
-from action6 import *
-from nml.generic import ScriptError
+from nml.actions import action2, action6, actionD
+from nml import generic, expression
 
 class Action3(object):
     def __init__(self, feature, id):
@@ -42,8 +40,8 @@ class Action3(object):
 
 def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
     action_list = []
-    act6 = Action6()
-    if isinstance(id, ConstantNumeric):
+    act6 = action6.Action6()
+    if isinstance(id, expression.ConstantNumeric):
         act3 = Action3(feature, id.value)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
@@ -62,7 +60,7 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         act3.def_cid = default_graphics.value
 
     if len(graphics_list) != 0 and feature not in [0, 1, 2, 3, 4, 0x10]:
-        raise ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations and railtypes")
+        raise generic.ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations and railtypes")
 
     for graphics in graphics_list:
         action2.add_ref(graphics.action2_id.value)
@@ -89,7 +87,7 @@ railtype_sprites = {
 
 def get_cargo_id_list(feature):
     if feature >= 0 and feature <= 4:
-        return [cargo_numbers]
+        return [expression.cargo_numbers]
     if feature == 0x10:
         return [railtype_sprites]
     return []
