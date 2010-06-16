@@ -1,6 +1,4 @@
-from ast import *
-from nml import generic
-from expression import *
+from nml import generic, ast, expression
 from actions import action1, action2var, actionD, action11, real_sprite
 
 #operator precedence (lower in the list = higher priority)
@@ -62,11 +60,11 @@ def p_skipable_block(t):
 #
 def p_const_expression(t):
     'expression : NUMBER'
-    t[0] = ConstantNumeric(t[1])
+    t[0] = expression.ConstantNumeric(t[1])
 
 def p_expression_float(t):
     'expression : FLOAT'
-    t[0] = ConstantFloat(t[1])
+    t[0] = expression.ConstantFloat(t[1])
 
 def p_param_expression(t):
     'expression : param'
@@ -86,23 +84,23 @@ def p_parenthesed_expression(t):
 
 def p_parameter(t):
     'param : PARAMETER LBRACKET expression RBRACKET'
-    t[0] = Parameter(t[3])
+    t[0] = expression.Parameter(t[3])
 
 code_to_op = {
-    '+' : Operator.ADD,
-    '-' : Operator.SUB,
-    '*' : Operator.MUL,
-    '/' : Operator.DIV,
-    '%' : Operator.MOD,
-    '&' : Operator.AND,
-    '|' : Operator.OR,
-    '^' : Operator.XOR,
-    '==' : Operator.CMP_EQ,
-    '!=' : Operator.CMP_NEQ,
-    '<' : Operator.CMP_LT,
-    '>' : Operator.CMP_GT,
-    '<<' : Operator.SHIFT_LEFT,
-    '>>' : Operator.SHIFT_RIGHT,
+    '+'  : expression.Operator.ADD,
+    '-'  : expression.Operator.SUB,
+    '*'  : expression.Operator.MUL,
+    '/'  : expression.Operator.DIV,
+    '%'  : expression.Operator.MOD,
+    '&'  : expression.Operator.AND,
+    '|'  : expression.Operator.OR,
+    '^'  : expression.Operator.XOR,
+    '==' : expression.Operator.CMP_EQ,
+    '!=' : expression.Operator.CMP_NEQ,
+    '<'  : expression.Operator.CMP_LT,
+    '>'  : expression.Operator.CMP_GT,
+    '<<' : expression.Operator.SHIFT_LEFT,
+    '>>' : expression.Operator.SHIFT_RIGHT,
 }
 
 def p_binop_plus(t):
@@ -120,23 +118,23 @@ def p_binop_plus(t):
                   | expression COMP_NEQ expression
                   | expression COMP_LT expression
                   | expression COMP_GT expression'''
-    t[0] = BinOp(code_to_op[t[2]], t[1], t[3]);
+    t[0] = expression.BinOp(code_to_op[t[2]], t[1], t[3]);
 
 def p_ternary_op(t):
     'expression : expression TERNARY_OPEN expression COLON expression'
-    t[0] = TernaryOp(t[1], t[3], t[5])
+    t[0] = expression.TernaryOp(t[1], t[3], t[5])
 
 def p_unary_minus(t):
     'expression : MINUS expression'
-    t[0] = BinOp(code_to_op[t[1]], ConstantNumeric(0), t[2])
+    t[0] = expression.BinOp(code_to_op[t[1]], expression.ConstantNumeric(0), t[2])
 
 def p_variable(t):
     'variable : VARIABLE LBRACKET expression_list RBRACKET'
-    t[0] = Variable(*t[3])
+    t[0] = expression.Variable(*t[3])
 
 def p_function(t):
     'expression : ID LPAREN expression_list RPAREN'
-    t[0] = FunctionCall(t[1], t[3])
+    t[0] = expression.FunctionCall(t[1], t[3])
 
 def p_array(t):
     'array : LBRACKET expression_list RBRACKET'
@@ -158,11 +156,11 @@ def p_assignment_list(t):
 def p_assignment(t):
     '''assignment : ID COLON string SEMICOLON
                   | ID COLON expression SEMICOLON'''
-    t[0] = Assignment(t[1], t[3])
+    t[0] = expression.Assignment(t[1], t[3])
 
 def p_string(t):
     'string : STRING LPAREN expression_list RPAREN'
-    t[0] = String(t[3][0], t[3][1:])
+    t[0] = expression.String(t[3][0], t[3][1:])
 
 def p_non_empty_expression_list(t):
     '''non_empty_expression_list : expression
@@ -197,13 +195,13 @@ def p_item(t):
     '''item : ITEM LPAREN expression RPAREN LBRACE skipable_script RBRACE
             | ITEM LPAREN expression COMMA ID RPAREN LBRACE skipable_script RBRACE
             | ITEM LPAREN expression COMMA ID COMMA expression RPAREN LBRACE skipable_script RBRACE'''
-    if len(t) == 8: t[0] = Item(t[3], t[6])
-    elif len(t) == 10: t[0] = Item(t[3], t[8], t[5])
-    else: t[0] = Item(t[3], t[10], t[5], t[7])
+    if len(t) == 8: t[0] = ast.Item(t[3], t[6])
+    elif len(t) == 10: t[0] = ast.Item(t[3], t[8], t[5])
+    else: t[0] = ast.Item(t[3], t[10], t[5], t[7])
 
 def p_property_block(t):
     'property_block : PROPERTY LBRACE property_list RBRACE'
-    t[0] = PropertyBlock(t[3])
+    t[0] = ast.PropertyBlock(t[3])
 
 def p_property_list(t):
     '''property_list : property_assignment
@@ -220,9 +218,9 @@ def p_property_assignment(t):
                            | NUMBER COLON expression UNIT SEMICOLON
                            | NUMBER COLON string SEMICOLON
                            | NUMBER COLON array SEMICOLON'''
-    val = Array(t[3]) if isinstance(t[3], list) else t[3]
-    unit = None if len(t) == 5 else Unit(t[4])
-    t[0] = Property(t[1], val, unit)
+    val = expression.Array(t[3]) if isinstance(t[3], list) else t[3]
+    unit = None if len(t) == 5 else ast.Unit(t[4])
+    t[0] = ast.Property(t[1], val, unit)
 
 def p_graphics_block(t):
     'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
@@ -230,22 +228,22 @@ def p_graphics_block(t):
 
 def p_liveryoverride_block(t):
     'liveryoverride_block : LIVERYOVERRIDE LPAREN expression RPAREN LBRACE graphics_list RBRACE'
-    t[0] = LiveryOverride(t[3], t[6])
+    t[0] = ast.LiveryOverride(t[3], t[6])
 
 def p_graphics_list(t):
     '''graphics_list : graphics_assignment_list
                      | graphics_assignment_list ID SEMICOLON
                      | ID SEMICOLON'''
     if len(t) == 2:
-        t[0] = GraphicsBlock(t[1], None)
+        t[0] = ast.GraphicsBlock(t[1], None)
     elif len(t) == 4:
-        t[0] = GraphicsBlock(t[1], t[2])
+        t[0] = ast.GraphicsBlock(t[1], t[2])
     else:
-        t[0] = GraphicsBlock([], t[1])
+        t[0] = ast.GraphicsBlock([], t[1])
 
 def p_graphics_assignment(t):
     'graphics_assignment : expression COLON ID SEMICOLON'
-    t[0] = GraphicsDefinition(t[1], t[3])
+    t[0] = ast.GraphicsDefinition(t[1], t[3])
 
 def p_graphics_assignment_list(t):
     '''graphics_assignment_list : graphics_assignment
@@ -260,7 +258,7 @@ def p_conditional(t):
     '''conditional : if_else_parts
                    | if_else_parts ELSE LBRACE skipable_script RBRACE'''
     if len(t) > 2:
-        parts = t[1] + [Conditional(None, t[4], None)]
+        parts = t[1] + [ast.Conditional(None, t[4], None)]
     else:
         parts = t[1]
 
@@ -273,23 +271,23 @@ def p_conditional(t):
 def p_if_else_parts(t):
     '''if_else_parts : IF LPAREN expression RPAREN LBRACE skipable_script RBRACE
                      | if_else_parts ELSE IF LPAREN expression RPAREN LBRACE skipable_script RBRACE'''
-    if len(t) == 8: t[0] = [Conditional(t[3], t[6], None)]
-    else: t[0] = t[1] + [Conditional(t[5], t[8], None)]
+    if len(t) == 8: t[0] = [ast.Conditional(t[3], t[6], None)]
+    else: t[0] = t[1] + [ast.Conditional(t[5], t[8], None)]
 
 def p_loop(t):
     'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'
-    t[0] = Loop(t[3], t[6])
+    t[0] = ast.Loop(t[3], t[6])
 
 #
 # Switch block
 #
 def p_switch(t):
     'switch : SWITCH LPAREN expression COMMA VARRANGE COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
-    t[0] = Switch(t[3], t[5], t[7], t[9], t[12])
+    t[0] = ast.Switch(t[3], t[5], t[7], t[9], t[12])
 
 def p_switch_body(t):
     'switch_body : switch_ranges switch_value'
-    t[0] = SwitchBody(t[1], t[2])
+    t[0] = ast.SwitchBody(t[1], t[2])
 
 def p_switch_ranges(t):
     '''switch_ranges :
@@ -323,7 +321,7 @@ def p_real_sprite_list(t):
 
 def p_template_declaration(t):
     'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE real_sprite_list RBRACE'
-    t[0] = TemplateDeclaration(t[2], t[4], t[7])
+    t[0] = ast.TemplateDeclaration(t[2], t[4], t[7])
 
 def p_template_usage(t):
     'template_usage : ID LPAREN expression_list RPAREN'
@@ -339,24 +337,24 @@ def p_spriteset_contents(t):
 
 def p_replace(t):
     'replace : REPLACESPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
-    t[0] = ReplaceSprite(t[3], t[5], t[8])
+    t[0] = ast.ReplaceSprite(t[3], t[5], t[8])
 
 def p_replace_new(t):
     '''replace_new : REPLACENEWSPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE
                    | REPLACENEWSPRITE LPAREN expression COMMA STRING_LITERAL COMMA expression RPAREN LBRACE spriteset_contents RBRACE'''
-    if len(t) == 10: t[0] = ReplaceNewSprite(t[3], t[5], ConstantNumeric(0), t[8])
-    else: t[0] = ReplaceNewSprite(t[3], t[5], t[7], t[10])
+    if len(t) == 10: t[0] = ast.ReplaceNewSprite(t[3], t[5], expression.ConstantNumeric(0), t[8])
+    else: t[0] = ast.ReplaceNewSprite(t[3], t[5], t[7], t[10])
 
 def p_font_glpyh(t):
     'font_glyph : FONTGLYPH LPAREN expression COMMA expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
-    t[0] = FontGlyphBlock(t[3], t[5], t[7], t[10])
+    t[0] = ast.FontGlyphBlock(t[3], t[5], t[7], t[10])
 
 #
 # Sprite blocks and their contents
 #
 def p_spriteblock(t):
     'spriteblock : SPRITEBLOCK LPAREN expression RPAREN LBRACE spriteset_list RBRACE'
-    t[0] = SpriteBlock(t[3], t[6])
+    t[0] = ast.SpriteBlock(t[3], t[6])
 
 def p_spriteset_list(t):
     '''spriteset_list : spriteset
@@ -383,15 +381,15 @@ def p_spriteview_list(t):
     '''spriteview_list : ID SEMICOLON
                        | spriteview
                        | spriteview_list spriteview'''
-    if isinstance(t[1], Identifier): t[0] = [SpriteView('default', [t[1]])]
+    if isinstance(t[1], expression.Identifier): t[0] = [ast.SpriteView('default', [t[1]])]
     elif len(t) == 2: t[0] = [t[1]]
     else: t[0] = t[1] + [t[2]]
 
 def p_spriteview(t):
     ''' spriteview : ID COLON id_array SEMICOLON
                    | ID COLON ID SEMICOLON'''
-    if isinstance(t[3], list): t[0] = SpriteView(t[1], t[3])
-    else: t[0] = SpriteView(t[1], [t[3]])
+    if isinstance(t[3], list): t[0] = ast.SpriteView(t[1], t[3])
+    else: t[0] = ast.SpriteView(t[1], [t[3]])
 
 def p_layout_sprite_list(t):
     '''layout_sprite_list : layout_sprite
@@ -403,7 +401,7 @@ def p_layout_sprite(t):
     '''layout_sprite : GROUND LBRACE layout_param_list RBRACE
                      | BUILDING LBRACE layout_param_list RBRACE
                      | CHILDSPRITE LBRACE layout_param_list RBRACE'''
-    t[0] = LayoutSprite(t[1], t[3])
+    t[0] = ast.LayoutSprite(t[1], t[3])
 
 def p_layout_param_list(t):
     '''layout_param_list : layout_param
@@ -413,7 +411,7 @@ def p_layout_param_list(t):
 
 def p_layout_param(t):
     'layout_param : ID COLON expression SEMICOLON'
-    t[0] = LayoutParam(t[1], t[3])
+    t[0] = ast.LayoutParam(t[1], t[3])
 
 #
 # Town names
@@ -421,8 +419,8 @@ def p_layout_param(t):
 def p_town_names(t):
     '''town_names : TOWN_NAMES LPAREN expression RPAREN LBRACE town_names_param_list RBRACE
                   | TOWN_NAMES LBRACE town_names_param_list RBRACE'''
-    if len(t) == 8: t[0] = TownNames(t[3], t[6])
-    else: t[0] = TownNames(None, t[3])
+    if len(t) == 8: t[0] = ast.TownNames(t[3], t[6])
+    else: t[0] = ast.TownNames(None, t[3])
 
 def p_town_names_param_list(t):
     '''town_names_param_list : town_names_param
@@ -433,8 +431,8 @@ def p_town_names_param_list(t):
 def p_town_names_param(t):
     '''town_names_param : ID COLON string SEMICOLON
                         | LBRACE town_names_part_list RBRACE'''
-    if len(t) == 5: t[0] = TownNamesParam(t[1], t[3])
-    else: t[0] = TownNamesPart(t[2])
+    if len(t) == 5: t[0] = ast.TownNamesParam(t[1], t[3])
+    else: t[0] = ast.TownNamesPart(t[2])
 
 def p_town_names_part_list(t):
     '''town_names_part_list : town_names_part
@@ -445,8 +443,8 @@ def p_town_names_part_list(t):
 def p_town_names_part(t):
     '''town_names_part : TOWN_NAMES LPAREN expression COMMA expression RPAREN
                        | ID LPAREN STRING_LITERAL COMMA expression RPAREN'''
-    if t[1] == 'town_names': t[0] = TownNamesEntryDefinition(t[3], t[5])
-    else: t[0] = TownNamesEntryText(t[1], t[3], t[5])
+    if t[1] == 'town_names': t[0] = ast.TownNamesEntryDefinition(t[3], t[5])
+    else: t[0] = ast.TownNamesEntryText(t[1], t[3], t[5])
 
 #
 # Sounds
@@ -476,11 +474,11 @@ def p_param_assignment(t):
 
 def p_error_block(t):
     'error_block : ERROR LPAREN expression_list RPAREN SEMICOLON'
-    t[0] = Error(t[3])
+    t[0] = ast.Error(t[3])
 
 def p_cargotable(t):
     'cargotable : CARGOTABLE LBRACE cargotable_list RBRACE'
-    t[0] = CargoTable(t[3])
+    t[0] = ast.CargoTable(t[3])
 
 def p_cargotable_list(t):
     '''cargotable_list : ID
@@ -492,8 +490,8 @@ def p_cargotable_list(t):
 
 def p_deactivate(t):
     'deactivate : DEACTIVATE LPAREN expression_list RPAREN SEMICOLON'
-    t[0] = DeactivateBlock(t[3])
+    t[0] = ast.DeactivateBlock(t[3])
 
 def p_grf_block(t):
     'grf_block : GRF LBRACE assignment_list RBRACE'
-    t[0] = GRF(t[3])
+    t[0] = ast.GRF(t[3])
