@@ -1,6 +1,5 @@
-from nml.expression import *
-from action6 import *
-from nml.actions import actionD
+from nml import expression
+from nml.actions import action6, actionD
 
 class ActionE(object):
     def __init__(self, grfid_list):
@@ -33,14 +32,13 @@ def bswap32(value):
     return ((value & 0xFF) << 24) | ((value & 0xFF00) << 8) | ((value & 0xFF0000) >> 8) | ((value & 0xFF000000) >> 24)
 
 def parse_deactivate_block(block):
-    global free_parameters
-    free_parameters_backup = free_parameters[:]
+    free_parameters_backup = action6.free_parameters[:]
     grfid_list = []
     action_list = []
-    act6 = Action6()
+    act6 = action6.Action6()
     offset = 2
     for grfid in block.grfid_list:
-        if isinstance(grfid, ConstantNumeric):
+        if isinstance(grfid, expression.ConstantNumeric):
             grfid_list.append(grfid)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(grfid)
@@ -49,14 +47,15 @@ def parse_deactivate_block(block):
                 if i == 0:
                     param = tmp_param
                 else:
-                    param = free_parameters.pop()
-                    action_list.append(actionD.ActionD(ConstantNumeric(param), ConstantNumeric(tmp_param), actionD.ActionDOperator.SHFTU, ConstantNumeric(0xFF), ConstantNumeric(-8 * i)))
+                    param = action6.free_parameters.pop()
+                    action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(tmp_param),
+                            actionD.ActionDOperator.SHFTU, expression.ConstantNumeric(0xFF), expression.ConstantNumeric(-8 * i)))
                 act6.modify_bytes(param, 1, offset + 3 - i)
-            grfid_list.append(ConstantNumeric(0))
+            grfid_list.append(expression.ConstantNumeric(0))
         offset += 4
 
     if len(act6.modifications) != 0: action_list.append(act6)
     action_list.append(ActionE(grfid_list))
 
-    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
+    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
     return action_list
