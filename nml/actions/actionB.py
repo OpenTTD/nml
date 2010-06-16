@@ -73,17 +73,17 @@ def parse_error_block(error):
     global free_parameters, default_error_msg
     free_parameters_backup = free_parameters[:]
     action_list = []
-    action6 = Action6()
+    act6 = Action6()
 
     if isinstance(error.severity, ConstantNumeric):
         severity = error.severity
     elif isinstance(error.severity, Parameter) and isinstance(error.severity.num, ConstantNumeric):
-        action6.modify_bytes(error.severity.num.value, 1, 1)
+        act6.modify_bytes(error.severity.num.value, 1, 1)
         severity = ConstantNumeric(0)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(error.severity)
         action_list.extend(tmp_param_actions)
-        action6.modify_bytes(tmp_param, 1, 1)
+        act6.modify_bytes(tmp_param, 1, 1)
         severity = ConstantNumeric(0)
 
     if not isinstance(error.msg, Identifier):
@@ -122,7 +122,7 @@ def parse_error_block(error):
         if custom_msg:
             msg = grfstrings.get_translation(error.msg.value, lang)
         data = None if error.data is None else grfstrings.get_translation(error.data.value, lang)
-        if len(action6.modifications) > 0: action_list.append(action6)
+        if len(act6.modifications) > 0: action_list.append(act6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])

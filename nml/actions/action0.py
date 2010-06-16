@@ -114,12 +114,12 @@ def parse_property_block(prop_list, feature, id):
     free_parameters_backup = free_parameters[:]
     action_list = []
     action_list_append = []
-    action6 = Action6()
+    act6 = Action6()
     if isinstance(id, ConstantNumeric):
         action0 = Action0(feature, id.value)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
-        action6.modify_bytes(tmp_param, 2, 5)
+        act6.modify_bytes(tmp_param, 2, 5)
         action_list.extend(tmp_param_actions)
         action0 = Action0(feature, 0)
 
@@ -129,12 +129,12 @@ def parse_property_block(prop_list, feature, id):
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:
-            action6.modify_bytes(mod[0], mod[1], mod[2] + offset)
+            act6.modify_bytes(mod[0], mod[1], mod[2] + offset)
         for p in properties:
             offset += p.get_size()
         action0.prop_list.extend(properties)
 
-    if len(action6.modifications) > 0: action_list.append(action6)
+    if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(action0)
     action_list.extend(action_list_append)
 

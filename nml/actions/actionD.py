@@ -110,14 +110,14 @@ def parse_actionD(assignment):
     global free_parameters
     free_parameters_backup = free_parameters[:]
     action_list = []
-    action6 = Action6()
+    act6 = Action6()
     target = assignment.param
     if isinstance(target, Parameter) and isinstance(target.num, ConstantNumeric):
-        action6.modify_bytes(target.num.value, 1, 1)
+        act6.modify_bytes(target.num.value, 1, 1)
         target = ConstantNumeric(0)
     elif not isinstance(target, ConstantNumeric):
         tmp_param, tmp_param_actions = get_tmp_parameter(target)
-        action6.modify_bytes(tmp_param, 1, 1)
+        act6.modify_bytes(tmp_param, 1, 1)
         target = ConstantNumeric(0)
         action_list.extend(tmp_param_actions)
 
@@ -134,7 +134,7 @@ def parse_actionD(assignment):
             param1 = assignment.value.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(assignment.value.num)
-            action6.modify_bytes(tmp_param, 1, 3)
+            act6.modify_bytes(tmp_param, 1, 3)
             action_list.extend(tmp_param_actions)
             op = ActionDOperator.EQUAL
             param1 = ConstantNumeric(0)
@@ -201,7 +201,7 @@ def parse_actionD(assignment):
 
     else: raise generic.ScriptError("Invalid expression in argument assignment")
 
-    if len(action6.modifications) > 0: action_list.append(action6)
+    if len(act6.modifications) > 0: action_list.append(act6)
 
     action_list.append(ActionD(target, param1, op, param2, data))
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
