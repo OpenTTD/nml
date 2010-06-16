@@ -7,6 +7,8 @@ action2_map = {}
 class Action2(object):
     def __init__(self, feature, name):
         global action2_map
+        if name in action2_map:
+            raise generic.ScriptError('Reusing names of switch/spritegroup blocks is not allowed, trying to use "%s"' % name)
         assert not name in action2_map
         action2_map[name] = self
         self.feature = feature
