@@ -1,0 +1,18 @@
+grf {
+	grfid: "test";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+}
+
+template no_param() {
+	[48, 56, 8, 18, -3, -10]
+}
+
+template many_param(a, b, c, d, e, f, g, h) {
+	[a, b, c, d, e+f, f*h]
+}
+
+replace (3092, "opengfx_generic_trams1.pcx") { // replace the first two bus sprites
+	no_param()
+	many_param(48, 56, 8, 18, -5, 2, -5, 2)
+}
