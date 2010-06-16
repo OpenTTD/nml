@@ -122,6 +122,10 @@ def p_binop_plus(t):
                   | expression COMP_GT expression'''
     t[0] = BinOp(code_to_op[t[2]], t[1], t[3]);
 
+def p_ternary_op(t):
+    'expression : expression TERNARY_OPEN expression COLON expression'
+    t[0] = TernaryOp(t[1], t[3], t[5])
+
 def p_unary_minus(t):
     'expression : MINUS expression'
     t[0] = BinOp(code_to_op[t[1]], ConstantNumeric(0), t[2])

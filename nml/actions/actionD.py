@@ -1,6 +1,7 @@
 from nml.expression import *
 from nml import generic, global_constants
 from action6 import *
+import nml.ast
 
 class ActionDOperator(object):
     EQUAL = r'\D='
@@ -100,6 +101,12 @@ def get_tmp_parameter(expr):
     return (param, actions)
 
 def parse_actionD(assignment):
+    if isinstance(assignment.value, TernaryOp):
+        actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr2))
+        cond_block = nml.ast.Conditional(assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)])
+        actions.extend(cond_block.get_action_list())
+        return actions
+
     global free_parameters
     free_parameters_backup = free_parameters[:]
     action_list = []
