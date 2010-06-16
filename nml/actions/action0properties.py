@@ -228,3 +228,12 @@ properties[0x10] = {
     'acceleration_model': {'size': 1, 'num': 0x15},
     'map_color': {'size': 1, 'num': 0x16},
 }
+
+properties[0x11] = {
+    'substitute': {'size': 1, 'num': 0x08},
+    'override': {'size': 1, 'num': 0x09},
+    'callback_flags': {'size': 1, 'num': 0x0E},
+    'animation_info': {'size': 2, 'num': 0x0F},
+    'animation_speed': {'size': 1, 'num': 0x10},
+    'animation_triggers': {'size': 1, 'num': 0x11},
+}
