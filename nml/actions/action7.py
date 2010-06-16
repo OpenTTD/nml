@@ -105,11 +105,16 @@ def parse_conditional_block(cond):
     global free_parameters, free_labels
     free_parameters_backup = free_parameters[:]
     free_labels_backup = free_labels[:]
-    #the skip all parameter is used to skip all blocks after one
-    #of the conditionals was true. We can't always skip directly
-    #to the end of the blocks since action7/action9 can't always
-    #be mixed
-    param_skip_all, action_list = actionD.get_tmp_parameter(ConstantNumeric(0xFFFFFFFF))
+
+    multiple_blocks = cond.else_block is not None
+    if multiple_blocks:
+        #the skip all parameter is used to skip all blocks after one
+        #of the conditionals was true. We can't always skip directly
+        #to the end of the blocks since action7/action9 can't always
+        #be mixed
+        param_skip_all, action_list = actionD.get_tmp_parameter(ConstantNumeric(0xFFFFFFFF))
+    else:
+        action_list = []
 
     blocks = []
     while cond is not None:
@@ -121,7 +126,10 @@ def parse_conditional_block(cond):
     #actions (like action6) can be skipped safely
     for block in blocks:
         block['param_dst'], block['cond_actions'] = parse_conditional(block['expr'])
-        block['action_list'] = [actionD.ActionD(ConstantNumeric(param_skip_all), ConstantNumeric(0xFF), actionD.ActionDOperator.EQUAL, ConstantNumeric(0), ConstantNumeric(0))]
+        if multiple_blocks:
+            block['action_list'] = [actionD.ActionD(ConstantNumeric(param_skip_all), ConstantNumeric(0xFF), actionD.ActionDOperator.EQUAL, ConstantNumeric(0), ConstantNumeric(0))]
+        else:
+            block['action_list'] = []
         for stmt in block['statements']:
             block['action_list'].extend(stmt.get_action_list())
 
