@@ -217,7 +217,6 @@ global_parameters = {
     'ttd_version'                        : 0x8D,
     'ttd_platform'                       : 0x9D,
     'openttd_version'                    : 0xA1,
-    'difficulty_level'                   : 0xA2,
     'climate'                            : 0x83,
     'date_loaded'                        : 0xA3,
     'year_loaded'                        : 0xA4,
