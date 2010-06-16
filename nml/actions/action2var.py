@@ -315,7 +315,7 @@ def parse_varaction2(switch_block):
     return_action = None
     varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
-    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + switch_block.feature)
+    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature))
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
 
     func = lambda x: expression.Variable(expression.ConstantNumeric(x['var']), expression.ConstantNumeric(x['start']), expression.ConstantNumeric((1 << x['size']) - 1))
