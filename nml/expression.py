@@ -50,7 +50,10 @@ def get_operator_string(op, param1, param2):
     operator_to_string[Operator.SHIFT_RIGHT] = '(%s >> %s)'
     return operator_to_string[op] % (param1, param2)
 
-class ConstantNumeric(object):
+class Expression(object):
+    pass
+
+class ConstantNumeric(Expression):
     def __init__(self, value):
         self.value = generic.truncate_int32(value)
 
@@ -66,7 +69,7 @@ class ConstantNumeric(object):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
-class ConstantFloat(object):
+class ConstantFloat(Expression):
     def __init__(self, value):
         self.value = value
 
@@ -79,7 +82,7 @@ class ConstantFloat(object):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
-class BitMask(object):
+class BitMask(Expression):
     def __init__(self, values):
         self.values = values
 
@@ -97,7 +100,7 @@ class BitMask(object):
             ret |= 1 << val.value
         return ConstantNumeric(ret)
 
-class BinOp(object):
+class BinOp(Expression):
     def __init__(self, op, expr1, expr2):
         self.op = op
         self.expr1 = expr1
@@ -142,7 +145,7 @@ class BinOp(object):
                 return expr1
         return BinOp(self.op, expr1, expr2)
 
-class TernaryOp(object):
+class TernaryOp(Expression):
     def __init__(self, guard, expr1, expr2):
         self.guard = guard
         self.expr1 = expr1
@@ -177,7 +180,7 @@ class Assignment(object):
         print indentation*' ' + 'Assignment, name = ', self.name
         self.value.debug_print(indentation + 2)
 
-class Parameter(object):
+class Parameter(Expression):
     def __init__(self, num):
         self.num = num
 
@@ -192,7 +195,7 @@ class Parameter(object):
         num = self.num.reduce(id_dicts)
         return Parameter(num)
 
-class Variable(object):
+class Variable(Expression):
     def __init__(self, num, shift = None, mask = None, param = None):
         self.num = num
         self.shift = shift if shift is not None else ConstantNumeric(0)
@@ -236,7 +239,7 @@ class Variable(object):
         var.mod = self.mod
         return var
 
-class FunctionCall(object):
+class FunctionCall(Expression):
     def __init__(self, name, params):
         self.name = name
         self.params = params
@@ -268,7 +271,7 @@ class FunctionCall(object):
                 raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % self.name.value);
             return Variable(ConstantNumeric(0x7E), param=self.name.value)
 
-class String(object):
+class String(Expression):
     def __init__(self, name, params = []):
         self.name = name
         self.params = params
@@ -290,7 +293,7 @@ class String(object):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
-class Identifier(object):
+class Identifier(Expression):
     def __init__(self, value):
         self.value = value
 
@@ -307,7 +310,7 @@ class Identifier(object):
                 return func(id_d[self.value])
         if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered")
 
-class StringLiteral(object):
+class StringLiteral(Expression):
     def __init__(self, value):
         self.value = value
 
@@ -324,7 +327,7 @@ class StringLiteral(object):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
-class Array(object):
+class Array(Expression):
     def __init__(self, values):
         self.values = values
 
