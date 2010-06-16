@@ -1,8 +1,5 @@
-from nml import generic, global_constants, grfstrings, unit
-from expression import *
-from actions.real_sprite import *
-from actions.action2var import *
-from nml.actions import action0, action1, action3, action5, action7, action8, actionA, actionB, actionD, actionE, actionF, action12
+from nml import expression, generic, global_constants, grfstrings, unit
+from nml.actions import action0, action1, action2var, action3, action5, action7, action8, actionA, actionB, actionD, actionE, actionF, action12, real_sprite
 from actions.sprite_count import SpriteCountAction
 
 def print_script(script, indent):
@@ -38,9 +35,9 @@ class GRF(object):
         self.grfid = None
         for assignment in alist:
             if assignment.name.value == "grfid":
-                if not isinstance(assignment.value, StringLiteral):
+                if not isinstance(assignment.value, expression.StringLiteral):
                     raise generic.ScriptError("GRFID must be a string literal")
-            elif not isinstance(assignment.value, String):
+            elif not isinstance(assignment.value, expression.String):
                 raise generic.ScriptError("Assignments in GRF-block must be constant strings")
             if assignment.name.value == "name": self.name = assignment.value
             elif assignment.name.value == "desc": self.desc = assignment.value
@@ -142,7 +139,7 @@ class Switch(object):
         self.body.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return parse_varaction2(self)
+        return action2var.parse_varaction2(self)
 
     def __str__(self):
         var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
@@ -158,7 +155,7 @@ class SwitchBody(object):
         for r in self.ranges:
             r.debug_print(indentation)
         print indentation*' ' + 'Default:'
-        if isinstance(self.default, Identifier):
+        if isinstance(self.default, expression.Identifier):
             print (indentation+2)*' ' + 'Go to switch:'
             self.default.debug_print(indentation + 4);
         elif self.default is None:
@@ -208,16 +205,15 @@ item_id = None
 
 class Item(object):
     def __init__(self, feature, body, name = None, id = None):
-        global item_names
         self.feature = feature.reduce_constant([feature_ids])
         self.body = body
         self.name = name
-        if name is not None and name.value in item_names:
-            self.id = ConstantNumeric(item_names[name.value])
-        elif id is None: self.id = ConstantNumeric(action0.get_free_id(self.feature.value))
+        if name is not None and name.value in expression.item_names:
+            self.id = expression.ConstantNumeric(expression.item_names[name.value])
+        elif id is None: self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
         else: self.id = id.reduce_constant()
         if name is not None:
-            item_names[name.value] = self.id.value
+            expression.item_names[name.value] = self.id.value
         validate_item_block(body)
 
     def debug_print(self, indentation):
@@ -256,9 +252,9 @@ class Unit(object):
 class Property(object):
     def __init__(self, name, value, unit):
         self.name = name
-        self.value = value.reduce(global_constants.const_list + [cargo_numbers])
+        self.value = value.reduce(global_constants.const_list + [expression.cargo_numbers])
         self.unit = unit
-        if unit is not None and not (isinstance(self.value, ConstantNumeric) or isinstance(self.value, ConstantFloat)):
+        if unit is not None and not (isinstance(self.value, expression.ConstantNumeric) or isinstance(self.value, expression.ConstantFloat)):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant")
 
     def debug_print(self, indentation):
@@ -302,8 +298,8 @@ class LiveryOverride(object):
         print (indentation+2)*' ' + 'Default graphics:', self.graphics_block.default_graphics
 
     def get_action_list(self):
-        global item_feature, item_names
-        wagon_id = self.wagon_id.reduce_constant([item_names])
+        global item_feature
+        wagon_id = self.wagon_id.reduce_constant([expression.item_names])
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
 class GraphicsBlock(object):
@@ -398,8 +394,8 @@ class SpriteBlock(object):
 class TemplateDeclaration(object):
     def __init__(self, name, param_list, sprite_list):
         self.name = name
-        if name.value not in sprite_template_map:
-            sprite_template_map[name.value] = self
+        if name.value not in real_sprite.sprite_template_map:
+            real_sprite.sprite_template_map[name.value] = self
         else:
             raise generic.ScriptError("Template named '" + name.value + "' is already defined")
         self.param_list = param_list
@@ -497,9 +493,9 @@ class TownNames(object):
 
         # 'name' is actually a number.
         # Allocate it now, before the self.prepare_output() call (to prevent names to grab it).
-        if self.name is not None and not isinstance(self.name, Identifier):
+        if self.name is not None and not isinstance(self.name, expression.Identifier):
             value = self.name.reduce_constant()
-            if not isinstance(value, ConstantNumeric):
+            if not isinstance(value, expression.ConstantNumeric):
                 raise generic.ScriptError("ID should be an integer number.")
 
             self.id_number = value.value
@@ -517,9 +513,9 @@ class TownNames(object):
             blocks.update(part.resolve_townname_id())
 
         # Allocate a number for this action F.
-        if self.name is None or isinstance(self.name, Identifier):
+        if self.name is None or isinstance(self.name, expression.Identifier):
             self.id_number = actionF.get_free_id()
-            if isinstance(self.name, Identifier):
+            if isinstance(self.name, expression.Identifier):
                 if self.name.value in actionF.named_numbers:
                     raise generic.ScriptError('Cannot define town name "%s", it is already in use' % self.name)
                 actionF.named_numbers[self.name.value] = self.id_number # Add name to the set 'safe' names.
@@ -687,21 +683,21 @@ class TownNamesEntryDefinition(object):
     def __init__(self, def_number, probability):
         self.def_number = def_number
         self.number = None
-        if not isinstance(self.def_number, Identifier):
+        if not isinstance(self.def_number, expression.Identifier):
             self.def_number = self.def_number.reduce_constant()
-            if not isinstance(self.def_number, ConstantNumeric):
+            if not isinstance(self.def_number, expression.ConstantNumeric):
                 raise generic.ScriptError("Reference to other town name ID should be an integer number.")
             if self.def_number.value < 0 or self.def_number.value > 0x7f:
                 raise generic.ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).")
 
         self.probability = probability.reduce_constant()
-        if not isinstance(self.probability, ConstantNumeric):
+        if not isinstance(self.probability, expression.ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.")
         if self.probability.value < 0 or self.probability.value > 0x7f:
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
 
     def debug_print(self, indentation, total):
-        if isinstance(self.def_number, Identifier): name_text = "name '" + self.def_number.value + "'"
+        if isinstance(self.def_number, expression.Identifier): name_text = "name '" + self.def_number.value + "'"
         else: name_text = "number 0x%x" % self.def_number.value
         print indentation*' ' + ('Insert town_name ID %s with probability %d/%d' % (name_text, self.probability.value, total))
 
@@ -714,7 +710,7 @@ class TownNamesEntryDefinition(object):
 
         @return: Number of the referenced C{town_names} block.
         '''
-        if isinstance(self.def_number, Identifier):
+        if isinstance(self.def_number, expression.Identifier):
             self.number = actionF.named_numbers.get(self.def_number.value)
             if self.number is None:
                 raise generic.ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number.value)
@@ -737,11 +733,11 @@ class TownNamesEntryText(object):
             raise generic.ScriptError("Expected 'text' prefix.")
 
         self.text = text
-        if not isinstance(self.text, StringLiteral):
+        if not isinstance(self.text, expression.StringLiteral):
             raise generic.ScriptError("Expected string literal for the name.")
 
         self.probability = probability.reduce_constant()
-        if not isinstance(self.probability, ConstantNumeric):
+        if not isinstance(self.probability, expression.ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.")
         if self.probability.value < 0 or self.probability.value > 0x7f:
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
@@ -797,7 +793,7 @@ class CargoTable(object):
         global cargo_numbers;
         self.cargo_list = cargo_list
         for i, cargo in enumerate(cargo_list):
-            cargo_numbers[cargo.value] = i
+            expression.cargo_numbers[cargo.value] = i
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Cargo table'
