@@ -1,8 +1,6 @@
 from nml.actions.action0properties import Action0Property, properties
-from nml import generic
-from nml.actions import action4, actionD
-from action6 import *
-from nml.expression import *
+from nml import generic, expression
+from nml.actions import action4, action6, actionD
 
 class Action0(object):
     def __init__(self, feature, id):
@@ -53,10 +51,10 @@ def parse_property(feature, name, value, id, unit):
     action_list_append = []
     mods = []
 
-    if isinstance(name, Identifier):
+    if isinstance(name, expression.Identifier):
         if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value)
         prop = properties[feature][name.value]
-    elif isinstance(name, ConstantNumeric):
+    elif isinstance(name, expression.ConstantNumeric):
         for p in properties[feature]:
             if 'num' in p and p['num'] != name.value: continue
             prop = p
@@ -70,29 +68,29 @@ def parse_property(feature, name, value, id, unit):
             if not 'unit_type' in prop or unit.type != prop['unit_type']:
                 raise generic.ScriptError("Invalid unit for property: " + name.value)
             mul = mul / unit.convert
-        if mul != 1 or isinstance(value, ConstantFloat): #always round floats
-            if not isinstance(value, (ConstantNumeric, ConstantFloat)):
+        if mul != 1 or isinstance(value, expression.ConstantFloat): #always round floats
+            if not isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
                 raise generic.ScriptError("Unit conversion specified for property, but no constant value found")
-            value = ConstantNumeric(int(value.value * mul + 0.5))
+            value = expression.ConstantNumeric(int(value.value * mul + 0.5))
 
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
     elif 'string_literal' in prop:
-        if not isinstance(value, StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop['num'])
+        if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop['num'])
         if len(value.value) != prop['string_literal']:
             raise generic.ScriptError("Value for property %d must be of length %d" % (prop['num'], prop['string_literal']))
         props = [Action0Property(prop['num'], value, prop['size'])]
     else:
-        if isinstance(value, ConstantNumeric):
+        if isinstance(value, expression.ConstantNumeric):
             pass
-        elif isinstance(value, Parameter) and isinstance(value.num, ConstantNumeric):
+        elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
             mods.append((value.num.value, prop['size'], 1))
-            value = ConstantNumeric(0)
-        elif isinstance(value, String):
+            value = expression.ConstantNumeric(0)
+        elif isinstance(value, expression.String):
             if not 'string' in prop: raise generic.ScriptError("String used as value for non-string property: " + str(prop['num']))
             string_range = prop['string']
             stringid, prepend, string_actions = action4.get_string_action4s(feature, string_range, value, id)
-            value = ConstantNumeric(stringid)
+            value = expression.ConstantNumeric(stringid)
             if prepend:
                 action_list.extend(string_actions)
             else:
@@ -101,7 +99,7 @@ def parse_property(feature, name, value, id, unit):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
             mods.append((tmp_param, prop['size'], 1))
             action_list.extend(tmp_param_actions)
-            value = ConstantNumeric(0)
+            value = expression.ConstantNumeric(0)
         if prop['num'] != -1:
             props = [Action0Property(prop['num'], value, prop['size'])]
         else:
@@ -110,12 +108,11 @@ def parse_property(feature, name, value, id, unit):
     return (props, action_list, mods, action_list_append)
 
 def parse_property_block(prop_list, feature, id):
-    global free_parameters
-    free_parameters_backup = free_parameters[:]
+    free_parameters_backup = action6.free_parameters[:]
     action_list = []
     action_list_append = []
-    act6 = Action6()
-    if isinstance(id, ConstantNumeric):
+    act6 = action6.Action6()
+    if isinstance(id, expression.ConstantNumeric):
         action0 = Action0(feature, id.value)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
@@ -138,7 +135,7 @@ def parse_property_block(prop_list, feature, id):
     action_list.append(action0)
     action_list.extend(action_list_append)
 
-    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
+    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
     return action_list
 
 class CargoListProp(object):
