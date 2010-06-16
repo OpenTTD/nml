@@ -53,9 +53,8 @@ def parse_action12(font_glpyhs):
         raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF")
 
     real_sprite_list = real_sprite.parse_sprite_list(font_glpyhs.sprite_list)
-    num_sprites = len(real_sprite_list);
     char = base_char.value
-    last_char = char + num_sprites
+    last_char = char + len(real_sprite_list)
     if last_char > 0xFFFF:
         raise generic.ScriptError("Character numbers in font_glyph block exceed the allowed range (0-0xFFFF)");
 
@@ -71,7 +70,7 @@ def parse_action12(font_glpyhs):
 
     action_list.append(Action12(sets))
 
-    last_sprite = real_sprite_list[num_sprites - 1][0]
+    last_sprite = real_sprite_list[-1][0]
     for sprite, id_dict in real_sprite_list:
         action_list.append(real_sprite.parse_real_sprite(sprite, font_glpyhs.pcx, sprite == last_sprite, id_dict))
 

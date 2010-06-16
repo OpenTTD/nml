@@ -87,7 +87,7 @@ def parse_sprite_block(sprite_block):
             elif num_ent != len(real_sprite_list):
                 raise generic.ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
 
-            last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
+            last_sprite = real_sprite_list[-1][0]
             for sprite, id_dict in real_sprite_list:
                 action_list.append(real_sprite.parse_real_sprite(sprite, item.pcx, sprite == last_sprite, id_dict))
 

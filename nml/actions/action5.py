@@ -106,7 +106,7 @@ def parse_action5(replaces):
 
     action_list.append(Action5(type_id, num_sprites, offset))
 
-    last_sprite = real_sprite_list[len(real_sprite_list) - 1][0]
+    last_sprite = real_sprite_list[-1][0]
     for sprite, id_dict in real_sprite_list:
         action_list.append(real_sprite.parse_real_sprite(sprite, replaces.pcx, sprite == last_sprite, id_dict))
 
