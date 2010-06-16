@@ -1,7 +1,5 @@
-from nml.expression import *
-from nml import generic, grfstrings
-from action6 import *
-from nml.actions import actionD
+from nml import expression, generic, grfstrings
+from nml.actions import action6, actionD
 
 class ActionB(object):
     def __init__(self, severity, lang, msg, data, param1, param2):
@@ -70,23 +68,23 @@ error_severity = {
 }
 
 def parse_error_block(error):
-    global free_parameters, default_error_msg
-    free_parameters_backup = free_parameters[:]
+    global default_error_msg
+    free_parameters_backup = action6.free_parameters[:]
     action_list = []
-    act6 = Action6()
+    act6 = action6.Action6()
 
-    if isinstance(error.severity, ConstantNumeric):
+    if isinstance(error.severity, expression.ConstantNumeric):
         severity = error.severity
-    elif isinstance(error.severity, Parameter) and isinstance(error.severity.num, ConstantNumeric):
+    elif isinstance(error.severity, expression.Parameter) and isinstance(error.severity.num, expression.ConstantNumeric):
         act6.modify_bytes(error.severity.num.value, 1, 1)
-        severity = ConstantNumeric(0)
+        severity = expression.ConstantNumeric(0)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(error.severity)
         action_list.extend(tmp_param_actions)
         act6.modify_bytes(tmp_param, 1, 1)
-        severity = ConstantNumeric(0)
+        severity = expression.ConstantNumeric(0)
 
-    if not isinstance(error.msg, Identifier):
+    if not isinstance(error.msg, expression.Identifier):
         raise generic.ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
 
     langs = [0x7F]
@@ -99,7 +97,7 @@ def parse_error_block(error):
             langs.append(translation['lang'])
 
     if error.data is not None:
-        if not isinstance(error.data, Identifier):
+        if not isinstance(error.data, expression.Identifier):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
         for translation in grfstrings.grf_strings[error.data.value]:
             langs.append(translation['lang'])
@@ -108,12 +106,12 @@ def parse_error_block(error):
     for expr in error.params:
         if expr is None:
             params.append(None)
-        elif isinstance(expr, Parameter) and isinstance(expr.num, ConstantNumeric):
+        elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
             params.append(expr.num)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
             action_list.extend(tmp_param_actions)
-            params.append(ConstantNumeric(tmp_param))
+            params.append(expression.ConstantNumeric(tmp_param))
 
     assert len(params) == 2
 
@@ -125,5 +123,5 @@ def parse_error_block(error):
         if len(act6.modifications) > 0: action_list.append(act6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 
-    free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
+    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
     return action_list
