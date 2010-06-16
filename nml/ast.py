@@ -73,7 +73,7 @@ class GRF(object):
 
 class Conditional(object):
     def __init__(self, expr, block, else_block = None):
-        self.expr = expr
+        self.expr = expr.reduce(global_constants.const_list)
         self.block = block
         self.else_block = else_block
 

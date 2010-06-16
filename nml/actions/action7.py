@@ -48,6 +48,14 @@ class UnconditionalSkipAction(SkipAction):
     def __init__(self, feature, label):
         SkipAction.__init__(self, feature, 0x83, 1, (3, r'\7! '), 0xFF, label)
 
+def op_to_cond_op(op):
+    #The operators are reversed as we want to skip if the expression is true
+    #while the nml-syntax wants to execute the block if the expression is true
+    if op == Operator.CMP_NEQ: return (2, r'\7=')
+    if op == Operator.CMP_EQ: return (3, r'\7!')
+    if op == Operator.CMP_GT: return (4, r'\7<')
+    if op == Operator.CMP_LT: return (5, r'\7>')
+
 def parse_conditional(expr):
     '''Parse an expression and return enougn information to use
     that expression as a conditional statement.
@@ -59,6 +67,15 @@ def parse_conditional(expr):
     '''
     if expr is None:
         return (None, [], (2, r'\7='), 0)
+    if isinstance(expr, BinOp) and expr.op in (Operator.CMP_EQ, Operator.CMP_NEQ, Operator.CMP_LT, Operator.CMP_GT) \
+            and isinstance(expr.expr2, ConstantNumeric):
+        if isinstance(expr.expr1, Parameter) and isinstance(expr.expr1.num, ConstantNumeric):
+            param = expr.expr1.num.value
+            actions = []
+        else:
+            param, actions = actionD.get_tmp_parameter(expr.expr1)
+        op = op_to_cond_op(expr.op)
+        return (param, actions, op, expr.expr2.value)
     else:
         param, actions = actionD.get_tmp_parameter(expr)
         return (param, actions, (2, r'\7='), 0)
