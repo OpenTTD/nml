@@ -49,10 +49,19 @@ class UnconditionalSkipAction(SkipAction):
         SkipAction.__init__(self, feature, 0x83, 1, (3, r'\7! '), 0xFF, label)
 
 def parse_conditional(expr):
+    '''Parse an expression and return enougn information to use
+    that expression as a conditional statement.
+    Return value is a tuple with the following elements:
+    - Parameter number (as integer) to use in comparison or None for unconditional skip
+    - List of actions needed to set the given parameter to the correct value
+    - The type of comparison to be done
+    - The value to compare against (as integer)
+    '''
     if expr is None:
-        return (None, [])
+        return (None, [], (2, r'\7='), 0)
     else:
-        return actionD.get_tmp_parameter(expr)
+        param, actions = actionD.get_tmp_parameter(expr)
+        return (param, actions, (2, r'\7='), 0)
 
 def cond_skip_actions(action_list, param, condtype, value):
     actions = []
@@ -119,14 +128,14 @@ def parse_conditional_block(cond):
     blocks = []
     while cond is not None:
         end_label = free_labels.pop()
-        blocks.append({'expr': cond.expr, 'statements': cond.block})
+        blocks.append({'expr': cond.expr, 'statements': cond.block, 'last_block': cond.else_block is None})
         cond = cond.else_block
 
     #use parse_conditional here, we also need to know if all generated
     #actions (like action6) can be skipped safely
     for block in blocks:
-        block['param_dst'], block['cond_actions'] = parse_conditional(block['expr'])
-        if multiple_blocks:
+        block['param_dst'], block['cond_actions'], block['cond_type'], block['cond_value'] = parse_conditional(block['expr'])
+        if not block['last_block']:
             block['action_list'] = [actionD.ActionD(ConstantNumeric(param_skip_all), ConstantNumeric(0xFF), actionD.ActionDOperator.EQUAL, ConstantNumeric(0), ConstantNumeric(0))]
         else:
             block['action_list'] = []
@@ -149,7 +158,7 @@ def parse_conditional_block(cond):
                 param = param_skip_all
             else:
                 action_list.append(actionD.ActionD(ConstantNumeric(block['param_dst']), ConstantNumeric(block['param_dst']), actionD.ActionDOperator.AND, ConstantNumeric(param_skip_all)))
-        action_list.extend(cond_skip_actions(block['action_list'], param, (2, r'\7='), 0))
+        action_list.extend(cond_skip_actions(block['action_list'], param, block['cond_type'], block['cond_value']))
 
     free_labels.extend([item for item in free_labels_backup if not item in free_labels])
     free_parameters.extend([item for item in free_parameters_backup if not item in free_parameters])
@@ -162,7 +171,7 @@ def parse_loop_block(loop):
     begin_label = free_while_labels.pop()
     action_list = [action10.Action10(begin_label)]
 
-    cond_param, cond_actions = parse_conditional(loop.expr)
+    cond_param, cond_actions, cond_type, cond_value = parse_conditional(loop.expr)
     block_actions = []
     for stmt in loop.block:
         block_actions.extend(stmt.get_action_list())
