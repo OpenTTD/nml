@@ -256,7 +256,7 @@ class Unit(object):
 class Property(object):
     def __init__(self, name, value, unit):
         self.name = name
-        self.value = value.reduce([global_constants.const_table, cargo_numbers])
+        self.value = value.reduce(global_constants.const_list + [cargo_numbers])
         self.unit = unit
         if unit is not None and not (isinstance(self.value, ConstantNumeric) or isinstance(self.value, ConstantFloat)):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant")
@@ -441,7 +441,7 @@ class LayoutSprite(object):
 class LayoutParam(object):
     def __init__(self, name, value):
         self.name = name
-        self.value = value.reduce([global_constants.const_table], False)
+        self.value = value.reduce(global_constants.const_list, False)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Layout parameter:', self.name.value

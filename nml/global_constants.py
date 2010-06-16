@@ -1,4 +1,6 @@
-const_table = {
+from nml import expression
+
+constant_numbers = {
     #climates
     'CLIMATE_TEMPERATE'     : 0x00,
     'CLIMATE_ARCTIC'        : 0x01,
@@ -199,4 +201,26 @@ const_table = {
     'PRODUCTIONTYPE_ORGANIC'             : 0x02,
     'PRODUCTIONTYPE_PROCESSING'          : 0x04,
     'PRODUCTIONTYPE_NONE'                : 0x00,
+
+    #which platform has loaded this grf
+    'PLATFORM_TTDPATCH'                  : 0x00,
+    'PLATFORM_OPENTTD'                   : 0x01,
 }
+
+def param_from_num(num):
+    return expression.Parameter(expression.ConstantNumeric(num))
+
+global_parameters = {
+    'climate'                            : 0x83,
+    'traffic_side'                       : 0x86,
+    'ttdpatch_version'                   : 0x8B,
+    'ttd_version'                        : 0x8D,
+    'ttd_platform'                       : 0x9D,
+    'openttd_version'                    : 0xA1,
+    'difficulty_level'                   : 0xA2,
+    'climate'                            : 0x83,
+    'date_loaded'                        : 0xA3,
+    'year_loaded'                        : 0xA4,
+}
+
+const_list = [constant_numbers, (global_parameters, param_from_num)]

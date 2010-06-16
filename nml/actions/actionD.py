@@ -71,7 +71,7 @@ class ActionD(object):
 class ParameterAssignment(object):
     def __init__(self, param, value):
         self.param = param
-        self.value = value.reduce([global_constants.const_table, cargo_numbers])
+        self.value = value.reduce(global_constants.const_list + [cargo_numbers])
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
