@@ -1,11 +1,10 @@
 import sys, os, codecs, optparse
-from ast import *
 from parser import *
 from tokens import NMLLexer
 from nml import generic, grfstrings
 from actions.sprite_count import SpriteCountAction
 from actions.real_sprite import RealSpriteAction
-from nml.actions import action8
+from nml.actions import action2var, action8
 from actions.action11 import LoadBinaryFile
 from output_nfo import OutputNFO
 
@@ -136,7 +135,7 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
 
     has_action8 = False
     for i in range(len(actions) - 1, -1, -1):
-        if isinstance(actions[i], Action2Var):
+        if isinstance(actions[i], action2var.Action2Var):
             actions[i].resolve_tmp_storage()
         elif isinstance(actions[i], action8.Action8):
             has_action8 = True
