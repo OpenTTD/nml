@@ -167,10 +167,10 @@ def parse_actionD(assignment):
             # We compute A==B by doing not(A - B) which will result in a value != 0
             # if A is equal to B
             action_list.extend(parse_actionD(ParameterAssignment(assignment.param, BinOp(Operator.SUB, expr1, expr2))))
-            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, BinOp(Operator.SUB, ConstantNumeric(-1), Parameter(assignment.param)))))
             # Clamp the value to 0/1, see above for details
-            op = ActionDOperator.DIVU
-            expr1 = Parameter(assignment.param)
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, BinOp(Operator.DIV, Parameter(assignment.param), Parameter(assignment.param)))))
+            op = ActionDOperator.SUB
+            expr1 = ConstantNumeric(1)
             expr2 = Parameter(assignment.param)
 
         else:
