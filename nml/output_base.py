@@ -9,18 +9,21 @@ class OutputBase(object):
         assert self._in_sprite
         if -0x80 < value < 0 : value += 0x100
         assert value >= 0 and value <= 0xFF
+        self._byte_count += 1
         return value
 
     def prepare_word(self, value):
         assert self._in_sprite
         if -0x8000 < value < 0: value += 0x10000
         assert value >= 0 and value <= 0xFFFF
+        self._byte_count += 2
         return value
 
     def prepare_dword(self, value):
         assert self._in_sprite
         if -0x80000000 < value < 0: value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
+        self._byte_count += 4
         return value
 
     def print_varx(self, value, size):
@@ -36,11 +39,15 @@ class OutputBase(object):
         else:
             assert False
 
-    def start_sprite(self):
+    def start_sprite(self, size):
         assert not self._in_sprite
         self._in_sprite = True
+        self._expected_count = size
+        self._byte_count = 0
 
     def end_sprite(self):
         assert self._in_sprite
         self._in_sprite = False
         self.newline()
+        if self._expected_count != self._byte_count:
+            raise "Expected %d bytes to be written, got %d" % (self._expected_count, self._byte_count)

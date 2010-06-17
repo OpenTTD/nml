@@ -80,9 +80,12 @@ class OutputGRF(OutputBase):
         pass
 
     def start_sprite(self, size, type = 0xFF):
-        OutputBase.start_sprite(self)
+        #The compression byte (=type) is counted when *not* 0xFF
+        size += (type != 0xFF)
+        OutputBase.start_sprite(self, size + 2)
         self.print_word(size)
         self.print_byte(type)
+        if type == 0xFF: self._byte_count -= 1
 
     def print_sprite(self, filename, sprite_info):
         im = Image.open(filename.value)
@@ -102,7 +105,7 @@ class OutputGRF(OutputBase):
 
     def wsprite_header(self, sprite, size, xoffset, yoffset, compression):
         size_x, size_y = sprite.size
-        self.start_sprite(size + 8, compression)
+        self.start_sprite(size + 7, compression)
         self.print_byte(size_y)
         self.print_word(size_x)
         self.print_word(xoffset)
@@ -127,11 +130,14 @@ class OutputGRF(OutputBase):
 
         lz = LZ77(data)
         stream = lz.Encode()
+        streamlength = len(stream)
         if (compression & 2) == 0: size = len(data)
-        else: size = len(stream)
+        else: size = streamlength
         self.wsprite_header(sprite, size, xoffset, yoffset, compression)
         for c in stream:
             self.print_byte(c)
+        #make up for the difference in byte count
+        self._byte_count += size - streamlength
         self.end_sprite()
 
     def wsprite_encodetile(self, sprite, xoffset, yoffset, compression):

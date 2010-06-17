@@ -2,6 +2,7 @@
 from nml import generic
 from output_base import OutputBase
 import codecs
+from nml import grfstrings
 
 class OutputNFO(OutputBase):
     def __init__(self, filename):
@@ -50,8 +51,11 @@ class OutputNFO(OutputBase):
     def print_string(self, value, final_zero = True, force_ascii = False):
         assert self._in_sprite
         self.file.write('"')
-        if not force_ascii: self.file.write(u'Þ')
+        if not force_ascii:
+            self.file.write(u'Þ')
+            self._byte_count += 2
         self.file.write(value)
+        self._byte_count += grfstrings.get_string_size(value)
         self.file.write('" ')
         if final_zero: self.print_bytex(0)
 
@@ -63,7 +67,7 @@ class OutputNFO(OutputBase):
         self.file.write("\n")
 
     def start_sprite(self, size, is_real_sprite = False):
-        OutputBase.start_sprite(self)
+        OutputBase.start_sprite(self, size)
         self.print_decimal(self.sprite_num, 2)
         self.sprite_num += 1
         if not is_real_sprite:
@@ -71,7 +75,7 @@ class OutputNFO(OutputBase):
             self.print_decimal(size)
 
     def print_sprite(self, filename, sprite_info):
-        self.start_sprite(0, True)
+        self.start_sprite(1, True)
         self.file.write(filename.value + " ")
         self.print_decimal(sprite_info.xpos.value)
         self.print_decimal(sprite_info.ypos.value)
