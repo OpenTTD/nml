@@ -250,6 +250,7 @@ class OutputGRF(object):
                 yoffset = 0
             else:
                 sprite, xoffset, yoffset = self.crop_sprite(sprite, xoffset, yoffset)
+        compression &= ~0x40
         if compression == 9:
             self.wsprite_encodetile(sprite, xoffset, yoffset, compression)
         elif compression == 1 or compression == 3:
