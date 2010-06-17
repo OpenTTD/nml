@@ -6,11 +6,13 @@ from lz77 import LZ77
 
 class OutputGRF(OutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
+        OutputBase.__init__(self)
         self.file = open(filename, 'wb')
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
 
     def close(self):
+        assert not self._in_sprite
         #terminate with 6 zero bytes (zero-size sprite + checksum)
         i = 0
         while i < 6:
@@ -78,6 +80,7 @@ class OutputGRF(OutputBase):
         pass
 
     def start_sprite(self, size, type = 0xFF):
+        OutputBase.start_sprite(self)
         self.print_word(size)
         self.print_byte(type)
 

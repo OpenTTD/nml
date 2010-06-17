@@ -5,6 +5,7 @@ import codecs
 
 class OutputNFO(OutputBase):
     def __init__(self, filename):
+        OutputBase.__init__(self)
         self.sprite_num = 0
         self.file = codecs.open(filename, 'w', 'utf-8')
         self.file.write(
@@ -16,6 +17,7 @@ class OutputNFO(OutputBase):
 ''')
 
     def close(self):
+        assert not self._in_sprite
         self.file.close()
 
     def print_byte(self, value):
@@ -46,6 +48,7 @@ class OutputNFO(OutputBase):
         self.file.write("\\dx" + generic.to_hex(value, 8) + " ")
 
     def print_string(self, value, final_zero = True, force_ascii = False):
+        assert self._in_sprite
         self.file.write('"')
         if not force_ascii: self.file.write(u'Þ')
         self.file.write(value)
@@ -53,12 +56,14 @@ class OutputNFO(OutputBase):
         if final_zero: self.print_bytex(0)
 
     def print_decimal(self, value, size = None):
+        assert self._in_sprite
         self.file.write(str(value) + " ")
 
     def newline(self):
         self.file.write("\n")
 
     def start_sprite(self, size, is_real_sprite = False):
+        OutputBase.start_sprite(self)
         self.print_decimal(self.sprite_num, 2)
         self.sprite_num += 1
         if not is_real_sprite:
