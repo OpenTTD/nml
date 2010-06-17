@@ -396,10 +396,6 @@ class SpriteBlock(object):
 class TemplateDeclaration(object):
     def __init__(self, name, param_list, sprite_list):
         self.name = name
-        if name.value not in real_sprite.sprite_template_map:
-            real_sprite.sprite_template_map[name.value] = self
-        else:
-            raise generic.ScriptError("Template named '" + name.value + "' is already defined")
         self.param_list = param_list
         self.sprite_list = sprite_list
 
@@ -413,6 +409,10 @@ class TemplateDeclaration(object):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
+        if self.name.value not in real_sprite.sprite_template_map:
+            real_sprite.sprite_template_map[self.name.value] = self
+        else:
+            raise generic.ScriptError("Template named '" + self.name.value + "' is already defined")
         return []
 
 class SpriteView(object):
