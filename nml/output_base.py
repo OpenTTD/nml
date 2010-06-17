@@ -49,5 +49,4 @@ class OutputBase(object):
         assert self._in_sprite
         self._in_sprite = False
         self.newline()
-        if self._expected_count != self._byte_count:
-            raise "Expected %d bytes to be written, got %d" % (self._expected_count, self._byte_count)
+        assert self._expected_count == self._byte_count, "Expected %d bytes to be written to sprite, got %d" % (self._expected_count, self._byte_count)
