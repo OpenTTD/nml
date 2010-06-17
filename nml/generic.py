@@ -13,6 +13,25 @@ def check_range(value, min_value, max_value, name):
     if not min_value <= value <= max_value:
         raise RangeError(value, min_value, max_value, name)
 
+
+class Position(object):
+    """
+    Position in a file.
+
+    @ivar filename: Name of the file.
+    @type filename: C{str}
+
+    @ivar line_start: Line number (starting with 1) where the position starts.
+    @type line_start: C{int}
+    """
+    def __init__(self, filename, line_start):
+        self.filename = filename
+        self.line_start = line_start
+
+    def __str__(self):
+        return '"%s", line %d' % (self.filename, self.line_start)
+
+
 class ScriptError(Exception):
     def __init__(self, value):
         self.value = value

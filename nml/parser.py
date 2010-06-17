@@ -27,12 +27,9 @@ class NMLParser(object):
         ('left','TIMES','DIVIDE','MODULO'),
     )
 
-    def p_error(self, p):
-        if p is None: print "Unexpected EOF"
-        else:
-            print p
-            print "Syntax error at '%s', line %d" % (p.value, p.lineno)
-        sys.exit(2)
+    def p_error(self, t):
+        text = "EOF" if t is None else t.value
+        raise generic.ScriptError('Syntax error, unexpected token "%s"' % text)
 
 
     #

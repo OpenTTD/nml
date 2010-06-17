@@ -1,6 +1,6 @@
-import sys
+import sys, re
 import ply.lex as lex
-import expression
+from nml import expression, generic
 
 reserved = {
     'grf' : 'GRF',
@@ -41,44 +41,45 @@ var_ranges = {
     'PARENT' : 0x8A,
 }
 
-tokens = list(reserved.values()) + [
-    'ID',
-    'PLUS',
-    'MINUS',
-    'TIMES',
-    'DIVIDE',
-    'MODULO',
-    'AND',
-    'OR',
-    'XOR',
-    'EQ',
-    'LPAREN',
-    'RPAREN',
-    'SHIFT_LEFT',
-    'SHIFT_RIGHT',
-    'COMP_EQ',
-    'COMP_NEQ',
-    'COMP_LT',
-    'COMP_GT',
-    'COMMA',
-    'RANGE',
-    'LBRACKET',
-    'RBRACKET',
-    'LBRACE',
-    'RBRACE',
-    'TERNARY_OPEN',
-    'COLON',
-    'SEMICOLON',
-    'STRING_LITERAL',
-    'NUMBER',
-    'FLOAT',
-    'VARRANGE',
-    'UNIT',
-]
+line_directive_pat = re.compile(r'\#line\s+(\d+)\s+"(.*)"\n')
 
 class NMLLexer(object):
+
     # Tokens
-    tokens = tokens
+    tokens = reserved.values() + [
+        'ID',
+        'PLUS',
+        'MINUS',
+        'TIMES',
+        'DIVIDE',
+        'MODULO',
+        'AND',
+        'OR',
+        'XOR',
+        'EQ',
+        'LPAREN',
+        'RPAREN',
+        'SHIFT_LEFT',
+        'SHIFT_RIGHT',
+        'COMP_EQ',
+        'COMP_NEQ',
+        'COMP_LT',
+        'COMP_GT',
+        'COMMA',
+        'RANGE',
+        'LBRACKET',
+        'RBRACKET',
+        'LBRACE',
+        'RBRACE',
+        'TERNARY_OPEN',
+        'COLON',
+        'SEMICOLON',
+        'STRING_LITERAL',
+        'NUMBER',
+        'FLOAT',
+        'VARRANGE',
+        'UNIT',
+    ]
 
     t_PLUS             = r'\+'
     t_MINUS            = r'-'
@@ -106,10 +107,6 @@ class NMLLexer(object):
     t_TERNARY_OPEN     = r'\?'
     t_COLON            = r':'
     t_SEMICOLON        = r';'
-
-    def t_ignore_COMMENT(self, t):
-        r'(/\*(\n|.)*?\*/)|(//.*)'
-        t.lexer.lineno += t.value.count("\n")
 
     def t_FLOAT(self, t):
         r'\d+\.\d+'
@@ -148,16 +145,41 @@ class NMLLexer(object):
         return t
 
     # Ignored characters
-    t_ignore = " \t\r"
+    def t_ignore_comment(self, t):
+        r'(/\*(\n|.)*?\*/)|(//.*)'
+        self.increment_lines(t.value.count("\n"))
+
+    def t_ignore_whitespace(self, t):
+        "[ \t\r]"
+        pass
+
+    def t_line_directive(self, t):
+        r'\#line\s+\d+\s+".*"\n'
+        m = line_directive_pat.match(t.value)
+        assert m is not None
+        self.set_position(m.group(2), int(m.group(1), 10))
 
     def t_newline(self, t):
         r'\n+'
-        t.lexer.lineno += t.value.count("\n")
+        self.increment_lines(len(t.value))
 
     def t_error(self, t):
-        print "Illegal character '%s' at line %d" % (t.value[0], t.lexer.lineno)
+        print "Illegal character '%s' at %s" % (t.value[0], t.lexer.lineno)
         sys.exit(1)
+
 
 
     def build(self, **kwargs):
         self.lexer = lex.lex(module=self, **kwargs)
+        self.set_position('input', 1)
+
+
+    def set_position(self, fname, line):
+        """
+        @note: The lexer.lineno contains a Position object.
+        """
+        self.lexer.lineno = generic.Position(fname, line)
+
+    def increment_lines(self, count):
+        self.set_position(self.lexer.lineno.filename, self.lexer.lineno.line_start + count)
+
