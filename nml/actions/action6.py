@@ -13,7 +13,7 @@ class Action6(object):
 
     def write(self, file):
         size = 2 + 5 * len(self.modifications)
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(6)
         file.newline()
         for mod in self.modifications:
@@ -24,7 +24,7 @@ class Action6(object):
             file.newline()
         file.print_bytex(0xFF)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return False

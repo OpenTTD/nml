@@ -97,7 +97,7 @@ class Action2Var(action2.Action2):
             file.newline()
         file.print_wordx(self.default_result)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
 def convert_op_to_action2(op):
     op_to_act2 = {

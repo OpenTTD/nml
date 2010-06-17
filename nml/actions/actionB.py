@@ -23,7 +23,7 @@ class ActionB(object):
                 if self.param2 is not None:
                     size += 1
 
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(0x0B)
         self.severity.write(file, 1)
         file.print_bytex(self.lang)
@@ -39,7 +39,7 @@ class ActionB(object):
                 if self.param2 is not None:
                     self.param2.write(file, 1)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return False

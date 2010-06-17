@@ -19,7 +19,7 @@ class Action2Real(action2.Action2):
         for i in self.loading_list:
             file.print_word(i)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
 real_action2_alias = {
     'loaded': (0, [0x00, 0x01, 0x02, 0x03]),  #vehicles

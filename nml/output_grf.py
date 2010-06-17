@@ -95,6 +95,7 @@ class OutputGRF(OutputBase):
     def print_empty_realsprite(self):
         self.start_sprite(1)
         self.print_byte(0)
+        self.end_sprite()
 
     def wsprite_header(self, sprite, size, xoffset, yoffset, compression):
         size_x, size_y = sprite.size
@@ -260,4 +261,5 @@ class OutputGRF(OutputBase):
             for d in data:
                 self.print_bytex(ord(d))
         fp.close()
+        self.end_sprite()
 

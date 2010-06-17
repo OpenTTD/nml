@@ -14,7 +14,7 @@ class Action3(object):
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
         if self.feature <= 3: size += 2
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(3)
         file.print_bytex(self.feature)
         file.print_bytex(1 if not self.is_livery_override else 0x81) # a single id
@@ -27,7 +27,7 @@ class Action3(object):
             file.newline()
         file.print_wordx(self.def_cid)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

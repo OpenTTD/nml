@@ -14,7 +14,7 @@ class Action4(object):
     def write(self, file):
         # +3 after string size is for final 0 and thorn at the start
         size = 4 + self.size + grfstrings.get_string_size(self.text) + 3
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(4)
         file.print_bytex(self.feature)
         file.print_bytex(self.lang)
@@ -22,7 +22,7 @@ class Action4(object):
         file.print_varx(self.id, self.size)
         file.print_string(self.text)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

@@ -6,11 +6,11 @@ class Action10(object):
         pass
 
     def write(self, file):
-        file.print_sprite_size(2)
+        file.start_sprite(2)
         file.print_bytex(0x10)
         file.print_bytex(self.label)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

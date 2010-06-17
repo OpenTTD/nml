@@ -12,13 +12,13 @@ class Action1(object):
 
     def write(self, file):
         #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
-        file.print_sprite_size(6)
+        file.start_sprite(6)
         file.print_bytex(1)
         self.feature.write(file, 1)
         file.print_byte(self.num_sets)
         file.print_varx(self.num_ent, 3)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

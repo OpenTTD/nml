@@ -15,7 +15,7 @@ class Action0(object):
     def write(self, file):
         size = 7
         for prop in self.prop_list: size += prop.get_size()
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(0)
         file.print_bytex(self.feature)
         file.print_byte(len(self.prop_list))
@@ -25,7 +25,7 @@ class Action0(object):
         file.newline()
         for prop in self.prop_list:
             prop.write(file)
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

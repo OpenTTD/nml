@@ -15,7 +15,7 @@ class Action5(object):
     def write(self, file):
         #<Sprite-number> * <Length> 05 <type> <num-sprites> [<offset>]
         size = 5 if self.offset == 0 else 8
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(0x05)
         file.print_bytex(self.type)
         file.print_bytex(0xFF)
@@ -24,7 +24,7 @@ class Action5(object):
             file.print_bytex(0xFF)
             file.print_word(self.offset)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         #skipping with Action  should work, according to the Action7/9 specs

@@ -6,7 +6,7 @@ class SpriteCountAction(object):
         pass
 
     def write(self, file):
-        file.print_sprite_size(4)
+        file.start_sprite(4)
         file.print_dword(self.count)
         file.newline()
-        file.newline()
+        file.end_sprite()

@@ -15,10 +15,10 @@ class Action11(object):
         for sound in self.sounds: sound.prepare_output()
 
     def write(self, file):
-        file.print_sprite_size(3)
+        file.start_sprite(3)
         file.print_bytex(0x11)
         file.print_word(len(self.sounds))
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True
@@ -64,7 +64,6 @@ class LoadBinaryFile(object):
 
     def write(self, file):
         file.print_named_filedata(self.fname.value)
-        file.newline()
         if self.last: file.newline()
 
 class ImportSound(object):
@@ -100,10 +99,10 @@ class ImportSound(object):
         print indentation*' ' + 'import sound %d from NewGRF %s' % (self.number, hex(value))
 
     def write(self, file):
-        file.print_sprite_size(8)
+        file.start_sprite(8)
         file.print_bytex(0xfe)
         file.print_bytex(0)
         file.print_dwordx(self.grfid)
         file.print_wordx(self.number)
-        file.newline()
+        file.end_sprite()
         if self.last: file.newline()

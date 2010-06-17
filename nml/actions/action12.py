@@ -13,7 +13,7 @@ class Action12(object):
     def write(self, file):
         #<sprite-number> * <length> 12 <num-def> (<font> <num-char> <base-char>){n}
         size = 2 + 4 * len(self.sets)
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(0x12)
         file.print_byte(len(self.sets))
         file.newline()
@@ -22,7 +22,7 @@ class Action12(object):
             file.print_byte(num_char)
             file.print_word(base_char)
             file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

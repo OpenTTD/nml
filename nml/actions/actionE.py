@@ -10,14 +10,14 @@ class ActionE(object):
 
     def write(self, file):
         size = 2 + 4 * len(self.grfid_list)
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(0x0E)
         file.print_byte(len(self.grfid_list))
         for grfid in self.grfid_list:
             file.newline()
             file.print_dwordx(grfid)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

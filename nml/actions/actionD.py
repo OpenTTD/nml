@@ -48,7 +48,7 @@ class ActionD(object):
         global actionDoperator_to_num
         size = 5
         if self.data is not None: size += 4
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(0x0D)
         self.target.write(file, 1)
         file.print_bytex(actionDoperator_to_num[self.op], self.op)
@@ -56,7 +56,7 @@ class ActionD(object):
         self.param2.write(file, 1)
         if self.data is not None: self.data.write(file, 4)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return False

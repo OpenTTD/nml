@@ -39,7 +39,7 @@ class ActionF(object):
         self.town_names_data.prepare_output()
 
     def write(self, file):
-        file.print_sprite_size(2 + self.town_names_data.get_length_styles() +
+        file.start_sprite(2 + self.town_names_data.get_length_styles() +
                 self.town_names_data.get_length_parts())
         file.print_bytex(0xF)
         id = self.town_names_data.get_id()
@@ -47,7 +47,7 @@ class ActionF(object):
         self.town_names_data.write_styles(file)
         file.newline()
         self.town_names_data.write_parts(file)
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return False

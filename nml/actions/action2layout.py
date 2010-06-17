@@ -35,7 +35,7 @@ class Action2Layout(action2.Action2):
                 file.print_byte(sprite.get_bounding_box_param('yextent'))
                 file.print_byte(sprite.get_bounding_box_param('zextent'))
             file.newline()
-        file.newline()
+        file.end_sprite()
 
 class Action2LayoutRecolorMode(object):
     NONE = 0

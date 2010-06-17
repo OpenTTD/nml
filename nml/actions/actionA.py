@@ -11,14 +11,14 @@ class ActionA(object):
     def write(self, file):
         #<Sprite-number> * <Length> 0A <num-sets> [<num-sprites> <first-sprite>]+
         size = 2 + 3 * len(self.sets)
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(0x0A)
         file.print_byte(len(self.sets))
         for num, first in self.sets:
             file.print_byte(num)
             first.write(file, 2)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True

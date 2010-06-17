@@ -24,7 +24,7 @@ class SkipAction(object):
 
     def write(self, file):
         size = 5 + self.varsize
-        file.print_sprite_size(size)
+        file.start_sprite(size)
         file.print_bytex(self.feature)
         file.print_bytex(self.var)
         file.print_bytex(self.varsize)
@@ -32,7 +32,7 @@ class SkipAction(object):
         file.print_varx(self.value, self.varsize)
         file.print_bytex(self.label)
         file.newline()
-        file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return self.feature == 7
