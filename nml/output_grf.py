@@ -11,8 +11,11 @@ class OutputGRF(OutputBase):
         self.crop_sprites = crop_sprites
 
     def close(self):
-        self.print_word(0)
-        self.print_dword(0)
+        #terminate with 6 zero bytes (zero-size sprite + checksum)
+        i = 0
+        while i < 6:
+            self.wb(0)
+            i += 1
         self.file.close()
 
     def wb(self, byte):
@@ -35,43 +38,45 @@ class OutputGRF(OutputBase):
 
     def print_dword(self, value):
         value = self.prepare_dword(value)
-        self.print_word(value & 0xFFFF)
-        self.print_word(value >> 16)
+        self.wb(value & 0xFF)
+        self.wb((value >> 8) & 0xFF)
+        self.wb((value >> 16) & 0xFF)
+        self.wb(value >> 24)
 
     def print_dwordx(self, value):
         self.print_dword(value)
 
     def _print_utf8(self, char):
         for c in unichr(char).encode('utf8'):
-            self.wb(ord(c))
+            self.print_byte(ord(c))
 
     def print_string(self, value, final_zero = True, force_ascii = False):
         if not force_ascii:
-            self.wb(0xC3)
-            self.wb(0x9E)
+            self.print_byte(0xC3)
+            self.print_byte(0x9E)
         i = 0
         while i < len(value):
             if value[i] == '\\':
                 if value[i+1] in ('\\', 'n', '"'):
-                    self.wb(ord(value[i+1]))
+                    self.print_byte(ord(value[i+1]))
                     i += 2
                 elif value[i+1] == 'U':
                     self._print_utf8(int(value[i+2:i+6], 16))
                     i += 6
                 else:
-                    self.wb(int(value[i+1:i+3], 16))
+                    self.print_byte(int(value[i+1:i+3], 16))
                     i += 3
             else:
                 self._print_utf8(ord(value[i]))
                 i += 1
-        if final_zero: self.wb(0)
+        if final_zero: self.print_byte(0)
 
     def print_decimal(self, value, size):
         self.print_varx(value, size)
 
     def print_sprite_size(self, size):
         self.print_word(size)
-        self.wb(0xFF)
+        self.print_byte(0xFF)
 
     def newline(self):
         pass
@@ -92,13 +97,13 @@ class OutputGRF(OutputBase):
 
     def print_empty_realsprite(self):
         self.print_sprite_size(1)
-        self.wb(0)
+        self.print_byte(0)
 
     def wsprite_header(self, sprite, size, xoffset, yoffset, compression):
         size_x, size_y = sprite.size
         self.print_word(size + 8)
-        self.wb(compression)
-        self.wb(size_y)
+        self.print_byte(compression)
+        self.print_byte(size_y)
         self.print_word(size_x)
         self.print_word(xoffset)
         self.print_word(yoffset)
@@ -108,9 +113,9 @@ class OutputGRF(OutputBase):
         i = 0
         while i < len(data):
             l = min(len(data) - i, 127)
-            self.wb(l)
+            self.print_byte(l)
             while l > 0:
-                self.wb(data[i])
+                self.print_byte(data[i])
                 i+=1
                 l-=1
 
@@ -125,7 +130,7 @@ class OutputGRF(OutputBase):
         else: size = len(stream)
         self.wsprite_header(sprite, size, xoffset, yoffset, compression)
         for c in stream:
-            self.wb(c)
+            self.print_byte(c)
 
 
     def wsprite_encodetile(self, sprite, xoffset, yoffset, compression):

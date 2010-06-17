@@ -50,7 +50,7 @@ class OutputNFO(OutputBase):
         if not force_ascii: self.file.write(u'Þ')
         self.file.write(value)
         self.file.write('" ')
-        if final_zero: self.file.write('00 ')
+        if final_zero: self.print_bytex(0)
 
     def print_decimal(self, value, size = None):
         self.file.write(str(value) + " ")
@@ -77,7 +77,9 @@ class OutputNFO(OutputBase):
         self.print_decimal(sprite_info.yrel.value)
 
     def print_empty_realsprite(self):
-        self.file.write("* 1 0")
+        self.file.write("* ")
+        self.print_sprite_size(1)
+        self.print_bytex(0)
 
     def print_named_filedata(self, filename):
         self.file.write("** " + filename)
