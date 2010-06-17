@@ -29,3 +29,6 @@ class OutputBase(object):
             self.print_dwordx(value)
         else:
             assert False
+
+    def end_sprite(self):
+        self.newline()

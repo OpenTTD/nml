@@ -74,15 +74,12 @@ class OutputGRF(OutputBase):
     def print_decimal(self, value, size):
         self.print_varx(value, size)
 
-    def print_sprite_size(self, size):
-        self.print_word(size)
-        self.print_byte(0xFF)
-
     def newline(self):
         pass
 
-    def next_sprite(self, is_real_sprite):
-        pass
+    def start_sprite(self, size, type = 0xFF):
+        self.print_word(size)
+        self.print_byte(type)
 
     def print_sprite(self, filename, sprite_info):
         im = Image.open(filename.value)
@@ -96,13 +93,12 @@ class OutputGRF(OutputBase):
         self.wsprite(sprite, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.compression.value)
 
     def print_empty_realsprite(self):
-        self.print_sprite_size(1)
+        self.start_sprite(1)
         self.print_byte(0)
 
     def wsprite_header(self, sprite, size, xoffset, yoffset, compression):
         size_x, size_y = sprite.size
-        self.print_word(size + 8)
-        self.print_byte(compression)
+        self.start_sprite(size + 8, compression)
         self.print_byte(size_y)
         self.print_word(size_x)
         self.print_word(xoffset)
@@ -118,6 +114,7 @@ class OutputGRF(OutputBase):
                 self.print_byte(data[i])
                 i+=1
                 l-=1
+        self.end_sprite()
 
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
         if not self.compress_grf:
@@ -131,7 +128,7 @@ class OutputGRF(OutputBase):
         self.wsprite_header(sprite, size, xoffset, yoffset, compression)
         for c in stream:
             self.print_byte(c)
-
+        self.end_sprite()
 
     def wsprite_encodetile(self, sprite, xoffset, yoffset, compression):
         data = list(sprite.getdata())
@@ -252,7 +249,7 @@ class OutputGRF(OutputBase):
         name = os.path.split(filename)[1]
         size = os.path.getsize(filename)
         total = 2 + len(name) + 1 + size
-        self.print_sprite_size(total)
+        self.start_sprite(total)
         self.print_bytex(0xff)
         self.print_bytex(len(name))
         self.print_string(name, force_ascii = True, final_zero = True)  # ASCII filenames seems sufficient.

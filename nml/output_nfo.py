@@ -55,18 +55,18 @@ class OutputNFO(OutputBase):
     def print_decimal(self, value, size = None):
         self.file.write(str(value) + " ")
 
-    def print_sprite_size(self, size):
-        self.print_decimal(size)
-
     def newline(self):
         self.file.write("\n")
 
-    def next_sprite(self, is_real_sprite):
+    def start_sprite(self, size, is_real_sprite = False):
         self.print_decimal(self.sprite_num, 2)
-        if not is_real_sprite: self.file.write("* ")
         self.sprite_num += 1
+        if not is_real_sprite:
+            self.file.write("* ")
+            self.print_decimal(size)
 
     def print_sprite(self, filename, sprite_info):
+        self.start_sprite(0, True)
         self.file.write(filename.value + " ")
         self.print_decimal(sprite_info.xpos.value)
         self.print_decimal(sprite_info.ypos.value)
@@ -75,11 +75,14 @@ class OutputNFO(OutputBase):
         self.print_decimal(sprite_info.xsize.value)
         self.print_decimal(sprite_info.xrel.value)
         self.print_decimal(sprite_info.yrel.value)
+        self.end_sprite()
 
     def print_empty_realsprite(self):
-        self.file.write("* ")
-        self.print_sprite_size(1)
+        self.start_sprite(1)
         self.print_bytex(0)
+        self.end_sprite()
 
     def print_named_filedata(self, filename):
+        self.start_sprite(0, True)
         self.file.write("** " + filename)
+        self.end_sprite()

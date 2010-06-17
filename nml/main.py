@@ -130,7 +130,6 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
         action.prepare_output()
     for outputfile in outputfiles:
         for action in actions:
-            outputfile.next_sprite(isinstance(action, (RealSpriteAction, LoadBinaryFile)))
             action.write(outputfile)
     return 0
 
