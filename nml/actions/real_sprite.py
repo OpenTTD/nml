@@ -96,26 +96,30 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
 
 sprite_template_map = {}
 
+def expand_template(sprite):
+    real_sprite_list = []
+    assert isinstance(sprite, TemplateUsage)
+    if sprite.name.value not in sprite_template_map:
+        raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
+    template = sprite_template_map[sprite.name.value]
+    if len(sprite.param_list) != len(template.param_list):
+        raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(sprite.param_list)))
+    param_dict = {}
+    try:
+        for i, param in enumerate(sprite.param_list):
+            param = param.reduce_constant([real_sprite_compression_flags])
+            param_dict[template.param_list[i].value] = param.value
+    except generic.ConstError:
+        raise generic.ScriptError("Template parameters should be compile-time constants")
+    for sprite in template.sprite_list:
+        real_sprite_list.append((sprite, param_dict))
+    return real_sprite_list
+
 def parse_sprite_list(sprite_list):
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
             real_sprite_list.append((sprite, {}))
         else:
-            #expand template
-            assert isinstance(sprite, TemplateUsage)
-            if sprite.name.value not in sprite_template_map:
-                raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
-            template = sprite_template_map[sprite.name.value]
-            if len(sprite.param_list) != len(template.param_list):
-                raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(sprite.param_list)))
-            param_dict = {}
-            try:
-                for i, param in enumerate(sprite.param_list):
-                    param = param.reduce_constant([real_sprite_compression_flags])
-                    param_dict[template.param_list[i].value] = param.value
-            except generic.ConstError:
-                raise generic.ScriptError("Template parameters should be compile-time constants")
-            for sprite in template.sprite_list:
-                real_sprite_list.append((sprite, param_dict))
+            real_sprite_list.extend(expand_template(sprite))
     return real_sprite_list
