@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from nml import generic
+from output_base import OutputBase
 import codecs
 
-class OutputNFO(object):
+class OutputNFO(OutputBase):
     def __init__(self, filename):
         self.sprite_num = 0
         self.file = codecs.open(filename, 'w', 'utf-8')
@@ -18,50 +19,31 @@ class OutputNFO(object):
         self.file.close()
 
     def print_byte(self, value):
-        if -0x80 < value < 0 : value += 0x100
-        assert value >= 0 and value <= 0xFF
+        value = self.prepare_byte(value)
         self.file.write("\\b" + str(value) + " ")
 
     def print_bytex(self, value, pretty_print = None):
+        value = self.prepare_byte(value)
         if pretty_print is not None:
             self.file.write(pretty_print + " ")
             return
-        if -0x80 < value < 0: value += 0x100
-        assert value >= 0 and value <= 0xFF
         self.file.write(generic.to_hex(value, 2) + " ")
 
     def print_word(self, value):
-        if -0x8000 < value < 0: value += 0x10000
-        assert value >= 0 and value <= 0xFFFF
+        value = self.prepare_word(value)
         self.file.write("\\w" + str(value) + " ")
 
     def print_wordx(self, value):
-        if -0x8000 < value < 0: value += 0x10000
-        assert value >= 0 and value <= 0xFFFF
+        value = self.prepare_word(value)
         self.file.write("\\wx" + generic.to_hex(value, 4) + " ")
 
     def print_dword(self, value):
-        if -0x80000000 < value < 0: value += 0x100000000
-        assert value >= 0 and value <= 0xFFFFFFFF
+        value = self.prepare_dword(value)
         self.file.write("\\d" + str(value) + " ")
 
     def print_dwordx(self, value):
-        if -0x80000000 < value < 0: value += 0x100000000
-        assert value >= 0 and value <= 0xFFFFFFFF
+        value = self.prepare_dword(value)
         self.file.write("\\dx" + generic.to_hex(value, 8) + " ")
-
-    def print_varx(self, value, size):
-        if size == 1:
-            self.print_bytex(value)
-        elif size == 2:
-            self.print_wordx(value)
-        elif size == 3:
-            self.print_bytex(0xFF)
-            self.print_wordx(value)
-        elif size == 4:
-            self.print_dwordx(value)
-        else:
-            assert False
 
     def print_string(self, value, final_zero = True, force_ascii = False):
         self.file.write('"')

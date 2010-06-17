@@ -1,9 +1,10 @@
+from output_base import OutputBase
 import Image
 import os
 from lz77 import LZ77
 
 
-class OutputGRF(object):
+class OutputGRF(OutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
         self.file = open(filename, 'wb')
         self.compress_grf = compress_grf
@@ -18,43 +19,27 @@ class OutputGRF(object):
         self.file.write(chr(byte))
 
     def print_byte(self, value):
-        if -0x80 < value < 0 : value += 0x100
-        assert value >= 0 and value <= 0xFF
+        value = self.prepare_byte(value)
         self.wb(value)
 
     def print_bytex(self, value, pretty_print = None):
         self.print_byte(value)
 
     def print_word(self, value):
-        if -0x8000 < value < 0: value += 0x10000
-        assert value >= 0 and value <= 0xFFFF
+        value = self.prepare_word(value)
         self.wb(value & 0xFF)
-        self.wb(value >> 8)\
+        self.wb(value >> 8)
 
     def print_wordx(self, value):
         self.print_word(value)
 
     def print_dword(self, value):
-        if -0x80000000 < value < 0: value += 0x100000000
-        assert value >= 0 and value <= 0xFFFFFFFF
+        value = self.prepare_dword(value)
         self.print_word(value & 0xFFFF)
         self.print_word(value >> 16)
 
     def print_dwordx(self, value):
         self.print_dword(value)
-
-    def print_varx(self, value, size):
-        if size == 1:
-            self.print_byte(value)
-        elif size == 2:
-            self.print_word(value)
-        elif size == 3:
-            self.print_byte(0xFF)
-            self.print_word(value)
-        elif size == 4:
-            self.print_dword(value)
-        else:
-            assert False
 
     def _print_utf8(self, char):
         for c in unichr(char).encode('utf8'):
