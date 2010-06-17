@@ -154,6 +154,11 @@ constant_numbers = {
     'LEVEL_CROSSING_OPEN'       : 1,
     'LEVEL_CROSSING_NONE'       : 1,
 
+    #acceleration model for trains
+    'ACC_MODEL_RAIL'     : 0,
+    'ACC_MODEL_MONORAIL' : 1,
+    'ACC_MODEL_MAGLEV'   : 2,
+
     #default industry IDs
     'INDUSTRYTYPE_COAL_MINE'             : 0x00,
     'INDUSTRYTYPE_POWER_PLANT'           : 0x01,
