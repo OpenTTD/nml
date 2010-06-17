@@ -409,6 +409,15 @@ class TemplateDeclaration(object):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
+        #check that all templates that are referred to exist at this point
+        #This prevents circular dependencies
+        for sprite in self.sprite_list:
+            if isinstance(sprite, real_sprite.TemplateUsage):
+                if sprite.name.value == self.name.value:
+                    raise generic.ScriptError("Sprite template '%s' includes itself." % sprite.name.value)
+                elif sprite.name.value not in real_sprite.sprite_template_map:
+                    raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
+        #Register template
         if self.name.value not in real_sprite.sprite_template_map:
             real_sprite.sprite_template_map[self.name.value] = self
         else:

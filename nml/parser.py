@@ -334,14 +334,8 @@ class NMLParser(object):
         'real_sprite : LBRACKET expression_list RBRACKET'
         t[0] = real_sprite.RealSprite(t[2])
 
-    def p_real_sprite_list(self, t):
-        '''real_sprite_list : real_sprite
-                            | real_sprite_list real_sprite'''
-        if len(t) == 2: t[0] = [t[1]]
-        else: t[0] = t[1] + [t[2]]
-
     def p_template_declaration(self, t):
-        'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE real_sprite_list RBRACE'
+        'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE spriteset_contents RBRACE'
         t[0] = ast.TemplateDeclaration(t[2], t[4], t[7])
 
     def p_template_usage(self, t):

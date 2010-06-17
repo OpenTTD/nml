@@ -96,7 +96,7 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
 
 sprite_template_map = {}
 
-def expand_template(sprite):
+def expand_template(sprite, parameters = {}):
     real_sprite_list = []
     assert isinstance(sprite, TemplateUsage)
     if sprite.name.value not in sprite_template_map:
@@ -107,12 +107,15 @@ def expand_template(sprite):
     param_dict = {}
     try:
         for i, param in enumerate(sprite.param_list):
-            param = param.reduce_constant([real_sprite_compression_flags])
+            param = param.reduce_constant([real_sprite_compression_flags, parameters])
             param_dict[template.param_list[i].value] = param.value
     except generic.ConstError:
         raise generic.ScriptError("Template parameters should be compile-time constants")
     for sprite in template.sprite_list:
-        real_sprite_list.append((sprite, param_dict))
+        if isinstance(sprite, RealSprite):
+            real_sprite_list.append((sprite, param_dict))
+        else:
+            real_sprite_list.extend(expand_template(sprite, param_dict))
     return real_sprite_list
 
 def parse_sprite_list(sprite_list):
