@@ -144,7 +144,7 @@ def parse_actionD(assignment):
 
         if op == expression.Operator.CMP_GT:
             expr1, expr2 = expr2, expr1
-            op = Operator.CMP_LT
+            op = expression.Operator.CMP_LT
 
         if op == expression.Operator.CMP_LT:
             action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(expression.Operator.SUB, expr1, expr2))))
