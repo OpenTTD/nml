@@ -111,25 +111,24 @@ class OutputGRF(OutputBase):
         self.print_word(xoffset)
         self.print_word(yoffset)
 
-    def wsprite_encoderegular_fakecompress(self, sprite, data, xoffset, yoffset, compression):
-        self.wsprite_header(sprite, len(data), xoffset, yoffset, compression)
+    def fakecompress(self, data):
         i = 0
+        output = []
         while i < len(data):
             l = min(len(data) - i, 127)
-            self.print_byte(l)
+            output.append(l)
             while l > 0:
-                self.print_byte(data[i])
+                output.append(data[i])
                 i+=1
                 l-=1
-        self.end_sprite()
+        return output
 
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
-        if not self.compress_grf:
-            self.wsprite_encoderegular_fakecompress(sprite, data, xoffset, yoffset, compression)
-            return
-
-        lz = LZ77(data)
-        stream = lz.Encode()
+        if self.compress_grf:
+            lz = LZ77(data)
+            stream = lz.Encode()
+        else:
+            stream = self.fakecompress(data)
         streamlength = len(stream)
         if (compression & 2) == 0: size = len(data)
         else: size = streamlength
