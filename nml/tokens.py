@@ -41,7 +41,8 @@ var_ranges = {
     'PARENT' : 0x8A,
 }
 
-line_directive_pat = re.compile(r'\#line\s+(\d+)\s+"(.*)"\n')
+line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\n|"(.*)"\n)')
+line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"(\s+\d+\s*)?\n')
 
 class NMLLexer(object):
 
@@ -153,9 +154,16 @@ class NMLLexer(object):
         "[ \t\r]"
         pass
 
-    def t_line_directive(self, t):
-        r'\#line\s+\d+\s+".*"\n'
-        m = line_directive_pat.match(t.value)
+    def t_line_directive1(self, t):
+        r'\#line\s+\d+\s*(\n|".*"\n)'
+        m = line_directive1_pat.match(t.value)
+        assert m is not None
+        fname = self.lexer.lineno.filename if m.group(3) is None else m.group(3)
+        self.set_position(fname, int(m.group(1), 10))
+
+    def t_line_directive2(self, t):
+        r'\#\s+\d+\s+".*"(\s+\d+\s*)?\n'
+        m = line_directive2_pat.match(t.value)
         assert m is not None
         self.set_position(m.group(2), int(m.group(1), 10))
 
