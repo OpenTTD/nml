@@ -190,7 +190,7 @@ class SwitchRange(object):
     def __init__(self, min, max, result):
         self.min = min.reduce(global_constants.const_list)
         self.max = max.reduce(global_constants.const_list)
-        self.result = result.reduce(global_constants.const_list, False)
+        self.result = result.reduce(global_constants.const_list, False) if result is not None else None
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Min:'
