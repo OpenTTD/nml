@@ -223,13 +223,14 @@ item_feature = None
 item_id = None
 
 class Item(object):
-    def __init__(self, params, body):
+    def __init__(self, params, body, pos):
+        self.pos = pos
         if len(params) >= 1:
             self.feature = params[0].reduce_constant([feature_ids])
         else:
-            raise generic.ScriptError("Item block requires at least one parameter, got 0")
+            raise generic.ScriptError("Item block requires at least one parameter, got 0", self.pos)
         if len(params) > 3:
-            raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params))
+            raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
         if len(params) == 3:
             self.id = params[2].reduce_constant()
@@ -239,11 +240,11 @@ class Item(object):
         if len(params) >= 2:
             self.name = params[1]
             if not isinstance(self.name, expression.Identifier):
-                raise generic.ScriptError("Item parameter 2 'name' should be an identifier")
+                raise generic.ScriptError("Item parameter 2 'name' should be an identifier", self.pos)
             if self.name.value in expression.item_names:
                 id = expression.ConstantNumeric(expression.item_names[self.name.value])
                 if self.id is not None and id.value != self.id.value:
-                    raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, self.id.value, id.value))
+                    raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, self.id.value, id.value), self.pos)
                 self.id = id
         else:
             self.name = None
