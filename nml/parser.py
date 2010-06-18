@@ -241,6 +241,7 @@ class NMLParser(object):
     def p_graphics_block(self, t):
         'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
         t[0] = t[3]
+        t[0].pos = t.lineno(1)
 
     def p_liveryoverride_block(self, t):
         'liveryoverride_block : LIVERYOVERRIDE LPAREN expression RPAREN LBRACE graphics_list RBRACE'
