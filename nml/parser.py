@@ -230,7 +230,7 @@ class NMLParser(object):
                                | ID COLON expression UNIT SEMICOLON
                                | ID COLON string SEMICOLON
                                | ID COLON array SEMICOLON
-                               | NUMBER COLON expression
+                               | NUMBER COLON expression SEMICOLON
                                | NUMBER COLON expression UNIT SEMICOLON
                                | NUMBER COLON string SEMICOLON
                                | NUMBER COLON array SEMICOLON'''
