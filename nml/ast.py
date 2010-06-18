@@ -440,10 +440,11 @@ class SpriteBlock(object):
         return action1.parse_sprite_block(self)
 
 class TemplateDeclaration(object):
-    def __init__(self, name, param_list, sprite_list):
+    def __init__(self, name, param_list, sprite_list, pos):
         self.name = name
         self.param_list = param_list
         self.sprite_list = sprite_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Template declaration:', self.name.value
@@ -460,14 +461,14 @@ class TemplateDeclaration(object):
         for sprite in self.sprite_list:
             if isinstance(sprite, real_sprite.TemplateUsage):
                 if sprite.name.value == self.name.value:
-                    raise generic.ScriptError("Sprite template '%s' includes itself." % sprite.name.value)
+                    raise generic.ScriptError("Sprite template '%s' includes itself." % sprite.name.value, self.pos)
                 elif sprite.name.value not in real_sprite.sprite_template_map:
                     raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
         #Register template
         if self.name.value not in real_sprite.sprite_template_map:
             real_sprite.sprite_template_map[self.name.value] = self
         else:
-            raise generic.ScriptError("Template named '" + self.name.value + "' is already defined")
+            raise generic.ScriptError("Template named '%s' is already defined, first definition at %s" % (self.name.value, real_sprite.sprite_template_map[self.name.value].pos), self.pos)
         return []
 
 class SpriteView(object):

@@ -332,7 +332,7 @@ class NMLParser(object):
 
     def p_template_declaration(self, t):
         'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = ast.TemplateDeclaration(t[2], t[4], t[7])
+        t[0] = ast.TemplateDeclaration(t[2], t[4], t[7], t.lineno(1))
 
     def p_template_usage(self, t):
         'template_usage : ID LPAREN expression_list RPAREN'
