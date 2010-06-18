@@ -353,8 +353,8 @@ class NMLParser(object):
     def p_replace_new(self, t):
         '''replace_new : REPLACENEWSPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE
                        | REPLACENEWSPRITE LPAREN expression COMMA STRING_LITERAL COMMA expression RPAREN LBRACE spriteset_contents RBRACE'''
-        if len(t) == 10: t[0] = ast.ReplaceNewSprite(t[3], t[5], expression.ConstantNumeric(0), t[8])
-        else: t[0] = ast.ReplaceNewSprite(t[3], t[5], t[7], t[10])
+        if len(t) == 10: t[0] = ast.ReplaceNewSprite(t[3], t[5], expression.ConstantNumeric(0), t[8], t.lineno(0))
+        else: t[0] = ast.ReplaceNewSprite(t[3], t[5], t[7], t[10], t.lineno(0))
 
     def p_font_glpyh(self, t):
         'font_glyph : FONTGLYPH LPAREN expression COMMA expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'

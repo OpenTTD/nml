@@ -389,11 +389,12 @@ class ReplaceSprite(object):
         return actionA.parse_actionA(self)
 
 class ReplaceNewSprite(object):
-    def __init__(self, type, pcx, offset, sprite_list):
+    def __init__(self, type, pcx, offset, sprite_list, pos):
         self.type = type
         self.pcx = pcx
         self.offset = offset
         self.sprite_list = sprite_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites for new features of type', self.type
