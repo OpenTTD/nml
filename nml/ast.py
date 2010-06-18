@@ -143,7 +143,7 @@ var_ranges = {
 }
 
 class Switch(object):
-    def __init__(self, feature, var_range, name, expr, body):
+    def __init__(self, feature, var_range, name, expr, body, pos):
         self.feature = feature.reduce_constant([feature_ids])
         if var_range.value in var_ranges:
             self.var_range = var_ranges[var_range.value]
@@ -152,6 +152,7 @@ class Switch(object):
         self.name = name
         self.expr = expr
         self.body = body
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
@@ -196,8 +197,9 @@ class SwitchBody(object):
         return ret
 
 class DeactivateBlock(object):
-    def __init__(self, grfid_list):
+    def __init__(self, grfid_list, pos):
         self.grfid_list = [grfid.reduce() for grfid in grfid_list]
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Deactivate other newgrfs:'

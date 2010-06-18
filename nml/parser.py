@@ -505,7 +505,7 @@ class NMLParser(object):
 
     def p_deactivate(self, t):
         'deactivate : DEACTIVATE LPAREN expression_list RPAREN SEMICOLON'
-        t[0] = ast.DeactivateBlock(t[3])
+        t[0] = ast.DeactivateBlock(t[3], t.lineno(1))
 
     def p_grf_block(self, t):
         'grf_block : GRF LBRACE assignment_list RBRACE'
