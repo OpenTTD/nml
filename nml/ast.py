@@ -524,7 +524,7 @@ class TownNames(object):
     @type id_number: C{None} or C{int}
 
     @ivar style_name: Name of the translated string containing the name of the style, if any.
-    @type style_name: C{None} or L{Identifier}
+    @type style_name: C{None} or L{String}
 
     @ivar style_names: List translations of L{style_name}, pairs (languageID, text).
     @type style_names: C{list} of (C{int}, L{Identifier})
@@ -556,7 +556,7 @@ class TownNames(object):
                     raise generic.ScriptError("Parameters of the 'styles' were not expected.", param.pos)
                 if self.style_name is not None:
                     raise generic.ScriptError("'styles' is already defined.", self.pos)
-                self.style_name = param.value.name.value
+                self.style_name = param.value.name
 
         if len(self.parts) == 0:
             raise generic.ScriptError("Missing name parts in a town_names item.", self.pos)
@@ -607,12 +607,12 @@ class TownNames(object):
 
         # Pull style names if needed.
         if self.style_name is not None:
-            if self.style_name not in grfstrings.grf_strings:
-                raise generic.ScriptError("Unknown string: " + self.style_name)
-            self.style_names = [(transl['lang'], transl['text']) for transl in grfstrings.grf_strings[self.style_name]]
+            if self.style_name.value not in grfstrings.grf_strings:
+                raise generic.ScriptError("Unknown string: " + self.style_name.value, self.style_name.pos)
+            self.style_names = [(transl['lang'], transl['text']) for transl in grfstrings.grf_strings[self.style_name.value]]
             self.style_names.sort()
             if len(self.style_names) == 0:
-                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name, self.pos)
+                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name.value, self.pos)
         else: self.style_names = []
 
 
@@ -658,7 +658,7 @@ class TownNames(object):
 
         print indentation*' ' + 'Town name ' + name_text
         if self.style_name is not None:
-            print indentation*' ' + "  style name string:", self.style_name
+            print indentation*' ' + "  style name string:", self.style_name.value
         for part in self.parts:
             print indentation*' ' + "-name part:"
             part.debug_print(indentation + 2)
