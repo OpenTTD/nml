@@ -372,10 +372,11 @@ class GraphicsDefinition(object):
         print (indentation+2)*' ' + 'Linked to action2:', self.action2_id.value
 
 class ReplaceSprite(object):
-    def __init__(self, start_id, pcx, sprite_list):
+    def __init__(self, start_id, pcx, sprite_list, pos):
         self.start_id = start_id.reduce_constant()
         self.pcx = pcx
         self.sprite_list = sprite_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites starting at', self.start_id
