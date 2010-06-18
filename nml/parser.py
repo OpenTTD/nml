@@ -236,7 +236,7 @@ class NMLParser(object):
                                | NUMBER COLON array SEMICOLON'''
         val = expression.Array(t[3], t[1].pos) if isinstance(t[3], list) else t[3]
         unit = None if len(t) == 5 else ast.Unit(t[4])
-        t[0] = ast.Property(t[1], val, unit)
+        t[0] = ast.Property(t[1], val, unit, t.lineno(1))
 
     def p_graphics_block(self, t):
         'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
