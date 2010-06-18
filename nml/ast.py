@@ -206,16 +206,37 @@ item_feature = None
 item_id = None
 
 class Item(object):
-    def __init__(self, feature, body, name = None, id = None):
-        self.feature = feature.reduce_constant([feature_ids])
+    def __init__(self, params, body):
+        if len(params) >= 1:
+            self.feature = params[0].reduce_constant([feature_ids])
+        else:
+            raise generic.ScriptError("Item block requires at least one parameter, got 0")
+        if len(params) > 3:
+            raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params))
+
+        if len(params) == 3:
+            self.id = params[2].reduce_constant()
+        else:
+            self.id = None
+
+        if len(params) >= 2:
+            self.name = params[1]
+            if not isinstance(self.name, expression.Identifier):
+                raise generic.ScriptError("Item parameter 2 'name' should be an identifier")
+            if self.name.value in expression.item_names:
+                id = expression.ConstantNumeric(expression.item_names[self.name.value])
+                if self.id is not None and id.value != self.id.value:
+                    raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, self.id.value, id.value))
+                self.id = id
+        else:
+            self.name = None
+
+        if self.id is None:
+            self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
+        if self.name is not None:
+            expression.item_names[self.name.value] = self.id.value
+
         self.body = body
-        self.name = name
-        if name is not None and name.value in expression.item_names:
-            self.id = expression.ConstantNumeric(expression.item_names[name.value])
-        elif id is None: self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
-        else: self.id = id.reduce_constant()
-        if name is not None:
-            expression.item_names[name.value] = self.id.value
         validate_item_block(body)
 
     def debug_print(self, indentation):

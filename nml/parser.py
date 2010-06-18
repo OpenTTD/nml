@@ -210,12 +210,8 @@ class NMLParser(object):
     # Item blocks
     #
     def p_item(self, t):
-        '''item : ITEM LPAREN expression RPAREN LBRACE skipable_script RBRACE
-                | ITEM LPAREN expression COMMA ID RPAREN LBRACE skipable_script RBRACE
-                | ITEM LPAREN expression COMMA ID COMMA expression RPAREN LBRACE skipable_script RBRACE'''
-        if len(t) == 8: t[0] = ast.Item(t[3], t[6])
-        elif len(t) == 10: t[0] = ast.Item(t[3], t[8], t[5])
-        else: t[0] = ast.Item(t[3], t[10], t[5], t[7])
+        'item : ITEM LPAREN expression_list RPAREN LBRACE skipable_script RBRACE'
+        t[0] = ast.Item(t[3], t[6])
 
     def p_property_block(self, t):
         'property_block : PROPERTY LBRACE property_list RBRACE'
