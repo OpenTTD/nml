@@ -145,7 +145,7 @@ class Switch(object):
         if var_range.value in var_ranges:
             self.var_range = var_ranges[var_range.value]
         else:
-            raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % var_range.value)
+            raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % var_range.value, var_range.pos)
         self.name = name
         self.expr = expr
         self.body = body
