@@ -495,9 +495,10 @@ class LayoutSprite(object):
             layout_param.debug_print(indentation + 2)
 
 class LayoutParam(object):
-    def __init__(self, name, value):
+    def __init__(self, name, value, pos):
         self.name = name
         self.value = value.reduce(global_constants.const_list, False)
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Layout parameter:', self.name.value

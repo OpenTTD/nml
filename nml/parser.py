@@ -422,7 +422,7 @@ class NMLParser(object):
 
     def p_layout_param(self, t):
         'layout_param : ID COLON expression SEMICOLON'
-        t[0] = ast.LayoutParam(t[1], t[3])
+        t[0] = ast.LayoutParam(t[1], t[3], t.lineno(1))
 
     #
     # Town names
