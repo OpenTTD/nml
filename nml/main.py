@@ -1,9 +1,6 @@
 import sys, os, codecs, optparse
 from nml import ast, generic, grfstrings, parser
-from actions.sprite_count import SpriteCountAction
-from actions.real_sprite import RealSpriteAction
-from nml.actions import action2var, action8
-from actions.action11 import LoadBinaryFile
+from nml.actions import action2var, action8, sprite_count
 from output_nfo import OutputNFO
 
 
@@ -124,7 +121,7 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
             has_action8 = True
 
     if has_action8:
-        actions = [SpriteCountAction(len(actions))] + actions
+        actions = [sprite_count.SpriteCountAction(len(actions))] + actions
 
     for action in actions:
         action.prepare_output()
@@ -133,5 +130,8 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
             action.write(outputfile)
     return 0
 
-if __name__ == "__main__":
+def run():
     main(sys.argv[1:])
+
+if __name__ == "__main__":
+    run()
