@@ -392,15 +392,15 @@ class NMLParser(object):
         '''spriteview_list : ID SEMICOLON
                            | spriteview
                            | spriteview_list spriteview'''
-        if isinstance(t[1], expression.Identifier): t[0] = [ast.SpriteView('default', [t[1]])]
+        if isinstance(t[1], expression.Identifier): t[0] = [ast.SpriteView('default', [t[1]], t.lineno(1))]
         elif len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[2]]
 
     def p_spriteview(self, t):
         ''' spriteview : ID COLON id_array SEMICOLON
                        | ID COLON ID SEMICOLON'''
-        if isinstance(t[3], list): t[0] = ast.SpriteView(t[1], t[3])
-        else: t[0] = ast.SpriteView(t[1], [t[3]])
+        if isinstance(t[3], list): t[0] = ast.SpriteView(t[1], t[3], t.lineno(1))
+        else: t[0] = ast.SpriteView(t[1], [t[3]], t.lineno(1))
 
     def p_layout_sprite_list(self, t):
         '''layout_sprite_list : layout_sprite

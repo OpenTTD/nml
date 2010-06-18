@@ -472,9 +472,10 @@ class TemplateDeclaration(object):
         return []
 
 class SpriteView(object):
-    def __init__(self, name, spriteset_list):
+    def __init__(self, name, spriteset_list, pos):
         self.name = name
         self.spriteset_list = spriteset_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite view:', self.name.value
