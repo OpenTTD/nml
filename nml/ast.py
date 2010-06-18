@@ -36,13 +36,13 @@ class GRF(object):
         for assignment in alist:
             if assignment.name.value == "grfid":
                 if not isinstance(assignment.value, expression.StringLiteral):
-                    raise generic.ScriptError("GRFID must be a string literal")
+                    raise generic.ScriptError("GRFID must be a string literal", assignment.value.pos)
             elif not isinstance(assignment.value, expression.String):
-                raise generic.ScriptError("Assignments in GRF-block must be constant strings")
+                raise generic.ScriptError("Assignments in GRF-block must be constant strings", assignment.value.pos)
             if assignment.name.value == "name": self.name = assignment.value
             elif assignment.name.value == "desc": self.desc = assignment.value
             elif assignment.name.value == "grfid": self.grfid = assignment.value
-            else: raise generic.ScriptError("Unknown item in GRF-block: " + assignment.name)
+            else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
