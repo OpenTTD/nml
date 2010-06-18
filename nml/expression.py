@@ -236,7 +236,7 @@ class Variable(Expression):
         num = self.num.reduce(id_dicts)
         shift = self.shift.reduce(id_dicts)
         mask = self.mask.reduce(id_dicts)
-        param = self.param.reduce(id_dicts)
+        param = self.param.reduce(id_dicts) if self.param is not None else None
         var = Variable(num, shift, mask, param)
         var.add = self.add
         var.div = self.div
