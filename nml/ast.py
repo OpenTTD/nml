@@ -508,42 +508,46 @@ class TownNames(object):
 
     @ivar free_bit: First available bit above the bits used by this block.
     @type free_bit: C{None} if unset, else C{int}
+
+    @ivar pos: Position information of the 'town_names' block.
+    @type pos: L{Position}
     """
-    def __init__(self, name, param_list):
+    def __init__(self, name, param_list, pos):
         self.name = name
         self.id_number = None
         self.style_name = None
         self.style_names = []
         self.parts = []
         self.free_bit = None
+        self.pos = pos
 
         for param in param_list:
             if isinstance(param, TownNamesPart): self.parts.append(param)
             else:
                 if param.key.value != 'styles':
-                    raise generic.ScriptError("Expected 'styles' keyword.")
+                    raise generic.ScriptError("Expected 'styles' keyword.", param.pos)
                 if len(param.value.params) > 0:
-                    raise generic.ScriptError("Parameters of the 'styles' were not expected.")
+                    raise generic.ScriptError("Parameters of the 'styles' were not expected.", param.pos)
                 if self.style_name is not None:
-                    raise generic.ScriptError("'styles' is already defined.")
+                    raise generic.ScriptError("'styles' is already defined.", self.pos)
                 self.style_name = param.value.name.value
 
         if len(self.parts) == 0:
-            raise generic.ScriptError("Missing name parts in a town_names item.")
+            raise generic.ScriptError("Missing name parts in a town_names item.", self.pos)
 
         # 'name' is actually a number.
         # Allocate it now, before the self.prepare_output() call (to prevent names to grab it).
         if self.name is not None and not isinstance(self.name, expression.Identifier):
             value = self.name.reduce_constant()
             if not isinstance(value, expression.ConstantNumeric):
-                raise generic.ScriptError("ID should be an integer number.")
+                raise generic.ScriptError("ID should be an integer number.", self.pos)
 
             self.id_number = value.value
             if self.id_number < 0 or self.id_number > 0x7f:
-                raise generic.ScriptError("ID must be a number between 0 and 0x7f (inclusive)")
+                raise generic.ScriptError("ID must be a number between 0 and 0x7f (inclusive)", self.pos)
 
             if self.id_number not in actionF.free_numbers:
-                raise generic.ScriptError("town names ID 0x%x is already used." % self.id_number)
+                raise generic.ScriptError("town names ID 0x%x is already used." % self.id_number, self.pos)
             actionF.free_numbers.remove(self.id_number)
 
     def prepare_output(self):
@@ -557,7 +561,7 @@ class TownNames(object):
             self.id_number = actionF.get_free_id()
             if isinstance(self.name, expression.Identifier):
                 if self.name.value in actionF.named_numbers:
-                    raise generic.ScriptError('Cannot define town name "%s", it is already in use' % self.name)
+                    raise generic.ScriptError('Cannot define town name "%s", it is already in use' % self.name, self.pos)
                 actionF.named_numbers[self.name.value] = self.id_number # Add name to the set 'safe' names.
         else: actionF.numbered_numbers.add(self.id_number) # Add number to the set of 'safe' numbers.
 
@@ -573,7 +577,7 @@ class TownNames(object):
         self.free_bit = startbit
 
         if startbit > 32:
-            raise generic.ScriptError("Not enough random bits for the town name generation (%d needed, 32 available)" % startbit)
+            raise generic.ScriptError("Not enough random bits for the town name generation (%d needed, 32 available)" % startbit, self.pos)
 
         # Pull style names if needed.
         if self.style_name is not None:
@@ -582,7 +586,7 @@ class TownNames(object):
             self.style_names = [(transl['lang'], transl['text']) for transl in grfstrings.grf_strings[self.style_name]]
             self.style_names.sort()
             if len(self.style_names) == 0:
-                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name)
+                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name, self.pos)
         else: self.style_names = []
 
 
@@ -640,11 +644,18 @@ class TownNames(object):
 class TownNamesPart(object):
     """
     A class containing a town name part.
+
+    @ivar pieces: Pieces of the town name part.
+    @type pieces: C{list}
+
+    @ivar pos: Position information of the parts block.
+    @type pos: L{Position}
     """
-    def __init__(self, pieces):
+    def __init__(self, pieces, pos):
+        self.pos = pos
         self.pieces = pieces
         if len(self.pieces) == 0:
-            raise generic.ScriptError("Expected names and/or town_name references in the part.")
+            raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
 
         self.total = sum(piece.probability.value for piece in self.pieces)
         self.startbit = None
@@ -680,9 +691,9 @@ class TownNamesPart(object):
         @return: Set of referenced C{town_names} block numbers.
         '''
         if len(self.pieces) == 0:
-            raise generic.ScriptError("Expected at least one value in a part.")
+            raise generic.ScriptError("Expected at least one value in a part.", self.pos)
         if len(self.pieces) > 255:
-            raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces))
+            raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces), self.pos)
         blocks = set()
         for piece in self.pieces:
             block = piece.resolve_townname_id()
@@ -703,9 +714,10 @@ class TownNamesParam(object):
     Currently known key/values:
      - 'styles'  / string expression
     """
-    def __init__(self, key, value):
+    def __init__(self, key, value, pos):
         self.key = key
         self.value = value
+        self.pos = pos
 
 class TownNamesEntryDefinition(object):
     """
@@ -719,22 +731,26 @@ class TownNamesEntryDefinition(object):
 
     @ivar probability: Probability of picking this reference.
     @type probability: C{ConstantNumeric}
+
+    @ivar pos: Position information of the parts block.
+    @type pos: L{Position}
     """
-    def __init__(self, def_number, probability):
+    def __init__(self, def_number, probability, pos):
         self.def_number = def_number
         self.number = None
+        self.pos = pos
         if not isinstance(self.def_number, expression.Identifier):
             self.def_number = self.def_number.reduce_constant()
             if not isinstance(self.def_number, expression.ConstantNumeric):
-                raise generic.ScriptError("Reference to other town name ID should be an integer number.")
+                raise generic.ScriptError("Reference to other town name ID should be an integer number.", self.pos)
             if self.def_number.value < 0 or self.def_number.value > 0x7f:
-                raise generic.ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).")
+                raise generic.ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
         self.probability = probability.reduce_constant()
         if not isinstance(self.probability, expression.ConstantNumeric):
-            raise generic.ScriptError("Probability should be an integer number.")
+            raise generic.ScriptError("Probability should be an integer number.", self.pos)
         if self.probability.value < 0 or self.probability.value > 0x7f:
-            raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
+            raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
         if isinstance(self.def_number, expression.Identifier): name_text = "name '" + self.def_number.value + "'"
@@ -753,11 +769,11 @@ class TownNamesEntryDefinition(object):
         if isinstance(self.def_number, expression.Identifier):
             self.number = actionF.named_numbers.get(self.def_number.value)
             if self.number is None:
-                raise generic.ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number.value)
+                raise generic.ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number.value, self.pos)
         else:
             self.number = self.def_number.value
             if self.number not in actionF.numbered_numbers:
-                raise generic.ScriptError('Town names number "%s" is not defined or points to a next town_names node' % self.number)
+                raise generic.ScriptError('Town names number "%s" is not defined or points to a next town_names node' % self.number, self.pos)
         return self.number
 
     def write(self, file):
@@ -767,20 +783,24 @@ class TownNamesEntryDefinition(object):
 class TownNamesEntryText(object):
     """
     An entry in a part, a text-string with a given probability.
+
+    @ivar pos: Position information of the parts block.
+    @type pos: L{Position}
     """
-    def __init__(self, id, text, probability):
+    def __init__(self, id, text, probability, pos):
+        self.pos = pos
         if id.value != 'text':
             raise generic.ScriptError("Expected 'text' prefix.")
 
         self.text = text
         if not isinstance(self.text, expression.StringLiteral):
-            raise generic.ScriptError("Expected string literal for the name.")
+            raise generic.ScriptError("Expected string literal for the name.", self.pos)
 
         self.probability = probability.reduce_constant()
         if not isinstance(self.probability, expression.ConstantNumeric):
-            raise generic.ScriptError("Probability should be an integer number.")
+            raise generic.ScriptError("Probability should be an integer number.", self.pos)
         if self.probability.value < 0 or self.probability.value > 0x7f:
-            raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).")
+            raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
         print indentation*' ' + ('Text %s with probability %d/%d' % (self.text.value, self.probability.value, total))

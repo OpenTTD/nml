@@ -427,8 +427,8 @@ class NMLParser(object):
     def p_town_names(self, t):
         '''town_names : TOWN_NAMES LPAREN expression RPAREN LBRACE town_names_param_list RBRACE
                       | TOWN_NAMES LBRACE town_names_param_list RBRACE'''
-        if len(t) == 8: t[0] = ast.TownNames(t[3], t[6])
-        else: t[0] = ast.TownNames(None, t[3])
+        if len(t) == 8: t[0] = ast.TownNames(t[3], t[6], t.lineno(1))
+        else: t[0] = ast.TownNames(None, t[3], t.lineno(1))
 
     def p_town_names_param_list(self, t):
         '''town_names_param_list : town_names_param
@@ -439,8 +439,8 @@ class NMLParser(object):
     def p_town_names_param(self, t):
         '''town_names_param : ID COLON string SEMICOLON
                             | LBRACE town_names_part_list RBRACE'''
-        if len(t) == 5: t[0] = ast.TownNamesParam(t[1], t[3])
-        else: t[0] = ast.TownNamesPart(t[2])
+        if len(t) == 5: t[0] = ast.TownNamesParam(t[1], t[3], t.lineno(1))
+        else: t[0] = ast.TownNamesPart(t[2], t.lineno(1))
 
     def p_town_names_part_list(self, t):
         '''town_names_part_list : town_names_part
@@ -451,8 +451,8 @@ class NMLParser(object):
     def p_town_names_part(self, t):
         '''town_names_part : TOWN_NAMES LPAREN expression COMMA expression RPAREN
                            | ID LPAREN STRING_LITERAL COMMA expression RPAREN'''
-        if t[1] == 'town_names': t[0] = ast.TownNamesEntryDefinition(t[3], t[5])
-        else: t[0] = ast.TownNamesEntryText(t[1], t[3], t[5])
+        if t[1] == 'town_names': t[0] = ast.TownNamesEntryDefinition(t[3], t[5], t.lineno(1))
+        else: t[0] = ast.TownNamesEntryText(t[1], t[3], t[5], t.lineno(1))
 
     #
     # Sounds
