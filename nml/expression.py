@@ -128,6 +128,8 @@ class BinOp(Expression):
         expr2 = self.expr2.reduce(id_dicts)
         if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op in compile_time_operator:
             return ConstantNumeric(compile_time_operator[self.op](expr1.value, expr2.value), self.pos)
+        if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral) and self.op == Operator.ADD:
+            return StringLiteral(expr1.value + expr2.value, expr1.pos)
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
         if self.op in commutative_operators and ((simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric))):
