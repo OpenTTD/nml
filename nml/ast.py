@@ -125,10 +125,18 @@ class Loop(object):
         ret += '}\n'
         return ret
 
+var_ranges = {
+    'SELF' : 0x89,
+    'PARENT' : 0x8A
+}
+
 class Switch(object):
     def __init__(self, feature, var_range, name, expr, body):
         self.feature = feature.reduce_constant([feature_ids])
-        self.var_range = var_range
+        if var_range.value in var_ranges:
+            self.var_range = var_ranges[var_range.value]
+        else:
+            raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % var_range.value)
         self.name = name
         self.expr = expr
         self.body = body

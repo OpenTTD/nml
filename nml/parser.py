@@ -296,7 +296,7 @@ class NMLParser(object):
     # Switch block
     #
     def p_switch(self, t):
-        'switch : SWITCH LPAREN expression COMMA VARRANGE COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
+        'switch : SWITCH LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
         t[0] = ast.Switch(t[3], t[5], t[7], t[9], t[12])
 
     def p_switch_body(self, t):

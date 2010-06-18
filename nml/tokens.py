@@ -36,11 +36,6 @@ reserved = {
     'livery_override' : 'LIVERYOVERRIDE',
 }
 
-var_ranges = {
-    'SELF' : 0x89,
-    'PARENT' : 0x8A,
-}
-
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\n|"(.*)"\n)')
 line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"(\s+\d+\s*)?\n')
 
@@ -78,7 +73,6 @@ class NMLLexer(object):
         'STRING_LITERAL',
         'NUMBER',
         'FLOAT',
-        'VARRANGE',
         'UNIT',
     ]
 
@@ -129,15 +123,11 @@ class NMLLexer(object):
 
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z0-9_]*'
-        if t.value in var_ranges:
-            t.type = 'VARRANGE'
-            t.value = var_ranges[t.value]
+        if t.value in reserved: # Check for reserved words
+            t.type = reserved[t.value];
         else:
-            if t.value in reserved: # Check for reserved words
-                t.type = reserved[t.value];
-            else:
-                t.type = 'ID'
-                t.value = expression.Identifier(t.value)
+            t.type = 'ID'
+            t.value = expression.Identifier(t.value)
         return t
 
     def t_STRING_LITERAL(self, t):
