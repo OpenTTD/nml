@@ -29,7 +29,8 @@ feature_ids = {
 
 ########### code blocks ###########
 class GRF(object):
-    def __init__(self, alist):
+    def __init__(self, alist, pos):
+        self.pos = pos
         self.name = None
         self.desc = None
         self.grfid = None

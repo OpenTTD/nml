@@ -509,6 +509,6 @@ class NMLParser(object):
 
     def p_grf_block(self, t):
         'grf_block : GRF LBRACE assignment_list RBRACE'
-        t[0] = ast.GRF(t[3])
+        t[0] = ast.GRF(t[3], t.lineno(1))
 
 
