@@ -489,11 +489,11 @@ class NMLParser(object):
 
     def p_cargotable(self, t):
         'cargotable : CARGOTABLE LBRACE cargotable_list RBRACE'
-        t[0] = ast.CargoTable(t[3])
+        t[0] = ast.CargoTable(t[3], t.lineno(1))
 
     def p_railtypetable(self, t):
         'railtype : RAILTYPETABLE LBRACE cargotable_list RBRACE'
-        t[0] = ast.RailtypeTable(t[3])
+        t[0] = ast.RailtypeTable(t[3], t.lineno(1))
 
     def p_cargotable_list(self, t):
         '''cargotable_list : ID

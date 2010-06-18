@@ -871,8 +871,9 @@ class Error(object):
         return actionB.parse_error_block(self)
 
 class CargoTable(object):
-    def __init__(self, cargo_list):
+    def __init__(self, cargo_list, pos):
         self.cargo_list = cargo_list
+        self.pos = pos
         for i, cargo in enumerate(cargo_list):
             global_constants.cargo_numbers[cargo.value] = i
 
@@ -891,8 +892,9 @@ class CargoTable(object):
         return ret
 
 class RailtypeTable(object):
-    def __init__(self, railtype_list):
+    def __init__(self, railtype_list, pos):
         self.railtype_list = railtype_list
+        self.pos = pos
         for i, railtype in enumerate(railtype_list):
             global_constants.railtype_table[railtype.value] = i
 
