@@ -329,9 +329,10 @@ class PropertyBlock(object):
         return ret
 
 class LiveryOverride(object):
-    def __init__(self, wagon_id, graphics_block):
+    def __init__(self, wagon_id, graphics_block, pos):
         self.graphics_block = graphics_block
         self.wagon_id = wagon_id
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Liverry override, wagon id:'

@@ -244,7 +244,7 @@ class NMLParser(object):
 
     def p_liveryoverride_block(self, t):
         'liveryoverride_block : LIVERYOVERRIDE LPAREN expression RPAREN LBRACE graphics_list RBRACE'
-        t[0] = ast.LiveryOverride(t[3], t[6])
+        t[0] = ast.LiveryOverride(t[3], t[6], t.lineno(1))
 
     def p_graphics_list(self, t):
         '''graphics_list : graphics_assignment_list
