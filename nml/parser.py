@@ -78,11 +78,11 @@ class NMLParser(object):
     #
     def p_const_expression(self, t):
         'expression : NUMBER'
-        t[0] = expression.ConstantNumeric(t[1])
+        t[0] = expression.ConstantNumeric(t[1], t.lineno(1))
 
     def p_expression_float(self, t):
         'expression : FLOAT'
-        t[0] = expression.ConstantFloat(t[1])
+        t[0] = expression.ConstantFloat(t[1], t.lineno(1))
 
     def p_param_expression(self, t):
         'expression : param'
@@ -102,7 +102,7 @@ class NMLParser(object):
 
     def p_parameter(self, t):
         'param : PARAMETER LBRACKET expression RBRACKET'
-        t[0] = expression.Parameter(t[3])
+        t[0] = expression.Parameter(t[3], t.lineno(1))
 
     code_to_op = {
         '+'  : expression.Operator.ADD,
@@ -136,23 +136,24 @@ class NMLParser(object):
                       | expression COMP_NEQ expression
                       | expression COMP_LT expression
                       | expression COMP_GT expression'''
-        t[0] = expression.BinOp(self.code_to_op[t[2]], t[1], t[3]);
+        t[0] = expression.BinOp(self.code_to_op[t[2]], t[1], t[3], t[1].pos);
 
     def p_ternary_op(self, t):
         'expression : expression TERNARY_OPEN expression COLON expression'
-        t[0] = expression.TernaryOp(t[1], t[3], t[5])
+        t[0] = expression.TernaryOp(t[1], t[3], t[5], t[1].pos)
 
     def p_unary_minus(self, t):
         'expression : MINUS expression'
-        t[0] = expression.BinOp(self.code_to_op[t[1]], expression.ConstantNumeric(0), t[2])
+        t[0] = expression.BinOp(self.code_to_op[t[1]], expression.ConstantNumeric(0), t[2], t.lineno(1))
 
     def p_variable(self, t):
         'variable : VARIABLE LBRACKET expression_list RBRACKET'
         t[0] = expression.Variable(*t[3])
+        t[0].pos = t.lineno(1)
 
     def p_function(self, t):
         'expression : ID LPAREN expression_list RPAREN'
-        t[0] = expression.FunctionCall(t[1], t[3])
+        t[0] = expression.FunctionCall(t[1], t[3], t[1].pos)
 
     def p_array(self, t):
         'array : LBRACKET expression_list RBRACKET'
@@ -178,7 +179,7 @@ class NMLParser(object):
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
-        t[0] = expression.String(t[3][0], t[3][1:])
+        t[0] = expression.String(t[3][0], t[3][1:], t.lineno(1))
 
     def p_non_empty_expression_list(self, t):
         '''non_empty_expression_list : expression
@@ -232,7 +233,7 @@ class NMLParser(object):
                                | NUMBER COLON expression UNIT SEMICOLON
                                | NUMBER COLON string SEMICOLON
                                | NUMBER COLON array SEMICOLON'''
-        val = expression.Array(t[3]) if isinstance(t[3], list) else t[3]
+        val = expression.Array(t[3], t[1].pos) if isinstance(t[3], list) else t[3]
         unit = None if len(t) == 5 else ast.Unit(t[4])
         t[0] = ast.Property(t[1], val, unit)
 

@@ -127,12 +127,12 @@ class NMLLexer(object):
             t.type = reserved[t.value];
         else:
             t.type = 'ID'
-            t.value = expression.Identifier(t.value)
+            t.value = expression.Identifier(t.value, t.lineno)
         return t
 
     def t_STRING_LITERAL(self, t):
         r'"([^"\\]|\\.)*"'
-        t.value = expression.StringLiteral(t.value[1:-1])
+        t.value = expression.StringLiteral(t.value[1:-1], t.lineno)
         return t
 
     # Ignored characters

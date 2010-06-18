@@ -51,14 +51,18 @@ def get_operator_string(op, param1, param2):
     return operator_to_string[op] % (param1, param2)
 
 class Expression(object):
+    def __init__(self, pos):
+        self.pos = pos
+
     def reduce_constant(self, id_dicts = []):
         expr = self.reduce(id_dicts)
         if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
-            raise generic.ConstError()
+            raise generic.ConstError(self.pos)
         return expr
 
 class ConstantNumeric(Expression):
-    def __init__(self, value):
+    def __init__(self, value, pos = None):
+        Expression.__init__(self, pos)
         self.value = generic.truncate_int32(value)
 
     def debug_print(self, indentation):
@@ -74,7 +78,8 @@ class ConstantNumeric(Expression):
         return self
 
 class ConstantFloat(Expression):
-    def __init__(self, value):
+    def __init__(self, value, pos):
+        Expression.__init__(self, pos)
         self.value = value
 
     def debug_print(self, indentation):
@@ -87,7 +92,8 @@ class ConstantFloat(Expression):
         return self
 
 class BitMask(Expression):
-    def __init__(self, values):
+    def __init__(self, values, pos):
+        Expression.__init__(self, pos)
         self.values = values
 
     def debug_print(self, indentation):
@@ -98,14 +104,14 @@ class BitMask(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         ret = 0
         for orig_expr in self.values:
-            val = orig_expr.reduce(id_dicts) # unknown ids are always fatal as they're not compile time constant
-            if not isinstance(val, ConstantNumeric): raise generic.ScriptError("Parameters of 'bitmask' should be a constant")
-            if val.value >= 32: raise generic.ScriptError("Parameters of 'bitmask' cannot be greater then 31")
+            val = orig_expr.reduce_constant(id_dicts) # unknown ids are always fatal as they're not compile time constant
+            if val.value >= 32: raise generic.ScriptError("Parameters of 'bitmask' cannot be greater then 31", orig_expr.pos)
             ret |= 1 << val.value
-        return ConstantNumeric(ret)
+        return ConstantNumeric(ret, self.pos)
 
 class BinOp(Expression):
-    def __init__(self, op, expr1, expr2):
+    def __init__(self, op, expr1, expr2, pos = None):
+        Expression.__init__(self, pos)
         self.op = op
         self.expr1 = expr1
         self.expr2 = expr2
@@ -122,22 +128,22 @@ class BinOp(Expression):
         expr1 = self.expr1.reduce(id_dicts)
         expr2 = self.expr2.reduce(id_dicts)
         if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op in compile_time_operator:
-            return ConstantNumeric(compile_time_operator[self.op](expr1.value, expr2.value))
+            return ConstantNumeric(compile_time_operator[self.op](expr1.value, expr2.value), self.pos)
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
         if self.op in commutative_operators and ((simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric))):
             expr1, expr2 = expr2, expr1
         if isinstance(expr1, Variable) and isinstance(expr2, ConstantNumeric):
             if self.op == Operator.AND and isinstance(expr1.mask, ConstantNumeric):
-                expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value)
+                expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value, self.pos)
                 return expr1
             if self.op == Operator.ADD and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = expr2
-                else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value)
+                else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value, self.pos)
                 return expr1
             if self.op == Operator.SUB and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(-expr2.value)
-                else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value)
+                else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value, self.pos)
                 return expr1
             if self.op == Operator.DIV and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
@@ -147,10 +153,11 @@ class BinOp(Expression):
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
-        return BinOp(self.op, expr1, expr2)
+        return BinOp(self.op, expr1, expr2, self.pos)
 
 class TernaryOp(Expression):
-    def __init__(self, guard, expr1, expr2):
+    def __init__(self, guard, expr1, expr2, pos):
+        Expression.__init__(self, pos)
         self.guard = guard
         self.expr1 = expr1
         self.expr2 = expr2
@@ -173,7 +180,7 @@ class TernaryOp(Expression):
                 return expr1
             else:
                 return expr2
-        return TernaryOp(guard, expr1, expr2)
+        return TernaryOp(guard, expr1, expr2, self.pos)
 
 class Assignment(object):
     def __init__(self, name, value):
@@ -185,7 +192,8 @@ class Assignment(object):
         self.value.debug_print(indentation + 2)
 
 class Parameter(Expression):
-    def __init__(self, num):
+    def __init__(self, num, pos):
+        Expression.__init__(self, pos)
         self.num = num
 
     def debug_print(self, indentation):
@@ -197,10 +205,11 @@ class Parameter(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         num = self.num.reduce(id_dicts)
-        return Parameter(num)
+        return Parameter(num, self.pos)
 
 class Variable(Expression):
-    def __init__(self, num, shift = None, mask = None, param = None):
+    def __init__(self, num, shift = None, mask = None, param = None, pos = None):
+        Expression.__init__(self, pos)
         self.num = num
         self.shift = shift if shift is not None else ConstantNumeric(0)
         self.mask = mask if mask is not None else ConstantNumeric(0xFFFFFFFF)
@@ -237,14 +246,15 @@ class Variable(Expression):
         shift = self.shift.reduce(id_dicts)
         mask = self.mask.reduce(id_dicts)
         param = self.param.reduce(id_dicts) if self.param is not None else None
-        var = Variable(num, shift, mask, param)
+        var = Variable(num, shift, mask, param, self.pos)
         var.add = self.add
         var.div = self.div
         var.mod = self.mod
         return var
 
 class FunctionCall(Expression):
-    def __init__(self, name, params):
+    def __init__(self, name, params, pos):
+        Expression.__init__(self, pos)
         self.name = name
         self.params = params
 
@@ -268,15 +278,16 @@ class FunctionCall(Expression):
             param_list.append(param.reduce(id_dicts))
         if self.name.value in function_table:
             func = function_table[self.name.value]
-            val = func(self.name.value, param_list)
+            val = func(self.name.value, param_list, self.pos)
             return val.reduce(id_dicts)
         else:
             if len(param_list) != 0:
-                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % self.name.value);
-            return Variable(ConstantNumeric(0x7E), param=self.name.value)
+                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % self.name.value, self.pos);
+            return Variable(ConstantNumeric(0x7E), param=self.name.value, pos = self.pos)
 
 class String(Expression):
-    def __init__(self, name, params = []):
+    def __init__(self, name, params, pos):
+        Expression.__init__(self, pos)
         self.name = name
         self.params = params
 
@@ -298,7 +309,8 @@ class String(Expression):
         return self
 
 class Identifier(Expression):
-    def __init__(self, value):
+    def __init__(self, value, pos):
+        Expression.__init__(self, pos)
         self.value = value
 
     def debug_print(self, indentation):
@@ -309,14 +321,15 @@ class Identifier(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         for id_dict in id_dicts:
-            id_d, func = (id_dict, lambda x: ConstantNumeric(x)) if not isinstance(id_dict, tuple) else id_dict
+            id_d, func = (id_dict, lambda x: ConstantNumeric(x, self.pos)) if not isinstance(id_dict, tuple) else id_dict
             if self.value in id_d:
                 return func(id_d[self.value])
-        if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered")
+        if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
         return self
 
 class StringLiteral(Expression):
-    def __init__(self, value):
+    def __init__(self, value, pos):
+        Expression.__init__(self, pos)
         self.value = value
 
     def debug_print(self, indentation):
@@ -333,7 +346,8 @@ class StringLiteral(Expression):
         return self
 
 class Array(Expression):
-    def __init__(self, values):
+    def __init__(self, values, pos):
+        Expression.__init__(self, pos)
         self.values = values
 
     def debug_print(self, indentation):
@@ -345,51 +359,51 @@ class Array(Expression):
         return '[' + ', '.join([str(expr) for expr in self.values]) + ']'
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values])
+        return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values], self.pos)
 
 #
 # compile-time expression evaluation
 #
 
-def builtin_min(name, args):
+def builtin_min(name, args, pos):
     if len(args) < 2:
-        raise generic.ScriptError("min() requires at least 2 arguments")
-    return reduce(lambda x, y: BinOp(Operator.MIN, x, y), args)
+        raise generic.ScriptError("min() requires at least 2 arguments", pos)
+    return reduce(lambda x, y: BinOp(Operator.MIN, x, y, pos), args)
 
-def builtin_max(name, args):
+def builtin_max(name, args, pos):
     if len(args) < 2:
-        raise generic.ScriptError("max() requires at least 2 arguments")
-    return reduce(lambda x, y: BinOp(Operator.MAX, x, y), args)
+        raise generic.ScriptError("max() requires at least 2 arguments", pos)
+    return reduce(lambda x, y: BinOp(Operator.MAX, x, y, pos), args)
 
-def builtin_date(name, args):
+def builtin_date(name, args, pos):
     if len(args) != 3:
-        raise generic.ScriptError("date() requires exactly 3 arguments")
+        raise generic.ScriptError("date() requires exactly 3 arguments", pos)
     try:
         year = args[0].reduce_constant().value
         month = args[1].reduce_constant().value
         day = args[2].reduce_constant().value
     except generic.ConstError:
-        raise generic.ScriptError("Parameters of date() should be compile-time constants")
+        raise generic.ScriptError("Parameters of date() should be compile-time constants", pos)
     date = datetime.date(year, month, day)
-    return ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1)
+    return ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1, pos)
 
-def builtin_store(name, args):
+def builtin_store(name, args, pos):
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have exactly two parameters")
+        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     op = Operator.STO_TMP if name == 'STORE_TEMP' else Operator.STO_PERM
-    return BinOp(op, args[0], args[1])
+    return BinOp(op, args[0], args[1], pos)
 
-def builtin_load(name, args):
+def builtin_load(name, args, pos):
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have one parameter")
+        raise generic.ScriptError(name + "() must have one parameter", pos)
     var_num = 0x7D if name == "LOAD_TEMP" else 0x7C
-    return Variable(ConstantNumeric(var_num), param=args[0])
+    return Variable(ConstantNumeric(var_num), param=args[0], pos=pos)
 
 function_table = {
     'min' : builtin_min,
     'max' : builtin_max,
     'date' : builtin_date,
-    'bitmask' : lambda name, args: BitMask(args),
+    'bitmask' : lambda name, args, pos: BitMask(args, pos),
     'STORE_TEMP' : builtin_store,
     'STORE_PERM' : builtin_store,
     'LOAD_TEMP' : builtin_load,
