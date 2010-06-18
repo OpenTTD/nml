@@ -499,7 +499,8 @@ class NMLParser(object):
         '''cargotable_list : ID
                            | cargotable_list COMMA ID'''
         # t is not a real list, so t[-1] does not work.
-        if len(t[len(t) - 1].value) != 4: raise generic.ScriptError("Each cargo/railtype identifier should be exactly 4 bytes long")
+        id_obj = t[len(t) - 1]
+        if len(id_obj.value) != 4: raise generic.ScriptError("Each cargo/railtype identifier should be exactly 4 bytes long", id_obj.pos)
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[3]]
 

@@ -816,7 +816,7 @@ class TownNamesEntryText(object):
     def __init__(self, id, text, probability, pos):
         self.pos = pos
         if id.value != 'text':
-            raise generic.ScriptError("Expected 'text' prefix.")
+            raise generic.ScriptError("Expected 'text' prefix.", self.pos)
 
         self.text = text
         if not isinstance(self.text, expression.StringLiteral):
