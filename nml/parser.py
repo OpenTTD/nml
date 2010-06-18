@@ -412,7 +412,7 @@ class NMLParser(object):
         '''layout_sprite : GROUND LBRACE layout_param_list RBRACE
                          | BUILDING LBRACE layout_param_list RBRACE
                          | CHILDSPRITE LBRACE layout_param_list RBRACE'''
-        t[0] = ast.LayoutSprite(t[1], t[3])
+        t[0] = ast.LayoutSprite(t[1], t[3], t.lineno(1))
 
     def p_layout_param_list(self, t):
         '''layout_param_list : layout_param

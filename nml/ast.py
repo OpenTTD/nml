@@ -484,9 +484,10 @@ class SpriteView(object):
             spriteset.debug_print(indentation + 4)
 
 class LayoutSprite(object):
-    def __init__(self, type, param_list):
+    def __init__(self, type, param_list, pos):
         self.type = type
         self.param_list = param_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Tile layout sprite of type:', self.type
