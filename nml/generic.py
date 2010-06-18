@@ -33,16 +33,20 @@ class Position(object):
 
 
 class ScriptError(Exception):
-    def __init__(self, value):
+    def __init__(self, value, pos = None):
         self.value = value
+        self.pos = pos
 
     def __str__(self):
-        return self.value
+        if self.pos is None:
+            return self.value
+        else:
+            return str(self.pos) + ": " + self.value
 
 class ConstError(ScriptError):
-    def __init__(self):
-        ScriptError.__init__(self, "Expected a compile-time constant")
+    def __init__(self, pos = None):
+        ScriptError.__init__(self, "Expected a compile-time constant", pos)
 
 class RangeError(ScriptError):
-    def __init__(self, value, min_value, max_value, name):
-        ScriptError.__init__(self, name + " out of range " + str(min_value) + ".." + str(max_value) + ", encountered " + str(value))
+    def __init__(self, value, min_value, max_value, name, pos = None):
+        ScriptError.__init__(self, name + " out of range " + str(min_value) + ".." + str(max_value) + ", encountered " + str(value), pos)
