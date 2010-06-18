@@ -79,12 +79,13 @@ class Assignment(object):
         self.value.debug_print(indentation + 2)
 
 class Conditional(object):
-    def __init__(self, expr, block, else_block = None):
+    def __init__(self, expr, block, else_block, pos):
         self.expr = expr
         if self.expr is not None:
             self.expr = self.expr.reduce(global_constants.const_list)
         self.block = block
         self.else_block = else_block
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Conditional'
