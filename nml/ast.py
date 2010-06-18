@@ -283,7 +283,7 @@ class Unit(object):
 class Property(object):
     def __init__(self, name, value, unit):
         self.name = name
-        self.value = value.reduce(global_constants.const_list + [expression.cargo_numbers])
+        self.value = value.reduce(global_constants.const_list)
         self.unit = unit
         if unit is not None and not (isinstance(self.value, expression.ConstantNumeric) or isinstance(self.value, expression.ConstantFloat)):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant")
@@ -850,10 +850,9 @@ class Error(object):
 
 class CargoTable(object):
     def __init__(self, cargo_list):
-        global cargo_numbers;
         self.cargo_list = cargo_list
         for i, cargo in enumerate(cargo_list):
-            expression.cargo_numbers[cargo.value] = i
+            global_constants.cargo_numbers[cargo.value] = i
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Cargo table'

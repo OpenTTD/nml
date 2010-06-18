@@ -2,7 +2,6 @@ import operator
 import datetime, calendar
 from nml import generic
 
-cargo_numbers = {}
 item_names = {}
 
 class Operator(object):

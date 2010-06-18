@@ -227,4 +227,6 @@ global_parameters = {
     'year_loaded'                        : 0xA4,
 }
 
-const_list = [constant_numbers, (global_parameters, param_from_num)]
+cargo_numbers = {}
+
+const_list = [constant_numbers, (global_parameters, param_from_num), cargo_numbers]

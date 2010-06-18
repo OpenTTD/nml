@@ -70,7 +70,7 @@ class ActionD(object):
 class ParameterAssignment(object):
     def __init__(self, param, value):
         self.param = param
-        self.value = value.reduce(global_constants.const_list + [expression.cargo_numbers])
+        self.value = value.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'

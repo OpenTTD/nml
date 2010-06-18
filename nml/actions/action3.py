@@ -1,5 +1,5 @@
 from nml.actions import action2, action6, actionD
-from nml import generic, expression
+from nml import generic, expression, global_constants
 
 class Action3(object):
     def __init__(self, feature, id):
@@ -87,7 +87,7 @@ railtype_sprites = {
 
 def get_cargo_id_list(feature):
     if feature >= 0 and feature <= 4:
-        return [expression.cargo_numbers]
+        return [global_constants.cargo_numbers]
     if feature == 0x10:
         return [railtype_sprites]
     return []
