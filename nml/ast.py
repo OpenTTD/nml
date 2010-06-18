@@ -115,9 +115,10 @@ class Conditional(object):
         return ret
 
 class Loop(object):
-    def __init__(self, expr, block):
+    def __init__(self, expr, block, pos):
         self.expr = expr
         self.block = block
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'While loop'

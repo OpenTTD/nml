@@ -293,7 +293,7 @@ class NMLParser(object):
 
     def p_loop(self, t):
         'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'
-        t[0] = ast.Loop(t[3], t[6])
+        t[0] = ast.Loop(t[3], t[6], t.lineno(1))
 
     #
     # Switch block
