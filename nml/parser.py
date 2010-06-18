@@ -48,7 +48,8 @@ class NMLParser(object):
                       | template_declaration
                       | town_names
                       | sounds
-                      | cargotable'''
+                      | cargotable
+                      | railtype'''
         t[0] = t[1]
 
     def p_skipable_script(self, t):
@@ -489,11 +490,15 @@ class NMLParser(object):
         'cargotable : CARGOTABLE LBRACE cargotable_list RBRACE'
         t[0] = ast.CargoTable(t[3])
 
+    def p_railtypetable(self, t):
+        'railtype : RAILTYPETABLE LBRACE cargotable_list RBRACE'
+        t[0] = ast.RailtypeTable(t[3])
+
     def p_cargotable_list(self, t):
         '''cargotable_list : ID
                            | cargotable_list COMMA ID'''
         # t is not a real list, so t[-1] does not work.
-        if len(t[len(t) - 1].value) != 4: raise generic.ScriptError("Each cargo identifier should be exactly 4 bytes long")
+        if len(t[len(t) - 1].value) != 4: raise generic.ScriptError("Each cargo/railtype identifier should be exactly 4 bytes long")
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[3]]
 

@@ -228,5 +228,6 @@ global_parameters = {
 }
 
 cargo_numbers = {}
+railtype_table = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_num), cargo_numbers]
+const_list = [constant_numbers, (global_parameters, param_from_num), cargo_numbers, railtype_table]

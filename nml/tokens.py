@@ -7,6 +7,7 @@ reserved = {
     'var' : 'VARIABLE',
     'param' : 'PARAMETER',
     'cargotable' : 'CARGOTABLE',
+    'railtypetable' : 'RAILTYPETABLE',
     'if' : 'IF',
     'else' : 'ELSE',
     'while' : 'WHILE', # reserved

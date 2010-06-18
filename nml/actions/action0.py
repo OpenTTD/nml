@@ -138,22 +138,29 @@ def parse_property_block(prop_list, feature, id):
     action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
     return action_list
 
-class CargoListProp(object):
-    def __init__(self, cargo_list):
-        self.cargo_list = cargo_list
+class IDListProp(object):
+    def __init__(self, prop_num, id_list):
+        self.prop_num = prop_num
+        self.id_list = id_list
 
     def write(self, file):
-        file.print_bytex(0x09)
-        for i in range(0, len(self.cargo_list)):
+        file.print_bytex(self.prop_num)
+        for i in range(0, len(self.id_list)):
             if i > 0 and i % 5 == 0: file.newline()
-            file.print_string(self.cargo_list[i].value, False, True)
+            file.print_string(self.id_list[i].value, False, True)
         file.newline()
 
     def get_size(self):
-        return len(self.cargo_list) * 4 + 1
+        return len(self.id_list) * 4 + 1
 
 def get_cargolist_action(cargo_list):
     action0 = Action0(0x08, 0)
-    action0.prop_list.append(CargoListProp(cargo_list))
+    action0.prop_list.append(IDListProp(0x09, cargo_list))
     action0.num_ids = len(cargo_list)
+    return [action0]
+
+def get_railtypelist_action(railtype_list):
+    action0 = Action0(0x08, 0)
+    action0.prop_list.append(IDListProp(0x12, railtype_list))
+    action0.num_ids = len(railtype_list)
     return [action0]
