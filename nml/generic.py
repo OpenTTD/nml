@@ -35,8 +35,9 @@ class Position(object):
 class ScriptError(Exception):
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
-        return repr(self.value)
+        return self.value
 
 class ConstError(ScriptError):
     def __init__(self):
