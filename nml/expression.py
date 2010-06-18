@@ -183,15 +183,6 @@ class TernaryOp(Expression):
                 return expr2
         return TernaryOp(guard, expr1, expr2, self.pos)
 
-class Assignment(object):
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Assignment, name = ', self.name
-        self.value.debug_print(indentation + 2)
-
 class Parameter(Expression):
     def __init__(self, num, pos = None):
         Expression.__init__(self, pos)

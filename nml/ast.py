@@ -68,6 +68,15 @@ class GRF(object):
         ret += '}\n'
         return ret
 
+class Assignment(object):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Assignment, name = ', self.name
+        self.value.debug_print(indentation + 2)
+
 class Conditional(object):
     def __init__(self, expr, block, else_block = None):
         self.expr = expr
