@@ -399,8 +399,16 @@ def parse_varaction2(switch_block):
         if default.value != 'CB_FAILED':
             act2 = action2.add_ref(default.value)
             varaction2.references.append(act2)
-    elif not isinstance(default, expression.ConstantNumeric):
-        raise generic.ScriptError("Default result of varaction2 must be another action2 or a constant number")
+    elif isinstance(default, expression.ConstantNumeric):
+        pass
+    elif isinstance(default, expression.Parameter) and isinstance(default.num, expression.ConstantNumeric):
+        act6.modify_bytes(default.num.value, varsize, offset)
+        default = expression.ConstantNumeric(0)
+    else:
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(default)
+        action_list.extend(tmp_param_actions)
+        act6.modify_bytes(tmp_param, 2, offset)
+        default = expression.ConstantNumeric(0)
 
     varaction2.default_result = default
 
