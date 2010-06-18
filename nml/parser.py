@@ -365,7 +365,7 @@ class NMLParser(object):
     #
     def p_spriteblock(self, t):
         'spriteblock : SPRITEBLOCK LPAREN expression RPAREN LBRACE spriteset_list RBRACE'
-        t[0] = ast.SpriteBlock(t[3], t[6])
+        t[0] = ast.SpriteBlock(t[3], t[6], t.lineno(1))
 
     def p_spriteset_list(self, t):
         '''spriteset_list : spriteset

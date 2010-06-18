@@ -427,9 +427,10 @@ class FontGlyphBlock(object):
         return action12.parse_action12(self)
 
 class SpriteBlock(object):
-    def __init__(self, feature, spriteset_list):
+    def __init__(self, feature, spriteset_list, pos):
         self.feature = feature.reduce_constant([feature_ids])
         self.spriteset_list = spriteset_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite block, feature', hex(self.feature.value)
