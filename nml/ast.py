@@ -222,7 +222,7 @@ def validate_item_block(block_list):
         if isinstance(block, Loop):
             validate_item_block(block.body)
             continue
-        raise generic.ScriptError("Invalid block type inside 'Item'-block")
+        raise generic.ScriptError("Invalid block type inside 'Item'-block", block.pos)
 
 item_feature = None
 item_id = None
