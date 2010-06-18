@@ -188,9 +188,9 @@ class Modification(object):
 
 class SwitchRange(object):
     def __init__(self, min, max, result):
-        self.min = min.reduce_constant(global_constants.const_list)
-        self.max = max.reduce_constant(global_constants.const_list)
-        self.result = result
+        self.min = min.reduce(global_constants.const_list)
+        self.max = max.reduce(global_constants.const_list)
+        self.result = result.reduce(global_constants.const_list, False)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Min:'
@@ -327,7 +327,7 @@ def parse_varaction2(switch_block):
     for mod in mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = var_list
-    offset += var_list_size
+    offset += var_list_size + 1 # +1 for the byte num-ranges
 
     #nvar == 0 is a special case, make sure that isn't triggered here, unless we want it to
     if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
@@ -339,20 +339,50 @@ def parse_varaction2(switch_block):
             act2 = action2.add_ref(return_action.name)
             assert return_action == act2
             varaction2.references.append(act2)
-            r.result = expression.Identifier(return_action.name)
+            range_result = expression.Identifier(return_action.name)
         elif isinstance(r.result, expression.Identifier):
             if r.result.value != 'CB_FAILED':
                 act2 = action2.add_ref(r.result.value)
                 varaction2.references.append(act2)
-        elif not isinstance(r.result, expression.ConstantNumeric):
-            raise generic.ScriptError("Result of varaction2 range must be another action2 or a constant number")
+            range_result = r.result
+        elif isinstance(r.result, expression.ConstantNumeric):
+            range_result = r.result
+        elif isinstance(r.result, expression.Parameter) and isinstance(r.result.num, expression.ConstantNumeric):
+            act6.modify_bytes(r.result.num.value, varsize, offset)
+            range_result = expression.ConstantNumeric(0)
+        else:
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.result)
+            action_list.extend(tmp_param_actions)
+            act6.modify_bytes(tmp_param, 2, offset)
+            range_result = expression.ConstantNumeric(0)
+        
+        offset += 2 # size of result
 
-        if not isinstance(r.min, expression.ConstantNumeric):
-            raise generic.ScriptError("Min value of varaction2 range must be a constant number")
-        if not isinstance(r.max, expression.ConstantNumeric):
-            raise generic.ScriptError("Max value of varaction2 range must be a constant number")
+        if isinstance(r.min, expression.ConstantNumeric):
+            range_min = r.min
+        elif isinstance(r.min, expression.Parameter) and isinstance(r.min.num, expression.ConstantNumeric):
+            act6.modify_bytes(r.min.num.value, varsize, offset)
+            range_min = expression.ConstantNumeric(0)
+        else:
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.min)
+            action_list.extend(tmp_param_actions)
+            act6.modify_bytes(tmp_param, varsize, offset)
+            range_min = expression.ConstantNumeric(0)
+        offset += varsize
 
-        varaction2.ranges.append(r)
+        if isinstance(r.max, expression.ConstantNumeric):
+            range_max = r.max
+        elif isinstance(r.max, expression.Parameter) and isinstance(r.max.num, expression.ConstantNumeric):
+            act6.modify_bytes(r.max.num.value, varsize, offset)
+            range_max = expression.ConstantNumeric(0)
+        else:
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.max)
+            action_list.extend(tmp_param_actions)
+            act6.modify_bytes(tmp_param, varsize, offset)
+            range_max = expression.ConstantNumeric(0)
+        offset += varsize
+
+        varaction2.ranges.append(SwitchRange(range_min, range_max, range_result))
 
     default = switch_block.body.default
     if default is None:
