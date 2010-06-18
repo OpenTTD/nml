@@ -3,6 +3,7 @@ from nml import ast, generic, grfstrings, parser
 from nml.actions import action2var, action8, sprite_count
 from output_nfo import OutputNFO
 
+developmode = False # Give 'nice' error message instead of a stack dump.
 
 OutputGRF = None
 def get_output_grf():
@@ -16,12 +17,15 @@ def get_output_grf():
         sys.exit(3)
 
 def main(argv):
+    global developmode
+
     usage = "Usage: %prog [options] <filename>\n" \
             "Where <filename> is the nml file to parse"
 
     opt_parser = optparse.OptionParser(usage=usage)
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
+    opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
     opt_parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
@@ -40,6 +44,8 @@ def main(argv):
         print "Error while parsing arguments: ", err
         opt_parser.print_help()
         sys.exit(2)
+
+    if opts.stack: developmode = True
 
     grfstrings.read_extra_commands(opts.custom_tags)
     grfstrings.read_lang_files(opts.lang_dir)
@@ -132,6 +138,62 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
 
 def run():
     main(sys.argv[1:])
+
+def run():
+    try:
+        main(sys.argv[1:])
+
+    except generic.ScriptError, ex:
+        print >> sys.stderr, "NML: %s" % ex
+
+        if developmode: raise # Reraise exception in developmode
+        sys.exit(1)
+
+    except SystemExit, ex:
+        raise
+
+    except KeyboardInterrupt, ex:
+        print 'Application forcibly terminated by user.'
+
+        if developmode: raise # Reraise exception in developmode
+
+        sys.exit(1)
+
+    except Exception, ex: # Other/internal error.
+
+        if developmode: raise # Reraise exception in developmode
+
+        # User mode: print user friendly error message.
+        ex_msg = str(ex)
+        if len(ex_msg) > 0: ex_msg = '"%s"' % ex_msg
+
+        traceback = sys.exc_info()[2]
+        # Walk through the traceback object until we get to the point where the exception happened.
+        while traceback.tb_next is not None:
+            traceback = traceback.tb_next
+
+        lineno = traceback.tb_lineno
+        frame = traceback.tb_frame
+        code = frame.f_code
+        filename = code.co_filename
+        name = code.co_name
+        del traceback # Required according to Python docs.
+
+        ex_data = {'class' : ex.__class__.__name__,
+                   'msg' : ex_msg,
+                   'cli' : sys.argv,
+                   'loc' : 'File "%s", line %d, in %s' % (filename, lineno, name) }
+
+        msg = "NML: An internal error has occurred:\n" \
+              "Error:    (%(class)s) %(msg)s.\n" \
+              "Command:  %(cli)s\n" \
+              "Location: %(loc)s\n" % ex_data
+
+        print >> sys.stderr, msg
+        sys.exit(1)
+
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     run()
