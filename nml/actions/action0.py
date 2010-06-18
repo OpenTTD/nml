@@ -52,33 +52,33 @@ def parse_property(feature, name, value, id, unit):
     mods = []
 
     if isinstance(name, expression.Identifier):
-        if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value)
+        if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value, name.pos)
         prop = properties[feature][name.value]
     elif isinstance(name, expression.ConstantNumeric):
         for p in properties[feature]:
-            if 'num' in p and p['num'] != name.value: continue
+            if 'num' not in p or p['num'] != name.value: continue
             prop = p
-        if prop is None: raise generic.ScriptError("Unknown property number: " + name.value)
-    else: raise generic.ScriptError("Invalid type as property identifier")
+        if prop is None: raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
+    else: assert False
 
     if unit is None or unit.type != 'nfo':
         mul = 1
         if 'unit_conversion' in prop: mul = prop['unit_conversion']
         if unit is not None:
             if not 'unit_type' in prop or unit.type != prop['unit_type']:
-                raise generic.ScriptError("Invalid unit for property: " + name.value)
+                raise generic.ScriptError("Invalid unit for property: " + str(name), name.pos)
             mul = mul / unit.convert
         if mul != 1 or isinstance(value, expression.ConstantFloat): #always round floats
             if not isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
-                raise generic.ScriptError("Unit conversion specified for property, but no constant value found")
+                raise generic.ScriptError("Unit conversion specified for property, but no constant value found", value.pos)
             value = expression.ConstantNumeric(int(value.value * mul + 0.5))
 
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
     elif 'string_literal' in prop:
-        if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop['num'])
+        if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop['num'], value.pos)
         if len(value.value) != prop['string_literal']:
-            raise generic.ScriptError("Value for property %d must be of length %d" % (prop['num'], prop['string_literal']))
+            raise generic.ScriptError("Value for property %d must be of length %d" % (prop['num'], prop['string_literal']), value.pos)
         props = [Action0Property(prop['num'], value, prop['size'])]
     else:
         if isinstance(value, expression.ConstantNumeric):
@@ -87,7 +87,7 @@ def parse_property(feature, name, value, id, unit):
             mods.append((value.num.value, prop['size'], 1))
             value = expression.ConstantNumeric(0)
         elif isinstance(value, expression.String):
-            if not 'string' in prop: raise generic.ScriptError("String used as value for non-string property: " + str(prop['num']))
+            if not 'string' in prop: raise generic.ScriptError("String used as value for non-string property: " + str(prop['num']), value.pos)
             string_range = prop['string']
             stringid, prepend, string_actions = action4.get_string_action4s(feature, string_range, value, id)
             value = expression.ConstantNumeric(stringid)
