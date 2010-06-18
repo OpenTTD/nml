@@ -408,11 +408,12 @@ class ReplaceNewSprite(object):
         return action5.parse_action5(self)
 
 class FontGlyphBlock(object):
-    def __init__(self, font_size, base_char, pcx, sprite_list):
+    def __init__(self, font_size, base_char, pcx, sprite_list, pos):
         self.font_size = font_size
         self.base_char = base_char
         self.pcx = pcx
         self.sprite_list = sprite_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Load font glpyhs, starting at', self.base_char
