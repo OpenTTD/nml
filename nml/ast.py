@@ -463,7 +463,7 @@ class TemplateDeclaration(object):
                 if sprite.name.value == self.name.value:
                     raise generic.ScriptError("Sprite template '%s' includes itself." % sprite.name.value, self.pos)
                 elif sprite.name.value not in real_sprite.sprite_template_map:
-                    raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
+                    raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value, sprite.pos)
         #Register template
         if self.name.value not in real_sprite.sprite_template_map:
             real_sprite.sprite_template_map[self.name.value] = self

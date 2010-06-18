@@ -336,7 +336,7 @@ class NMLParser(object):
 
     def p_template_usage(self, t):
         'template_usage : ID LPAREN expression_list RPAREN'
-        t[0] = real_sprite.TemplateUsage(t[1], t[3])
+        t[0] = real_sprite.TemplateUsage(t[1], t[3], t.lineno(1))
 
     def p_spriteset_contents(self, t):
         '''spriteset_contents : real_sprite

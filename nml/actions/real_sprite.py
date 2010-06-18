@@ -37,9 +37,10 @@ class RealSpriteAction(object):
         return True
 
 class TemplateUsage(object):
-    def __init__(self, name, param_list):
+    def __init__(self, name, param_list, pos):
         self.name = name
         self.param_list = param_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Template used:', self.name.value
