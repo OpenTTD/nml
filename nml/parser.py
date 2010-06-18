@@ -485,7 +485,7 @@ class NMLParser(object):
 
     def p_error_block(self, t):
         'error_block : ERROR LPAREN expression_list RPAREN SEMICOLON'
-        t[0] = ast.Error(t[3])
+        t[0] = ast.Error(t[3], t.lineno(1))
 
     def p_cargotable(self, t):
         'cargotable : CARGOTABLE LBRACE cargotable_list RBRACE'

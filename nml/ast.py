@@ -843,10 +843,11 @@ class TownNamesEntryText(object):
 
 
 class Error(object):
-    def __init__(self, param_list):
+    def __init__(self, param_list, pos):
         self.params = []
+        self.pos = pos
         if not 2 <= len(param_list) <= 5:
-            raise generic.ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)))
+            raise generic.ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)), self.pos)
         self.severity = param_list[0].reduce([actionB.error_severity])
         self.msg      = param_list[1]
         self.data     = param_list[2] if len(param_list) >= 3 else None
