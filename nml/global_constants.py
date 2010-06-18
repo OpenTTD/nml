@@ -212,8 +212,8 @@ constant_numbers = {
     'PLATFORM_OPENTTD'                   : 0x01,
 }
 
-def param_from_num(num):
-    return expression.Parameter(expression.ConstantNumeric(num))
+def param_from_num(num, pos):
+    return expression.Parameter(expression.ConstantNumeric(num), pos)
 
 global_parameters = {
     'climate'                            : 0x83,

@@ -193,7 +193,7 @@ class Assignment(object):
         self.value.debug_print(indentation + 2)
 
 class Parameter(Expression):
-    def __init__(self, num, pos):
+    def __init__(self, num, pos = None):
         Expression.__init__(self, pos)
         self.num = num
 
@@ -322,9 +322,9 @@ class Identifier(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         for id_dict in id_dicts:
-            id_d, func = (id_dict, lambda x: ConstantNumeric(x, self.pos)) if not isinstance(id_dict, tuple) else id_dict
+            id_d, func = (id_dict, lambda x, pos: ConstantNumeric(x, pos)) if not isinstance(id_dict, tuple) else id_dict
             if self.value in id_d:
-                return func(id_d[self.value])
+                return func(id_d[self.value], self.pos)
         if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
         return self
 

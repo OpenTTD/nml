@@ -318,7 +318,7 @@ def parse_varaction2(switch_block):
     if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature))
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
 
-    func = lambda x: expression.Variable(expression.ConstantNumeric(x['var']), expression.ConstantNumeric(x['start']), expression.ConstantNumeric((1 << x['size']) - 1))
+    func = lambda x, pos: expression.Variable(expression.ConstantNumeric(x['var']), expression.ConstantNumeric(x['start']), expression.ConstantNumeric((1 << x['size']) - 1), None, pos)
     expr = switch_block.expr.reduce(global_constants.const_list + [(action2var_variables.varact2vars[feature], func), (action2var_variables.varact2_globalvars, func)])
 
     offset = 4 #first var
