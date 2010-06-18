@@ -308,8 +308,9 @@ class Property(object):
         return '\t%s: %s%s;' % (self.name, self.value, unit)
 
 class PropertyBlock(object):
-    def __init__(self, prop_list):
+    def __init__(self, prop_list, pos):
         self.prop_list = prop_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Property block:'

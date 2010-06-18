@@ -217,7 +217,7 @@ class NMLParser(object):
 
     def p_property_block(self, t):
         'property_block : PROPERTY LBRACE property_list RBRACE'
-        t[0] = ast.PropertyBlock(t[3])
+        t[0] = ast.PropertyBlock(t[3], t.lineno(1))
 
     def p_property_list(self, t):
         '''property_list : property_assignment
