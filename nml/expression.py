@@ -24,6 +24,7 @@ class Operator(object):
     STO_PERM = 16
     SHIFT_LEFT = 17
     SHIFT_RIGHT = 18
+    HASBIT  = 19
 
 
 def get_operator_string(op, param1, param2):
@@ -391,6 +392,11 @@ def builtin_load(name, args, pos):
     var_num = 0x7D if name == "LOAD_TEMP" else 0x7C
     return Variable(ConstantNumeric(var_num), param=args[0], pos=pos)
 
+def builtin_hasbit(name, args, pos):
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+    return BinOp(Operator.HASBIT, args[0], args[1], pos)
+
 function_table = {
     'min' : builtin_min,
     'max' : builtin_max,
@@ -400,6 +406,7 @@ function_table = {
     'STORE_PERM' : builtin_store,
     'LOAD_TEMP' : builtin_load,
     'LOAD_PERM' : builtin_load,
+    'hasbit' : builtin_hasbit,
 }
 
 
@@ -421,6 +428,7 @@ compile_time_operator = {
     Operator.MAX:     lambda a, b: max(a, b),
     Operator.SHIFT_LEFT: operator.lshift,
     Operator.SHIFT_RIGHT: operator.rshift,
+    Operator.HASBIT:  lambda a, b: (a & (1 << b)) != 0,
 }
 
 commutative_operators = set([
