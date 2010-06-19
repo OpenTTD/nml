@@ -210,6 +210,13 @@ constant_numbers = {
     #which platform has loaded this grf
     'PLATFORM_TTDPATCH'                  : 0x00,
     'PLATFORM_OPENTTD'                   : 0x01,
+
+    #ttdpatch flags
+    'TTDPATCHFLAG_KEEPSMALLAIRPORT'      : 0x0C,
+    'TTDPATCHFLAG_NEWAIRPORTS'           : 0x0D,
+    'TTDPATCHFLAG_LARGESTATIONS'         : 0x0E,
+    'TTDPATCHFLAG_LONGBRIDGES'           : 0x0F,
+    #todo: finish list of ttdpatch flag bits
 }
 
 def param_from_num(num, pos):
@@ -217,6 +224,7 @@ def param_from_num(num, pos):
 
 global_parameters = {
     'climate'                            : 0x83,
+    'ttdpatch_flags'                     : 0x85,
     'traffic_side'                       : 0x86,
     'ttdpatch_version'                   : 0x8B,
     'ttd_version'                        : 0x8D,
