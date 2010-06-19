@@ -106,6 +106,12 @@ def parse_actionD(assignment):
         actions.extend(cond_block.get_action_list())
         return actions
 
+    if isinstance(assignment.value, expression.BinOp) and assignment.value.op == expression.Operator.HASBIT:
+        actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
+        cond_block = nml.ast.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
+        actions.extend(cond_block.get_action_list())
+        return actions
+
     free_parameters_backup = action6.free_parameters[:]
     action_list = []
     act6 = action6.Action6()
