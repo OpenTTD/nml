@@ -43,7 +43,7 @@ string_ranges = {
 
 def get_string_action4s(feature, string_range, string, id = None):
     global string_ranges
-    if not string.name.value in grfstrings.grf_strings: raise generic.ScriptError("Unknown string: " + string.name.value)
+    if not string.name.value in grfstrings.grf_strings: raise generic.ScriptError("Unknown string: " + string.name.value, string.pos)
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:
