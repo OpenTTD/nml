@@ -9,9 +9,9 @@ def truncate_int32(value):
     #source: http://www.tiac.net/~sw/2010/02/PureSalsa20/index.html
     return int( (value & 0x7fffFFFF) | -(value & 0x80000000) )
 
-def check_range(value, min_value, max_value, name):
+def check_range(value, min_value, max_value, name, pos):
     if not min_value <= value <= max_value:
-        raise RangeError(value, min_value, max_value, name)
+        raise RangeError(value, min_value, max_value, name, pos)
 
 
 class Position(object):

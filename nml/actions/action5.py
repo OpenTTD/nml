@@ -86,7 +86,7 @@ def parse_action5(replaces):
         offset = replaces.offset.reduce_constant().value
     except generic.ConstError:
         raise generic.ScriptError("replacenew parameter 'offset' must be a compile-time constant", replaces.offset.pos)
-    generic.check_range(offset, 0, 0xFFFF, "replacenew parameter 'offset'")
+    generic.check_range(offset, 0, 0xFFFF, "replacenew parameter 'offset'", replaces.offset.pos)
 
     if block_type == Action5BlockType.FIXED:
         if num_sprites < num_required:

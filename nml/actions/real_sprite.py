@@ -75,12 +75,12 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         new_sprite.xrel  = sprite.param_list[4].reduce_constant([id_dict])
         new_sprite.yrel  = sprite.param_list[5].reduce_constant([id_dict])
 
-        generic.check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'")
-        generic.check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'")
-        generic.check_range(new_sprite.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'")
-        generic.check_range(new_sprite.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'")
-        generic.check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'")
-        generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'")
+        generic.check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", new_sprite.xpos.pos)
+        generic.check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", new_sprite.ypos.pos)
+        generic.check_range(new_sprite.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'", new_sprite.xsize.pos)
+        generic.check_range(new_sprite.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'", new_sprite.ysize.pos)
+        generic.check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'", new_sprite.xrel.pos)
+        generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'", new_sprite.yrel.pos)
 
         if len(sprite.param_list) == 7:
             new_sprite.compression = sprite.param_list[6].reduce_constant([real_sprite_compression_flags, id_dict])
