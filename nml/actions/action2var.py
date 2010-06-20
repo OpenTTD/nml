@@ -243,9 +243,9 @@ def parse_varaction2_expression(expr, varsize):
 
     elif isinstance(expr, expression.Variable):
         if not isinstance(expr.num, expression.ConstantNumeric):
-            raise generic.ScriptError("Variable number must be a constant number")
+            raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
         if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
-            raise generic.ScriptError("Variable parameter must be a constant number")
+            raise generic.ScriptError("Variable parameter must be a constant number", expr.param.pos)
         var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
         var.add, var.div, var.mod = expr.add, expr.div, expr.mod
         var_list.append(var)
@@ -299,7 +299,7 @@ def parse_varaction2_expression(expr, varsize):
             var_list_size += tmp_var_list_size
 
     else:
-        raise generic.ScriptError("Invalid expression type in varaction2 expression")
+        raise generic.ScriptError("Invalid expression type in varaction2 expression", expr.pos)
 
     return (extra_actions, mods, var_list, var_list_size)
 
@@ -315,7 +315,7 @@ def parse_varaction2(switch_block):
     return_action = None
     varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
-    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature))
+    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
 
     func = lambda x, pos: expression.Variable(expression.ConstantNumeric(x['var']), expression.ConstantNumeric(x['start']), expression.ConstantNumeric((1 << x['size']) - 1), None, pos)
