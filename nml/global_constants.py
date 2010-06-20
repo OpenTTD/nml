@@ -150,9 +150,9 @@ constant_numbers = {
     'TILETYPE_SNOW'             : 0x04,
 
     #level crossing status as returned by railtypes varaction2 0x42
-    'LEVEL_CROSSING_CLOSED'     : 0,
-    'LEVEL_CROSSING_OPEN'       : 1,
-    'LEVEL_CROSSING_NONE'       : 1,
+    'LEVEL_CROSSING_CLOSED'     : 1,
+    'LEVEL_CROSSING_OPEN'       : 0,
+    'LEVEL_CROSSING_NONE'       : 0,
 
     #acceleration model for trains
     'ACC_MODEL_RAIL'     : 0,
