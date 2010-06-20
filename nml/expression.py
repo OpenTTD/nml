@@ -371,14 +371,26 @@ def builtin_max(name, args, pos):
 def builtin_date(name, args, pos):
     if len(args) != 3:
         raise generic.ScriptError("date() requires exactly 3 arguments", pos)
+    year = args[0].reduce()
     try:
-        year = args[0].reduce_constant().value
         month = args[1].reduce_constant().value
         day = args[2].reduce_constant().value
     except generic.ConstError:
-        raise generic.ScriptError("Parameters of date() should be compile-time constants", pos)
-    date = datetime.date(year, month, day)
-    return ConstantNumeric(year * 365 + calendar.leapdays(0, year) + date.timetuple().tm_yday - 1, pos)
+        raise generic.ScriptError("Month and day parameters of date() should be compile-time constants", pos)
+    if not isinstance(year, ConstantNumeric):
+        if month != 1 or day != 1:
+            raise generic.ScriptError("when the year parameter of date() is not a compile time constant month and day should be 1", pos)
+        #num_days = year*365 + year/4 - year/100 + year/400
+        part1 = BinOp(Operator.MUL, year, ConstantNumeric(365))
+        part2 = BinOp(Operator.DIV, year, ConstantNumeric(4))
+        part3 = BinOp(Operator.DIV, year, ConstantNumeric(100))
+        part4 = BinOp(Operator.DIV, year, ConstantNumeric(400))
+        res = BinOp(Operator.ADD, part1, part2)
+        res = BinOp(Operator.SUB, res, part3)
+        res = BinOp(Operator.ADD, res, part4)
+        return res
+    date = datetime.date(year.value, month, day)
+    return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + date.timetuple().tm_yday - 1, pos)
 
 def builtin_store(name, args, pos):
     if len(args) != 2:
