@@ -293,7 +293,7 @@ def parse_varaction2_expression(expr, varsize):
             assert len(tmp_var_list) == 1
             extra_actions.extend(tmp_actions)
             for mod in tmp_mods:
-                mod.offset += var_list_size
+                mod.offset += tmp_var_list_size
             mods.extend(tmp_mods)
             var_list.extend(tmp_var_list)
             var_list_size += tmp_var_list_size
