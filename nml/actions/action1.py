@@ -30,10 +30,11 @@ class Action1(object):
         return True
 
 class SpriteSet(object):
-    def __init__(self, name, pcx, sprite_list):
+    def __init__(self, name, pcx, sprite_list, pos):
         self.name = name
         self.pcx = pcx
         self.sprite_list = sprite_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite set:', self.name.value
@@ -74,7 +75,7 @@ def parse_sprite_block(sprite_block):
     num_ent = -1
 
     if sprite_block.feature.value not in action1_features:
-        raise generic.ScriptError("Sprite blocks are not supported for this feature: 0x" + generic.to_hex(sprite_block.feature.value, 2))
+        raise generic.ScriptError("Sprite blocks are not supported for this feature: 0x" + generic.to_hex(sprite_block.feature.value, 2), feature.pos)
 
     for item in sprite_block.spriteset_list:
         if isinstance(item, SpriteSet):
@@ -85,7 +86,7 @@ def parse_sprite_block(sprite_block):
             if num_ent == -1:
                 num_ent = len(real_sprite_list)
             elif num_ent != len(real_sprite_list):
-                raise generic.ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)))
+                raise generic.ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)), item.pos)
 
             last_sprite = real_sprite_list[-1][0]
             for sprite, id_dict in real_sprite_list:
