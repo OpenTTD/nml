@@ -10,7 +10,7 @@ feature_ids = {
     'FEAT_TRAINS': 0x00,
     'FEAT_ROADVEHS': 0x01,
     'FEAT_SHIPS': 0x02,
-    'FEAT_AIRCRAFTS': 0x03,
+    'FEAT_AIRCRAFT': 0x03,
     'FEAT_STATIONS': 0x04,
     'FEAT_CANALS': 0x05,
     'FEAT_BRIDGES': 0x06,
