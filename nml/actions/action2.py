@@ -8,7 +8,7 @@ class Action2(object):
     def __init__(self, feature, name):
         global action2_map
         if name in action2_map:
-            raise generic.ScriptError('Reusing names of switch/spritegroup blocks is not allowed, trying to use "%s"' % name)
+            raise generic.ScriptError('Reusing names of switch/spritegroup blocks is not allowed, trying to use "%s"' % name, name.pos)
         assert not name in action2_map
         action2_map[name] = self
         self.feature = feature
@@ -39,7 +39,7 @@ class Action2(object):
 
 def add_ref(name):
     global action2_map
-    if name not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name)
+    if name not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name, name.pos)
     action2_map[name].num_refs += 1
     return action2_map[name]
 
