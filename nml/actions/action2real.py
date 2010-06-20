@@ -37,19 +37,19 @@ def get_real_action2s(spritegroup, feature, spritesets):
     loading_list = []
 
     if feature not in real_action2_features:
-        raise generic.ScriptError("Sprite groups that directly combine sprite sets are not supported for this feature: 0x" + generic.to_hex(feature, 2))
+        raise generic.ScriptError("Sprite groups that directly combine sprite sets are not supported for this feature: 0x" + generic.to_hex(feature, 2), spritegroup.pos)
 
     for view in spritegroup.spriteview_list:
-        if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value)
+        if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value, view.pos)
         type, feature_list = real_action2_alias[view.name.value];
         #of course stations want to be different, their default view is the second type instead of the first
         if view.name.value == 'default' and feature is 0x04: type = 1
         if feature not in feature_list:
-            raise generic.ScriptError("Sprite view type '" + view.name.value + "' is not supported for this feature: 0x" + generic.to_hex(feature, 2))
+            raise generic.ScriptError("Sprite view type '" + view.name.value + "' is not supported for this feature: 0x" + generic.to_hex(feature, 2), view.pos)
 
         for set_name in view.spriteset_list:
             if set_name.value not in spritesets:
-                raise generic.ScriptError("Unknown sprite set: " + set_name.value)
+                raise generic.ScriptError("Unknown sprite set: " + set_name.value, set_name.pos)
             if type == 0: loaded_list.append(spritesets[set_name.value])
             else:  loading_list.append(spritesets[set_name.value])
     return [Action2Real(feature, spritegroup.name.value, loaded_list, loading_list)]
