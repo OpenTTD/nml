@@ -46,17 +46,17 @@ def parse_action12(font_glyphs):
         font_size = font_glyphs.font_size.reduce_constant([font_sizes])
         base_char = font_glyphs.base_char.reduce_constant()
     except generic.ConstError:
-        raise generic.ScriptError("Parameters of font_glpyh have to be compile-time constants")
+        raise generic.ScriptError("Parameters of font_glpyh have to be compile-time constants", font_glyphs.pos)
     if font_size.value not in font_sizes.values():
-        raise generic.ScriptError("Invalid value for parameter 'font_size' in font_glpyh, valid values are 0, 1, 2")
+        raise generic.ScriptError("Invalid value for parameter 'font_size' in font_glpyh, valid values are 0, 1, 2", font_size.pos)
     if not (0 <= base_char.value <= 0xFFFF):
-        raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF")
+        raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF", base_char.pos)
 
     real_sprite_list = real_sprite.parse_sprite_list(font_glyphs.sprite_list)
     char = base_char.value
     last_char = char + len(real_sprite_list)
     if last_char > 0xFFFF:
-        raise generic.ScriptError("Character numbers in font_glyph block exceed the allowed range (0-0xFFFF)");
+        raise generic.ScriptError("Character numbers in font_glyph block exceed the allowed range (0-0xFFFF)", , font_glyphs.pos);
 
     sets = []
     while char < last_char:
