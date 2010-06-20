@@ -203,7 +203,7 @@ def parse_actionD(assignment):
             action_list.extend(tmp_param_actions)
             param2 = expression.ConstantNumeric(tmp_param)
 
-    else: raise generic.ScriptError("Invalid expression in argument assignment")
+    else: raise generic.ScriptError("Invalid expression in argument assignment", assignment.value.pos)
 
     if len(act6.modifications) > 0: action_list.append(act6)
 

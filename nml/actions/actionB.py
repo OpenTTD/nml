@@ -85,7 +85,7 @@ def parse_error_block(error):
         severity = expression.ConstantNumeric(0)
 
     if not isinstance(error.msg, expression.Identifier):
-        raise generic.ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting")
+        raise generic.ScriptError("Error parameter 2 'message' should be the identifier of a built-in or custom sting", error.msg.pos)
 
     langs = [0x7F]
     if error.msg.value in default_error_msg:
@@ -98,7 +98,7 @@ def parse_error_block(error):
 
     if error.data is not None:
         if not isinstance(error.data, expression.Identifier):
-            raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting")
+            raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos)
         for translation in grfstrings.grf_strings[error.data.value]:
             langs.append(translation['lang'])
 
