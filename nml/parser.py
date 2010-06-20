@@ -474,8 +474,8 @@ class NMLParser(object):
     def p_sound(self, t):
         '''sound : LOAD_SOUNDFILE LPAREN STRING_LITERAL RPAREN SEMICOLON
                  | IMPORT_SOUND LPAREN expression COMMA expression RPAREN SEMICOLON'''
-        if len(t) == 6: t[0] = action11.LoadBinaryFile(t[3])
-        else: t[0] = action11.ImportSound(t[3], t[5])
+        if len(t) == 6: t[0] = action11.LoadBinaryFile(t[3], t.lineno(1))
+        else: t[0] = action11.ImportSound(t[3], t[5], t.lineno(1))
 
     #
     # Various misc. main script blocks that don't belong anywhere else

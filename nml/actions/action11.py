@@ -41,18 +41,19 @@ class LoadBinaryFile(object):
     '''
     <sprite-number> * <length> FF <name-len> <name> 00 <data>
     '''
-    def __init__(self, fname):
+    def __init__(self, fname, pos):
         self.fname = fname
         self.last = False
+        self.pos = pos
 
     def prepare_output(self):
         if not os.access(self.fname.value, os.R_OK):
-            raise generic.ScriptError('File "%s" does not exist.' % self.fname.value)
+            raise generic.ScriptError('File "%s" does not exist.' % self.fname.value, self.pos)
         size = os.path.getsize(self.fname.value)
         if size == 0:
-            raise generic.ScriptError("Expected a sound file with non-zero length.")
+            raise generic.ScriptError("Expected a sound file with non-zero length.", self.pos)
         if size > 0x10000:
-            raise generic.ScriptError("Sound file too big (max 64KB).")
+            raise generic.ScriptError("Sound file too big (max 64KB).", self.pos)
 
     def debug_print(self, indentation):
         name = os.path.split(self.fname.value)[1]
@@ -78,15 +79,16 @@ class ImportSound(object):
     @ivar number: Sound number to load.
     @type number: C{int}
     """
-    def __init__(self, grfid, number):
+    def __init__(self, grfid, number, pos):
         grfid = grfid.reduce_constant()
         if not isinstance(grfid, expression.ConstantNumeric):
-            raise generic.ScriptError("grf id of the imported sound is not a number.")
+            raise generic.ScriptError("grf id of the imported sound is not a number.", grfid.pos)
         self.grfid = grfid.value
+        self.pos = pos
 
         number = number.reduce_constant()
         if not isinstance(number, expression.ConstantNumeric):
-            raise generic.ScriptError("sound number of the imported sound is not a number.")
+            raise generic.ScriptError("sound number of the imported sound is not a number.", number.pos)
         self.number = number.value
         self.last = False
 
