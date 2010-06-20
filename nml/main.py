@@ -137,9 +137,6 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
     return 0
 
 def run():
-    main(sys.argv[1:])
-
-def run():
     try:
         main(sys.argv[1:])
 
