@@ -421,7 +421,7 @@ class FontGlyphBlock(object):
         self.pos = pos
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Load font glpyhs, starting at', self.base_char
+        print indentation*' ' + 'Load font glyphs, starting at', self.base_char
         print (indentation+2)*' ' + 'Font size:  ', self.font_size
         print (indentation+2)*' ' + 'Source:  ', self.pcx.value
         print (indentation+2)*' ' + 'Sprites:'

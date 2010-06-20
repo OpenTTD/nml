@@ -39,12 +39,12 @@ font_sizes = {
     'LARGE'  : 2,
 }
 
-def parse_action12(font_glpyhs):
+def parse_action12(font_glyphs):
     action_list = []
 
     try:
-        font_size = font_glpyhs.font_size.reduce_constant([font_sizes])
-        base_char = font_glpyhs.base_char.reduce_constant()
+        font_size = font_glyphs.font_size.reduce_constant([font_sizes])
+        base_char = font_glyphs.base_char.reduce_constant()
     except generic.ConstError:
         raise generic.ScriptError("Parameters of font_glpyh have to be compile-time constants")
     if font_size.value not in font_sizes.values():
@@ -52,7 +52,7 @@ def parse_action12(font_glpyhs):
     if not (0 <= base_char.value <= 0xFFFF):
         raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF")
 
-    real_sprite_list = real_sprite.parse_sprite_list(font_glpyhs.sprite_list)
+    real_sprite_list = real_sprite.parse_sprite_list(font_glyphs.sprite_list)
     char = base_char.value
     last_char = char + len(real_sprite_list)
     if last_char > 0xFFFF:
@@ -72,6 +72,6 @@ def parse_action12(font_glpyhs):
 
     last_sprite = real_sprite_list[-1][0]
     for sprite, id_dict in real_sprite_list:
-        action_list.append(real_sprite.parse_real_sprite(sprite, font_glpyhs.pcx, sprite == last_sprite, id_dict))
+        action_list.append(real_sprite.parse_real_sprite(sprite, font_glyphs.pcx, sprite == last_sprite, id_dict))
 
     return action_list
