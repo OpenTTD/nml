@@ -23,7 +23,6 @@ class LZ77(object):
     def __init__(self, data):
         self.position = 0
         self.stream = data
-        self.remaining = len(self.stream)
         self.search = BMH()
 
     def Encode(self):
