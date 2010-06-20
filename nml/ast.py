@@ -905,7 +905,7 @@ class RailtypeTable(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Railtype table'
-        for railtype in self.railtype_list_list:
+        for railtype in self.railtype_list:
             print (indentation+2)*' ' + 'Railtype:', railtype.value
 
     def get_action_list(self):
