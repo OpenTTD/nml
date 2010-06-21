@@ -134,7 +134,7 @@ class BinOp(Expression):
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
         op = self.op
-        if (simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric)):
+        if (simple_expr1 and not simple_expr2) or (isinstance(expr2, (Parameter, Variable)) and isinstance(expr1, ConstantNumeric)):
             if op in commutative_operators or self.op in (Operator.CMP_LT, Operator.CMP_GT):
                 expr1, expr2 = expr2, expr1
                 if op == Operator.CMP_LT:
