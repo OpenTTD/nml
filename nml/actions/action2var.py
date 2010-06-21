@@ -51,7 +51,7 @@ class Action2Var(action2.Action2):
             if isinstance(var, VarAction2StoreTempVar):
                 var.mask = expression.ConstantNumeric(self.tmp_locations.pop())
                 for act2 in self.references:
-                    if var.mask.value in act2.tmp_locations:
+                    if isinstance(act2, Action2Var) and var.mask.value in act2.tmp_locations:
                         act2.tmp_locations.remove(var.mask.value)
 
     def prepare_output(self):
