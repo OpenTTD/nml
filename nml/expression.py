@@ -415,6 +415,15 @@ def builtin_hasbit(name, args, pos):
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return BinOp(Operator.HASBIT, args[0], args[1], pos)
 
+def builtin_version_openttd(name, args, pos):
+    if len(args) > 4 or len(args) < 3:
+        raise generic.ScriptError(name + "() must have 3 or 4 parameters", pos)
+    major = args[0].reduce_constant().value
+    minor = args[1].reduce_constant().value
+    revision = args[2].reduce_constant().value
+    build = args[3].reduce_constant().value if len(args) == 4 else 0x80000
+    return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
+
 function_table = {
     'min' : builtin_min,
     'max' : builtin_max,
@@ -425,6 +434,7 @@ function_table = {
     'LOAD_TEMP' : builtin_load,
     'LOAD_PERM' : builtin_load,
     'hasbit' : builtin_hasbit,
+    'version_openttd' : builtin_version_openttd,
 }
 
 
