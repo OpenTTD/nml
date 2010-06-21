@@ -208,7 +208,7 @@ class SwitchRange(object):
 
     def __str__(self):
         ret = str(self.min)
-        if self.max.value != self.min.value:
+        if not isinstance(self.min, expression.ConstantNumeric) or not isinstance(self.max, expression.ConstantNumeric) or self.max.value != self.min.value:
             ret += '..' + str(self.max)
         if isinstance(self.result, basestring):
             ret += ': %s;' % self.result
