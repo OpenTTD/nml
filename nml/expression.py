@@ -133,29 +133,35 @@ class BinOp(Expression):
             return StringLiteral(expr1.value + expr2.value, expr1.pos)
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
-        if self.op in commutative_operators and ((simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric))):
-            expr1, expr2 = expr2, expr1
+        op = self.op
+        if (simple_expr1 and not simple_expr2) or (isinstance(expr2, Variable) and isinstance(expr1, ConstantNumeric)):
+            if op in commutative_operators or self.op in (Operator.CMP_LT, Operator.CMP_GT):
+                expr1, expr2 = expr2, expr1
+                if op == Operator.CMP_LT:
+                    op = Operator.CMP_GT
+                elif op == Operator.CMP_GT:
+                    op = Operator.CMP_LT
         if isinstance(expr1, Variable) and isinstance(expr2, ConstantNumeric):
-            if self.op == Operator.AND and isinstance(expr1.mask, ConstantNumeric):
+            if op == Operator.AND and isinstance(expr1.mask, ConstantNumeric):
                 expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value, self.pos)
                 return expr1
-            if self.op == Operator.ADD and expr1.div is None and expr1.mod is None:
+            if op == Operator.ADD and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = expr2
                 else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value, self.pos)
                 return expr1
-            if self.op == Operator.SUB and expr1.div is None and expr1.mod is None:
+            if op == Operator.SUB and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(-expr2.value)
                 else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value, self.pos)
                 return expr1
-            if self.op == Operator.DIV and expr1.div is None and expr1.mod is None:
+            if op == Operator.DIV and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.div = expr2
                 return expr1
-            if self.op == Operator.MOD and expr1.div is None and expr1.mod is None:
+            if op == Operator.MOD and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
-        return BinOp(self.op, expr1, expr2, self.pos)
+        return BinOp(op, expr1, expr2, self.pos)
 
 class TernaryOp(Expression):
     def __init__(self, guard, expr1, expr2, pos):
