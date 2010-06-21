@@ -66,7 +66,7 @@ def parse_conditional(expr):
     - The size of the value (as integer)
     '''
     if expr is None:
-        return (None, [], (2, r'\7='), 0)
+        return (None, [], (2, r'\7='), 0, 4)
     if isinstance(expr, expression.BinOp):
         if expr.op == expression.Operator.HASBIT:
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
