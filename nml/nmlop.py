@@ -12,7 +12,7 @@ class Operator(object):
         self.compiletime_func = compiletime_func
 
     def to_string(self, expr1, expr2):
-        return '(%s %s %s)' % (expr1, token, expr2)
+        return '(%s %s %s)' % (expr1, self.token, expr2)
 
 ADD         = Operator( True,   r'\2+',    0,  True, r'\D+',    1,  '+', operator.add)
 SUB         = Operator( True,   r'\2-',    1,  True, r'\D-',    2,  '-', operator.sub)
