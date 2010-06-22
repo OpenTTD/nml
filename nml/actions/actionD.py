@@ -1,37 +1,6 @@
-from nml import generic, global_constants, expression
+from nml import generic, global_constants, expression, nmlop
 from nml.actions import action6
 import nml.ast
-
-class ActionDOperator(object):
-    EQUAL = r'\D='
-    ADD   = r'\D+'
-    SUB   = r'\D-'
-    MULU  = r'\Du*'
-    MULS  = r'\D*'
-    SHFTU = r'\Du<<'
-    SHFTS = r'\D<<'
-    AND   = r'\D&'
-    OR    = r'\D|'
-    DIVU  = r'\Du/'
-    DIVS  = r'\D/'
-    MODU  = r'\Du%'
-    MODS  = r'\D%'
-
-actionDoperator_to_num = {
-    ActionDOperator.EQUAL: 0,
-    ActionDOperator.ADD: 1,
-    ActionDOperator.SUB: 2,
-    ActionDOperator.MULU: 3,
-    ActionDOperator.MULS: 4,
-    ActionDOperator.SHFTU: 5,
-    ActionDOperator.SHFTS: 6,
-    ActionDOperator.AND: 7,
-    ActionDOperator.OR: 8,
-    ActionDOperator.DIVU: 9,
-    ActionDOperator.DIVS: 0x0A,
-    ActionDOperator.MODU: 0x0B,
-    ActionDOperator.MODS: 0x0C,
-}
 
 class ActionD(object):
     def __init__(self, target, param1, op, param2, data = None):
@@ -45,13 +14,12 @@ class ActionD(object):
         pass
 
     def write(self, file):
-        global actionDoperator_to_num
         size = 5
         if self.data is not None: size += 4
         file.start_sprite(size)
         file.print_bytex(0x0D)
         self.target.write(file, 1)
-        file.print_bytex(actionDoperator_to_num[self.op], self.op)
+        file.print_bytex(self.op.actd_num, self.op.actd_str)
         self.param1.write(file, 1)
         self.param2.write(file, 1)
         if self.data is not None: self.data.write(file, 4)
@@ -83,15 +51,6 @@ class ParameterAssignment(object):
     def __str__(self):
         return 'param[%s] = %s;\n' % (str(self.param), str(self.value))
 
-def convert_op_to_actiond(op):
-    if op == expression.Operator.ADD: return ActionDOperator.ADD
-    if op == expression.Operator.SUB: return ActionDOperator.SUB
-    if op == expression.Operator.AND: return ActionDOperator.AND
-    if op == expression.Operator.OR: return ActionDOperator.OR
-    if op == expression.Operator.MUL: return ActionDOperator.MULS
-    if op == expression.Operator.DIV: return ActionDOperator.DIVS
-    if op == expression.Operator.MOD: return ActionDOperator.MODS
-    raise generic.ScriptError("Unsupported operator in parameter assignment: " + str(op))
 
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
@@ -106,7 +65,7 @@ def parse_actionD(assignment):
         actions.extend(cond_block.get_action_list())
         return actions
 
-    if isinstance(assignment.value, expression.BinOp) and assignment.value.op == expression.Operator.HASBIT:
+    if isinstance(assignment.value, expression.BinOp) and assignment.value.op == nmlop.HASBIT:
         actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
         cond_block = nml.ast.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
         actions.extend(cond_block.get_action_list())
@@ -128,19 +87,19 @@ def parse_actionD(assignment):
     data = None
     #print assignment.value
     if isinstance(assignment.value, expression.ConstantNumeric):
-        op = ActionDOperator.EQUAL
+        op = nmlop.ASSIGN
         param1 = expression.ConstantNumeric(0xFF)
         param2 = expression.ConstantNumeric(0)
         data = assignment.value
     elif isinstance(assignment.value, expression.Parameter):
         if isinstance(assignment.value.num, expression.ConstantNumeric):
-            op = ActionDOperator.EQUAL
+            op = nmlop.ASSIGN
             param1 = assignment.value.num
         else:
             tmp_param, tmp_param_actions = get_tmp_parameter(assignment.value.num)
             act6.modify_bytes(tmp_param, 1, 3)
             action_list.extend(tmp_param_actions)
-            op = ActionDOperator.EQUAL
+            op = nmlop.ASSIGN
             param1 = expression.ConstantNumeric(0)
         param2 = expression.ConstantNumeric(0)
     elif isinstance(assignment.value, expression.BinOp):
@@ -148,37 +107,34 @@ def parse_actionD(assignment):
         expr1 = assignment.value.expr1
         expr2 = assignment.value.expr2
 
-        if op == expression.Operator.CMP_GT:
+        if op == nmlop.CMP_GT:
             expr1, expr2 = expr2, expr1
-            op = expression.Operator.CMP_LT
+            op = nmlop.CMP_LT
 
-        if op == expression.Operator.CMP_LT:
-            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(expression.Operator.SUB, expr1, expr2))))
-            op = ActionDOperator.SHFTU
+        if op == nmlop.CMP_LT:
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
+            op = nmlop.SHIFT_DU
             expr1 = expression.Parameter(assignment.param)
             expr2 = expression.ConstantNumeric(-31)
 
-        elif op == expression.Operator.CMP_NEQ:
-            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(expression.Operator.SUB, expr1, expr2))))
-            op = ActionDOperator.DIVU
+        elif op == nmlop.CMP_NEQ:
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
+            op = nmlop.DIV
             # We rely here on the (ondocumented) behavior of both OpenTTD and TTDPatch
             # that expr/0==expr. What we do is compute A/A, which will result in 1 if
             # A != 0 and in 0 if A == 0
             expr1 = expression.Parameter(assignment.param)
             expr2 = expression.Parameter(assignment.param)
 
-        elif op == expression.Operator.CMP_EQ:
+        elif op == nmlop.CMP_EQ:
             # We compute A==B by doing not(A - B) which will result in a value != 0
             # if A is equal to B
-            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(expression.Operator.SUB, expr1, expr2))))
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
             # Clamp the value to 0/1, see above for details
-            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(expression.Operator.DIV, expression.Parameter(assignment.param), expression.Parameter(assignment.param)))))
-            op = ActionDOperator.SUB
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.DIV, expression.Parameter(assignment.param), expression.Parameter(assignment.param)))))
+            op = nmlop.SUB
             expr1 = expression.ConstantNumeric(1)
             expr2 = expression.Parameter(assignment.param)
-
-        else:
-            op = convert_op_to_actiond(op)
 
 
         if isinstance(expr1, expression.ConstantNumeric):
