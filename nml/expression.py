@@ -133,7 +133,8 @@ class BinOp(Expression):
 
     def supported_by_action2(self, raise_error):
         if not self.op.act2_supports:
-            if raise_error: raise generic.ScriptError("Operator not supported in a switch-block", self.pos)
+            token = " '%s'" % self.op.token if self.op.token else ""
+            if raise_error: raise generic.ScriptError("Operator%s not supported in a switch-block" % token, self.pos)
             return False
         return self.expr1.supported_by_action2(raise_error) and self.expr2.supported_by_action2(raise_error)
 
