@@ -2,6 +2,7 @@ from output_base import OutputBase
 import Image
 import os
 from lz77 import LZ77
+from nml import generic
 
 
 class OutputGRF(OutputBase):
@@ -90,7 +91,7 @@ class OutputGRF(OutputBase):
     def print_sprite(self, filename, sprite_info):
         im = Image.open(filename.value)
         if im.mode != "P":
-            raise "Image file '%s' does not have a palette" % str(filename)
+            raise generic.ImageError("image does not have a palette", filename)
         x = sprite_info.xpos.value
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
@@ -142,7 +143,7 @@ class OutputGRF(OutputBase):
     def wsprite_encodetile(self, sprite, xoffset, yoffset, compression):
         data = list(sprite.getdata())
         size_x, size_y = sprite.size
-        if size_x > 255: raise "TODO: sprites wider then 255px are not supported"
+        if size_x > 255: raise generic.ScriptError("sprites wider then 255px are not supported")
         data_output = []
         offsets = size_y * [0]
         for y in range(size_y):
@@ -252,7 +253,7 @@ class OutputGRF(OutputBase):
         elif compression == 1 or compression == 3:
             self.wsprite_encoderegular(sprite, list(sprite.getdata()), xoffset, yoffset, compression)
         else:
-            raise "Invalid sprite compression"
+            raise generic.ScriptError("Invalid sprite compression")
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]

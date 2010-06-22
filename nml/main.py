@@ -58,7 +58,9 @@ def main(argv):
             sys.exit(2)
         input = sys.stdin
     elif len(args) > 1:
-        raise "Error: only a single nml file can be read per run"
+        print "Error: only a single nml file can be read per run"
+        opt_parser.print_help()
+        sys.exit(2)
     else:
         input_filename = args[0]
         if not os.access(input_filename, os.R_OK):
