@@ -1,5 +1,5 @@
 from nml.actions import action2, action6, actionD, action2var_variables
-from nml import expression, generic, global_constants
+from nml import expression, generic, global_constants, nmlop
 
 class Action2Operator(object):
     ADD   = r'\2+'
@@ -17,24 +17,6 @@ class Action2Operator(object):
     VAL2  = r'\2r'
     STO_TMP = r'\2sto'
     STO_PERM = r'10'
-
-action2operator_to_num = {
-    Action2Operator.ADD: 0,
-    Action2Operator.SUB: 1,
-    Action2Operator.MUL: 0x0A,
-    Action2Operator.AND: 0x0B,
-    Action2Operator.OR: 0x0C,
-    Action2Operator.XOR: 0x0D,
-    Action2Operator.DIVU: 8,
-    Action2Operator.DIVS: 6,
-    Action2Operator.MODU: 9,
-    Action2Operator.MODS: 7,
-    Action2Operator.MIN: 2,
-    Action2Operator.MAX: 3,
-    Action2Operator.VAL2: 0x0F,
-    Action2Operator.STO_TMP: 0x0E,
-    Action2Operator.STO_PERM: 0x10,
-}
 
 class Action2Var(action2.Action2):
     def __init__(self, feature, name, type_byte, varsize):
@@ -70,7 +52,6 @@ class Action2Var(action2.Action2):
             self.default_result = self.default_result.value | 0x8000
 
     def write(self, file):
-        global action2operator_to_num
         #type_byte, num_ranges, default_result = 4
         size = 4 + (2 + 2 * self.varsize) * len(self.ranges)
         for var in self.var_list:
@@ -83,9 +64,9 @@ class Action2Var(action2.Action2):
         file.print_bytex(self.type_byte)
         file.newline()
         for var in self.var_list:
-            if isinstance(var, basestring):
+            if isinstance(var, nmlop.Operator):
                 file.newline()
-                file.print_bytex(action2operator_to_num[var], var)
+                file.print_bytex(var.act2_num, var.act2_str)
             else:
                 var.write(file, self.varsize)
         file.print_byte(len(self.ranges))
@@ -98,24 +79,6 @@ class Action2Var(action2.Action2):
         file.print_wordx(self.default_result)
         file.newline()
         file.end_sprite()
-
-def convert_op_to_action2(op):
-    op_to_act2 = {
-        expression.Operator.ADD: Action2Operator.ADD,
-        expression.Operator.SUB: Action2Operator.SUB,
-        expression.Operator.DIV: Action2Operator.DIVS,
-        expression.Operator.MOD: Action2Operator.MODS,
-        expression.Operator.MUL: Action2Operator.MUL,
-        expression.Operator.AND: Action2Operator.AND,
-        expression.Operator.OR: Action2Operator.OR,
-        expression.Operator.XOR: Action2Operator.XOR,
-        expression.Operator.MIN: Action2Operator.MIN,
-        expression.Operator.MAX: Action2Operator.MAX,
-        expression.Operator.STO_TMP:  Action2Operator.STO_TMP,
-        expression.Operator.STO_PERM: Action2Operator.STO_PERM,
-    }
-    if not op in op_to_act2: raise generic.ScriptError("Unsupported operator in action2 expression: " + str(op))
-    return op_to_act2[op]
 
 class VarAction2Var(object):
     def __init__(self, var_num, shift, mask, parameter = None):
@@ -252,7 +215,7 @@ def parse_varaction2_expression(expr, varsize):
         var_list_size += var.get_size(varsize)
 
     elif isinstance(expr, expression.BinOp):
-        op = convert_op_to_action2(expr.op)
+        op = expr.op
 
         #parse expression 2 first in case we need to temporary store the result
         if not isinstance(expr.expr2, expression.BinOp):
@@ -265,9 +228,9 @@ def parse_varaction2_expression(expr, varsize):
             mods.extend(tmp_mods)
             var_list.extend(tmp_var_list)
             tmp_var = VarAction2StoreTempVar()
-            var_list.append(Action2Operator.STO_TMP)
+            var_list.append(nmlop.STO_TMP)
             var_list.append(tmp_var)
-            var_list.append(Action2Operator.VAL2)
+            var_list.append(nmlop.VAL2)
             #the +2 is for both operators
             var_list_size += tmp_var_list_size + 2 + tmp_var.get_size(varsize)
             expr2 = VarAction2LoadTempVar(tmp_var)
