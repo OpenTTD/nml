@@ -53,6 +53,8 @@ class NMLLexer(object):
         'AND',
         'OR',
         'XOR',
+        'LOGICAL_AND',
+        'LOGICAL_OR',
         'EQ',
         'LPAREN',
         'RPAREN',
@@ -87,6 +89,8 @@ class NMLLexer(object):
     t_AND              = r'&'
     t_OR               = r'\|'
     t_XOR              = r'\^'
+    t_LOGICAL_AND      = r'&&'
+    t_LOGICAL_OR       = r'\|\|'
     t_EQ               = r'='
     t_LPAREN           = r'\('
     t_RPAREN           = r'\)'

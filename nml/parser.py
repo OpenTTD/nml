@@ -18,6 +18,8 @@ class NMLParser(object):
     precedence = (
         ('left','COMMA'),
         ('right','TERNARY_OPEN','COLON'),
+        ('left','LOGICAL_OR'),
+        ('left','LOGICAL_AND'),
         ('left','OR'),
         ('left','XOR'),
         ('left','AND'),
@@ -114,6 +116,8 @@ class NMLParser(object):
         '&'  : nmlop.AND,
         '|'  : nmlop.OR,
         '^'  : nmlop.XOR,
+        '&&' : nmlop.AND,
+        '||' : nmlop.OR,
         '==' : nmlop.CMP_EQ,
         '!=' : nmlop.CMP_NEQ,
         '<=' : nmlop.CMP_LE,
@@ -124,7 +128,7 @@ class NMLParser(object):
         '>>' : nmlop.SHIFT_RIGHT,
     }
 
-    def p_binop_plus(self, t):
+    def p_binop(self, t):
         '''expression : expression PLUS expression
                       | expression MINUS expression
                       | expression TIMES expression
@@ -142,6 +146,11 @@ class NMLParser(object):
                       | expression COMP_LT expression
                       | expression COMP_GT expression'''
         t[0] = expression.BinOp(self.code_to_op[t[2]], t[1], t[3], t[1].pos);
+
+    def p_binop_logical(self, t):
+        '''expression : expression LOGICAL_AND expression
+                      | expression LOGICAL_OR expression'''
+        t[0] = expression.BinOp(self.code_to_op[t[2]], expression.Boolean(t[1]), expression.Boolean(t[3]), t[1].pos)
 
     def p_ternary_op(self, t):
         'expression : expression TERNARY_OPEN expression COLON expression'
