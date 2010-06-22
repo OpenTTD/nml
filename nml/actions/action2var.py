@@ -192,13 +192,8 @@ def parse_varaction2_expression(expr, varsize):
         var_list.append(var)
         var_list_size += var.get_size(varsize)
 
-    elif isinstance(expr, expression.Parameter):
-        if isinstance(expr.num, expression.ConstantNumeric):
-            param_num = expr.num.value
-        else:
-            param_num, tmp_param_actions = actionD.get_tmp_parameter(expr)
-            extra_actions.extend(tmp_param_actions)
-        mods.append(Modification(param_num, varsize, var_list_size + 2))
+    elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
+        mods.append(Modification(expr.num.value, varsize, var_list_size + 2))
         var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
         var_list.append(var)
         var_list_size += var.get_size(varsize)
@@ -214,13 +209,31 @@ def parse_varaction2_expression(expr, varsize):
         var_list.append(var)
         var_list_size += var.get_size(varsize)
 
-    elif isinstance(expr, expression.BinOp):
-        op = expr.op
+    elif expr.supported_by_actionD(False):
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
+        extra_actions.extend(tmp_param_actions)
+        num = expression.ConstantNumeric(tmp_param)
+        tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expression.Parameter(num), varsize)
+        extra_actions.extend(tmp_actions)
+        for mod in tmp_mods:
+            mod.offset += var_list_size
+        mods.extend(tmp_mods)
+        var_list.extend(tmp_var_list)
+        var_list_size += tmp_var_list_size
 
-        #parse expression 2 first in case we need to temporary store the result
-        if not isinstance(expr.expr2, expression.BinOp):
+    elif isinstance(expr, expression.BinOp):
+        if not expr.op.act2_supports: expr.supported_by_action2(True)
+
+        if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
+                (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)):
             expr2 = expr.expr2
+        elif expr.expr2.supported_by_actionD(False):
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
+            extra_actions.extend(tmp_param_actions)
+            expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param))
         else:
+            #The expression is so complex we need to compute it first, store the
+            #result and load it back later.
             tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr2, varsize)
             extra_actions.extend(tmp_actions)
             for mod in tmp_mods:
@@ -244,7 +257,7 @@ def parse_varaction2_expression(expr, varsize):
         var_list.extend(tmp_var_list)
         var_list_size += tmp_var_list_size
 
-        var_list.append(op)
+        var_list.append(expr.op)
         var_list_size += 1
 
         if isinstance(expr2, VarAction2LoadTempVar):
@@ -262,7 +275,8 @@ def parse_varaction2_expression(expr, varsize):
             var_list_size += tmp_var_list_size
 
     else:
-        raise generic.ScriptError("Invalid expression type in varaction2 expression", expr.pos)
+        expr.supported_by_action2(True)
+        assert False #supported_by_action2 should have raised the correct error already
 
     return (extra_actions, mods, var_list, var_list_size)
 
