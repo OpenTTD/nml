@@ -182,6 +182,42 @@ class SwitchRange(object):
         return ret
 
 def parse_varaction2_expression(expr, varsize):
+    if isinstance(expr, expression.BinOp):
+        if expr.op == nmlop.CMP_LT:
+            #return value is 0, 1 or 2, we want to map 0 to 1 and the others to 0
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            #reduce the problem to 0/1
+            expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
+            #and invert the result
+            expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_GT:
+            #return value is 0, 1 or 2, we want to map 2 to 1 and the others to 0
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            #subtract one
+            expr = expression.BinOp(nmlop.SUB, expr, expression.ConstantNumeric(1))
+            #map -1 and 0 to 0
+            expr = expression.BinOp(nmlop.MAX, expr, expression.ConstantNumeric(0))
+        elif expr.op == nmlop.CMP_LE:
+            #return value is 0, 1 or 2, we want to map 2 to 0 and the others to 1
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            #swap 0 and 2
+            expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(2))
+            #map 1/2 to 1
+            expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_GE:
+            #return value is 0, 1 or 2, we want to map 1/2 to 1
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_EQ:
+            #return value is 0, 1 or 2, we want to map 1 to 1, other to 0
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_NEQ:
+            #same as CMP_EQ but invert the result
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
+            expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
+    
     extra_actions = []
     mods = []
     var_list = []
@@ -222,7 +258,7 @@ def parse_varaction2_expression(expr, varsize):
         var_list_size += tmp_var_list_size
 
     elif isinstance(expr, expression.BinOp):
-        if not expr.op.act2_supports: expr.supported_by_action2(True)
+        if expr.op.act2_num is None: expr.supported_by_action2(True)
 
         if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
                 (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)):
