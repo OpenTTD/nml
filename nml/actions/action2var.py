@@ -55,7 +55,7 @@ class Action2Var(action2.Action2):
         #type_byte, num_ranges, default_result = 4
         size = 4 + (2 + 2 * self.varsize) * len(self.ranges)
         for var in self.var_list:
-            if isinstance(var, basestring):
+            if isinstance(var, nmlop.Operator):
                 size += 1
             else:
                 size += var.get_size(self.varsize)
