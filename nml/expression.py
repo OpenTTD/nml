@@ -226,6 +226,14 @@ class Not(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value != 0)
+        if isinstance(expr, Not): return expr.expr
+        if isinstance(expr, BinOp):
+            if expr.op == nmlop.CMP_EQ: return BinOp(nmlop.CMP_NEQ, expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_NEQ: return BinOp(nmlop.CMP_EQ, expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_LE: return BinOp(nmlop.CMP_GT, expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_GE: return BinOp(nmlop.CMP_LT, expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_LT: return BinOp(nmlop.CMP_GE, expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_GT: return BinOp(nmlop.CMP_LE, expr.expr1, expr.expr2)
         return Not(expr)
 
     def supported_by_action2(self, raise_error):

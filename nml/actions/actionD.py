@@ -82,7 +82,7 @@ def parse_actionD(assignment):
 
     if isinstance(assignment.value, expression.Not):
         expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(1), assignment.value.expr)
-        return parse_actionD(ParameterAssignMent(assignment.param, expr))
+        return parse_actionD(ParameterAssignment(assignment.param, expr))
 
     free_parameters_backup = action6.free_parameters[:]
     action_list = []
