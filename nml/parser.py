@@ -1,5 +1,5 @@
 import sys
-from nml import generic, ast, expression, tokens
+from nml import generic, ast, expression, tokens, nmlop
 from actions import action1, action2var, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -106,20 +106,20 @@ class NMLParser(object):
         t[0] = expression.Parameter(t[3], t.lineno(1))
 
     code_to_op = {
-        '+'  : expression.Operator.ADD,
-        '-'  : expression.Operator.SUB,
-        '*'  : expression.Operator.MUL,
-        '/'  : expression.Operator.DIV,
-        '%'  : expression.Operator.MOD,
-        '&'  : expression.Operator.AND,
-        '|'  : expression.Operator.OR,
-        '^'  : expression.Operator.XOR,
-        '==' : expression.Operator.CMP_EQ,
-        '!=' : expression.Operator.CMP_NEQ,
-        '<'  : expression.Operator.CMP_LT,
-        '>'  : expression.Operator.CMP_GT,
-        '<<' : expression.Operator.SHIFT_LEFT,
-        '>>' : expression.Operator.SHIFT_RIGHT,
+        '+'  : nmlop.ADD,
+        '-'  : nmlop.SUB,
+        '*'  : nmlop.MUL,
+        '/'  : nmlop.DIV,
+        '%'  : nmlop.MOD,
+        '&'  : nmlop.AND,
+        '|'  : nmlop.OR,
+        '^'  : nmlop.XOR,
+        '==' : nmlop.CMP_EQ,
+        '!=' : nmlop.CMP_NEQ,
+        '<'  : nmlop.CMP_LT,
+        '>'  : nmlop.CMP_GT,
+        '<<' : nmlop.SHIFT_LEFT,
+        '>>' : nmlop.SHIFT_RIGHT,
     }
 
     def p_binop_plus(self, t):
