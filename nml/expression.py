@@ -191,6 +191,29 @@ class TernaryOp(Expression):
     def is_boolean(self):
         return self.expr1.is_boolean() and self.expr2.is_boolean()
 
+class Boolean(Expression):
+    def __init__(self, expr, pos = None):
+        Expression.__init__(self, pos)
+        self.expr = expr
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Force expression to boolean:'
+        self.expr.debug_print(indentation + 2)
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        expr = self.expr.reduce(id_dicts)
+        if expr.is_boolean(): return expr
+        return Boolean(expr)
+
+    def supported_by_action2(self, raise_error):
+        return self.expr.supported_by_action2(raise_error)
+
+    def supported_by_actionD(self, raise_error):
+        return self.expr.supported_by_actionD(raise_error)
+
+    def is_boolean(self):
+        return True
+
 class Parameter(Expression):
     def __init__(self, num, pos = None):
         Expression.__init__(self, pos)

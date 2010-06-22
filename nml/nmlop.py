@@ -41,6 +41,7 @@ VAL2        = Operator( True,   r'\2r',   15, False,   None, None, False, None, 
 ASSIGN      = Operator(False,     None, None,  True, r'\D=',    0, False, None, None)
 SHIFT_DU    = Operator(False,     None, None,  True, r'\Du<<',  5, False, None, None)
 VACT2_CMP   = Operator( True,     None,   18, False,   None, None, False, None, None)
+MINU        = Operator( True,  r'\2u<',    4, False,   None, None, False, None, None)
 
 
 MIN.to_string = lambda expr1, expr2: 'min(%s, %s)' % (expr1, expr2)
