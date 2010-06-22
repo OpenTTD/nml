@@ -109,6 +109,16 @@ def parse_actionD(assignment):
         expr1 = assignment.value.expr1
         expr2 = assignment.value.expr2
 
+        if op == nmlop.CMP_GE:
+            expr1, expr2 = expr2, expr1
+            op = nmlop.CMP_LE
+
+        if op == nmlop.CMP_LE:
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
+            op = nmlop.CMP_LT
+            expr1 = expression.Parameter(assignment.param)
+            expr2 = expression.ConstantNumeric(1)
+
         if op == nmlop.CMP_GT:
             expr1, expr2 = expr2, expr1
             op = nmlop.CMP_LT
