@@ -91,7 +91,7 @@ class BinOp(Expression):
         self.expr2 = expr2
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Binary operator, op = ', self.op
+        print indentation*' ' + 'Binary operator, op = ', self.op.token
         self.expr1.debug_print(indentation + 2)
         self.expr2.debug_print(indentation + 2)
 
