@@ -1,4 +1,4 @@
-from nml import expression
+from nml import expression, nmlop
 from nml.actions import action6, actionD
 
 class ActionE(object):
@@ -49,7 +49,7 @@ def parse_deactivate_block(block):
                 else:
                     param = action6.free_parameters.pop()
                     action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(tmp_param),
-                            actionD.ActionDOperator.SHFTU, expression.ConstantNumeric(0xFF), expression.ConstantNumeric(-8 * i)))
+                            nmlop.SHIFT_DU, expression.ConstantNumeric(0xFF), expression.ConstantNumeric(-8 * i)))
                 act6.modify_bytes(param, 1, offset + 3 - i)
             grfid_list.append(expression.ConstantNumeric(0))
         offset += 4

@@ -1,4 +1,4 @@
-from nml import expression
+from nml import expression, nmlop
 from nml.actions import action6, actionD, action10
 
 #a jump is always to the next action10 with a given id, so they
@@ -50,10 +50,10 @@ class UnconditionalSkipAction(SkipAction):
 def op_to_cond_op(op):
     #The operators are reversed as we want to skip if the expression is true
     #while the nml-syntax wants to execute the block if the expression is true
-    if op == expression.Operator.CMP_NEQ: return (2, r'\7=')
-    if op == expression.Operator.CMP_EQ: return (3, r'\7!')
-    if op == expression.Operator.CMP_GT: return (4, r'\7<')
-    if op == expression.Operator.CMP_LT: return (5, r'\7>')
+    if op == nmlop.CMP_NEQ: return (2, r'\7=')
+    if op == nmlop.CMP_EQ: return (3, r'\7!')
+    if op == nmlop.CMP_GT: return (4, r'\7<')
+    if op == nmlop.CMP_LT: return (5, r'\7>')
 
 def parse_conditional(expr):
     '''Parse an expression and return enougn information to use
@@ -68,7 +68,7 @@ def parse_conditional(expr):
     if expr is None:
         return (None, [], (2, r'\7='), 0, 4)
     if isinstance(expr, expression.BinOp):
-        if expr.op == expression.Operator.HASBIT:
+        if expr.op == nmlop.HASBIT:
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
                 param = expr.expr1.num.value
                 actions = []
@@ -77,7 +77,7 @@ def parse_conditional(expr):
             if not isinstance(expr.expr2, expression.ConstantNumeric):
                 raise generic.ScriptError("The bit to test must be a constant value", expr.expr2.pos)
             return (param, actions, (1, r'\70'), expr.expr2.value, 1)
-        elif expr.op in (expression.Operator.CMP_EQ, expression.Operator.CMP_NEQ, expression.Operator.CMP_LT, expression.Operator.CMP_GT) \
+        elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LT, nmlop.CMP_GT) \
                 and isinstance(expr.expr2, expression.ConstantNumeric):
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
                 param = expr.expr1.num.value
@@ -163,7 +163,7 @@ def parse_conditional_block(cond):
     for block in blocks:
         block['param_dst'], block['cond_actions'], block['cond_type'], block['cond_value'], block['cond_value_size'] = parse_conditional(block['expr'])
         if not block['last_block']:
-            block['action_list'] = [actionD.ActionD(expression.ConstantNumeric(param_skip_all), expression.ConstantNumeric(0xFF), actionD.ActionDOperator.EQUAL, expression.ConstantNumeric(0), expression.ConstantNumeric(0))]
+            block['action_list'] = [actionD.ActionD(expression.ConstantNumeric(param_skip_all), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0), expression.ConstantNumeric(0))]
         else:
             block['action_list'] = []
         for stmt in block['statements']:
@@ -184,7 +184,7 @@ def parse_conditional_block(cond):
             if param is None:
                 param = param_skip_all
             else:
-                action_list.append(actionD.ActionD(expression.ConstantNumeric(block['param_dst']), expression.ConstantNumeric(block['param_dst']), actionD.ActionDOperator.AND, expression.ConstantNumeric(param_skip_all)))
+                action_list.append(actionD.ActionD(expression.ConstantNumeric(block['param_dst']), expression.ConstantNumeric(block['param_dst']), nmlop.AND, expression.ConstantNumeric(param_skip_all)))
         action_list.extend(cond_skip_actions(block['action_list'], param, block['cond_type'], block['cond_value'], block['cond_value_size']))
 
     free_labels.extend([item for item in free_labels_backup if not item in free_labels])
