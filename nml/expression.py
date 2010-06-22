@@ -1,54 +1,8 @@
 import operator
 import datetime, calendar
-from nml import generic
+from nml import generic, nmlop
 
 item_names = {}
-
-class Operator(object):
-    ADD     = 0
-    SUB     = 1
-    DIV     = 2
-    MOD     = 3
-    MUL     = 4
-    AND     = 5
-    OR      = 6
-    XOR     = 7
-    VAL2    = 8
-    CMP_EQ  = 9
-    CMP_NEQ = 10
-    CMP_LT  = 11
-    CMP_GT  = 12
-    MIN     = 13
-    MAX     = 14
-    STO_TMP = 15
-    STO_PERM = 16
-    SHIFT_LEFT = 17
-    SHIFT_RIGHT = 18
-    HASBIT  = 19
-
-
-def get_operator_string(op, param1, param2):
-    operator_to_string = {}
-    operator_to_string[Operator.ADD] = '(%s + %s)'
-    operator_to_string[Operator.SUB] = '(%s - %s)'
-    operator_to_string[Operator.DIV] = '(%s / %s)'
-    operator_to_string[Operator.MOD] = '(%s %% %s)'
-    operator_to_string[Operator.MUL] = '(%s * %s)'
-    operator_to_string[Operator.AND] = '(%s & %s)'
-    operator_to_string[Operator.OR] = '(%s | %s)'
-    operator_to_string[Operator.XOR] = '(%s ^ %s)'
-    #operator_to_string[Operator.VAL2] = 
-    operator_to_string[Operator.CMP_EQ] = '(%s == %s)'
-    operator_to_string[Operator.CMP_NEQ] = '(%s != %s)'
-    operator_to_string[Operator.CMP_LT] = '(%s < %s)'
-    operator_to_string[Operator.CMP_GT] = '(%s > %s)'
-    operator_to_string[Operator.MIN] = 'min(%s, %s)'
-    operator_to_string[Operator.MAX] = 'max(%s, %s)'
-    operator_to_string[Operator.STO_TMP] = 'STORE_TEMP(%s, %s)'
-    operator_to_string[Operator.STO_PERM] = 'STORE_PERM(%s, %s)'
-    operator_to_string[Operator.SHIFT_LEFT] = '(%s << %s)'
-    operator_to_string[Operator.SHIFT_RIGHT] = '(%s >> %s)'
-    return operator_to_string[op] % (param1, param2)
 
 class Expression(object):
     def __init__(self, pos):
@@ -122,42 +76,42 @@ class BinOp(Expression):
         self.expr2.debug_print(indentation + 2)
 
     def __str__(self):
-        return get_operator_string(self.op, str(self.expr1), str(self.expr2))
+        return self.op.to_string(self.expr1, self.expr2)
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr1 = self.expr1.reduce(id_dicts)
         expr2 = self.expr2.reduce(id_dicts)
-        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op in compile_time_operator:
-            return ConstantNumeric(compile_time_operator[self.op](expr1.value, expr2.value), self.pos)
-        if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral) and self.op == Operator.ADD:
+        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op.compiletime_func:
+            return ConstantNumeric(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
+        if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral) and self.op == nmlop.ADD:
             return StringLiteral(expr1.value + expr2.value, expr1.pos)
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
         op = self.op
         if (simple_expr1 and not simple_expr2) or (isinstance(expr2, (Parameter, Variable)) and isinstance(expr1, ConstantNumeric)):
-            if op in commutative_operators or self.op in (Operator.CMP_LT, Operator.CMP_GT):
+            if op in commutative_operators or self.op in (nmlop.CMP_LT, nmlop.CMP_GT):
                 expr1, expr2 = expr2, expr1
-                if op == Operator.CMP_LT:
-                    op = Operator.CMP_GT
-                elif op == Operator.CMP_GT:
-                    op = Operator.CMP_LT
+                if op == nmlop.CMP_LT:
+                    op = nmlop.CMP_GT
+                elif op == nmlop.CMP_GT:
+                    op = nmlop.CMP_LT
         if isinstance(expr1, Variable) and isinstance(expr2, ConstantNumeric):
-            if op == Operator.AND and isinstance(expr1.mask, ConstantNumeric):
+            if op == nmlop.AND and isinstance(expr1.mask, ConstantNumeric):
                 expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value, self.pos)
                 return expr1
-            if op == Operator.ADD and expr1.div is None and expr1.mod is None:
+            if op == nmlop.ADD and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = expr2
                 else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value, self.pos)
                 return expr1
-            if op == Operator.SUB and expr1.div is None and expr1.mod is None:
+            if op == nmlop.SUB and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(-expr2.value)
                 else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value, self.pos)
                 return expr1
-            if op == Operator.DIV and expr1.div is None and expr1.mod is None:
+            if op == nmlop.DIV and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.div = expr2
                 return expr1
-            if op == Operator.MOD and expr1.div is None and expr1.mod is None:
+            if op == nmlop.MOD and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
@@ -367,12 +321,12 @@ class Array(Expression):
 def builtin_min(name, args, pos):
     if len(args) < 2:
         raise generic.ScriptError("min() requires at least 2 arguments", pos)
-    return reduce(lambda x, y: BinOp(Operator.MIN, x, y, pos), args)
+    return reduce(lambda x, y: BinOp(nmlop.MIN, x, y, pos), args)
 
 def builtin_max(name, args, pos):
     if len(args) < 2:
         raise generic.ScriptError("max() requires at least 2 arguments", pos)
-    return reduce(lambda x, y: BinOp(Operator.MAX, x, y, pos), args)
+    return reduce(lambda x, y: BinOp(nmlop.MAX, x, y, pos), args)
 
 def builtin_date(name, args, pos):
     if len(args) != 3:
@@ -387,13 +341,13 @@ def builtin_date(name, args, pos):
         if month != 1 or day != 1:
             raise generic.ScriptError("when the year parameter of date() is not a compile time constant month and day should be 1", pos)
         #num_days = year*365 + year/4 - year/100 + year/400
-        part1 = BinOp(Operator.MUL, year, ConstantNumeric(365))
-        part2 = BinOp(Operator.DIV, year, ConstantNumeric(4))
-        part3 = BinOp(Operator.DIV, year, ConstantNumeric(100))
-        part4 = BinOp(Operator.DIV, year, ConstantNumeric(400))
-        res = BinOp(Operator.ADD, part1, part2)
-        res = BinOp(Operator.SUB, res, part3)
-        res = BinOp(Operator.ADD, res, part4)
+        part1 = BinOp(nmlop.MUL, year, ConstantNumeric(365))
+        part2 = BinOp(nmlop.DIV, year, ConstantNumeric(4))
+        part3 = BinOp(nmlop.DIV, year, ConstantNumeric(100))
+        part4 = BinOp(nmlop.DIV, year, ConstantNumeric(400))
+        res = BinOp(nmlop.ADD, part1, part2)
+        res = BinOp(nmlop.SUB, res, part3)
+        res = BinOp(nmlop.ADD, res, part4)
         return res
     date = datetime.date(year.value, month, day)
     return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + date.timetuple().tm_yday - 1, pos)
@@ -401,7 +355,7 @@ def builtin_date(name, args, pos):
 def builtin_store(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
-    op = Operator.STO_TMP if name == 'STORE_TEMP' else Operator.STO_PERM
+    op = nmlop.STO_TMP if name == 'STORE_TEMP' else nmlop.STO_PERM
     return BinOp(op, args[0], args[1], pos)
 
 def builtin_load(name, args, pos):
@@ -413,7 +367,7 @@ def builtin_load(name, args, pos):
 def builtin_hasbit(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
-    return BinOp(Operator.HASBIT, args[0], args[1], pos)
+    return BinOp(nmlop.HASBIT, args[0], args[1], pos)
 
 def builtin_version_openttd(name, args, pos):
     if len(args) > 4 or len(args) < 3:
@@ -437,36 +391,14 @@ function_table = {
     'version_openttd' : builtin_version_openttd,
 }
 
-
-compile_time_operator = {
-    Operator.ADD:     operator.add,
-    Operator.SUB:     operator.sub,
-    Operator.DIV:     operator.div,
-    Operator.MOD:     operator.mod,
-    Operator.MUL:     operator.mul,
-    Operator.AND:     operator.and_,
-    Operator.OR:      operator.or_,
-    Operator.XOR:     operator.xor,
-    Operator.VAL2:    lambda a, b: b,
-    Operator.CMP_EQ:  operator.eq,
-    Operator.CMP_NEQ: operator.ne,
-    Operator.CMP_LT:  operator.lt,
-    Operator.CMP_GT:  operator.gt,
-    Operator.MIN:     lambda a, b: min(a, b),
-    Operator.MAX:     lambda a, b: max(a, b),
-    Operator.SHIFT_LEFT: operator.lshift,
-    Operator.SHIFT_RIGHT: operator.rshift,
-    Operator.HASBIT:  lambda a, b: (a & (1 << b)) != 0,
-}
-
 commutative_operators = set([
-    Operator.ADD,
-    Operator.MUL,
-    Operator.AND,
-    Operator.OR,
-    Operator.XOR,
-    Operator.CMP_EQ,
-    Operator.CMP_NEQ,
-    Operator.MIN,
-    Operator.MAX,
+    nmlop.ADD,
+    nmlop.MUL,
+    nmlop.AND,
+    nmlop.OR,
+    nmlop.XOR,
+    nmlop.CMP_EQ,
+    nmlop.CMP_NEQ,
+    nmlop.MIN,
+    nmlop.MAX,
 ])
