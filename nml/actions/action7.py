@@ -104,8 +104,13 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
         if allow7 and action.skip_action7():
             allow9 = allow9 and action.skip_action9()
             continue
-        allow7 = False
         if allow9 and action.skip_action9():
+            #If action7 was ok, we wouldn't be in this block.
+            #Set allow7 to False in here so in case both
+            #action7 and action9 don't work at least one
+            #of allow7/allow9 is True. This is possible because
+            #all previous actions could be skipped at least one.
+            allow7 = False
             continue
         #neither action7 nor action9 can be used. add all
         #previous actions to the list and start a new block
