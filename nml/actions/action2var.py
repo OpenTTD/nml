@@ -174,7 +174,7 @@ class SwitchRange(object):
         if not isinstance(self.min, expression.ConstantNumeric) or not isinstance(self.max, expression.ConstantNumeric) or self.max.value != self.min.value:
             ret += '..' + str(self.max)
         if isinstance(self.result, expression.Identifier):
-            ret += ': %s;' % self.result
+            ret += ': %s;' % str(self.result)
         elif self.result is None:
             ret += ': return;'
         else:
