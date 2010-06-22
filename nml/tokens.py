@@ -60,6 +60,8 @@ class NMLLexer(object):
         'SHIFT_RIGHT',
         'COMP_EQ',
         'COMP_NEQ',
+        'COMP_LE',
+        'COMP_GE',
         'COMP_LT',
         'COMP_GT',
         'COMMA',
@@ -92,6 +94,8 @@ class NMLLexer(object):
     t_SHIFT_RIGHT      = r'>>'
     t_COMP_EQ          = r'=='
     t_COMP_NEQ         = r'!='
+    t_COMP_LE          = r'<='
+    t_COMP_GE          = r'>='
     t_COMP_LT          = r'<'
     t_COMP_GT          = r'>'
     t_COMMA            = r','

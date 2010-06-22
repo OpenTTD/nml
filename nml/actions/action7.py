@@ -52,8 +52,8 @@ def op_to_cond_op(op):
     #while the nml-syntax wants to execute the block if the expression is true
     if op == nmlop.CMP_NEQ: return (2, r'\7=')
     if op == nmlop.CMP_EQ: return (3, r'\7!')
-    if op == nmlop.CMP_GT: return (4, r'\7<')
-    if op == nmlop.CMP_LT: return (5, r'\7>')
+    if op == nmlop.CMP_GE: return (4, r'\7<')
+    if op == nmlop.CMP_LE: return (5, r'\7>')
 
 def parse_conditional(expr):
     '''Parse an expression and return enougn information to use
@@ -77,7 +77,7 @@ def parse_conditional(expr):
             if not isinstance(expr.expr2, expression.ConstantNumeric):
                 raise generic.ScriptError("The bit to test must be a constant value", expr.expr2.pos)
             return (param, actions, (1, r'\70'), expr.expr2.value, 1)
-        elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LT, nmlop.CMP_GT) \
+        elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LE, nmlop.CMP_GE) \
                 and isinstance(expr.expr2, expression.ConstantNumeric):
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
                 param = expr.expr1.num.value

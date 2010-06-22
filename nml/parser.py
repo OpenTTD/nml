@@ -116,6 +116,8 @@ class NMLParser(object):
         '^'  : nmlop.XOR,
         '==' : nmlop.CMP_EQ,
         '!=' : nmlop.CMP_NEQ,
+        '<=' : nmlop.CMP_LE,
+        '>=' : nmlop.CMP_GE,
         '<'  : nmlop.CMP_LT,
         '>'  : nmlop.CMP_GT,
         '<<' : nmlop.SHIFT_LEFT,
@@ -135,6 +137,8 @@ class NMLParser(object):
                       | expression SHIFT_RIGHT expression
                       | expression COMP_EQ expression
                       | expression COMP_NEQ expression
+                      | expression COMP_LE expression
+                      | expression COMP_GE expression
                       | expression COMP_LT expression
                       | expression COMP_GT expression'''
         t[0] = expression.BinOp(self.code_to_op[t[2]], t[1], t[3], t[1].pos);
