@@ -22,6 +22,9 @@ class Expression(object):
         if raise_error: raise generic.ScriptError("This expression can not be assigned to a parameter", self.pos)
         return False
 
+    def is_boolean(self):
+        return False
+
 class ConstantNumeric(Expression):
     def __init__(self, value, pos = None):
         Expression.__init__(self, pos)
@@ -44,6 +47,9 @@ class ConstantNumeric(Expression):
 
     def supported_by_actionD(self, raise_error):
         return True
+
+    def is_boolean(self):
+        return self.value == 0 or self.value == 1
 
 class ConstantFloat(Expression):
     def __init__(self, value, pos):
@@ -145,6 +151,9 @@ class BinOp(Expression):
             return False
         return self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
 
+    def is_boolean(self):
+        return self.op.returns_boolean
+
 class TernaryOp(Expression):
     def __init__(self, guard, expr1, expr2, pos):
         Expression.__init__(self, pos)
@@ -178,6 +187,9 @@ class TernaryOp(Expression):
 
     def supported_by_actionD(self, raise_error):
         return True
+
+    def is_boolean(self):
+        return self.expr1.is_boolean() and self.expr2.is_boolean()
 
 class Parameter(Expression):
     def __init__(self, num, pos = None):
