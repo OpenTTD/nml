@@ -80,6 +80,10 @@ def parse_actionD(assignment):
         actions.extend(cond_block.get_action_list())
         return actions
 
+    if isinstance(assignment.value, expression.Not):
+        expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(1), assignment.value.expr)
+        return parse_actionD(ParameterAssignMent(assignment.param, expr))
+
     free_parameters_backup = action6.free_parameters[:]
     action_list = []
     act6 = action6.Action6()

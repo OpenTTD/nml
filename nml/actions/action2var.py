@@ -221,6 +221,9 @@ def parse_varaction2_expression(expr, varsize):
     elif isinstance(expr, expression.Boolean):
         expr = expression.BinOp(nmlop.MINU, expr.expr, expression.ConstantNumeric(1))
 
+    elif isinstance(expr, expression.Not):
+        expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(1))
+
     extra_actions = []
     mods = []
     var_list = []

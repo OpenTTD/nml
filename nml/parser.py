@@ -27,6 +27,7 @@ class NMLParser(object):
         ('left','SHIFT_LEFT','SHIFT_RIGHT'),
         ('left','PLUS','MINUS'),
         ('left','TIMES','DIVIDE','MODULO'),
+        ('left','LOGICAL_NOT'),
     )
 
     def p_error(self, t):
@@ -151,6 +152,10 @@ class NMLParser(object):
         '''expression : expression LOGICAL_AND expression
                       | expression LOGICAL_OR expression'''
         t[0] = expression.BinOp(self.code_to_op[t[2]], expression.Boolean(t[1]), expression.Boolean(t[3]), t[1].pos)
+
+    def p_logical_not(self, t):
+        'expression : LOGICAL_NOT expression'
+        t[0] = expression.Not(expression.Boolean(t[2]), t.lineno(1))
 
     def p_ternary_op(self, t):
         'expression : expression TERNARY_OPEN expression COLON expression'

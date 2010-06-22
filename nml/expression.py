@@ -214,6 +214,29 @@ class Boolean(Expression):
     def is_boolean(self):
         return True
 
+class Not(Expression):
+    def __init__(self, expr, pos = None):
+        Expression.__init__(self, pos)
+        self.expr = expr
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Logical not:'
+        self.expr.debug_print(indentation + 2)
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        expr = self.expr.reduce(id_dicts)
+        if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value != 0)
+        return Not(expr)
+
+    def supported_by_action2(self, raise_error):
+        return self.expr.supported_by_action2(raise_error)
+
+    def supported_by_actionD(self, raise_error):
+        return self.expr.supported_by_actionD(raise_error)
+
+    def is_boolean(self):
+        return True
+
 class Parameter(Expression):
     def __init__(self, num, pos = None):
         Expression.__init__(self, pos)
