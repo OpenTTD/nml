@@ -59,6 +59,8 @@ def get_tmp_parameter(expr):
     return (param, actions)
 
 def parse_actionD(assignment):
+    assignment.value.supported_by_actionD(True)
+
     if isinstance(assignment.value, expression.TernaryOp):
         actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr2))
         cond_block = nml.ast.Conditional(assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)], None, None)

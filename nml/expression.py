@@ -14,6 +14,14 @@ class Expression(object):
             raise generic.ConstError(self.pos)
         return expr
 
+    def supported_by_action2(self, raise_error):
+        if raise_error: raise generic.ScriptError("This expression is not supported in a switch-block", self.pos)
+        return False
+
+    def supported_by_actionD(self, raise_error):
+        if raise_error: raise generic.ScriptError("This expression can not be assigned to a parameter", self.pos)
+        return False
+
 class ConstantNumeric(Expression):
     def __init__(self, value, pos = None):
         Expression.__init__(self, pos)
@@ -30,6 +38,12 @@ class ConstantNumeric(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
+
+    def supported_by_action2(self, raise_error):
+        return True
+
+    def supported_by_actionD(self, raise_error):
+        return True
 
 class ConstantFloat(Expression):
     def __init__(self, value, pos):
@@ -117,6 +131,19 @@ class BinOp(Expression):
                 return expr1
         return BinOp(op, expr1, expr2, self.pos)
 
+    def supported_by_action2(self, raise_error):
+        if not self.op.act2_supports:
+            if raise_error: raise generic.ScriptError("Operator not supported in a switch-block", self.pos)
+            return False
+        return self.expr1.supported_by_action2(raise_error) and self.expr2.supported_by_action2(raise_error)
+
+    def supported_by_actionD(self, raise_error):
+        if not self.op.actd_supports:
+            token = " '%s'" % self.op.token if self.op.token else ""
+            if raise_error: raise generic.ScriptError("Operator%s not supported in parameter assignment" % token, self.pos)
+            return False
+        return self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
+
 class TernaryOp(Expression):
     def __init__(self, guard, expr1, expr2, pos):
         Expression.__init__(self, pos)
@@ -144,6 +171,13 @@ class TernaryOp(Expression):
                 return expr2
         return TernaryOp(guard, expr1, expr2, self.pos)
 
+    def supported_by_action2(self, raise_error):
+        if raise_error: raise generic.ScriptError("Ternary operator not supported in a switch-block", self.pos)
+        return False
+
+    def supported_by_actionD(self, raise_error):
+        return True
+
 class Parameter(Expression):
     def __init__(self, num, pos = None):
         Expression.__init__(self, pos)
@@ -159,6 +193,15 @@ class Parameter(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         num = self.num.reduce(id_dicts)
         return Parameter(num, self.pos)
+
+    def supported_by_action2(self, raise_error):
+        supported = isinstance(self.num, ConstantNumeric)
+        if not supported and raise_error:
+            raise generic.ScriptError("Parameters with non-constant numbers are not supported in a switch-block", self.pos)
+        return supported
+
+    def supported_by_actionD(self, raise_error):
+        return True
 
 class Variable(Expression):
     def __init__(self, num, shift = None, mask = None, param = None, pos = None):
@@ -204,6 +247,13 @@ class Variable(Expression):
         var.div = self.div
         var.mod = self.mod
         return var
+
+    def supported_by_action2(self, raise_error):
+        return True
+
+    def supported_by_actionD(self, raise_error):
+        if raise_error: raise generic.ScriptError("Variables are not supported in parameter assignments", self.pos)
+        return False
 
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):
