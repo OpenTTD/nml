@@ -28,7 +28,7 @@ def get_hg_version(path):
         hash = string.rstrip(version_list[0],'+')
         # Test whether we have a tag (=release version)
         if version_list[2] != 'tip':
-            version = version_list[1] + modified
+            version = version_list[2] + modified
         else: # we have a trunk version
             version = 'r'+revision + modified + ' (' + hash + ')'
 #        print "HG repository with version found: %s" % version
