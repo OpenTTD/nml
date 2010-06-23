@@ -114,28 +114,29 @@ class OutputGRF(OutputBase):
 
     def fakecompress(self, data):
         i = 0
-        output = []
+        output = ""
         while i < len(data):
             l = min(len(data) - i, 127)
-            output.append(l)
+            output += chr(l)
             while l > 0:
-                output.append(data[i])
+                output += data[i]
                 i+=1
                 l-=1
         return output
 
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
+        data_str = ''.join(chr(c) for c in data)
         if self.compress_grf:
-            lz = LZ77(data)
+            lz = LZ77(data_str)
             stream = lz.Encode()
         else:
-            stream = self.fakecompress(data)
+            stream = self.fakecompress(data_str)
         streamlength = len(stream)
         if (compression & 2) == 0: size = len(data)
         else: size = streamlength
         self.wsprite_header(sprite, size, xoffset, yoffset, compression)
         for c in stream:
-            self.print_byte(c)
+            self.print_byte(ord(c))
         #make up for the difference in byte count
         self._byte_count += size - streamlength
         self.end_sprite()
