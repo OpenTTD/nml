@@ -15,12 +15,12 @@ def get_output_grf():
     except ImportError:
         print "PIL (python-imaging) wasn't found, no support for writing grf files"
         sys.exit(3)
-		
-def show_version(option, opt, value, parser):
+
+try:
     from nml import __version__
-    version = __version__.version
-    print 'This is NML %s.' % version
-    sys.exit(0)
+    version = version
+except ImportError:
+    version = 'unknown'
 
 def main(argv):
     global developmode
@@ -28,10 +28,9 @@ def main(argv):
     usage = "Usage: %prog [options] <filename>\n" \
             "Where <filename> is the nml file to parse"
 
-    opt_parser = optparse.OptionParser(usage=usage)
+    opt_parser = optparse.OptionParser(usage=usage, version=version)
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
-    opt_parser.add_option("-V", "--version", action="callback", callback=show_version, help="print version information and exit")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
