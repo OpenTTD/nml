@@ -39,7 +39,7 @@ class Action2(object):
 
 def add_ref(name):
     global action2_map
-    if name not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name, name.pos)
+    if name not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name)
     action2_map[name].num_refs += 1
     return action2_map[name]
 
