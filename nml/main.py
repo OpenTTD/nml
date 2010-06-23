@@ -18,7 +18,7 @@ def get_output_grf():
 
 try:
     from nml import __version__
-    version = version
+    version = __version__.version
 except ImportError:
     version = 'unknown'
 
