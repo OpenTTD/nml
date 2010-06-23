@@ -398,7 +398,7 @@ def parse_varaction2(switch_block):
             action_list.extend(tmp_param_actions)
             act6.modify_bytes(tmp_param, 2, offset)
             range_result = expression.ConstantNumeric(0)
-        
+
         offset += 2 # size of result
 
         if isinstance(r.min, expression.ConstantNumeric):

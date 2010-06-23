@@ -66,7 +66,7 @@ action5_table = {
     'ROAD_STOPS' : (0x11, 8, Action5BlockType.FIXED),
     'AQUEDUCTS' : (0x12, 8, Action5BlockType.FIXED),
     'AUTORAIL' : (0x13, 55, Action5BlockType.FIXED),
-    'FLAGS' : (0x14, 36, Action5BlockType.OFFSET), 
+    'FLAGS' : (0x14, 36, Action5BlockType.OFFSET),
     'OTTD_GUI' : (0x15, 154, Action5BlockType.OFFSET),
 }
 

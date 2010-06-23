@@ -6,24 +6,24 @@ from distutils.core import setup
 
 if sys.version < '2.5':
     sys.exit('ERROR: Sorry, python 2.5 is required for this application.')
-	
+
 # The following version determination code is a greatly simplified version
 # of the mercurial repo code. The version is stored in nml/__version__.py
 
 version = ''
 
 if os.path.isdir('.hg'):
-	version_list = (subprocess.Popen(['hg', 'id', '-n', '-t'], stdout=subprocess.PIPE).communicate()[0]).split()
-	if version_list[0].endswith('+'):
-		modified = 'M'
-	else:
-		modified = ''
-	revision = string.rstrip(version_list[0],'+')
-	# Test whether we have a tag (=release version)
-	if version_list[1] != 'tip':
-		version = version_list[1] + modified
-	else: # we have a trunk version
-		version = 'r'+revision + modified
+    version_list = (subprocess.Popen(['hg', 'id', '-n', '-t'], stdout=subprocess.PIPE).communicate()[0]).split()
+    if version_list[0].endswith('+'):
+        modified = 'M'
+    else:
+        modified = ''
+    revision = string.rstrip(version_list[0],'+')
+    # Test whether we have a tag (=release version)
+    if version_list[1] != 'tip':
+        version = version_list[1] + modified
+    else: # we have a trunk version
+        version = 'r'+revision + modified
 
 if version:
     f = open("nml/__version__.py", "w")

@@ -77,7 +77,7 @@ railtype_sprites = {
     'TRACKOVERLAY'    : 0x01,
     'UNDERLAY'        : 0x02,
     'TUNNELS'         : 0x03,
-    'CATENARY_WIRE'   : 0x04, 
+    'CATENARY_WIRE'   : 0x04,
     'CATENARY_PYLONS' : 0x05,
     'BRIDGE_SURFACES' : 0x06,
     'LEVEL_CROSSINGS' : 0x07,
