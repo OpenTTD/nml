@@ -16,11 +16,8 @@ def get_output_grf():
         print "PIL (python-imaging) wasn't found, no support for writing grf files"
         sys.exit(3)
 
-try:
-    from nml import __version__
-    version = __version__.version
-except ImportError:
-    version = 'unknown'
+from nml import version_info
+version = version_info.get_version()
 
 def main(argv):
     global developmode
