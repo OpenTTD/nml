@@ -182,14 +182,16 @@ def run():
         del traceback # Required according to Python docs.
 
         ex_data = {'class' : ex.__class__.__name__,
+                   'version' : version,
                    'msg' : ex_msg,
                    'cli' : sys.argv,
                    'loc' : 'File "%s", line %d, in %s' % (filename, lineno, name) }
 
         msg = "NML: An internal error has occurred:\n" \
-              "Error:    (%(class)s) %(msg)s.\n" \
-              "Command:  %(cli)s\n" \
-              "Location: %(loc)s\n" % ex_data
+              "NML-version: %(version)s\n" \
+              "Error:      (%(class)s) %(msg)s.\n" \
+              "Command:    %(cli)s\n" \
+              "Location:   %(loc)s\n" % ex_data
 
         print >> sys.stderr, msg
         sys.exit(1)
