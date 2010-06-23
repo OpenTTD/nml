@@ -5,3 +5,5 @@ regression/output/
 
 parser.out
 parsetab.py
+
+nml/__version__.py
