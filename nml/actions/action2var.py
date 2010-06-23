@@ -116,6 +116,10 @@ class VarAction2Var(object):
         if self.add is not None or self.div is not None or self.mod is not None: size += varsize * 2
         return size
 
+    def supported_by_actionD(self, raise_error):
+        assert not raise_error
+        return False
+
 class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
         VarAction2Var.__init__(self, 0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
@@ -182,6 +186,11 @@ class SwitchRange(object):
         return ret
 
 def parse_varaction2_expression(expr, varsize):
+    extra_actions = []
+    mods = []
+    var_list = []
+    var_list_size = 0
+
     if isinstance(expr, expression.BinOp):
         if expr.op == nmlop.CMP_LT:
             #return value is 0, 1 or 2, we want to map 0 to 1 and the others to 0
@@ -224,10 +233,24 @@ def parse_varaction2_expression(expr, varsize):
     elif isinstance(expr, expression.Not):
         expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(1))
 
-    extra_actions = []
-    mods = []
-    var_list = []
-    var_list_size = 0
+    elif isinstance(expr, expression.TernaryOp):
+        guard = expression.Boolean(expr.guard).reduce()
+        actions, mods, var_list, var_list_size = parse_varaction2_expression(guard, varsize)
+        guard_var = VarAction2StoreTempVar()
+        inverted_guard_var = VarAction2StoreTempVar()
+        var_list.append(nmlop.STO_TMP)
+        var_list.append(guard_var)
+        var_list.append(nmlop.XOR)
+        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(1))
+        var_list.append(var)
+        var_list.append(nmlop.STO_TMP)
+        var_list.append(inverted_guard_var)
+        var_list.append(nmlop.VAL2)
+        # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
+        var_list_size += 4 + guard_var.get_size(varsize) + inverted_guard_var.get_size(varsize) + var.get_size(varsize)
+        expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
+        expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
+        expr = expression.BinOp(nmlop.ADD, expr1, expr2)
 
     if isinstance(expr, expression.ConstantNumeric):
         var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expr)
@@ -267,6 +290,7 @@ def parse_varaction2_expression(expr, varsize):
         if expr.op.act2_num is None: expr.supported_by_action2(True)
 
         if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
+                isinstance(expr.expr2, VarAction2LoadTempVar) or \
                 (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)):
             expr2 = expr.expr2
         elif expr.expr2.supported_by_actionD(False):

@@ -182,8 +182,7 @@ class TernaryOp(Expression):
         return TernaryOp(guard, expr1, expr2, self.pos)
 
     def supported_by_action2(self, raise_error):
-        if raise_error: raise generic.ScriptError("Ternary operator not supported in a switch-block", self.pos)
-        return False
+        return True
 
     def supported_by_actionD(self, raise_error):
         return True
