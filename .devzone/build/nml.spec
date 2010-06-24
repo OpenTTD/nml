@@ -40,11 +40,9 @@ rename .tar.gz .src.tar.gz dist/*
 %install
 %{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT --prefix=%{_prefix} --record=INSTALLED_FILES
 
-%clean
-
 %check
 cd regression
-make >%{name}-%{version}-build.test.log
+make 1>%{name}-%{version}-build.test.log 2>&1
 
 %files -f INSTALLED_FILES 
 %defattr(-,root,root,-)
@@ -52,4 +50,3 @@ make >%{name}-%{version}-build.test.log
 %dir %{python_sitelib}/nml/actions
 
 %changelog
-
