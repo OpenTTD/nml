@@ -1,11 +1,7 @@
 <html>
 <head>
 <title>NML documentation</title>
-<style type="text/css">
-pre {
-	background: lightgrey;
-}
-</style>
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
 </head>
 <body>
 
@@ -105,30 +101,30 @@ the block, optional arguments and then the contents enclosed by curly braces.
 Nearly all NML files will start with a <a href="#block-grf">grf-block</a>. The
 grf-block takes no parameters and is one of the simplest blocks there is.
 Following is an example grf-block.
-<pre>grf {
+<pre class="code">grf {
 	grfid : "AB\02\03";
 	name : string(STR_GRF_NAME);
 	desc : string(STR_GRF_DESCRIPTION);
 }</pre>
 Let's look at this code line for line.
-<pre>grf {</pre>
+<pre class="code">grf {</pre>
 This block is a grf-block. A grf-block has no parameters. The '{' is the start
 of the block content.
-<pre>	grfid : "AB\02\03";</pre>
+<pre class="code">	grfid : "AB\02\03";</pre>
 This line sets the grfid of the resulting grf. The value is the letters AB
 followed by a byte with value 2 and then another one with value 3. The
 semicolon marks the end of the statement.
-<pre>	name : string(STR_GRF_NAME);</pre>
+<pre class="code">	name : string(STR_GRF_NAME);</pre>
 The name of the grf. In NML nearly all strings are put in
 <a href="#language-files">language files</a>. The format of the language files
 is described in another section. For now just assume a string with the name
 <code>STR_GRF_NAME</code> exists. To reference a string from the language file
 you use <code>string(&lt;stringname&gt;)</code> where <code>&lt;stringname&gt;</code>
 should be replaced by the actual name of the string.
-<pre>	desc : string(STR_GRF_DESCRIPTION);</pre>
+<pre class="code">	desc : string(STR_GRF_DESCRIPTION);</pre>
 This looks a lot like the previous line, only it sets the description instead
 of the name.
-<pre>}</pre>
+<pre class="code">}</pre>
 This marks the end of the last-opened block, in this case the grf-block.</p>
 
 <h2>Parameters</h2>
@@ -137,7 +133,7 @@ assignments. Each NewGRF has 128 parameters available, NML reservers the top 64
 parameters for internal use. If a user sets parameters for your grf, these are
 the starting at parameter 0. Each parameter is available by using
 <code>param[&lt;expression&gt;]</code>. You can set parameter number 4 to 3 by doing:
-<pre>param[4] = 3;</pre>
+<pre class="code">param[4] = 3;</pre>
 
 
 <h1><a name="block-syntax">Block syntax</a></h1>
@@ -166,27 +162,27 @@ If something is enclosed by square brackes [] it's optional.
 
 
 <h2><a name="block-grf">GRF</a></h2>
-<pre>grf {
+<pre class="exl">grf {
 	grfid: &lt;literal-string&gt;;
 	name: &lt;string&gt;;
 	desc: &lt;string&gt;;
 }</pre>
 Example:
-<pre>grf {
+<pre class="code">grf {
 	grfid: "AB\03\02";
 	name: string(STR_GRF_NAME);
 	desc: string(STR_GRF_DESC);
 }</pre>
 
 <h2><a name="block-item">Item</a></h2>
-<pre>item (&lt;expression&gt; [, &lt;ID&gt; [, &lt;expression&gt;]]) {
+<pre class="exl">item (&lt;expression&gt; [, &lt;ID&gt; [, &lt;expression&gt;]]) {
 	(&lt;property-block&gt;|&lt;graphics-block&gt;|&lt;livery_override-block&gt;)+
 }</pre>
 The first argument is the feature of the item, the second (optional) argument
 is the name and the third (optional) argument is the numerical id you want to
 use for this item.
 Example:
-<pre>item (FEAT_ROADVEHS, hereford_tram) {
+<pre class="code">item (FEAT_ROADVEHS, hereford_tram) {
 	property {
 		name:               string(STR_NAME_HEREFORD_TRAM);
 		climates_available: CLIMATE_ALL;
@@ -196,7 +192,7 @@ Example:
 }</pre>
 
 <h3><a name="block-item-property">Property</a></h3>
-<pre>property {
+<pre class="exl">property {
 	(&lt;ID&gt;: (&lt;string&gt;|(&lt;expression&gt; [&lt;unit&gt;]));)+
 }</pre>
 This one looks a lot more complicated then it actually is. A property-block
@@ -210,7 +206,7 @@ a unit if the expression is constant. <a href="#units">List of valid units</a>
 
 <h3><a name="block-item-graphics">Graphics</a></h3>
 In general the layout for defining graphics is like
-<pre>
+<pre class="code">
 spriteblock(FEATURE) {
 	spriteset (SPRITESET_NAME, graphics_file) {
 		[left_X, upper_Y, width, height, offset_X, offset_Y]
@@ -223,7 +219,7 @@ spriteblock(FEATURE) {
 }
 </pre>
 An example which defines two graphics for a train engine:
-<pre>
+<pre class="code">
 spriteblock(FEAT_TRAINS) {
 	spriteset(turbotrain_engine_set, "sprites/pcx/opengfx_trains_start.pcx") {
 		[142,112,  8,22,   -3,-10]
@@ -261,7 +257,7 @@ spriteblock(FEAT_TRAINS) {
 A livery override block offers the possibility to change the look of an engine or wagon depending on wagons coupled to them, e.g.
 allowing a freight engine to be differently coloured than a passenger engine. The spritegroup needs to be defined before it can
 be used in a livery override. A livery override block is always part of the engine definition and looks like
-<pre>
+<pre class="exl">
 livery_override (vehicleID) {
 	spritegroup_name
 }
@@ -269,7 +265,7 @@ livery_override (vehicleID) {
 Concerning this example it is assumed that it is preceeded by the graphics definitions given as example in the <a href="#block-item-graphics">graphics definition</a>
 and that a vehicleID "passenger_wagon" is defined. The engine will get different looks (spritegroup "turbotrain_passenger_group") in this example, if the passenger
 wagon is attached. For all other wagons it will show sprites from "turbotrain_engine_group".
-<pre>
+<pre class="code">
 // Turbotrain engine:
 item(FEAT_TRAINS, turbotrain, 20) {
 	property {
@@ -289,7 +285,7 @@ item(FEAT_TRAINS, turbotrain, 20) {
 <h3><a name="block-spriteblock-spritegroup">Spritegroup</a></h3>
 
 <h2><a name="block-switch">Switch</a></h2>
-<pre>switch (&lt;expression&gt;, (SELF|PARENT), &lt;ID&gt;, &lt;expression&gt;) {
+<pre class="exl">switch (&lt;expression&gt;, (SELF|PARENT), &lt;ID&gt;, &lt;expression&gt;) {
 	(&lt;range&gt;: &lt;return_value&gt;;)*
 	&lt;return_value&gt;;
 }</pre>
@@ -306,16 +302,16 @@ of a spriteblock or switch and that block will be evaluated.
 <h2><a name="block-template">Template</a></h2>
 
 <h2><a name="block-cargotable">Cargotable</a></h2>
-<pre>cargotable {
+<pre class="exl">cargotable {
 	ID [, ID]*
 }</pre>
 The cargotable is a list of 4-byte long IDs. For example:
-<pre>cargotable {
+<pre class="code">cargotable {
 	PASS, MAIL, GOOD, COAL
 }</pre>
 
 <h2><a name="block-if">If/else</a></h2>
-<pre>
+<pre class="exl">
 if (expression) {
 	block;
 } else {
@@ -323,7 +319,7 @@ if (expression) {
 }
 </pre>
 For example:
-<pre>
+<pre class="code">
 if (param[1] == 1) {
 	param[2] = 3
 } else {
@@ -345,7 +341,7 @@ sections will outline the detailed functionality of these blocks and when to use
 <h3><a name="block-replacement-replace">Replace TTD sprites</a></h3>
 <p>Using a <code>replace</code> block, it is possible to replace TTD's built-in sprites.
 The syntax is as follows:</p>
-<pre>replace(&lt;sprite-id&gt;, &lt;image-file&gt;) {
+<pre class="exl">replace(&lt;sprite-id&gt;, &lt;image-file&gt;) {
 	&lt;real-sprites&gt;...
 }</pre>
 <p>The first parameter <code>&lt;sprite-id&gt;</code> should be a compile-time constant
@@ -358,7 +354,7 @@ the new sprites. A series of real sprites has to be specified between the curly 
 (<code>{</code> and <code>}</code>). The first sprite in this list replaces sprite with id
 <code>sprite-id</code>, the second replaces <code>sprite-id + 1</code> and so on.
 Sprite templates can be used as well. For example:
-<pre>
+<pre class="code">
 // Rail overlays for crossings
 replace (1005, "src/gfx/rails_overlays.png") {
 		[ 20,198, 40,21, -20,  5]
@@ -375,7 +371,7 @@ replace (1005, "src/gfx/rails_overlays.png") {
 sprites. As these sprites are not present in the original base graphics, they cannot
 be replaced using a normal <code>replace</code> block. Instead, a <code>replacenew</code>
 block has to be used. The semantics are like this:</p>
-<pre>replacenew(&lt;type&gt;, &lt;image-file&gt;[, &lt;offset&gt;]) {
+<pre class="exl">replacenew(&lt;type&gt;, &lt;image-file&gt;[, &lt;offset&gt;]) {
 	&lt;real-sprites&gt;...
 }</pre>
 The <code>&lt;type&gt;</code> parameter indicates the type of sprites that will be replaced.
@@ -385,7 +381,7 @@ It should be an identifier from the first column of the following table.
  and references to which sprites are actually needed. However this is a lot
  of work (even TTDP wiki doesn't list all info) and this is not really a
  high priority job -->
-<table>
+<table class=t>
 	<tr><th>Type</th><th>Number of sprites</th></tr>
 	<tr><td>PRE_SIGNAL</td><td>48</td></tr>
 	<tr><td>PRE_SIGNAL_SEMAPHORE</td><td>112</td></tr>
@@ -436,7 +432,7 @@ subset of the sprites (starting at <code>offset</code>) will be replaced.</p>
 <p>A <code>font-glpyh</code> block makes it possible to provide sprites
 for glyphs that don't have sprites in normal TTD. The syntax is as follows:</p>
 
-<pre>font_glpyh (&lt;font-size&gt;, &lt;base-char&gt;, &lt;image-file&gt;) {
+<pre class="exl">font_glpyh (&lt;font-size&gt;, &lt;base-char&gt;, &lt;image-file&gt;) {
 	&lt;real-sprites&gt;...
 }</pre>
 
@@ -461,7 +457,7 @@ names for another block, or as top-level town names block, the starting point of
 grf file. You must have at least one starting point, but you can have more
 than one.
 <p>The general syntax of a town names block is:
-<pre>town_names[(&lt;name&gt;)] {
+<pre class="exl">town_names[(&lt;name&gt;)] {
 	[styles : &lt;string&gt;]
 	&lt;part&gt; &lt;part&gt; ....
 }</pre>
@@ -483,7 +479,7 @@ A <code>town_names</code> block has one or more <code>&lt;part&gt;</code>s.
 Each part defines a piece of a town name. All pieces together form the name
 generated by the block.
 <p>An example of a part is
-<pre>{
+<pre class="code">{
 	text("name1", 1),
 	text("name2", 2),
 	town_names(othernames, 3)
@@ -500,15 +496,15 @@ A part should have at least one and at most 255 entries.
 
 
 <h2><a name="block-assignment">Parameter assignment</a></h2>
-<pre>param[&lt;expression&gt;] = &lt;expression&gt;;</pre>
+<pre class="exl">param[&lt;expression&gt;] = &lt;expression&gt;;</pre>
 Set a parameter to the given expression. Neither of the two expessions has to
 be constant, the following is perfectly valid:
-<pre>param[param[2] + 1] = param[3] * param[4];</pre>
+<pre class="code">param[param[2] + 1] = param[3] * param[4];</pre>
 
 <h2><a name="block-sounds">Sound support</a></h2>
 Sounds are supported by means of the <code>sounds</code> block.
 An example of a sounds block that defines two new sounds is
-<pre>sounds {
+<pre class="code">sounds {
         load_soundfile("whistle.wav");
         import_sound(0x87654321, 3);
 }</pre>The block starts with the keywords <code>sounds</code>, followed by one
@@ -533,7 +529,7 @@ the file size cannot exceed 64KB.
 <h1><a name="properties">List of properties</a></h1>
 <h2><a name="property-trains">Trains</a></h2>
 <h2><a name="property-roadvehs">Road vehicles</a></h2>
-<table>
+<table class=t>
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
 <tr><td> name</td><td>                         string(STR_NAME_HEREFORD_TRAM)</td><td></td></tr>
 <tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
@@ -569,12 +565,11 @@ the file size cannot exceed 64KB.
 <h2><a name="property-cargos">Cargos</a></h2>
 <h2><a name="property-airports">Airports</a></h2>
 <h2><a name="property-railtypes">Railtypes</a></h2>
-
-<table>
+<table class=t>
 <tr><th>property</th><th>value range</th><th>comment</th></tr>
 <tr><td>label</td><td>                   4-byte string</td><td>names of default rail types: "RAIL", "ELRL", "MONO", "MLEV", "3RDR"</td></tr>
 <tr><td>name</td><td>                    string</td><td></td></tr>
-<tr><td>menu_text</td>                   string<td></td><td></td></tr>
+<tr><td>menu_text</td><td>               string</td><td></td></tr>
 <tr><td>build_window_caption</td><td>    string</td><td></td></tr>
 <tr><td>autoreplace_text</td><td>        string</td><td></td></tr>
 <tr><td>new_engine_text</td><td>         string</td><td></td></tr>
@@ -591,14 +586,14 @@ the file size cannot exceed 64KB.
 
 <!--
 example table:
-<table>
+<table class=t>
 <tr><th></td><th></td><th></td></tr>
 <tr><td></td><td></td><td></td></tr>
 </table>
 -->
-
+<br>
 The base speeds relevant for the curve_speed_multiplier are:
-<table padding=1, border=2>
+<table class=t>
 <tr><th>curve length</th><th>base speed [km/h]</th></tr>
 <tr><td>0 (90 degree turn)</td><td>30</td></tr>
 <tr><td>1</td><td>44</td></tr>
@@ -617,7 +612,7 @@ The base speeds relevant for the curve_speed_multiplier are:
 
 
 Rail types define a number of fixed graphic blocks:
-<table>
+<table class=t>
 <tr><th>block name</td><th>number of sprites</td><th>meaning</td></tr>
 <tr><td>GUI</td><td>         16</td><td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu</td></tr>
 <tr><td>TRACKOVERLAY*</td><td>10</td><td>6 flat and 4 slope sprites. Track without landscape</td></tr>
@@ -637,7 +632,7 @@ The entries marked by * are required.
 
 <h1><a name="vars">List of variables</a></h1>
 <h2><a name="vars-global">General</a></h2>
-<table>
+<table class=t>
 <tr><th>name <th>value range <th>comment
 <tr><td>climate <td>CLIMATE_XXX with XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND] <td>
 <tr><td>ttdpatch_flags <td> <td>
@@ -666,7 +661,7 @@ The entries marked by * are required.
 <h2><a name="vars-cargos">Cargos</a></h2>
 <h2><a name="vars-airports">Airports</a></h2>
 <h2><a name="vars-railtypes">Railtypes</a></h2>
-<table>
+<table class=t>
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
 <tr><td>terrain_type</td><td>         TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
 <tr><td>enhanced_tunnels</td><td>     0</td><td>should custom tunnel entrances be modified other values than 0 might be returned</td></tr>
