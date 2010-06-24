@@ -75,7 +75,7 @@ def parse_sprite_block(sprite_block):
     num_ent = -1
 
     if sprite_block.feature.value not in action1_features:
-        raise generic.ScriptError("Sprite blocks are not supported for this feature: 0x" + generic.to_hex(sprite_block.feature.value, 2), feature.pos)
+        raise generic.ScriptError("Sprite blocks are not supported for this feature: 0x" + generic.to_hex(sprite_block.feature.value, 2), sprite_block.feature.pos)
 
     for item in sprite_block.spriteset_list:
         if isinstance(item, SpriteSet):

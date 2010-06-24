@@ -1,4 +1,4 @@
-from nml import expression, nmlop
+from nml import expression, nmlop, generic
 from nml.actions import action6, actionD, action10
 
 #a jump is always to the next action10 with a given id, so they
