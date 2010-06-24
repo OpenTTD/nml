@@ -18,10 +18,13 @@ def get_output_grf():
         print "PIL (python-imaging) wasn't found, no support for writing grf files"
         sys.exit(3)
 
+def parse_cli(argv):
+    """
+    Parse the command line, and process options.
 
-def main(argv):
-    global developmode
-
+    @return: Options, and input filename (if not supplied, use C{sys.stdin}).
+    @rtype:  C{tuple} (C{Object}, C{str} or C{None})
+    """
     usage = "Usage: %prog [options] <filename>\n" \
             "Where <filename> is the nml file to parse"
 
@@ -35,8 +38,11 @@ def main(argv):
     opt_parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     opt_parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
     opt_parser.add_option("-o", "--output", dest="outputs", action="append", metavar="<file>", help="write output(nfo/grf) to <file>")
-    opt_parser.add_option("-t", "--custom-tags", dest="custom_tags", default="custom_tags.txt",  metavar="<file>", help="Load custom tags from <file> [default: %default]")
-    opt_parser.add_option("-l", "--lang-dir", dest="lang_dir", default="lang",  metavar="<dir>", help="Load language files from directory <dir> [default: %default]")
+    opt_parser.add_option("-t", "--custom-tags", dest="custom_tags", default="custom_tags.txt",  metavar="<file>",
+                        help="Load custom tags from <file> [default: %default]")
+    opt_parser.add_option("-l", "--lang-dir", dest="lang_dir", default="lang",  metavar="<dir>",
+                        help="Load language files from directory <dir> [default: %default]")
+
     try:
         opts, args = opt_parser.parse_args(argv)
     except optparse.OptionError, err:
@@ -48,18 +54,13 @@ def main(argv):
         opt_parser.print_help()
         sys.exit(2)
 
-    if opts.stack: developmode = True
-
-    grfstrings.read_extra_commands(opts.custom_tags)
-    grfstrings.read_lang_files(opts.lang_dir)
-
-    outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.outputs)
+    opts.outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.outputs)
 
     if not args:
-        if not outputfile_given:
+        if not opts.outputfile_given:
             opt_parser.print_help()
             sys.exit(2)
-        input = sys.stdin
+        input_filename = None # Output filenames, but no input -> use stdin.
     elif len(args) > 1:
         print "Error: only a single nml file can be read per run"
         opt_parser.print_help()
@@ -68,8 +69,24 @@ def main(argv):
         input_filename = args[0]
         if not os.access(input_filename, os.R_OK):
             raise generic.ScriptError('Input file "%s" does not exist' % input_filename)
+
+    return opts, input_filename
+
+def main(argv):
+    global developmode
+
+    opts, input_filename = parse_cli(argv)
+
+    if opts.stack: developmode = True
+
+    grfstrings.read_extra_commands(opts.custom_tags)
+    grfstrings.read_lang_files(opts.lang_dir)
+
+    if input_filename is None:
+        input = sys.stdin
+    else:
         input = codecs.open(input_filename, 'r', 'utf-8')
-        if not outputfile_given:
+        if not opts.outputfile_given:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
     outputs = []
