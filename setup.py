@@ -10,7 +10,7 @@ if sys.version < '2.5':
 # For the purpose of the packet information we only use the numeric code
 
 from nml import version_info
-version = version_info.get_numeric_version()
+version = version_info.get_and_write_version()
 
 setup(name='nml',
       version=version,
