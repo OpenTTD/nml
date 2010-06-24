@@ -1,9 +1,11 @@
 import sys, os, codecs, optparse
-from nml import ast, generic, grfstrings, parser
+from nml import ast, generic, grfstrings, parser, version_info
 from nml.actions import action2var, action8, sprite_count
 from output_nfo import OutputNFO
 
 developmode = False # Give 'nice' error message instead of a stack dump.
+
+version = version_info.get_version()
 
 OutputGRF = None
 def get_output_grf():
@@ -16,8 +18,6 @@ def get_output_grf():
         print "PIL (python-imaging) wasn't found, no support for writing grf files"
         sys.exit(3)
 
-from nml import version_info
-version = version_info.get_version()
 
 def main(argv):
     global developmode
