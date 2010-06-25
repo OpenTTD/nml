@@ -207,6 +207,10 @@ constant_numbers = {
     'PRODUCTIONTYPE_PROCESSING'          : 0x04,
     'PRODUCTIONTYPE_NONE'                : 0x00,
 
+    #traffic side (right hand traffic when bit 4 is set)
+    'TRAFFIC_SIDE_LEFT'                  : 0x00,
+    'TRAFFIC_SIDE_RIGHT'                 : 0x10,
+
     #which platform has loaded this grf
     'PLATFORM_TTDPATCH'                  : 0x00,
     'PLATFORM_OPENTTD'                   : 0x01,
