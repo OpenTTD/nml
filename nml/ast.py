@@ -1,5 +1,5 @@
 from nml import expression, generic, global_constants, grfstrings, unit
-from nml.actions import action0, action1, action2var, action3, action5, action7, action8, actionA, actionB, actionD, actionE, actionF, action12, real_sprite
+from nml.actions import action0, action1, action2var, action2random, action3, action5, action7, action8, actionA, actionB, actionD, actionE, actionF, action12, real_sprite
 from actions.sprite_count import SpriteCountAction
 
 def print_script(script, indent):
@@ -237,7 +237,7 @@ class RandomBlock(object):
             choice.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return []
+        return action2random.parse_randomblock(self)
 
     def __str__(self):
         ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), random_types_inv[self.type], str(self.name), str(self.triggers))
