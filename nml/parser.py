@@ -1,6 +1,6 @@
 import sys
 from nml import generic, ast, expression, tokens, nmlop
-from actions import action1, action2var, actionD, action11, real_sprite
+from actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
 class NMLParser(object):
@@ -47,6 +47,7 @@ class NMLParser(object):
     def p_main_block(self, t):
         '''main_block : skipable_block
                       | switch
+                      | random
                       | spriteblock
                       | template_declaration
                       | town_names
@@ -315,7 +316,7 @@ class NMLParser(object):
         t[0] = ast.Loop(t[3], t[6], t.lineno(1))
 
     #
-    # Switch block
+    # Switch  / Random block
     #
     def p_switch(self, t):
         'switch : SWITCH LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
@@ -341,6 +342,16 @@ class NMLParser(object):
         if len(t) == 4: t[0] = t[2]
         elif t[1] == 'return': t[0] = None
         else: t[0] = t[1]
+
+    def p_random(self, t):
+        'random : RANDOM LPAREN expression_list RPAREN LBRACE random_body RBRACE'
+        t[0] = ast.RandomBlock(t[3], t[6], t.lineno(1));
+
+    def p_random_body(self, t):
+        '''random_body :
+                       | random_body expression COLON switch_value'''
+        if len(t) == 1: t[0] = []
+        else: t[0] = t[1] + [action2random.RandomChoice(t[2], t[4])]
 
     #
     # Real sprites and related stuff

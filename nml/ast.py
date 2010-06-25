@@ -196,6 +196,56 @@ class SwitchBody(object):
             ret += '\t%s;\n' % str(self.default)
         return ret
 
+random_types = {
+    'SELF' : 0x80,
+    'PARENT' : 0x83
+}
+#invert dictionary
+random_types_inv = dict((v,k) for k, v in random_types.iteritems())
+
+class RandomBlock(object):
+    def __init__(self, param_list, choices, pos):
+        if not (3 <= len(param_list) <= 4):
+            raise generic.ScriptError("random-block requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
+        self.feature = param_list[0].reduce_constant([feature_ids])
+
+        if not isinstance(param_list[1], expression.Identifier):
+            raise generic.ScriptError("random-block parameter 2 'type' should be an identifier", pos)
+        if param_list[1].value in random_types:
+            self.type = random_types[param_list[1].value]
+        else:
+            raise generic.ScriptError("Unrecognized value for random-block parameter 2 'type': " + param_list[1].value, pos)
+
+        if not isinstance(param_list[2], expression.Identifier):
+            raise generic.ScriptError("random-block parameter 3 'name' should be an identifier", pos)
+        self.name = param_list[2]
+        self.triggers = param_list[3].reduce_constant(global_constants.const_list) if len(param_list) == 4 else expression.ConstantNumeric(0)
+        if not (0 <= self.triggers.value <= 255):
+            raise generic.ScriptError("random-block parameter 4 'triggers' out of range 0..255, encountered " + str(self.triggers.value), self.triggers.pos)
+        self.choices = choices
+        self.pos = pos
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Random'
+        print (2+indentation)*' ' + 'Feature:', self.feature.value
+        print (2+indentation)*' ' + 'Type:', random_types_inv[self.type]
+        print (2+indentation)*' ' + 'Name:', self.name.value
+        print (2+indentation)*' ' + 'Triggers:'
+        self.triggers.debug_print(indentation + 4)
+        print (2+indentation)*' ' + 'Choices:'
+        for choice in self.choices:
+            choice.debug_print(indentation + 4)
+
+    def get_action_list(self):
+        return []
+
+    def __str__(self):
+        ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), random_types_inv[self.type], str(self.name), str(self.triggers))
+        for choice in self.choices:
+            ret += str(choice) + '\n'
+        ret += '}\n'
+        return ret
+
 class DeactivateBlock(object):
     def __init__(self, grfid_list, pos):
         self.grfid_list = [grfid.reduce() for grfid in grfid_list]
