@@ -1,0 +1,122 @@
+/*
+    NML Documentation -- Stylesheet
+	adopted from the PHost project
+ */
+
+/* Show headings and other emphasized things in a bright color. */
+h1,h3,h4 {
+   color:#000000;
+   margin-left:-20px;
+   margin-top:10px;
+   margin-bottom:5px;
+   font-family:tahoma, serif;
+}
+h2 {
+   color:#000000;
+   margin-left:-20px;
+   margin-top:10px;
+   font-family:tahoma, serif;
+   border-bottom: solid black 1px;
+}
+
+em.hd {
+   color:#880000;
+   font-weight:bold;
+}
+em,b,th {
+   color:#000000;
+}
+body {
+   margin-left:40px;
+   margin-right:40px;
+   font-family: georgia, serif;
+}
+
+/* These are the boxes used for missions, commands, fcodes, ... */
+table.heading {
+   border:solid;
+   border-color:#000000;
+   border-width:1px;
+   background:#ffffff;
+   color:#000000;
+   margin-top:10px;
+}
+
+table.t {
+  margin:1px;
+  border:1px solid black;
+  border-collapse:collapse;
+}
+
+table.t td,th {
+  border:1px solid black;
+  margin:0px;
+  padding:3px;
+  background:lightgray;
+}
+
+pre.exl {
+  margin-left:2em;
+  background: lightgrey;
+}
+pre.code {
+  margin-left:2em;
+  background: lightgrey;
+  color: #0000FF
+}
+
+.ext {
+  font-family: serif;
+}
+
+hr { display: none; }
+
+dt {
+  margin-left:0em;
+  margin-top:0.2em;
+  font-weight: bold;
+  font-family: sansserif;
+}
+dd {
+  margin-left:1em;
+}
+
+dl {
+  color: black;
+}
+
+address {
+  margin-top: 1em;
+  margin-left: -20px;
+  padding-left: 20px;
+  padding-top: 0.5em;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  border-top: solid black 1px;
+}
+
+code {
+	color: #004400;
+	font-style: typewriter;
+}
+
+bitlist {
+	color: #FF0000;
+}
+
+/* Nice idea, but looks all too un-familiar.
+tt.cfg a {
+  text-decoration: none;
+} */
+
+/* Nice idea, but this looks rather ugly since <ex> inside <ul>
+   gets indented
+table.ex {
+  background:#eeeeee;
+} */
+@media print {
+  body { color: #000000; }
+  a { text-decoration: none; color: #000000; }
+  .screenonly { display: none; }
+  hr { display: none; }
+}
