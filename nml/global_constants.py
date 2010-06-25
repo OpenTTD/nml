@@ -292,6 +292,29 @@ constant_numbers = {
     'CONFIGFLAG_ENGINE_POOL'                : 0x78,
     'CONFIGFLAG_VARIABLE_RUNNING_COSTS'     : 0x7E,
     'CONFIGFLAG_ANY'                        : 0x7F,
+
+    #Random triggers
+    'TRIGGER_ALL'                           : 0x80,
+
+    'TRIGGER_VEHICLE_NEW_LOAD'              : 0x01,
+    'TRIGGER_VEHICLE_SERVICE'               : 0x02,
+    'TRIGGER_VEHICLE_UNLOAD_ALL'            : 0x04,
+    'TRIGGER_VEHICLE_ANY_LOAD'              : 0x08,
+    'TRIGGER_VEHICLE_32_CALLBACK'           : 0x10,
+
+    'TRIGGER_STATION_NEW_CARGO'             : 0x01,
+    'TRIGGER_STATION_NO_MORE_CARGO'         : 0x02,
+    'TRIGGER_STATION_TRAIN_ARRIVES'         : 0x04,
+    'TRIGGER_STATION_TRAIN_LEAVES'          : 0x08,
+    'TRIGGER_STATION_TRAIN_LOADS_UNLOADS'   : 0x10,
+    'TRIGGER_STATION_TRAIN_RESERVES'        : 0x20,
+
+    'TRIGGER_HOUSE_TILELOOP'                : 0x01,
+    'TRIGGER_HOUSE_TOP_TILELOOP'            : 0x02,
+
+    'TRIGGER_INDUSTRYTILE_TILELOOP'         : 0x01,
+    'TRIGGER_INDUSTRYTILE_256_TICKS'        : 0x02,
+    'TRIGGER_INDUSTRYTILE_CARGO_DELIVERY'   : 0x04,
 }
 
 def param_from_num(num, pos):
