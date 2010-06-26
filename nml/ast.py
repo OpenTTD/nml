@@ -222,7 +222,24 @@ class RandomBlock(object):
         self.triggers = param_list[3].reduce_constant(global_constants.const_list) if len(param_list) == 4 else expression.ConstantNumeric(0)
         if not (0 <= self.triggers.value <= 255):
             raise generic.ScriptError("random-block parameter 4 'triggers' out of range 0..255, encountered " + str(self.triggers.value), self.triggers.pos)
-        self.choices = choices
+        self.choices = []
+        self.dependent = []
+        self.independent = []
+        for choice in choices:
+            if isinstance(choice.probability, expression.Identifier):
+                if choice.probability.value == 'independent':
+                    if not isinstance(choice.result, expression.Identifier):
+                        raise generic.ScriptError("Value for 'independent' should be an identifier")
+                    self.independent.append(choice.result)
+                    continue
+                elif choice.probability.value == 'dependent':
+                    if not isinstance(choice.result, expression.Identifier):
+                        raise generic.ScriptError("Value for 'dependent' should be an identifier")
+                    self.dependent.append(choice.result)
+                    continue
+                else:
+                    assert 0, "NOT REACHED"
+            self.choices.append(choice)
         self.pos = pos
 
     def debug_print(self, indentation):
@@ -232,6 +249,10 @@ class RandomBlock(object):
         print (2+indentation)*' ' + 'Name:', self.name.value
         print (2+indentation)*' ' + 'Triggers:'
         self.triggers.debug_print(indentation + 4)
+        for dep in self.dependent:
+            print (2+indentation)*' ' + 'Dependent on:', dep.value
+        for indep in self.independent:
+            print (2+indentation)*' ' + 'Independent from:', indep.value
         print (2+indentation)*' ' + 'Choices:'
         for choice in self.choices:
             choice.debug_print(indentation + 4)
@@ -241,6 +262,10 @@ class RandomBlock(object):
 
     def __str__(self):
         ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), random_types_inv[self.type], str(self.name), str(self.triggers))
+        for dep in self.dependent:
+            ret += 'dependent: %s;\n' % str(dep)
+        for indep in self.independent:
+            ret += 'independent: %s;\n' % str(indep)
         for choice in self.choices:
             ret += str(choice) + '\n'
         ret += '}\n'
