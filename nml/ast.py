@@ -197,31 +197,66 @@ class SwitchBody(object):
         return ret
 
 random_types = {
-    'SELF' : {'type': 0x80, 'range': 0},
-    'PARENT' : {'type': 0x83, 'range': 0},
-    'TILE' : {'type': 0x80, 'range': 1}
+    'SELF' : {'type': 0x80, 'range': 0, 'param': 0},
+    'PARENT' : {'type': 0x83, 'range': 0, 'param': 0},
+    'TILE' : {'type': 0x80, 'range': 1, 'param': 0},
+    'FORWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x00},
+    'BACKWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x40},
+    'BACKWARD_ENGINE' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x80},
+    'BACKWARD_SAMEID' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0xC0},
 }
 
 class RandomBlock(object):
     def __init__(self, param_list, choices, pos):
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random-block requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
+        #feature
         self.feature = param_list[0].reduce_constant([feature_ids])
 
-        if not isinstance(param_list[1], expression.Identifier):
-            raise generic.ScriptError("random-block parameter 2 'type' should be an identifier", pos)
-        if param_list[1].value in random_types:
-            self.type = random_types[param_list[1].value]['type']
-            self.bit_range = random_types[param_list[1].value]['range']
+        #type
+        if isinstance(param_list[1], expression.Identifier):
+            type_name = param_list[1].value
+            type_param = None
+        elif isinstance(param_list[1], expression.FunctionCall):
+            type_name = param_list[1].name.value
+            if len(param_list[1].params) == 0:
+                type_param = None
+            elif len(param_list[1].params) == 1:
+                type_param = param_list[1].params[0].reduce_constant(global_constants.const_list)
+            else:
+                raise generic.ScriptError("Value for random-block parameter 2 'type' can have only one parameter.", param_list[1].pos)
+        else:
+            raise generic.ScriptError("Random-block parameter 2 'type' should be an identifier, possibly with a parameter.", param_list[1].pos)
+        if type_name in random_types:
+            if type_param is None:
+                if random_types[type_name]['param'] == 1:
+                    raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' requires a parameter." % type_name, param_list[1].pos)
+                self.count = None
+            else:
+                if random_types[type_name]['param'] == 0:
+                    raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' should not have a parameter." % type_name, param_list[1].pos)
+                if not (0 <= type_param.value <= 15):
+                    raise generic.ScriptError("Parameter value for random-block type '%s' should be in range 0..15" % type_name, type_param.pos)
+                if not (0 <= self.feature.value <= 3):
+                    raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' is valid only for vehicles." % type_name, param_list[1].pos)
+                self.count = type_param.value | random_types[type_name]['value']
+            self.type = random_types[type_name]['type']
+            self.bit_range = random_types[type_name]['range']
         else:
             raise generic.ScriptError("Unrecognized value for random-block parameter 2 'type': " + param_list[1].value, pos)
+        assert (self.type == 0x84) == (self.count is not None)
 
+        #name
         if not isinstance(param_list[2], expression.Identifier):
             raise generic.ScriptError("random-block parameter 3 'name' should be an identifier", pos)
         self.name = param_list[2]
+
+        #triggers
         self.triggers = param_list[3].reduce_constant(global_constants.const_list) if len(param_list) == 4 else expression.ConstantNumeric(0)
         if not (0 <= self.triggers.value <= 255):
             raise generic.ScriptError("random-block parameter 4 'triggers' out of range 0..255, encountered " + str(self.triggers.value), self.triggers.pos)
+
+        #body
         self.choices = []
         self.dependent = []
         self.independent = []

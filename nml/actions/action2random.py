@@ -2,9 +2,10 @@ from nml.actions import action2, action2var_variables
 from nml import generic, expression, global_constants
 
 class Action2Random(action2.Action2):
-    def __init__(self, feature, name, type_byte, triggers, randbit, nrand, choices):
+    def __init__(self, feature, name, type_byte, count, triggers, randbit, nrand, choices):
         action2.Action2.__init__(self, feature, name)
         self.type_byte = type_byte
+        self.count = count
         self.triggers = triggers
         self.randbit = randbit
         self.nrand = nrand
@@ -19,10 +20,11 @@ class Action2Random(action2.Action2):
                 choice.result = choice.result.value | 0x8000
 
     def write(self, file):
-        # [80|83] <random-triggers> <randbit> <nrand> <set-ids>
-        size = 4 + 2 * self.nrand
+        # <type> [<count>] <random-triggers> <randbit> <nrand> <set-ids>
+        size = 4 + 2 * self.nrand + (self.count is not None)
         action2.Action2.write(self, file, size)
         file.print_bytex(self.type_byte)
+        if self.count is not None: file.print_bytex(self.count)
         file.print_bytex(self.triggers)
         file.print_byte(self.randbit)
         file.print_bytex(self.nrand)
@@ -187,4 +189,4 @@ def parse_randomblock(random_block):
         best_choice.resulting_prob += 1
         i += 1
 
-    return [Action2Random(random_block.feature.value, random_block.name.value, random_block.type, random_block.triggers.value, randbit, nrand, random_block.choices)]
+    return [Action2Random(random_block.feature.value, random_block.name.value, random_block.type, random_block.count, random_block.triggers.value, randbit, nrand, random_block.choices)]
