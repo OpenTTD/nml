@@ -197,15 +197,13 @@ class SwitchBody(object):
         return ret
 
 random_types = {
-    'SELF' : 0x80,
-    'PARENT' : 0x83
+    'SELF' : {'type': 0x80, 'range': 0},
+    'PARENT' : {'type': 0x83, 'range': 0},
+    'TILE' : {'type': 0x80, 'range': 1}
 }
-#invert dictionary
-random_types_inv = dict((v,k) for k, v in random_types.iteritems())
 
 class RandomBlock(object):
     def __init__(self, param_list, choices, pos):
-        self.bit_range = 0
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random-block requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         self.feature = param_list[0].reduce_constant([feature_ids])
@@ -213,7 +211,8 @@ class RandomBlock(object):
         if not isinstance(param_list[1], expression.Identifier):
             raise generic.ScriptError("random-block parameter 2 'type' should be an identifier", pos)
         if param_list[1].value in random_types:
-            self.type = random_types[param_list[1].value]
+            self.type = random_types[param_list[1].value]['type']
+            self.bit_range = random_types[param_list[1].value]['range']
         else:
             raise generic.ScriptError("Unrecognized value for random-block parameter 2 'type': " + param_list[1].value, pos)
 
@@ -246,7 +245,8 @@ class RandomBlock(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Random'
         print (2+indentation)*' ' + 'Feature:', self.feature.value
-        print (2+indentation)*' ' + 'Type:', random_types_inv[self.type]
+        typestr = 'PARENT' if self.type == 0x83 else 'SELF' if self.bit_range == 0 else 'TILE'
+        print (2+indentation)*' ' + 'Type:', typestr
         print (2+indentation)*' ' + 'Name:', self.name.value
         print (2+indentation)*' ' + 'Triggers:'
         self.triggers.debug_print(indentation + 4)
@@ -262,7 +262,8 @@ class RandomBlock(object):
         return action2random.parse_randomblock(self)
 
     def __str__(self):
-        ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), random_types_inv[self.type], str(self.name), str(self.triggers))
+        typestr = 'PARENT' if self.type == 0x83 else 'SELF' if self.bit_range == 0 else 'TILE'
+        ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), typestr, str(self.name), str(self.triggers))
         for dep in self.dependent:
             ret += 'dependent: %s;\n' % str(dep)
         for indep in self.independent:

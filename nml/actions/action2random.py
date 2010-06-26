@@ -93,6 +93,8 @@ def parse_randomblock(random_block):
     if random_block.type == 0x83: feature = action2var_variables.varact2parent_scope[feature]
     if feature is None:
         raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % random_block.feature.value, random_block.feature.pos)
+    if random_block.bit_range != 0 and feature not in (0x04, 0x11):
+        raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.")
     bits_available = num_random_bits[feature][random_block.bit_range]
     start_bit = sum(num_random_bits[feature][0:random_block.bit_range])
     if bits_available == 0:
