@@ -205,6 +205,7 @@ random_types_inv = dict((v,k) for k, v in random_types.iteritems())
 
 class RandomBlock(object):
     def __init__(self, param_list, choices, pos):
+        self.bit_range = 0
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random-block requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         self.feature = param_list[0].reduce_constant([feature_ids])

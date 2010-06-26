@@ -66,24 +66,24 @@ class RandomChoice(object):
         return ret
 
 num_random_bits = {
-    0x00 : 8,
-    0x01 : 8,
-    0x02 : 8,
-    0x03 : 8,
-    0x04 : 16,
-    0x05 : 8,
-    0x06 : 0,
-    0x07 : 8,
-    0x08 : 0,
-    0x09 : 8,
-    0x0A : 16,
-    0x0B : 0,
-    0x0C : 0,
-    0x0D : 0,
-    0x0E : 0,
-    0x0F : 8,
-    0x10 : 2,
-    0x11 : 16,
+    0x00 : [8],
+    0x01 : [8],
+    0x02 : [8],
+    0x03 : [8],
+    0x04 : [16, 4],
+    0x05 : [8],
+    0x06 : [0],
+    0x07 : [8],
+    0x08 : [0],
+    0x09 : [8],
+    0x0A : [16],
+    0x0B : [0],
+    0x0C : [0],
+    0x0D : [0],
+    0x0E : [0],
+    0x0F : [8],
+    0x10 : [2],
+    0x11 : [16, 4],
 }
 
 def parse_randomblock(random_block):
@@ -93,7 +93,8 @@ def parse_randomblock(random_block):
     if random_block.type == 0x83: feature = action2var_variables.varact2parent_scope[feature]
     if feature is None:
         raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % random_block.feature.value, random_block.feature.pos)
-    bits_available = num_random_bits[feature]
+    bits_available = num_random_bits[feature][random_block.bit_range]
+    start_bit = sum(num_random_bits[feature][0:random_block.bit_range])
     if bits_available == 0:
         raise generic.ScriptError("No random data is available for the given feature and scope, feature: " + str(feature), random_block.feature.pos)
 
@@ -146,7 +147,7 @@ def parse_randomblock(random_block):
         randbit = -1
 
     #INdependent random chains
-    possible_mask = (1 << bits_available) - 1
+    possible_mask = ((1 << bits_available) - 1) << start_bit
     for indep in random_block.independent:
         if indep.value not in action2.action2_map:
             raise generic.ScriptError("Unknown identifier of random-block: " + indep.value, indep.pos)
@@ -162,7 +163,7 @@ def parse_randomblock(random_block):
             raise generic.ScriptError("Combination of dependence on and independence from random-blocks is not possible for random-block '%s'." % random_block.name.value, random_block.pos)
     else:
         #find a suitable randbit
-        for i in range(0, bits_available):
+        for i in range(start_bit, bits_available + start_bit):
             if possible_mask & (required_mask << i) == (required_mask << i):
                 randbit = i
                 break
