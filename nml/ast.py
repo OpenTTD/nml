@@ -222,7 +222,7 @@ class RandomBlock(object):
             if len(param_list[1].params) == 0:
                 type_param = None
             elif len(param_list[1].params) == 1:
-                type_param = param_list[1].params[0].reduce_constant(global_constants.const_list)
+                type_param = param_list[1].params[0]
             else:
                 raise generic.ScriptError("Value for random-block parameter 2 'type' can have only one parameter.", param_list[1].pos)
         else:
@@ -231,20 +231,19 @@ class RandomBlock(object):
             if type_param is None:
                 if random_types[type_name]['param'] == 1:
                     raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' requires a parameter." % type_name, param_list[1].pos)
-                self.count = None
+                self.count_type = None
             else:
                 if random_types[type_name]['param'] == 0:
                     raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' should not have a parameter." % type_name, param_list[1].pos)
-                if not (0 <= type_param.value <= 15):
-                    raise generic.ScriptError("Parameter value for random-block type '%s' should be in range 0..15" % type_name, type_param.pos)
                 if not (0 <= self.feature.value <= 3):
                     raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' is valid only for vehicles." % type_name, param_list[1].pos)
-                self.count = type_param.value | random_types[type_name]['value']
+                self.count_type = random_types[type_name]['value']
+                self.count_expr = type_param
             self.type = random_types[type_name]['type']
             self.bit_range = random_types[type_name]['range']
         else:
             raise generic.ScriptError("Unrecognized value for random-block parameter 2 'type': " + param_list[1].value, pos)
-        assert (self.type == 0x84) == (self.count is not None)
+        assert (self.type == 0x84) == (self.count_type is not None)
 
         #name
         if not isinstance(param_list[2], expression.Identifier):

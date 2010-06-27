@@ -1,5 +1,6 @@
 from nml.actions import action2, action2var_variables
-from nml import generic, expression, global_constants
+from nml import generic, expression, global_constants, nmlop
+import nml.ast
 
 class Action2Random(action2.Action2):
     def __init__(self, feature, name, type_byte, count, triggers, randbit, nrand, choices):
@@ -189,4 +190,32 @@ def parse_randomblock(random_block):
         best_choice.resulting_prob += 1
         i += 1
 
-    return [Action2Random(random_block.feature.value, random_block.name.value, random_block.type, random_block.count, random_block.triggers.value, randbit, nrand, random_block.choices)]
+    #handle the 'count' parameter, if necessary
+    need_varact2 = False
+    if random_block.count_type is not None:
+        try:
+            expr = random_block.count_expr.reduce_constant(global_constants.const_list)
+            if not (1 <= expr.value <= 15):
+                need_varact2 = True
+        except generic.ConstError:
+            need_varact2 = True
+        except generic.ScriptError:
+            need_varact2 = True
+        count = random_block.count_type if need_varact2 else random_block.count_type | expr.value
+        name = random_block.name.value + '@random'
+    else:
+        count = None
+        name = random_block.name.value
+    action_list = [Action2Random(random_block.feature.value, name, random_block.type, count, random_block.triggers.value, randbit, nrand, random_block.choices)]
+
+    if need_varact2:
+        #Add varaction2 that stores count_expr in temporary register 0x100
+        pos = random_block.pos
+        va2_feature = expression.ConstantNumeric(random_block.feature.value)
+        va2_range = expression.Identifier('SELF', pos)
+        va2_name = expression.Identifier(random_block.name.value, pos)
+        va2_expr = expression.BinOp(nmlop.STO_TMP, random_block.count_expr, expression.ConstantNumeric(0x100))
+        va2_body = nml.ast.SwitchBody([], expression.Identifier(name, pos))
+        switch = nml.ast.Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, pos)
+        action_list.extend(switch.get_action_list())
+    return action_list
