@@ -41,7 +41,7 @@ def get_string_size(string):
     return size
 
 escapes = {
-'':               {'escape': r'\n',     'num_params': 0},
+'':               {'escape': r'\0D',    'num_params': 0},
 '{':              {'escape': r'{',      'num_params': 0},
 'TINYFONT':       {'escape': r'\0E',    'num_params': 0},
 'BIGFONT':        {'escape': r'\0F',    'num_params': 0},
