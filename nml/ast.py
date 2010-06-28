@@ -196,10 +196,10 @@ class SwitchBody(object):
             ret += '\t%s;\n' % str(self.default)
         return ret
 
-class RandomBlock(object):
+class RandomSwitch(object):
     def __init__(self, param_list, choices, pos):
         if not (3 <= len(param_list) <= 4):
-            raise generic.ScriptError("random-block requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
+            raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         #feature
         self.feature = param_list[0].reduce_constant([feature_ids])
 
@@ -208,13 +208,13 @@ class RandomBlock(object):
 
         #name
         if not isinstance(param_list[2], expression.Identifier):
-            raise generic.ScriptError("random-block parameter 3 'name' should be an identifier", pos)
+            raise generic.ScriptError("random_switch parameter 3 'name' should be an identifier", pos)
         self.name = param_list[2]
 
         #triggers
         self.triggers = param_list[3].reduce_constant(global_constants.const_list) if len(param_list) == 4 else expression.ConstantNumeric(0)
         if not (0 <= self.triggers.value <= 255):
-            raise generic.ScriptError("random-block parameter 4 'triggers' out of range 0..255, encountered " + str(self.triggers.value), self.triggers.pos)
+            raise generic.ScriptError("random_switch parameter 4 'triggers' out of range 0..255, encountered " + str(self.triggers.value), self.triggers.pos)
 
         #body
         self.choices = []
@@ -254,7 +254,7 @@ class RandomBlock(object):
             choice.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return action2random.parse_randomblock(self)
+        return action2random.parse_randomswitch(self)
 
     def __str__(self):
         ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), str(self.type), str(self.name), str(self.triggers))

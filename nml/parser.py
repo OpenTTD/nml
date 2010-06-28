@@ -47,7 +47,7 @@ class NMLParser(object):
     def p_main_block(self, t):
         '''main_block : skipable_block
                       | switch
-                      | random
+                      | random_switch
                       | spriteblock
                       | template_declaration
                       | town_names
@@ -316,7 +316,7 @@ class NMLParser(object):
         t[0] = ast.Loop(t[3], t[6], t.lineno(1))
 
     #
-    # Switch  / Random block
+    # (Random) Switch block
     #
     def p_switch(self, t):
         'switch : SWITCH LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
@@ -343,9 +343,9 @@ class NMLParser(object):
         elif t[1] == 'return': t[0] = None
         else: t[0] = t[1]
 
-    def p_random(self, t):
-        'random : RANDOM LPAREN expression_list RPAREN LBRACE random_body RBRACE'
-        t[0] = ast.RandomBlock(t[3], t[6], t.lineno(1));
+    def p_random_switch(self, t):
+        'random_switch : RANDOMSWITCH LPAREN expression_list RPAREN LBRACE random_body RBRACE'
+        t[0] = ast.RandomSwitch(t[3], t[6], t.lineno(1));
 
     def p_random_body(self, t):
         '''random_body :

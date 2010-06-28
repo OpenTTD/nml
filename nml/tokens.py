@@ -22,7 +22,7 @@ reserved = {
     'building' : 'BUILDING',
     'childsprite' : 'CHILDSPRITE',
     'switch' : 'SWITCH', #deterministic varaction2
-    'random' : 'RANDOM', #random action2
+    'random_switch' : 'RANDOMSWITCH', #random action2
     'error' : 'ERROR', #action B
     'replace' : 'REPLACESPRITE', #action A
     'replacenew' : 'REPLACENEWSPRITE', #action 5
