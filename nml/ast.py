@@ -200,8 +200,8 @@ random_types = {
     'SELF' : {'type': 0x80, 'range': 0, 'param': 0},
     'PARENT' : {'type': 0x83, 'range': 0, 'param': 0},
     'TILE' : {'type': 0x80, 'range': 1, 'param': 0},
-    'FORWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x00},
-    'BACKWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x40},
+    'BACKWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x00},
+    'FORWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x40},
     'BACKWARD_ENGINE' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x80},
     'BACKWARD_SAMEID' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0xC0},
 }
