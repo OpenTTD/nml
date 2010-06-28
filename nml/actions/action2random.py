@@ -89,17 +89,60 @@ num_random_bits = {
     0x11 : [16, 4],
 }
 
+random_types = {
+    'SELF' : {'type': 0x80, 'range': 0, 'param': 0},
+    'PARENT' : {'type': 0x83, 'range': 0, 'param': 0},
+    'TILE' : {'type': 0x80, 'range': 1, 'param': 0},
+    'BACKWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x00},
+    'FORWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x40},
+    'BACKWARD_ENGINE' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x80},
+    'BACKWARD_SAMEID' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0xC0},
+}
+
 def parse_randomblock(random_block):
     feature = random_block.feature.value
+
+    #parse type
+    if isinstance(random_block.type, expression.Identifier):
+        type_name = random_block.type.value
+        type_param = None
+    elif isinstance(random_block.type, expression.FunctionCall):
+        type_name = random_block.type.name.value
+        if len(random_block.type.params) == 0:
+            type_param = None
+        elif len(random_block.type.params) == 1:
+            type_param = random_block.type.params[0]
+        else:
+            raise generic.ScriptError("Value for random-block parameter 2 'type' can have only one parameter.", random_block.type.pos)
+    else:
+        raise generic.ScriptError("Random-block parameter 2 'type' should be an identifier, possibly with a parameter.", random_block.type.pos)
+    if type_name in random_types:
+        if type_param is None:
+            if random_types[type_name]['param'] == 1:
+                raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' requires a parameter." % type_name, random_block.type.pos)
+            count_type = None
+        else:
+            if random_types[type_name]['param'] == 0:
+                raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' should not have a parameter." % type_name, random_block.type.pos)
+            if not (0 <= feature <= 3):
+                raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' is valid only for vehicles." % type_name, random_block.type.pos)
+            count_type = random_types[type_name]['value']
+            count_expr = type_param
+        type = random_types[type_name]['type']
+        bit_range = random_types[type_name]['range']
+    else:
+        raise generic.ScriptError("Unrecognized value for random-block parameter 2 'type': " + type_name, random_block.type.pos)
+    assert (type == 0x84) == (count_type is not None)
+
     if feature not in num_random_bits:
         raise generic.ScriptError("Invalid feature for random-block: " + str(feature), random_block.feature.pos)
-    if random_block.type == 0x83: feature = action2var_variables.varact2parent_scope[feature]
+    if type == 0x83: feature = action2var_variables.varact2parent_scope[feature]
     if feature is None:
         raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % random_block.feature.value, random_block.feature.pos)
-    if random_block.bit_range != 0 and feature not in (0x04, 0x11):
+    if bit_range != 0 and feature not in (0x04, 0x11):
         raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.")
-    bits_available = num_random_bits[feature][random_block.bit_range]
-    start_bit = sum(num_random_bits[feature][0:random_block.bit_range])
+    bits_available = num_random_bits[feature][bit_range]
+    start_bit = sum(num_random_bits[feature][0:bit_range])
     if bits_available == 0:
         raise generic.ScriptError("No random data is available for the given feature and scope, feature: " + str(feature), random_block.feature.pos)
 
@@ -192,21 +235,21 @@ def parse_randomblock(random_block):
 
     #handle the 'count' parameter, if necessary
     need_varact2 = False
-    if random_block.count_type is not None:
+    if count_type is not None:
         try:
-            expr = random_block.count_expr.reduce_constant(global_constants.const_list)
+            expr = count_expr.reduce_constant(global_constants.const_list)
             if not (1 <= expr.value <= 15):
                 need_varact2 = True
         except generic.ConstError:
             need_varact2 = True
         except generic.ScriptError:
             need_varact2 = True
-        count = random_block.count_type if need_varact2 else random_block.count_type | expr.value
+        count = count_type if need_varact2 else count_type | expr.value
         name = random_block.name.value + '@random'
     else:
         count = None
         name = random_block.name.value
-    action_list = [Action2Random(random_block.feature.value, name, random_block.type, count, random_block.triggers.value, randbit, nrand, random_block.choices)]
+    action_list = [Action2Random(random_block.feature.value, name, type, count, random_block.triggers.value, randbit, nrand, random_block.choices)]
 
     if need_varact2:
         #Add varaction2 that stores count_expr in temporary register 0x100
@@ -214,7 +257,7 @@ def parse_randomblock(random_block):
         va2_feature = expression.ConstantNumeric(random_block.feature.value)
         va2_range = expression.Identifier('SELF', pos)
         va2_name = expression.Identifier(random_block.name.value, pos)
-        va2_expr = expression.BinOp(nmlop.STO_TMP, random_block.count_expr, expression.ConstantNumeric(0x100))
+        va2_expr = expression.BinOp(nmlop.STO_TMP, count_expr, expression.ConstantNumeric(0x100))
         va2_body = nml.ast.SwitchBody([], expression.Identifier(name, pos))
         switch = nml.ast.Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, pos)
         action_list.extend(switch.get_action_list())

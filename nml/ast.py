@@ -196,16 +196,6 @@ class SwitchBody(object):
             ret += '\t%s;\n' % str(self.default)
         return ret
 
-random_types = {
-    'SELF' : {'type': 0x80, 'range': 0, 'param': 0},
-    'PARENT' : {'type': 0x83, 'range': 0, 'param': 0},
-    'TILE' : {'type': 0x80, 'range': 1, 'param': 0},
-    'BACKWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x00},
-    'FORWARD_SELF' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x40},
-    'BACKWARD_ENGINE' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0x80},
-    'BACKWARD_SAMEID' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0xC0},
-}
-
 class RandomBlock(object):
     def __init__(self, param_list, choices, pos):
         if not (3 <= len(param_list) <= 4):
@@ -214,36 +204,7 @@ class RandomBlock(object):
         self.feature = param_list[0].reduce_constant([feature_ids])
 
         #type
-        if isinstance(param_list[1], expression.Identifier):
-            type_name = param_list[1].value
-            type_param = None
-        elif isinstance(param_list[1], expression.FunctionCall):
-            type_name = param_list[1].name.value
-            if len(param_list[1].params) == 0:
-                type_param = None
-            elif len(param_list[1].params) == 1:
-                type_param = param_list[1].params[0]
-            else:
-                raise generic.ScriptError("Value for random-block parameter 2 'type' can have only one parameter.", param_list[1].pos)
-        else:
-            raise generic.ScriptError("Random-block parameter 2 'type' should be an identifier, possibly with a parameter.", param_list[1].pos)
-        if type_name in random_types:
-            if type_param is None:
-                if random_types[type_name]['param'] == 1:
-                    raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' requires a parameter." % type_name, param_list[1].pos)
-                self.count_type = None
-            else:
-                if random_types[type_name]['param'] == 0:
-                    raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' should not have a parameter." % type_name, param_list[1].pos)
-                if not (0 <= self.feature.value <= 3):
-                    raise generic.ScriptError("Value '%s' for random-block parameter 2 'type' is valid only for vehicles." % type_name, param_list[1].pos)
-                self.count_type = random_types[type_name]['value']
-                self.count_expr = type_param
-            self.type = random_types[type_name]['type']
-            self.bit_range = random_types[type_name]['range']
-        else:
-            raise generic.ScriptError("Unrecognized value for random-block parameter 2 'type': " + param_list[1].value, pos)
-        assert (self.type == 0x84) == (self.count_type is not None)
+        self.type = param_list[1]
 
         #name
         if not isinstance(param_list[2], expression.Identifier):
@@ -279,8 +240,8 @@ class RandomBlock(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Random'
         print (2+indentation)*' ' + 'Feature:', self.feature.value
-        typestr = 'PARENT' if self.type == 0x83 else 'SELF' if self.bit_range == 0 else 'TILE'
-        print (2+indentation)*' ' + 'Type:', typestr
+        print (2+indentation)*' ' + 'Type:'
+        self.type.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Name:', self.name.value
         print (2+indentation)*' ' + 'Triggers:'
         self.triggers.debug_print(indentation + 4)
@@ -296,8 +257,7 @@ class RandomBlock(object):
         return action2random.parse_randomblock(self)
 
     def __str__(self):
-        typestr = 'PARENT' if self.type == 0x83 else 'SELF' if self.bit_range == 0 else 'TILE'
-        ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), typestr, str(self.name), str(self.triggers))
+        ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), str(self.type), str(self.name), str(self.triggers))
         for dep in self.dependent:
             ret += 'dependent: %s;\n' % str(dep)
         for indep in self.independent:
