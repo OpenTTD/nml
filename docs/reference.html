@@ -24,6 +24,7 @@
 		<li><a href="#block-spriteblock-spritegroup">Spritegroup</a></li>
 	</ul>
 	<li><a href="#block-switch">Switch</a></li>
+    <li><a href="#block-random">Random</a></li>
 	<li><a href="#block-template">Template</a></li>
 	<li><a href="#block-cargotable">Cargotable</a></li>
 	<li><a href="#block-if">If/else</a></li>
@@ -298,6 +299,121 @@ is the name of another switchblock or spriteblock or a string. If the
 of the computation is returned. If it's a string or a <code>return</code>
 followed by an expression then that value is returned. Otherwise it's the ID
 of a spriteblock or switch and that block will be evaluated.
+
+<h2><a name="block-random">Random</a></h2>
+<p>While a <a href="#block-switch">switch-block</a> allows making a predictable
+desicion, a random-block allows a random choice between several options.</p>
+<pre class="exl">random (&lt;feature&gt;, &lt;type&gt;, &lt;ID&gt;[, &lt;triggers&gt;]) {
+    (&lt;independent&gt;: &lt;other_random&gt;;)*
+    (&lt;dependent&gt;: &lt;other_random&gt;;)*
+	(&lt;probability&gt;: &lt;return_value&gt;;)+
+}</pre>
+<p>The first parameter <code>&lt;feature&gt;</code> specifies the feature to use.
+<code>&lt;type&gt;</code>, the second parameter, is used to define what random data
+is used. The supported combinations are listed in the following table. The amount
+of random data is given in the third column. The maximum number of possible
+combinations is equal to 2^x, with x being the number of random bits. The last
+column specifies the object of which the random data is used.</p>
+
+<table class="t">
+<tr><th>Feature</th><th>Type</th><th># of random bits</th><th>Random data used</th></tr>
+<tr><td>Vehicles</td><td>SELF</td><td>8</td><td>Vehicle itself</td></tr>
+<tr><td>Vehicles</td><td>PARENT</td><td>8</td><td>Leading engine</td></tr>
+<tr><td>Vehicles</td><td>BACKWARD_SELF(x)</td><td>8</td><td>Count x vehicles backward (away from the engine), starting at the vehicle itself (a)</td></tr>
+<tr><td>Vehicles</td><td>FORWARD_SELF(x)</td><td>8</td><td>Count x vehicles forward (towards the engine), starting at the vehicle itself (a)</td></tr>
+<tr><td>Vehicles</td><td>BACKWARD_ENGINE(x)</td><td>8</td><td>Count x vehicles backward, starting at the leading engine (a)</td></tr>
+<tr><td>Vehicles</td><td>BACKWARD_SAMEID(x)</td><td>8</td><td>Count x vehicles backward, starting at the first vehicle in the chain with the same ID (a)</td></tr>
+<tr><td>Stations / airport tiles</td><td>SELF</td><td>16</td><td>Station</td></tr>
+<tr><td>Stations / airport tiles</td><td>TILE</td><td>4</td><td>Specific station tile</td></tr>
+<tr><td>Canals</td><td>SELF</td><td>8</td><td>Canal tile</td></tr>
+<tr><td>Houses</td><td>SELF</td><td>8</td><td>House tile (b)</td></tr>
+<tr><td>Industry tiles</td><td>SELF</td><td>8</td><td>Industry tile</td></tr>
+<tr><td>Industry tiles</td><td>PARENT</td><td>16</td><td>Industry as a whole</td></tr>
+<tr><td>Industries</td><td>SELF</td><td>16</td><td>Industry (same as above)</td></tr>
+<tr><td>Objects</td><td>SELF</td><td>8</td><td>Object tile (different per tile)</td></tr>
+<tr><td>Rail types</td><td>SELF</td><td>2</td><td>Rail tile (pseudo-random, based on location)</td></tr>
+</table>
+<p>(a) x can be any expression. It can even contain variables, in that case
+the variables of the vehicle itself are used.</p>
+<p>(b) The random bits are initially the same for all tiles of a multi-tile house.</p>
+<p>The third parameter <code>&lt;ID&gt;</code> can be used to refer to this
+block from other random- or switch-blocks. The last parameter
+<code>&lt;triggers&gt;</code> is optional and allows re-randomizing when
+certain conditions occur. The events and accompanying trigger names are
+given in the following tables. To re-randomize graphics when any of a set of
+events occurs, use <code>TRIGGER_A | TRIGGER_B | ... | TRIGGER_Z</code>
+To re-randomize only when <em>all</em> of the events have occured, use
+<code>TRIGGER_ALL | TRIGGER_A | ...</code></p>
+
+<table class="t">
+<caption>Vehicle triggers</caption>
+<tr><th>Trigger</th><th>Event</th></tr>
+<tr><td>TRIGGER_VEHICLE_NEW_LOAD</td><td>Vehicle gets new load of cargo (only after it was empty)</td></tr>
+<tr><td>TRIGGER_VEHICLE_SERVICE</td><td>Vehicle enters a depot and is serviced</td></tr>
+<tr><td>TRIGGER_VEHICLE_UNLOAD_ALL</td><td>The consist has unloaded all cargo (use with type 'SELF')</td></tr>
+<tr><td>TRIGGER_VEHICLE_ANY_LOAD</td><td>Any vehicle of the consist receives cargo (use with type 'SELF')</td></tr>
+<tr><td>TRIGGER_VEHICLE_32_CALLBACK</td><td>32-day callback returned 1</td></tr>
+</table>
+<p>To re-randomize when the consist has been emptied and then receives new cargo, use
+<code>TRIGGER_VEHICLE_UNLOAD_ALL | TRIGGER_VEHICLE_ANY_LOAD | TRIGGER_ALL</code></p>
+
+<table class="t">
+<caption>Station triggers</caption>
+<tr><th>Trigger</th><th>Event</th></tr>
+<tr><td>TRIGGER_STATION_NEW_CARGO</td><td>New cargo waiting</td></tr>
+<tr><td>TRIGGER_STATION_NO_MORE_CARGO</td><td>No more cargo waiting</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_ARRIVES</td><td>Train arrives (starts loading/unloading)</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_LEAVES</td><td>Train leaves (done loading/unloading)</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_LOADS_UNLOADS</td><td>Train loads/unloads cargo</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_RESERVES</td><td>Train reserves platform using PBS</td></tr>
+</table>
+<p>The last four triggers in the table only trigger on the platform on which they occur.</p>
+
+<table class="t">
+<caption>House triggers</caption>
+<tr><th>Trigger</th><th>Event</th></tr>
+<tr><td>TRIGGER_HOUSE_TILELOOP</td><td>The house tile is processed in the periodic tile-processing loop</td></tr>
+<tr><td>TRIGGER_HOUSE_TOP_TILELOOP</td><td>The top tile of the house is processed in the periodic tile-processing loop</td></tr>
+</table>
+<p>Using <code>TRIGGER_HOUSE_TOP_TILELOOP</code>, it is possible to re-randomize
+the whole building as one unit. All tiles of a multi-tile house will get the same
+new random data.</p>
+
+<table class="t">
+<caption>Industry tile triggers</caption>
+<tr><th>Trigger</th><th>Event</th></tr>
+<tr><td>TRIGGER_INDUSTRYTILE_TILELOOP</td><td>The industry tile is processed in the periodic tile-processing loop </td></tr>
+<tr><td>TRIGGER_INDUSTRYTILE_256_TICKS</td><td>Triggers simultaneously for all tiles of the industry every 256 ticks.
+If the industry is a primary one, output cargo is generated at the same time.</td></tr>
+<tr><td>TRIGGER_INDUSTRYTILE_CARGO_DELIVERY</td><td>Cargo is delivered to the industry. If the industry is a processing one, output cargo is generated at the same time.</td></tr>
+</table>
+
+<p><code>&lt;independent&gt;: &lt;other_random&gt;;</code> makes sure that this
+random block and <code>&lt;other_random&gt;</code> use different
+(non-intersecting) random data. This allows making multiple randomized
+desicions that are independent of eachother.</p>
+<p><code>&lt;dependent&gt;: &lt;other_random&gt;;</code>, on the other hand,
+lets this random block and <code>&lt;other_random&gt;</code> use the same
+random data. To make this possible, it should not require more random data
+(i.e. have a higher sum of probabilities) than the block it is dependent on.</p>
+<p>Both of these options require enough random data to be available. Also, the
+combination must make sense. For example, if A is dependent on B and B is
+dependent on C, then A cannot be independent of C.</p>
+<p>Following this, there is a list of options, one of which will be chosen
+randomly. The syntax is <code>&lt;probability&gt;: &lt;return_value&gt;;</code>.
+The relative probability that this option will be chosen is given by
+<code>&lt;probability&gt;</code>. The chance is equal to the probability divided
+by the sum of all probabilities. If this sum is not equal to a power of two (2,
+4, 8, 16, ...), then rounding is done and the probabilities may be inexact. For
+information about <code>&lt;return_value&gt;</code>, see the
+<a href="#block-switch">switch-block</a>. Let's conclude with an example:
+<pre class="code">random(FEAT_TRAINS, SELF, random_42, TRIGGER_VEHICLE_UNLOAD_ALL | TRIGGER_VEHICLE_ANY_LOAD | TRIGGER_ALL) {
+    /* re-randomize when vehicle has been emptied and then received new cargo */
+    independent: random_43; // desicion should be independent from random_43, which is defined elsewhere
+    6: group_open;          // 6/11 chance to display open wagon
+    3: group_closed;        // 3/11 chance to display closed wagon (with cover)
+    2: group_halfopen;      // 2/11 chance to display a half-covered wagon
+}</pre>
 
 <h2><a name="block-template">Template</a></h2>
 
