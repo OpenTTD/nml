@@ -24,7 +24,7 @@
 		<li><a href="#block-spriteblock-spritegroup">Spritegroup</a></li>
 	</ul>
 	<li><a href="#block-switch">Switch</a></li>
-    <li><a href="#block-random">Random</a></li>
+    <li><a href="#block-randomswitch">Random switch</a></li>
 	<li><a href="#block-template">Template</a></li>
 	<li><a href="#block-cargotable">Cargotable</a></li>
 	<li><a href="#block-if">If/else</a></li>
@@ -300,10 +300,10 @@ of the computation is returned. If it's a string or a <code>return</code>
 followed by an expression then that value is returned. Otherwise it's the ID
 of a spriteblock or switch and that block will be evaluated.
 
-<h2><a name="block-random">Random</a></h2>
+<h2><a name="block-randomswitch">Random switch</a></h2>
 <p>While a <a href="#block-switch">switch-block</a> allows making a predictable
-desicion, a random-block allows a random choice between several options.</p>
-<pre class="exl">random (&lt;feature&gt;, &lt;type&gt;, &lt;ID&gt;[, &lt;triggers&gt;]) {
+desicion, a random_switch allows a randomized choice between several options.</p>
+<pre class="exl">random_switch (&lt;feature&gt;, &lt;type&gt;, &lt;ID&gt;[, &lt;triggers&gt;]) {
     (&lt;independent&gt;: &lt;other_random&gt;;)*
     (&lt;dependent&gt;: &lt;other_random&gt;;)*
 	(&lt;probability&gt;: &lt;return_value&gt;;)+
@@ -337,7 +337,7 @@ column specifies the object of which the random data is used.</p>
 the variables of the vehicle itself are used.</p>
 <p>(b) The random bits are initially the same for all tiles of a multi-tile house.</p>
 <p>The third parameter <code>&lt;ID&gt;</code> can be used to refer to this
-block from other random- or switch-blocks. The last parameter
+block from other (random-)switch-blocks. The last parameter
 <code>&lt;triggers&gt;</code> is optional and allows re-randomizing when
 certain conditions occur. The events and accompanying trigger names are
 given in the following tables. To re-randomize graphics when any of a set of
@@ -389,11 +389,11 @@ If the industry is a primary one, output cargo is generated at the same time.</t
 </table>
 
 <p><code>&lt;independent&gt;: &lt;other_random&gt;;</code> makes sure that this
-random block and <code>&lt;other_random&gt;</code> use different
+random_switch block and <code>&lt;other_random&gt;</code> use different
 (non-intersecting) random data. This allows making multiple randomized
 desicions that are independent of eachother.</p>
 <p><code>&lt;dependent&gt;: &lt;other_random&gt;;</code>, on the other hand,
-lets this random block and <code>&lt;other_random&gt;</code> use the same
+lets this random_switch block and <code>&lt;other_random&gt;</code> use the same
 random data. To make this possible, it should not require more random data
 (i.e. have a higher sum of probabilities) than the block it is dependent on.</p>
 <p>Both of these options require enough random data to be available. Also, the
@@ -407,7 +407,7 @@ by the sum of all probabilities. If this sum is not equal to a power of two (2,
 4, 8, 16, ...), then rounding is done and the probabilities may be inexact. For
 information about <code>&lt;return_value&gt;</code>, see the
 <a href="#block-switch">switch-block</a>. Let's conclude with an example:
-<pre class="code">random(FEAT_TRAINS, SELF, random_42, TRIGGER_VEHICLE_UNLOAD_ALL | TRIGGER_VEHICLE_ANY_LOAD | TRIGGER_ALL) {
+<pre class="code">random_switch (FEAT_TRAINS, SELF, random_42, TRIGGER_VEHICLE_UNLOAD_ALL | TRIGGER_VEHICLE_ANY_LOAD | TRIGGER_ALL) {
     /* re-randomize when vehicle has been emptied and then received new cargo */
     independent: random_43; // desicion should be independent from random_43, which is defined elsewhere
     6: group_open;          // 6/11 chance to display open wagon
