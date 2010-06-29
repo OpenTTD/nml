@@ -668,7 +668,7 @@ the file size cannot exceed 64KB.</p>
 <tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
 <tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base cost</td></tr>
-<tr><td> cost_factor</td><td>                  0 ... 255</td><td>mutliplicator to the base cost</td></tr>
+<tr><td> cost_factor</td><td>                  0 ... 255</td><td>purchase cost; mutliplicator to the base cost</td></tr>
 <tr><td> speed</td><td>                        0 ... 65000km/h (speed units)</td><td></td></tr>
 <tr><td> power</td><td>                        0 ... 65000kN (power units)</td><td></td></tr>
 <tr><td> weight</td><td>                       0 ... 65000t (mass units)</td><td></td></tr>
@@ -677,13 +677,35 @@ the file size cannot exceed 64KB.</p>
 <tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td></td></tr>
 <tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr>
 <tr><td> cargo_capacity</td><td>               0 ... 65000</td><td></td></tr>
-<tr><td> refittable_cargo_classes</td><td>     bit set of cargo classes</td><td></td></tr>
-<tr><td> non_refittable_cargo_classes</td><td> bit set of cargo classes</td><td></td></tr>
+<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> misc_flags</td><td>                   ROADVEH_FLAG_XXX</td><td>road vehicle flags</td></tr>
 <tr><td> cargo_type</td><td>                   default cargo as cargo label</td><td></td></tr>
 
 </table>
 <h2><a name="property-ships">Ships</a></h2>
+<table class="t">
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+<tr><td> sprite_id <td> SPRITE_ID_NEW_SHIP <td> define base set spriteID to replace or this constant
+<tr><td> is_refittable <td> ??? <td>
+<tr><td> cost_factor</td><td>                  0 ... 255</td><td>purchase cost; multiplicator to the base costs</td></tr>
+<tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
+<tr><td> cargo_type<td> bit set, entry into the cargo translation table<td>
+<tr><td> cargo_capacity<td> (units of cargo)<td>
+<tr><td> running_cost_factor</td><td>          0 ... 255 </td><td>multiplicator to the base costs</td></tr>
+<tr><td> sound_effect<td> SOUND_XXX<td>XXX=[CARGO_SHIP|PASSENGER_SHIP] See available sound effects.
+<tr><td> refittable_cargo_types<td> bit set, entry into the cargo translation table<td>
+<tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> refit_costs<td> <td>
+<tr><td> ocean_speed_fraction<td> fraction of base speed on ocean tiles<td>
+<tr><td> canal_speed_fraction<td> fraction of base speed on canal tiles<td>
+<tr><td> retire_early<td> (years)<td>reliability of new vehicles starts to decrease <i>model life</i>-8-<i>retire_early</i> after vehicle introduction. Value of
+<i>retire_early</i> may be negative.
+<tr><td> misc_flags<td> SHIP_FLAG_2CC <td> no other flags present
+<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> cargo_type</td>(cargo label)<td> default cargo as cargo label</td><td></td></tr>
+</table>
 <h2><a name="property-planes">Planes</a></h2>
 <h2><a name="property-stations">Stations</a></h2>
 <h2><a name="property-canals">Canals</a></h2>
@@ -692,6 +714,24 @@ the file size cannot exceed 64KB.</p>
 <h2><a name="property-industrytiles">Industry tiles</a></h2>
 <h2><a name="property-industries">Industries</a></h2>
 <h2><a name="property-cargos">Cargos</a></h2>
+Available cargo classes are:
+<table class="t">
+<tr><th>name <th> type of cargo
+<tr><td>CC_NONE <td> No cargo
+<tr><td>CC_PASSENGERS<td> passengers, also tourists (ECS)
+<tr><td>CC_MAIL<td> mail
+<tr><td>CC_EXPRESS<td> express goods
+<tr><td>CC_ARMOURED<td> valuables, diamonds, gold and alike
+<tr><td>CC_BULK<td> coal, ore, grain,...
+<tr><td>CC_PIECE_GOODS<td> containers, crates, livestock
+<tr><td>CC_LIQUID<td> oil, milk, water, ...
+<tr><td>CC_REFRIGERATED<td> food, milk, ...
+<tr><td>CC_HAZARDOUS<td> chemicals? uranium, ...
+<tr><td>CC_COVERED<td> grain, cement, fruit, ...
+<tr><td>CC_OVERSIZED<td> ./.
+<tr><td>CC_ALL_NORMAL<td> all except special classes like oversized and not yet defined ones
+<tr><td>CC_ALL<td> all cargo classes
+</table>
 <h2><a name="property-airports">Airports</a></h2>
 <h2><a name="property-railtypes">Railtypes</a></h2>
 <table class="t">
