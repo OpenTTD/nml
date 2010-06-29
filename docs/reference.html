@@ -687,7 +687,7 @@ the file size cannot exceed 64KB.</p>
 <table class="t">
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
 <tr><td> sprite_id <td> SPRITE_ID_NEW_SHIP <td> define base set spriteID to replace or this constant
-<tr><td> is_refittable <td> ??? <td>
+<tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true
 <tr><td> cost_factor</td><td>                  0 ... 255</td><td>purchase cost; multiplicator to the base costs</td></tr>
 <tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
 <tr><td> cargo_type<td> bit set, entry into the cargo translation table<td>
@@ -705,8 +705,31 @@ the file size cannot exceed 64KB.</p>
 <tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> cargo_type</td>(cargo label)<td> default cargo as cargo label</td><td></td></tr>
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
 </table>
 <h2><a name="property-planes">Planes</a></h2>
+<table class="t">
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+<tr><td> sprite_id <td> SPRITE_ID_NEW_AIRCRAFT <td> define base set spriteID to replace or this constant
+<tr><td> is_helicopter<td> AIRCRAFT_TYPE_XXX<td>XXX=[NORMAL | HELICOPTER]
+<tr><td> is_large<td> AIRCRAFT_TYPE_XXX<td>XXX=[SMALL | LARGE]
+<tr><td> cost_factor<td> 0 ... 255<td>purchase cost; multiplicator to the base costs
+<tr><td> speed<td> 0 .. 4080 km/h (speed units)<td>
+<tr><td> acceleration<td> <td>
+<tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
+<tr><td> passenger_capacity<td> (units of cargo)<td>
+<tr><td> mail_capacity<td> (units of cargo)<td>
+<tr><td> sound_effect<td> SOUND_XXX<td>XXX=[PROPELLER_1 | PROPELLER_2 | JET_1 | JET_2 | JET_3 | SUPERSONIC] see available sound effects
+<tr><td> refittable_cargo_types<td> bit set, entry into the cargo translation table<td>
+<tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> refit_cost<td> <td> in 1/32 of purchase cost
+<tr><td> retire_early<td> (years)<td>reliability of new vehicles starts to decrease <i>model life</i>-8-<i>retire_early</i> after vehicle introduction. Value of
+<i>retire_early</i> may be negative.
+<tr><td> misc_flags<td> AIRCRAFT_FLAG_2CC<td>
+<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
+</table>
 <h2><a name="property-stations">Stations</a></h2>
 <h2><a name="property-canals">Canals</a></h2>
 <h2><a name="property-bridges">Bridges</a></h2>
