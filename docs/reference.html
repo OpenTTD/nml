@@ -457,7 +457,31 @@ if (param[1] == 1) {
 <h2><a name="block-while">While</a></h2>
 
 <h2><a name="block-error">Error</a></h2>
+The general form of an error statement is
+<pre="exl">
+error(level, message_type[, parameter1[, parameter2]])
+</pre>
+where level is the severity of the message and one of <code>NOTICE, WARNING, ERROR, FATAL</code>. The message_type can be either a customly
+defined string which can contain up to two parameters or it can be one of the pre-defined strings which already have translations:
+<table class="t">
+<r><th>name <th>actual text<th> parameters
+<tr><td>REQUIRES_TTDPATCH <td>"%1 requires at least TTDPatch version %2"<td>#1: GRF name, #2: version string
+<tr><td>REQUIRES_DOS_WINDOWS <td>"%1 is for the %2 version of TTD.<td>#1: NewGRF name, #2: [DOS | Windows]
+Palette type
+<tr><td>USED_WITH <td>"%1 is designed to be used with %2<td>#1: NewGRF name, #2: Explanation of error or required parameters
+<tr><td>INVALID_PARAMETER <td>"Invalid parameter for %1: parameter %2 (value)"<td>#1: NewGRF name, #2: Parameter number. value is automatically
+filled in.
+<tr><td>MUST_LOAD_BEFORE <td>"%1 must be loaded before %2."  <td>#1: NewGRF name, #2: NewGRF name
+<tr><td>MUST_LOAD_AFTER <td>"%1 must be loaded after %2."  <td>#1: NewGRF name, #2: NewGRF name
+<tr><td>REQUIRES_OPENTTD <td>"%1 requires OpenTTD version %2 or better."<td>#1: NewGRF name, #2: version string
+<tr><td>./.<td>(user-defined string)<td>Up to two parameters, if required by the string
+</table>
 
+For example:
+<pre class="code">
+error(NOTICE, USED_WITH, STR_REGRESSION_CARE);
+error(FATAL, STR_REGRESSION_ERROR, STR_ANSWER, 14, param[1] + 12 * param[2]);
+</pre>
 <h2><a name="block-deactivate">Deactivate</a></h2>
 
 <h2><a name="block-replacement">Sprite replacement</a></h2>
