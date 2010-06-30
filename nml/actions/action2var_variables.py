@@ -32,7 +32,7 @@ veh_vars = {
     'num_vehs_in_vehid_chain' : {'var': 0x41, 'start': 16, 'size': 8},
     'cargo_classes_in_consist' : {'var': 0x42, 'start': 0, 'size': 8},
     'most_common_refit' : {'var': 0x42, 'start': 16, 'size': 8},
-    'or_of_bitmask' : {'var': 0x42, 'start': 24, 'size': 8},
+    'bitmask_consist_info' : {'var': 0x42, 'start': 24, 'size': 8},
     'company_num' : {'var': 0x43, 'start': 0, 'size': 8},
     'company_type' : {'var': 0x43, 'start': 16, 'size': 2},
     'company_color1' : {'var': 0x43, 'start': 24, 'size': 4},
@@ -51,7 +51,7 @@ veh_vars = {
     'vehicle_type_id' : {'var': 0xC6, 'start': 0, 'size': 16},
     'refit_cycle' : {'var': 0xF2, 'start': 0, 'size': 8},
     'vehicle_is_powered' : {'var': 0xFE, 'start': 5, 'size': 1},
-    'unpowered_electred_engine' : {'var': 0xFE, 'start': 6, 'size': 1},
+    'unpowered_electric_engine' : {'var': 0xFE, 'start': 6, 'size': 1},
     'vehicle_is_reversed' : {'var': 0xFE, 'start': 8, 'size': 1},
     'build_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
 }

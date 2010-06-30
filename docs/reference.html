@@ -657,6 +657,39 @@ the file size cannot exceed 64KB.</p>
 
 <h1><a name="properties">List of properties</a></h1>
 <h2><a name="property-trains">Trains</a></h2>
+<table class="t">
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+<tr><td> track_type<td> TRACK_TYPE_XXX<td>XXX=[RAIL | MONORAIL | MAGLEV]
+<tr><td> ai_special_flag<td> [AI_FLAG_PASSENGER | AI_FLAG_CARGO]<td> For TTDPatch only: set to AI_FLAG_PASSENGER to tell the AI that it's an engine for passenger service
+<tr><td> speed<td> 0 ... 65000 (speed units)<td>Max speed for engines, speed limit for wagons
+<tr><td> power<td> 0 ... 65000 hp (power units) <td>
+<tr><td> running_cost_base</td><td>RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
+<tr><td> running_cost_factor</td><td>0 ... 255</td><td>multiplicator to the base cost</td></tr>
+<tr><td> sprite_id</td><td>SPRITE_ID_NEW_TRAIN</td><td>define base set spriteID to replace or this constant</td></tr>
+<tr><td> dual_headed<td> [0 | 1]<td>1 = dual_headed, otherwise normal engine
+<tr><td> cargo_capacity<td> (cargo units)<td>
+<tr><td> cargo_type<td> (cargo slot)<td>climate-dependent cargo type
+<tr><td> weight<td> 0 .. 20000 t (mass units)<td>
+<tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; mutliplicator to the base cost</td></tr>
+<tr><td> ai_engine_rank<td> 0 ... 255<td>higher values make the engine for the TTDPatch AI more attractive
+<tr><td> engine_class<td> ENGINE_CLASS_XXX<td>XXX=[STEAM | DIESEL | ELECTRIC | MONORAIL | MAGLEV]
+<tr><td> extra_power_per_wagon<td> (power units) <td>
+<tr><td> refit_cost<td> <td>
+<tr><td> refittable_cargo_types<td> bit set, entry into the cargo translation table<td>
+<tr><td> callback_flags<td> CBF_XXX<td>XXX = [WAGON_POWER | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> tractive_effort_coefficient<td> 0 ... 1<td>
+<tr><td> air_drag_coefficient</td><td>   0 ... 1</td><td></td></tr>
+<tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>XXX=[8_8 | 7_8 | ... | 1_8]
+<tr><td> visual_effect<td> VISUAL_EFFECT_XXX<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE]
+<tr><td> extra_weight_per_wagon<td> (mass units)<td>
+<tr><td> bitmask_vehicle_info<td> 8-bit bitmask<td>Used for obtaining bitmask_consist_info
+<tr><td> retire_early<td> (years)<td>reliability of new vehicles starts to decrease <i>model life</i>-8-<i>retire_early</i> after vehicle introduction. Value of
+<tr><td> misc_flags</td><td>                   TRAIN_FLAG_XXX</td><td>XXX=[TILT | 2CC | MU]</td></tr>
+<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
+<tr><td> <td> <td>
+</table>
 <h2><a name="property-roadvehs">Road vehicles</a></h2>
 <table class="t">
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
@@ -680,7 +713,7 @@ the file size cannot exceed 64KB.</p>
 <tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> misc_flags</td><td>                   ROADVEH_FLAG_XXX</td><td>road vehicle flags</td></tr>
-<tr><td> cargo_type</td><td>                   default cargo as cargo label</td><td></td></tr>
+<tr><td> cargo_type</td><td>                   cargo slot</td><td></td></tr>
 
 </table>
 <h2><a name="property-ships">Ships</a></h2>
@@ -704,7 +737,7 @@ the file size cannot exceed 64KB.</p>
 <tr><td> misc_flags<td> SHIP_FLAG_2CC <td> no other flags present
 <tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> cargo_type</td>(cargo label)<td> default cargo as cargo label</td><td></td></tr>
+<tr><td> cargo_type</td>(cargo label)<td> cargo slot</td><td></td></tr>
 <tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
 </table>
 <h2><a name="property-planes">Planes</a></h2>
@@ -840,6 +873,36 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 </table>
 
 <h2><a name="vars-trains">Trains</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>position_in_consist <td>0 ... 255<td>
+<tr><td>position_in_consist_from_end <td>0 ... 255 <td>
+<tr><td>num_vehs_in_consist <td>0 ... 255 <td>
+<tr><td>position_in_vehid_chain <td>0 ... 255 <td>
+<tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>
+<tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td>XXX: cargo_classes
+<tr><td>most_common_refit <td>cargo class<td>cargo class most often refit to
+<tr><td>bitmask_consist_info <td>Bitmask 8 bit<td>OR of all bitmask_vehicle_info of all vehicles (engines, wagons) in the consist
+<tr><td>company_num <td>0 ... 15<td>company number of the vehicle owner. TTDPatch only supports up to 8 companies
+<tr><td>company_type <td>0 ... 3 <td>0: human; 1: AI; 2: human in AI company; 3: human company controlled by AI
+<tr><td>company_color1 <td> <td>index into company colour
+<tr><td>company_color2 <td> <td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
+<tr><td>curv_info_prev_cur <td> <td>
+<tr><td>curv_info_cur_next <td> <td>
+<tr><td>curv_info_prev_next <td> <td>
+<tr><td>motion_counter <td> <td>
+<tr><td>cargo_type_in_veh <td>entry in cargo translation table <td>
+<tr><td>cargo_unit_weight <td>weight in 1/16t <td>
+<tr><td>cargo_classes <td>cargo class<td>class of the currently transported cargo
+<tr><td>vehicle_type_info <td> <td>
+<tr><td>build_year <td>0 ... 5000000 <td>0-based year when the vehicle was built
+<tr><td>vehicle_type_id <td> <td>
+<tr><td>refit_cycle <td> <td>
+<tr><td>vehicle_is_powered <td> <td>
+<tr><td>unpowered_electric_engine <td> <td>
+<tr><td>vehicle_is_reversed <td> <td>
+<tr><td>build_during_preview <td> <td>
+</table>
 <h2><a name="vars-roadvehs">Road vehicles</a></h2>
 <h2><a name="vars-ships">Ships</a></h2>
 <h2><a name="vars-planes">Planes</a></h2>
