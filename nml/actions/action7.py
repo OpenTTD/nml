@@ -100,9 +100,9 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
             actions.append(action)
             start += 1
             continue
-        length += 1
         if allow7 and action.skip_action7():
             allow9 = allow9 and action.skip_action9()
+            length += 1
             continue
         if allow9 and action.skip_action9():
             #If action7 was ok, we wouldn't be in this block.
@@ -111,6 +111,7 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
             #of allow7/allow9 is True. This is possible because
             #all previous actions could be skipped at least one.
             allow7 = False
+            length += 1
             continue
         #neither action7 nor action9 can be used. add all
         #previous actions to the list and start a new block
@@ -124,9 +125,9 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
         actions.append(SkipAction(feature, param, value_size, condtype, value, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
-        start = i + 1
-        length = 0
-        allow7, allow9 = True, True
+        start = i
+        length = 1
+        allow7, allow9 = action.skip_action7(), action.skip_action9()
 
     if length > 0:
         feature = 7 if allow7 else 9
