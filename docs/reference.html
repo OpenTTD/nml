@@ -26,7 +26,7 @@
 		</ul>
 	</li>
 	<li><a href="#block-switch">Switch</a></li>
-    <li><a href="#block-randomswitch">Random switch</a></li>
+	<li><a href="#block-randomswitch">Random switch</a></li>
 	<li><a href="#block-template">Template</a></li>
 	<li><a href="#block-cargotable">Cargotable</a></li>
 	<li><a href="#block-if">If/else</a></li>
@@ -459,22 +459,27 @@ if (param[1] == 1) {
 <h2><a name="block-error">Error</a></h2>
 The general form of an error statement is
 <pre="exl">
-error(level, message_type[, parameter1[, parameter2]])
+error(level, message[, extra_text[, parameter1[, parameter2]]])
 </pre>
-where level is the severity of the message and one of <code>NOTICE, WARNING, ERROR, FATAL</code>. The message_type can be either a customly
-defined string which can contain up to two parameters or it can be one of the pre-defined strings which already have translations:
+where level is the severity of the message and one of <code>NOTICE, WARNING, ERROR, FATAL</code>. The message can be either a customly
+defined string which can contain up to two parameters or it can be one of the pre-defined strings which already have translations. The first
+{STRING}-code will always be replaced by the NewGRF name. The second {STRING}-code will be replaced by the value of 'extra_text'.
 <table class="t">
-<r><th>name <th>actual text<th> parameters
-<tr><td>REQUIRES_TTDPATCH <td>"%1 requires at least TTDPatch version %2"<td>#1: GRF name, #2: version string
-<tr><td>REQUIRES_DOS_WINDOWS <td>"%1 is for the %2 version of TTD.<td>#1: NewGRF name, #2: [DOS | Windows]
+<r><th>name <th>actual text<th>Contents of extra_text
+<tr><td>REQUIRES_TTDPATCH <td>"{STRING} requires at least TTDPatch version {STRING}"<td>version string
+<tr><td>REQUIRES_DOS_WINDOWS <td>"{STRING} is for the {STRING} version of TTD."<td>[DOS | Windows]
 Palette type
-<tr><td>USED_WITH <td>"%1 is designed to be used with %2<td>#1: NewGRF name, #2: Explanation of error or required parameters
-<tr><td>INVALID_PARAMETER <td>"Invalid parameter for %1: parameter %2 (value)"<td>#1: NewGRF name, #2: Parameter number. value is automatically
+<tr><td>USED_WITH <td>"{STRING} is designed to be used with {STRING}"<td>switchname + value, e.g. "multihead 0". This is designed to be used
+for incompatible settings that you can check via ttdpatch_flags.
+<tr><td>INVALID_PARAMETER <td>"Invalid parameter for {STRING}: parameter {STRING} ({PARAM})"<td>extra_text should be the parameter number written
+out as string. {PARAM} is replaced by parameter1.
 filled in.
-<tr><td>MUST_LOAD_BEFORE <td>"%1 must be loaded before %2."  <td>#1: NewGRF name, #2: NewGRF name
-<tr><td>MUST_LOAD_AFTER <td>"%1 must be loaded after %2."  <td>#1: NewGRF name, #2: NewGRF name
-<tr><td>REQUIRES_OPENTTD <td>"%1 requires OpenTTD version %2 or better."<td>#1: NewGRF name, #2: version string
-<tr><td>./.<td>(user-defined string)<td>Up to two parameters, if required by the string
+<tr><td>MUST_LOAD_BEFORE <td>"{STRING} must be loaded before {STRING}."<td>NewGRF name
+<tr><td>MUST_LOAD_AFTER <td>"{STRING} must be loaded after {STRING}."<td>NewGRF name
+<tr><td>REQUIRES_OPENTTD <td>"{STRING} requires OpenTTD version {STRING} or better."<td>version string
+<tr><td>./.<td>(user-defined string)<td>The message-string can use the code {STRING} up to 2 times, the first usage will be replaced by the
+NewGRF name and the second usage by 'extra_text'. After 2 {STRING}-codes you can include up to 2 {PARAM}-codes that will be replaced
+by the contents of parameter1 and parameter2.
 </table>
 
 For example:

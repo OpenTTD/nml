@@ -48,6 +48,7 @@ escapes = {
 'TINYFONT':       {'escape': r'\0E',    'num_params': 0},
 'BIGFONT':        {'escape': r'\0F',    'num_params': 0},
 'DWORD_S':        {'escape': r'\UE07B', 'num_params': 0},
+'PARAM':          {'escape': r'\UE07B', 'num_params': 0},
 'WORD_S':         {'escape': r'\UE07C', 'num_params': 0},
 'BYTE_S':         {'escape': r'\UE07D', 'num_params': 0},
 'WORD_U':         {'escape': r'\UE07E', 'num_params': 0},
