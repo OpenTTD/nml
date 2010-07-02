@@ -1,5 +1,5 @@
 import sys, os, codecs, optparse
-from nml import ast, generic, grfstrings, parser, version_info
+from nml import ast, generic, grfstrings, parser, version_info, output_nml
 from nml.actions import action2var, action8, sprite_count
 from output_nfo import OutputNFO
 
@@ -92,7 +92,7 @@ def main(argv):
     outputs = []
     if opts.grf_filename: outputs.append(get_output_grf()(opts.grf_filename, opts.compress, opts.crop))
     if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
-    nml_output = codecs.open(opts.nml_filename, 'w', 'utf-8') if opts.nml_filename else None
+    nml_output = output_nml.OutputNML(opts.nml_filename) if opts.nml_filename else None
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
@@ -135,7 +135,7 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
     if nml_output is not None:
         for b in result:
             nml_output.write(str(b))
-            nml_output.write('\n')
+            nml_output.newline()
 
     actions = []
     for block in result:
