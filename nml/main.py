@@ -102,11 +102,10 @@ def main(argv):
         else:
             print "Unknown output format %s" % outext
             sys.exit(2)
+
     ret = nml(input, opts.debug, outputs)
 
-    for output in outputs: output.close()
     input.close()
-
     sys.exit(ret)
 
 def filename_output_from_input(name, ext):
@@ -127,6 +126,8 @@ def nml(inputfile, output_debug, outputfiles):
 
     if output_debug > 0:
         ast.print_script(result, 0)
+
+    for outputfile in outputfiles: outputfile.open()
 
     for outputfile in outputfiles:
         if isinstance(outputfile, output_nml.OutputNML):
@@ -154,6 +155,9 @@ def nml(inputfile, output_debug, outputfiles):
         if isinstance(outputfile, output_base.OutputBase):
             for action in actions:
                 action.write(outputfile)
+
+    for outputfile in outputfiles: outputfile.close()
+
     return 0
 
 def run():

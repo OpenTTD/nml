@@ -8,9 +8,13 @@ from nml import generic
 class OutputGRF(OutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
         OutputBase.__init__(self)
-        self.file = open(filename, 'wb')
+        self.filename = filename
+        self.file = None
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
+
+    def open(self):
+        self.file = open(self.filename, 'wb')
 
     def close(self):
         assert not self._in_sprite

@@ -14,8 +14,6 @@ class OutputNML(object):
         self.filename = filename
         self.file = None
 
-        self.open()
-
     def open(self):
         self.file = codecs.open(self.filename, 'w', 'utf-8')
 
