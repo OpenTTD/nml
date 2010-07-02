@@ -1,5 +1,5 @@
 import sys, os, codecs, optparse
-from nml import ast, generic, grfstrings, parser, version_info, output_nml
+from nml import ast, generic, grfstrings, parser, version_info, output_base, output_nml
 from nml.actions import action2var, action8, sprite_count
 from output_nfo import OutputNFO
 
@@ -92,23 +92,19 @@ def main(argv):
     outputs = []
     if opts.grf_filename: outputs.append(get_output_grf()(opts.grf_filename, opts.compress, opts.crop))
     if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
-    nml_output = output_nml.OutputNML(opts.nml_filename) if opts.nml_filename else None
+    if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
         if outext == '.grf': outputs.append(get_output_grf()(output, opts.compress, opts.crop))
         elif outext == '.nfo': outputs.append(OutputNFO(output))
-        elif outext == '.nml':
-            print "Use --output-nml <file> to specify nml output"
-            sys.exit(2)
+        elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         else:
             print "Unknown output format %s" % outext
             sys.exit(2)
-    ret = nml(input, opts.debug, outputs, nml_output)
+    ret = nml(input, opts.debug, outputs)
 
     for output in outputs: output.close()
-    if nml_output is not None:
-        nml_output.close()
     input.close()
 
     sys.exit(ret)
@@ -116,7 +112,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, output_debug, outputfiles, nml_output):
+def nml(inputfile, output_debug, outputfiles):
     script = inputfile.read()
     if script.strip() == "":
         print "Empty input file"
@@ -132,10 +128,11 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
     if output_debug > 0:
         ast.print_script(result, 0)
 
-    if nml_output is not None:
-        for b in result:
-            nml_output.write(str(b))
-            nml_output.newline()
+    for outputfile in outputfiles:
+        if isinstance(outputfile, output_nml.OutputNML):
+            for b in result:
+                outputfile.write(str(b))
+                outputfile.newline()
 
     actions = []
     for block in result:
@@ -154,8 +151,9 @@ def nml(inputfile, output_debug, outputfiles, nml_output):
     for action in actions:
         action.prepare_output()
     for outputfile in outputfiles:
-        for action in actions:
-            action.write(outputfile)
+        if isinstance(outputfile, output_base.OutputBase):
+            for action in actions:
+                action.write(outputfile)
     return 0
 
 def run():
