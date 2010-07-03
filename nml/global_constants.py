@@ -137,7 +137,7 @@ constant_numbers = {
 
     #railtype flags
     'RAILTYPE_FLAG_CATANERY'          : 0x01,
-	'RAILTYPE_FLAG_NO_LEVEL_CROSSING' : 0x02, # for OpenTTD > r20049
+    'RAILTYPE_FLAG_NO_LEVEL_CROSSING' : 0x02, # for OpenTTD > r20049
 
     #type of default station graphics used for a railtype
     'RAILTYPE_STATION_NORMAL'   : 0,
