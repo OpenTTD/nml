@@ -829,7 +829,7 @@ Available cargo classes are:
 <tr><td>new_engine_text</td><td>         string</td><td></td></tr>
 <tr><td>compatible_railtype_list</td><td>list of railtype labels</td><td>e.g. ["RAIL", "ELRL", "MONO"]</td></tr>
 <tr><td>powered_railtype_list</td><td>   list of railtype labels</td><td></td></tr>
-<tr><td>railtype_flags</td><td>          RAILTYPE_FLAG_CATANERY</td><td></td></tr>
+<tr><td>railtype_flags</td><td>          RAILTYPE_FLAG_CATANERY | RAILTYPE_FLAG_NO_LEVEL_CROSSING (OpenTTD r20049)</td><td></td></tr>
 <tr><td>curve_speed_multiplier</td><td>  0...65525</td><td>max curve speed is defined as multiple of the base curve speed (see below)</td></tr>
 <tr><td>station graphics</td><td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV</td><td></td></tr>
 <tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track in GBP</td></tr>
@@ -909,7 +909,7 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <tr><td>num_vehs_in_consist <td>0 ... 255 <td>
 <tr><td>position_in_vehid_chain <td>0 ... 255 <td>
 <tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>
-<tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td>XXX: cargo_classes
+<tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td><a href="#property-cargos">cargo classes</a>
 <tr><td>most_common_refit <td><a href="#property-cargos">cargo class</a><td>cargo class most often refit to
 <tr><td>bitmask_consist_info <td>Bitmask 8 bit<td>OR of all bitmask_vehicle_info of all vehicles (engines, wagons) in the consist
 <tr><td>company_num <td>0 ... 15<td>company number of the vehicle owner. TTDPatch only supports up to 8 companies
