@@ -2,6 +2,16 @@ from nml import generic
 from nml.expression import ConstantNumeric, Array, StringLiteral
 
 class Action0Property(object):
+    """
+    @ivar num: Number of the property.
+    @type num: C{int}
+
+    @ivar value: Value of the property.
+    @type value: L{ConstantNumeric}
+
+    @ivar size: Size of the storage, in bytes.
+    @type size: C{int}
+    """
     def __init__(self, num, value, size):
         self.num = num
         self.value = value
