@@ -1,3 +1,5 @@
+from nml import generic
+
 raw_palette_data = [
 #DOS palette
 [
@@ -135,3 +137,13 @@ raw_palette_data = [
    253,   0, 253,    254,   0, 254,    255,   0, 255,    255, 255, 255
 ] #end of Windows palette
 ]
+
+#Convert palettes to strings for fast comparision
+palette_data = [''.join([chr(c) for c in pal]) for pal in raw_palette_data]
+
+def validate_palette(image, filename):
+    palette = image.palette.palette
+    if len(palette) != 768:
+        raise generic.ImageError("Invalid palette; does not contain 256 entries.", filename)
+    if palette not in palette_data:
+        raise generic.ImageError("Palette is not recognized as a valid palette.", filename)

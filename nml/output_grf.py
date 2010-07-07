@@ -2,7 +2,7 @@ from output_base import OutputBase
 import Image
 import os
 from lz77 import LZ77
-from nml import generic
+from nml import generic, palette
 
 
 class OutputGRF(OutputBase):
@@ -96,6 +96,7 @@ class OutputGRF(OutputBase):
         im = Image.open(filename.value)
         if im.mode != "P":
             raise generic.ImageError("image does not have a palette", filename)
+        palette.validate_palette(im, filename)
         x = sprite_info.xpos.value
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
