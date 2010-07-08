@@ -9,7 +9,7 @@ grf_strings = {}
 def get_translation(string, lang = DEFAULT_LANGUAGE):
     global grf_strings
     if string not in grf_strings:
-        raise generic.ScriptError('String "%s" is not translatable' % string)
+        raise generic.ScriptError('String "%s" does not exist in the translations.' % string)
     def_trans = None
     for translation in grf_strings[string]:
         if translation['lang'] == lang:
