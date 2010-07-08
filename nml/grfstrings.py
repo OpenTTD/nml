@@ -193,4 +193,4 @@ def read_lang_files(lang_dir):
                 break
         if not found:
             print "Warning: String %r is defined in languages %r, but not in the default language %s." \
-                    % (", ".join(hex(lang_dict['lang;']) for lang_dict in lang_dicts), hex(DEFAULT_LANGUAGE))
+                    % (strid, ", ".join(hex(lang_dict['lang;']) for lang_dict in lang_dicts), hex(DEFAULT_LANGUAGE))
