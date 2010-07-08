@@ -703,7 +703,7 @@ the file size cannot exceed 64KB.</p>
 <i>retire_early</i> may be negative.
 <tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; mutliplicator to the base cost</td></tr>
 <tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit set, entry into the cargo translation table<td>
+<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
 
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>SPRITE_ID_NEW_TRAIN</td><td>define base set spriteID to replace or this constant</td></tr>
@@ -749,7 +749,7 @@ the file size cannot exceed 64KB.</p>
 <i>retire_early</i> may be negative.
 <tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; mutliplicator to the base cost</td></tr>
 <tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit set, entry into the cargo translation table<td>
+<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
 
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr>
@@ -785,7 +785,7 @@ the file size cannot exceed 64KB.</p>
 <i>retire_early</i> may be negative.
 <tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; mutliplicator to the base cost</td></tr>
 <tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit set, entry into the cargo translation table<td>
+<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
 
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_SHIP <td> define base set spriteID to replace or this constant
@@ -820,7 +820,7 @@ the file size cannot exceed 64KB.</p>
 <i>retire_early</i> may be negative.
 <tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; mutliplicator to the base cost</td></tr>
 <tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit set, entry into the cargo translation table<td>
+<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
 
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_AIRCRAFT <td> define base set spriteID to replace or this constant
