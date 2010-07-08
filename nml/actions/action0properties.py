@@ -18,9 +18,11 @@ class Action0Property(object):
         self.size = size
 
         # Make sure the value fits in the size.
-        biggest = 1 << (8 * size)
-        if self.value.value >= biggest:
-            raise generic.ScriptError("Action 0 property too large", value.pos)
+        # Strings have their own check in parse_property
+        if not isinstance(self.value, StringLiteral):
+            biggest = 1 << (8 * size)
+            if self.value.value >= biggest:
+                raise generic.ScriptError("Action 0 property too large", value.pos)
 
     def write(self, file):
         file.print_bytex(self.num)
