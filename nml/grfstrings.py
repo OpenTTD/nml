@@ -1,6 +1,7 @@
 import os, codecs, re, glob
 from nml import generic
 
+# Mapping of stringID to list of dicts {'lang': language-code, 'text': text}
 grf_strings = {}
 
 def get_translation(string, lang = 0x7F):
@@ -161,15 +162,19 @@ def read_lang_files(lang_dir):
     """
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
         lang = -1
-        for line in codecs.open(filename, "r", "utf-8"):
+        for idx, line in enumerate(codecs.open(filename, "r", "utf-8")):
             line = line.strip()
             if len(line) == 0 or line[0] == "#":
                 pass
             elif line[:6] == "lang: ":
-                assert lang == -1, "Only one 'lang:' line allowed per language file"
+                if lang != -1:
+                    pos = generic.Position(filename, idx + 1)
+                    raise generic.ScriptError("Only one 'lang: ' line allowed per language file.", pos)
                 lang = int(line[6:8], 16)
             else:
-                assert lang != -1, "Language id not set"
+                if lang == -1:
+                    pos = generic.Position(filename, idx + 1)
+                    raise generic.ScriptError("Language ID ('lang: ') not set.", pos)
                 i = line.index(':')
                 name = line[:i].strip()
                 value = line[i+1:]
