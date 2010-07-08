@@ -92,11 +92,11 @@ class OutputGRF(OutputBase):
         self.print_byte(type)
         if type == 0xFF: self._byte_count -= 1
 
-    def print_sprite(self, filename, sprite_info):
-        im = Image.open(filename.value)
+    def print_sprite(self, sprite_info):
+        im = Image.open(sprite_info.file.value)
         if im.mode != "P":
-            raise generic.ImageError("image does not have a palette", filename)
-        palette.validate_palette(im, filename)
+            raise generic.ImageError("image does not have a palette", sprite_info.file)
+        palette.validate_palette(im, sprite_info.file)
         x = sprite_info.xpos.value
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value

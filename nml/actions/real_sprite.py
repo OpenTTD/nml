@@ -11,9 +11,8 @@ class RealSprite(object):
             param.debug_print(indentation + 2)
 
 class RealSpriteAction(object):
-    def __init__(self, sprite, pcx, last = False):
+    def __init__(self, sprite, last = False):
         self.sprite = sprite
-        self.pcx = pcx
         self.last = last
 
     def prepare_output(self):
@@ -24,7 +23,7 @@ class RealSpriteAction(object):
             file.print_empty_realsprite()
             if self.last: file.newline()
             return
-        file.print_sprite(self.pcx, self.sprite)
+        file.print_sprite(self.sprite)
         if self.last: file.newline()
 
     def skip_action7(self):
@@ -58,10 +57,10 @@ real_sprite_compression_flags = {
 }
 
 
-def parse_real_sprite(sprite, pcx, last, id_dict):
+def parse_real_sprite(sprite, default_file, last, id_dict):
     if len(sprite.param_list) == 0:
         sprite.is_empty = True
-        return RealSpriteAction(sprite, pcx, last)
+        return RealSpriteAction(sprite, last)
     elif not 6 <= len(sprite.param_list) <= 7:
         raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
     try:
@@ -90,10 +89,12 @@ def parse_real_sprite(sprite, pcx, last, id_dict):
         # only bits 0, 1, 3, and 6 can be set
         if (new_sprite.compression.value & ~0x4B) != 0:
             raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value))
+
+        new_sprite.file = default_file
     except generic.ConstError:
         raise generic.ScriptError("Real sprite parameters should be compile-time constants.")
 
-    return RealSpriteAction(new_sprite, pcx, last)
+    return RealSpriteAction(new_sprite, last)
 
 sprite_template_map = {}
 
