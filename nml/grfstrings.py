@@ -1,10 +1,12 @@
 import os, codecs, re, glob
 from nml import generic
 
+DEFAULT_LANGUAGE = 0x7F
+
 # Mapping of stringID to list of dicts {'lang': language-code, 'text': text}
 grf_strings = {}
 
-def get_translation(string, lang = 0x7F):
+def get_translation(string, lang = DEFAULT_LANGUAGE):
     global grf_strings
     if string not in grf_strings:
         raise generic.ScriptError('String "%s" is not translatable' % string)
@@ -12,7 +14,7 @@ def get_translation(string, lang = 0x7F):
     for translation in grf_strings[string]:
         if translation['lang'] == lang:
             return translation['text']
-        if translation['lang'] == 0x7F:
+        if translation['lang'] == DEFAULT_LANGUAGE:
             def_trans = translation['text']
     return def_trans
 
@@ -181,3 +183,14 @@ def read_lang_files(lang_dir):
                 if not name in grf_strings:
                     grf_strings[name] = []
                 grf_strings[name].append({'lang': lang, 'text': parse_grf_string(value)})
+
+    # Generate warnings for strings not in the default language.
+    for strid, lang_dicts in grf_strings.iteritems():
+        found = False
+        for lang_dict in lang_dicts:
+            if lang_dict['lang'] == DEFAULT_LANGUAGE:
+                found = True
+                break
+        if not found:
+            print "Warning: String %r is defined in languages %r, but not in the default language %s." \
+                    % (", ".join(hex(lang_dict['lang;']) for lang_dict in lang_dicts), hex(DEFAULT_LANGUAGE))
