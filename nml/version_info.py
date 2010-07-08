@@ -3,7 +3,7 @@
 # get_numeric_version is used only for the purpose of packet creation,
 # in all other cases use get_version()
 
-import subprocess, os, string, sys
+import subprocess, os, sys
 
 def get_hg_version():
     path = os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -15,8 +15,8 @@ def get_hg_version():
             modified = 'M'
         else:
             modified = ''
-        revision = string.rstrip(version_list[1],'+')
-        hash = string.rstrip(version_list[0],'+')
+        revision = version_list[1].rstrip('+')
+        hash = version_list[0].rstrip('+')
         # Test whether we have a tag (=release version)
         if len(version_list) > 2:
             if version_list[2] != 'tip':
