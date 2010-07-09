@@ -390,7 +390,7 @@ class Identifier(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         for id_dict in id_dicts:
-            id_d, func = (id_dict, lambda x, pos: ConstantNumeric(x, pos)) if not isinstance(id_dict, tuple) else id_dict
+            id_d, func = (id_dict, lambda x, pos: StringLiteral(x, pos) if isinstance(x, basestring) else ConstantNumeric(x, pos)) if not isinstance(id_dict, tuple) else id_dict
             if self.value in id_d:
                 return func(id_d[self.value], self.pos)
         if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
