@@ -1,6 +1,5 @@
 from nml import generic, expression
 from nml.actions import real_sprite
-import warnings
 
 class Action5(object):
     def __init__(self, type, num_sprites, offset):
@@ -92,7 +91,7 @@ def parse_action5(replaces):
         if num_sprites < num_required:
             raise generic.ScriptError("Invalid sprite count for sprite replacement type '%s', expcected %d, got %d" % (replaces.type, num_required, num_sprites), replaces.pos)
         elif num_sprites > num_required:
-            warnings.warn("Too many sprites specified for sprite replacement type '%s', expcected %d, got %d, extra sprites may be ignored" % (replaces.type, num_required, num_sprites), replaces.pos)
+            generic.print_warning("Too many sprites specified for sprite replacement type '%s', expcected %d, got %d, extra sprites may be ignored" % (replaces.type, num_required, num_sprites), replaces.pos)
         if offset != 0:
             raise generic.ScriptError("replacenew parameter 'offset' must be zero for sprite replacement type '%s'" % replaces.type, replaces.pos)
     elif block_type == Action5BlockType.ANY:
@@ -100,7 +99,7 @@ def parse_action5(replaces):
             raise generic.ScriptError("replacenew parameter 'offset' must be zero for sprite replacement type '%s'" % replaces.type, replaces.pos)
     elif block_type == Action5BlockType.OFFSET:
         if num_sprites + offset > num_required:
-            warnings.warn("Exceeding the limit of %d spriets for sprite replacement type '%s', extra sprites may be ignored" % (num_required, replaces.type), replaces.pos)
+            generic.print_warning("Exceeding the limit of %d spriets for sprite replacement type '%s', extra sprites may be ignored" % (num_required, replaces.type), replaces.pos)
     else:
         assert 0
 

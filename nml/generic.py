@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 
 def to_hex(value, width = 0):
     ret = hex(value)[2:].upper()
@@ -54,3 +55,17 @@ class RangeError(ScriptError):
 class ImageError(ScriptError):
     def __init__(self, value, filename):
         ScriptError.__init__(self, value, 'Image file "%s"' % filename)
+
+
+def print_warning(msg, pos = None):
+    """
+    Output a warning message to the user.
+    """
+    if pos is None:
+        text = msg
+    else:
+        text = str(pos) + ": " + msg
+
+    sys.stderr.write(text)
+    sys.stderr.write("\n")
+

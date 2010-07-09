@@ -112,7 +112,7 @@ def read_extra_commands(custom_tags_file):
             name = line[:i].strip()
             value = line[i+1:]
             if name in escapes:
-                print 'Warning: overwriting existing tag "' + name + '"'
+                generic.print_warning('Warning: overwriting existing tag "' + name + '"')
             escapes[name] = {'escape': value, 'num_params': 0}
 
 def parse_command(command):
@@ -192,5 +192,5 @@ def read_lang_files(lang_dir):
                 found = True
                 break
         if not found:
-            print "Warning: String %r is defined in languages %r, but not in the default language %s." \
-                    % (strid, ", ".join(hex(lang_dict['lang;']) for lang_dict in lang_dicts), hex(DEFAULT_LANGUAGE))
+            generic.print_warning("Warning: String %r is defined in language(s) %s, but not in the default language %s."
+                    % (strid, ", ".join(hex(lang_dict['lang']) for lang_dict in lang_dicts), hex(DEFAULT_LANGUAGE)))
