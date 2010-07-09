@@ -61,8 +61,8 @@ def parse_real_sprite(sprite, default_file, last, id_dict):
     if len(sprite.param_list) == 0:
         sprite.is_empty = True
         return RealSpriteAction(sprite, last)
-    elif not 6 <= len(sprite.param_list) <= 7:
-        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 6 or 7.")
+    elif not 6 <= len(sprite.param_list) <= 8:
+        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 6 to 8.")
     try:
         # create new sprite struct, needed for template expansion
         new_sprite = RealSprite()
@@ -90,7 +90,12 @@ def parse_real_sprite(sprite, default_file, last, id_dict):
         if (new_sprite.compression.value & ~0x4B) != 0:
             raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value))
 
-        new_sprite.file = default_file
+        if len(sprite.param_list) >= 8:
+            new_sprite.file= sprite.param_list[7].reduce([id_dict])
+            if not isinstance(new_sprite.file, expression.StringLiteral):
+                raise generic.ScriptError("Real sprite parameter 8 'file' should be a string literal")
+        else:
+            new_sprite.file = default_file
     except generic.ConstError:
         raise generic.ScriptError("Real sprite parameters should be compile-time constants.")
 
@@ -107,12 +112,12 @@ def expand_template(sprite, parameters = {}):
     if len(sprite.param_list) != len(template.param_list):
         raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(sprite.param_list)))
     param_dict = {}
-    try:
-        for i, param in enumerate(sprite.param_list):
-            param = param.reduce_constant([real_sprite_compression_flags, parameters])
-            param_dict[template.param_list[i].value] = param.value
-    except generic.ConstError:
-        raise generic.ScriptError("Template parameters should be compile-time constants")
+    for i, param in enumerate(sprite.param_list):
+        param = param.reduce([real_sprite_compression_flags, parameters])
+        if not isinstance(param, (expression.ConstantNumeric, expression.StringLiteral)):
+            raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
+        param_dict[template.param_list[i].value] = param.value
+
     for sprite in template.sprite_list:
         if isinstance(sprite, RealSprite):
             real_sprite_list.append((sprite, param_dict))
