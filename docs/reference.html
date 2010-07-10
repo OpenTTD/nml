@@ -50,6 +50,7 @@
 </ul>
 </li>
 <li><a href="#units">Units</a></li>
+<li><a href="#language-files">Language files</a></li>
 <li><a href="#properties">List of properties</a>
 <ul>
 	<li><a href="#property-trains">Trains</a></li>
@@ -683,6 +684,101 @@ frequencies: 11025 Hz and 22050 Hz. Due to some limitations of the NewGRF format
 the file size cannot exceed 64KB.</p>
 
 <h1><a name="units">Units</a></h1>
+
+<h1><a name="language-files">Language files</a></h1>
+Language files are usually found in the <code>lang</code> sub-folder of the 
+project, but the place NML looks for the language files can be changed via command 
+line parameter to any directory desired:
+<pre class="code">
+nml2nfo -l path/to/lang-dir path/to/nml-source-file.nml
+nml2nfo --lang-dir=path/to/lang-dir path/to/nml-source-file.nml
+</pre>
+Language files MUST have the extension <code>.lng</code><br>
+The language files themselves follow a certain structure:
+<pre class="exl">
+lang: &lt;number&gt;
+&lt;string-name&gt;                                                   :&lt;text&gt;
+&lt;string-name&gt;                                                   :&lt;text&gt;
+...
+</pre>
+where the first line must give the language code for the language this file
+describes (see below). The following lines each describe a string. The translated
+string follows immediately the colon. A NewGRF project must contain a language file
+for the default fallback language 7F.
+
+Example for a valid language file:
+<pre class="code">
+lang: 7F
+STR_GRF_NAME                                                    :Swedish Rails {VERSION}
+STR_GRF_DESCRIPTION                                             :Swedish rails are a graphical extension for rails.
+</pre>
+
+Strings may contain a number of special string codes which control how the string is being printed or which insert 
+values into the string. Custom replacements can be stored in the file <code>custom_tags.txt</code> (for example a
+newgrf version which is written by your build script).
+
+Valid language IDs are
+<table class="t">
+<tr><th>ID <th>language
+<tr><td>7F<td>default fallback
+<tr><td>00<td>American
+<tr><td>01<td>English
+<tr><td>02<td>German
+<tr><td>03<td>French
+<tr><td>04<td>Spanish
+<tr><td>05<td>Esperanto
+<tr><td>06<td>Ido
+<tr><td>07<td>Russian
+<tr><td>08<td>Irish
+<tr><td>09<td>Maltese
+<tr><td>0A<td>Tamil
+<tr><td>0B<td>Chuvash
+<tr><td>0C<td>Chinese (Traditional)
+<tr><td>0D<td>Serbian
+<tr><td>0E<td>Norwegian (Nynorsk)
+<tr><td>0F<td>Welsh
+<tr><td>14<td>Arabic (Egypt)
+<tr><td>15<td>Czech
+<tr><td>16<td>Slovak
+<tr><td>18<td>Bulgarian
+<tr><td>1B<td>Afrikaans
+<tr><td>1E<td>Greek
+<tr><td>1F<td>Dutch
+<tr><td>21<td>Basque
+<tr><td>22<td>Catalan
+<tr><td>23<td>Luxembourgish
+<tr><td>24<td>Hungarian
+<tr><td>26<td>Macedonian
+<tr><td>27<td>Italian
+<tr><td>28<td>Romanian
+<tr><td>29<td>Icelandic
+<tr><td>2A<td>Latvian
+<tr><td>2B<td>Lithuanian
+<tr><td>2C<td>Slovenian
+<tr><td>2D<td>Danish
+<tr><td>2E<td>Swedish
+<tr><td>2F<td>Norwegian (Bokmal)
+<tr><td>30<td>Polish
+<tr><td>31<td>Galician
+<tr><td>32<td>Frisian
+<tr><td>33<td>Ukrainian
+<tr><td>34<td>Estonian
+<tr><td>35<td>Finnish
+<tr><td>36<td>Portuguese
+<tr><td>37<td>Brazilian Portuguese
+<tr><td>38<td>Croatian
+<tr><td>39<td>Japanese
+<tr><td>3A<td>Korean
+<tr><td>3C<td>Malay
+<tr><td>3E<td>Turkish
+<tr><td>42<td>Thai
+<tr><td>54<td>Vietnamese
+<tr><td>56<td>Chinese (Simplified)
+<tr><td>5A<td>Indonesian
+<tr><td>5C<td>Urdu
+<tr><td>61<td>Hebrew
+<tr><td>62<td>Persian
+</table>
 
 <h1><a name="properties">List of properties</a></h1>
 <h2><a name="property-trains">Trains</a></h2>
