@@ -31,20 +31,23 @@ class Action1(object):
 
 class SpriteSet(object):
     def __init__(self, param_list, sprite_list, pos):
-        if len(param_list) != 2:
-            raise generic.ScriptError("Spriteset requires 2 parameters, encountered " + str(len(param_list)), pos)
+        if not (1 <= len(param_list) <= 2):
+            raise generic.ScriptError("Spriteset requires 1 or 2 parameters, encountered " + str(len(param_list)), pos)
         self.name = param_list[0]
         if not isinstance(self.name, expression.Identifier):
             raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", self.name.pos)
-        self.pcx = param_list[1].reduce()
-        if not isinstance(self.pcx, expression.StringLiteral):
-            raise generic.ScriptError("Spriteset-block parameter 2 'file' must be a string literal", self.pcx.pos)
+        if len(param_list) >= 2:
+            self.pcx = param_list[1].reduce()
+            if not isinstance(self.pcx, expression.StringLiteral):
+                raise generic.ScriptError("Spriteset-block parameter 2 'file' must be a string literal", self.pcx.pos)
+        else:
+            self.pcx = None
         self.sprite_list = sprite_list
         self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite set:', self.name.value
-        print (indentation+2)*' ' + 'Source:  ', self.pcx.value
+        print (indentation+2)*' ' + 'Source:  ', self.pcx.value if self.pcx is not None else 'None'
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)

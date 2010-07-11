@@ -94,8 +94,10 @@ def parse_real_sprite(sprite, default_file, last, id_dict):
             new_sprite.file= sprite.param_list[7].reduce([id_dict])
             if not isinstance(new_sprite.file, expression.StringLiteral):
                 raise generic.ScriptError("Real sprite parameter 8 'file' should be a string literal")
-        else:
+        elif default_file is not None:
             new_sprite.file = default_file
+        else:
+            raise generic.ScriptError("No image file specified for real sprite")
     except generic.ConstError:
         raise generic.ScriptError("Real sprite parameters should be compile-time constants.")
 
