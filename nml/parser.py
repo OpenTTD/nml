@@ -404,8 +404,8 @@ class NMLParser(object):
         else: t[0] = t[1] + [t[2]]
 
     def p_spriteset(self, t):
-        'spriteset : SPRITESET LPAREN ID COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = action1.SpriteSet(t[3], t[5], t[8], t.lineno(1))
+        'spriteset : SPRITESET LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
+        t[0] = action1.SpriteSet(t[3], t[6], t.lineno(1))
 
 
     def p_spritegroup_normal(self, t):

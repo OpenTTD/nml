@@ -1,4 +1,4 @@
-from nml import generic
+from nml import generic, expression
 from nml.actions import action2real, action2layout, real_sprite
 
 class Action1(object):
@@ -30,9 +30,15 @@ class Action1(object):
         return True
 
 class SpriteSet(object):
-    def __init__(self, name, pcx, sprite_list, pos):
-        self.name = name
-        self.pcx = pcx
+    def __init__(self, param_list, sprite_list, pos):
+        if len(param_list) != 2:
+            raise generic.ScriptError("Spriteset requires 2 parameters, encountered " + str(len(param_list)), pos)
+        self.name = param_list[0]
+        if not isinstance(self.name, expression.Identifier):
+            raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", self.name.pos)
+        self.pcx = param_list[1].reduce()
+        if not isinstance(self.pcx, expression.StringLiteral):
+            raise generic.ScriptError("Spriteset-block parameter 2 'file' must be a string literal", self.pcx.pos)
         self.sprite_list = sprite_list
         self.pos = pos
 
