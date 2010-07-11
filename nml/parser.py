@@ -385,8 +385,8 @@ class NMLParser(object):
         t[0] = ast.ReplaceNewSprite(t[3], t[6], t.lineno(0))
 
     def p_font_glyph(self, t):
-        'font_glyph : FONTGLYPH LPAREN expression COMMA expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = ast.FontGlyphBlock(t[3], t[5], t[7], t[10], t.lineno(1))
+        'font_glyph : FONTGLYPH LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
+        t[0] = ast.FontGlyphBlock(t[3], t[6], t.lineno(1))
 
     #
     # Sprite blocks and their contents

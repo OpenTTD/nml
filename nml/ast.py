@@ -495,10 +495,14 @@ class ReplaceNewSprite(object):
         return action5.parse_action5(self)
 
 class FontGlyphBlock(object):
-    def __init__(self, font_size, base_char, pcx, sprite_list, pos):
-        self.font_size = font_size
-        self.base_char = base_char
-        self.pcx = pcx
+    def __init__(self, param_list, sprite_list, pos):
+        if len(param_list) != 3:
+            raise generic.ScriptError("font_glpyh-block requires 3 parameters, encountered " + str(len(param_list)), pos)
+        self.font_size = param_list[0]
+        self.base_char = param_list[1]
+        self.pcx = param_list[2].reduce()
+        if not isinstance(self.pcx, expression.StringLiteral):
+            raise generic.ScriptError("font_glpyh-block parameter 3 'file' must be a string literal", self.pcx.pos)
         self.sprite_list = sprite_list
         self.pos = pos
 
