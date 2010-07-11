@@ -469,10 +469,17 @@ class ReplaceSprite(object):
         return actionA.parse_actionA(self)
 
 class ReplaceNewSprite(object):
-    def __init__(self, type, pcx, offset, sprite_list, pos):
-        self.type = type
-        self.pcx = pcx
-        self.offset = offset
+    def __init__(self, param_list, sprite_list, pos):
+        if not (2 <= len(param_list) <= 3):
+            raise generic.ScriptError("replacenew-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
+        self.type = param_list[0]
+        self.pcx = param_list[1].reduce()
+        if not isinstance(self.pcx, expression.StringLiteral):
+            raise generic.ScriptError("replace-block parameter 2 'file' must be a string literal", self.pcx.pos)
+        if len(param_list) >= 3:
+            self.offset = param_list[2]
+        else:
+            self.offset = expression.ConstantNumeric(0)
         self.sprite_list = sprite_list
         self.pos = pos
 
