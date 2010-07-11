@@ -448,9 +448,13 @@ class GraphicsDefinition(object):
         print (indentation+2)*' ' + 'Linked to action2:', self.action2_id.value
 
 class ReplaceSprite(object):
-    def __init__(self, start_id, pcx, sprite_list, pos):
-        self.start_id = start_id.reduce_constant()
-        self.pcx = pcx
+    def __init__(self, param_list, sprite_list, pos):
+        if len(param_list) != 2:
+            raise generic.ScriptError("replace-block requires 2 parameters, encountered " + str(len(param_list)), pos)
+        self.start_id = param_list[0].reduce_constant()
+        self.pcx = param_list[1].reduce()
+        if not isinstance(self.pcx, expression.StringLiteral):
+            raise generic.ScriptError("replace-block parameter 2 'file' must be a string literal", self.pcx.pos)
         self.sprite_list = sprite_list
         self.pos = pos
 

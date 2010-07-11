@@ -377,8 +377,8 @@ class NMLParser(object):
         else: t[0] = t[1] + [t[2]]
 
     def p_replace(self, t):
-        'replace : REPLACESPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = ast.ReplaceSprite(t[3], t[5], t[8], t.lineno(1))
+        'replace : REPLACESPRITE LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
+        t[0] = ast.ReplaceSprite(t[3], t[6], t.lineno(1))
 
     def p_replace_new(self, t):
         '''replace_new : REPLACENEWSPRITE LPAREN expression COMMA STRING_LITERAL RPAREN LBRACE spriteset_contents RBRACE
