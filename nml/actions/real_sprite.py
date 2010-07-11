@@ -81,7 +81,7 @@ def parse_real_sprite(sprite, default_file, last, id_dict):
         generic.check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'", new_sprite.xrel.pos)
         generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'", new_sprite.yrel.pos)
 
-        if len(sprite.param_list) == 7:
+        if len(sprite.param_list) >= 7:
             new_sprite.compression = sprite.param_list[6].reduce_constant([real_sprite_compression_flags, id_dict])
             new_sprite.compression.value |= 0x01
         else:
