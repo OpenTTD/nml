@@ -349,7 +349,7 @@ def parse_varaction2_expression(expr, varsize):
 def make_return_varact2(switch_block):
     act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89, 4)
     act.var_list = [VarAction2Var(0x1C, expression.ConstantNumeric(0), expression.ConstantNumeric(0xFFFFFFFF))]
-    act.default_result = expression.Identifier('CB_FAILED')
+    act.default_result = expression.Identifier('CB_FAILED', switch_block.pos)
     return act
 
 def parse_varaction2(switch_block):
@@ -382,7 +382,7 @@ def parse_varaction2(switch_block):
             act2 = action2.add_ref(return_action.name)
             assert return_action == act2
             varaction2.references.append(act2)
-            range_result = expression.Identifier(return_action.name)
+            range_result = expression.Identifier(return_action.name, switch_block.pos)
         elif isinstance(r.result, expression.Identifier):
             if r.result.value != 'CB_FAILED':
                 act2 = action2.add_ref(r.result.value)
@@ -428,16 +428,17 @@ def parse_varaction2(switch_block):
         varaction2.ranges.append(SwitchRange(range_min, range_max, range_result))
 
     default = switch_block.body.default
+    print default
     if default is None:
         if len(switch_block.body.ranges) == 0:
             #in this case, we can return with nvar == 0 without an extra action2
-            default = expression.Identifier('CB_FAILED')
+            default = expression.Identifier('CB_FAILED', switch_block.pos)
         else:
             if return_action is None: return_action = make_return_varact2(switch_block)
             act2 = action2.add_ref(return_action.name)
             assert act2 == return_action
             varaction2.references.append(act2)
-            default = expression.Identifier(return_action.name)
+            default = expression.Identifier(return_action.name, switch_block.pos)
     elif isinstance(default, expression.Identifier):
         if default.value != 'CB_FAILED':
             act2 = action2.add_ref(default.value)
