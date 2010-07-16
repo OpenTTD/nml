@@ -19,7 +19,7 @@ def get_hg_version():
         hash = version_list[0].rstrip('+')
         # Test whether we have a tag (=release version)
         if len(version_list) > 2 and version_list[2] != 'tip':
-			version = version_list[2]
+            version = version_list[2]
         else: # we have a trunk version
             version = 'r'+revision
         # Add modification tag and hash to the stored version info
