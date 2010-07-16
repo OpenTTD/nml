@@ -165,7 +165,7 @@ def run():
         main(sys.argv[1:])
 
     except generic.ScriptError, ex:
-        print >> sys.stderr, "NML: %s" % ex
+        print >> sys.stderr, "nmlc: %s" % ex
 
         if developmode: raise # Reraise exception in developmode
         sys.exit(1)
@@ -206,8 +206,8 @@ def run():
                    'cli' : sys.argv,
                    'loc' : 'File "%s", line %d, in %s' % (filename, lineno, name) }
 
-        msg = "NML: An internal error has occurred:\n" \
-              "NML-version: %(version)s\n" \
+        msg = "nmlc: An internal error has occurred:\n" \
+              "nmlc-version: %(version)s\n" \
               "Error:      (%(class)s) %(msg)s.\n" \
               "Command:    %(cli)s\n" \
               "Location:   %(loc)s\n" % ex_data
