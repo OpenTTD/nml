@@ -54,6 +54,7 @@ veh_vars = {
     'unpowered_electric_engine' : {'var': 0xFE, 'start': 6, 'size': 1},
     'vehicle_is_reversed' : {'var': 0xFE, 'start': 8, 'size': 1},
     'build_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
+    'current_railtype': {'var': 0x4A, 'start': 0, 'size': 8},
 }
 
 varact2vars_railtype = {
