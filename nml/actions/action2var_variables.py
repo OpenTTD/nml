@@ -52,7 +52,7 @@ veh_vars = {
     'refit_cycle' : {'var': 0xF2, 'start': 0, 'size': 8},
     'vehicle_is_powered' : {'var': 0xFE, 'start': 5, 'size': 1},
     'vehicle_is_not_powered' : {'var': 0xFE, 'start': 6, 'size': 1},
-    'vehicle_is_potentially_powered': {'var' 0x4A, 'start': 8, 'size': 1},
+    'vehicle_is_potentially_powered': {'var': 0x4A, 'start': 8, 'size': 1},
     'vehicle_is_reversed' : {'var': 0xFE, 'start': 8, 'size': 1},
     'build_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
     'current_railtype': {'var': 0x4A, 'start': 0, 'size': 8},
