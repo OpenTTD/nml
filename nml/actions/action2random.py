@@ -1,6 +1,5 @@
 from nml.actions import action2, action2var_variables
 from nml import generic, expression, global_constants, nmlop
-import nml.ast
 
 class Action2Random(action2.Action2):
     def __init__(self, feature, name, type_byte, count, triggers, randbit, nrand, choices):
@@ -258,7 +257,7 @@ def parse_randomswitch(random_switch):
         va2_range = expression.Identifier('SELF', pos)
         va2_name = expression.Identifier(random_switch.name.value, pos)
         va2_expr = expression.BinOp(nmlop.STO_TMP, count_expr, expression.ConstantNumeric(0x100))
-        va2_body = nml.ast.SwitchBody([], expression.Identifier(name, pos))
-        switch = nml.ast.Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, pos)
+        va2_body = nml.ast.switch.SwitchBody([], expression.Identifier(name, pos))
+        switch = nml.ast.switch.Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, pos)
         action_list.extend(switch.get_action_list())
     return action_list

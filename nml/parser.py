@@ -1,5 +1,6 @@
 import sys
 from nml import generic, ast, expression, tokens, nmlop
+from nml.ast import assignment, cargotable, conditional, deactivate, error, font, general, grf, item, loop, railtypetable, replace, spriteblock, spritecount, switch, townnames
 from actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -195,7 +196,7 @@ class NMLParser(object):
     def p_assignment(self, t):
         '''assignment : ID COLON string SEMICOLON
                       | ID COLON expression SEMICOLON'''
-        t[0] = ast.Assignment(t[1], t[3])
+        t[0] = assignment.Assignment(t[1], t[3])
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
@@ -232,11 +233,11 @@ class NMLParser(object):
     #
     def p_item(self, t):
         'item : ITEM LPAREN expression_list RPAREN LBRACE skipable_script RBRACE'
-        t[0] = ast.Item(t[3], t[6], t.lineno(1))
+        t[0] = item.Item(t[3], t[6], t.lineno(1))
 
     def p_property_block(self, t):
         'property_block : PROPERTY LBRACE property_list RBRACE'
-        t[0] = ast.PropertyBlock(t[3], t.lineno(1))
+        t[0] = item.PropertyBlock(t[3], t.lineno(1))
 
     def p_property_list(self, t):
         '''property_list : property_assignment
@@ -255,8 +256,8 @@ class NMLParser(object):
                                | NUMBER COLON array SEMICOLON'''
         name = t[1] if isinstance(t[1], expression.Identifier) else expression.ConstantNumeric(t[1])
         val = expression.Array(t[3], t[1].pos) if isinstance(t[3], list) else t[3]
-        unit = None if len(t) == 5 else ast.Unit(t[4])
-        t[0] = ast.Property(name, val, unit, t.lineno(1))
+        unit = None if len(t) == 5 else item.Unit(t[4])
+        t[0] = item.Property(name, val, unit, t.lineno(1))
 
     def p_graphics_block(self, t):
         'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
@@ -265,22 +266,22 @@ class NMLParser(object):
 
     def p_liveryoverride_block(self, t):
         'liveryoverride_block : LIVERYOVERRIDE LPAREN expression RPAREN LBRACE graphics_list RBRACE'
-        t[0] = ast.LiveryOverride(t[3], t[6], t.lineno(1))
+        t[0] = item.LiveryOverride(t[3], t[6], t.lineno(1))
 
     def p_graphics_list(self, t):
         '''graphics_list : graphics_assignment_list
                          | graphics_assignment_list ID SEMICOLON
                          | ID SEMICOLON'''
         if len(t) == 2:
-            t[0] = ast.GraphicsBlock(t[1], None)
+            t[0] = item.GraphicsBlock(t[1], None)
         elif len(t) == 4:
-            t[0] = ast.GraphicsBlock(t[1], t[2])
+            t[0] = item.GraphicsBlock(t[1], t[2])
         else:
-            t[0] = ast.GraphicsBlock([], t[1])
+            t[0] = item.GraphicsBlock([], t[1])
 
     def p_graphics_assignment(self, t):
         'graphics_assignment : expression COLON ID SEMICOLON'
-        t[0] = ast.GraphicsDefinition(t[1], t[3])
+        t[0] = item.GraphicsDefinition(t[1], t[3])
 
     def p_graphics_assignment_list(self, t):
         '''graphics_assignment_list : graphics_assignment
@@ -295,36 +296,36 @@ class NMLParser(object):
         '''conditional : if_else_parts
                        | if_else_parts ELSE LBRACE skipable_script RBRACE'''
         if len(t) > 2:
-            parts = t[1] + [ast.Conditional(None, t[4], None, t.lineno(2))]
+            parts = t[1] + [conditional.Conditional(None, t[4], None, t.lineno(2))]
         else:
             parts = t[1]
 
         last = None
         for part in parts:
             if last is None: t[0] = part
-            else: last.else_block = part
+            else: lelse_block = part
             last = part
 
     def p_if_else_parts(self, t):
         '''if_else_parts : IF LPAREN expression RPAREN LBRACE skipable_script RBRACE
                          | if_else_parts ELSE IF LPAREN expression RPAREN LBRACE skipable_script RBRACE'''
-        if len(t) == 8: t[0] = [ast.Conditional(t[3], t[6], None, t.lineno(1))]
-        else: t[0] = t[1] + [ast.Conditional(t[5], t[8], None, t.lineno(2))]
+        if len(t) == 8: t[0] = [conditional.Conditional(t[3], t[6], None, t.lineno(1))]
+        else: t[0] = t[1] + [conditional.Conditional(t[5], t[8], None, t.lineno(2))]
 
     def p_loop(self, t):
         'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'
-        t[0] = ast.Loop(t[3], t[6], t.lineno(1))
+        t[0] = loop.Loop(t[3], t[6], t.lineno(1))
 
     #
     # (Random) Switch block
     #
     def p_switch(self, t):
         'switch : SWITCH LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
-        t[0] = ast.Switch(t[3], t[5], t[7], t[9], t[12], t.lineno(1))
+        t[0] = switch.Switch(t[3], t[5], t[7], t[9], t[12], t.lineno(1))
 
     def p_switch_body(self, t):
         'switch_body : switch_ranges switch_value'
-        t[0] = ast.SwitchBody(t[1], t[2])
+        t[0] = switch.SwitchBody(t[1], t[2])
 
     def p_switch_ranges(self, t):
         '''switch_ranges :
@@ -345,7 +346,7 @@ class NMLParser(object):
 
     def p_random_switch(self, t):
         'random_switch : RANDOMSWITCH LPAREN expression_list RPAREN LBRACE random_body RBRACE'
-        t[0] = ast.RandomSwitch(t[3], t[6], t.lineno(1));
+        t[0] = switch.RandomSwitch(t[3], t[6], t.lineno(1));
 
     def p_random_body(self, t):
         '''random_body :
@@ -362,7 +363,7 @@ class NMLParser(object):
 
     def p_template_declaration(self, t):
         'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = ast.TemplateDeclaration(t[2], t[4], t[7], t.lineno(1))
+        t[0] = spriteblock.TemplateDeclaration(t[2], t[4], t[7], t.lineno(1))
 
     def p_template_usage(self, t):
         'template_usage : ID LPAREN expression_list RPAREN'
@@ -378,22 +379,22 @@ class NMLParser(object):
 
     def p_replace(self, t):
         'replace : REPLACESPRITE LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = ast.ReplaceSprite(t[3], t[6], t.lineno(1))
+        t[0] = replace.ReplaceSprite(t[3], t[6], t.lineno(1))
 
     def p_replace_new(self, t):
         'replace_new : REPLACENEWSPRITE LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = ast.ReplaceNewSprite(t[3], t[6], t.lineno(0))
+        t[0] = replace.ReplaceNewSprite(t[3], t[6], t.lineno(0))
 
     def p_font_glyph(self, t):
         'font_glyph : FONTGLYPH LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = ast.FontGlyphBlock(t[3], t[6], t.lineno(1))
+        t[0] = font.FontGlyphBlock(t[3], t[6], t.lineno(1))
 
     #
     # Sprite blocks and their contents
     #
     def p_spriteblock(self, t):
         'spriteblock : SPRITEBLOCK LPAREN expression RPAREN LBRACE spriteset_list RBRACE'
-        t[0] = ast.SpriteBlock(t[3], t[6], t.lineno(1))
+        t[0] = spriteblock.SpriteBlock(t[3], t[6], t.lineno(1))
 
     def p_spriteset_list(self, t):
         '''spriteset_list : spriteset
@@ -420,15 +421,15 @@ class NMLParser(object):
         '''spriteview_list : ID SEMICOLON
                            | spriteview
                            | spriteview_list spriteview'''
-        if isinstance(t[1], expression.Identifier): t[0] = [ast.SpriteView('default', [t[1]], t.lineno(1))]
+        if isinstance(t[1], expression.Identifier): t[0] = [spriteblock.SpriteView('default', [t[1]], t.lineno(1))]
         elif len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[2]]
 
     def p_spriteview(self, t):
         ''' spriteview : ID COLON id_array SEMICOLON
                        | ID COLON ID SEMICOLON'''
-        if isinstance(t[3], list): t[0] = ast.SpriteView(t[1], t[3], t.lineno(1))
-        else: t[0] = ast.SpriteView(t[1], [t[3]], t.lineno(1))
+        if isinstance(t[3], list): t[0] = spriteblock.SpriteView(t[1], t[3], t.lineno(1))
+        else: t[0] = spriteblock.SpriteView(t[1], [t[3]], t.lineno(1))
 
     def p_layout_sprite_list(self, t):
         '''layout_sprite_list : layout_sprite
@@ -440,7 +441,7 @@ class NMLParser(object):
         '''layout_sprite : GROUND LBRACE layout_param_list RBRACE
                          | BUILDING LBRACE layout_param_list RBRACE
                          | CHILDSPRITE LBRACE layout_param_list RBRACE'''
-        t[0] = ast.LayoutSprite(t[1], t[3], t.lineno(1))
+        t[0] = spriteblock.LayoutSprite(t[1], t[3], t.lineno(1))
 
     def p_layout_param_list(self, t):
         '''layout_param_list : layout_param
@@ -450,7 +451,7 @@ class NMLParser(object):
 
     def p_layout_param(self, t):
         'layout_param : ID COLON expression SEMICOLON'
-        t[0] = ast.LayoutParam(t[1], t[3], t.lineno(1))
+        t[0] = spriteblock.LayoutParam(t[1], t[3], t.lineno(1))
 
     #
     # Town names
@@ -458,8 +459,8 @@ class NMLParser(object):
     def p_town_names(self, t):
         '''town_names : TOWN_NAMES LPAREN expression RPAREN LBRACE town_names_param_list RBRACE
                       | TOWN_NAMES LBRACE town_names_param_list RBRACE'''
-        if len(t) == 8: t[0] = ast.TownNames(t[3], t[6], t.lineno(1))
-        else: t[0] = ast.TownNames(None, t[3], t.lineno(1))
+        if len(t) == 8: t[0] = townnames.TownNames(t[3], t[6], t.lineno(1))
+        else: t[0] = townnames.TownNames(None, t[3], t.lineno(1))
 
     def p_town_names_param_list(self, t):
         '''town_names_param_list : town_names_param
@@ -470,8 +471,8 @@ class NMLParser(object):
     def p_town_names_param(self, t):
         '''town_names_param : ID COLON string SEMICOLON
                             | LBRACE town_names_part_list RBRACE'''
-        if len(t) == 5: t[0] = ast.TownNamesParam(t[1], t[3], t.lineno(1))
-        else: t[0] = ast.TownNamesPart(t[2], t.lineno(1))
+        if len(t) == 5: t[0] = townnames.TownNamesParam(t[1], t[3], t.lineno(1))
+        else: t[0] = townnames.TownNamesPart(t[2], t.lineno(1))
 
     def p_town_names_part_list(self, t):
         '''town_names_part_list : town_names_part
@@ -482,8 +483,8 @@ class NMLParser(object):
     def p_town_names_part(self, t):
         '''town_names_part : TOWN_NAMES LPAREN expression COMMA expression RPAREN
                            | ID LPAREN STRING_LITERAL COMMA expression RPAREN'''
-        if t[1] == 'town_names': t[0] = ast.TownNamesEntryDefinition(t[3], t[5], t.lineno(1))
-        else: t[0] = ast.TownNamesEntryText(t[1], t[3], t[5], t.lineno(1))
+        if t[1] == 'town_names': t[0] = townnames.TownNamesEntryDefinition(t[3], t[5], t.lineno(1))
+        else: t[0] = townnames.TownNamesEntryText(t[1], t[3], t[5], t.lineno(1))
 
     #
     # Sounds
@@ -513,15 +514,15 @@ class NMLParser(object):
 
     def p_error_block(self, t):
         'error_block : ERROR LPAREN expression_list RPAREN SEMICOLON'
-        t[0] = ast.Error(t[3], t.lineno(1))
+        t[0] = error.Error(t[3], t.lineno(1))
 
     def p_cargotable(self, t):
         'cargotable : CARGOTABLE LBRACE cargotable_list RBRACE'
-        t[0] = ast.CargoTable(t[3], t.lineno(1))
+        t[0] = cargotable.CargoTable(t[3], t.lineno(1))
 
     def p_railtypetable(self, t):
         'railtype : RAILTYPETABLE LBRACE cargotable_list RBRACE'
-        t[0] = ast.RailtypeTable(t[3], t.lineno(1))
+        t[0] = railtypetable.RailtypeTable(t[3], t.lineno(1))
 
     def p_cargotable_list(self, t):
         '''cargotable_list : ID
@@ -534,10 +535,10 @@ class NMLParser(object):
 
     def p_deactivate(self, t):
         'deactivate : DEACTIVATE LPAREN expression_list RPAREN SEMICOLON'
-        t[0] = ast.DeactivateBlock(t[3], t.lineno(1))
+        t[0] = deactivate.DeactivateBlock(t[3], t.lineno(1))
 
     def p_grf_block(self, t):
         'grf_block : GRF LBRACE assignment_list RBRACE'
-        t[0] = ast.GRF(t[3], t.lineno(1))
+        t[0] = grf.GRF(t[3], t.lineno(1))
 
 

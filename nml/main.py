@@ -1,5 +1,5 @@
 import sys, os, codecs, optparse
-from nml import ast, generic, grfstrings, parser, version_info, output_base, output_nml
+from nml import generic, grfstrings, parser, version_info, output_base, output_nml
 from nml.actions import action2var, action8, sprite_count
 from output_nfo import OutputNFO
 
@@ -125,7 +125,7 @@ def nml(inputfile, output_debug, outputfiles):
         return 8
 
     if output_debug > 0:
-        ast.print_script(result, 0)
+        nml.ast.general.print_script(result, 0)
 
     for outputfile in outputfiles: outputfile.open()
 
