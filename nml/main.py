@@ -1,8 +1,7 @@
 import sys, os, codecs, optparse
-from nml import generic, grfstrings, parser, version_info, output_base, output_nml
+from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo
 from nml.actions import action2var, action8, sprite_count
 from nml.ast import general
-from output_nfo import OutputNFO
 
 developmode = False # Give 'nice' error message instead of a stack dump.
 
@@ -13,7 +12,7 @@ def get_output_grf():
     global OutputGRF
     if OutputGRF: return OutputGRF
     try:
-        from output_grf import OutputGRF
+        from nml.output_grf import OutputGRF
         return OutputGRF
     except ImportError:
         print "PIL (python-imaging) wasn't found, no support for writing grf files"
@@ -92,13 +91,13 @@ def main(argv):
 
     outputs = []
     if opts.grf_filename: outputs.append(get_output_grf()(opts.grf_filename, opts.compress, opts.crop))
-    if opts.nfo_filename: outputs.append(OutputNFO(opts.nfo_filename))
+    if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename))
     if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
         if outext == '.grf': outputs.append(get_output_grf()(output, opts.compress, opts.crop))
-        elif outext == '.nfo': outputs.append(OutputNFO(output))
+        elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output))
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         else:
             print "Unknown output format %s" % outext

@@ -1,13 +1,11 @@
-from output_base import OutputBase
 import Image
 import os
-from lz77 import LZ77
-from nml import generic, palette
+from nml import generic, palette, output_base, lz77
 
 
-class OutputGRF(OutputBase):
+class OutputGRF(output_base.OutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
-        OutputBase.__init__(self)
+        output_base.OutputBase.__init__(self)
         self.filename = filename
         self.file = None
         self.compress_grf = compress_grf
@@ -132,7 +130,7 @@ class OutputGRF(OutputBase):
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
         data_str = ''.join(chr(c) for c in data)
         if self.compress_grf:
-            lz = LZ77(data_str)
+            lz = lz77.LZ77(data_str)
             stream = lz.Encode()
         else:
             stream = self.fakecompress(data_str)

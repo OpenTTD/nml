@@ -1,4 +1,4 @@
-from nml import expression, generic
+from nml import generic
 from nml.actions import actionB
 
 class Error(object):

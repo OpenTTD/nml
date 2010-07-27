@@ -1,5 +1,5 @@
-from nml.actions import action2, action2var_variables
-from nml import generic, expression, global_constants, nmlop
+from nml.actions import action2
+from nml import generic, expression, global_constants
 
 class Action2Random(action2.Action2):
     def __init__(self, feature, name, type_byte, count, triggers, randbit, nrand, choices):

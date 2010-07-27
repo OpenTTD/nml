@@ -1,7 +1,6 @@
-import sys
-from nml import generic, ast, expression, tokens, nmlop
-from nml.ast import assignment, cargotable, conditional, deactivate, error, font, general, grf, item, loop, railtypetable, replace, spriteblock, spritecount, switch, townnames
-from actions import action1, action2var, action2random, actionD, action11, real_sprite
+from nml import generic, expression, tokens, nmlop
+from nml.ast import assignment, cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames
+from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
 class NMLParser(object):

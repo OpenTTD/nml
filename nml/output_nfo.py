@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-from nml import generic
-from output_base import OutputBase
 import codecs
-from nml import grfstrings
+from nml import generic, grfstrings, output_base
 
-class OutputNFO(OutputBase):
+class OutputNFO(output_base.OutputBase):
     def __init__(self, filename):
-        OutputBase.__init__(self)
+        output_base.OutputBase.__init__(self)
         self.sprite_num = 0
         self.file = None
         self.filename = filename
@@ -71,7 +69,7 @@ class OutputNFO(OutputBase):
         self.file.write("\n")
 
     def start_sprite(self, size, is_real_sprite = False):
-        OutputBase.start_sprite(self, size)
+        output_base.OutputBase.start_sprite(self, size)
         self.print_decimal(self.sprite_num, 2)
         self.sprite_num += 1
         if not is_real_sprite:

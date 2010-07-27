@@ -1,4 +1,3 @@
-import operator
 import datetime, calendar
 from nml import generic, nmlop
 
