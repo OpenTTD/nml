@@ -50,6 +50,10 @@
 </ul>
 </li>
 <li><a href="#units">Units</a></li>
+<li><a href="#expressions">Expressions</a></li>
+<ul>
+	<li><a href="#builtin-functions">Builtin functions</a></li>
+</ul>
 <li><a href="#language-files">Language files</a></li>
 <li><a href="#properties">List of properties</a>
 <ul>
@@ -684,6 +688,25 @@ frequencies: 11025 Hz and 22050 Hz. Due to some limitations of the NewGRF format
 the file size cannot exceed 64KB.</p>
 
 <h1><a name="units">Units</a></h1>
+
+<h1><a name="expressions">Expressions</a></h1>
+
+<h2><a name="builtin-functions">Builtin functions</a></h2>
+Available builtin functions are
+<table class="t">
+<tr><th>Function<th>Description
+<tr><td>min(<i>v1</i>, <i>v2</i>)<td>Return the smallest value
+<tr><td>max(<i>v1</i>, <i>v2</i>)<td>Return the biggest value
+<tr><td>date(<i>year</i>, <i>month</i>, <i>day</i>)<td>If all values are constants, returns the number of days since year 0. If the year is a variable, the month and day should be 1.
+<tr><td>bitmask(<i>bitpos1</i>, ...)<td>Compose an integer by switching the bits at the given positions on.
+<tr><td>STORE_TEMP(<i>value</v1>, <i>address</i>)<td>Store value in temporary storage
+<tr><td>STORE_PERM(<i>value</v1>, <i>address</i>)<td>Store value in permanent storage
+<tr><td>LOAD_TEMP(<i>address</i>)<td>Get value from temporary storage
+<tr><td>LOAD_PERM(<i>address</i>)<td>Get value from permanent storage
+<tr><td>hasbit(<i>v1</v1>, <i>v2</i>)<td>Test whether a bit in a value is on
+<tr><td>version_openttd(<i>major</i>, <i>minor</i>, <i>revision</i>[, <i>build</i>])<td>Return the constant representing an Openttd version
+</table>
+
 
 <h1><a name="language-files">Language files</a></h1>
 Language files are usually found in the <code>lang</code> sub-folder of the 
