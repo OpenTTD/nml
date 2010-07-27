@@ -56,8 +56,9 @@ def parse_property(feature, name, value, id, unit):
         prop = properties[feature][name.value]
     elif isinstance(name, expression.ConstantNumeric):
         for p in properties[feature]:
-            if 'num' not in p or p['num'] != name.value: continue
-            prop = p
+            pdata = properties[feature][p]
+            if 'num' not in pdata or pdata['num'] != name.value: continue
+            prop = pdata
         if prop is None: raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
     else: assert False
 
