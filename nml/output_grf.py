@@ -85,7 +85,7 @@ class OutputGRF(output_base.OutputBase):
     def start_sprite(self, size, type = 0xFF):
         #The compression byte (=type) is counted when *not* 0xFF
         size += (type != 0xFF)
-        OutputBase.start_sprite(self, size + 2)
+        output_base.OutputBase.start_sprite(self, size + 2)
         self.print_word(size)
         self.print_byte(type)
         if type == 0xFF: self._byte_count -= 1
