@@ -253,7 +253,7 @@ class NMLParser(object):
                                | NUMBER COLON expression UNIT SEMICOLON
                                | NUMBER COLON string SEMICOLON
                                | NUMBER COLON array SEMICOLON'''
-        name = t[1] if isinstance(t[1], expression.Identifier) else expression.ConstantNumeric(t[1])
+        name = t[1] if isinstance(t[1], expression.Identifier) else expression.ConstantNumeric(t[1], t.lineno(1))
         val = expression.Array(t[3], t[1].pos) if isinstance(t[3], list) else t[3]
         unit = None if len(t) == 5 else item.Unit(t[4])
         t[0] = item.Property(name, val, unit, t.lineno(1))
