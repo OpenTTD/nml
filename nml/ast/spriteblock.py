@@ -1,3 +1,4 @@
+from nml import generic, global_constants
 from nml.actions import action1, real_sprite
 from nml.ast import general
 
