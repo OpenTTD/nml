@@ -1,5 +1,5 @@
 from nml import expression, generic, global_constants, unit
-from nml.ast import conditional, general
+from nml.ast import conditional, loop, general
 from nml.actions import action0, action3
 
 def validate_item_block(block_list):
@@ -12,7 +12,7 @@ def validate_item_block(block_list):
                 validate_item_block(block.block)
                 block = block.else_block
             continue
-        if isinstance(block, Loop):
+        if isinstance(block, loop.Loop):
             validate_item_block(block.body)
             continue
         raise generic.ScriptError("Invalid block type inside 'Item'-block", block.pos)
