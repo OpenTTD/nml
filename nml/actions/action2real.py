@@ -41,7 +41,7 @@ def get_real_action2s(spritegroup, feature, spritesets):
 
     for view in spritegroup.spriteview_list:
         if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value, view.pos)
-        type, feature_list = real_action2_alias[view.name.value];
+        type, feature_list = real_action2_alias[view.name.value]
         #of course stations want to be different, their default view is the second type instead of the first
         if view.name.value == 'default' and feature is 0x04: type = 1
         if feature not in feature_list:

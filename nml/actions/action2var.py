@@ -167,7 +167,7 @@ class SwitchRange(object):
         print indentation*' ' + 'Result:'
         if isinstance(self.result, expression.Identifier):
             print (indentation+2)*' ' + 'Go to switch:'
-            self.result.debug_print(indentation + 4);
+            self.result.debug_print(indentation + 4)
         elif self.result is None:
             print (indentation+2)*' ' + 'Return computed value'
         else:

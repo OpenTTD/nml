@@ -148,7 +148,7 @@ class NMLParser(object):
                       | expression COMP_GE expression
                       | expression COMP_LT expression
                       | expression COMP_GT expression'''
-        t[0] = expression.BinOp(self.code_to_op[t[2]], t[1], t[3], t[1].pos);
+        t[0] = expression.BinOp(self.code_to_op[t[2]], t[1], t[3], t[1].pos)
 
     def p_binop_logical(self, t):
         '''expression : expression LOGICAL_AND expression
@@ -346,7 +346,7 @@ class NMLParser(object):
 
     def p_random_switch(self, t):
         'random_switch : RANDOMSWITCH LPAREN expression_list RPAREN LBRACE random_body RBRACE'
-        t[0] = switch.RandomSwitch(t[3], t[6], t.lineno(1));
+        t[0] = switch.RandomSwitch(t[3], t[6], t.lineno(1))
 
     def p_random_body(self, t):
         '''random_body :

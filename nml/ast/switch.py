@@ -45,7 +45,7 @@ class SwitchBody(object):
         print indentation*' ' + 'Default:'
         if isinstance(self.default, expression.Identifier):
             print (indentation+2)*' ' + 'Go to switch:'
-            self.default.debug_print(indentation + 4);
+            self.default.debug_print(indentation + 4)
         elif self.default is None:
             print (indentation+2)*' ' + 'Return computed value'
         else:

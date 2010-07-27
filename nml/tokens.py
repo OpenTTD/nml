@@ -135,7 +135,7 @@ class NMLLexer(object):
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z0-9_]*'
         if t.value in reserved: # Check for reserved words
-            t.type = reserved[t.value];
+            t.type = reserved[t.value]
         else:
             t.type = 'ID'
             t.value = expression.Identifier(t.value, t.lineno)

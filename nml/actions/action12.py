@@ -56,7 +56,7 @@ def parse_action12(font_glyphs):
     char = base_char.value
     last_char = char + len(real_sprite_list)
     if last_char > 0xFFFF:
-        raise generic.ScriptError("Character numbers in font_glyph block exceed the allowed range (0-0xFFFF)", font_glyphs.pos);
+        raise generic.ScriptError("Character numbers in font_glyph block exceed the allowed range (0-0xFFFF)", font_glyphs.pos)
 
     sets = []
     while char < last_char:

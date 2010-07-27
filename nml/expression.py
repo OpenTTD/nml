@@ -351,7 +351,7 @@ class FunctionCall(Expression):
             return val.reduce(id_dicts)
         else:
             if len(param_list) != 0:
-                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % self.name.value, self.pos);
+                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % self.name.value, self.pos)
             return Variable(ConstantNumeric(0x7E), param=self.name.value, pos = self.pos)
 
 class String(Expression):

@@ -56,7 +56,7 @@ class RandomChoice(object):
         print indentation*' ' + 'Result:'
         if isinstance(self.result, expression.Identifier):
             print (indentation+2)*' ' + 'Go to switch:'
-            self.result.debug_print(indentation + 4);
+            self.result.debug_print(indentation + 4)
         else:
             self.result.debug_print(indentation + 2)
 
