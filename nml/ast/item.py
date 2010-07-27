@@ -1,6 +1,5 @@
 from nml import expression, generic, global_constants, unit
-from nml.ast import conditional
-from nml.ast.general import feature_ids
+from nml.ast import conditional, general
 from nml.actions import action0, action3
 
 def validate_item_block(block_list):
@@ -25,7 +24,7 @@ class Item(object):
     def __init__(self, params, body, pos):
         self.pos = pos
         if len(params) >= 1:
-            self.feature = params[0].reduce_constant([feature_ids])
+            self.feature = params[0].reduce_constant([general.feature_ids])
         else:
             raise generic.ScriptError("Item block requires at least one parameter, got 0", self.pos)
         if len(params) > 3:

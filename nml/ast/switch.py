@@ -1,6 +1,6 @@
 from nml import expression, generic, global_constants
 from nml.actions import action2var, action2random
-from nml.ast.general import feature_ids
+from nml.ast import general
 
 var_ranges = {
     'SELF' : 0x89,
@@ -9,7 +9,7 @@ var_ranges = {
 
 class Switch(object):
     def __init__(self, feature, var_range, name, expr, body, pos):
-        self.feature = feature.reduce_constant([feature_ids])
+        self.feature = feature.reduce_constant([general.feature_ids])
         if var_range.value in var_ranges:
             self.var_range = var_ranges[var_range.value]
         else:
@@ -66,7 +66,7 @@ class RandomSwitch(object):
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         #feature
-        self.feature = param_list[0].reduce_constant([feature_ids])
+        self.feature = param_list[0].reduce_constant([general.feature_ids])
 
         #type
         self.type = param_list[1]
