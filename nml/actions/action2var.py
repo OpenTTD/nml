@@ -428,7 +428,7 @@ def parse_varaction2(switch_block):
         varaction2.ranges.append(SwitchRange(range_min, range_max, range_result))
 
     default = switch_block.body.default
-    print default
+
     if default is None:
         if len(switch_block.body.ranges) == 0:
             #in this case, we can return with nvar == 0 without an extra action2
