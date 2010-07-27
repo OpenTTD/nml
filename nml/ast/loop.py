@@ -1,4 +1,5 @@
 from nml.actions import action7
+from nml.ast import general
 
 class Loop(object):
     def __init__(self, expr, block, pos):
@@ -11,7 +12,7 @@ class Loop(object):
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Block:'
-        print_script(self.block, indentation + 4)
+        general.print_script(self.block, indentation + 4)
 
     def get_action_list(self):
         return action7.parse_loop_block(self)

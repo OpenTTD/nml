@@ -1,6 +1,7 @@
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_base, output_nml
 from nml.actions import action2var, action8, sprite_count
+from nml.ast import general
 from output_nfo import OutputNFO
 
 developmode = False # Give 'nice' error message instead of a stack dump.
@@ -125,7 +126,7 @@ def nml(inputfile, output_debug, outputfiles):
         return 8
 
     if output_debug > 0:
-        nml.ast.general.print_script(result, 0)
+        general.print_script(result, 0)
 
     for outputfile in outputfiles: outputfile.open()
 
