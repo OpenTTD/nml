@@ -18,9 +18,8 @@ version = version_info.get_and_write_version()
 setup(name='nml',
       version=version,
       description='A tool to compile nml files to grf or nfo files',
-      long_description =
-'''A tool to compile nml files to grf and / or nfo files. NML is a
-meta-language that aims to be a lot simpler to learn and use than nfo.''',
+      long_description = 'A tool to compile nml files to grf and / or nfo files.' \
+                         'NML is a meta-language that aims to be a lot simpler to learn and use than nfo.',
       license='GPLv2',
       classifiers = ['Development Status :: 2 - Pre-Alpha',
                      'Environment :: Console',
@@ -30,7 +29,7 @@ meta-language that aims to be a lot simpler to learn and use than nfo.''',
                      'Programming Language :: Python',
                      'Topic :: Software Development :: Compilers',
                      ],
-      packages=['nml','nml.actions'],
+      packages=['nml', 'nml.actions', 'nml.ast'],
       url='http://dev.openttdcoop.org/projects/nml',
       scripts=['nmlc'],
       )
