@@ -26,18 +26,6 @@ class TemplateDeclaration(object):
         self.pos = pos
 
     def pre_process(self):
-        pass
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Template declaration:', self.name.value
-        print (indentation+2)*' ' + 'Parameters:'
-        for param in self.param_list:
-            param.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Sprites:'
-        for sprite in self.sprite_list:
-            sprite.debug_print(indentation + 4)
-
-    def get_action_list(self):
         #check that all templates that are referred to exist at this point
         #This prevents circular dependencies
         for sprite in self.sprite_list:
@@ -51,6 +39,17 @@ class TemplateDeclaration(object):
             real_sprite.sprite_template_map[self.name.value] = self
         else:
             raise generic.ScriptError("Template named '%s' is already defined, first definition at %s" % (self.name.value, real_sprite.sprite_template_map[self.name.value].pos), self.pos)
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Template declaration:', self.name.value
+        print (indentation+2)*' ' + 'Parameters:'
+        for param in self.param_list:
+            param.debug_print(indentation + 4)
+        print (indentation+2)*' ' + 'Sprites:'
+        for sprite in self.sprite_list:
+            sprite.debug_print(indentation + 4)
+
+    def get_action_list(self):
         return []
 
 
