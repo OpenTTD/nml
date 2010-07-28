@@ -467,6 +467,33 @@ def builtin_date(name, args, pos):
     date = datetime.date(year.value, month, day)
     return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + date.timetuple().tm_yday - 1, pos)
 
+def builtin_day_of_year(name, args, pos):
+    """
+    day_of_year(month, day) builtin function.
+
+    @return Day of the year, assuming February has 28 days.
+    """
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have a month and a day parameter", pos)
+
+    month = args[0].reduce()
+    if not isinstance(month, ConstantNumeric):
+        raise generic.ScriptError('Month should be a compile-time constant.', month.pos)
+    if month.value < 1 or month.value > 12:
+        raise generic.ScriptError('Month should be a value between 1 and 12.', month.pos)
+
+    day = args[0].reduce()
+    if not isinstance(day, ConstantNumeric):
+        raise generic.ScriptError('Day should be a compile-time constant.', day.pos)
+
+    #: Mapping of month to number of days in that month.
+    number_days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
+    if day.value < 1 or day.value > number_days[month.value]:
+        raise generic.ScriptError('Day should be value between 1 and %d.' % number_days[month.value], day.pos)
+
+    return ConstantNumeric(datetime.date(1, month.value, day.value).toordinal(), pos)
+
+
 def builtin_store(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
@@ -497,6 +524,7 @@ function_table = {
     'min' : builtin_min,
     'max' : builtin_max,
     'date' : builtin_date,
+    'day_of_year' : builtin_day_of_year,
     'bitmask' : lambda name, args, pos: BitMask(args, pos),
     'STORE_TEMP' : builtin_store,
     'STORE_PERM' : builtin_store,

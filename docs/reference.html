@@ -711,6 +711,8 @@ Available builtin functions are
 <tr><td>min(<i>v1</i>, <i>v2</i>)<td>Return the smallest value
 <tr><td>max(<i>v1</i>, <i>v2</i>)<td>Return the biggest value
 <tr><td>date(<i>year</i>, <i>month</i>, <i>day</i>)<td>If all values are constants, returns the number of days since year 0. If the year is a variable, the month and day should be 1.
+<tr><td>day_of_year(<i>month</i>, <i>day</i>)<td>Return the day of the year
+since January 1st. Both values must be compile-time constants.
 <tr><td>bitmask(<i>bitpos1</i>, ...)<td>Compose an integer by switching the bits at the given positions on.
 <tr><td>STORE_TEMP(<i>value</v1>, <i>address</i>)<td>Store value in temporary storage
 <tr><td>STORE_PERM(<i>value</v1>, <i>address</i>)<td>Store value in permanent storage
