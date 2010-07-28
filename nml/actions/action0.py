@@ -165,3 +165,26 @@ def get_railtypelist_action(railtype_list):
     action0.prop_list.append(IDListProp(0x12, railtype_list))
     action0.num_ids = len(railtype_list)
     return [action0]
+
+class ByteListProp(object):
+    def __init__(self, prop_num, data):
+        self.prop_num = prop_num
+        self.data = data
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        file.newline()
+        for i in range(0, len(self.data)):
+            if i > 0 and i % 8 == 0: file.newline()
+            file.print_bytex(ord(self.data[i]))
+        file.newline()
+
+    def get_size(self):
+        return len(self.data) + 1
+
+def get_snowlinetable_action(snowline_table):
+    assert(len(snowline_table) == 12*32);
+    action0 = Action0(0x08, 0)
+    action0.prop_list.append(ByteListProp(0x10, snowline_table))
+    action0.num_ids = 1
+    return [action0]
