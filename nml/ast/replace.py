@@ -47,6 +47,9 @@ class ReplaceNewSprite(object):
         self.sprite_list = sprite_list
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites for new features of type', self.type
         print (indentation+2)*' ' + 'Offset:  ', self.offset
