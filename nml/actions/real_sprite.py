@@ -47,6 +47,27 @@ class TemplateUsage(object):
         for param in self.param_list:
             param.debug_print(indentation + 4)
 
+    def expand(self, parameters = []):
+        real_sprite_list = []
+        if self.name.value not in sprite_template_map:
+            raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value)
+        template = sprite_template_map[self.name.value]
+        if len(self.param_list) != len(template.param_list):
+            raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(self.param_list)))
+        param_dict = {}
+        for i, param in enumerate(self.param_list):
+            param = param.reduce([real_sprite_compression_flags, parameters])
+            if not isinstance(param, (expression.ConstantNumeric, expression.StringLiteral)):
+                raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
+            param_dict[template.param_list[i].value] = param.value
+
+        for sprite in template.sprite_list:
+            if isinstance(sprite, RealSprite):
+                real_sprite_list.append((sprite, param_dict))
+            else:
+                real_sprite_list.extend(sprite.expand(param_dict))
+        return real_sprite_list
+
 real_sprite_compression_flags = {
     'NORMAL'       : 0x00,
     'TILE'         : 0x08,
@@ -91,7 +112,7 @@ def parse_real_sprite(sprite, default_file, last, id_dict):
             raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value))
 
         if len(sprite.param_list) >= 8:
-            new_sprite.file= sprite.param_list[7].reduce([id_dict])
+            new_sprite.file = sprite.param_list[7].reduce([id_dict])
             if not isinstance(new_sprite.file, expression.StringLiteral):
                 raise generic.ScriptError("Real sprite parameter 8 'file' should be a string literal")
         elif default_file is not None:
@@ -105,33 +126,11 @@ def parse_real_sprite(sprite, default_file, last, id_dict):
 
 sprite_template_map = {}
 
-def expand_template(sprite, parameters = {}):
-    real_sprite_list = []
-    assert isinstance(sprite, TemplateUsage)
-    if sprite.name.value not in sprite_template_map:
-        raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value)
-    template = sprite_template_map[sprite.name.value]
-    if len(sprite.param_list) != len(template.param_list):
-        raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(sprite.param_list)))
-    param_dict = {}
-    for i, param in enumerate(sprite.param_list):
-        param = param.reduce([real_sprite_compression_flags, parameters])
-        if not isinstance(param, (expression.ConstantNumeric, expression.StringLiteral)):
-            raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
-        param_dict[template.param_list[i].value] = param.value
-
-    for sprite in template.sprite_list:
-        if isinstance(sprite, RealSprite):
-            real_sprite_list.append((sprite, param_dict))
-        else:
-            real_sprite_list.extend(expand_template(sprite, param_dict))
-    return real_sprite_list
-
 def parse_sprite_list(sprite_list):
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
             real_sprite_list.append((sprite, {}))
         else:
-            real_sprite_list.extend(expand_template(sprite))
+            real_sprite_list.extend(sprite.expand())
     return real_sprite_list
