@@ -42,7 +42,7 @@ rename .tar.gz .src.tar.gz dist/*
 
 %check
 cd regression
-make 1>%{name}-%{version}-build.test.log 2>&1
+make NMLC=nmlc 1>%{name}-%{version}-build.test.log 2>&1
 
 %files -f INSTALLED_FILES 
 %defattr(-,root,root,-)
