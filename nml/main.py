@@ -130,6 +130,9 @@ def nml(inputfile, output_debug, outputfiles):
                 outputfile.write(str(b))
                 outputfile.newline()
 
+    for block in result:
+        block.pre_process()
+
     actions = []
     for block in result:
         actions.extend(block.get_action_list())

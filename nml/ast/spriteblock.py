@@ -8,6 +8,9 @@ class SpriteBlock(object):
         self.spriteset_list = spriteset_list
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite block, feature', hex(self.feature.value)
         for spriteset in self.spriteset_list:
@@ -21,6 +24,9 @@ class TemplateDeclaration(object):
         self.param_list = param_list
         self.sprite_list = sprite_list
         self.pos = pos
+
+    def pre_process(self):
+        pass
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Template declaration:', self.name.value

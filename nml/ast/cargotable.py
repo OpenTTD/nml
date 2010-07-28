@@ -8,6 +8,9 @@ class CargoTable(object):
         for i, cargo in enumerate(cargo_list):
             global_constants.cargo_numbers[cargo.value] = i
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Cargo table'
         for cargo in self.cargo_list:

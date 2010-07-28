@@ -16,6 +16,9 @@ class ReplaceSprite(object):
         self.sprite_list = sprite_list
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites starting at', self.start_id
         print (indentation+2)*' ' + 'Source:', self.pcx.value if self.pcx is not None else 'None'

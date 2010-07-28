@@ -55,6 +55,9 @@ class Item(object):
         self.body = body
         validate_item_block(body)
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Item, feature', hex(self.feature.value)
         for b in self.body: b.debug_print(indentation + 2)

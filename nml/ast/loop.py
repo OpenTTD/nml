@@ -7,6 +7,9 @@ class Loop(object):
         self.block = block
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'While loop'
         print (2+indentation)*' ' + 'Expression:'

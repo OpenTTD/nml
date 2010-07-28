@@ -16,6 +16,9 @@ class FontGlyphBlock(object):
         self.sprite_list = sprite_list
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Load font glyphs, starting at', self.base_char
         print (indentation+2)*' ' + 'Font size:  ', self.font_size

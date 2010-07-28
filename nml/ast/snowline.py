@@ -25,6 +25,9 @@ class Snowline(object):
             self.type = SnowlineType('equal', None)
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Snowline (type=%s)' % self.type.type
         for dh in self.date_heights:

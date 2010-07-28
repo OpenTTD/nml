@@ -8,6 +8,9 @@ class RailtypeTable(object):
         for i, railtype in enumerate(railtype_list):
             global_constants.railtype_table[railtype.value] = i
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Railtype table'
         for railtype in self.railtype_list:

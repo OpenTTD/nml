@@ -18,6 +18,9 @@ class GRF(object):
             elif assignment.name.value == "grfid": self.grfid = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
         if self.grfid is not None:

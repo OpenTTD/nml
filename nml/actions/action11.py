@@ -29,6 +29,9 @@ class Action11(object):
     def skip_needed(self):
         return True
 
+    def pre_process(self):
+        pass
+
     def get_action_list(self):
         return [self] + self.sounds
 

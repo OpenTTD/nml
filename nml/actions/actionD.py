@@ -40,6 +40,9 @@ class ParameterAssignment(object):
         self.param = param
         self.value = value.reduce(global_constants.const_list)
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
         self.param.debug_print(indentation + 2)

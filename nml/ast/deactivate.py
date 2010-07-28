@@ -5,6 +5,9 @@ class DeactivateBlock(object):
         self.grfid_list = [grfid.reduce() for grfid in grfid_list]
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Deactivate other newgrfs:'
         for grfid in self.grfid_list:

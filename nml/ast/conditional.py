@@ -11,6 +11,9 @@ class Conditional(object):
         self.else_block = else_block
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Conditional'
         if self.expr is not None:

@@ -19,6 +19,9 @@ class Switch(object):
         self.body = body
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
         print (2+indentation)*' ' + 'Expression:'
@@ -101,6 +104,9 @@ class RandomSwitch(object):
                     assert 0, "NOT REACHED"
             self.choices.append(choice)
         self.pos = pos
+
+    def pre_process(self):
+        pass
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Random'

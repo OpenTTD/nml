@@ -135,6 +135,8 @@ class TownNames(object):
             part.write(file)
             file.newline()
 
+    def pre_process(self):
+        pass
 
     def debug_print(self, indentation):
         if isinstance(self.name, basestring):

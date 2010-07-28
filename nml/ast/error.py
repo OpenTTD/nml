@@ -13,6 +13,9 @@ class Error(object):
         self.params.append(param_list[3].reduce() if len(param_list) >= 4 else None)
         self.params.append(param_list[4].reduce() if len(param_list) >= 5 else None)
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Error message'
         print (indentation+2)*' ' + 'Message:'
