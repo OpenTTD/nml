@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames
+from nml.ast import assignment, cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames, snowline
 from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -52,6 +52,7 @@ class NMLParser(object):
                       | template_declaration
                       | town_names
                       | sounds
+                      | snowline
                       | cargotable
                       | railtype'''
         t[0] = t[1]
@@ -503,6 +504,29 @@ class NMLParser(object):
                  | IMPORT_SOUND LPAREN expression COMMA expression RPAREN SEMICOLON'''
         if len(t) == 6: t[0] = action11.LoadBinaryFile(t[3], t.lineno(1))
         else: t[0] = action11.ImportSound(t[3], t[5], t.lineno(1))
+
+    #
+    # Snow line
+    #
+    def p_snowline(self, t):
+        """snowline : SNOWLINE LBRACE snowlinedates RBRACE"""
+        t[0] = snowline.Snowline(t[3], t.lineno(1))
+
+    def p_snowlinedates(self, t):
+        """snowlinedates : snowlinedate
+                         | snowlinedates COMMA snowlinedate"""
+        if len(t) == 2:
+            t[0] = t[1]
+        else:
+            t[0] = (t[1][0] + t[3][0], t[1][1] + t[3][1])
+
+    def p_snowlinedate(self, t):
+        """snowlinedate : expression COLON expression
+                        | ID"""
+        if len(t) == 2:
+            t[0] = ([], [snowline.SnowlineType(t[1], t.lineno(1))])
+        else:
+            t[0] = ([snowline.SnowDateHeight(t[1], t[3], t.lineno(1))], [])
 
     #
     # Various misc. main script blocks that don't belong anywhere else
