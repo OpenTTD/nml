@@ -117,12 +117,7 @@ def nml(inputfile, output_debug, outputfiles):
         print "Empty input file"
         return 4
     nml_parser = parser.NMLParser()
-    try:
-        result = nml_parser.parse(script)
-    except:
-        print "Error while parsing input file"
-        raise
-        return 8
+    result = nml_parser.parse(script)
 
     if output_debug > 0:
         general.print_script(result, 0)
@@ -165,7 +160,7 @@ def run():
         main(sys.argv[1:])
 
     except generic.ScriptError, ex:
-        print >> sys.stderr, "nmlc: %s" % ex
+        print >> sys.stderr, "nmlc: %s" % str(ex)
 
         if developmode: raise # Reraise exception in developmode
         sys.exit(1)
