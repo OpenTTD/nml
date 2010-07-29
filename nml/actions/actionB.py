@@ -69,7 +69,7 @@ error_severity = {
 
 def parse_error_block(error):
     global default_error_msg
-    free_parameters_backup = action6.free_parameters[:]
+    action6.free_parameters.save()
     action_list = []
     act6 = action6.Action6()
 
@@ -123,5 +123,5 @@ def parse_error_block(error):
         if len(act6.modifications) > 0: action_list.append(act6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 
-    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
+    action6.free_parameters.restore()
     return action_list

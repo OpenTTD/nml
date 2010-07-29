@@ -87,7 +87,7 @@ def parse_actionD(assignment):
         expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(1), assignment.value.expr)
         return parse_actionD(ParameterAssignment(assignment.param, expr))
 
-    free_parameters_backup = action6.free_parameters[:]
+    action6.free_parameters.save()
     action_list = []
     act6 = action6.Action6()
     target = assignment.param
@@ -190,5 +190,5 @@ def parse_actionD(assignment):
     if len(act6.modifications) > 0: action_list.append(act6)
 
     action_list.append(ActionD(target, param1, op, param2, data))
-    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
+    action6.free_parameters.restore()
     return action_list

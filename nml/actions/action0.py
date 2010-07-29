@@ -109,7 +109,7 @@ def parse_property(feature, name, value, id, unit):
     return (props, action_list, mods, action_list_append)
 
 def parse_property_block(prop_list, feature, id):
-    free_parameters_backup = action6.free_parameters[:]
+    action6.free_parameters.save()
     action_list = []
     action_list_append = []
     act6 = action6.Action6()
@@ -136,7 +136,7 @@ def parse_property_block(prop_list, feature, id):
     action_list.append(action0)
     action_list.extend(action_list_append)
 
-    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
+    action6.free_parameters.restore()
     return action_list
 
 class IDListProp(object):

@@ -1,5 +1,6 @@
-free_parameters = range(0x40, 0x80)
-free_parameters.reverse()
+from nml import free_number_list
+
+free_parameters = free_number_list.FreeNumberList(range(0x7F, 0x3F, -1))
 
 class Action6(object):
     def __init__(self):
@@ -34,7 +35,3 @@ class Action6(object):
 
     def skip_needed(self):
         return True
-
-def reset_free_parameters(free_params):
-    global free_parameters
-    free_parameters = free_params

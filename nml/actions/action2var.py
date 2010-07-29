@@ -353,7 +353,7 @@ def make_return_varact2(switch_block):
     return act
 
 def parse_varaction2(switch_block):
-    free_parameters_backup = action6.free_parameters[:]
+    action6.free_parameters.save()
     act6 = action6.Action6()
     return_action = None
     varsize = 4
@@ -461,5 +461,5 @@ def parse_varaction2(switch_block):
     action_list.append(varaction2)
     if return_action is not None: action_list.insert(0, return_action)
 
-    action6.free_parameters.extend([item for item in free_parameters_backup if not item in action6.free_parameters])
+    action6.free_parameters.restore()
     return action_list
