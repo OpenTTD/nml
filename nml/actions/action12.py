@@ -28,8 +28,6 @@ font_sizes = {
 }
 
 def parse_action12(font_glyphs):
-    action_list = []
-
     try:
         font_size = font_glyphs.font_size.reduce_constant([font_sizes])
         base_char = font_glyphs.base_char.reduce_constant()
@@ -40,7 +38,7 @@ def parse_action12(font_glyphs):
     if not (0 <= base_char.value <= 0xFFFF):
         raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF", base_char.pos)
 
-    real_sprite_list = real_sprite.parse_sprite_list(font_glyphs.sprite_list)
+    real_sprite_list = real_sprite.parse_sprite_list(font_glyphs.sprite_list, font_glyphs.pcx)
     char = base_char.value
     last_char = char + len(real_sprite_list)
     if last_char > 0xFFFF:
@@ -56,10 +54,4 @@ def parse_action12(font_glyphs):
         sets.append((font_size, num_in_set, char))
         char += num_in_set
 
-    action_list.append(Action12(sets))
-
-    last_sprite = real_sprite_list[-1][0]
-    for sprite, id_dict in real_sprite_list:
-        action_list.append(real_sprite.parse_real_sprite(sprite, font_glyphs.pcx, sprite == last_sprite, id_dict))
-
-    return action_list
+    return [Action12(sets)] + real_sprite_list

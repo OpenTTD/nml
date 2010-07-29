@@ -11,9 +11,9 @@ class RealSprite(object):
             param.debug_print(indentation + 2)
 
 class RealSpriteAction(object):
-    def __init__(self, sprite, last = False):
+    def __init__(self, sprite):
         self.sprite = sprite
-        self.last = last
+        self.last = False
 
     def prepare_output(self):
         pass
@@ -21,9 +21,8 @@ class RealSpriteAction(object):
     def write(self, file):
         if self.sprite.is_empty:
             file.print_empty_realsprite()
-            if self.last: file.newline()
-            return
-        file.print_sprite(self.sprite)
+        else:
+            file.print_sprite(self.sprite)
         if self.last: file.newline()
 
     def skip_action7(self):
@@ -47,7 +46,7 @@ class TemplateUsage(object):
         for param in self.param_list:
             param.debug_print(indentation + 4)
 
-    def expand(self, parameters = []):
+    def expand(self, default_file, parameters = {}):
         real_sprite_list = []
         if self.name.value not in sprite_template_map:
             raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value)
@@ -61,11 +60,7 @@ class TemplateUsage(object):
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
 
-        for sprite in template.sprite_list:
-            if isinstance(sprite, RealSprite):
-                real_sprite_list.append((sprite, param_dict))
-            else:
-                real_sprite_list.extend(sprite.expand(param_dict))
+        real_sprite_list.extend(parse_sprite_list(template.sprite_list, default_file, param_dict, False))
         return real_sprite_list
 
 real_sprite_compression_flags = {
@@ -78,10 +73,10 @@ real_sprite_compression_flags = {
 }
 
 
-def parse_real_sprite(sprite, default_file, last, id_dict):
+def parse_real_sprite(sprite, default_file, id_dict):
     if len(sprite.param_list) == 0:
         sprite.is_empty = True
-        return RealSpriteAction(sprite, last)
+        return RealSpriteAction(sprite)
     elif not 6 <= len(sprite.param_list) <= 8:
         raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 6 to 8.")
     try:
@@ -122,15 +117,16 @@ def parse_real_sprite(sprite, default_file, last, id_dict):
     except generic.ConstError:
         raise generic.ScriptError("Real sprite parameters should be compile-time constants.")
 
-    return RealSpriteAction(new_sprite, last)
+    return RealSpriteAction(new_sprite)
 
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list):
+def parse_sprite_list(sprite_list, default_file, parameters = {}, mark_last = True):
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
-            real_sprite_list.append((sprite, {}))
+            real_sprite_list.append(parse_real_sprite(sprite, default_file, parameters))
         else:
-            real_sprite_list.extend(sprite.expand())
+            real_sprite_list.extend(sprite.expand(default_file, parameters))
+    if mark_last: real_sprite_list[-1].last = True
     return real_sprite_list
