@@ -1,8 +1,8 @@
 from nml.actions.action0properties import Action0Property, properties
 from nml import generic, expression
-from nml.actions import action4, action6, actionD
+from nml.actions import base_action, action4, action6, actionD
 
-class Action0(object):
+class Action0(base_action.BaseAction):
     def __init__(self, feature, id):
         self.feature = feature
         self.id = id
@@ -26,15 +26,6 @@ class Action0(object):
         for prop in self.prop_list:
             prop.write(file)
         file.end_sprite()
-
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 first_free_id = 0x12 * [0]
 

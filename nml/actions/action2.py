@@ -1,10 +1,11 @@
 from nml import generic
+from nml.actions import base_action
 
 free_action2_ids = range(1, 255)
 
 action2_map = {}
 
-class Action2(object):
+class Action2(base_action.BaseAction):
     def __init__(self, feature, name):
         global action2_map
         if name in action2_map:
@@ -33,9 +34,6 @@ class Action2(object):
 
     def skip_action9(self):
         return False
-
-    def skip_needed(self):
-        return True
 
 def add_ref(name):
     global action2_map

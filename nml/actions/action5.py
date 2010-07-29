@@ -1,7 +1,7 @@
 from nml import generic, expression
-from nml.actions import real_sprite
+from nml.actions import base_action, real_sprite
 
-class Action5(object):
+class Action5(base_action.BaseAction):
     def __init__(self, type, num_sprites, offset):
         self.type = type
         self.num_sprites = num_sprites
@@ -26,16 +26,10 @@ class Action5(object):
         file.end_sprite()
 
     def skip_action7(self):
-        #skipping with Action  should work, according to the Action7/9 specs
+        #skipping with Action7 should work, according to the Action7/9 specs
         #However, skipping invalid (OpenTTD-only) Action5s in TTDP can only be done using Action9, else an error occurs
         #To be on the safe side, don't allow skipping with Action7 at all
         return False
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 class Action5BlockType(object):
     FIXED  = 0, #fixed number of sprites

@@ -1,13 +1,11 @@
 from nml import grfstrings
+from nml.actions import base_action
 
-class Action8(object):
+class Action8(base_action.BaseAction):
     def __init__(self, grfid, name, description):
         self.grfid = grfid
         self.name = name
         self.description = description
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         name = grfstrings.get_translation(self.name.name.value)
@@ -23,9 +21,3 @@ class Action8(object):
 
     def skip_action7(self):
         return False
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True

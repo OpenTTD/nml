@@ -1,6 +1,7 @@
 """
 Code for storing and generating action F
 """
+from nml.actions import base_action
 
 # Helper functions to allocate townname IDs
 #
@@ -31,7 +32,7 @@ def get_free_id():
 town_names_blocks = {} # Mapping of town_names ID number to TownNames instance.
 
 
-class ActionF(object):
+class ActionF(base_action.BaseAction):
     def __init__(self, town_names_data):
         self.town_names_data = town_names_data
 
@@ -51,10 +52,3 @@ class ActionF(object):
 
     def skip_action7(self):
         return False
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
-

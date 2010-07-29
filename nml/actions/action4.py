@@ -1,6 +1,7 @@
 from nml import generic, grfstrings
+from nml.actions import base_action
 
-class Action4(object):
+class Action4(base_action.BaseAction):
     def __init__(self, feature, lang, size, id, text):
         self.feature = feature
         self.lang = lang
@@ -24,14 +25,8 @@ class Action4(object):
         file.newline()
         file.end_sprite()
 
-    def skip_action7(self):
-        return True
-
     def skip_action9(self):
         return False
-
-    def skip_needed(self):
-        return True
 
 string_ranges = {
     0xC4: {'random_id': False},

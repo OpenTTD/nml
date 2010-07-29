@@ -1,7 +1,7 @@
 from nml import expression, generic, grfstrings
-from nml.actions import action6, actionD
+from nml.actions import base_action, action6, actionD
 
-class ActionB(object):
+class ActionB(base_action.BaseAction):
     def __init__(self, severity, lang, msg, data, param1, param2):
         self.severity = severity
         self.lang = lang
@@ -9,9 +9,6 @@ class ActionB(object):
         self.data = data
         self.param1 = param1
         self.param2 = param2
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         size = 4
@@ -43,12 +40,6 @@ class ActionB(object):
 
     def skip_action7(self):
         return False
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 default_error_msg = {
     'REQUIRES_TTDPATCH' : 0,

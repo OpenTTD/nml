@@ -1,14 +1,11 @@
 from nml import generic
-from nml.actions import real_sprite
+from nml.actions import base_action, real_sprite
 
-class Action12(object):
+class Action12(base_action.BaseAction):
 
     #sets: list of (font_size, num_char, base_char) tuples
     def __init__(self, sets):
         self.sets = sets
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         #<sprite-number> * <length> 12 <num-def> (<font> <num-char> <base-char>){n}
@@ -23,15 +20,6 @@ class Action12(object):
             file.print_word(base_char)
             file.newline()
         file.end_sprite()
-
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 font_sizes = {
     'NORMAL' : 0,

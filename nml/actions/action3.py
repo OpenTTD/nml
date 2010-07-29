@@ -1,7 +1,7 @@
-from nml.actions import action2, action6, actionD
 from nml import generic, expression, global_constants
+from nml.actions import base_action, action2, action6, actionD
 
-class Action3(object):
+class Action3(base_action.BaseAction):
     def __init__(self, feature, id):
         self.feature = feature
         self.id = id
@@ -29,14 +29,8 @@ class Action3(object):
         file.newline()
         file.end_sprite()
 
-    def skip_action7(self):
-        return True
-
     def skip_action9(self):
         return False
-
-    def skip_needed(self):
-        return True
 
 def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
     action_list = []

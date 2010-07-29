@@ -3,8 +3,9 @@ Action 11 support classes (sounds).
 """
 import os
 from nml import generic, expression
+from nml.actions import base_action
 
-class Action11(object):
+class Action11(base_action.BaseAction):
     def __init__(self, sounds):
         self.sounds = sounds
         self.sounds[-1].last = True
@@ -19,15 +20,6 @@ class Action11(object):
         file.print_bytex(0x11)
         file.print_word(len(self.sounds))
         file.end_sprite()
-
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
     def pre_process(self):
         pass

@@ -1,9 +1,9 @@
 from nml import expression, nmlop, generic, free_number_list
-from nml.actions import action6, actionD, action10
+from nml.actions import base_action, action6, actionD, action10
 
 free_labels = free_number_list.FreeNumberList(range(0xFF, 0x0F, -1))
 
-class SkipAction(object):
+class SkipAction(base_action.BaseAction):
     def __init__(self, feature, var, varsize, condtype, value, label):
         self.feature = feature
         self.label = label
@@ -12,9 +12,6 @@ class SkipAction(object):
         self.condtype = condtype
         self.value = value
         self.label = label
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         size = 5 + self.varsize
@@ -33,9 +30,6 @@ class SkipAction(object):
 
     def skip_action9(self):
         return self.feature == 9 or self.label == 0
-
-    def skip_needed(self):
-        return True
 
 class UnconditionalSkipAction(SkipAction):
     def __init__(self, feature, label):

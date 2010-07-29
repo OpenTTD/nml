@@ -1,12 +1,9 @@
-from nml.actions import real_sprite
+from nml.actions import base_action, real_sprite
 
-class ActionA(object):
+class ActionA(base_action.BaseAction):
     def __init__(self, num_sets, sets):
         self.num_sets = num_sets
         self.sets = sets
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         #<Sprite-number> * <Length> 0A <num-sets> [<num-sprites> <first-sprite>]+
@@ -19,15 +16,6 @@ class ActionA(object):
             first.write(file, 2)
         file.newline()
         file.end_sprite()
-
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 def parse_actionA(replaces):
     action_list = []

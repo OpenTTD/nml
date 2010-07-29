@@ -1,14 +1,11 @@
 from nml import generic, expression
-from nml.actions import action2real, action2layout, real_sprite
+from nml.actions import base_action, action2real, action2layout, real_sprite
 
-class Action1(object):
+class Action1(base_action.BaseAction):
     def __init__(self, feature, num_sets, num_ent):
         self.feature = feature
         self.num_sets = num_sets
         self.num_ent = num_ent
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
@@ -19,15 +16,6 @@ class Action1(object):
         file.print_varx(self.num_ent, 3)
         file.newline()
         file.end_sprite()
-
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 class SpriteSet(object):
     def __init__(self, param_list, sprite_list, pos):

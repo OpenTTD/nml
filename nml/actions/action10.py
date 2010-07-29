@@ -1,9 +1,8 @@
-class Action10(object):
+from nml.actions import base_action
+
+class Action10(base_action.BaseAction):
     def __init__(self, label):
         self.label = label
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         file.start_sprite(2)
@@ -11,9 +10,6 @@ class Action10(object):
         file.print_bytex(self.label)
         file.newline()
         file.end_sprite()
-
-    def skip_action7(self):
-        return True
 
     def skip_action9(self):
         return False

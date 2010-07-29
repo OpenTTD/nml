@@ -1,17 +1,14 @@
 from nml import generic, global_constants, expression, nmlop
-from nml.actions import action6
+from nml.actions import base_action, action6
 import nml
 
-class ActionD(object):
+class ActionD(base_action.BaseAction):
     def __init__(self, target, param1, op, param2, data = None):
         self.target = target
         self.param1 = param1
         self.op = op
         self.param2 = param2
         self.data = data
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         size = 5
@@ -28,12 +25,6 @@ class ActionD(object):
 
     def skip_action7(self):
         return False
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 class ParameterAssignment(object):
     def __init__(self, param, value):

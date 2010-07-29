@@ -1,16 +1,14 @@
 from nml import free_number_list
+from nml.actions import base_action
 
 free_parameters = free_number_list.FreeNumberList(range(0x7F, 0x3F, -1))
 
-class Action6(object):
+class Action6(base_action.BaseAction):
     def __init__(self):
         self.modifications = []
 
     def modify_bytes(self, param, num_bytes, offset):
         self.modifications.append( (param, num_bytes, offset) )
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         size = 2 + 5 * len(self.modifications)
@@ -29,9 +27,3 @@ class Action6(object):
 
     def skip_action7(self):
         return False
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True

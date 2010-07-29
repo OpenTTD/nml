@@ -1,12 +1,9 @@
 from nml import expression, nmlop
-from nml.actions import action6, actionD
+from nml.actions import base_action, action6, actionD
 
-class ActionE(object):
+class ActionE(base_action.BaseAction):
     def __init__(self, grfid_list):
         self.grfid_list = [bswap32(grfid.value) for grfid in grfid_list]
-
-    def prepare_output(self):
-        pass
 
     def write(self, file):
         size = 2 + 4 * len(self.grfid_list)
@@ -18,15 +15,6 @@ class ActionE(object):
             file.print_dwordx(grfid)
         file.newline()
         file.end_sprite()
-
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 def bswap32(value):
     return ((value & 0xFF) << 24) | ((value & 0xFF00) << 8) | ((value & 0xFF0000) >> 8) | ((value & 0xFF000000) >> 24)
