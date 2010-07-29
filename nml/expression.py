@@ -1,8 +1,6 @@
 import datetime, calendar
 from nml import generic, nmlop
 
-item_names = {}
-
 class Expression(object):
     """
     Superclass for all expression classes.

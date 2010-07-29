@@ -2,6 +2,8 @@ from nml import expression, generic, global_constants, unit
 from nml.ast import conditional, loop, general
 from nml.actions import action0, action3
 
+item_names = {}
+
 def validate_item_block(block_list):
     for block in block_list:
         if isinstance(block, PropertyBlock): continue
@@ -39,8 +41,8 @@ class Item(object):
             self.name = params[1]
             if not isinstance(self.name, expression.Identifier):
                 raise generic.ScriptError("Item parameter 2 'name' should be an identifier", self.pos)
-            if self.name.value in expression.item_names:
-                id = expression.ConstantNumeric(expression.item_names[self.name.value])
+            if self.name.value in item_names:
+                id = expression.ConstantNumeric(item_names[self.name.value])
                 if self.id is not None and id.value != self.id.value:
                     raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, self.id.value, id.value), self.pos)
                 self.id = id
@@ -50,7 +52,7 @@ class Item(object):
         if self.id is None:
             self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
         if self.name is not None:
-            expression.item_names[self.name.value] = self.id.value
+            item_names[self.name.value] = self.id.value
 
         self.body = body
         validate_item_block(body)
@@ -144,7 +146,7 @@ class LiveryOverride(object):
 
     def get_action_list(self):
         global item_feature
-        wagon_id = self.wagon_id.reduce_constant([expression.item_names])
+        wagon_id = self.wagon_id.reduce_constant([item_names])
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
 class GraphicsBlock(object):
