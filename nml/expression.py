@@ -429,21 +429,34 @@ class Array(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values], self.pos)
 
-#
-# compile-time expression evaluation
-#
+#{ Builtin functions
 
 def builtin_min(name, args, pos):
+    """
+    min(...) builtin function.
+
+    @return Lowest value of the given arguments.
+    """
     if len(args) < 2:
         raise generic.ScriptError("min() requires at least 2 arguments", pos)
     return reduce(lambda x, y: BinOp(nmlop.MIN, x, y, pos), args)
 
 def builtin_max(name, args, pos):
+    """
+    max(...) builtin function.
+
+    @return Heighest value of the given arguments.
+    """
     if len(args) < 2:
         raise generic.ScriptError("max() requires at least 2 arguments", pos)
     return reduce(lambda x, y: BinOp(nmlop.MAX, x, y, pos), args)
 
 def builtin_date(name, args, pos):
+    """
+    date(year, month, day) builtin function.
+
+    @return Days since 1 jan 1 of the given date.
+    """
     if len(args) != 3:
         raise generic.ScriptError("date() requires exactly 3 arguments", pos)
     year = args[0].reduce()
@@ -486,7 +499,7 @@ def builtin_day_of_year(name, args, pos):
     if not isinstance(day, ConstantNumeric):
         raise generic.ScriptError('Day should be a compile-time constant.', day.pos)
 
-    #: Mapping of month to number of days in that month.
+    # Mapping of month to number of days in that month.
     number_days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
     if day.value < 1 or day.value > number_days[month.value]:
         raise generic.ScriptError('Day should be value between 1 and %d.' % number_days[month.value], day.pos)
@@ -495,23 +508,47 @@ def builtin_day_of_year(name, args, pos):
 
 
 def builtin_store(name, args, pos):
+    """
+    STORE_TEMP(value, pos) builtin function.
+    STORE_PERM(value, pos) builtin function.
+    Store C{value} in temporary/permanent storage in location C{pos}.
+
+    @return C{value}
+    """
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     op = nmlop.STO_TMP if name == 'STORE_TEMP' else nmlop.STO_PERM
     return BinOp(op, args[0], args[1], pos)
 
 def builtin_load(name, args, pos):
+    """
+    LOAD_TEMP(pos) builtin function.
+    LOAD_PERM(pos) builtin function.
+    Load a value from location C{pos} from temporary/permanent storage.
+
+    @return The value loaded from the storage.
+    """
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have one parameter", pos)
     var_num = 0x7D if name == "LOAD_TEMP" else 0x7C
     return Variable(ConstantNumeric(var_num), param=args[0], pos=pos)
 
 def builtin_hasbit(name, args, pos):
+    """
+    hasbit(value, bit_num) builtin function.
+
+    @return C{1} if and only if C{value} has bit C{bit_num} set, C{0} otherwise.
+    """
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return BinOp(nmlop.HASBIT, args[0], args[1], pos)
 
 def builtin_version_openttd(name, args, pos):
+    """
+    version_openttd(major, minor, revision[, build]) builtin function.
+
+    @return The version information encoded in a double-word.
+    """
     if len(args) > 4 or len(args) < 3:
         raise generic.ScriptError(name + "() must have 3 or 4 parameters", pos)
     major = args[0].reduce_constant().value
@@ -519,6 +556,8 @@ def builtin_version_openttd(name, args, pos):
     revision = args[2].reduce_constant().value
     build = args[3].reduce_constant().value if len(args) == 4 else 0x80000
     return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
+
+#}
 
 function_table = {
     'min' : builtin_min,
