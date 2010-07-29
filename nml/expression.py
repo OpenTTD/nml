@@ -4,24 +4,87 @@ from nml import generic, nmlop
 item_names = {}
 
 class Expression(object):
+    """
+    Superclass for all expression classes.
+
+    @ivar pos: Position of the data in the original file.
+    @type pos: :L{Position}
+    """
     def __init__(self, pos):
         self.pos = pos
 
+    def debug_print(self, indentation):
+        """
+        Print all data with explanation of what it is to standard output.
+        
+        @param indentation: Indent all printed lines with at least
+            C{indentation} spaces.
+        """
+        raise NotImplementedError('debug_print must be implemented in expression-subclasses')
+
+    def __str__(self):
+        """
+        Convert this expression to a string representing this expression in valid NML-code.
+        
+        @return: A string representation of this expression.
+        """
+        raise NotImplementedError('__str__ must be implemented in expression-subclasses')
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        """
+        Reduce this expression to the simplest representation possible.
+
+        @param id_dicts: A list with dicts that are used to map identifiers
+            to another (often numeric) representation.
+        @param unknown_id_fatal: Is encountering an unknown identifier somewhere
+            in this expression a fatal error?
+
+        @return: A deep copy of this expression simplified as much as possible.
+        """
+        raise NotImplementedError('reduce must be implemented in expression-subclasses')
+
     def reduce_constant(self, id_dicts = []):
+        """
+        Reduce this expression and make sure the result is a constant number.
+
+        @param id_dicts: A list with dicts that are used to map identifiers
+            to another (often numeric) representation.
+
+        @return: A constant number that is the result of this expression.
+        """
         expr = self.reduce(id_dicts)
         if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
             raise generic.ConstError(self.pos)
         return expr
 
     def supported_by_action2(self, raise_error):
+        """
+        Check if this expression can be used inside a switch-block.
+
+        @param raise_error: If true raise a scripterror instead of returning false.
+
+        @return: True if this expression can be calculated by advanced varaction2.
+        """
         if raise_error: raise generic.ScriptError("This expression is not supported in a switch-block", self.pos)
         return False
 
     def supported_by_actionD(self, raise_error):
+        """
+        Check if this expression can be used inside a parameter-assignment.
+
+        @param raise_error: If true raise a scripterror instead of returning false.
+
+        @return: True if this expression can be calculated by actionD.
+        """
         if raise_error: raise generic.ScriptError("This expression can not be assigned to a parameter", self.pos)
         return False
 
     def is_boolean(self):
+        """
+        Check if this expression is limited to 0 or 1 as value.
+
+        @return: True if the value of this expression is either 0 or 1.
+        """
         return False
 
 class ConstantNumeric(Expression):
