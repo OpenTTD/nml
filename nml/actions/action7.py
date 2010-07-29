@@ -1,13 +1,7 @@
-from nml import expression, nmlop, generic
+from nml import expression, nmlop, generic, free_number_list
 from nml.actions import action6, actionD, action10
 
-#a jump is always to the next action10 with a given id, so they
-#can be freely reused
-free_labels = range(0x10, 0x70)
-free_labels.reverse()
-#for a loop we need to jump backward, so those labels can't be reused
-free_while_labels = range(0x80, 0x100)
-free_while_labels.reverse()
+free_labels = free_number_list.FreeNumberList(range(0xFF, 0x0F, -1))
 
 class SkipAction(object):
     def __init__(self, feature, var, varsize, condtype, value, label):
@@ -143,7 +137,6 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
     return actions
 
 def parse_conditional_block(cond):
-    global free_labels
     action6.free_parameters.save()
 
     multiple_blocks = cond.else_block is not None
@@ -195,9 +188,8 @@ def parse_conditional_block(cond):
     return action_list
 
 def parse_loop_block(loop):
-    global free_labels, free_while_labels
     action6.free_parameters.save()
-    begin_label = free_while_labels.pop()
+    begin_label = free_labels.pop_unique()
     action_list = [action10.Action10(begin_label)]
 
     cond_param, cond_actions, cond_type, cond_value, cond_value_size = parse_conditional(loop.expr)
