@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames, snowline
+from nml.ast import cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames, snowline
 from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -196,7 +196,7 @@ class NMLParser(object):
     def p_assignment(self, t):
         '''assignment : ID COLON string SEMICOLON
                       | ID COLON expression SEMICOLON'''
-        t[0] = assignment.Assignment(t[1], t[3])
+        t[0] = grf.Assignment(t[1], t[3])
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
