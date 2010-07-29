@@ -15,3 +15,6 @@ class DeactivateBlock(object):
 
     def get_action_list(self):
         return actionE.parse_deactivate_block(self)
+
+    def __str__(self):
+        return 'deactivate(%s);\n' % ', '.join([str(grfid) for grfid in self.grfid_list])
