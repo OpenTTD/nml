@@ -1,4 +1,4 @@
-from nml import generic
+from nml import generic, expression
 from nml.actions import actionB
 
 class Error(object):
@@ -31,3 +31,20 @@ class Error(object):
 
     def get_action_list(self):
         return actionB.parse_error_block(self)
+
+    def __str__(self):
+        sev = str(self.severity)
+        if isinstance(self.severity, expression.ConstantNumeric):
+            for s in actionB.error_severity:
+                if self.severity.value == actionB.error_severity[s]:
+                    sev = s
+                    break
+        res = 'error(%s, %s' % (sev, self.msg)
+        if self.data is not None:
+            res += ', %s' % self.data
+        if self.params[0] is not None:
+            res += ', %s' % self.params[0]
+        if self.params[1] is not None:
+            res += ', %s' % self.params[1]
+        res += ');\n'
+        return res
