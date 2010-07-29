@@ -27,7 +27,7 @@ class FreeNumberList(object):
         """
         Pop a free number from the list. You have to call L{save} at least
         once before calling L{pop}.
-        
+
         @return: Some free number.
         """
         assert len(self.states) > 0
@@ -41,7 +41,7 @@ class FreeNumberList(object):
         """
         Pop a free number from the list. The number may have been used before
         and already been restored but it'll never be given out again.
-        
+
         @return: Some free number.
         """
         assert len(self.free_numbers) > 0
@@ -51,7 +51,7 @@ class FreeNumberList(object):
         """
         Pop a free number from the list. The number has not been used before
         and will not be used again.
-        
+
         @return: A unique free number.
         """
         available = set(self.free_numbers) - self.used_numbers
