@@ -38,7 +38,7 @@ class ReplaceNewSprite(object):
         if len(param_list) >= 2:
             self.pcx = param_list[1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("replace-block parameter 2 'file' must be a string literal", self.pcx.pos)
+                raise generic.ScriptError("replacenew-block parameter 2 'file' must be a string literal", self.pcx.pos)
         else:
             self.pcx = None
         if len(param_list) >= 3:
