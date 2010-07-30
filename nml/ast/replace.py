@@ -4,20 +4,21 @@ from nml.actions import actionA, action5
 
 class ReplaceSprite(object):
     def __init__(self, param_list, sprite_list, pos):
-        if not (1 <= len(param_list) <= 2):
-            raise generic.ScriptError("replace-block requires 1 or 2 parameters, encountered " + str(len(param_list)), pos)
-        self.start_id = param_list[0].reduce_constant()
-        if len(param_list) >= 2:
-            self.pcx = param_list[1].reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("replace-block parameter 2 'file' must be a string literal", self.pcx.pos)
-        else:
-            self.pcx = None
+        self.param_list = param_list
         self.sprite_list = sprite_list
         self.pos = pos
 
     def pre_process(self):
-        pass
+        num_params = len(self.param_list)
+        if not (1 <= num_params <= 2):
+            raise generic.ScriptError("replace-block requires 1 or 2 parameters, encountered " + str(num_params), self.pos)
+        self.start_id = self.param_list[0].reduce_constant()
+        if num_params >= 2:
+            self.pcx = self.param_list[1].reduce()
+            if not isinstance(self.pcx, expression.StringLiteral):
+                raise generic.ScriptError("replace-block parameter 2 'file' must be a string literal", self.pcx.pos)
+        else:
+            self.pcx = None
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites starting at', self.start_id
