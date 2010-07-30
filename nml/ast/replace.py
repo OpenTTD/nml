@@ -32,24 +32,25 @@ class ReplaceSprite(object):
 
 class ReplaceNewSprite(object):
     def __init__(self, param_list, sprite_list, pos):
-        if not (1 <= len(param_list) <= 3):
-            raise generic.ScriptError("replacenew-block requires 1 to 3 parameters, encountered " + str(len(param_list)), pos)
-        self.type = param_list[0]
-        if len(param_list) >= 2:
-            self.pcx = param_list[1].reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("replacenew-block parameter 2 'file' must be a string literal", self.pcx.pos)
-        else:
-            self.pcx = None
-        if len(param_list) >= 3:
-            self.offset = param_list[2]
-        else:
-            self.offset = expression.ConstantNumeric(0)
+        self.param_list = param_list
         self.sprite_list = sprite_list
         self.pos = pos
 
     def pre_process(self):
-        pass
+        num_params = len(self.param_list)
+        if not (1 <= num_params <= 3):
+            raise generic.ScriptError("replacenew-block requires 1 to 3 parameters, encountered " + str(num_params), self.pos)
+        self.type = self.param_list[0]
+        if num_params >= 2:
+            self.pcx = self.param_list[1].reduce()
+            if not isinstance(self.pcx, expression.StringLiteral):
+                raise generic.ScriptError("replacenew-block parameter 2 'file' must be a string literal", self.pcx.pos)
+        else:
+            self.pcx = None
+        if num_params >= 3:
+            self.offset = self.param_list[2]
+        else:
+            self.offset = expression.ConstantNumeric(0)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites for new features of type', self.type
