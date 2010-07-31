@@ -1,5 +1,5 @@
 from nml import expression, generic
-from nml.actions import action8
+from nml.actions import action8, action14
 
 class GRF(object):
     def __init__(self, alist, pos):
@@ -33,7 +33,7 @@ class GRF(object):
             self.desc.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return [action8.Action8(self.grfid, self.name, self.desc)]
+        return action14.grf_name_desc_actions(self.name, self.desc) + [action8.Action8(self.grfid, self.name, self.desc)]
 
     def __str__(self):
         ret = 'grf {\n'

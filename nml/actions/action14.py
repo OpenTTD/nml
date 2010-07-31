@@ -87,3 +87,15 @@ class BranchNode(Action14Node):
             node.write(file)
         file.print_bytex(0)
         file.newline()
+
+def grf_name_desc_actions(name, desc):
+    root = BranchNode("INFO")
+    if len(grfstrings.grf_strings[name.name.value]) > 1:
+        name_node = TextNode("NAME", name)
+        root.subnodes.append(name_node)
+    if len(grfstrings.grf_strings[desc.name.value]) > 1:
+        desc_node = TextNode("DESC", desc)
+        root.subnodes.append(desc_node)
+    if len(root.subnodes) > 0:
+        return [Action14([root])]
+    return []
