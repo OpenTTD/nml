@@ -1,5 +1,5 @@
 from nml import grfstrings
-from nml.actions import base_action, action4, action6, actionD
+from nml.actions import base_action, action7
 
 
 class Action14(base_action.BaseAction):
@@ -97,5 +97,6 @@ def grf_name_desc_actions(name, desc):
         desc_node = TextNode("DESC", desc)
         root.subnodes.append(desc_node)
     if len(root.subnodes) > 0:
-        return [Action14([root])]
+        skip_act = action7.SkipAction(9, 0x9D, 4, (2, r'\7='), 0, 1)
+        return [skip_act, Action14([root])]
     return []
