@@ -39,6 +39,40 @@ class OutputBase(object):
         else:
             assert False
 
+    def print_bytex(self, byte, pretty_print = None):
+        """
+        Output an unsigned byte.
+
+        @param byte: Value to output.
+        @type  byte: C{int}
+        """
+        raise NotImplementedError("Implement print_bytex() in %r" % type(self))
+
+    def print_wordx(self, byte):
+        """
+        Output an unsigned word (2 bytes).
+
+        @param byte: Value to output.
+        @type  byte: C{int}
+        """
+        raise NotImplementedError("Implement print_wordx() in %r" % type(self))
+
+    def print_dwordx(self, byte):
+        """
+        Output an unsigned double word (4 bytes).
+
+        @param byte: Value to output.
+        @type  byte: C{int}
+        """
+        raise NotImplementedError("Implement print_dwordx() in %r" % type(self))
+
+    def newline(self):
+        """
+        Output a seperator.
+        """
+        raise NotImplementedError("Implement newline() in %r" % type(self))
+
+
     def start_sprite(self, size):
         assert not self._in_sprite
         self._in_sprite = True
