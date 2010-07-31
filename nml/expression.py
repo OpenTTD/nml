@@ -14,19 +14,19 @@ class Expression(object):
     def debug_print(self, indentation):
         """
         Print all data with explanation of what it is to standard output.
-        
+
         @param indentation: Indent all printed lines with at least
             C{indentation} spaces.
         """
-        raise NotImplementedError('debug_print must be implemented in expression-subclasses')
+        raise NotImplementedError('debug_print must be implemented in expression-subclass %r' % type(self))
 
     def __str__(self):
         """
         Convert this expression to a string representing this expression in valid NML-code.
-        
+
         @return: A string representation of this expression.
         """
-        raise NotImplementedError('__str__ must be implemented in expression-subclasses')
+        raise NotImplementedError('__str__ must be implemented in expression-subclass %r' % type(self))
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         """
@@ -39,7 +39,7 @@ class Expression(object):
 
         @return: A deep copy of this expression simplified as much as possible.
         """
-        raise NotImplementedError('reduce must be implemented in expression-subclasses')
+        raise NotImplementedError('reduce must be implemented in expression-subclass %r' % type(self))
 
     def reduce_constant(self, id_dicts = []):
         """

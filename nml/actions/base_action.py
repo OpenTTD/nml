@@ -14,7 +14,7 @@ class BaseAction(object):
         @param file: The outputfile to write the data to.
         @type file: L{OutputBase}
         """
-        raise NotImplementedError('write must be implemented by all BaseAction-subclasses')
+        raise NotImplementedError('write is not implemented in %r' % type(self))
 
     def skip_action7(self):
         """
