@@ -3,6 +3,25 @@ from nml.actions import actionA, action5
 
 
 class ReplaceSprite(object):
+    """
+    AST node for a 'replace' block.
+    NML syntax: replace(start_id[, default_file]) { ..real sprites.. }
+
+    @ivar param_list: List of parameters passed to the replace-block
+    @type param_list: C{list} of L{Expression}
+
+    @ivar sprite_list: List of real sprites to use
+    @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
+
+    @ivar pos: Position information of the 'replace' block.
+    @type pos: L{Position}
+
+    @ivar start_id: First sprite to replace. Extracted from C{param_list} during pre-processing.
+    @type start_id: L{ConstantNumeric}
+
+    @ivar pcx: Default image file to use for sprites. Extracted from C{param_list} during pre-processing.
+    @type pcx: C{None} if not specified, else L{StringLiteral}
+    """
     def __init__(self, param_list, sprite_list, pos):
         self.param_list = param_list
         self.sprite_list = sprite_list
