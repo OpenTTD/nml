@@ -4,8 +4,8 @@ class ActionA(base_action.BaseAction):
     """
     Action class for Action A (sprite replacement)
 
-    @ivar sets: List of sprite collections to be replaced
-    @type sets: C{list} of (C{int}, L{ConstantNumeric})-tuples
+    @ivar sets: List of sprite collections to be replaced.
+    @type sets: C{list} of (C{int}, C{int})-tuples
     """
     def __init__(self, sets):
         self.sets = sets
@@ -18,7 +18,7 @@ class ActionA(base_action.BaseAction):
         file.print_byte(len(self.sets))
         for num, first in self.sets:
             file.print_byte(num)
-            first.write(file, 2)
+            file.print_word(first)
         file.newline()
         file.end_sprite()
 

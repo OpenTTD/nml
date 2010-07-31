@@ -17,7 +17,7 @@ class ReplaceSprite(object):
     @type pos: L{Position}
 
     @ivar start_id: First sprite to replace. Extracted from C{param_list} during pre-processing.
-    @type start_id: L{ConstantNumeric}
+    @type start_id: C{int}
 
     @ivar pcx: Default image file to use for sprites. Extracted from C{param_list} during pre-processing.
     @type pcx: C{None} if not specified, else L{StringLiteral}
@@ -31,7 +31,7 @@ class ReplaceSprite(object):
         num_params = len(self.param_list)
         if not (1 <= num_params <= 2):
             raise generic.ScriptError("replace-block requires 1 or 2 parameters, encountered " + str(num_params), self.pos)
-        self.start_id = self.param_list[0].reduce_constant()
+        self.start_id = self.param_list[0].reduce_constant().value
         if num_params >= 2:
             self.pcx = self.param_list[1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
@@ -59,17 +59,24 @@ class ReplaceNewSprite(object):
         num_params = len(self.param_list)
         if not (1 <= num_params <= 3):
             raise generic.ScriptError("replacenew-block requires 1 to 3 parameters, encountered " + str(num_params), self.pos)
+
         self.type = self.param_list[0]
+        if not isinstance(self.type, expression.Identifier):
+            raise generic.ScriptError("replacenew parameter 'type' must be an identifier of a sprite replacement type", self.type.pos)
+            
+
         if num_params >= 2:
             self.pcx = self.param_list[1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
                 raise generic.ScriptError("replacenew-block parameter 2 'file' must be a string literal", self.pcx.pos)
         else:
             self.pcx = None
+
         if num_params >= 3:
-            self.offset = self.param_list[2]
+            self.offset = self.param_list[2].reduce_constant().value
+            generic.check_range(self.offset, 0, 0xFFFF, "replacenew-block parameter 3 'offset'", self.param_list[2].pos)
         else:
-            self.offset = expression.ConstantNumeric(0)
+            self.offset = 0
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites for new features of type', self.type
