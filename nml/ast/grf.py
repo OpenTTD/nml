@@ -8,18 +8,21 @@ class GRF(object):
         self.desc = None
         self.grfid = None
         for assignment in alist:
-            if assignment.name.value == "grfid":
-                if not isinstance(assignment.value, expression.StringLiteral):
-                    raise generic.ScriptError("GRFID must be a string literal", assignment.value.pos)
-            elif not isinstance(assignment.value, expression.String):
-                raise generic.ScriptError("Assignments in GRF-block must be constant strings", assignment.value.pos)
             if assignment.name.value == "name": self.name = assignment.value
             elif assignment.name.value == "desc": self.desc = assignment.value
             elif assignment.name.value == "grfid": self.grfid = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
 
     def pre_process(self):
-        pass
+        self.grfid = self.grfid.reduce()
+        if not isinstance(self.grfid, expression.StringLiteral):
+            raise generic.ScriptError("GRFID must be a string literal", self.grfid.pos)
+        self.name = self.name.reduce()
+        if not isinstance(self.name, expression.String):
+            raise generic.ScriptError("GRF-name must be a string", self.name.pos)
+        self.desc = self.desc.reduce()
+        if not isinstance(self.desc, expression.String):
+            raise generic.ScriptError("GRF-description must be a string", self.desc.pos)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
