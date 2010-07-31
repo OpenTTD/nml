@@ -314,7 +314,7 @@ class Not(Expression):
         return True
 
     def __str__(self):
-        return "not " + str(self.expr)
+        return "!" + str(self.expr)
 
 class Parameter(Expression):
     def __init__(self, num, pos = None):
