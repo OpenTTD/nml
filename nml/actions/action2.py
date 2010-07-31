@@ -6,15 +6,31 @@ free_action2_ids = range(1, 255)
 action2_map = {}
 
 class Action2(base_action.BaseAction):
+    """
+    Abstract Action2 base class.
+
+    @ivar name; Name of the action2.
+    @type name: C{str}
+
+    @ivar feature: Action2 feature byte.
+    @type feature: C{int}
+
+    @ivar num_refs: Number of references to this action2.
+    @type num_refs: C{int}
+
+    @ivar id: Unique number of this action2.
+    @type id: C{int}, or C{None} if no number is allocated yet.
+    """
     def __init__(self, feature, name):
         global action2_map
         if name in action2_map:
             raise generic.ScriptError('Reusing names of switch/spritegroup blocks is not allowed, trying to use "%s"' % name)
-        assert not name in action2_map
         action2_map[name] = self
+
         self.feature = feature
         self.name = name
         self.num_refs = 0
+        self.id = None
 
     def prepare_output(self):
         global free_action2_ids
