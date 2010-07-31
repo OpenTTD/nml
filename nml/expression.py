@@ -143,6 +143,9 @@ class BitMask(Expression):
             ret |= 1 << val.value
         return ConstantNumeric(ret, self.pos)
 
+    def __str__(self):
+        return "bitmask(" + ", ".join(str(e) for e in self.values) + ")"
+
 class BinOp(Expression):
     def __init__(self, op, expr1, expr2, pos = None):
         Expression.__init__(self, pos)
@@ -250,6 +253,9 @@ class TernaryOp(Expression):
     def is_boolean(self):
         return self.expr1.is_boolean() and self.expr2.is_boolean()
 
+    def __str__(self):
+        return "(%s ? %s : %s)" % (str(self.guard), str(self.expr1), str(self.expr2))
+
 class Boolean(Expression):
     def __init__(self, expr, pos = None):
         Expression.__init__(self, pos)
@@ -272,6 +278,9 @@ class Boolean(Expression):
 
     def is_boolean(self):
         return True
+
+    def __str__(self):
+        return "(bool)" + str(self.expr)
 
 class Not(Expression):
     def __init__(self, expr, pos = None):
@@ -303,6 +312,9 @@ class Not(Expression):
 
     def is_boolean(self):
         return True
+
+    def __str__(self):
+        return "not " + str(self.expr)
 
 class Parameter(Expression):
     def __init__(self, num, pos = None):
