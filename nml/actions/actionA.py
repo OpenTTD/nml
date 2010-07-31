@@ -1,8 +1,7 @@
 from nml.actions import base_action, real_sprite
 
 class ActionA(base_action.BaseAction):
-    def __init__(self, num_sets, sets):
-        self.num_sets = num_sets
+    def __init__(self, sets):
         self.sets = sets
 
     def write(self, file):
@@ -20,4 +19,4 @@ class ActionA(base_action.BaseAction):
 def parse_actionA(replaces):
     real_sprite_list = real_sprite.parse_sprite_list(replaces.sprite_list, replaces.pcx)
 
-    return [ActionA(1, [(len(real_sprite_list), replaces.start_id)])] + real_sprite_list
+    return [ActionA([(len(real_sprite_list), replaces.start_id)])] + real_sprite_list
