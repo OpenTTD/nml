@@ -9,7 +9,7 @@ class Action2Real(action2.Action2):
 
     def write(self, file):
         size = 2 + 2 * len(self.loaded_list) + 2 * len(self.loading_list)
-        action2.Action2.write(self, file, size)
+        action2.Action2.write_sprite_start(self, file, size)
         file.print_byte(len(self.loaded_list))
         file.print_byte(len(self.loading_list))
         file.newline()

@@ -60,7 +60,7 @@ class Action2Var(action2.Action2):
             else:
                 size += var.get_size(self.varsize)
 
-        action2.Action2.write(self, file, size)
+        self.write_sprite_start(self, file, size)
         file.print_bytex(self.type_byte)
         file.newline()
         for var in self.var_list:
@@ -90,7 +90,7 @@ class VarAction2Var(object):
         self.div = None
         self.mod = None
 
-    def write(self, file, size):
+    def write_sprite_start(self, file, size):
         file.print_bytex(self.var_num)
         if self.parameter is not None: self.parameter.write(file, 1)
         if self.mod is not None:
@@ -139,10 +139,10 @@ class VarAction2LoadTempVar(VarAction2Var):
         assert isinstance(tmp_var, VarAction2StoreTempVar)
         self.tmp_var = tmp_var
 
-    def write(self, file, size):
+    def write_sprite_start(self, file, size):
         self.parameter = self.tmp_var.mask
         self.mask = expression.ConstantNumeric(get_mask(size))
-        VarAction2Var.write(self, file, size)
+        VarAction2Var.write_sprite_start(self, file, size)
 
     def get_size(self, varsize):
         return 3 + varsize

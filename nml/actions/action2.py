@@ -23,7 +23,7 @@ class Action2(base_action.BaseAction):
         else:
             self.id = free_action2_ids.pop()
 
-    def write(self, file, size):
+    def write_sprite_start(self, file, size):
         file.start_sprite(size + 3)
         file.print_bytex(2)
         file.print_bytex(self.feature)
