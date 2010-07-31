@@ -18,7 +18,7 @@ class Action2(base_action.BaseAction):
     @ivar num_refs: Number of references to this action2.
     @type num_refs: C{int}
 
-    @ivar id: Unique number of this action2.
+    @ivar id: Number of this action2.
     @type id: C{int}, or C{None} if no number is allocated yet.
     """
     def __init__(self, feature, name):
