@@ -181,15 +181,25 @@ def get_snowlinetable_action(snowline_table):
     return [action0]
 
 def parse_basecost_slice(first, last, table):
+    action_list = []
     if first is not None:
         act0 = Action0(0x08, first)
-        act0.prop_list.append(Action0Property(0x08, table[first:last+1], 1))
+        act6 = action6.Action6()
+        table = table[first:last+1]
+        for index, value in enumerate(table):
+            if not isinstance(value, expression.ConstantNumeric):
+                table[index] = expression.ConstantNumeric(0)
+                tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
+                act6.modify_bytes(tmp_param, 1, index + 8)
+                action_list.extend(tmp_param_actions)
+        if len(act6.modifications) > 0: action_list.append(act6)
+        act0.prop_list.append(Action0Property(0x08, table, 1))
         act0.num_ids = last - first + 1
-        return [act0]
-    else:
-        return []
+        action_list.append(act0)
+    return action_list
 
 def get_basecost_action(basecost):
+    action6.free_parameters.save()
     action_list = []
     #We want to avoid writing lots of action0s if possible
     first_index = None #First index of current block of continuous base cost ids
@@ -202,4 +212,5 @@ def get_basecost_action(basecost):
         else:
             last_index = index
     action_list.extend(parse_basecost_slice(first_index, last_index, basecost.table))
+    action6.free_parameters.restore()
     return action_list

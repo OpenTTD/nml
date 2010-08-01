@@ -1,4 +1,4 @@
-from nml import expression, generic
+from nml import expression, generic, nmlop
 from nml.ast import assignment
 from nml.actions import action0
 
@@ -23,9 +23,12 @@ class BaseCost:
         #create a map of base costs
         table = len(base_cost_table) * [None]
         for cost in self.costs:
-            value = cost.value.reduce_constant()
-            generic.check_range(value.value, -8, 16, 'Base cost value', value.pos)
-            value.value += 8 #8 is the 'neutral value' for base costs
+            value = cost.value.reduce()
+            if isinstance(value, expression.ConstantNumeric):
+                generic.check_range(value.value, -8, 16, 'Base cost value', value.pos)
+                value.value += 8 #8 is the 'neutral value' for base costs
+            else:
+                value = expression.BinOp(nmlop.ADD, value, expression.ConstantNumeric(8), value.pos)
 
             #always make cost.name a list
             if isinstance(cost.name, expression.Identifier):
