@@ -50,6 +50,28 @@ class ReplaceSprite(object):
         return actionA.parse_actionA(self)
 
 class ReplaceNewSprite(object):
+    """
+    AST node for a 'replacenew' block.
+    NML syntax: replacenew(type[, default_file[, offset]]) { ..real sprites.. }
+
+    @ivar param_list: List of parameters passed to the replacenew-block
+    @type param_list: C{list} of L{Expression}
+
+    @ivar sprite_list: List of real sprites to use
+    @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
+
+    @ivar pos: Position information of the 'replacenew' block.
+    @type pos: L{Position}
+
+    @ivar type: Type of sprites to replace. Extracted from C{param_list} during pre-processing.
+    @type type: L{Identifier}
+
+    @ivar pcx: Default image file to use for sprites. Extracted from C{param_list} during pre-processing.
+    @type pcx: C{None} if not specified, else L{StringLiteral}
+
+    @ivar offset: Offset into the block of sprites. Extracted from C{param_list} during pre-processing.
+    @type offset: C{int}
+    """
     def __init__(self, param_list, sprite_list, pos):
         self.param_list = param_list
         self.sprite_list = sprite_list
