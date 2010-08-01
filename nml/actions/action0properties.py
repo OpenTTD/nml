@@ -6,31 +6,33 @@ class Action0Property(object):
     @ivar num: Number of the property.
     @type num: C{int}
 
-    @ivar value: Value of the property.
-    @type value: L{ConstantNumeric}
+    @ivar values: Value of the property for each id.
+    @type values: C{list} of L{ConstantNumeric}
 
     @ivar size: Size of the storage, in bytes.
     @type size: C{int}
     """
     def __init__(self, num, value, size):
         self.num = num
-        self.value = value
+        self.values = value if isinstance(value, list) else [value]
         self.size = size
 
         # Make sure the value fits in the size.
         # Strings have their own check in parse_property
-        if not isinstance(self.value, StringLiteral):
-            biggest = 1 << (8 * size)
-            if self.value.value >= biggest:
-                raise generic.ScriptError("Action 0 property too large", value.pos)
+        for val in self.values:
+            if not isinstance(val, StringLiteral):
+                biggest = 1 << (8 * size)
+                if val.value >= biggest:
+                    raise generic.ScriptError("Action 0 property too large", val.pos)
 
     def write(self, file):
         file.print_bytex(self.num)
-        self.value.write(file, self.size)
+        for val in self.values:
+            val.write(file, self.size)
         file.newline()
 
     def get_size(self):
-        return self.size + 1
+        return self.size * len(self.values) + 1
 
 properties = 0x12 * [None]
 
