@@ -18,7 +18,7 @@ class Action2Layout(action2.Action2):
             else:
                 size += 10
 
-        action2.Action2.write(self, file, size)
+        action2.Action2.write_sprite_start(self, file, size)
         file.print_byte(len(self.sprite_list))
         file.print_dwordx(self.ground_sprite.get_sprite_number())
         file.newline()
