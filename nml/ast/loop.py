@@ -8,7 +8,8 @@ class Loop(object):
         self.pos = pos
 
     def pre_process(self):
-        pass
+        for b in self.block:
+            b.pre_process()
 
     def debug_print(self, indentation):
         print indentation*' ' + 'While loop'
