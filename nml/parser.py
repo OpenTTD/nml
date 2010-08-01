@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames, snowline
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames, snowline
 from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -76,7 +76,8 @@ class NMLParser(object):
                           | font_glyph
                           | property_block
                           | graphics_block
-                          | liveryoverride_block'''
+                          | liveryoverride_block
+                          | basecost'''
         t[0] = t[1]
 
     #
@@ -227,6 +228,15 @@ class NMLParser(object):
     def p_id_array(self, t):
         'id_array : LBRACKET id_list RBRACKET'
         t[0] = t[2]
+
+    def p_generic_assignment(self, t):
+        'generic_assignment : expression COLON expression SEMICOLON'
+        t[0] = assignment.Assignment(t[1], t[3], t.lineno(1))
+
+    def p_generic_assignment_list(self, t):
+        '''generic_assignment_list : 
+                                   | generic_assignment_list generic_assignment'''
+        t[0] = [] if len(t) == 1 else t[1] + [t[2]]
 
     #
     # Item blocks
@@ -555,6 +565,10 @@ class NMLParser(object):
         if len(id_obj.value) != 4: raise generic.ScriptError("Each cargo/railtype identifier should be exactly 4 bytes long", id_obj.pos)
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[3]]
+
+    def p_basecost(self, t):
+        'basecost : BASECOST LBRACE generic_assignment_list RBRACE'
+        t[0] = basecost.BaseCost(t[3], t.lineno(1))
 
     def p_deactivate(self, t):
         'deactivate : DEACTIVATE LPAREN expression_list RPAREN SEMICOLON'
