@@ -184,6 +184,7 @@ def parse_basecost_slice(first, last, table):
     if first is not None:
         act0 = Action0(0x08, first)
         act0.prop_list.append(Action0Property(0x08, table[first:last+1], 1))
+        act0.num_ids = last - first + 1
         return [act0]
     else:
         return []
