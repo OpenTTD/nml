@@ -196,7 +196,7 @@ class NMLParser(object):
     def p_assignment(self, t):
         '''assignment : ID COLON string SEMICOLON
                       | ID COLON expression SEMICOLON'''
-        t[0] = assignment.Assignment(t[1], t[3])
+        t[0] = assignment.Assignment(t[1], t[3], t[1].pos)
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
