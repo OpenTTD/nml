@@ -186,7 +186,7 @@ def parse_basecost_slice(first, last, table):
         act0 = Action0(0x08, first)
         act6 = action6.Action6()
         table = table[first:last+1]
-        for index, value in enumerate(table):
+        for index, value in enumerate(table[:]):
             if not isinstance(value, expression.ConstantNumeric):
                 table[index] = expression.ConstantNumeric(0)
                 tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
@@ -204,6 +204,7 @@ def get_basecost_action(basecost):
     #We want to avoid writing lots of action0s if possible
     first_index = None #First index of current block of continuous base cost ids
     last_index = None #Last index of current block of continuous base cost ids
+
     for index, value in enumerate(basecost.table):
         if value is None: continue
         if (index - 1) != last_index:
@@ -212,5 +213,28 @@ def get_basecost_action(basecost):
         else:
             last_index = index
     action_list.extend(parse_basecost_slice(first_index, last_index, basecost.table))
+
+    for index, value in basecost.dyn_list:
+        #Use the normal table for constant indices
+        assert not isinstance(index, expression.ConstantNumeric)
+        act6 = action6.Action6()
+        act0 = Action0(0x08, 0)
+        if isinstance(index, expression.Parameter) and isinstance(index.num, expression.ConstantNumeric):
+            act6.modify_bytes(index.num.value, 2, 5)
+        else:
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(index)
+            act6.modify_bytes(tmp_param, 2, 5)
+            action_list.extend(tmp_param_actions)
+
+        if isinstance(value, expression.ConstantNumeric):
+            act0.prop_list.append(Action0Property(0x08, value, 1))
+        else:
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
+            act6.modify_bytes(tmp_param, 1, 8)
+            action_list.extend(tmp_param_actions)
+            act0.prop_list.append(Action0Property(0x08, expression.ConstantNumeric(0), 1))
+        action_list.append(act6)
+        action_list.append(act0)
+
     action6.free_parameters.restore()
     return action_list

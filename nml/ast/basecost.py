@@ -12,6 +12,9 @@ class BaseCost:
     @ivar table: List of the base cost value to set for each of the base costs
     @type table: C{list} of L{Expression}
 
+    @ivar dyn_list: List of base costs whose base cost number is not a constant
+    @type dyn_list: C{list} of (L{Expression}, L{Expression})-tuples
+
     @ivar pos: Position information of the basecost block.
     @type pos: L{Position}
     """
@@ -21,7 +24,10 @@ class BaseCost:
 
     def pre_process(self):
         #create a map of base costs
-        table = len(base_cost_table) * [None]
+        self.table = len(base_cost_table) * [None]
+        #list of base costs with a dynamic index
+        self.dyn_list = []
+
         for cost in self.costs:
             value = cost.value.reduce()
             if isinstance(value, expression.ConstantNumeric):
@@ -30,21 +36,22 @@ class BaseCost:
             else:
                 value = expression.BinOp(nmlop.ADD, value, expression.ConstantNumeric(8), value.pos)
 
-            #always make cost.name a list
             if isinstance(cost.name, expression.Identifier):
                 if cost.name.value in base_cost_table:
-                    table[base_cost_table[cost.name.value][0]] = value
+                    self.table[base_cost_table[cost.name.value][0]] = value
                 elif cost.name.value in generic_base_costs:
                     for num, type in base_cost_table.values():
                         if type == cost.name.value:
-                            table[num] = value
+                            self.table[num] = value
                 else:
                     raise generic.ScriptError("Unrecognized base cost identifier '%s' encountered" % cost.name.value)
             else:
-                name = cost.name.reduce_constant()
-                generic.check_range(name.value, 0, len(base_cost_table), 'Base cost number', name.pos)
-                table[name.value] = value
-        self.table = table
+                name = cost.name.reduce()
+                if isinstance(name, expression.ConstantNumeric):
+                    generic.check_range(name.value, 0, len(base_cost_table), 'Base cost number', name.pos)
+                    self.table[name.value] = value
+                else:
+                    self.dyn_list.append((name, value))
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Base costs'
@@ -52,6 +59,9 @@ class BaseCost:
             if value is not None:
                 print (indentation+2)*' ' + str(index) + ':'
                 value.debug_print(indentation + 4)
+        for index, value in self.dyn_list:
+            index.debug_print(indentation + 2)
+            value.debug_print(indentation + 4)
 
     def get_action_list(self):
         return action0.get_basecost_action(self)
