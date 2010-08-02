@@ -1,0 +1,14 @@
+grf {
+	grfid: "NML\12";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+}
+
+basecost {
+    1: param[2];
+    PR_RUNNING: -2;
+    PR_BUILD_VEHICLE: param[1] + 1;
+    PR_BUILD_WAYPOINT_RAIL: 14 - 1;
+    param[param[11]]: param[param[11]+1];
+}
+    
