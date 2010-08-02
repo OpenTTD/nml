@@ -31,8 +31,10 @@ class NMLParser(object):
     )
 
     def p_error(self, t):
-        text = "EOF" if t is None else t.value
-        raise generic.ScriptError('Syntax error, unexpected token "%s"' % text, t.lineno)
+        if t is None:
+            raise generic.ScriptError('Syntax error, unexpected end-of-file')
+        else:
+            raise generic.ScriptError('Syntax error, unexpected token "%s"' % t.value, t.lineno)
 
 
     #
