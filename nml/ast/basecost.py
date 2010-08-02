@@ -8,12 +8,6 @@ class BaseCost:
 
     @ivar costs: List of base cost values to set.
     @type costs: C{list} of L{Assignment}
-    
-    @ivar stat_list: List of base costs with constant cost numbers (sorted).
-    @type stat_list: C{list} of (L{ConstantNumeric}, L{Expression})-tuples
-
-    @ivar dyn_list: List of base costs whose base cost number is not a constant
-    @type dyn_list: C{list} of (L{Expression}, L{Expression})-tuples
 
     @ivar pos: Position information of the basecost block.
     @type pos: L{Position}
@@ -23,44 +17,41 @@ class BaseCost:
         self.pos = pos
 
     def pre_process(self):
-        #create a map of base costs
-        table = len(base_cost_table) * [None]
-        #list of base costs with a dynamic index
-        self.dyn_list = []
+        new_costs = []
 
         for cost in self.costs:
-            value = cost.value.reduce()
-            if isinstance(value, expression.ConstantNumeric):
-                generic.check_range(value.value, -8, 16, 'Base cost value', value.pos)
-                value.value += 8 #8 is the 'neutral value' for base costs
+            cost.value = cost.value.reduce()
+            if isinstance(cost.value, expression.ConstantNumeric):
+                generic.check_range(cost.value.value, -8, 16, 'Base cost value', cost.value.pos)
+                cost.value.value += 8 #8 is the 'neutral value' for base costs
             else:
-                value = expression.BinOp(nmlop.ADD, value, expression.ConstantNumeric(8), value.pos)
+                cost.value = expression.BinOp(nmlop.ADD, cost.value, expression.ConstantNumeric(8), cost.value.pos)
 
             if isinstance(cost.name, expression.Identifier):
                 if cost.name.value in base_cost_table:
-                    table[base_cost_table[cost.name.value][0]] = value
+                    cost.name = expression.ConstantNumeric(base_cost_table[cost.name.value][0])
+                    new_costs.append(cost)
                 elif cost.name.value in generic_base_costs:
+                    #create temporary list, so it can be sorted for efficiency
+                    tmp_list = []
                     for num, type in base_cost_table.values():
                         if type == cost.name.value:
-                            table[num] = value
+                            tmp_list.append(assignment.Assignment(expression.ConstantNumeric(num), cost.value, cost.name.pos))
+                    tmp_list.sort(lambda x, y: cmp(x.name.value, y.name.value))
+                    new_costs.extend(tmp_list)
                 else:
                     raise generic.ScriptError("Unrecognized base cost identifier '%s' encountered" % cost.name.value)
             else:
-                name = cost.name.reduce()
-                if isinstance(name, expression.ConstantNumeric):
-                    generic.check_range(name.value, 0, len(base_cost_table), 'Base cost number', name.pos)
-                    table[name.value] = value
-                else:
-                    self.dyn_list.append((name, value))
-        self.stat_list = [(expression.ConstantNumeric(i),v) for i,v in enumerate(table) if v is not None]
+                cost.name = cost.name.reduce()
+                if isinstance(cost.name, expression.ConstantNumeric):
+                    generic.check_range(cost.name.value, 0, len(base_cost_table), 'Base cost number', cost.name.pos)
+                new_costs.append(cost)
+        self.costs = new_costs
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Base costs'
-        for index, value in self.stat_list + self.dyn_list:
-            print (indentation+2)*' ' + 'Index:'
-            index.debug_print(indentation + 4)
-            print (indentation+2)*' ' + 'Value:'
-            value.debug_print(indentation + 4)
+        for cost in self.costs:
+            cost.debug_print(indentation + 2)
 
     def get_action_list(self):
         return action0.get_basecost_action(self)

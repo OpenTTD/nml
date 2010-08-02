@@ -180,61 +180,61 @@ def get_snowlinetable_action(snowline_table):
     action0.num_ids = 1
     return [action0]
 
-def parse_basecost_slice(first, last, table):
-    action_list = []
-    if first is not None:
-        act0 = Action0(0x08, first)
-        act6 = action6.Action6()
-        table = table[first:last+1]
-        for index, value in enumerate(table[:]):
-            if not isinstance(value, expression.ConstantNumeric):
-                table[index] = expression.ConstantNumeric(0)
-                tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
-                act6.modify_bytes(tmp_param, 1, index + 8)
-                action_list.extend(tmp_param_actions)
-        if len(act6.modifications) > 0: action_list.append(act6)
-        act0.prop_list.append(Action0Property(0x08, table, 1))
-        act0.num_ids = last - first + 1
-        action_list.append(act0)
-    return action_list
-
 def get_basecost_action(basecost):
     action6.free_parameters.save()
     action_list = []
+    tmp_param_map = {} #Cache for tmp parameters
+
     #We want to avoid writing lots of action0s if possible
-    first_index = None #First index of current block of continuous base cost ids
-    last_index = None #Last index of current block of continuous base cost ids
-
-    for index, value in basecost.stat_list:
-        #use the dynamic list for non-constant indices
-        assert isinstance(index, expression.ConstantNumeric)
-        if (index.value - 1) != last_index:
-            action_list.extend(parse_basecost_slice(first_index, last_index, basecost.stat_list))
-            first_index = index.value
-        last_index = index.value
-    action_list.extend(parse_basecost_slice(first_index, last_index, basecost.stat_list))
-
-    for index, value in basecost.dyn_list:
-        #Use the static list for constant indices
-        assert not isinstance(index, expression.ConstantNumeric)
+    i = 0;
+    while i < len(basecost.costs):
+        cost = basecost.costs[i]
         act6 = action6.Action6()
-        act0 = Action0(0x08, 0)
-        if isinstance(index, expression.Parameter) and isinstance(index.num, expression.ConstantNumeric):
-            act6.modify_bytes(index.num.value, 2, 5)
+
+        index = 0xFF #placeholder, overwritten by either the real value or action6
+        if isinstance(cost.name, expression.ConstantNumeric):
+            index = cost.name.value
+        elif isinstance(cost.name, expression.Parameter) and isinstance(cost.name.num, expression.ConstantNumeric):
+            act6.modify_bytes(cost.name.num.value, 2, 5)
         else:
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(index)
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(cost.name)
             act6.modify_bytes(tmp_param, 2, 5)
             action_list.extend(tmp_param_actions)
+        act0 = Action0(0x08, index)
 
-        if isinstance(value, expression.ConstantNumeric):
-            act0.prop_list.append(Action0Property(0x08, value, 1))
-        else:
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
-            act6.modify_bytes(tmp_param, 1, 8)
-            action_list.extend(tmp_param_actions)
-            act0.prop_list.append(Action0Property(0x08, expression.ConstantNumeric(0), 1))
-        action_list.append(act6)
+        num_ids = 1 #Number of values that will be written in one go
+        values = []
+        #try to capture as much values as possible
+        while True:
+            cost = basecost.costs[i]
+            if isinstance(cost.value, expression.ConstantNumeric):
+                values.append(cost.value)
+            else:
+                #Cache lookup, saves some ActionDs
+                if cost.value in tmp_param_map:
+                    tmp_param, tmp_param_actions = tmp_param_map[cost.value], []
+                else:
+                    tmp_param, tmp_param_actions = actionD.get_tmp_parameter(cost.value)
+                    tmp_param_map[cost.value] = tmp_param
+                act6.modify_bytes(tmp_param, 1, 7 + num_ids)
+                action_list.extend(tmp_param_actions)
+                values.append(expression.ConstantNumeric(0))
+
+            #check if we can append the next to this one (it has to be consecutively numbered)
+            if (i + 1) < len(basecost.costs):
+                nextcost = basecost.costs[i+1]
+                if isinstance(nextcost.name, expression.ConstantNumeric) and nextcost.name.value == index + num_ids:
+                    num_ids += 1
+                    i += 1
+                    #Yes We Can, continue the loop to append this value to the list and try further
+                    continue
+            # No match, so stop it and write an action0
+            break
+
+        act0.prop_list.append(Action0Property(0x08, values, 1))
+        act0.num_ids = num_ids
+        if len(act6.modifications) > 0: action_list.append(act6)
         action_list.append(act0)
-
+        i += 1
     action6.free_parameters.restore()
     return action_list
