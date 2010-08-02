@@ -9,8 +9,8 @@ class BaseCost:
     @ivar costs: List of base cost values to set.
     @type costs: C{list} of L{Assignment}
     
-    @ivar table: List of the base cost value to set for each of the base costs
-    @type table: C{list} of L{Expression}
+    @ivar stat_list: List of base costs with constant cost numbers (sorted).
+    @type stat_list: C{list} of (L{ConstantNumeric}, L{Expression})-tuples
 
     @ivar dyn_list: List of base costs whose base cost number is not a constant
     @type dyn_list: C{list} of (L{Expression}, L{Expression})-tuples
@@ -24,7 +24,7 @@ class BaseCost:
 
     def pre_process(self):
         #create a map of base costs
-        self.table = len(base_cost_table) * [None]
+        table = len(base_cost_table) * [None]
         #list of base costs with a dynamic index
         self.dyn_list = []
 
@@ -38,29 +38,28 @@ class BaseCost:
 
             if isinstance(cost.name, expression.Identifier):
                 if cost.name.value in base_cost_table:
-                    self.table[base_cost_table[cost.name.value][0]] = value
+                    table[base_cost_table[cost.name.value][0]] = value
                 elif cost.name.value in generic_base_costs:
                     for num, type in base_cost_table.values():
                         if type == cost.name.value:
-                            self.table[num] = value
+                            table[num] = value
                 else:
                     raise generic.ScriptError("Unrecognized base cost identifier '%s' encountered" % cost.name.value)
             else:
                 name = cost.name.reduce()
                 if isinstance(name, expression.ConstantNumeric):
                     generic.check_range(name.value, 0, len(base_cost_table), 'Base cost number', name.pos)
-                    self.table[name.value] = value
+                    table[name.value] = value
                 else:
                     self.dyn_list.append((name, value))
+        self.stat_list = [(expression.ConstantNumeric(i),v) for i,v in enumerate(table) if v is not None]
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Base costs'
-        for index, value in enumerate(self.table):
-            if value is not None:
-                print (indentation+2)*' ' + str(index) + ':'
-                value.debug_print(indentation + 4)
-        for index, value in self.dyn_list:
-            index.debug_print(indentation + 2)
+        for index, value in self.stat_list + self.dyn_list:
+            print (indentation+2)*' ' + 'Index:'
+            index.debug_print(indentation + 4)
+            print (indentation+2)*' ' + 'Value:'
             value.debug_print(indentation + 4)
 
     def get_action_list(self):

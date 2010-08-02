@@ -205,17 +205,17 @@ def get_basecost_action(basecost):
     first_index = None #First index of current block of continuous base cost ids
     last_index = None #Last index of current block of continuous base cost ids
 
-    for index, value in enumerate(basecost.table):
-        if value is None: continue
-        if (index - 1) != last_index:
-            action_list.extend(parse_basecost_slice(first_index, last_index, basecost.table))
-            first_index = last_index = index
-        else:
-            last_index = index
-    action_list.extend(parse_basecost_slice(first_index, last_index, basecost.table))
+    for index, value in basecost.stat_list:
+        #use the dynamic list for non-constant indices
+        assert isinstance(index, expression.ConstantNumeric)
+        if (index.value - 1) != last_index:
+            action_list.extend(parse_basecost_slice(first_index, last_index, basecost.stat_list))
+            first_index = index.value
+        last_index = index.value
+    action_list.extend(parse_basecost_slice(first_index, last_index, basecost.stat_list))
 
     for index, value in basecost.dyn_list:
-        #Use the normal table for constant indices
+        #Use the static list for constant indices
         assert not isinstance(index, expression.ConstantNumeric)
         act6 = action6.Action6()
         act0 = Action0(0x08, 0)
