@@ -11,4 +11,3 @@ basecost {
     PR_BUILD_WAYPOINT_RAIL: 14 - 1;
     param[param[11]]: param[param[11]+1];
 }
-    
