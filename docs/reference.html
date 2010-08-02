@@ -47,6 +47,7 @@
 	</li>
 	<li><a href="#block-assignment">Parameter assignment</a></li>
 	<li><a href="#block-sounds">Sound support</a></li>
+	<li><a href="#block-basecost">Setting base costs</a></li>
 </ul>
 </li>
 <li><a href="#units">Units</a></li>
@@ -91,6 +92,12 @@
 	<li><a href="#vars-airports">Airports</a></li>
 	<li><a href="#vars-railtypes">Railtypes</a></li>
 	<li><a href="#vars-airporttiles">Airport tiles</a></li>
+</ul>
+</li>
+<li><a href="#refs">Additional references</a>
+<ul>
+	<li><a href="#refs-default-industries">Default industries</a></li>
+	<li><a href="#refs-basecost-table">Base cost table</a></li>
 </ul>
 </li>
 </ul>
@@ -688,6 +695,33 @@ another NewGRF, as counting starts at <code>0</code> in that case.</p>
 8-bit mono sound files in WAV format, PCM encoding. There are two allowed
 frequencies: 11025 Hz and 22050 Hz. Due to some limitations of the NewGRF format,
 the file size cannot exceed 64KB.</p>
+<h2><a name="block-basecost">Setting base costs</a></h2>
+<p>A number of base costs determine how much everything costs in (O)TTD(P).
+Each cost in-game is determined by a fixed factor multiplied by a base cost.
+Setting base cost to 0 leaves this cost unchanged. Incrementing it by one
+doubles the cost, so e.g. a setting of 3 results in a cost that is 8x higher.
+Setting a negative value reduces the cost in the same manner, e.g. a value of
+-4 results in 1/16th of the cost. The minimum and maximum values are -8 (1/256th)
+and 16 (65536x), respectively. Some example code:</p>
+<pre class="code">
+basecost {
+	PR_BUILD_TUNNEL: 2; //tunnel cost x4
+	PR_BUILD_BRIDGE: -3; //bridge cost x1/8
+	PR_RUNNING: param[1]; //all running costs are set by the factor in grf parameter 1
+	param[2]: param[3]; //base cost with the number given by param 2 is set to the factor in param 3.
+}
+</pre>
+<p><a href="#refs-basecost-table">This table</a> lists all base costs that can be set. They can be referred to
+using either the number in the first or the identifier in the second column.
+Using an identifier from the third column, it is possible to set an entire
+category of base costs at once.</p>
+<p>Recent OpenTTD versions have added a number of base costs. To keep
+compatibility with earlier grfs, a number of 'old' base costs override
+the 'new' ones if the 'new' costs are not set separately. These cases are
+marked in the table. To avoid this behaviour always set the 'new' cost to 0
+if you are changing the 'old' cost but want to keep the new one unchanged.
+Note that this may override other grfs that change base costs, but this is
+currently unavoidable.</p>
 
 <h1><a name="units">Units</a></h1>
 
@@ -1166,7 +1200,9 @@ specified height of the year is used in the calculation.
 </table>
 <h2><a name="vars-airporttiles">Airport tiles</a></h2>
 
-<h2><a name="default industries">Default industries</a></h2>
+<h1><a name="refs">Additional references</a></h1>
+
+<h2><a name="refs-default-industries">Default industries</a></h2>
 <ul>
 <li>INDUSTRYTYPE_COAL_MINE</li>
 <li>INDUSTRYTYPE_POWER_PLANT</li>
@@ -1209,5 +1245,77 @@ specified height of the year is used in the calculation.
 <li>INDUSTRYTYPE_UNKNOWN</li>
 <li>INDUSTRYTYPE_TOWN</li>
 </ul>
+
+<h2><a name="refs-basecost-table">Base cost table</a></h2>
+<table>
+<tr><th>Number<th>Identifier<th>Category<th>Default value<th>Version<th>Remarks
+<tr><td>0<td>PR_STATION_VALUE<td>-<td>100<td><td>Used for some misc. purposes
+<tr><td>1<td>PR_BUILD_RAIL<td>PR_CONSTRUCTION<td>100<td><td>
+<tr><td>2<td>PR_BUILD_ROAD<td>PR_CONSTRUCTION<td>95<td><td>
+<tr><td>3<td>PR_BUILD_SIGNALS<td>PR_CONSTRUCTION<td>65<td><td>
+<tr><td>4<td>PR_BUILD_BRIDGE<td>PR_CONSTRUCTION<td>275<td><td>
+<tr><td>5<td>PR_BUILD_DEPOT_TRAIN<td>PR_CONSTRUCTION<td>600<td><td>Affects PR_BUILD_WAYPOINT_RAIL
+<tr><td>6<td>PR_BUILD_DEPOT_ROAD<td>PR_CONSTRUCTION<td>500<td><td>
+<tr><td>7<td>PR_BUILD_DEPOT_SHIP<td>PR_CONSTRUCTION<td>700<td><td>
+<tr><td>8<td>PR_BUILD_TUNNEL<td>PR_CONSTRUCTION<td>450<td><td>
+<tr><td>9<td>PR_BUILD_STATION_RAIL<td>PR_CONSTRUCTION<td>200<td><td>Cost per tile
+<tr><td>10<td>PR_BUILD_STATION_RAIL_LENGTH<td>PR_CONSTRUCTION<td>180<td><td>Cost per platform
+<tr><td>11<td>PR_BUILD_STATION_AIRPORT<td>PR_CONSTRUCTION<td>600<td><td>
+<tr><td>12<td>PR_BUILD_STATION_BUS<td>PR_CONSTRUCTION<td>200<td><td>
+<tr><td>13<td>PR_BUILD_STATION_TRUCK<td>PR_CONSTRUCTION<td>200<td><td>
+<tr><td>14<td>PR_BUILD_STATION_DOCK<td>PR_CONSTRUCTION<td>350<td><td>Affects PR_BUILD_WAYPOINT_BUOY
+<tr><td>15<td>PR_BUILD_VEHICLE_TRAIN<td>PR_BUILD_VEHICLE<td>400000<td><td>
+<tr><td>16<td>PR_BUILD_VEHICLE_WAGON<td>PR_BUILD_VEHICLE<td>2000<td><td>
+<tr><td>17<td>PR_BUILD_VEHICLE_AIRCRAFT<td>PR_BUILD_VEHICLE<td>700000<td><td>
+<tr><td>18<td>PR_BUILD_VEHICLE_ROAD<td>PR_BUILD_VEHICLE<td>14000<td><td>
+<tr><td>19<td>PR_BUILD_VEHICLE_SHIP<td>PR_BUILD_VEHICLE<td>65000<td><td>
+<tr><td>20<td>PR_BUILD_TREES<td>PR_CONSTRUCTION<td>20<td><td>
+<tr><td>21<td>PR_TERRAFORM<td>PR_CONSTRUCTION<td>250<td><td>Affects PR_BUILD_FOUNDATION
+<tr><td>22<td>PR_CLEAR_GRASS<td>PR_CONSTRUCTION<td>20<td><td>
+<tr><td>23<td>PR_CLEAR_ROUGH<td>PR_CONSTRUCTION<td>40<td><td>Affects PR_*_UNMOVABLE
+<tr><td>24<td>PR_CLEAR_ROCKS<td>PR_CONSTRUCTION<td>200<td><td>
+<tr><td>25<td>PR_CLEAR_FIELDS<td>PR_CONSTRUCTION<td>500<td><td>
+<tr><td>26<td>PR_CLEAR_TREES<td>PR_CONSTRUCTION<td>20<td><td>
+<tr><td>27<td>PR_CLEAR_RAIL<td>PR_CONSTRUCTION<td>-70<td><td>
+<tr><td>28<td>PR_CLEAR_SIGNALS<td>PR_CONSTRUCTION<td>10<td><td>
+<tr><td>29<td>PR_CLEAR_BRIDGE<td>PR_CONSTRUCTION<td>50<td><td>Affects PR_CLEAR_AQUEDUCT
+<tr><td>30<td>PR_CLEAR_DEPOT_TRAIN<td>PR_CONSTRUCTION<td>80<td><td>Affects PR_CLEAR_WAYPOINT_RAIL
+<tr><td>31<td>PR_CLEAR_DEPOT_ROAD<td>PR_CONSTRUCTION<td>80<td><td>
+<tr><td>32<td>PR_CLEAR_DEPOT_SHIP<td>PR_CONSTRUCTION<td>90<td><td>
+<tr><td>33<td>PR_CLEAR_TUNNEL<td>PR_CONSTRUCTION<td>30<td><td>
+<tr><td>34<td>PR_CLEAR_WATER<td>PR_CONSTRUCTION<td>10000<td><td>Affects PR_*_CANAL, PR_*_LOCK and PR_BUILD_AQUEDUCT
+<tr><td>35<td>PR_CLEAR_STATION_RAIL<td>PR_CONSTRUCTION<td>50<td><td>
+<tr><td>36<td>PR_CLEAR_STATION_AIRPORT<td>PR_CONSTRUCTION<td>30<td><td>
+<tr><td>37<td>PR_CLEAR_STATION_BUS<td>PR_CONSTRUCTION<td>50<td><td>
+<tr><td>38<td>PR_CLEAR_STATION_TRUCK<td>PR_CONSTRUCTION<td>50<td><td>Affects PR_CLEAR_WAYPOINT_BUOY
+<tr><td>39<td>PR_CLEAR_STATION_DOCK<td>PR_CONSTRUCTION<td>55<td><td>
+<tr><td>40<td>PR_CLEAR_HOUSE<td>PR_CONSTRUCTION<td>1600<td><td>Affects PR_CLEAR_INDUSTRY
+<tr><td>41<td>PR_CLEAR_ROAD<td>PR_CONSTRUCTION<td>40<td><td>
+<tr><td>42<td>PR_RUNNING_TRAIN_STEAM<td>PR_RUNNING<td>5600<td><td>
+<tr><td>43<td>PR_RUNNING_TRAIN_DIESEL<td>PR_RUNNING<td>5200<td><td>
+<tr><td>44<td>PR_RUNNING_TRAIN_ELECTRIC<td>PR_RUNNING<td>4800<td><td>
+<tr><td>45<td>PR_RUNNING_AIRCRAFT<td>PR_RUNNING<td>9600<td><td>
+<tr><td>46<td>PR_RUNNING_ROADVEH<td>PR_RUNNING<td>1600<td><td>
+<tr><td>47<td>PR_RUNNING_SHIP<td>PR_RUNNING<td>5600<td><td>
+<tr><td>48<td>PR_BUILD_INDUSTRY<td>PR_CONSTRUCTION<td>1000000<td><td>Affects PR_TOWN_ACTION, PR_BUILD_INDUSTRY_RAW and PR_BUILD_TOWN
+<tr><td>49<td>PR_CLEAR_INDUSTRY<td>PR_CONSTRUCTION<td>1600<td>OTTD r18283<td>Affected by PR_CLEAR_HOUSE
+<tr><td>50<td>PR_BUILD_UNMOVABLE<td>PR_CONSTRUCTION<td>40<td>OTTD r18283<td>Affected by PR_CLEAR_ROUGH
+<tr><td>51<td>PR_CLEAR_UNMOVABLE<td>PR_CONSTRUCTION<td>40<td>OTTD r18283<td>Affected by PR_CLEAR_ROUGH
+<tr><td>52<td>PR_BUILD_WAYPOINT_RAIL<td>PR_CONSTRUCTION<td>600<td>OTTD r18283<td>Affected by PR_BUILD_DEPOT_TRAIN
+<tr><td>53<td>PR_CLEAR_WAYPOINT_RAIL<td>PR_CONSTRUCTION<td>80<td>OTTD r18283<td>Affected by PR_CLEAR_DEPOT_TRAIN
+<tr><td>54<td>PR_BUILD_WAYPOINT_BUOY<td>PR_CONSTRUCTION<td>350<td>OTTD r18283<td>Affected by PR_BUILD_STATION_DOCK
+<tr><td>55<td>PR_CLEAR_WAYPOINT_BUOY<td>PR_CONSTRUCTION<td>50<td>OTTD r18283<td>Affected by PR_CLEAR_WAYPOINT_BUOY
+<tr><td>56<td>PR_TOWN_ACTION<td>PR_CONSTRUCTION<td>1000000<td>OTTD r18283<td>Interactions with local authority, affected by PR_BUILD_INDUSTRY
+<tr><td>57<td>PR_BUILD_FOUNDATION<td>PR_CONSTRUCTION<td>250<td>OTTD r18283<td>Affected by PR_BUILD_FOUNDATION
+<tr><td>58<td>PR_BUILD_INDUSTRY_RAW<td>PR_CONSTRUCTION<td>8000000<td>OTTD r18283<td>Directly building (not prospecting) raw industries, affected by PR_BUILD_INDUSTRY
+<tr><td>59<td>PR_BUILD_TOWN<td>PR_CONSTRUCTION<td>1000000<td>OTTD r18283<td>Affected by PR_BUILD_INDUSTRY
+<tr><td>60<td>PR_BUILD_CANAL<td>PR_CONSTRUCTION<td>5000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>61<td>PR_CLEAR_CANAL<td>PR_CONSTRUCTION<td>5000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>62<td>PR_BUILD_AQUEDUCT<td>PR_CONSTRUCTION<td>10000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>63<td>PR_CLEAR_AQUEDUCT<td>PR_CONSTRUCTION<td>2000<td>OTTD r19720<td>Affected by PR_CLEAR_BRIDGE
+<tr><td>64<td>PR_BUILD_LOCK<td>PR_CONSTRUCTION<td>7500<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>65<td>PR_CLEAR_LOCK<td>PR_CONSTRUCTION<td>2000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+</table>
+
 </body>
 </html>
