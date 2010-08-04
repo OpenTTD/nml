@@ -351,7 +351,7 @@ class NMLParser(object):
         '''switch_value : RETURN expression SEMICOLON
                         | RETURN SEMICOLON
                         | ID SEMICOLON
-                        | string SEMICOLON'''
+                        | RETURN string SEMICOLON'''
         if len(t) == 4: t[0] = t[2]
         elif t[1] == 'return': t[0] = None
         else: t[0] = t[1]

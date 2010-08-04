@@ -318,12 +318,12 @@ item(FEAT_TRAINS, turbotrain, 20) {
 <p><code>&lt;range&gt;</code> can either number or two numbers seperated by
 two dots.</p>
 <p><code>&lt;return_value&gt;</code> can be either a literal <code>return</code>,
-a literal <code>return</code> followed by an expression, an <code>ID</code> that
-is the name of another switchblock or spriteblock or a string. If the
+a literal <code>return</code> followed by an expression or string, an <code>ID
+</code> that is the name of another switchblock or spritegroup. If the
 <code>return_value</code> is just a literal <code>return</code>, then the value
-of the computation is returned. If it's a string or a <code>return</code>
-followed by an expression then that value is returned. Otherwise it's the ID
-of a spriteblock or switch and that block will be evaluated.
+of the computation is returned. If it's a <code>return</code> followed by an
+expression or a string, then that value is returned. Otherwise it's the ID
+of a spritegroup or switch and that block will be evaluated.</p>
 
 <h2><a name="block-randomswitch">Random switch</a></h2>
 <p>While a <a href="#block-switch">switch-block</a> allows making a predictable
