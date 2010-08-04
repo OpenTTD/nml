@@ -1,4 +1,4 @@
-from nml.actions import action2, action6, actionD, action2var_variables
+from nml.actions import action2, action6, actionD, action2var_variables, action4
 from nml import expression, generic, global_constants, nmlop
 
 class Action2Operator(object):
@@ -393,6 +393,10 @@ def parse_varaction2(switch_block):
         elif isinstance(r.result, expression.Parameter) and isinstance(r.result.num, expression.ConstantNumeric):
             act6.modify_bytes(r.result.num.value, varsize, offset)
             range_result = expression.ConstantNumeric(0)
+        elif isinstance(r.result, expression.String):
+            str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, r.result)
+            action_list.extend(actions)
+            range_result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.result)
             action_list.extend(tmp_param_actions)
