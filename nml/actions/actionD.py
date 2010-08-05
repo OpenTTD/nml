@@ -153,7 +153,7 @@ def parse_actionD(assignment):
 
         if op == nmlop.CMP_LT:
             action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
-            op = nmlop.SHIFT_DU
+            op = nmlop.SHIFTU_LEFT #shift left by negative number = shift right
             expr1 = expression.Parameter(assignment.param)
             expr2 = expression.ConstantNumeric(-31)
 
@@ -176,12 +176,12 @@ def parse_actionD(assignment):
             expr1 = expression.ConstantNumeric(1)
             expr2 = expression.Parameter(assignment.param)
 
-        if op == nmlop.SHIFT_RIGHT:
+        if op == nmlop.SHIFT_RIGHT or op == nmlop.SHIFTU_RIGHT:
             if isinstance(expr2, expression.ConstantNumeric):
                 expr2.value *= -1
             else:
                 expr2 = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(0), expr2)
-            op = nmlop.SHIFT_LEFT
+            op = nmlop.SHIFT_LEFT if op == nmlop.SHIFT_RIGHT else nmlop.SHIFTU_LEFT
 
         elif op == nmlop.XOR:
             #a ^ b ==> (a | b) - (a & b)

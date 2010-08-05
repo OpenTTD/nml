@@ -241,6 +241,9 @@ def parse_varaction2_expression(expr, varsize):
         elif expr.op == nmlop.SHIFT_RIGHT:
             #a >> b ==> a / (2**b)
             expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
+        elif expr.op == nmlop.SHIFTU_RIGHT:
+            #a >>> b ==> (uint)a / (2**b)
+            expr = expression.BinOp(nmlop.DIVU, expr.expr1, pow2(expr.expr2))
         elif expr.op == nmlop.HASBIT:
             # hasbit(x, n) ==> (x >> n) & 1
             expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))

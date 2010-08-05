@@ -132,6 +132,7 @@ class NMLParser(object):
         '>'  : nmlop.CMP_GT,
         '<<' : nmlop.SHIFT_LEFT,
         '>>' : nmlop.SHIFT_RIGHT,
+        '>>>': nmlop.SHIFTU_RIGHT,
     }
 
     def p_binop(self, t):
@@ -145,6 +146,7 @@ class NMLParser(object):
                       | expression XOR expression
                       | expression SHIFT_LEFT expression
                       | expression SHIFT_RIGHT expression
+                      | expression SHIFTU_RIGHT expression
                       | expression COMP_EQ expression
                       | expression COMP_NEQ expression
                       | expression COMP_LE expression

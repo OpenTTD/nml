@@ -1,4 +1,5 @@
 import operator
+from nml import generic
 
 class Operator(object):
     def __init__(self, act2_supports, act2_str, act2_num, actd_supports, actd_str, actd_num, returns_boolean, token, compiletime_func):
@@ -15,6 +16,13 @@ class Operator(object):
     def to_string(self, expr1, expr2):
         return '(%s %s %s)' % (expr1, self.token, expr2)
 
+def unsigned_rshift(a, b):
+    print "%x" % a
+    if a < 0:
+        a += 0x100000000
+    return generic.truncate_int32(a >> b)
+    print "%x" % a
+        
 ADD         = Operator( True,   r'\2+',    0,  True, r'\D+',    1, False,  '+', operator.add)
 SUB         = Operator( True,   r'\2-',    1,  True, r'\D-',    2, False,  '-', operator.sub)
 DIV         = Operator( True,   r'\2/',    6,  True, r'\D/',   10, False,  '/', operator.div)
@@ -35,14 +43,16 @@ STO_TMP     = Operator( True, r'\2sto',   14, False,   None, None, False, None, 
 STO_PERM    = Operator( True,    r'10',   16, False,   None, None, False, None, None)
 SHIFT_LEFT  = Operator( True,     None, None,  True, r'\D<<',   6, False, '<<', operator.lshift)
 SHIFT_RIGHT = Operator( True,     None, None,  True,   None, None, False, '>>', operator.rshift)
+SHIFTU_RIGHT= Operator( True,     None, None,  True,   None, None, False, '>>>',unsigned_rshift)
 HASBIT      = Operator( True,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) != 0)
 #A few operators that are generated internally but can't be directly written in nml
 VAL2        = Operator( True,   r'\2r',   15, False,   None, None, False, None, lambda a, b: b)
 ASSIGN      = Operator(False,     None, None,  True, r'\D=',    0, False, None, None)
-SHIFT_DU    = Operator(False,     None, None,  True, r'\Du<<',  5, False, None, None)
+SHIFTU_LEFT = Operator(False,     None, None,  True, r'\Du<<',  5, False, None, None)
 VACT2_CMP   = Operator( True,     None,   18, False,   None, None, False, None, None)
 MINU        = Operator( True,  r'\2u<',    4, False,   None, None, False, None, None)
 ROT_RIGHT   = Operator( True,  r'\2ror',  17, False,   None, None, False, None, None)
+DIVU        = Operator( True,  r'\2u/',    8,  True, r'\Du/',   9, False, None, None)
 
 
 MIN.to_string = lambda expr1, expr2: 'min(%s, %s)' % (expr1, expr2)
