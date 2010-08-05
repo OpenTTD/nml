@@ -169,6 +169,18 @@ def parse_actionD(assignment):
                 expr2 = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(0), expr2)
             op = nmlop.SHIFT_LEFT
 
+        elif op == nmlop.XOR:
+            #a ^ b ==> (a | b) - (a & b)
+            expr1 = parse_subexpression(expr1, action_list)
+            expr2 = parse_subexpression(expr2, action_list)
+            tmp_param1, tmp_action_list1 = get_tmp_parameter(expression.BinOp(nmlop.OR, expr1, expr2))
+            tmp_param2, tmp_action_list2 = get_tmp_parameter(expression.BinOp(nmlop.AND, expr1, expr2))
+            action_list.extend(tmp_action_list1)
+            action_list.extend(tmp_action_list2)
+            expr1 = expression.Parameter(expression.ConstantNumeric(tmp_param1))
+            expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param2))
+            op = nmlop.SUB
+
         if isinstance(expr1, expression.ConstantNumeric):
             param1 = expression.ConstantNumeric(0xFF)
             data = expr1

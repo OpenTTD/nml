@@ -22,7 +22,7 @@ MOD         = Operator( True,   r'\2%',    7,  True, r'\D%',   12, False,  '%', 
 MUL         = Operator( True,   r'\2*',   10,  True, r'\D*',    4, False,  '*', operator.mul)
 AND         = Operator( True,   r'\2&',   11,  True, r'\D&',    7, False,  '&', operator.and_)
 OR          = Operator( True,   r'\2|',   12,  True, r'\D|',    8, False,  '|', operator.or_)
-XOR         = Operator( True,   r'\2^',   13, False,   None, None, False,  '^', operator.xor)
+XOR         = Operator( True,   r'\2^',   13,  True,   None, None, False,  '^', operator.xor)
 CMP_EQ      = Operator( True,     None, None,  True,   None, None,  True, '==', operator.eq)
 CMP_NEQ     = Operator( True,     None, None,  True,   None, None,  True, '!=', operator.ne)
 CMP_LE      = Operator( True,     None, None,  True,   None, None,  True, '<=', operator.le)
