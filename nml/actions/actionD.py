@@ -153,6 +153,12 @@ def parse_actionD(assignment):
             expr1 = expression.ConstantNumeric(1)
             expr2 = expression.Parameter(assignment.param)
 
+        if op == nmlop.SHIFT_RIGHT:
+            if isinstance(expr2, expression.ConstantNumeric):
+                expr2.value *= -1
+            else:
+                expr2 = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(0), expr2)
+            op = nmlop.SHIFT_LEFT
 
         if isinstance(expr1, expression.ConstantNumeric):
             param1 = expression.ConstantNumeric(0xFF)

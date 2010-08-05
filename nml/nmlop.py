@@ -33,8 +33,8 @@ MIN         = Operator( True,   r'\2<',    2, False,   None, None, False, None, 
 MAX         = Operator( True,   r'\2>',    3, False,   None, None, False, None, lambda a, b: max(a, b))
 STO_TMP     = Operator( True, r'\2sto',   14, False,   None, None, False, None, None)
 STO_PERM    = Operator( True,    r'10',   16, False,   None, None, False, None, None)
-SHIFT_LEFT  = Operator(False,     None, None, False,   None, None, False, '<<', operator.lshift)
-SHIFT_RIGHT = Operator(False,     None, None, False,   None, None, False, '>>', operator.rshift)
+SHIFT_LEFT  = Operator(False,     None, None,  True, r'\D<<',   6, False, '<<', operator.lshift)
+SHIFT_RIGHT = Operator(False,     None, None,  True,   None, None, False, '>>', operator.rshift)
 HASBIT      = Operator(False,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) != 0)
 #A few operators that are generated internally but can't be directly written in nml
 VAL2        = Operator( True,   r'\2r',   15, False,   None, None, False, None, lambda a, b: b)
