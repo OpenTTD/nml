@@ -70,11 +70,25 @@ def parse_actionD(assignment):
         actions.extend(cond_block.get_action_list())
         return actions
 
-    if isinstance(assignment.value, expression.BinOp) and assignment.value.op == nmlop.HASBIT:
-        actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
-        cond_block = nml.ast.conditional.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
-        actions.extend(cond_block.get_action_list())
-        return actions
+    if isinstance(assignment.value, expression.BinOp):
+        op = assignment.value.op
+        if op == nmlop.HASBIT:
+            actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
+            cond_block = nml.ast.conditional.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
+            actions.extend(cond_block.get_action_list())
+            return actions
+
+        elif op == nmlop.MIN or op == nmlop.MAX:
+            #min(a, b) ==> a < b ? a : b.
+            #max(a, b) ==> a > b ? a : b.
+            action6.free_parameters.save()
+            action_list = []
+            expr1 = parse_subexpression(assignment.value.expr1, action_list)
+            expr2 = parse_subexpression(assignment.value.expr2, action_list)
+            guard = expression.BinOp(nmlop.CMP_LT if op == nmlop.MIN else nmlop.CMP_GT, expr1, expr2)
+            action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.TernaryOp(guard, expr1, expr2, None))))
+            action6.free_parameters.restore()
+            return action_list
 
     if isinstance(assignment.value, expression.Boolean):
         actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
