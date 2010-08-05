@@ -35,7 +35,7 @@ STO_TMP     = Operator( True, r'\2sto',   14, False,   None, None, False, None, 
 STO_PERM    = Operator( True,    r'10',   16, False,   None, None, False, None, None)
 SHIFT_LEFT  = Operator( True,     None, None,  True, r'\D<<',   6, False, '<<', operator.lshift)
 SHIFT_RIGHT = Operator( True,     None, None,  True,   None, None, False, '>>', operator.rshift)
-HASBIT      = Operator(False,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) != 0)
+HASBIT      = Operator( True,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) != 0)
 #A few operators that are generated internally but can't be directly written in nml
 VAL2        = Operator( True,   r'\2r',   15, False,   None, None, False, None, lambda a, b: b)
 ASSIGN      = Operator(False,     None, None,  True, r'\D=',    0, False, None, None)
