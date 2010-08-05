@@ -208,6 +208,22 @@ properties[0x0A] = {
     'nearby_station_name': {'size': 2, 'num': 0x24, 'string': 0xDC},
 }
 
+def airport_years(value):
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
+    min_year = value.values[0].reduce_constant()
+    max_year = value.values[1].reduce_constant()
+    return [Action0Property(0x0C, ConstantNumeric(max_year.value << 16 | min_year.value), 4)]
+
+properties[0x0D] = {
+    'override': {'size': 1, 'num': 0x08},
+    'years_available': {'custom_function': airport_years},
+    'ttd_airport_type': {'size': 1, 'num': 0x0D},
+    'catchment_area': {'size': 1, 'num': 0x0E},
+    'noise_level': {'size': 1, 'num': 0x0F},
+    'name': {'size': 2, 'num': 0x10, 'string': 0xDC},
+}
+
 class RailtypeListProp(object):
     def __init__(self, prop_num, railtype_list):
         self.prop_num = prop_num
