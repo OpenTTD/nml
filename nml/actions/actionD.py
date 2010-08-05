@@ -45,6 +45,15 @@ class ParameterAssignment(object):
     def __str__(self):
         return 'param[%s] = %s;\n' % (str(self.param), str(self.value))
 
+#prevent evaluating common sub-expressions multiple times
+def parse_subexpression(expr, action_list):
+    if isinstance(expr, expression.ConstantNumeric) or \
+            (isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric)):
+        return expr
+    else:
+        tmp_param, tmp_param_actions = get_tmp_parameter(expr)
+        action_list.extend(tmp_param_actions)
+        return expression.Parameter(expression.ConstantNumeric(tmp_param))
 
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
