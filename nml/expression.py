@@ -210,7 +210,11 @@ class BinOp(Expression):
     def supported_by_actionD(self, raise_error):
         if not self.op.actd_supports:
             token = " '%s'" % self.op.token if self.op.token else ""
-            if raise_error: raise generic.ScriptError("Operator%s not supported in parameter assignment" % token, self.pos)
+            if raise_error:
+                if self.op == nmlop.STO_PERM: raise generic.ScriptError("STORE_PERM is only available in switch-blocks.", self.pos)
+                elif self.op == nmlop.STO_TMP: raise generic.ScriptError("STORE_TEMP is only available in switch-blocks.", self.pos)
+                #default case
+                raise generic.ScriptError("Operator%s not supported in parameter assignment" % token, self.pos)
             return False
         return self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
 
@@ -335,7 +339,7 @@ class Parameter(Expression):
     def supported_by_action2(self, raise_error):
         supported = isinstance(self.num, ConstantNumeric)
         if not supported and raise_error:
-            raise generic.ScriptError("Parameters with non-constant numbers are not supported in a switch-block", self.pos)
+            raise generic.ScriptError("Parameter acessess with non-constant numbers are not supported in a switch-block.", self.pos)
         return supported
 
     def supported_by_actionD(self, raise_error):
@@ -390,7 +394,11 @@ class Variable(Expression):
         return True
 
     def supported_by_actionD(self, raise_error):
-        if raise_error: raise generic.ScriptError("Variables are not supported in parameter assignments", self.pos)
+        if raise_error:
+            if isinstance(self.num, ConstantNumeric):
+                if self.num.value == 0x7C: raise generic.ScriptError("LOAD_PERM is only available in switch-blocks.", self.pos)
+                if self.num.value == 0x7D: raise generic.ScriptError("LOAD_TEMP is only available in switch-blocks.", self.pos)
+            raise generic.ScriptError("Variable accesses are not supported outside of switch-blocks.", self.pos)
         return False
 
 class FunctionCall(Expression):
