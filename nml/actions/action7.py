@@ -63,9 +63,19 @@ def parse_conditional(expr):
                 actions = []
             else:
                 param, actions = actionD.get_tmp_parameter(expr.expr1)
-            if not isinstance(expr.expr2, expression.ConstantNumeric):
-                raise generic.ScriptError("The bit to test must be a constant value", expr.expr2.pos)
-            return (param, actions, (1, r'\70'), expr.expr2.value, 1)
+            if isinstance(expr.expr2, expression.ConstantNumeric):
+                bit_num = expr.expr2.value
+            else:
+                if isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric):
+                   param = expr.expr2.num.value
+                else:
+                    param, tmp_action_list = actionD.get_tmp_parameter(expr.expr2)
+                    actions.extend(tmp_action_list)
+                act6 = action6.Action6()
+                act6.modify_bytes(param, 1, 4)
+                actions.append(act6)
+                bit_num = 0
+            return (param, actions, (1, r'\70'), bit_num , 1)
         elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LE, nmlop.CMP_GE) \
                 and isinstance(expr.expr2, expression.ConstantNumeric):
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
