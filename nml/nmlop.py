@@ -33,8 +33,8 @@ MIN         = Operator( True,   r'\2<',    2,  True,   None, None, False, None, 
 MAX         = Operator( True,   r'\2>',    3,  True,   None, None, False, None, lambda a, b: max(a, b))
 STO_TMP     = Operator( True, r'\2sto',   14, False,   None, None, False, None, None)
 STO_PERM    = Operator( True,    r'10',   16, False,   None, None, False, None, None)
-SHIFT_LEFT  = Operator(False,     None, None,  True, r'\D<<',   6, False, '<<', operator.lshift)
-SHIFT_RIGHT = Operator(False,     None, None,  True,   None, None, False, '>>', operator.rshift)
+SHIFT_LEFT  = Operator( True,     None, None,  True, r'\D<<',   6, False, '<<', operator.lshift)
+SHIFT_RIGHT = Operator( True,     None, None,  True,   None, None, False, '>>', operator.rshift)
 HASBIT      = Operator(False,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) != 0)
 #A few operators that are generated internally but can't be directly written in nml
 VAL2        = Operator( True,   r'\2r',   15, False,   None, None, False, None, lambda a, b: b)
@@ -42,6 +42,7 @@ ASSIGN      = Operator(False,     None, None,  True, r'\D=',    0, False, None, 
 SHIFT_DU    = Operator(False,     None, None,  True, r'\Du<<',  5, False, None, None)
 VACT2_CMP   = Operator( True,     None,   18, False,   None, None, False, None, None)
 MINU        = Operator( True,  r'\2u<',    4, False,   None, None, False, None, None)
+ROT_RIGHT   = Operator( True,  r'\2ror',  17, False,   None, None, False, None, None)
 
 
 MIN.to_string = lambda expr1, expr2: 'min(%s, %s)' % (expr1, expr2)
