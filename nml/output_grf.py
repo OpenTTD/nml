@@ -100,6 +100,15 @@ class OutputGRF(output_base.OutputBase):
         size_x = sprite_info.xsize.value
         size_y = sprite_info.ysize.value
         sprite = im.crop((x, y, x + size_x, y + size_y))
+
+        # Check for white pixels; those that cause "artefacts" when shading
+        white_pixels = 0
+        for p in sprite.getdata():
+            if p == 255:
+                white_pixels += 1
+        if white_pixels != 0:
+            pixels = sprite.size[0] * sprite.size[1]
+            generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), "%s at [x: %i, y: %i]" % (sprite_info.file.value, x, y))
         self.wsprite(sprite, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.compression.value)
 
     def print_empty_realsprite(self):

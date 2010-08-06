@@ -97,6 +97,7 @@
 	<li><a href="#vars-airporttiles">Airport tiles</a></li>
 </ul>
 </li>
+<li><a href="#warnings">Warnings</a></li>
 <li><a href="#refs">Additional references</a>
 <ul>
 	<li><a href="#refs-default-industries">Default industries</a></li>
@@ -1204,6 +1205,16 @@ specified height of the year is used in the calculation.
 <tr><td>build_date <td>0 .. 5000000 <td>for depots only: build date of the depot in days since 0
 </table>
 <h2><a name="vars-airporttiles">Airport tiles</a></h2>
+
+<h1><a name="warnings">Warnings</a></h1>
+<p>Sometimes NML gives warnings that might be cryptic or you have no idea why they are given. This section will list these warnings.</p>
+<li>
+<ul>
+<b>IMAGE at [x: X, y: Y]: I of J pixels (K%) are pure white</b>
+<br>
+This warning is generated when pixels with palette index 255, or RGB colour 0xFFFFFF, are found. These so-called pure white pixels are not used by OpenTTD, or TTDPatch, as they do not work with colour remaps such as the "transparency" colour remap. The pure white is used around the sprites in the PCX files that GRFCodec generates, which made pure white images with sprites common in NewGRF development. As such the pure white pixel test is also a way to detect so cases where the position or size of the sprite is incorrect, i.e. when it covers the white pixels around the sprite.
+</ul>
+</li>
 
 <h1><a name="refs">Additional references</a></h1>
 
