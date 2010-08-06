@@ -97,6 +97,5 @@ def grf_name_desc_actions(name, desc):
         desc_node = TextNode("DESC", desc)
         root.subnodes.append(desc_node)
     if len(root.subnodes) > 0:
-        skip_act = action7.SkipAction(9, 0x9D, 4, (2, r'\7='), 0, 1)
-        return [skip_act, Action14([root])]
+        return [Action14([root])]
     return []
