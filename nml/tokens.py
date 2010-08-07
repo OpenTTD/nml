@@ -25,6 +25,7 @@ reserved = {
     'childsprite' : 'CHILDSPRITE',
     'switch' : 'SWITCH', #deterministic varaction2
     'random_switch' : 'RANDOMSWITCH', #random action2
+    'produce' : 'PRODUCE', #production action2
     'error' : 'ERROR', #action B
     'replace' : 'REPLACESPRITE', #action A
     'replacenew' : 'REPLACENEWSPRITE', #action 5

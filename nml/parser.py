@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, railtypetable, replace, spriteblock, switch, townnames, snowline
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline
 from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -50,6 +50,7 @@ class NMLParser(object):
         '''main_block : skipable_block
                       | switch
                       | random_switch
+                      | produce
                       | spriteblock
                       | template_declaration
                       | town_names
@@ -367,6 +368,10 @@ class NMLParser(object):
                        | random_body expression COLON switch_value'''
         if len(t) == 1: t[0] = []
         else: t[0] = t[1] + [action2random.RandomChoice(t[2], t[4])]
+
+    def p_produce(self,t):
+        'produce : PRODUCE LPAREN expression_list RPAREN SEMICOLON'
+        t[0] = produce.Produce(t[3], t.lineno(1))
 
     #
     # Real sprites and related stuff
