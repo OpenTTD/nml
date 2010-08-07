@@ -108,7 +108,8 @@ class OutputGRF(output_base.OutputBase):
                 white_pixels += 1
         if white_pixels != 0:
             pixels = sprite.size[0] * sprite.size[1]
-            generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), "%s at [x: %i, y: %i]" % (sprite_info.file.value, x, y))
+            pos = generic.PixelPosition(sprite_info.file.value, x, y)
+            generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), pos)
         self.wsprite(sprite, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.compression.value)
 
     def print_empty_realsprite(self):

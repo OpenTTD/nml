@@ -39,6 +39,24 @@ class LinePosition(Position):
     def __str__(self):
         return '"%s", line %d' % (self.filename, self.line_start)
 
+class PixelPosition(Position):
+    """
+    Position of a pixel (in a file with graphics).
+
+    @ivar xpos: Horizontal position of the pixel.
+    @type xpos: C{int}
+
+    @ivar ypos: Vertical position of the pixel.
+    @type ypos: C{int}
+    """
+    def __init__(self, filename, xpos, ypos):
+        Position.__init__(self, filename)
+        self.xpos = xpos
+        self.ypos = ypos
+
+    def __str__(self):
+        return '"%s" at [x: %d, y: %d]' % (self.filename, self.xpos, self.ypos)
+
 
 class ScriptError(Exception):
     def __init__(self, value, pos = None):
