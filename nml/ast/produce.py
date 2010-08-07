@@ -1,4 +1,5 @@
 from nml import expression, generic, global_constants
+from nml.actions import action2production
 
 class Produce(object):
     """
@@ -59,4 +60,4 @@ class Produce(object):
         self.again.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return []
+        return action2production.get_production_actions(self)

@@ -23,7 +23,10 @@ class Action2Var(action2.Action2):
         action2.Action2.__init__(self, feature, name)
         self.type_byte = type_byte
         self.varsize = varsize
-        self.tmp_locations = range(0x80, 0x100)
+        #0x00 - 0x7F: available to user
+        #0x80 - 0x85: used for production CB
+        #0x86 - 0x100: available as temp. registers
+        self.tmp_locations = range(0x86, 0x100)
         self.references = []
         self.ranges = []
 
