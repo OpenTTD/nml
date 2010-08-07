@@ -170,12 +170,12 @@ def read_lang_files(lang_dir):
                 pass
             elif line[:6] == "lang: ":
                 if lang != -1:
-                    pos = generic.Position(filename, idx + 1)
+                    pos = generic.LinePosition(filename, idx + 1)
                     raise generic.ScriptError("Only one 'lang: ' line allowed per language file.", pos)
                 lang = int(line[6:8], 16)
             else:
                 if lang == -1:
-                    pos = generic.Position(filename, idx + 1)
+                    pos = generic.LinePosition(filename, idx + 1)
                     raise generic.ScriptError("Language ID ('lang: ') not set.", pos)
                 i = line.index(':')
                 name = line[:i].strip()

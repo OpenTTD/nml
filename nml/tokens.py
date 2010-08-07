@@ -191,7 +191,7 @@ class NMLLexer(object):
         """
         @note: The lexer.lineno contains a Position object.
         """
-        self.lexer.lineno = generic.Position(fname, line)
+        self.lexer.lineno = generic.LinePosition(fname, line)
 
     def increment_lines(self, count):
         self.set_position(self.lexer.lineno.filename, self.lexer.lineno.line_start + count)

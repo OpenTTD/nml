@@ -17,16 +17,23 @@ def check_range(value, min_value, max_value, name, pos):
 
 class Position(object):
     """
-    Position in a file.
+    Base class representing a position in a file.
 
     @ivar filename: Name of the file.
     @type filename: C{str}
+    """
+    def __init__(self, filename):
+        self.filename = filename
+
+class LinePosition(Position):
+    """
+    Line in a file.
 
     @ivar line_start: Line number (starting with 1) where the position starts.
     @type line_start: C{int}
     """
     def __init__(self, filename, line_start):
-        self.filename = filename
+        Position.__init__(self, filename)
         self.line_start = line_start
 
     def __str__(self):
