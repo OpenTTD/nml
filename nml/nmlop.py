@@ -17,12 +17,11 @@ class Operator(object):
         return '(%s %s %s)' % (expr1, self.token, expr2)
 
 def unsigned_rshift(a, b):
-    print "%x" % a
     if a < 0:
         a += 0x100000000
     return generic.truncate_int32(a >> b)
-    print "%x" % a
-        
+
+
 ADD         = Operator( True,   r'\2+',    0,  True, r'\D+',    1, False,  '+', operator.add)
 SUB         = Operator( True,   r'\2-',    1,  True, r'\D-',    2, False,  '-', operator.sub)
 DIV         = Operator( True,   r'\2/',    6,  True, r'\D/',   10, False,  '/', operator.div)
