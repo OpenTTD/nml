@@ -316,7 +316,8 @@ def parse_varaction2_expression(expr, varsize):
 
         if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
                 isinstance(expr.expr2, VarAction2LoadTempVar) or \
-                (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)):
+                (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
+                expr.op == nmlop.VAL2:
             expr2 = expr.expr2
         elif expr.expr2.supported_by_actionD(False):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
@@ -357,7 +358,7 @@ def parse_varaction2_expression(expr, varsize):
         else:
             tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr2, varsize)
             #it can be constant, parameter or variable
-            assert len(tmp_var_list) == 1
+            assert len(tmp_var_list) == 1 or expr.op == nmlop.VAL2
             extra_actions.extend(tmp_actions)
             for mod in tmp_mods:
                 mod.offset += var_list_size
