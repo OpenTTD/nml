@@ -159,7 +159,10 @@ def parse_grf_string(orig_string):
 
 def read_lang_files(lang_dir):
     """
-    @param lang_dir: Name of the direcotry containing the language files.
+    Read the language files containing the translations for string constants used in the NML specification.
+    Loaded translations are stored in L{grf_strings}.
+
+    @param lang_dir: Name of the directory containing the language files.
     @type  lang_dir: C{str}
     """
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
