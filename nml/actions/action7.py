@@ -34,7 +34,7 @@ class SkipAction(base_action.BaseAction):
 
 class UnconditionalSkipAction(SkipAction):
     def __init__(self, feature, label):
-        SkipAction.__init__(self, feature, 0x83, 1, (3, r'\7! '), 0xFF, label)
+        SkipAction.__init__(self, feature, 0x9A, 1, (0, r'\71'), 0, label)
 
 def op_to_cond_op(op):
     #The operators are reversed as we want to skip if the expression is true
