@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall
 from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -69,6 +69,7 @@ class NMLParser(object):
     def p_skipable_block(self, t):
         '''skipable_block : grf_block
                           | param_assignment
+                          | skip_all
                           | conditional
                           | loop
                           | item
@@ -587,4 +588,7 @@ class NMLParser(object):
         'grf_block : GRF LBRACE assignment_list RBRACE'
         t[0] = grf.GRF(t[3], t.lineno(1))
 
+    def p_skip_all(self, t):
+        'skip_all : SKIP_ALL SEMICOLON'
+        t[0] = skipall.SkipAll(t.lineno(1))
 
