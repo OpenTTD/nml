@@ -167,25 +167,28 @@ def read_lang_files(lang_dir):
     """
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
         lang = -1
-        for idx, line in enumerate(codecs.open(filename, "r", "utf-8")):
-            line = line.strip()
-            if len(line) == 0 or line[0] == "#":
-                pass
-            elif line[:6] == "lang: ":
-                if lang != -1:
-                    pos = generic.LinePosition(filename, idx + 1)
-                    raise generic.ScriptError("Only one 'lang: ' line allowed per language file.", pos)
-                lang = int(line[6:8], 16)
-            else:
-                if lang == -1:
-                    pos = generic.LinePosition(filename, idx + 1)
-                    raise generic.ScriptError("Language ID ('lang: ') not set.", pos)
-                i = line.index(':')
-                name = line[:i].strip()
-                value = line[i+1:]
-                if not name in grf_strings:
-                    grf_strings[name] = []
-                grf_strings[name].append({'lang': lang, 'text': parse_grf_string(value)})
+        try:
+            for idx, line in enumerate(codecs.open(filename, "r", "utf-8")):
+                line = line.strip()
+                if len(line) == 0 or line[0] == "#":
+                    pass
+                elif line[:6] == "lang: ":
+                    if lang != -1:
+                        pos = generic.LinePosition(filename, idx + 1)
+                        raise generic.ScriptError("Only one 'lang: ' line allowed per language file.", pos)
+                    lang = int(line[6:8], 16)
+                else:
+                    if lang == -1:
+                        pos = generic.LinePosition(filename, idx + 1)
+                        raise generic.ScriptError("Language ID ('lang: ') not set.", pos)
+                    i = line.index(':')
+                    name = line[:i].strip()
+                    value = line[i+1:]
+                    if not name in grf_strings:
+                        grf_strings[name] = []
+                    grf_strings[name].append({'lang': lang, 'text': parse_grf_string(value)})
+        except UnicodeDecodeError:
+            generic.print_warning("Language file \"%s\" contains non-utf8 characters. Ignoring (part of) the contents" % filename);
 
     # Generate warnings for strings not in the default language.
     for strid, lang_dicts in grf_strings.iteritems():
