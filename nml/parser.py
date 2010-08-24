@@ -319,7 +319,7 @@ class NMLParser(object):
         last = None
         for part in parts:
             if last is None: t[0] = part
-            else: lelse_block = part
+            else: last.else_block = part
             last = part
 
     def p_if_else_parts(self, t):
