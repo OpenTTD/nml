@@ -42,8 +42,8 @@ class GRF(object):
 
     def get_action_list(self):
         action_list = action14.grf_name_desc_actions(self.name, self.desc)
-        action_list.append(action8.Action8(self.grfid, self.name, self.desc))
         action_list.extend(action14.param_desc_actions(self.params))
+        action_list.append(action8.Action8(self.grfid, self.name, self.desc))
         return action_list
 
     def __str__(self):
