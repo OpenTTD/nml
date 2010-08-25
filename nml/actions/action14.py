@@ -88,6 +88,49 @@ class BranchNode(Action14Node):
         file.print_bytex(0)
         file.newline()
 
+class BinaryNode(Action14Node):
+    def __init__(self, id, size, val = None):
+        Action14Node.__init__(self, "B", id)
+        self.size = size
+        self.val = val
+
+    def get_size(self):
+        return 7 + self.size # "B" (1), id (4), size (2), data (self.size)
+
+    def write(self, file):
+        self.write_type_id(file)
+        file.print_word(self.size)
+        file.print_varx(self.val, self.size)
+        file.newline()
+
+class SettingMaskNode(BinaryNode):
+    def __init__(self, param_num, first_bit, num_bits):
+        BinaryNode.__init__(self, "MASK", 3)
+        self.param_num = param_num
+        self.first_bit = first_bit
+        self.num_bits = num_bits
+
+    def write(self, file):
+        self.write_type_id(file)
+        file.print_word(self.size)
+        file.print_byte(self.param_num)
+        file.print_byte(self.first_bit)
+        file.print_byte(self.num_bits)
+        file.newline()
+
+class LimitNode(BinaryNode):
+    def __init__(self, min_val, max_val):
+        BinaryNode.__init__(self, "LIMI", 8)
+        self.min_val = min_val
+        self.max_val = max_val
+
+    def write(self, file):
+        self.write_type_id(file)
+        file.print_word(self.size)
+        file.print_dword(self.min_val)
+        file.print_dword(self.max_val)
+        file.newline()
+
 def grf_name_desc_actions(name, desc):
     root = BranchNode("INFO")
     if len(grfstrings.grf_strings[name.name.value]) > 1:
@@ -99,3 +142,40 @@ def grf_name_desc_actions(name, desc):
     if len(root.subnodes) > 0:
         return [Action14([root])]
     return []
+
+def param_desc_actions(params):
+    num_params = 0
+    for param_desc in params:
+        num_params += len(param_desc.setting_list)
+    root = BranchNode("INFO")
+    root.subnodes.append(BinaryNode("NPAR", 1, num_params))
+    param_root = BranchNode("PARA")
+    param_num = 0
+    setting_num = 0
+    for param_desc in params:
+        if param_desc.num is not None:
+            param_num = param_desc.num.value
+        for setting in param_desc.setting_list:
+            setting_node = BranchNode(setting_num)
+            if setting.name_string is not None:
+                setting_node.subnodes.append(TextNode("NAME", setting.name_string))
+            if setting.desc_string is not None:
+                setting_node.subnodes.append(TextNode("DESC", setting.desc_string))
+            if setting.type == 'int':
+                setting_node.subnodes.append(BinaryNode("MASK", 1, param_num))
+                min_val = setting.min_val.value if setting.min_val is not None else 0
+                max_val = setting.max_val.value if setting.max_val is not None else 0xFFFFFFFF
+                setting_node.subnodes.append(LimitNode(min_val, max_val))
+            else:
+                assert setting.type == 'bool'
+                setting_node.subnodes.append(BinaryNode("TYPE", 1, 1))
+                bit = setting.bit_num.value if setting.bit_num is not None else 0
+                setting_node.subnodes.append(SettingMaskNode(param_num, bit, 1))
+            if setting.def_val is not None:
+                setting_node.subnodes.append(BinaryNode("DFLT", 4, setting.def_val.value))
+            param_root.subnodes.append(setting_node)
+            setting_num += 1
+        param_num += 1
+    if len(param_root.subnodes) > 0:
+        root.subnodes.append(param_root)
+    return [Action14([root])]
