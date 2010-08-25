@@ -196,7 +196,9 @@ class NMLParser(object):
     #
     def p_assignment_list(self, t):
         '''assignment_list : assignment
-                           | assignment_list assignment'''
+                           | param_desc
+                           | assignment_list assignment
+                           | assignment_list param_desc'''
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[2]]
 
@@ -204,6 +206,33 @@ class NMLParser(object):
         '''assignment : ID COLON string SEMICOLON
                       | ID COLON expression SEMICOLON'''
         t[0] = assignment.Assignment(t[1], t[3], t[1].pos)
+        
+    def p_param_desc(self, t):
+        '''param_desc : PARAMETER expression LBRACE setting_list RBRACE
+                      | PARAMETER LBRACE setting_list RBRACE'''
+        if len(t) == 5: t[0] = grf.ParameterDescription(t[3])
+        else: t[0] = grf.ParameterDescription(t[4], t[2])
+        
+    def p_setting_list(self, t):
+        '''setting_list : setting
+                        | setting_list setting'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[2]]
+
+    def p_setting(self, t):
+        'setting : ID LBRACE setting_value_list RBRACE'
+        t[0] = grf.ParameterSetting(t[1], t[3]);
+
+    def p_setting_value_list(self, t):
+        '''setting_value_list : setting_value
+                              | setting_value_list setting_value'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[2]]
+
+    def p_setting_value(self, t):
+        '''setting_value : ID COLON string SEMICOLON
+                         | ID COLON expression SEMICOLON'''
+        t[0] = grf.SettingValue(t[1], t[3])
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
