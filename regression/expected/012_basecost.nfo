@@ -6,26 +6,30 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d19 
+0 * 4 \d20 
 
-1 * 56 08 07 "NML\12" "ÞNML regression test" 00 "ÞA test newgrf testing NML" 00 
-2 * 9 0D 40 \D+ 02 FF \dx00000008 
+1 * 16 14 "C" "INFO" 
+"B" "NPAR" \w1 00 
+00 
+00 
+2 * 56 08 07 "NML\12" "ÞNML regression test" 00 "ÞA test newgrf testing NML" 00 
+3 * 9 0D 40 \D+ 02 FF \dx00000008 
 
-3 * 7 06 
+4 * 7 06 
 40 01 FF \wx0008 
 FF 
 
-4 * 9 00 08 \b1 01 FF \wx0001 
+5 * 9 00 08 \b1 01 FF \wx0001 
 08 00 
 
-5 * 14 00 08 \b1 06 FF \wx002A 
+6 * 14 00 08 \b1 06 FF \wx002A 
 08 06 06 06 06 06 06 
 
-6 * 9 0D 42 \D+ 01 FF \dx00000001 
+7 * 9 0D 42 \D+ 01 FF \dx00000001 
 
-7 * 9 0D 41 \D+ 42 FF \dx00000008 
+8 * 9 0D 41 \D+ 42 FF \dx00000008 
 
-8 * 27 06 
+9 * 27 06 
 41 01 FF \wx0008 
 41 01 FF \wx0009 
 41 01 FF \wx000A 
@@ -33,35 +37,35 @@ FF
 41 01 FF \wx000C 
 FF 
 
-9 * 13 00 08 \b1 05 FF \wx000F 
+10 * 13 00 08 \b1 05 FF \wx000F 
 08 00 00 00 00 00 
 
-10 * 9 00 08 \b1 01 FF \wx0034 
+11 * 9 00 08 \b1 01 FF \wx0034 
 08 15 
 
-11 * 5 0D 43 \D= 0B 00 
+12 * 5 0D 43 \D= 0B 00 
 
-12 * 7 06 
+13 * 7 06 
 43 01 FF \wx0003 
 FF 
 
-13 * 5 0D 42 \D= 00 00 
+14 * 5 0D 42 \D= 00 00 
 
-14 * 9 0D 45 \D+ 0B FF \dx00000001 
+15 * 9 0D 45 \D+ 0B FF \dx00000001 
 
-15 * 7 06 
+16 * 7 06 
 45 01 FF \wx0003 
 FF 
 
-16 * 5 0D 44 \D= 00 00 
+17 * 5 0D 44 \D= 00 00 
 
-17 * 9 0D 43 \D+ 44 FF \dx00000008 
+18 * 9 0D 43 \D+ 44 FF \dx00000008 
 
-18 * 12 06 
+19 * 12 06 
 42 02 FF \wx0005 
 43 01 FF \wx0008 
 FF 
 
-19 * 9 00 08 \b1 01 FF \wx00FF 
+20 * 9 00 08 \b1 01 FF \wx00FF 
 08 00 
 

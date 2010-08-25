@@ -6,37 +6,41 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d19 
+0 * 4 \d20 
 
-1 * 56 08 07 "test" "ÞNML regression test" 00 "ÞA test newgrf testing NML" 00 
-2 * 32 00 08 \b1 06 FF \wx0000 
+1 * 16 14 "C" "INFO" 
+"B" "NPAR" \w1 00 
+00 
+00 
+2 * 56 08 07 "test" "ÞNML regression test" 00 "ÞA test newgrf testing NML" 00 
+3 * 32 00 08 \b1 06 FF \wx0000 
 09 "PASS" "MAIL" "GOOD" "IORE" "GOLD" 
 "FOOD" 
 
-3 * 6 01 01 \b1 FF \wx0008 
+4 * 6 01 01 \b1 FF \wx0008 
 
-4 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
-5 opengfx_generic_trams1.pcx 64 56 01 19 20 -14 -5 
-6 opengfx_generic_trams1.pcx 96 56 01 15 28 -14 -8 
-7 opengfx_generic_trams1.pcx 144 56 01 19 20 -6 -7 
-8 opengfx_generic_trams1.pcx 176 56 01 18 8 -3 -10 
-9 opengfx_generic_trams1.pcx 192 56 01 19 20 -14 -9 
-10 opengfx_generic_trams1.pcx 224 56 01 15 28 -14 -8 
-11 opengfx_generic_trams1.pcx 272 56 01 19 20 -6 -7 
+5 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
+6 opengfx_generic_trams1.pcx 64 56 01 19 20 -14 -5 
+7 opengfx_generic_trams1.pcx 96 56 01 15 28 -14 -8 
+8 opengfx_generic_trams1.pcx 144 56 01 19 20 -6 -7 
+9 opengfx_generic_trams1.pcx 176 56 01 18 8 -3 -10 
+10 opengfx_generic_trams1.pcx 192 56 01 19 20 -14 -9 
+11 opengfx_generic_trams1.pcx 224 56 01 15 28 -14 -8 
+12 opengfx_generic_trams1.pcx 272 56 01 19 20 -6 -7 
 
-12 * 9 02 01 FE \b1 \b1 
+13 * 9 02 01 FE \b1 \b1 
 \w0 
 \w0 
 
-13 * 9 0D 00 \D= FF 00 \dx00000009 
+14 * 9 0D 00 \D= FF 00 \dx00000009 
 
-14 * 9 0D 40 \D* 00 FF \dx00000005 
+15 * 9 0D 40 \D* 00 FF \dx00000005 
 
-15 * 7 06 
+16 * 7 06 
 40 01 FF \wx002E 
 FF 
 
-16 * 57 00 01 \b21 01 FF \wx0059 
+17 * 57 00 01 \b21 01 FF \wx0059 
 06 03 
 04 28 
 03 1E 
@@ -59,10 +63,10 @@ FF
 1C 01 
 10 00 
 
-17 * 29 04 01 7F 01 FF \wx0059 "ÞFoster Express Tram" 00 
+18 * 29 04 01 7F 01 FF \wx0059 "ÞFoster Express Tram" 00 
 
-18 * 25 04 01 1F 01 FF \wx0059 "ÞFoster Sneltram" 00 
+19 * 25 04 01 1F 01 FF \wx0059 "ÞFoster Sneltram" 00 
 
-19 * 9 03 01 01 FF \wx0059 \b0 
+20 * 9 03 01 01 FF \wx0059 \b0 
 \wx00FE 
 

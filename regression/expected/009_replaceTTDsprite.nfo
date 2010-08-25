@@ -6,11 +6,15 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d4 
+0 * 4 \d5 
 
-1 * 56 08 07 "test" "ÞNML regression test" 00 "ÞA test newgrf testing NML" 00 
-2 * 5 0A \b1 \b2 \w3092 
+1 * 16 14 "C" "INFO" 
+"B" "NPAR" \w1 00 
+00 
+00 
+2 * 56 08 07 "test" "ÞNML regression test" 00 "ÞA test newgrf testing NML" 00 
+3 * 5 0A \b1 \b2 \w3092 
 
-3 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
-4 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 4 
+4 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
+5 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 4 
 
