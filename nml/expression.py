@@ -158,6 +158,7 @@ class BitMask(Expression):
         ret = 0
         for orig_expr in self.values:
             val = orig_expr.reduce_constant(id_dicts) # unknown ids are always fatal as they're not compile time constant
+            if val.type() != Type.INTEGER: raise generic.ScriptError("Parameters of 'bitmask' must be integers.", orig_expr.pos)
             if val.value >= 32: raise generic.ScriptError("Parameters of 'bitmask' cannot be greater then 31", orig_expr.pos)
             ret |= 1 << val.value
         return ConstantNumeric(ret, self.pos)
@@ -185,8 +186,12 @@ class BinOp(Expression):
         expr2 = self.expr2.reduce(id_dicts)
         if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op.compiletime_func:
             return ConstantNumeric(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
-        if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral) and self.op == nmlop.ADD:
-            return StringLiteral(expr1.value + expr2.value, expr1.pos)
+        if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral):
+            if self.op == nmlop.ADD:
+                return StringLiteral(expr1.value + expr2.value, expr1.pos)
+            raise generic.ScriptError("Only the '+'-operator is supported for literal strings.")
+        if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
+            raise generic.ScriptError("Both operands of a binary operator must be integers.")
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
         op = self.op
@@ -265,6 +270,8 @@ class TernaryOp(Expression):
                 return expr1
             else:
                 return expr2
+        if guard.type() != Type.INTEGER or expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
+            raise generic.ScriptError("All parts of the ternary operator (?:) must be integers.")
         return TernaryOp(guard, expr1, expr2, self.pos)
 
     def supported_by_action2(self, raise_error):
@@ -290,6 +297,8 @@ class Boolean(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
+        if expr.type() != Type.INTEGER:
+            raise generic.ScriptError("Only integers can be converted to a boolean value.", self.pos)
         if expr.is_boolean(): return expr
         return Boolean(expr)
 
@@ -316,6 +325,8 @@ class Not(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
+        if expr.type() != Type.INTEGER:
+            raise generic.ScriptError("Not-operator (!) requires an integer argument.", expr.pos)
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value != 0)
         if isinstance(expr, Not): return expr.expr
         if isinstance(expr, BinOp):
@@ -353,6 +364,8 @@ class Parameter(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         num = self.num.reduce(id_dicts)
+        if num.type() != Type.INTEGER:
+            raise generic.ScriptError("Parameter number must be an integer.", num.pos)
         return Parameter(num, self.pos)
 
     def supported_by_action2(self, raise_error):
@@ -403,6 +416,8 @@ class Variable(Expression):
         shift = self.shift.reduce(id_dicts)
         mask = self.mask.reduce(id_dicts)
         param = self.param.reduce(id_dicts) if self.param is not None else None
+        if not all(map(lambda x: x.type() == Type.INTEGER, (num, shift, mask, param))):
+            raise generic.ScriptError("All parts of a variable access must be integers.", self.pos)
         var = Variable(num, shift, mask, param, self.pos)
         var.add = self.add
         var.div = self.div
