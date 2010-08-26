@@ -59,17 +59,17 @@ veh_vars = {
 }
 
 varact2vars_railtype = {
-	'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
-	'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
-	'level_crossing_status': {'var': 0x42, 'start': 0, 'size': 8},
-	'build_date': {'var': 0x43, 'start': 0, 'size': 32},
+    'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
+    'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
+    'level_crossing_status': {'var': 0x42, 'start': 0, 'size': 8},
+    'build_date': {'var': 0x43, 'start': 0, 'size': 32},
 }
 
 varact2vars_airporttiles = {
-	'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
-	'town_radius_group': {'var': 0x42, 'start': 0, 'size': 3},
-	'relative_pos': {'var': 0x43, 'start': 0, 'size': 24},
-	'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
+    'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
+    'town_radius_group': {'var': 0x42, 'start': 0, 'size': 3},
+    'relative_pos': {'var': 0x43, 'start': 0, 'size': 24},
+    'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
 varact2vars[0x00] = veh_vars
