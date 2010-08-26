@@ -1,6 +1,14 @@
 import datetime, calendar
 from nml import generic, nmlop
 
+class Type(object):
+    """
+    Enum-type class of the various value types possible in NML
+    """
+    INTEGER = 0
+    FLOAT = 1
+    STRING_LITERAL = 2
+
 class Expression(object):
     """
     Superclass for all expression classes.
@@ -84,6 +92,14 @@ class Expression(object):
         @return: True if the value of this expression is either 0 or 1.
         """
         return False
+    
+    def type(self):
+        """
+        Determine the datatype of this expression.
+
+        @return: A constant from the L{Type} class, representing the data type."
+        """
+        return Type.INTEGER
 
 class ConstantNumeric(Expression):
     def __init__(self, value, pos = None):
@@ -124,6 +140,9 @@ class ConstantFloat(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
+    
+    def type(self):
+        return Type.FLOAT
 
 class BitMask(Expression):
     def __init__(self, values, pos):
@@ -493,6 +512,9 @@ class StringLiteral(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
+
+    def type(self):
+        return Type.STRING_LITERAL
 
 class Array(Expression):
     def __init__(self, values, pos):
