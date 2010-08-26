@@ -55,11 +55,15 @@ class OutputNFO(output_base.OutputBase):
         self.file.write('"')
         if not force_ascii:
             self.file.write(u'Þ')
-            self._byte_count += 2
         self.file.write(value)
-        self._byte_count += grfstrings.get_string_size(value)
+        self._byte_count += grfstrings.get_string_size(value, final_zero, force_ascii)
         self.file.write('" ')
-        if final_zero: self.print_bytex(0)
+        if final_zero:
+            self.print_bytex(0)
+            # get_string_size already includes the final 0 byte
+            # but pritn_bytex also increases _byte_count, so decrease
+            # it here by one to correct it.
+            self._byte_count -= 1
 
     def print_decimal(self, value, size = None):
         assert self._in_sprite

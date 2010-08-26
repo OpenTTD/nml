@@ -12,9 +12,9 @@ class ActionB(base_action.BaseAction):
 
     def write(self, file):
         size = 4
-        if not isinstance(self.msg, int): size += grfstrings.get_string_size(self.msg) + 3
+        if not isinstance(self.msg, int): size += grfstrings.get_string_size(self.msg)
         if self.data is not None:
-            size += grfstrings.get_string_size(self.data) + 3
+            size += grfstrings.get_string_size(self.data)
             if self.param1 is not None:
                 size += 1
                 if self.param2 is not None:

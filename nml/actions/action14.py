@@ -58,8 +58,8 @@ class TextNode(Action14Node):
     def get_size(self):
         size = 0
         for translation in grfstrings.grf_strings[self.string.name.value]:
-            # 9 is for "T" (1), id (4), langid (1), thorn at start (2), final 0-byte (1)
-            size += 9 + grfstrings.get_string_size(translation['text'])
+            # 6 is for "T" (1), id (4), langid (1)
+            size += 6 + grfstrings.get_string_size(translation['text'])
         return size
 
     def write(self, file):

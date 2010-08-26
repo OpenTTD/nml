@@ -113,7 +113,7 @@ class TownNames(object):
         if len(self.style_names) == 0: return 0
         size = 0
         for _lang, txt in self.style_names:
-            size += 1 + 2 + grfstrings.get_string_size(txt) + 1 # Language ID, text, 0 byte
+            size += 1 + grfstrings.get_string_size(txt) # Language ID, text
         return size + 1 # Terminating 0
 
     def write_styles(self, file):
@@ -323,7 +323,7 @@ class TownNamesEntryText(object):
         print indentation*' ' + ('Text %s with probability %d/%d' % (self.text.value, self.probability.value, total))
 
     def get_length(self):
-        return 1 + 2 + grfstrings.get_string_size(self.text.value) + 1 # probability, text, 0
+        return 1 + grfstrings.get_string_size(self.text.value) # probability, text
 
     def resolve_townname_id(self):
         '''

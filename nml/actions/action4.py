@@ -13,8 +13,7 @@ class Action4(base_action.BaseAction):
         if self.size == 2: self.lang = self.lang | 0x80
 
     def write(self, file):
-        # +3 after string size is for final 0 and thorn at the start
-        size = 4 + self.size + grfstrings.get_string_size(self.text) + 3
+        size = 4 + self.size + grfstrings.get_string_size(self.text)
         file.start_sprite(size)
         file.print_bytex(4)
         file.print_bytex(self.feature)

@@ -24,8 +24,10 @@ def utf8_get_size(char):
     if char < 65536: return 3
     return 4
 
-def get_string_size(string):
+def get_string_size(string, final_zero = True, force_ascii = False):
     size = 0
+    if final_zero: size += 1
+    if not force_ascii: size += 2
     i = 0
     while i < len(string):
         if string[i] != '\\':
