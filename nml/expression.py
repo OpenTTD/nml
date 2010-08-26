@@ -97,7 +97,7 @@ class Expression(object):
         """
         Determine the datatype of this expression.
 
-        @return: A constant from the L{Type} class, representing the data type."
+        @return: A constant from the L{Type} class, representing the data type.
         """
         return Type.INTEGER
 
@@ -416,7 +416,8 @@ class Variable(Expression):
         shift = self.shift.reduce(id_dicts)
         mask = self.mask.reduce(id_dicts)
         param = self.param.reduce(id_dicts) if self.param is not None else None
-        if not all(map(lambda x: x.type() == Type.INTEGER, (num, shift, mask, param))):
+        if not all(map(lambda x: x.type() == Type.INTEGER, (num, shift, mask))) or \
+                (param is not None and param.type() != Type.INTEGER):
             raise generic.ScriptError("All parts of a variable access must be integers.", self.pos)
         var = Variable(num, shift, mask, param, self.pos)
         var.add = self.add
