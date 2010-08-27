@@ -26,17 +26,23 @@ class TownNames(object):
 
     @ivar pos: Position information of the 'town_names' block.
     @type pos: L{Position}
+
+    @ivar param_list: Stored parameter list.
+    @type param_list: C{list}
     """
     def __init__(self, name, param_list, pos):
         self.name = name
+        self.param_list = param_list
+        self.pos = pos
+
         self.id_number = None
         self.style_name = None
         self.style_names = []
         self.parts = []
         self.free_bit = None
-        self.pos = pos
 
-        for param in param_list:
+    def pre_process(self):
+        for param in self.param_list:
             if isinstance(param, TownNamesPart): self.parts.append(param)
             else:
                 if param.key.value != 'styles':
@@ -135,8 +141,6 @@ class TownNames(object):
             part.write(file)
             file.newline()
 
-    def pre_process(self):
-        pass
 
     def debug_print(self, indentation):
         if isinstance(self.name, basestring):
