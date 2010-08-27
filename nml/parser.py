@@ -221,7 +221,7 @@ class NMLParser(object):
 
     def p_setting(self, t):
         'setting : ID LBRACE setting_value_list RBRACE'
-        t[0] = grf.ParameterSetting(t[1], t[3]);
+        t[0] = grf.ParameterSetting(t[1], t[3])
 
     def p_setting_value_list(self, t):
         '''setting_value_list : setting_value

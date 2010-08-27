@@ -190,7 +190,7 @@ def read_lang_files(lang_dir):
                         grf_strings[name] = []
                     grf_strings[name].append({'lang': lang, 'text': parse_grf_string(value)})
         except UnicodeDecodeError:
-            generic.print_warning("Language file \"%s\" contains non-utf8 characters. Ignoring (part of) the contents" % filename);
+            generic.print_warning("Language file \"%s\" contains non-utf8 characters. Ignoring (part of) the contents" % filename)
 
     # Generate warnings for strings not in the default language.
     for strid, lang_dicts in grf_strings.iteritems():

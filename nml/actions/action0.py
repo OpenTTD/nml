@@ -174,7 +174,7 @@ class ByteListProp(object):
         return len(self.data) + 1
 
 def get_snowlinetable_action(snowline_table):
-    assert(len(snowline_table) == 12*32);
+    assert(len(snowline_table) == 12*32)
     action0 = Action0(0x08, 0)
     action0.prop_list.append(ByteListProp(0x10, snowline_table))
     action0.num_ids = 1
@@ -186,7 +186,7 @@ def get_basecost_action(basecost):
     tmp_param_map = {} #Cache for tmp parameters
 
     #We want to avoid writing lots of action0s if possible
-    i = 0;
+    i = 0
     while i < len(basecost.costs):
         cost = basecost.costs[i]
         act6 = action6.Action6()

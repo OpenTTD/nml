@@ -81,7 +81,7 @@ class ParameterSetting(object):
 
     def set_property(self, name, value):
         if name in self.properties_set:
-            raise generic.ScriptError("You cannot set the same property twice in a parameter description block", value.pos);
+            raise generic.ScriptError("You cannot set the same property twice in a parameter description block", value.pos)
         self.properties_set.add(name)
         value = value.reduce(unknown_id_fatal = False)
         if name == 'type':
