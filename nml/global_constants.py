@@ -129,6 +129,38 @@ constant_numbers = {
     'GROUNDSPRITE_SNOW'        : 4550,
     'GROUNDSPRITE_DESERT'      : 4550,
 
+    #object labels
+    'OBJ_TRANSMITTER'          : "TRNS",
+    'OBJ_LIGHTHOUSE'           : "LTHS",
+
+    #object flags
+    'OBJ_FLAG_ONLY_SE'         : 0x01,
+    'OBJ_FLAG_IRREMOVABLE'     : 0x02,
+    'OBJ_FLAG_ANYTHING_REMOVE' : 0x04,
+    'OBJ_FLAG_ON_WATER'        : 0x08,
+    'OBJ_FLAG_REMOVE_IS_INCOME': 0x10,
+    'OBJ_FLAG_NO_FOUNDATIONS'  : 0x20,
+    'OBJ_FLAG_ANIMATED'        : 0x40,
+    'OBJ_FLAG_ONLY_INGAME'     : 0x80,
+    'OBJ_FLAG_2CC'             : 0x100,
+    'OBJ_FLAG_NOT_ON_LAND'     : 0x200,
+    'OBJ_FLAG_DRAW_WATER'      : 0x400,
+    'OBJ_FLAG_ALLOW_BRIDGE'    : 0x800,
+    'OBJ_FLAG_RANDOM_ANIMATION': 0x1000,
+
+    #object animation triggers
+    'OBJ_ANIM_IS_BUILT'        : 0x01,
+    'OBJ_ANIM_PERIODIC'        : 0x02,
+    'OBJ_ANIM_SYNC'            : 0x04,
+
+    #object callback flags
+    'OBJ_CBF_SLOPE_CHECK'      : 0x01,
+    'OBJ_CBF_DECIDE_ANIM'      : 0x02,
+    'OBJ_CBF_DECIDE_ANIM_SPEED': 0x04,
+    'OBJ_CBF_DECIDE_COLOUR'    : 0x08,
+    'OBJ_CBF_ADDITIONAL_TEXT'  : 0x10,
+    'OBJ_CBF_AUTOSLOPE'        : 0x20,
+
     #railtype labels
     'RAILTYPE_RAIL'    : "RAIL",
     'RAILTYPE_ERAIL'   : "ELRL",
