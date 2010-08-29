@@ -40,7 +40,7 @@ action5_table = {
     'PRE_SIGNAL' : (0x04, 48, Action5BlockType.FIXED),
     'PRE_SIGNAL_SEMAPHORE' : (0x04, 112, Action5BlockType.FIXED),
     'PRE_SIGNAL_SEMAPHORE_PBS' : (0x04, 240, Action5BlockType.FIXED),
-    'CATERNARY' : (0x05, 48, Action5BlockType.FIXED),
+    'CATENARY' : (0x05, 48, Action5BlockType.FIXED),
     'FOUNDATIONS_SLOPES' : (0x06, 74, Action5BlockType.FIXED),
     'FOUNDATIONS_SLOPES_HALFTILES' : (0x06, 90, Action5BlockType.FIXED),
     'TTDP_GUI_25' : (0x07, 73, Action5BlockType.FIXED),
