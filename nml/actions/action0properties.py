@@ -159,6 +159,52 @@ properties[0x03] = {
 }
 properties[0x03].update(general_veh_props)
 
+def house_years(value):
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
+    min_year = value.values[0].reduce_constant()
+    max_year = value.values[1].reduce_constant()
+    return [Action0Property(0x21, ConstantNumeric(min_year.value), 2), Action0Property(0x22, ConstantNumeric(max_year.value), 2)]
+
+def house_colours(value):
+    if not isinstance(value, Array) or len(value.values) > 4:
+        raise generic.ScriptError("A house can only have up to four random colours", value.pos)
+    colours = 0
+    for i in range(0, value.len()):
+        colours.value += value.values[i].reduce_constant() << (i * 8)
+    return [Action0Property(0x17, ConstantNumeric(colours.value), 4)]
+
+def house_cargo_watchlist(value):
+    return []
+
+properties[0x07] = {
+    'substitute'              : {'size': 1, 'num': 0x08},
+    'flags'                   : {'size': 1, 'num': 0x09},
+    'years_available'         : {'custom_function': house_years},
+    'population'              : {'size': 1, 'num': 0x0B},
+    'mail_multiplier'         : {'size': 1, 'num': 0x0C},
+    'pax_acceptance'          : {'size': 1, 'num': 0x0D},
+    'mail_acceptance'         : {'size': 1, 'num': 0x0E},
+    'cargo_acceptance'        : {'size': 1, 'num': 0x0F},
+    'removal_impact'          : {'size': 12, 'num': 0x10},
+    'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
+    'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
+    'availability_mask'       : {'size': 2, 'num': 0x13},
+    'callback_flags_1'        : {'size': 1, 'num': 0x14},
+    'override'                : {'size': 1, 'num': 0x15},
+    'refresh_multiplier'      : {'size': 1, 'num': 0x16},
+    'random_colours'          : {'custom_function': house_colours},
+    'probability'             : {'size': 1, 'num': 0x18},
+    'extra_flags'             : {'size': 1, 'num': 0x19},
+    'animation_frames'        : {'size': 1, 'num': 0x1A},
+    'animation_speed'         : {'size': 1, 'num': 0x1B},
+    'buiding_class'           : {'size': 1, 'num': 0x1C},
+    'callback_flags_2'        : {'size': 1, 'num': 0x1D},
+    'accept_cargo_types'      : {'size': 4, 'num': 0x1E},
+    'min_lifetime'            : {'size': 1, 'num': 0x1F},
+    'accept_cargo_watchlist'  : {'custom_function': house_cargo_watchlist},
+}
+
 properties[0x09] = {
     'substitute': {'size': 1, 'num': 0x08},
     'override': {'size': 1, 'num': 0x09},
