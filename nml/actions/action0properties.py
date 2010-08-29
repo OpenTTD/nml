@@ -229,7 +229,7 @@ def object_size(value):
         raise generic.ScriptError("Object size must be an array with exactly two values", value.pos)
     sizex = value.values[0].reduce_constant()
     sizey = value.values[1].reduce_constant()
-    if (sizex.value < 1 || sizex.value > 15 || sizey.value < 1 || sizey.value > 15):
+    if sizex.value < 1 or sizex.value > 15 or sizey.value < 1 or sizey.value > 15:
         raise generic.ScriptError("The size of an object must be at least 1x1 and at most 15x15 tiles", value.pos)
     return [Action0Property(0x0C, ConstantNumeric(sizey.value << 8 | sizex.value), 1)]
 
