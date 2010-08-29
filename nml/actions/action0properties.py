@@ -224,6 +224,34 @@ properties[0x0D] = {
     'name': {'size': 2, 'num': 0x10, 'string': 0xDC},
 }
 
+def object_size(value):
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("Object size must be an array with exactly two values", value.pos)
+    sizex = value.values[0].reduce_constant()
+    sizey = value.values[1].reduce_constant()
+    if (sizex.value < 1 || sizex.value > 15 || sizey.value < 1 || sizey.value > 15):
+        raise generic.ScriptError("The size of an object must be at least 1x1 and at most 15x15 tiles", value.pos)
+    return [Action0Property(0x0C, ConstantNumeric(sizey.value << 8 | sizex.value), 1)]
+
+properties[0x0F] = {
+    'class': {'size': 4, 'num': 0x08, 'string_literal': 4},
+    # strings might be according to specs be either 0xD0 or 0xD4
+    'classname': {'size': 2, 'num': 0x09, 'string': 0xD0},
+    'build_window_caption': {'size': 2, 'num': 0x0A, 'string': 0xD0},
+    'climates_available' : {'size': 1, 'num': 0x0B},
+    'size': {'custom_function': object_size},
+    'build_cost_multiplier': {'size': 1, 'num': 0x0D},
+    'introduction_date': {'size': 4, 'num': 0x0E},
+    'end_of_life_date': {'size': 4, 'num': 0x0F},
+    'object_flags': {'size': 2, 'num': 0x10},
+    'animation_info': {'size': 2, 'num': 0x11},
+    'animation_speed': {'size': 1, 'num': 0x12},
+    'animation_triggers': {'size': 1, 'num': 0x13},
+    'remove_cost_multiplier': {'size': 1, 'num': 0x14},
+    'callback_flags': {'size': 2, 'num': 0x15},
+    'height': {'size': 1, 'num': 0x16},
+}
+
 class RailtypeListProp(object):
     def __init__(self, prop_num, railtype_list):
         self.prop_num = prop_num
