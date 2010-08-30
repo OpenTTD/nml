@@ -51,19 +51,22 @@ class Action14Node(object):
             file.print_dword(self.id)
 
 class TextNode(Action14Node):
-    def __init__(self, id, string):
+    def __init__(self, id, string, skip_default_langid = False):
         Action14Node.__init__(self, "T", id)
         self.string = string
+        self.skip_default_langid = skip_default_langid
 
     def get_size(self):
         size = 0
         for translation in grfstrings.grf_strings[self.string.name.value]:
+            if self.skip_default_langid and translation['lang'] == 0x7F: continue
             # 6 is for "T" (1), id (4), langid (1)
             size += 6 + grfstrings.get_string_size(translation['text'])
         return size
 
     def write(self, file):
         for translation in grfstrings.grf_strings[self.string.name.value]:
+            if self.skip_default_langid and translation['lang'] == 0x7F: continue
             self.write_type_id(file)
             file.print_bytex(translation['lang'])
             file.print_string(translation['text'])
@@ -134,10 +137,10 @@ class LimitNode(BinaryNode):
 def grf_name_desc_actions(name, desc):
     root = BranchNode("INFO")
     if len(grfstrings.grf_strings[name.name.value]) > 1:
-        name_node = TextNode("NAME", name)
+        name_node = TextNode("NAME", name, True)
         root.subnodes.append(name_node)
     if len(grfstrings.grf_strings[desc.name.value]) > 1:
-        desc_node = TextNode("DESC", desc)
+        desc_node = TextNode("DESC", desc, True)
         root.subnodes.append(desc_node)
     if len(root.subnodes) > 0:
         return [Action14([root])]
