@@ -159,50 +159,68 @@ properties[0x03] = {
 }
 properties[0x03].update(general_veh_props)
 
-def house_years(value):
+def house_available_years(value):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
-    min_year = value.values[0].reduce_constant()
-    max_year = value.values[1].reduce_constant()
-    return [Action0Property(0x21, ConstantNumeric(min_year.value), 2), Action0Property(0x22, ConstantNumeric(max_year.value), 2)]
+    min_year = value.values[0].reduce_constant().value
+    max_year = value.values[1].reduce_constant().value
+    min_year_safe = min(max(min_year - 1920, 0), 255)
+    max_year_safe = min(max(max_year - 1920, 0), 255)
+    return [Action0Property(0x0A, ConstantNumeric(max_year_safe << 8 | min_year_safe), 2),
+            Action0Property(0x21, ConstantNumeric(min_year), 2),
+            Action0Property(0x22, ConstantNumeric(max_year), 2)]
 
-def house_colours(value):
-    if not isinstance(value, Array) or len(value.values) > 4:
-        raise generic.ScriptError("A house can only have up to four random colours", value.pos)
-    colours = 0
-    for i in range(0, value.len()):
-        colours.value += value.values[i].reduce_constant() << (i * 8)
-    return [Action0Property(0x17, ConstantNumeric(colours.value), 4)]
+def house_random_colors(value):
+    if not isinstance(value, Array) or len(value.values) != 4:
+        raise generic.ScriptError("Random colors must be an array with exactly four values", value.pos)
+    colors = [val.reduce_constant().value for val in value.values]
+    for color in colors:
+        if color < 0 or color > 15:
+            raise generic.ScriptError("Random house colors must be a value between 0 and 15", value.pos)
+    return [Action0Property(0x17, ConstantNumeric(colors[0] << 24 | colors[1] << 16 | colors[2] << 8 | colors[3]), 4)]
 
-def house_cargo_watchlist(value):
-    return []
+def house_accepted_cargos(value):
+    if not isinstance(value, Array) or len(value.values) > 3:
+        raise generic.ScriptError("Random colors must be an array with no more than 3 values", value.pos)
+    cargoes = [val.reduce_constant().value for val in value.values]
+    val = 0
+    for i in range(4):
+        if i < len(cargoes):
+            val = val | (cargoes[i] << (i * 8))
+        else:
+            val = val | (0xFF << (i * 8))
+    return [Action0Property(0x1E, ConstantNumeric(val), 4)]
+
+def house_callback_flags(value):
+    value = value.reduce_constant()
+    low_byte = ConstantNumeric(value.value & 0xFF)
+    high_byte = ConstantNumeric(value.value >> 8)
+    return [Action0Property(0x14, low_byte, 1), Action0Property(0x1D, high_byte, 1)]
 
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08},
-    'flags'                   : {'size': 1, 'num': 0x09},
-    'years_available'         : {'custom_function': house_years},
+    'building_flags'          : {'size': 1, 'num': 0x09},
+    'years_available'         : {'custom_function': house_available_years},
     'population'              : {'size': 1, 'num': 0x0B},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C},
     'pax_acceptance'          : {'size': 1, 'num': 0x0D},
     'mail_acceptance'         : {'size': 1, 'num': 0x0E},
     'cargo_acceptance'        : {'size': 1, 'num': 0x0F},
-    'removal_impact'          : {'size': 12, 'num': 0x10},
+    'local_authority_impact'  : {'size': 2, 'num': 0x10},
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
     'availability_mask'       : {'size': 2, 'num': 0x13},
-    'callback_flags_1'        : {'size': 1, 'num': 0x14},
+    'callback_flags'          : {'custom_function': house_callback_flags},
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
-    'random_colours'          : {'custom_function': house_colours},
+    'random_colours'          : {'custom_function': house_random_colors},
     'probability'             : {'size': 1, 'num': 0x18},
     'extra_flags'             : {'size': 1, 'num': 0x19},
     'animation_frames'        : {'size': 1, 'num': 0x1A},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
-    'buiding_class'           : {'size': 1, 'num': 0x1C},
-    'callback_flags_2'        : {'size': 1, 'num': 0x1D},
-    'accept_cargo_types'      : {'size': 4, 'num': 0x1E},
-    'min_lifetime'            : {'size': 1, 'num': 0x1F},
-    'accept_cargo_watchlist'  : {'custom_function': house_cargo_watchlist},
+    'building_class'          : {'size': 1, 'num': 0x1C},
+    'accepted_cargos'         : {'custom_function': house_accepted_cargos},
+    'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
 }
 
 properties[0x09] = {
