@@ -157,6 +157,11 @@ constant_numbers = {
     'HOUSE_FLAG_PROTECTED'          : 0x0200,
     'HOUSE_FLAG_SYNC_CALLBACK'      : 0x0400,
     'HOUSE_FLAG_RANDOM_ANIMATION'   : 0x0800,
+
+    #cargo acceptance
+    'HOUSE_ACCEPT_GOODS'            : 0x00,
+    'HOUSE_ACCEPT_FOOD'             : 0x10, // 0x80 / 8
+    'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, // 0x80 / 8
     
     #town zones
     'TOWNZONE_EDGE'                 : 0x01,
