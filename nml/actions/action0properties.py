@@ -191,15 +191,15 @@ def house_accepted_cargos(value):
             val = val | (0xFF << (i * 8))
     return [Action0Property(0x1E, ConstantNumeric(val), 4)]
 
-def house_callback_flags(value):
+def house_flags(value, low_property, high_property):
     value = value.reduce_constant()
     low_byte = ConstantNumeric(value.value & 0xFF)
     high_byte = ConstantNumeric(value.value >> 8)
-    return [Action0Property(0x14, low_byte, 1), Action0Property(0x1D, high_byte, 1)]
+    return [Action0Property(low_property, low_byte, 1), Action0Property(high_property, high_byte, 1)]
 
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08},
-    'building_flags'          : {'size': 1, 'num': 0x09},
+    'building_flags'          : {'custom_function': lambda x: house_flags(x, 0x09, 0x19)},
     'years_available'         : {'custom_function': house_available_years},
     'population'              : {'size': 1, 'num': 0x0B},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C},
@@ -210,12 +210,11 @@ properties[0x07] = {
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
     'availability_mask'       : {'size': 2, 'num': 0x13},
-    'callback_flags'          : {'custom_function': house_callback_flags},
+    'callback_flags'          : {'custom_function': lambda x: house_flags(x, 0x14, 0x1D)},
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
     'random_colours'          : {'custom_function': house_random_colors},
     'probability'             : {'size': 1, 'num': 0x18},
-    'extra_flags'             : {'size': 1, 'num': 0x19},
     'animation_frames'        : {'size': 1, 'num': 0x1A},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
     'building_class'          : {'size': 1, 'num': 0x1C},
