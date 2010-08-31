@@ -160,8 +160,8 @@ constant_numbers = {
 
     #cargo acceptance
     'HOUSE_ACCEPT_GOODS'            : 0x00,
-    'HOUSE_ACCEPT_FOOD'             : 0x10, // 0x80 / 8
-    'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, // 0x80 / 8
+    'HOUSE_ACCEPT_FOOD'             : 0x10, # 0x80 / 8
+    'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, # 0x80 / 8
     
     #town zones
     'TOWNZONE_EDGE'                 : 0x01,
