@@ -246,7 +246,8 @@ class NMLParser(object):
 
     def p_expression_list(self, t):
         '''expression_list :
-                           | non_empty_expression_list'''
+                           | non_empty_expression_list
+                           | non_empty_expression_list COMMA'''
         t[0] = [] if len(t) == 1 else t[1]
 
     def p_non_empty_id_list(self, t):
@@ -257,7 +258,8 @@ class NMLParser(object):
 
     def p_id_list(self, t):
         '''id_list :
-                   | non_empty_id_list'''
+                   | non_empty_id_list
+                   | non_empty_id_list COMMA'''
         t[0] = [] if len(t) == 1 else t[1]
 
     def p_id_array(self, t):
@@ -519,8 +521,9 @@ class NMLParser(object):
 
     def p_town_names_param(self, t):
         '''town_names_param : ID COLON string SEMICOLON
-                            | LBRACE town_names_part_list RBRACE'''
-        if len(t) == 5: t[0] = townnames.TownNamesParam(t[1], t[3], t.lineno(1))
+                            | LBRACE town_names_part_list RBRACE
+                            | LBRACE town_names_part_list COMMA RBRACE'''
+        if t[1] != '{': t[0] = townnames.TownNamesParam(t[1], t[3], t.lineno(1))
         else: t[0] = townnames.TownNamesPart(t[2], t.lineno(1))
 
     def p_town_names_part_list(self, t):
@@ -558,7 +561,8 @@ class NMLParser(object):
     # Snow line
     #
     def p_snowline(self, t):
-        """snowline : SNOWLINE LBRACE snowlinedates RBRACE"""
+        """snowline : SNOWLINE LBRACE snowlinedates RBRACE
+                    | SNOWLINE LBRACE snowlinedates COMMA RBRACE"""
         t[0] = snowline.Snowline(t[3], t.lineno(1))
 
     def p_snowlinedates(self, t):
@@ -589,11 +593,13 @@ class NMLParser(object):
         t[0] = error.Error(t[3], t.lineno(1))
 
     def p_cargotable(self, t):
-        'cargotable : CARGOTABLE LBRACE cargotable_list RBRACE'
+        '''cargotable : CARGOTABLE LBRACE cargotable_list RBRACE
+                      | CARGOTABLE LBRACE cargotable_list COMMA RBRACE'''
         t[0] = cargotable.CargoTable(t[3], t.lineno(1))
 
     def p_railtypetable(self, t):
-        'railtype : RAILTYPETABLE LBRACE cargotable_list RBRACE'
+        '''railtype : RAILTYPETABLE LBRACE cargotable_list RBRACE
+                    | RAILTYPETABLE LBRACE cargotable_list COMMA RBRACE'''
         t[0] = railtypetable.RailtypeTable(t[3], t.lineno(1))
 
     def p_cargotable_list(self, t):
