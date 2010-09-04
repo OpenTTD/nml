@@ -1,6 +1,6 @@
 from nml import generic, global_constants, expression, nmlop
 from nml.actions import base_action, action6
-from nml.ast import conditional
+import nml
 
 class ActionD(base_action.BaseAction):
     def __init__(self, target, param1, op, param2, data = None):
@@ -66,7 +66,7 @@ def parse_actionD(assignment):
 
     if isinstance(assignment.value, expression.TernaryOp):
         actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr2))
-        cond_block = conditional.Conditional(assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)], None, None)
+        cond_block = nml.ast.conditional.Conditional(assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)], None, None)
         actions.extend(cond_block.get_action_list())
         return actions
 
@@ -74,7 +74,7 @@ def parse_actionD(assignment):
         op = assignment.value.op
         if op == nmlop.HASBIT:
             actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
-            cond_block = conditional.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
+            cond_block = nml.ast.conditional.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
             actions.extend(cond_block.get_action_list())
             return actions
 
@@ -93,7 +93,7 @@ def parse_actionD(assignment):
     if isinstance(assignment.value, expression.Boolean):
         actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
         expr = expression.BinOp(nmlop.CMP_NEQ, assignment.value.expr, expression.ConstantNumeric(0))
-        cond_block = conditional.Conditional(expr, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
+        cond_block = nml.ast.conditional.Conditional(expr, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
         actions.extend(cond_block.get_action_list())
         return actions
 
