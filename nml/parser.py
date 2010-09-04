@@ -234,6 +234,20 @@ class NMLParser(object):
                          | ID COLON expression SEMICOLON'''
         t[0] = grf.SettingValue(t[1], t[3])
 
+    def p_names_setting_value(self, t):
+        'setting_value : ID COLON LBRACE name_string_list RBRACE SEMICOLON'
+        t[0] = grf.SettingValue(t[1], t[4])
+
+    def p_name_string_list(self, t):
+        '''name_string_list : name_string_item
+                            | name_string_list name_string_item'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[2]]
+
+    def p_name_string_item(self, t):
+        'name_string_item : expression COLON string SEMICOLON'
+        t[0] = grf.NameValue(t[1], t[3])
+
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
         t[0] = expression.String(t[3][0], t[3][1:], t.lineno(1))

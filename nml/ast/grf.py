@@ -61,6 +61,11 @@ class SettingValue(object):
         self.name = name
         self.value = value
 
+class NameValue(object):
+    def __init__(self, num, desc):
+        self.num = num
+        self.desc = desc
+
 class ParameterSetting(object):
     def __init__(self, name, value_list):
         self.name = name
@@ -72,7 +77,7 @@ class ParameterSetting(object):
         self.max_val = None
         self.def_val = None
         self.bit_num = None
-        self.val_names = None
+        self.val_names = []
         self.properties_set = set()
 
     def pre_process(self):
@@ -83,6 +88,14 @@ class ParameterSetting(object):
         if name in self.properties_set:
             raise generic.ScriptError("You cannot set the same property twice in a parameter description block", value.pos)
         self.properties_set.add(name)
+        if name == 'names':
+            for name_value in value:
+                num = name_value.num.reduce_constant().value
+                desc = name_value.desc
+                if not isinstance(desc, expression.String):
+                    raise generic.ScriptError("setting name description must be a string", desc.pos)
+                self.val_names.append((num, desc))
+            return
         value = value.reduce(unknown_id_fatal = False)
         if name == 'type':
             if not isinstance(value, expression.Identifier) or (value.value != 'int' and value.value != 'bool'):

@@ -169,6 +169,11 @@ def param_desc_actions(params):
                 min_val = setting.min_val.value if setting.min_val is not None else 0
                 max_val = setting.max_val.value if setting.max_val is not None else 0xFFFFFFFF
                 setting_node.subnodes.append(LimitNode(min_val, max_val))
+                if len(setting.val_names) > 0:
+                    value_names_node = BranchNode("VALU")
+                    for set_val_pair in setting.val_names:
+                        value_names_node.subnodes.append(TextNode(set_val_pair[0], set_val_pair[1]))
+                    setting_node.subnodes.append(value_names_node)
             else:
                 assert setting.type == 'bool'
                 setting_node.subnodes.append(BinaryNode("TYPE", 1, 1))
