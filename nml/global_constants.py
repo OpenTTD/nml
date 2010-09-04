@@ -1,4 +1,4 @@
-from nml import expression
+from nml import expression, nmlop
 
 constant_numbers = {
     #climates
@@ -399,22 +399,28 @@ constant_numbers = {
     'TRIGGER_INDUSTRYTILE_CARGO_DELIVERY'   : 0x04,
 }
 
-def param_from_num(num, pos):
-    return expression.Parameter(expression.ConstantNumeric(num), pos)
+def param_from_info(info, pos):
+    param = expression.Parameter(expression.ConstantNumeric(info['num']), pos)
+    if info['size'] == 1:
+        mask = expression.ConstantNumeric(0xFF)
+        return expression.BinOp(nmlop.AND, param, mask)
+    else:
+        assert info['size'] == 4
+        return param
 
 global_parameters = {
-    'climate'                            : 0x83,
-    'ttdpatch_flags'                     : 0x85,
-    'traffic_side'                       : 0x86,
-    'ttdpatch_version'                   : 0x8B,
-    'ttd_version'                        : 0x8D,
-    'ttd_platform'                       : 0x9D,
-    'openttd_version'                    : 0xA1,
-    'date_loaded'                        : 0xA3,
-    'year_loaded'                        : 0xA4,
+    'climate'                            : {'num': 0x83, 'size': 1},
+    'ttdpatch_flags'                     : {'num': 0x85, 'size': 4},
+    'traffic_side'                       : {'num': 0x86, 'size': 1},
+    'ttdpatch_version'                   : {'num': 0x8B, 'size': 4},
+    'ttd_version'                        : {'num': 0x8D, 'size': 1},
+    'ttd_platform'                       : {'num': 0x9D, 'size': 4},
+    'openttd_version'                    : {'num': 0xA1, 'size': 4},
+    'date_loaded'                        : {'num': 0xA3, 'size': 4},
+    'year_loaded'                        : {'num': 0xA4, 'size': 4},
 }
 
 cargo_numbers = {}
 railtype_table = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_num), cargo_numbers, railtype_table]
+const_list = [constant_numbers, (global_parameters, param_from_info), cargo_numbers, railtype_table]
