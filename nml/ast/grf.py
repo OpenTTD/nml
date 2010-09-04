@@ -7,6 +7,7 @@ class GRF(object):
         self.name = None
         self.desc = None
         self.grfid = None
+        self.version = None
         self.params = []
         for assignment in alist:
             if isinstance(assignment, ParameterDescription):
@@ -14,6 +15,7 @@ class GRF(object):
             elif assignment.name.value == "name": self.name = assignment.value
             elif assignment.name.value == "desc": self.desc = assignment.value
             elif assignment.name.value == "grfid": self.grfid = assignment.value
+            elif assignment.name.value == "version": self.version = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
 
     def pre_process(self):
@@ -26,6 +28,8 @@ class GRF(object):
         self.desc = self.desc.reduce()
         if not isinstance(self.desc, expression.String):
             raise generic.ScriptError("GRF-description must be a string", self.desc.pos)
+        if self.version:
+            self.version = self.version.reduce_constant()
         for param in self.params:
             param.pre_process()
 
@@ -41,7 +45,7 @@ class GRF(object):
             self.desc.debug_print(indentation + 4)
 
     def get_action_list(self):
-        action_list = action14.grf_name_desc_actions(self.name, self.desc)
+        action_list = action14.grf_name_desc_actions(self.name, self.desc, self.version)
         action_list.extend(action14.param_desc_actions(self.params))
         action_list.append(action8.Action8(self.grfid, self.name, self.desc))
         return action_list
