@@ -97,7 +97,7 @@ class Property(object):
     def __init__(self, name, value, unit, pos):
         self.pos = pos
         self.name = name
-        self.value = value.reduce(global_constants.const_list)
+        self.value = value.reduce(global_constants.const_list, unknown_id_fatal = False)
         self.unit = unit
         if unit is not None and not (isinstance(self.value, expression.ConstantNumeric) or isinstance(self.value, expression.ConstantFloat)):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant", self.pos)

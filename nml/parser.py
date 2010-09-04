@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout
 from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -57,7 +57,8 @@ class NMLParser(object):
                       | sounds
                       | snowline
                       | cargotable
-                      | railtype'''
+                      | railtype
+                      | tilelayout'''
         t[0] = t[1]
 
     def p_skipable_script(self, t):
@@ -641,3 +642,20 @@ class NMLParser(object):
         'skip_all : SKIP_ALL SEMICOLON'
         t[0] = skipall.SkipAll(t.lineno(1))
 
+    def p_tilelayout(self, t):
+        'tilelayout : TILELAYOUT ID LBRACE tilelayout_list RBRACE'
+        t[0] = tilelayout.TileLayout(t[2], t[4], t.lineno(1))
+
+    def p_tilelayout_list(self, t):
+        '''tilelayout_list : tilelayout_item
+                           | tilelayout_list tilelayout_item'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[2]]
+
+    def p_tilelayout_item_tile(self, t):
+        'tilelayout_item : expression COMMA expression COLON expression SEMICOLON'
+        t[0] = tilelayout.LayoutTile(t[1], t[3], t[5])
+
+    def p_tilelayout_item_prop(self, t):
+        'tilelayout_item : ID COLON expression SEMICOLON'
+        t[0] = tilelayout.LayoutProp(t[1], t[3])

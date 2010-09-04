@@ -39,6 +39,7 @@ reserved = {
     'return' : 'RETURN',
     'livery_override' : 'LIVERYOVERRIDE',
     'exit' : 'SKIP_ALL',
+    'tilelayout' : 'TILELAYOUT',
 }
 
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\n|"(.*)"\n)')

@@ -1,5 +1,7 @@
 from nml import generic
-from nml.expression import ConstantNumeric, Array, StringLiteral
+from nml.expression import ConstantNumeric, Array, StringLiteral, Identifier
+
+tilelayout_names = {}
 
 class Action0Property(object):
     """
@@ -236,8 +238,35 @@ properties[0x09] = {
     'special_flags': {'size': 1, 'num': 0x12},
 }
 
+class IndustryLayoutProp(object):
+    def __init__(self, layout_list):
+        self.layout_list = layout_list
+
+    def write(self, file):
+        file.print_bytex(0x0A)
+        file.print_byte(len(self.layout_list))
+        # -6 because prop_num, num_layouts and size should not be included
+        file.print_dword(self.get_size() - 6)
+        file.newline()
+        for layout in self.layout_list:
+            layout.write(file)
+        file.newline()
+
+    def get_size(self):
+        size = 6
+        for layout in self.layout_list:
+            size += layout.get_size()
+        return size
+
 def industry_layouts(value):
-    return []
+    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, Identifier), value.values)):
+        raise generic.ScriptError("layouts must be an array of layout names", value.pos)
+    layouts = []
+    for name in value.values:
+        if name.value not in tilelayout_names:
+            raise generic.ScriptError("Unknown layout name '%s'" % name.value, name.pos)
+        layouts.append(tilelayout_names[name.value])
+    return [IndustryLayoutProp(layouts)]
 
 properties[0x0A] = {
     'substitute': {'size': 1, 'num': 0x08},
