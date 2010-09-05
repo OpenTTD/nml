@@ -5,6 +5,7 @@ class RailtypeTable(object):
     def __init__(self, railtype_list, pos):
         self.railtype_list = railtype_list
         self.pos = pos
+        global_constants.railtype_table.clear()
         for i, railtype in enumerate(railtype_list):
             global_constants.railtype_table[railtype.value] = i
 

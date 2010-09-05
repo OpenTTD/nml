@@ -30,11 +30,6 @@ constant_numbers = {
     'CC_ALL_NORMAL'   : 0x04FF,
     'CC_ALL'          : 0x84FF,
 
-    #track type
-    'TRACK_TYPE_RAIL'     : 0x00,
-    'TRACK_TYPE_MONORAIL' : 0x01,
-    'TRACK_TYPE_MAGLEV'   : 0x02,
-
     #engine class
     'ENGINE_CLASS_STEAM'    : 0x00,
     'ENGINE_CLASS_DIESEL'   : 0x08,
@@ -209,12 +204,6 @@ constant_numbers = {
     'OBJ_CBF_DECIDE_COLOUR'    : 0x08,
     'OBJ_CBF_ADDITIONAL_TEXT'  : 0x10,
     'OBJ_CBF_AUTOSLOPE'        : 0x20,
-
-    #railtype labels
-    'RAILTYPE_RAIL'    : "RAIL",
-    'RAILTYPE_ERAIL'   : "ELRL",
-    'RAILTYPE_MONORAIL': "MONO",
-    'RAILTYPE_MAGLEV'  : "MGLV",
 
     #railtype flags
     'RAILTYPE_FLAG_CATANERY'          : 0x01,
@@ -421,6 +410,6 @@ global_parameters = {
 }
 
 cargo_numbers = {}
-railtype_table = {}
+railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 
 const_list = [constant_numbers, (global_parameters, param_from_info), cargo_numbers, railtype_table]
