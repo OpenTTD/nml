@@ -67,6 +67,21 @@ varact2vars_industrytiles = {
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
+varact2vars_industries = {
+    'waiting_cargo_1' : {'var': 0x40, 'start': 0, 'size': 16},
+    'waiting_cargo_2' : {'var': 0x41, 'start': 0, 'size': 16},
+    'waiting_cargo_3' : {'var': 0x42, 'start': 0, 'size': 16},
+    'water_distance' : {'var': 0x43, 'start': 0, 'size': 32},
+    'layout_num' : {'var': 0x44, 'start': 0, 'size': 8},
+    'company_num' : {'var': 0x45, 'start': 0, 'size': 8},
+    'company_type' : {'var': 0x45, 'start': 16, 'size': 2},
+    'company_color1' : {'var': 0x45, 'start': 24, 'size': 4},
+    'company_color2' : {'var': 0x45, 'start': 28, 'size': 4},
+    'build_date' : {'var': 0x46, 'start': 0, 'size': 32},
+    'founder' : {'var': 0xA7, 'start': 0, 'size': 8},
+    'build_type' : {'var': 0xB3, 'start': 0, 'size': 2},
+}
+
 varact2vars_railtype = {
     'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
     'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
@@ -86,5 +101,6 @@ varact2vars[0x01] = veh_vars
 varact2vars[0x02] = veh_vars
 varact2vars[0x03] = veh_vars
 varact2vars[0x09] = varact2vars_industrytiles
+varact2vars[0x0A] = varact2vars_industries
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
