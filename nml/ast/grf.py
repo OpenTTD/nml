@@ -129,6 +129,8 @@ class ParameterSetting(object):
             if self.type != 'int':
                 raise generic.ScriptError("setting-def_value is only valid for 'int' settings", value.pos)
             self.def_val = value.reduce_constant()
+        else:
+            raise generic.ScriptError("Unknown setting-property " + name, value.pos)
 
 class ParameterDescription(object):
     def __init__(self, setting_list, num = None, pos = None):
