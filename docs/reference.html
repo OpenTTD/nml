@@ -892,21 +892,21 @@ Note that ELRL is mapped to MONO. If you install a railtypetable yourself you'll
 railtype you specified. If you want a vehicle to run on electric rail and you don't have a
 railtypetable, make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRIC in addition
 to setting <tt>track_type</tt> to ELRL.
-<tr><td> ai_special_flag<td> [AI_FLAG_PASSENGER | AI_FLAG_CARGO]<td> Set to AI_FLAG_PASSENGER to tell computer players that it's an engine for passenger service.
+<tr><td> ai_special_flag<td> [AI_FLAG_PASSENGER | AI_FLAG_CARGO]<td> Set to AI_FLAG_PASSENGER to tell computer players that it's an engine that should only be used for passenger service.
 <tr><td> power<td> 0 ... 65000 hp (power units) <td>
 <tr><td> running_cost_base</td><td>RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
 <tr><td> dual_headed<td> [0 | 1]<td>1 = dual_headed, otherwise normal engine
 <tr><td> cargo_capacity<td> (cargo units)<td>
 <tr><td> cargo_type<td> (cargo label)<td> use one from your cargo translation table
-<tr><td> weight<td> 0 .. 20000 t (mass units)<td>
+<tr><td> weight<td> 0 .. 1279 t (mass units)<td>
 <tr><td> ai_engine_rank<td> 0 ... 255<td>TTDPatch only: Higher values make the engine for the TTDPatch AI more attractive
 <tr><td> engine_class<td> ENGINE_CLASS_XXX<td>XXX=[STEAM | DIESEL | ELECTRIC | MONORAIL | MAGLEV]
-<tr><td> extra_power_per_wagon<td> (power units) <td>
+<tr><td> extra_power_per_wagon<td> 0 ... 65000 hp (power units) <td>
 <tr><td> tractive_effort_coefficient<td> 0 ... 1<td>
 <tr><td> air_drag_coefficient</td><td>   0 ... 1</td><td></td></tr>
 <tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>XXX=[8_8 | 7_8 | ... | 1_8]
 <tr><td> visual_effect<td> VISUAL_EFFECT_XXX<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE]
-<tr><td> extra_weight_per_wagon<td> (mass units)<td>
+<tr><td> extra_weight_per_wagon<td> 0 ... 255 t (mass units)<td>
 <tr><td> bitmask_vehicle_info<td> 8-bit bitmask<td>Used for obtaining bitmask_consist_info
 <tr><td> <td> <td>
 </table>
