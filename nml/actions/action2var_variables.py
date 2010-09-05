@@ -59,6 +59,14 @@ veh_vars = {
     'current_railtype': {'var': 0x4A, 'start': 0, 'size': 8},
 }
 
+varact2vars_industrytiles = {
+    'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
+    'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
+    'town_radius_group': {'var': 0x42, 'start': 0, 'size': 3},
+    'relative_pos': {'var': 0x43, 'start': 0, 'size': 24},
+    'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
+}
+
 varact2vars_railtype = {
     'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
     'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
@@ -77,5 +85,6 @@ varact2vars[0x00] = veh_vars
 varact2vars[0x01] = veh_vars
 varact2vars[0x02] = veh_vars
 varact2vars[0x03] = veh_vars
+varact2vars[0x09] = varact2vars_industrytiles
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
