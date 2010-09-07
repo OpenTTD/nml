@@ -9,6 +9,7 @@ class GRF(object):
         self.grfid = None
         self.version = None
         self.params = []
+        generic.OnlyOnce.enforce(self, "GRF-block")
         for assignment in alist:
             if isinstance(assignment, ParameterDescription):
                 self.params.append(assignment)

@@ -1,10 +1,11 @@
-from nml import global_constants
+from nml import generic, global_constants
 from nml.actions import action0
 
 class CargoTable(object):
     def __init__(self, cargo_list, pos):
         self.cargo_list = cargo_list
         self.pos = pos
+        generic.OnlyOnce.enforce(self, "cargo table")
         for i, cargo in enumerate(cargo_list):
             global_constants.cargo_numbers[cargo.value] = i
 
