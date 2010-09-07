@@ -112,6 +112,8 @@ def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
 def nml(inputfile, output_debug, outputfiles):
+    generic.OnlyOnce.clear()
+
     script = inputfile.read()
     if script.strip() == "":
         print "Empty input file"

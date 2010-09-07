@@ -81,6 +81,30 @@ class ImageError(ScriptError):
     def __init__(self, value, filename):
         ScriptError.__init__(self, value, 'Image file "%s"' % filename)
 
+class OnlyOnceError(ScriptError):
+    def __init__(self, typestr, pos = None):
+        ScriptError.__init__(self, "A grf may contain only one %s." % typestr, pos)
+
+class OnlyOnce:
+    """
+    Class to enforce that certain objects / constructs appear only once.
+    """
+    seen = {}
+
+    @classmethod
+    def enforce(cls, obj, typestr):
+        """
+        If this method is called more than once for an object of the exact same
+        class, an OnlyOnceError is raised.
+        """
+        objtype = obj.__class__
+        if objtype in cls.seen:
+            raise OnlyOnceError(typestr, obj.pos)
+        cls.seen[objtype] = None
+
+    @classmethod
+    def clear(cls):
+        cls.seen = {}
 
 def print_warning(msg, pos = None):
     """
