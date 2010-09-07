@@ -45,14 +45,14 @@ constant_numbers = {
     'RUNNING_COST_NONE'     : 0x0000,
 
     #vehicle cb flags
-    'CBF_WAGON_POWER'       : 0x01,
-    'CBF_WAGON_LENGTH'      : 0x02,
-    'CBF_LOAD_AMOUNT'       : 0x04,
-    'CBF_REFITTED_CAPACITY' : 0x08,
-    'CBF_ARTICULATED_PARTS' : 0x10,
-    'CBF_CARGO_SUFFIX'      : 0x20,
-    'CBF_COLOR_MAPPING'     : 0x40,
-    'CBF_SOUND_EFFECT'      : 0x80,
+    'VEH_CBF_WAGON_POWER'       : 0x01,
+    'VEH_CBF_WAGON_LENGTH'      : 0x02,
+    'VEH_CBF_LOAD_AMOUNT'       : 0x04,
+    'VEH_CBF_REFITTED_CAPACITY' : 0x08,
+    'VEH_CBF_ARTICULATED_PARTS' : 0x10,
+    'VEH_CBF_CARGO_SUFFIX'      : 0x20,
+    'VEH_CBF_COLOR_MAPPING'     : 0x40,
+    'VEH_CBF_SOUND_EFFECT'      : 0x80,
 
     #shorten factor
     'SHORTEN_TO_8_8' : 0x00,
