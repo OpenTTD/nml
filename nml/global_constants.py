@@ -54,6 +54,22 @@ constant_numbers = {
     'VEH_CBF_COLOR_MAPPING'     : 0x40,
     'VEH_CBF_SOUND_EFFECT'      : 0x80,
 
+    #corresponding callbacks
+    'VEH_CB_WAGON_POWER'            : 0x10,
+    'VEH_CB_WAGON_LENGTH'           : 0x11,
+    'VEH_CB_LOAD_AMOUNT'            : 0x12,
+    'VEH_CB_REFITTED_CAPACITY'      : 0x15,
+    'VEH_CB_ARTICULATED_PARTS'      : 0x16,
+    'VEH_CB_CARGO_SUFFIX'           : 0x19,
+    'VEH_CB_CAN_ATTACH_WAGON'       : 0x1D,
+    'VEH_CB_TEXT_PURCHASE_SCREEN'   : 0x23,
+    'VEH_CB_COLOUR_MAPPING'         : 0x2D,
+    'VEH_CB_START_STOP_CHECK'       : 0x31,
+    'VEH_CB_32DAY'                  : 0x32,
+    'VEH_CB_SOUND_EFFECT'           : 0x33,
+    'VEH_CB_AUTOREPLACE_SELECT'     : 0x34,
+    'VEH_CB_VEHICLE_PROPERTIES'     : 0x36,
+
     #shorten factor
     'SHORTEN_TO_8_8' : 0x00,
     'SHORTEN_TO_7_8' : 0x01,
@@ -138,7 +154,24 @@ constant_numbers = {
     'HOUSE_CBF_PROTECTION'          : 0x400,
     'HOUSE_CBF_FOUNDATIONS'         : 0x800,
     'HOUSE_CBF_AUTOSLOPE'           : 0x1000,
-    
+
+    #corresponding callbacks
+    'HOUSE_CB_BUILD'                : 0x17,
+    'HOUSE_CB_ANIM_NEXT_FRAME'      : 0x1A,
+    'HOUSE_CB_ANIM_STARTSTOP'       : 0x1B,
+    'HOUSE_CB_CONSTRUCTION_ANIM'    : 0x1C,
+    'HOUSE_CB_COLOUR'               : 0x1E,
+    'HOUSE_CB_CARGO_AMOUNT_ACCEPT'  : 0x1F,
+    'HOUSE_CB_ANIM_FRAME_LENGTH'    : 0x20,
+    'HOUSE_CB_DESTRUCTION'          : 0x21,
+    'HOUSE_CB_CARGO_TYPE_ACCEPT'    : 0x2A,
+    'HOUSE_CB_CARGO_PRODUCTION'     : 0x2E,
+    'HOUSE_CB_PROTECTION'           : 0x143,
+    'HOUSE_CB_ACCEPTED_CARGO'       : 0x148,
+    'HOUSE_CB_BUILDING_NAME'        : 0x14D,
+    'HOUSE_CB_FOUNDATIONS'          : 0x14E,
+    'HOUSE_CB_AUTOSLOPE'            : 0x14F,
+
     #house flags
     'HOUSE_FLAG_SIZE_1x1'           : 0x01,
     'HOUSE_FLAG_NOT_SLOPED'         : 0x02,
@@ -204,6 +237,15 @@ constant_numbers = {
     'OBJ_CBF_DECIDE_COLOUR'    : 0x08,
     'OBJ_CBF_ADDITIONAL_TEXT'  : 0x10,
     'OBJ_CBF_AUTOSLOPE'        : 0x20,
+
+    #corresponding callbacks
+    'OBJ_CB_SLOPE_CHECK'            : 0x157,
+    'OBJ_CB_DECIDE_ANIM'            : 0x158,
+    'OBJ_CB_DECIDE_ANIM_SPEED'      : 0x159,
+    'OBJ_CB_DECIDE_ANIM_LENGTH'     : 0x15A,
+    'OBJ_CB_DECIDE_COLOUR'          : 0x15B,
+    'OBJ_CB_ADDITIONAL_TEXT'        : 0x15C,
+    'OBJ_CB_AUTOSLOPE'              : 0x15D,
 
     #railtype flags
     'RAILTYPE_FLAG_CATANERY'          : 0x01,
