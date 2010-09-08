@@ -2,4 +2,5 @@ grf {
 	grfid: "test";
 	name: string(STR_REGRESSION_NAME);
 	desc: string(STR_REGRESSION_DESC);
+	version: 0;
 }

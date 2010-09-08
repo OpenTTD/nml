@@ -2,6 +2,7 @@ grf {
 	grfid: "NML\12";
 	name: string(STR_REGRESSION_NAME);
 	desc: string(STR_REGRESSION_DESC);
+	version: 0;
 }
 
 basecost {
