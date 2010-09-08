@@ -314,6 +314,32 @@ class Boolean(Expression):
     def __str__(self):
         return "(bool)" + str(self.expr)
 
+class BinNot(Expression):
+    def __init__(self, expr, pos = None):
+        Expression.__init__(self, pos)
+        self.expr = expr
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Binary not:'
+        self.expr.debug_print(indentation + 2)
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        expr = self.expr.reduce(id_dicts)
+        if expr.type() != Type.INTEGER:
+            raise generic.ScriptError("Not-operator (~) requires an integer argument.", expr.pos)
+        if isinstance(expr, ConstantNumeric): return ConstantNumeric(0xFFFFFFFF ^ expr.value)
+        if isinstance(expr, BinNot): return expr.expr
+        return BinNot(expr)
+
+    def supported_by_action2(self, raise_error):
+        return self.expr.supported_by_action2(raise_error)
+
+    def supported_by_actionD(self, raise_error):
+        return self.expr.supported_by_actionD(raise_error)
+
+    def __str__(self):
+        return "~" + str(self.expr)
+
 class Not(Expression):
     def __init__(self, expr, pos = None):
         Expression.__init__(self, pos)

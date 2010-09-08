@@ -101,6 +101,10 @@ def parse_actionD(assignment):
         expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(1), assignment.value.expr)
         return parse_actionD(ParameterAssignment(assignment.param, expr))
 
+    if isinstance(assignment.value, expression.BinNot):
+        expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(0xFFFFFFFF), assignment.value.expr)
+        return parse_actionD(ParameterAssignment(assignment.param, expr))
+
     action6.free_parameters.save()
     action_list = []
     act6 = action6.Action6()

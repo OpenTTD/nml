@@ -167,6 +167,10 @@ class NMLParser(object):
         'expression : LOGICAL_NOT expression'
         t[0] = expression.Not(expression.Boolean(t[2]), t.lineno(1))
 
+    def p_binary_not(self, t):
+        'expression : BINARY_NOT expression'
+        t[0] = expression.BinNot(t[2], t.lineno(1))
+
     def p_ternary_op(self, t):
         'expression : expression TERNARY_OPEN expression COLON expression'
         t[0] = expression.TernaryOp(t[1], t[3], t[5], t[1].pos)

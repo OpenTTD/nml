@@ -61,6 +61,7 @@ class NMLLexer(object):
         'LOGICAL_AND',
         'LOGICAL_OR',
         'LOGICAL_NOT',
+        'BINARY_NOT',
         'EQ',
         'LPAREN',
         'RPAREN',
@@ -99,6 +100,7 @@ class NMLLexer(object):
     t_LOGICAL_AND      = r'&&'
     t_LOGICAL_OR       = r'\|\|'
     t_LOGICAL_NOT      = r'!'
+    t_BINARY_NOT       = r'~'
     t_EQ               = r'='
     t_LPAREN           = r'\('
     t_RPAREN           = r'\)'
