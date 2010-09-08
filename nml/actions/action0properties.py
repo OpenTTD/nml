@@ -38,11 +38,11 @@ class Action0Property(object):
 
 properties = 0x12 * [None]
 
-def train_weight_prop(value):
+def two_byte_property(value, low_prop, high_prop):
     value = value.reduce_constant()
     low_byte = ConstantNumeric(value.value & 0xFF)
     high_byte = ConstantNumeric(value.value >> 8)
-    return [Action0Property(0x16, low_byte, 1), Action0Property(0x24, high_byte, 1)]
+    return [Action0Property(low_prop, low_byte, 1), Action0Property(high_prop, high_byte, 1)]
 
 general_veh_props = {
     'reliability_decay' : {'size': 1, 'num': 0x02},
@@ -64,7 +64,7 @@ properties[0x00] = {
     'dual_headed' : {'size': 1, 'num': 0x13},
     'cargo_capacity' : {'size': 1, 'num': 0x14},
     'cargo_type' : {'size': 1, 'num': 0x15},
-    'weight' : {'custom_function': train_weight_prop, 'unit_type': 'weight'},
+    'weight' : {'custom_function': lambda x: two_byte_property(x, 0x16, 0x24), 'unit_type': 'weight'},
     'cost_factor' : {'size': 1, 'num': 0x17},
     'ai_engine_rank' : {'size': 1, 'num': 0x18},
     'engine_class' : {'size': 1, 'num': 0x19},
@@ -193,15 +193,9 @@ def house_accepted_cargos(value):
             val = val | (0xFF << (i * 8))
     return [Action0Property(0x1E, ConstantNumeric(val), 4)]
 
-def house_flags(value, low_property, high_property):
-    value = value.reduce_constant()
-    low_byte = ConstantNumeric(value.value & 0xFF)
-    high_byte = ConstantNumeric(value.value >> 8)
-    return [Action0Property(low_property, low_byte, 1), Action0Property(high_property, high_byte, 1)]
-
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08},
-    'building_flags'          : {'custom_function': lambda x: house_flags(x, 0x09, 0x19)},
+    'building_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x09, 0x19)},
     'years_available'         : {'custom_function': house_available_years},
     'population'              : {'size': 1, 'num': 0x0B},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C},
@@ -212,7 +206,7 @@ properties[0x07] = {
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
     'availability_mask'       : {'size': 2, 'num': 0x13},
-    'callback_flags'          : {'custom_function': lambda x: house_flags(x, 0x14, 0x1D)},
+    'callback_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x14, 0x1D)},
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
     'random_colours'          : {'custom_function': house_random_colors},
