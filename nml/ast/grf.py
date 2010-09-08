@@ -18,6 +18,8 @@ class GRF(object):
             elif assignment.name.value == "grfid": self.grfid = assignment.value
             elif assignment.name.value == "version": self.version = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
+        if None in (self.name, self.desc, self.grfid, self.version):
+            raise generic.ScriptError("A GRF-block requires the 'name', 'desc', 'grfid', and 'version' properties to be set.")
 
     def pre_process(self):
         self.grfid = self.grfid.reduce()
