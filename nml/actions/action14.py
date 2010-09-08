@@ -1,4 +1,4 @@
-from nml import grfstrings
+from nml import grfstrings, generic
 from nml.actions import base_action, action7
 
 
@@ -54,6 +54,8 @@ class TextNode(Action14Node):
     def __init__(self, id, string, skip_default_langid = False):
         Action14Node.__init__(self, "T", id)
         self.string = string
+        if self.string.name.value not in grfstrings.grf_strings:
+            raise generic.ScriptError('Unknown string "%s" in grf-block' % self.string.name.value, self.string.pos)
         self.skip_default_langid = skip_default_langid
 
     def get_size(self):
