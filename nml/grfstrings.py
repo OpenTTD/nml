@@ -16,6 +16,8 @@ def get_translation(string, lang = DEFAULT_LANGUAGE):
             return translation['text']
         if translation['lang'] == DEFAULT_LANGUAGE:
             def_trans = translation['text']
+    if def_trans is None:
+        raise generic.ScriptError('Default translation of string "%s" is required, but does not exist.' % string)
     return def_trans
 
 def utf8_get_size(char):
