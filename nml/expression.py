@@ -654,9 +654,9 @@ def builtin_day_of_year(name, args, pos):
 
 def builtin_store(name, args, pos):
     """
-    STORE_TEMP(value, pos) builtin function.
-    STORE_PERM(value, pos) builtin function.
-    Store C{value} in temporary/permanent storage in location C{pos}.
+    STORE_TEMP(value, register) builtin function.
+    STORE_PERM(value, register) builtin function.
+    Store C{value} in temporary/permanent storage in location C{register}.
 
     @return C{value}
     """
@@ -667,9 +667,9 @@ def builtin_store(name, args, pos):
 
 def builtin_load(name, args, pos):
     """
-    LOAD_TEMP(pos) builtin function.
-    LOAD_PERM(pos) builtin function.
-    Load a value from location C{pos} from temporary/permanent storage.
+    LOAD_TEMP(register) builtin function.
+    LOAD_PERM(register) builtin function.
+    Load a value from location C{register} from temporary/permanent storage.
 
     @return The value loaded from the storage.
     """
