@@ -81,10 +81,7 @@
 </li>
 <li><a href="#vars">List of variables</a>
 <ul>
-	<li><a href="#vars-trains">Trains</a></li>
-	<li><a href="#vars-roadvehs">Road vehicles</a></li>
-	<li><a href="#vars-ships">Ships</a></li>
-	<li><a href="#vars-planes">Planes</a></li>
+	<li><a href="#vars-vehicles">Vehicles</a></li>s
 	<li><a href="#vars-stations">Stations</a></li>
 	<li><a href="#vars-canals">Canals</a></li>
 	<li><a href="#vars-bridges">Bridges</a></li>
@@ -926,23 +923,25 @@ to setting <tt>track_type</tt> to ELRL.
 <tr><td> retire_early<td> (years)<td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.
 <tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; multiplicator to the base cost</td></tr>
 <tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
+<tr><td> refittable_cargo_types<td> bit mask of entries in the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
 
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr>
-<tr><td> speed</td><td>                        0 ... 65000km/h (speed units)</td><td></td></tr>
-<tr><td> misc_flags</td><td>                   ROADVEH_FLAG_XXX</td><td>road vehicle flags</td></tr>
+<tr><td> speed</td><td>                        0 ... 514km/h (speed units)</td><td></td></tr>
+<tr><td> misc_flags</td><td>                   ROADVEH_FLAG_XXX</td><td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
+You can combine them with the binary or-operator (|). Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> refit_costs<td> <td> in 25% units of the purchase price cost base
 <tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
-<tr><td> power</td><td>                        0 ... 65000kN (power units)</td><td></td></tr>
-<tr><td> weight</td><td>                       0 ... 65000t (mass units)</td><td></td></tr>
+<tr><td> power</td><td>                        0 ... 2550hp (power units)</td><td></td></tr>
+<tr><td> weight</td><td>                       0 ... 63.75ton (mass units)</td><td></td></tr>
 <tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td></td></tr>
 <tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr>
-<tr><td> cargo_capacity</td><td>               0 ... 65000</td><td></td></tr>
-<tr><td> cargo_type<td> (cargo label)<td> use one from your cargo translation table
+<tr><td> cargo_capacity</td><td>               0 ... 255</td><td></td></tr>
+<tr><td> cargo_type</td><td>                   (cargo label)</td><td>use one from your cargo translation table</td></tr>
+<tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>See available sound effects.</td></tr>
 
 </table>
 <h2><a name="property-ships">Ships</a></h2>
@@ -1151,7 +1150,10 @@ specified height of the year is used in the calculation.
 
 </table>
 
-<h2><a name="vars-trains">Trains</a></h2>
+<h2><a name="vars-vehicles">Vehicles</a></h2>
+Pleas note that while those variables are available for all vehicles types, some of them only make sense
+for one or more vehicle types. For example checking current_railtype for a non-rail vehicle doesn't make
+sense at all.
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
 <tr><td>position_in_consist <td>0 ... 255<td>
@@ -1182,11 +1184,10 @@ specified height of the year is used in the calculation.
 <tr><td>vehicle_is_potentially_powered <td> [0 | 1]<td> vehicle provides power, if it is on a suitable track type
 <tr><td>vehicle_is_reversed <td> <td>
 <tr><td>build_during_preview <td> <td>
-<tr><td>current_railtype <td> 0 ... 15<td>The railtype where the vehicle is currently on. Either entry into current railtypes translation table (if defined), otherwise direct number. Available since OpenTTD r20164.
+<tr><td>current_railtype <td> Entry from railtype translation table or 0xFF<td>Don't use this variable unless you've defined
+a railtype translation table. If the train is running on a railtype that is not listed in your railtype translation table
+this variable will contain 0xFF. Available since OpenTTD r20164.
 </table>
-<h2><a name="vars-roadvehs">Road vehicles</a></h2>
-<h2><a name="vars-ships">Ships</a></h2>
-<h2><a name="vars-planes">Planes</a></h2>
 <h2><a name="vars-stations">Stations</a></h2>
 <h2><a name="vars-canals">Canals</a></h2>
 <h2><a name="vars-bridges">Bridges</a></h2>
