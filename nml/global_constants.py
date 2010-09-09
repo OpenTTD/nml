@@ -453,5 +453,6 @@ global_parameters = {
 
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
+item_names = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_info), cargo_numbers, railtype_table]
+const_list = [constant_numbers, (global_parameters, param_from_info), cargo_numbers, railtype_table, item_names]

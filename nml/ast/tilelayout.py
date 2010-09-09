@@ -1,5 +1,4 @@
 from nml import generic, expression, global_constants
-from nml.ast import item
 from nml.actions import actionB, action0properties
 
 
@@ -55,10 +54,10 @@ class TileLayout(object):
             else:
                 if not isinstance(tile['tile'], expression.Identifier):
                     raise generic.ScriptError("Invalid expression type for layout tile", tile['tile'].pos)
-                if tile['tile'].value not in item.item_names:
+                if tile['tile'].value not in global_constants.item_names:
                     raise generic.ScriptError("Unknown tile name", tile['tile'].pos)
                 file.print_bytex(0xFE)
-                file.print_wordx(item.item_names[tile['tile'].value])
+                file.print_wordx(global_constants.item_names[tile['tile'].value])
             file.newline()
         file.print_bytex(0)
         file.print_bytex(0x80)
