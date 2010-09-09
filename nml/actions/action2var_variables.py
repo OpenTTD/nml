@@ -24,7 +24,7 @@ varact2_globalvars = {
     'years_since_0' : {'var': 0x24, 'start': 0, 'size': 32},
 }
 
-veh_vars = {
+varact2vars_vehicles = {
     'position_in_consist' : {'var': 0x40, 'start': 0, 'size': 8},
     'position_in_consist_from_end' : {'var': 0x40, 'start': 8, 'size': 8},
     'num_vehs_in_consist' : {'var': 0x40, 'start': 16, 'size': 8},
@@ -96,10 +96,10 @@ varact2vars_airporttiles = {
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
-varact2vars[0x00] = veh_vars
-varact2vars[0x01] = veh_vars
-varact2vars[0x02] = veh_vars
-varact2vars[0x03] = veh_vars
+varact2vars[0x00] = varact2vars_vehicles
+varact2vars[0x01] = varact2vars_vehicles
+varact2vars[0x02] = varact2vars_vehicles
+varact2vars[0x03] = varact2vars_vehicles
 varact2vars[0x09] = varact2vars_industrytiles
 varact2vars[0x0A] = varact2vars_industries
 varact2vars[0x10] = varact2vars_railtype
