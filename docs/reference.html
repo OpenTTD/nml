@@ -100,6 +100,7 @@
 <ul>
 	<li><a href="#refs-default-industries">Default industries</a></li>
 	<li><a href="#refs-basecost-table">Base cost table</a></li>
+	<li><a href="#refs-sounds">List of sound effects</a></li>
 </ul>
 </li>
 </ul>
@@ -943,7 +944,7 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr>
 <tr><td> cargo_capacity</td><td>               0 ... 255</td><td></td></tr>
 <tr><td> cargo_type</td><td>                   (cargo label)</td><td>use one from your cargo translation table</td></tr>
-<tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>See available sound effects.</td></tr>
+<tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>See available <a href="#refs-sounds">sound effects</a>.</td></tr>
 
 </table>
 <h2><a name="property-ships">Ships</a></h2>
@@ -960,7 +961,7 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true. Note: if you do not set this property to 1 than refittable_cargo_classes /
 non_refittable_cargo_classes have no effect.
 <tr><td> cargo_capacity<td> (units of cargo)<td>
-<tr><td> sound_effect<td> SOUND_XXX<td>XXX=[CARGO_SHIP|PASSENGER_SHIP] See available sound effects.
+<tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="#refs-sounds">sound effects</a>.
 <tr><td> ocean_speed_fraction<td>0 ... 1<td> fraction of base speed on ocean tiles
 <tr><td> canal_speed_fraction<td>0 ... 1<td> fraction of base speed on canal tiles
 <tr><td> cargo_type<td> (cargo label)<td> use one from your cargo translation table
@@ -982,7 +983,7 @@ non_refittable_cargo_classes have no effect.
 <tr><td> acceleration<td> <td>
 <tr><td> passenger_capacity<td> (units of cargo)<td>
 <tr><td> mail_capacity<td> (units of cargo)<td>
-<tr><td> sound_effect<td> SOUND_XXX<td>XXX=[PROPELLER_1 | PROPELLER_2 | JET_1 | JET_2 | JET_3 | SUPERSONIC] see available sound effects
+<tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="#refs-sounds">sound effects</a>.
 </table>
 <h2><a name="property-stations">Stations</a></h2>
 <h2><a name="property-canals">Canals</a></h2>
@@ -1344,6 +1345,83 @@ This warning is generated when pixels with palette index 255, or RGB colour 0xFF
 <tr><td>64<td>PR_BUILD_LOCK<td>PR_CONSTRUCTION<td>7500<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
 <tr><td>65<td>PR_CLEAR_LOCK<td>PR_CONSTRUCTION<td>2000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
 </table>
+
+<h2><a name="refs-sounds">List of sound effects</a></h2>
+<ul>
+<li>SOUND_SPLAT</li>
+<li>SOUND_FACTORY_WHISTLE</li>
+<li>SOUND_TRAIN</li>
+<li>SOUND_TRAIN_THROUGH_TUNNEL</li>
+<li>SOUND_SHIP_HORN</li>
+<li>SOUND_FERRY_HORN</li>
+<li>SOUND_PLANE_TAKE_OFF</li>
+<li>SOUND_JET</li>
+<li>SOUND_TRAIN_HORN</li>
+<li>SOUND_MINING_MACHINERY</li>
+<li>SOUND_ELECTRIC_SPARK</li>
+<li>SOUND_STEAM</li>
+<li>SOUND_LEVEL_CROSSING</li>
+<li>SOUND_VEHICLE_BREAKDOWN</li>
+<li>SOUND_TRAIN_BREAKDOWN</li>
+<li>SOUND_CRASH</li>
+<li>SOUND_EXPLOSION</li>
+<li>SOUND_BIG_CRASH</li>
+<li>SOUND_CASHTILL</li>
+<li>SOUND_BEEP</li>
+<li>SOUND_MORSE</li>
+<li>SOUND_SKID_PLANE</li>
+<li>SOUND_HELICOPTER</li>
+<li>SOUND_BUS_START_PULL_AWAY</li>
+<li>SOUND_BUS_START_PULL_AWAY_WITH_HORN</li>
+<li>SOUND_TRUCK_START</li>
+<li>SOUND_TRUCK_START_2</li>
+<li>SOUND_APPLAUSE</li>
+<li>SOUND_OOOOH</li>
+<li>SOUND_SPLAT</li>
+<li>SOUND_SPLAT_2</li>
+<li>SOUND_JACKHAMMER</li>
+<li>SOUND_CAR_HORN</li>
+<li>SOUND_CAR_HORN_2</li>
+<li>SOUND_SHEEP</li>
+<li>SOUND_COW</li>
+<li>SOUND_HORSE</li>
+<li>SOUND_BLACKSMITH_ANVIL</li>
+<li>SOUND_SAWMILL</li>
+<li>SOUND_GOOD_YEAR</li>
+<li>SOUND_BAD_YEAR</li>
+<li>SOUND_RIP</li>
+<li>SOUND_EXTRACT_AND_POP</li>
+<li>SOUND_COMEDY_HIT</li>
+<li>SOUND_MACHINERY</li>
+<li>SOUND_RIP_2</li>
+<li>SOUND_EXTRACT_AND_POP</li>
+<li>SOUND_POP</li>
+<li>SOUND_CARTOON_SOUND</li>
+<li>SOUND_EXTRACT</li>
+<li>SOUND_POP_2</li>
+<li>SOUND_PLASTIC_MINE</li>
+<li>SOUND_WIND</li>
+<li>SOUND_COMEDY_BREAKDOWN</li>
+<li>SOUND_CARTOON_CRASH</li>
+<li>SOUND_BALLOON_SQUEAK</li>
+<li>SOUND_CHAINSAW</li>
+<li>SOUND_HEAVY_WIND</li>
+<li>SOUND_COMEDY_BREAKDOWN_2</li>
+<li>SOUND_JET_OVERHEAD</li>
+<li>SOUND_COMEDY_CAR</li>
+<li>SOUND_ANOTHER_JET_OVERHEAD</li>
+<li>SOUND_COMEDY_CAR_2</li>
+<li>SOUND_COMEDY_CAR_3</li>
+<li>SOUND_COMEDY_CAR_START_AND_PULL_AWAY</li>
+<li>SOUND_MAGLEV</li>
+<li>SOUND_LOON_BIRD</li>
+<li>SOUND_LION</li>
+<li>SOUND_MONKEYS</li>
+<li>SOUND_PLANE_CRASHING</li>
+<li>SOUND_PLANE_ENGINE_SPUTTERING</li>
+<li>SOUND_MAGLEV_2</li>
+<li>SOUND_DISTANT_BIRD</li>
+</ul>
 
 </body>
 </html>
