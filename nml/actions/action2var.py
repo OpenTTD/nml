@@ -381,6 +381,30 @@ def make_return_varact2(switch_block):
     act.default_result = expression.Identifier('CB_FAILED', switch_block.pos)
     return act
 
+def parse_60x_var(name, args, pos, info):
+    if 'tile' in info:
+        narg = 2
+        if info['tile'] == 's': minmax = (-8, 7)
+        elif info['tile'] == 'u': minmax = (0, 15)
+        else: assert False
+    else:
+        narg = 1
+        minmax = (0, 255)
+
+    if len(args) != narg:
+        raise generic.ScriptError("'%s'() requires %d argument(s), encountered %d" % (name, narg, len(args)), pos)
+    for arg in args:
+        if not isinstance(arg, expression.ConstantNumeric):
+            raise generic.ScriptError("Arguments of '%s' must be compile-time constants." % name, arg.pos)
+        generic.check_range(arg.value, minmax[0], minmax[1], "Argument of '%s'" % name, arg.pos)
+
+    if 'tile' in info:
+        param = expression.ConstantNumeric(args[0].value & 0xF)
+        param.value |= (args[1].value & 0xF) << 4
+    else:
+        param = args[0]
+    return expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
+
 def parse_varaction2(switch_block):
     action6.free_parameters.save()
     act6 = action6.Action6()
@@ -391,7 +415,11 @@ def parse_varaction2(switch_block):
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
 
     func = lambda x, pos: expression.Variable(expression.ConstantNumeric(x['var']), expression.ConstantNumeric(x['start']), expression.ConstantNumeric((1 << x['size']) - 1), None, pos)
-    expr = switch_block.expr.reduce(global_constants.const_list + [(action2var_variables.varact2vars[feature], func), (action2var_variables.varact2_globalvars, func)])
+    func60x = lambda name, value: expression.FunctionPtr(name, parse_60x_var, value)
+    expr = switch_block.expr.reduce(global_constants.const_list + \
+        [(action2var_variables.varact2vars[feature], func), \
+        (action2var_variables.varact2_globalvars, func), \
+        (action2var_variables.varact2vars60x_test, func60x)])
 
     offset = 4 #first var
 
