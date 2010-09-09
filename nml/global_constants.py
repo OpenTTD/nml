@@ -328,6 +328,18 @@ constant_numbers = {
     'PLATFORM_TTDPATCH'                  : 0x00,
     'PLATFORM_OPENTTD'                   : 0x01,
 
+    #player types (vehicle var 0x43)
+    'PLAYERTYPE_HUMAN'                   : 0,
+    'PLAYERTYPE_AI'                      : 1,
+    'PLAYERTYPE_HUMAN_IN_AI'             : 2,
+    'PLAYERTYPE_AI_IN_HUMAN'             : 3,
+
+    #airport types (vehicle var 0x44)
+    'AIRPORTTYPE_SMALL'                  : 0,
+    'AIRPORTTYPE_LARGE'                  : 1,
+    'AIRPORTTYPE_HELIPORT'               : 2,
+    'AIRPORTTYPE_OILRIG'                 : 3,
+
     #ttdpatch flags
     'CONFIGFLAG_KEEPSMALLAIRPORT'           : 0x0C,
     'CONFIGFLAG_NEWAIRPORTS'                : 0x0D,

@@ -1161,29 +1161,34 @@ sense at all.
 <tr><td>num_vehs_in_consist <td>0 ... 255 <td>
 <tr><td>position_in_vehid_chain <td>0 ... 255 <td>
 <tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>
+<tr><td>num_vehs_in_vehid_chain <td>0 ... 255 <td>
 <tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td><a href="#property-cargos">cargo classes</a>
 <tr><td>most_common_refit <td><a href="#property-cargos">cargo class</a><td>cargo class most often refit to
 <tr><td>bitmask_consist_info <td>Bitmask 8 bit<td>OR of all bitmask_vehicle_info of all vehicles (engines, wagons) in the consist
-<tr><td>company_num <td>0 ... 15<td>company number of the vehicle owner. TTDPatch only supports up to 8 companies
-<tr><td>company_type <td>0 ... 3 <td>0: human; 1: AI; 2: human in AI company; 3: human company controlled by AI
-<tr><td>company_color1 <td> <td>index into company colour
-<tr><td>company_color2 <td> <td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
+<tr><td>company_num <td>0 ... 14 <td>company number of the vehicle owner. TTDPatch only supports up to 8 companies (0 ... 7)
+<tr><td>company_type <td>PLAYERTYPE_XX <td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI (human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company)
+<tr><td>company_color1 <td>0 ... 15 <td>index into company colour
+<tr><td>company_color2 <td>0 ... 15 <td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
+<tr><td>aircraft_height <td>0 ... 255 <td>Height difference between the aircraft and its shadow. 8 Units are equivalent to one height level on the map.
+<tr><td>airport_type <td>AIRPORTTYPE_XX <td>AIRPORTTYPE_SMALL, AIRPORTTYPE_LARGE, AIRPORTTYPE_HELIPORT or AIRPORTTYPE_OILRIG
 <tr><td>curv_info_prev_cur <td> <td>
 <tr><td>curv_info_cur_next <td> <td>
 <tr><td>curv_info_prev_next <td> <td>
-<tr><td>motion_counter <td> <td>
+<tr><td>motion_counter <td>0 ... 15 <td>Is increased every time the vehicle moves a single step on the map. Useful for animations.
 <tr><td>cargo_type_in_veh <td>entry in cargo translation table <td>
-<tr><td>cargo_unit_weight <td>weight in 1/16t <td>
+<tr><td>cargo_unit_weight <td>weight per unit in 1/16t <td>
 <tr><td>cargo_classes <td><a href="#property-cargos">cargo class</a><td>class of the currently transported cargo
-<tr><td>vehicle_type_info <td> <td>
+<tr><td>vehicle_is_available <td> [0 | 1]<td>Value is 1 if the vehicle is available on the open market
+<tr><td>vehicle_is_testing <td> [0 | 1]<td>Value is 1 if the vehicle is currently being tested
+<tr><td>vehicle_is_offered <td> [0 | 1]<td>Value is 1 if the vehicle is currently being offered for exclusive preview
 <tr><td>build_year <td>0 ... 5000000 <td>0-based year when the vehicle was built
-<tr><td>vehicle_type_id <td> <td>
-<tr><td>refit_cycle <td> <td>
+<tr><td>vehicle_type_id <td> <td>ID of the vehicle
+<tr><td>refit_cycle <td>0 ... 255 <td>How many times the vehicle has been refitted to the same cargo type
 <tr><td>vehicle_is_powered <td> [0 | 1]<td> vehicle provides power and is on the correct track type
 <tr><td>vehicle_is_not_powered <td> [0 | 1]<td> vehicle is either on a wrong track type or it doesn't provide power at all
 <tr><td>vehicle_is_potentially_powered <td> [0 | 1]<td> vehicle provides power, if it is on a suitable track type
-<tr><td>vehicle_is_reversed <td> <td>
-<tr><td>build_during_preview <td> <td>
+<tr><td>vehicle_is_reversed <td> [0 | 1]<td>Value is 1 if the vehicle has reversed an odd number of times
+<tr><td>built_during_preview <td> [0 | 1]<td>Value is 1 if the vehicle was built during the exclusive preview stage
 <tr><td>current_railtype <td> Entry from railtype translation table or 0xFF<td>Don't use this variable unless you've defined
 a railtype translation table. If the train is running on a railtype that is not listed in your railtype translation table
 this variable will contain 0xFF. Available since OpenTTD r20164.

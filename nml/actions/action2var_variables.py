@@ -48,7 +48,9 @@ varact2vars_vehicles = {
     'cargo_type_in_veh' : {'var': 0x47, 'start': 0, 'size': 8},
     'cargo_unit_weight' : {'var': 0x47, 'start': 8, 'size': 8},
     'cargo_classes' : {'var': 0x47, 'start': 16, 'size': 16},
-    'vehicle_type_info' : {'var': 0x48, 'start': 0, 'size': 2},
+    'vehicle_is_available' : {'var': 0x48, 'start': 0, 'size': 1},
+    'vehicle_is_testing' : {'var': 0x48, 'start': 1, 'size': 1},
+    'vehicle_is_offered' : {'var': 0x48, 'start': 2, 'size': 1},
     'build_year' : {'var': 0x49, 'start': 0, 'size': 32},
     'vehicle_type_id' : {'var': 0xC6, 'start': 0, 'size': 16},
     'refit_cycle' : {'var': 0xF2, 'start': 0, 'size': 8},
@@ -56,7 +58,7 @@ varact2vars_vehicles = {
     'vehicle_is_not_powered' : {'var': 0xFE, 'start': 6, 'size': 1},
     'vehicle_is_potentially_powered': {'var': 0x4A, 'start': 8, 'size': 1},
     'vehicle_is_reversed' : {'var': 0xFE, 'start': 8, 'size': 1},
-    'build_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
+    'built_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
     'current_railtype': {'var': 0x4A, 'start': 0, 'size': 8},
 }
 
