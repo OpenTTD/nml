@@ -381,6 +381,14 @@ def make_return_varact2(switch_block):
     act.default_result = expression.Identifier('CB_FAILED', switch_block.pos)
     return act
 
+def parse_var(info, pos):
+    res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), None, pos)
+    if 'signextend' in info and info['signextend']:
+        #r = (x ^ m) - m; with m being (1 << (num_bits -1))
+        m = expression.ConstantNumeric(1 << (info['size'] - 1))
+        return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, res, m, pos), m, pos)
+    return res
+
 def parse_60x_var(name, args, pos, info):
     if 'tile' in info:
         narg = 2
@@ -414,11 +422,10 @@ def parse_varaction2(switch_block):
     if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
 
-    func = lambda x, pos: expression.Variable(expression.ConstantNumeric(x['var']), expression.ConstantNumeric(x['start']), expression.ConstantNumeric((1 << x['size']) - 1), None, pos)
     func60x = lambda name, value: expression.FunctionPtr(name, parse_60x_var, value)
     expr = switch_block.expr.reduce(global_constants.const_list + \
-        [(action2var_variables.varact2vars[feature], func), \
-        (action2var_variables.varact2_globalvars, func), \
+        [(action2var_variables.varact2vars[feature], parse_var), \
+        (action2var_variables.varact2_globalvars, parse_var), \
         (action2var_variables.varact2vars60x[feature], func60x)])
 
     offset = 4 #first var
