@@ -60,6 +60,10 @@ varact2vars_vehicles = {
     'current_railtype': {'var': 0x4A, 'start': 0, 'size': 8},
 }
 
+varact2vars60x_vehicles = {
+    'count_veh_id': {'var': 0x60, 'start': 0, 'size': 8},
+}
+
 varact2vars_industrytiles = {
     'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
     'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
@@ -98,9 +102,13 @@ varact2vars_airporttiles = {
 }
 
 varact2vars[0x00] = varact2vars_vehicles
+varact2vars60x[0x00] = varact2vars60x_vehicles
 varact2vars[0x01] = varact2vars_vehicles
+varact2vars60x[0x01] = varact2vars60x_vehicles
 varact2vars[0x02] = varact2vars_vehicles
+varact2vars60x[0x02] = varact2vars60x_vehicles
 varact2vars[0x03] = varact2vars_vehicles
+varact2vars60x[0x03] = varact2vars60x_vehicles
 varact2vars[0x09] = varact2vars_industrytiles
 varact2vars[0x0A] = varact2vars_industries
 varact2vars[0x10] = varact2vars_railtype
