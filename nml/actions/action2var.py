@@ -419,7 +419,7 @@ def parse_varaction2(switch_block):
     expr = switch_block.expr.reduce(global_constants.const_list + \
         [(action2var_variables.varact2vars[feature], func), \
         (action2var_variables.varact2_globalvars, func), \
-        (action2var_variables.varact2vars60x_test, func60x)])
+        (action2var_variables.varact2vars60x[feature], func60x)])
 
     offset = 4 #first var
 
