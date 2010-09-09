@@ -62,6 +62,7 @@
 <li><a href="#language-files">Language files</a></li>
 <li><a href="#properties">List of properties</a>
 <ul>
+	<li><a href="#property-vehicles">Properties common to all vehicle types</a></li>
 	<li><a href="#property-trains">Trains</a></li>
 	<li><a href="#property-roadvehs">Road vehicles</a></li>
 	<li><a href="#property-ships">Ships</a></li>
@@ -857,24 +858,39 @@ Valid language IDs are
 </table>
 
 <h1><a name="properties">List of properties</a></h1>
+<h2><a name="property-vehicles">Properties common to all vehicle types</a></h2>
+<table class="t">
+<tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
+<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
+<tr><td> model_life</td><td>                   0 ... 255 (years)</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
+<tr><td> retire_early</td><td>                 (years)</td><td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.</td></tr>
+<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
+<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
+<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
+<tr><td> refittable_cargo_types</td><td>       bit mask of entries into the cargo translation table</td><td>example: <code>bitmask(PASS, MAIL, GOOD)</code></td></tr>
+<tr><td> loading_speed <td>                    0 ... 255 (cargo units)</td><td> units loaded per tick</td></tr>
+<tr><td> cost_factor</td><td>                  0 ... 255</td><td>multiplicator to the base purchase cost</td></tr>
+<tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base running costs</td></tr>
+</table>
+
+<p>To determine whether your vehicle can be refitted to a certain cargo openttd uses the following table:</p>
+<table class="t">
+<tr><th>Cargo matches refittable_cargo_classes</th><th>Cargo matches non_refittable_cargo_classes</th><th>Cargo in refittable_cargo_types</th><th>Result</th></tr>
+<tr><td>No</td><td>Doesn't matter</td><td>No</td><td>Not refittable</td></tr>
+<tr><td>No</td><td>Doesn't matter</td><td>Yes</td><td>Refittable</td></tr>
+<tr><td>Yes</td><td>No</td><td>No</td><td>Refittable</td></tr>
+<tr><td>Yes</td><td>No</td><td>Yes</td><td>Not refittable</td></tr>
+<tr><td>Yes</td><td>Yes</td><td>No</td><td>Not refittable</td></tr>
+<tr><td>Yes</td><td>Yes</td><td>Yes</td><td>Refittable</td></tr>
+</table>
+You should use refittable_cargo_classes and non_refittable_cargo_classes to decide to which cargos your vehicle is refittable, and only
+use refittable_cargo_types as a last resort to include/exclude some cargo type.
+
 <h2><a name="property-trains">Trains</a></h2>
 <table class="t">
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
-<!-- properties common to all vehicle types -->
-<tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
-<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
-<tr><td> model_life</td><td>                   0 ... 255 (years)</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
-<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
-<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
-<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
-<tr><td> loading_speed <td>                    0 ... 255 (cargo units) <td> units loaded per tick
-<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> running_cost_factor</td><td>0 ... 255</td><td>multiplicator to the base cost</td></tr>
-<tr><td> retire_early<td> (years)<td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.
-<tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; multiplicator to the base cost</td></tr>
-<tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
 
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>SPRITE_ID_NEW_TRAIN</td><td>defines base set spriteID to use or this constant</td></tr>
@@ -907,24 +923,10 @@ to setting <tt>track_type</tt> to ELRL.
 <tr><td> bitmask_vehicle_info<td> 8-bit bitmask<td>Used for obtaining bitmask_consist_info
 <tr><td> <td> <td>
 </table>
+
 <h2><a name="property-roadvehs">Road vehicles</a></h2>
 <table class="t">
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
-<!-- properties common to all vehicle types -->
-<tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
-<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
-<tr><td> model_life</td><td>                   0 ... 255 (years)</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
-<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
-<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
-<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
-<tr><td> loading_speed <td>                    0 ... 255 (cargo units) <td> units loaded per tick
-<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> retire_early<td> (years)<td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.
-<tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; multiplicator to the base cost</td></tr>
-<tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit mask of entries in the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
-
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr>
 <tr><td> speed</td><td>                        0 ... 514km/h (speed units)</td><td></td></tr>
@@ -947,21 +949,6 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <h2><a name="property-ships">Ships</a></h2>
 <table class="t">
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
-<!-- properties common to all vehicle types -->
-<tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
-<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
-<tr><td> model_life</td><td>                   0 ... 255 (years)</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
-<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
-<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
-<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
-<tr><td> loading_speed <td>                    0 ... 255 (cargo units) <td> units loaded per tick
-<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> retire_early<td> (years)<td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.
-<tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; multiplicator to the base cost</td></tr>
-<tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
-
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_SHIP <td> define base set spriteID to replace or this constant
 <tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
@@ -981,21 +968,6 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <h2><a name="property-planes">Planes</a></h2>
 <table class="t">
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
-<!-- properties common to all vehicle types -->
-<tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
-<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
-<tr><td> model_life</td><td>                   0 ... 255 (years)</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
-<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
-<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
-<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
-<tr><td> loading_speed <td>                    0 ... 255 (cargo units) <td> units loaded per tick
-<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
-<tr><td> retire_early<td> (years)<td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.
-<tr><td> cost_factor</td><td> 0 ... 255</td><td>purchase cost; multiplicator to the base cost</td></tr>
-<tr><td> running_cost_factor<td> 0 ... 255<td> multiplicator to the base running costs
-<tr><td> refittable_cargo_types<td> bit mask of entries into the cargo translation table<td>example: <code>bitmask(PASS, MAIL, GOOD)</code>
-
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_AIRCRAFT <td> define base set spriteID to replace or this constant
 <tr><td> speed<td> 0 .. 4080 km/h (speed units)<td>
