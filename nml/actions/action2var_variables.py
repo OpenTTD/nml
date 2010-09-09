@@ -74,6 +74,16 @@ varact2vars_industrytiles = {
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
+varact2vars60x_industrytiles = {
+    'tile_slope': {'var': 0x60, 'start': 0, 'size': 5, 'tile': 's'},
+    'tile_is_same_industry': {'var': 0x60, 'start': 8, 'size': 1, 'tile': 's'},
+    'tile_has_water': {'var': 0x60, 'start': 9, 'size': 1, 'tile': 's'},
+    'terrain_type_nearby_tile': {'var': 0x60, 'start': 10, 'size': 3, 'tile': 's'},
+    'tile_lowest_corner_height': {'var': 0x60, 'start': 16, 'size': 8, 'tile': 's'},
+    'animation_frame_nearby_tile': {'var': 0x61, 'start': 0, 'size': 8, 'tile': 's'},
+    'industrytile_id_nearby_tile': {'var': 0x62, 'start': 0, 'size': 16, 'tile': 's'},
+}
+
 varact2vars_industries = {
     'waiting_cargo_1' : {'var': 0x40, 'start': 0, 'size': 16},
     'waiting_cargo_2' : {'var': 0x41, 'start': 0, 'size': 16},
@@ -112,6 +122,7 @@ varact2vars60x[0x02] = varact2vars60x_vehicles
 varact2vars[0x03] = varact2vars_vehicles
 varact2vars60x[0x03] = varact2vars60x_vehicles
 varact2vars[0x09] = varact2vars_industrytiles
+varact2vars60x[0x09] = varact2vars60x_industrytiles
 varact2vars[0x0A] = varact2vars_industries
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles

@@ -1204,6 +1204,28 @@ the given ID.</td></tr>
 <h2><a name="vars-bridges">Bridges</a></h2>
 <h2><a name="vars-houses">Houses</a></h2>
 <h2><a name="vars-industrytiles">Industry tiles</a></h2>
+Variables that require a signed x,y offset. The offset is relative to the current tile. Offset 0,0 means the current tile.
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>tile_slope</td><td>Which corners are raised on the given tile.</td><td>
+Bit 0: west corner is above the lowest corner.<br>
+Bit 1: south corner is above the lowest corner.<br>
+Bit 2: east corner is above the lowest corner.<br>
+Bit 3: north corner is above the lowest corner.<br>
+Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).
+</td></tr>
+<tr><td>tile_is_same_industry</td><td>1 if the tile is part of the same industry, 0 otherwise</td><td></td></tr>
+<tr><td>tile_has_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
+<tr><td>terrain_type_nearby_tile</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>tile_lowest_corner_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
+<tr><td>animation_frame_nearby_tile</td><td>0..255</td><td>Animation frame of the given tile</td></tr>
+<tr><td>terrain_type_nearby_tile</td><td>0x00aa, 0xFFbb, 0xFFFE or 0xFFFF</td><td>
+0x00aa: The tile is an industry tile that is part of this GRF, the tile id is aa.<br>
+0xFFbb: The tile is an original industry tile with id bb.<br>
+0xFFFE: The tile is an industry tile defined in another GRF.<br>
+0xFFFF: The tile is not an industry tile or it belongs to another GRF.
+</td></tr>
+</table>
 <h2><a name="vars-industries">Industries</a></h2>
 <h2><a name="vars-cargos">Cargos</a></h2>
 <h2><a name="vars-airports">Airports</a></h2>
