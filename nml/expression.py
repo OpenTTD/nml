@@ -8,6 +8,7 @@ class Type(object):
     INTEGER = 0
     FLOAT = 1
     STRING_LITERAL = 2
+    FUNCTION_PTR = 3
 
 class Expression(object):
     """
@@ -462,6 +463,44 @@ class Variable(Expression):
             raise generic.ScriptError("Variable accesses are not supported outside of switch-blocks.", self.pos)
         return False
 
+class FunctionPtr(Expression):
+    """
+    Pointer to a function.
+    If this appears inside an expression, the user has made an error.
+
+    @ivar name Identifier that has been resolved to this function pointer.
+    @type name L{Identifier}
+
+    @ivar func Function that will be called to resolve this function call. Arguments:
+                    Name of the function (C{basestring})
+                    List of passed arguments (C{list} of L{Expression})
+                    Position information (L{Position})
+                    Any extra arguments passed to the constructor of this class
+    @type func C{function}
+
+    @ivar extra_args List of arguments that should be passed to the function that is to be called.
+    @type extra_args C{list}
+    """
+    def __init__(self, name, func, *extra_args):
+        self.name = name
+        self.func = func
+        self.extra_args = extra_args
+
+    def debug_print(self, indentation):
+        assert False, "Function pointers should not appear inside expressions."
+
+    def __str__(self):
+        assert False, "Function pointers should not appear inside expressions."
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        raise generic.ScriptError("'%s' is a function and should be called using the function call syntax." % str(self.name))
+
+    def type(self):
+        return Type.FUNCTION_PTR
+
+    def call(self, args):
+        return self.func(self.name.value, args, self.name.pos, *self.extra_args)
+
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):
         Expression.__init__(self, pos)
@@ -491,8 +530,15 @@ class FunctionCall(Expression):
             val = func(self.name.value, param_list, self.pos)
             return val.reduce(id_dicts)
         else:
+            #try user-defined functions
+            func_ptr = self.name.reduce(id_dicts, False, True)
+            if func_ptr != self.name: # we found something!
+                if func_ptr.type() != Type.FUNCTION_PTR:
+                    raise generic.ScriptError("'%s' is defined, but it is not a function." % self.name.value, self.pos)
+                return func_ptr.call(param_list)
+            #must be a switch-block, then
             if len(param_list) != 0:
-                raise generic.ScriptError("Only built-in functions can accept parameters. '%s' is not a built-in function." % self.name.value, self.pos)
+                raise generic.ScriptError("'%s' is not defined as a function that accepts parameters." % self.name.value, self.pos)
             return Variable(ConstantNumeric(0x7E), param=self.name.value, pos = self.pos)
 
 class String(Expression):
@@ -529,11 +575,17 @@ class Identifier(Expression):
     def __str__(self):
         return self.value
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts = [], unknown_id_fatal = True, search_func_ptr = False):
         for id_dict in id_dicts:
             id_d, func = (id_dict, lambda x, pos: StringLiteral(x, pos) if isinstance(x, basestring) else ConstantNumeric(x, pos)) if not isinstance(id_dict, tuple) else id_dict
             if self.value in id_d:
-                return func(id_d[self.value], self.pos).reduce(id_dicts)
+                if search_func_ptr:
+                    # XXX - hacky
+                    # Call func with (name, value) instead of (value, name)
+                    # And do not reduce the resulting value
+                    return func(self, id_d[self.value])
+                else:
+                    return func(id_d[self.value], self.pos).reduce(id_dicts)
         if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
         return self
 
