@@ -920,7 +920,7 @@ to setting <tt>track_type</tt> to ELRL.
 <tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>XXX=[8_8 | 7_8 | ... | 1_8]
 <tr><td> visual_effect<td> VISUAL_EFFECT_XXX<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE]
 <tr><td> extra_weight_per_wagon<td> 0 ... 255 t (mass units)<td>
-<tr><td> bitmask_vehicle_info<td> 8-bit bitmask<td>Used for obtaining bitmask_consist_info
+<tr><td> <a name="bitmask_vehicle_info">bitmask_vehicle_info</a><td> 8-bit bitmask<td>Used for obtaining <a href="#bitmask_consist_info">bitmask_consist_info</a>
 <tr><td> <td> <td>
 </table>
 
@@ -957,7 +957,8 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
-<tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true
+<tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true. Note: if you do not set this property to 1 than refittable_cargo_classes /
+non_refittable_cargo_classes have no effect.
 <tr><td> cargo_capacity<td> (units of cargo)<td>
 <tr><td> sound_effect<td> SOUND_XXX<td>XXX=[CARGO_SHIP|PASSENGER_SHIP] See available sound effects.
 <tr><td> ocean_speed_fraction<td>0 ... 1<td> fraction of base speed on ocean tiles
@@ -970,14 +971,14 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_AIRCRAFT <td> define base set spriteID to replace or this constant
-<tr><td> speed<td> 0 .. 4080 km/h (speed units)<td>
+<tr><td> speed<td> 0 .. 3280 km/h (speed units)<td>
 <tr><td> misc_flags<td> AIRCRAFT_FLAG_2CC<td>
 <tr><td> refit_cost<td> <td> in 1/32 of default refit cost base
 <tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_helicopter<td> AIRCRAFT_TYPE_XXX<td>XXX=[NORMAL | HELICOPTER]
-<tr><td> is_large<td> AIRCRAFT_TYPE_XXX<td>XXX=[SMALL | LARGE]
+<tr><td> is_large<td> AIRCRAFT_TYPE_XXX<td>XXX=[SMALL | LARGE]. Set to AIRCRAFT_TYPE_SMALL for helicopters.
 <tr><td> acceleration<td> <td>
 <tr><td> passenger_capacity<td> (units of cargo)<td>
 <tr><td> mail_capacity<td> (units of cargo)<td>
@@ -1136,9 +1137,15 @@ sense at all.
 <tr><td>num_vehs_in_vehid_chain <td>0 ... 255 <td>
 <tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td><a href="#property-cargos">cargo classes</a>
 <tr><td>most_common_refit <td><a href="#property-cargos">cargo class</a><td>cargo class most often refit to
-<tr><td>bitmask_consist_info <td>Bitmask 8 bit<td>OR of all bitmask_vehicle_info of all vehicles (engines, wagons) in the consist
+<tr><td><a name="bitmask_consist_info">bitmask_consist_info</a><td>Bitmask 8 bit<td>OR of all
+<a href="#bitmask_vehicle_info">bitmask_vehicle_info</a> of all vehicles (engines, wagons) in
+the consist. Only available for rail vehicles.
 <tr><td>company_num <td>0 ... 14 <td>company number of the vehicle owner. TTDPatch only supports up to 8 companies (0 ... 7)
-<tr><td>company_type <td>PLAYERTYPE_XX <td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI (human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company)
+<tr><td>company_type <td>PLAYERTYPE_XX <td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI
+(human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company). OpenTTD only
+uses PLAYERTYPE_HUMAN and PLAYERTYPE_AI. If you cheat yourself to be part of an AI company OpenTTD
+will still report PLAYERTYPE_AI for the company with yourself and the AI and it'll report
+PLAYERTYPE_HUMAN for the now uncontrolled company.
 <tr><td>company_color1 <td>0 ... 15 <td>index into company colour
 <tr><td>company_color2 <td>0 ... 15 <td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
 <tr><td>aircraft_height <td>0 ... 255 <td>Height difference between the aircraft and its shadow. 8 Units are equivalent to one height level on the map.
