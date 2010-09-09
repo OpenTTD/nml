@@ -63,7 +63,7 @@ def parse_property(feature, name, value, id, unit):
         if mul != 1 or isinstance(value, expression.ConstantFloat): #always round floats
             if not isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
                 raise generic.ScriptError("Unit conversion specified for property, but no constant value found", value.pos)
-            value = expression.ConstantNumeric(int(value.value * mul + 0.5))
+            value = expression.ConstantNumeric(int(value.value * mul + 0.5), value.pos)
 
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
