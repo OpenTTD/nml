@@ -301,8 +301,43 @@ def airport_years(value):
     max_year = value.values[1].reduce_constant()
     return [Action0Property(0x0C, ConstantNumeric(max_year.value << 16 | min_year.value), 4)]
 
+class AirportLayoutProp(object):
+    def __init__(self, layout_list):
+        self.layout_list = layout_list
+
+    def write(self, file):
+        file.print_bytex(0x0A)
+        file.print_byte(len(self.layout_list))
+        # -6 because prop_num, num_layouts and size should not be included
+        file.print_dword(self.get_size() - 6)
+        file.newline()
+        for layout in self.layout_list:
+            file.print_bytex(layout.properties['rotation'].value)
+            layout.write(file)
+        file.newline()
+
+    def get_size(self):
+        size = 6
+        for layout in self.layout_list:
+            size += layout.get_size() + 1
+        return size
+
+def airport_layouts(value):
+    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, Identifier), value.values)):
+        raise generic.ScriptError("layouts must be an array of layout names", value.pos)
+    layouts = []
+    for name in value.values:
+        if name.value not in tilelayout_names:
+            raise generic.ScriptError("Unknown layout name '%s'" % name.value, name.pos)
+        layout = tilelayout_names[name.value]
+        if 'rotation' not in layout.properties:
+            raise generic.ScriptError("Airport layouts must have the 'rotation' property", layout.pos)
+        layouts.append(layout)
+    return [AirportLayoutProp(layouts)]
+
 properties[0x0D] = {
     'override': {'size': 1, 'num': 0x08},
+    'layouts': {'custom_function': airport_layouts},
     'years_available': {'custom_function': airport_years},
     'ttd_airport_type': {'size': 1, 'num': 0x0D},
     'catchment_area': {'size': 1, 'num': 0x0E},

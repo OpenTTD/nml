@@ -402,6 +402,12 @@ constant_numbers = {
     'AIRPORTTYPE_HELIPORT'               : 2,
     'AIRPORTTYPE_OILRIG'                 : 3,
 
+    #Rotation property for airport layouts
+    'ROTATION_NORTH'                     : 0,
+    'ROTATION_EAST'                      : 2,
+    'ROTATION_SOUTH'                     : 4,
+    'ROTATION_WEST'                      : 6,
+
     #ttdpatch flags
     'CONFIGFLAG_KEEPSMALLAIRPORT'           : 0x0C,
     'CONFIGFLAG_NEWAIRPORTS'                : 0x0D,

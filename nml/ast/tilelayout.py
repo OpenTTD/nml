@@ -16,7 +16,7 @@ class TileLayout(object):
                 name = tileprop.name.value
                 if name in self.properties:
                     raise generic.ScriptError("Duplicate property %s in tile layout" % name, tileprop.name.pos)
-                self.properties[name] = tileprop.value
+                self.properties[name] = tileprop.value.reduce_constant(global_constants.const_list)
             else:
                 assert isinstance(tileprop, LayoutTile)
                 x = tileprop.x.reduce_constant().value
