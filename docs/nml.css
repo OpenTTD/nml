@@ -96,12 +96,17 @@ address {
 }
 
 code {
-	color: #004400;
-	font-style: typewriter;
+  color: #004400;
+  font-style: typewriter;
 }
 
 bitlist {
-	color: #FF0000;
+  color: #FF0000;
+}
+
+.img_right {
+  float: right;
+  background: white;
 }
 
 /* Nice idea, but looks all too un-familiar.
