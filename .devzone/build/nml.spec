@@ -4,7 +4,7 @@
 Name:           %{dz_repo}
 Version:        %{dz_version}
 Release:        %{_vendor}%{?suse_version}
-Summary:        NFO Meta Language
+Summary:        NewGRF Meta Language
 Group:          Development/Tools
 License:        GPLv2
 URL:            http://dev.openttdcoop.org/projects/nml
@@ -18,7 +18,7 @@ BuildRequires:  python-base
 %else
 BuildRequires:  python-devel
 %endif
-Provides:       nml2nfo
+Provides:       nmlc
 Requires:       python-ply python-imaging
 #We need for regression test the required packages also on building:
 BuildRequires:  python-ply python-imaging
@@ -26,7 +26,7 @@ BuildRequires:  python-ply python-imaging
 BuildRequires:  mercurial
 
 %description
-A tool to convert a meta-language to nfo, making newgrf coding easier.
+A tool to compile nml files to grf or nfo files,, making newgrf coding easier.
 
 %prep
 %setup -qn %{name}
