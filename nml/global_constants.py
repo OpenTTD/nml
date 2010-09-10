@@ -268,6 +268,36 @@ constant_numbers = {
     'CLIMATEZONE_NO_SNOW'           : 0xD800,
     'CLIMATEZONE_ALL'               : 0xF800,
 
+    #industry callback flags
+    'IND_CBF_AVAILABILITY'          : 0x0001,
+    'IND_CBF_PROD_CB_CARGO_ARRIVE'  : 0x0002,
+    'IND_CBF_PROD_CB_256_TICKS'     : 0x0004,
+    'IND_CBF_LOCATION_CHECK'        : 0x0008,
+    'IND_CBF_RANDOM_PROD_CHANGE'    : 0x0010,
+    'IND_CBF_MONTLY_PROD_CHANGE'    : 0x0020,
+    'IND_CBF_CARGO_SUBTYPE_DISPLAY' : 0x0040,
+    'IND_CBF_EXTRA_TEXT_FUND'       : 0x0080,
+    'IND_CBF_EXTRA_TEXT_INDUSTRY'   : 0x0100,
+    'IND_CBF_CONTROL_SPECIAL'       : 0x0200,
+    'IND_CBF_STOP_ACCEPT_CARGO'     : 0x0400,
+    'IND_CBF_COLOR'                 : 0x0800,
+    'IND_CBF_CARGO_INPUT'           : 0x1000,
+    'IND_CBF_CARGO_OUTPUT'          : 0x2000,
+
+    #corresponding callbacks
+    'IND_CB_AVAILABILITY'           : 0x22,
+    'IND_CB_LOCATION_CHECK'         : 0x28,
+    'IND_CB_RANDOM_PROD_CHANGE'     : 0x29,
+    'IND_CB_MONTLY_PROD_CHANGE'     : 0x35,
+    'IND_CB_CARGO_SUBTYPE_DISPLAY'  : 0x37,
+    'IND_CB_EXTRA_TEXT_FUND'        : 0x38,
+    'IND_CB_EXTRA_TEXT_INDUSTRY'    : 0x3A,
+    'IND_CB_CONTROL_SPECIAL'        : 0x3B,
+    'IND_CB_STOP_ACCEPT_CARGO'      : 0x3D,
+    'IND_CB_COLOR'                  : 0x14A,
+    'IND_CB_CARGO_INPUT'            : 0x14B,
+    'IND_CB_CARGO_OUTPUT'           : 0x14C,
+
     #object labels
     'OBJ_TRANSMITTER'          : "TRNS",
     'OBJ_LIGHTHOUSE'           : "LTHS",
@@ -309,6 +339,18 @@ constant_numbers = {
     'OBJ_CB_ADDITIONAL_TEXT'        : 0x15C,
     'OBJ_CB_AUTOSLOPE'              : 0x15D,
 
+    #airport tile callback flags
+    'APT_CBF_DECIDE_ANIM'       : 0x01,
+    'APT_CBF_DECIDE_ANIM_SPEED' : 0x02,
+    'APT_CBF_SLOPE_CHECK'       : 0x10,
+    'APT_CBF_FOUNDATIONS'       : 0x20,
+    'APT_CBF_AUTOSLOPE'         : 0x40,
+
+    #corresponding callbacks
+    'APT_CB_DECIDE_ANIM'        : 0x153,
+    'APT_CB_DECIDE_ANIM_SPEED'  : 0x154,
+    'APT_CB_FOUNDATIONS'        : 0x150,
+
     #railtype flags
     'RAILTYPE_FLAG_CATANERY'          : 0x01,
     'RAILTYPE_FLAG_NO_LEVEL_CROSSING' : 0x02, # for OpenTTD > r20049
@@ -347,7 +389,7 @@ constant_numbers = {
     'INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM' : 0x09,
     'INDUSTRYTYPE_COPPER_ORE_MINE'       : 0x0A,
     'INDUSTRYTYPE_OIL_WELLS'             : 0x0B,
-    'INDUSTRYTYPE_TEMPERATE_BANK'         : 0x0C,
+    'INDUSTRYTYPE_TEMPERATE_BANK'        : 0x0C,
     'INDUSTRYTYPE_FOOD_PROCESSING_PLANT' : 0x0D,
     'INDUSTRYTYPE_PAPER_MILL'            : 0x0E,
     'INDUSTRYTYPE_GOLD_MINE'             : 0x0F,

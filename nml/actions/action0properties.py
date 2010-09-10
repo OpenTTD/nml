@@ -288,8 +288,7 @@ properties[0x0A] = {
     'input_multiplier_3': {'size': 4, 'num': 0x1E},
     'name': {'size': 2, 'num': 0x1F, 'string': 0xDC},
     'prospect_chance': {'size': 4, 'num': 0x20, 'unit_conversion': 0xFFFFFFFF},
-    'callback_flags_1': {'size': 1, 'num': 0x21},
-    'callback_flags_2': {'size': 1, 'num': 0x22},
+    'callback_flags': {'custom_function': lambda x: two_byte_property(x, 0x21, 0x22)},
     'remove_cost_multiplier': {'size': 4, 'num': 0x23},
     'nearby_station_name': {'size': 2, 'num': 0x24, 'string': 0xDC},
 }
