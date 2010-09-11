@@ -1,6 +1,6 @@
 import Image
 import os
-from nml import generic, palette, output_base, lz77
+from nml import generic, palette, output_base, lz77, grfstrings
 
 
 class OutputGRF(output_base.OutputBase):
@@ -56,7 +56,9 @@ class OutputGRF(output_base.OutputBase):
             self.print_byte(ord(c))
 
     def print_string(self, value, final_zero = True, force_ascii = False):
-        if not force_ascii:
+        if not grfstrings.can_use_ascii(value):
+            if force_ascii:
+                raise generic.ScriptError("Expected ascii string but got a unicode string")
             self.print_byte(0xC3)
             self.print_byte(0x9E)
         i = 0

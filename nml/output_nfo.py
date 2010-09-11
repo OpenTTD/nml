@@ -53,7 +53,9 @@ class OutputNFO(output_base.OutputBase):
     def print_string(self, value, final_zero = True, force_ascii = False):
         assert self._in_sprite
         self.file.write('"')
-        if not force_ascii:
+        if not grfstrings.can_use_ascii(value):
+            if force_ascii:
+                raise generic.ScriptError("Expected ascii string but got a unicode string")
             self.file.write(u'Þ')
         self.file.write(value)
         self._byte_count += grfstrings.get_string_size(value, final_zero, force_ascii)

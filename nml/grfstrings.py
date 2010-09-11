@@ -26,10 +26,30 @@ def utf8_get_size(char):
     if char < 65536: return 3
     return 4
 
+def can_use_ascii(string):
+    i = 0
+    while i < len(string):
+        if string[i] != '\\':
+            if ord(string[i]) >= 0x80:
+                return False
+            i += 1
+        else:
+            if string[i+1] in ('\\', 'n', '"'):
+                i += 2
+            elif string[i+1] == 'U':
+                return False
+                i += 6
+            else:
+                i += 3
+    return True
+
 def get_string_size(string, final_zero = True, force_ascii = False):
     size = 0
     if final_zero: size += 1
-    if not force_ascii: size += 2
+    if not can_use_ascii(string):
+        if force_ascii:
+            raise generic.ScriptError("Expected ascii string but got a unicode string")
+        size += 2
     i = 0
     while i < len(string):
         if string[i] != '\\':
