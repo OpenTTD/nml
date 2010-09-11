@@ -6,13 +6,13 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 66 0F 00 
-02 04 00 05 0A "Þsmall" 00 0A "Þmedium" 00 02 "Þbig" 00 01 "Þ" 00 
-03 05 05 0D "Þvillage" 00 0A "Þtown" 00 01 "Þcity" 00 
+0 * 52 0F 00 
+02 04 00 05 0A "small" 00 0A "medium" 00 02 "big" 00 01 "" 00 
+03 05 05 0D "village" 00 0A "town" 00 01 "city" 00 
 
-1 * 22 0F 01 
-01 01 00 01 01 "Þtiny village" 00 
+1 * 20 0F 01 
+01 01 00 01 01 "tiny village" 00 
 
-2 * 81 0F 82 00 "ÞUS Stations" 00 1F "ÞTest stationnnetjes" 00 7F "ÞTest Stations" 00 00 
-01 03 0A 04 0A "ÞMainCapital" 00 85 00 81 01 
+2 * 73 0F 82 00 "US Stations" 00 1F "Test stationnnetjes" 00 7F "Test Stations" 00 00 
+01 03 0A 04 0A "MainCapital" 00 85 00 81 01 
 
