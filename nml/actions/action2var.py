@@ -261,7 +261,7 @@ def parse_varaction2_expression(expr, varsize):
     elif isinstance(expr, expression.BinNot):
         expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(0xFFFFFFFF))
 
-    elif isinstance(expr, expression.TernaryOp):
+    elif isinstance(expr, expression.TernaryOp) and not expr.supported_by_actionD(False):
         guard = expression.Boolean(expr.guard).reduce()
         actions, mods, var_list, var_list_size = parse_varaction2_expression(guard, varsize)
         extra_actions.extend(actions)
