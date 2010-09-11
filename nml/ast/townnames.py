@@ -28,7 +28,7 @@ class TownNames(object):
     @type pos: L{Position}
 
     @ivar param_list: Stored parameter list.
-    @type param_list: C{list}
+    @type param_list: C{list} of (L{TownNamesPart} or L{TownNamesParam})
     """
     def __init__(self, name, param_list, pos):
         self.name = name
@@ -167,10 +167,19 @@ class TownNamesPart(object):
     A class containing a town name part.
 
     @ivar pieces: Pieces of the town name part.
-    @type pieces: C{list}
+    @type pieces: C{list} of (L{TownNamesEntryDefinition} or L{TownNamesEntryText})
 
     @ivar pos: Position information of the parts block.
     @type pos: L{Position}
+
+    @ivar total: Sum of probabilities.
+    @type total: C{int}
+
+    @ivar startbit: First bit to use for this part, if defined.
+    @type startbit: C{int} or C{None}
+
+    @ivar num_bits: Number of bits to use.
+    @type num_bits: C{int}
     """
     def __init__(self, pieces, pos):
         self.pos = pos
@@ -187,7 +196,10 @@ class TownNamesPart(object):
         Assign bits for this piece.
 
         @param startbit: First bit free for use.
+        @type  startbit: C{int}
+
         @return: Number of bits needed for this piece.
+        @rtype:  C{int}
         """
         self.startbit = startbit
         n = 1
