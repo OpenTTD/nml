@@ -43,6 +43,8 @@ class TownNames(object):
 
     def pre_process(self):
         for param in self.param_list:
+            param.pre_process()
+
             if isinstance(param, TownNamesPart): self.parts.append(param)
             else:
                 if param.key.value != 'styles':
@@ -184,12 +186,19 @@ class TownNamesPart(object):
     def __init__(self, pieces, pos):
         self.pos = pos
         self.pieces = pieces
+
+        self.total = 0
+        self.startbit = None
+        self.num_bits = 0
+
+    def pre_process(self):
+        for piece in self.pieces:
+            piece.pre_process()
+
         if len(self.pieces) == 0:
             raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
 
         self.total = sum(piece.probability.value for piece in self.pieces)
-        self.startbit = None
-        self.num_bits = 0
 
     def assign_bits(self, startbit):
         """
@@ -252,6 +261,10 @@ class TownNamesParam(object):
         self.value = value
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
+
 class TownNamesEntryDefinition(object):
     """
     An entry in a part referring to a non-final town name, with a given probability.
@@ -270,8 +283,11 @@ class TownNamesEntryDefinition(object):
     """
     def __init__(self, def_number, probability, pos):
         self.def_number = def_number
-        self.number = None
+        self.probability = probability
         self.pos = pos
+
+    def pre_process(self):
+        self.number = None
         if not isinstance(self.def_number, expression.Identifier):
             self.def_number = self.def_number.reduce_constant()
             if not isinstance(self.def_number, expression.ConstantNumeric):
@@ -279,7 +295,7 @@ class TownNamesEntryDefinition(object):
             if self.def_number.value < 0 or self.def_number.value > 0x7f:
                 raise generic.ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
-        self.probability = probability.reduce_constant()
+        self.probability = self.probability.reduce_constant()
         if not isinstance(self.probability, expression.ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.", self.pos)
         if self.probability.value < 0 or self.probability.value > 0x7f:
@@ -321,15 +337,19 @@ class TownNamesEntryText(object):
     @type pos: L{Position}
     """
     def __init__(self, id, text, probability, pos):
+        self.id = id
+        self.text = text
+        self.probability = probability
         self.pos = pos
-        if id.value != 'text':
+
+    def pre_process(self):
+        if self.id.value != 'text':
             raise generic.ScriptError("Expected 'text' prefix.", self.pos)
 
-        self.text = text
         if not isinstance(self.text, expression.StringLiteral):
             raise generic.ScriptError("Expected string literal for the name.", self.pos)
 
-        self.probability = probability.reduce_constant()
+        self.probability = self.probability.reduce_constant()
         if not isinstance(self.probability, expression.ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.", self.pos)
         if self.probability.value < 0 or self.probability.value > 0x7f:
