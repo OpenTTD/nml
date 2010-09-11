@@ -1079,7 +1079,40 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <tr><td>FENCES</td><td>8</td><td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301</td></tr>
 </table>
 
-<p>The entries marked by * are required.</p>
+<p>The entries marked by * are required. A typical implementation for railtypes can look like
+<pre class="code">
+item(FEAT_RAILTYPES, elrail, 0x01) {
+    property {
+        label:                      "SHIN";
+        name:                       string(STR_EL_RAIL);
+        menu_text:                  string(STR_EL_RAIL);
+        build_window_caption:       string(STR_BUILD_CAPTION);
+        autoreplace_text:           string(STR_AUTOREPLACE);
+        new_engine_text:            string(STR_NEW_ENGINE);
+        compatile_railtype_list:    ["SHIN","RAIL","ELRL"];           // Tracks of rail and electrified rail are compatible
+        powered_railtype_list:      ["ELRL","SHIN"];                  // But we got only power when we have electricity
+        railtype_flags:             RAILTYPE_FLAG_CATANERY;           // High speed tracks should not have level crossings
+        curve_speed_multiplier:     1;
+        station_graphics:           RAILTYPE_STATION_MAGLEV;          // We want the most modern stations
+        construction_cost:          32;                               // should be pretty steep
+        speed_limit:                500 km/h;
+        acceleration_model:         ACC_MODEL_RAIL;                   // This is still rail, though
+    }
+    graphics {
+        TRACKOVERLAY:    ground_switch_overlay;     // defines the sprites drawn as overlay for junctions and highlight
+        UNDERLAY:        ground_switch_underlay;    // defines the usual tracks and the underlay for junctions
+        LEVEL_CROSSINGS: level_crossing_switch;     // defines level crossings including traffic lights and blocking bars
+        TUNNELS:         tunnel_switch;             // defines the tracks drawn on a funnel tile
+        DEPOTS:          depot_switch_electric;     // defines the depot sprites
+        BRIDGE_SURFACES: bridge_terrain_switch;     // defines the overlay drawn over bridges
+        FENCES:          fences_group;              // defines the look of fences
+        // we don't define catenery wire and pylons, thus we use the default which comes with the base graphics.
+    }
+}
+</pre>
+The switches and graphics blocks are defined in the usual way as described in section
+<a href="#block-switch">switches</a>, <a href="#block-randomswitch">random switches</a> and <a href="#block-item-graphics">graphics block</a> sections.
+</p>
 
 <h2><a name="property-airporttiles">Airport tiles</a></h2>
 
