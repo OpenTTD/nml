@@ -135,23 +135,6 @@ class ActionF(base_action.BaseAction):
             part.write(handle)
             handle.newline()
 
-
-    def debug_print(self, indentation):
-        if isinstance(self.name, basestring):
-            name_text = "name = " + repr(self.name)
-            if self.id_number is not None: name_text += " (allocated number is 0x%x)" % self.id_number
-        elif self.id_number is not None:
-            name_text = "number = 0x%x" % self.id_number
-        else:
-            name_text = "(unnamed)"
-
-        print indentation*' ' + 'Town name ' + name_text
-        if self.style_name is not None:
-            print indentation*' ' + "  style name string:", self.style_name.value
-        for part in self.parts:
-            print indentation*' ' + "-name part:"
-            part.debug_print(indentation + 2)
-
     def write(self, handle):
         handle.start_sprite(2 + self.get_length_styles() + self.get_length_parts())
         handle.print_bytex(0xF)
