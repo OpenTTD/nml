@@ -264,6 +264,7 @@ def parse_varaction2_expression(expr, varsize):
     elif isinstance(expr, expression.TernaryOp):
         guard = expression.Boolean(expr.guard).reduce()
         actions, mods, var_list, var_list_size = parse_varaction2_expression(guard, varsize)
+        extra_actions.extend(actions)
         guard_var = VarAction2StoreTempVar()
         inverted_guard_var = VarAction2StoreTempVar()
         var_list.append(nmlop.STO_TMP)
