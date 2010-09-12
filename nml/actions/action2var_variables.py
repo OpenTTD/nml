@@ -59,7 +59,9 @@ varact2vars_vehicles = {
     'vehicle_is_potentially_powered': {'var': 0x4A, 'start': 8, 'size': 1},
     'vehicle_is_reversed' : {'var': 0xFE, 'start': 8, 'size': 1},
     'built_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
-    'current_railtype': {'var': 0x4A, 'start': 0, 'size': 8},
+    'current_railtype' : {'var': 0x4A, 'start': 0, 'size': 8},
+    'waiting_triggers' : {'var': 0x5F, 'start': 0, 'size': 8},
+    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
 }
 
 varact2vars60x_vehicles = {

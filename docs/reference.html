@@ -1212,6 +1212,8 @@ PLAYERTYPE_HUMAN for the now uncontrolled company.
 <tr><td>current_railtype <td> Entry from railtype translation table or 0xFF<td>Don't use this variable unless you've defined
 a railtype translation table. If the train is running on a railtype that is not listed in your railtype translation table
 this variable will contain 0xFF. Available since OpenTTD r20164.
+<tr><td>waiting_triggers <td> <td>Random triggers waiting to be matched. (see <a href="#block-randomswitch">Random switch</a>)
+<tr><td>random_bits <td>0 ... 255 <td>Random data that can be used to randomize certain descisions. (see <a href="#block-randomswitch">Random switch</a>)
 </table>
 Variables that require an argument:
 <table class="t">
