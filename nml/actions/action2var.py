@@ -440,6 +440,7 @@ def parse_varaction2(switch_block):
     if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
         switch_block.body.ranges.append(SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), switch_block.body.default))
 
+    used_ranges = []
     for r in switch_block.body.ranges:
         if r.result is None:
             if return_action is None: return_action = make_return_varact2(switch_block)
@@ -469,6 +470,7 @@ def parse_varaction2(switch_block):
 
         offset += 2 # size of result
 
+        check_range = True
         if r.unit:
             if not isinstance(r.min, expression.ConstantNumeric):
                 raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", r.min.pos)
@@ -479,11 +481,13 @@ def parse_varaction2(switch_block):
         elif isinstance(r.min, expression.Parameter) and isinstance(r.min.num, expression.ConstantNumeric):
             act6.modify_bytes(r.min.num.value, varsize, offset)
             range_min = expression.ConstantNumeric(0)
+            check_range = False
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.min)
             action_list.extend(tmp_param_actions)
             act6.modify_bytes(tmp_param, varsize, offset)
             range_min = expression.ConstantNumeric(0)
+            check_range = False
         offset += varsize
 
 
@@ -497,14 +501,35 @@ def parse_varaction2(switch_block):
         elif isinstance(r.max, expression.Parameter) and isinstance(r.max.num, expression.ConstantNumeric):
             act6.modify_bytes(r.max.num.value, varsize, offset)
             range_max = expression.ConstantNumeric(0)
+            check_range = False
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.max)
             action_list.extend(tmp_param_actions)
             act6.modify_bytes(tmp_param, varsize, offset)
             range_max = expression.ConstantNumeric(0)
+            check_range = False
         offset += varsize
 
-        varaction2.ranges.append(SwitchRange(range_min, range_max, range_result))
+        range_overlap = False
+        if check_range:
+            for existing_range in used_ranges:
+                if existing_range[0] <= range_min.value and range_max.value <= existing_range[1]:
+                    generic.print_warning("Range overlaps with existing ranges so it'll never be reached", r.min.pos)
+                    range_overlap = True
+                    break
+            if not range_overlap:
+                used_ranges.append([range_min.value, range_max.value])
+                used_ranges.sort()
+                i = 0
+                while i + 1 < len(used_ranges):
+                    if used_ranges[i + 1][0] <= used_ranges[i][1] + 1:
+                        used_ranges[i][1] = max(used_ranges[i][1], used_ranges[i + 1][1])
+                        used_ranges.pop(i + 1)
+                    else:
+                        i += 1
+
+        if not range_overlap:
+            varaction2.ranges.append(SwitchRange(range_min, range_max, range_result))
 
     default = switch_block.body.default
 
