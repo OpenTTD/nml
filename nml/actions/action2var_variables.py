@@ -62,6 +62,7 @@ varact2vars_vehicles = {
     'current_railtype' : {'var': 0x4A, 'start': 0, 'size': 8},
     'waiting_triggers' : {'var': 0x5F, 'start': 0, 'size': 8},
     'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
+    'grfid' : {'var': 0x25, 'start': 0, 'size': 32},
 }
 
 varact2vars60x_vehicles = {
