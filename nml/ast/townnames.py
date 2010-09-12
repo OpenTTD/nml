@@ -127,8 +127,15 @@ class TownNamesPart(object):
         @return: Action F that should be defined before, and the processed part.
         @rtype: C{list} of L{ActionF}, L{TownNamesPart}
         """
+        new_pieces = []
         for piece in self.pieces:
             piece.pre_process()
+            if piece.probability.value == 0:
+                generic.print_warning("Dropping town name piece with 0 probability.", piece.pos)
+            else:
+                new_pieces.append(piece)
+
+        self.pieces = new_pieces
 
         if len(self.pieces) == 0:
             raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
