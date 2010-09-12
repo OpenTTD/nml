@@ -119,6 +119,8 @@ class TownNamesPart(object):
 
         if len(self.pieces) == 0:
             raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
+        if len(self.pieces) > 255:
+            raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces), self.pos)
 
         self.total = sum(piece.probability.value for piece in self.pieces)
 
@@ -154,10 +156,6 @@ class TownNamesPart(object):
 
         @return: Set of referenced C{town_names} block numbers.
         '''
-        if len(self.pieces) == 0:
-            raise generic.ScriptError("Expected at least one value in a part.", self.pos)
-        if len(self.pieces) > 255:
-            raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces), self.pos)
         blocks = set()
         for piece in self.pieces:
             block = piece.resolve_townname_id()
@@ -205,6 +203,7 @@ class TownNamesEntryDefinition(object):
     """
     def __init__(self, def_number, probability, pos):
         self.def_number = def_number
+        self.number = None
         self.probability = probability
         self.pos = pos
 
