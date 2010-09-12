@@ -384,10 +384,8 @@ def make_return_varact2(switch_block):
 
 def parse_var(info, pos):
     res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), None, pos)
-    if 'signextend' in info and info['signextend']:
-        #r = (x ^ m) - m; with m being (1 << (num_bits -1))
-        m = expression.ConstantNumeric(1 << (info['size'] - 1))
-        return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, res, m, pos), m, pos)
+    if 'function' in info:
+        return info['function'](res, info)
     return res
 
 def parse_60x_var(name, args, pos, info):

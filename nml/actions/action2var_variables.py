@@ -1,8 +1,14 @@
+from nml import expression, nmlop
 
 varact2vars = 0x12 * [{}]
 varact2vars60x = 0x12 * [{}]
 # feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11
 varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x08, None, 0x08, 0x08, None, 0x0A, 0x08, None, None, None, None, 0x08, None, None]
+
+def signextend(var, info):
+    #r = (x ^ m) - m; with m being (1 << (num_bits -1))
+    m = expression.ConstantNumeric(1 << (info['size'] - 1))
+    return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, var, m, var.pos), m, var.pos)
 
 varact2_globalvars = {
     'days_since_1920' : {'var': 0x00, 'start': 0, 'size': 16},
@@ -41,9 +47,9 @@ varact2vars_vehicles = {
     'company_color2' : {'var': 0x43, 'start': 28, 'size': 4},
     'aircraft_height' : {'var': 0x44, 'start': 8, 'size': 8},
     'airport_type' : {'var': 0x44, 'start': 0, 'size': 8},
-    'curv_info_prev_cur' : {'var': 0x45, 'start': 0, 'size': 4, 'signextend': 1},
-    'curv_info_cur_next' : {'var': 0x45, 'start': 8, 'size': 4, 'signextend': 1},
-    'curv_info_prev_next' : {'var': 0x45, 'start': 16, 'size': 4, 'signextend': 1},
+    'curv_info_prev_cur' : {'var': 0x45, 'start': 0, 'size': 4, 'function': signextend},
+    'curv_info_cur_next' : {'var': 0x45, 'start': 8, 'size': 4, 'function': signextend},
+    'curv_info_prev_next' : {'var': 0x45, 'start': 16, 'size': 4, 'function': signextend},
     'motion_counter' : {'var': 0x46, 'start': 8, 'size': 4},
     'cargo_type_in_veh' : {'var': 0x47, 'start': 0, 'size': 8},
     'cargo_unit_weight' : {'var': 0x47, 'start': 8, 'size': 8},
