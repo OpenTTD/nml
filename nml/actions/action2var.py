@@ -1,5 +1,5 @@
 from nml.actions import action2, action6, actionD, action2var_variables, action4
-from nml import expression, generic, global_constants, nmlop
+from nml import expression, generic, global_constants, nmlop, unit
 
 class Action2Operator(object):
     ADD   = r'\2+'
@@ -157,10 +157,11 @@ class Modification(object):
         self.offset = offset
 
 class SwitchRange(object):
-    def __init__(self, min, max, result):
+    def __init__(self, min, max, result, unit = None):
         self.min = min.reduce(global_constants.const_list)
         self.max = max.reduce(global_constants.const_list)
         self.result = result.reduce(global_constants.const_list, False) if result is not None else None
+        self.unit = unit
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Min:'
@@ -468,7 +469,12 @@ def parse_varaction2(switch_block):
 
         offset += 2 # size of result
 
-        if isinstance(r.min, expression.ConstantNumeric):
+        if r.unit:
+            if not isinstance(r.min, expression.ConstantNumeric):
+                raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", r.min.pos)
+            assert r.unit in unit.units
+            range_min = expression.ConstantNumeric(int(r.min.value / unit.units[r.unit]['convert']))
+        elif isinstance(r.min, expression.ConstantNumeric):
             range_min = r.min
         elif isinstance(r.min, expression.Parameter) and isinstance(r.min.num, expression.ConstantNumeric):
             act6.modify_bytes(r.min.num.value, varsize, offset)
@@ -480,7 +486,13 @@ def parse_varaction2(switch_block):
             range_min = expression.ConstantNumeric(0)
         offset += varsize
 
-        if isinstance(r.max, expression.ConstantNumeric):
+
+        if r.unit:
+            if not isinstance(r.max, expression.ConstantNumeric):
+                raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", r.max.pos)
+            assert r.unit in unit.units
+            range_max = expression.ConstantNumeric(int(r.max.value / unit.units[r.unit]['convert']))
+        elif isinstance(r.max, expression.ConstantNumeric):
             range_max = r.max
         elif isinstance(r.max, expression.Parameter) and isinstance(r.max.num, expression.ConstantNumeric):
             act6.modify_bytes(r.max.num.value, varsize, offset)
