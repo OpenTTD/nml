@@ -1,6 +1,8 @@
+import heapq
 from nml import expression, generic, grfstrings
 from nml.actions import actionF
 
+townname_serial = 1
 
 class TownNames(object):
     """
@@ -137,13 +139,132 @@ class TownNamesPart(object):
 
         self.pieces = new_pieces
 
+        actFs = self.move_pieces()
         if len(self.pieces) == 0:
             raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
         if len(self.pieces) > 255:
             raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces), self.pos)
 
         self.total = sum(piece.probability.value for piece in self.pieces)
-        return [], self
+        return actFs, self
+
+    def move_pieces(self):
+        """
+        Move pieces to new action F instances to make it fit, if needed.
+
+        @return: Created action F instances.
+        @rtype:  C{list} of L{ActionF}
+
+        @note: Function may change L{pieces}.
+        """
+        global townname_serial
+
+        if len(self.pieces) <= 255:
+            return [] # Trivially correct.
+
+        # There are too many pieces.
+        prob_pieces = {}  # Dict of probability -> pieces
+        non_removables = 0
+        for piece in self.pieces:
+            if piece.probability.value >= 1 + 0x7f // 2:
+                non_removables = non_removables + 1
+                continue # Moving such a piece is useless as at most one fits.
+
+            pcs = prob_pieces.get(piece.probability.value)
+            if pcs is None:
+                pcs = []
+                prob_pieces[piece.probability.value] = pcs
+            pcs.append(piece)
+
+        ordered_pieces = [(prob, pcs[:]) for prob, pcs in prob_pieces.iteritems()] # Ordered list of tuples (probability, pieces-with-that-value)
+        ordered_pieces.sort()
+
+        # Compute how many actionFs must be created (for movables only).
+        nactf = 0
+        count = len(self.pieces)
+        while nactf < 255 - non_removables and count > 255 - non_removables - nactf:
+            # Still too many, add another actionF
+            nactf = nactf + 1
+            sum_probs = 0
+
+            # Put the biggest ones in, slowly going towards the smaller ones.
+            i = len(ordered_pieces) - 1
+            while i >= 0:
+                while count > 255 - non_removables - nactf and len(ordered_pieces[i][1]) > 0 and ordered_pieces[i][0] <= 0x7f - sum_probs:
+                    ordered_pieces[i][1].pop()
+                    sum_probs += ordered_pieces[i][0]
+                    count = count - 1
+
+                i = i - 1
+
+            if sum_probs == 0:
+                return [] # Nothing was found, user should provide a better set
+
+        subs = self.split_pieces(prob_pieces, nactf)
+        if len(self.pieces) - sum(len(sub[1]) for sub in subs) > 255:
+            # Perhaps nactf was too optimistic, let's try again.
+            nactf = nactf + 1
+            subs = self.split_pieces(prob_pieces, nactf)
+            if len(self.pieces) - sum(len(sub[1]) for sub in subs) > 255:
+                # Really not working, bail out.
+                return []
+
+        actFs = []
+        for prob, sub in subs:
+            actF_name = expression.Identifier("**townname #%d**" % townname_serial, None)
+            townname_serial = townname_serial + 1
+            parts = [TownNamesPart(sub, self.pos)]
+            actF = actionF.ActionF(actF_name, None, None, parts, self.pos)
+            actFs.append(actF)
+
+            # Remove pieces of 'sub' from self.pieces
+            counts = len(self.pieces), len(sub)
+            sub_set = set(sub)
+            self.pieces = [piece for piece in self.pieces if piece not in sub_set]
+            assert len(self.pieces) == counts[0] - counts[1]
+
+            self.pieces.append(TownNamesEntryDefinition(actF_name, expression.ConstantNumeric(prob), self.pos))
+
+        # update self.parts
+        return actFs
+
+    def split_pieces(self, prob_pieces, n):
+        """
+        Split the pieces of L{prob_pieces} into L{n} new sub-actions.
+
+        @param prob_pieces: Pieces available for splitting.
+        @type  prob_pieces: C{dict} of C{int} to C{list} of (L{TownNamesEntryDefinition} or L{TownNamesEntryText})
+
+        @param n: Number of sub-elements to check.
+        @type  n: C{int}
+
+        @return: Lists of tuples (total probability, pieces)
+        @rtype:  C{list} of C{tuple} (C{int}, C{list} of (L{TownNamesEntryDefinition} or L{TownNamesEntryText}))
+        """
+        # Create heap of sub-actions.
+        heap = []
+        i = 0
+        while i < n:
+            heapq.heappush(heap, (0, []))
+            i = i + 1
+
+        ordered_pieces = [(prob, pcs[:]) for prob, pcs in prob_pieces.iteritems()] # Ordered list of tuples (probability, pieces-with-that-value)
+        ordered_pieces.sort()
+        ordered_pieces.reverse()
+        for val, pcs in ordered_pieces:
+            while len(pcs) > 0:
+                sub = heapq.heappop(heap)
+                if sub[0] + val > 0x7f:
+                    heapq.heappush(heap, sub)
+                    break
+
+                sub[1].append(pcs.pop())
+                sub = (sub[0] + val, sub[1])
+                heapq.heappush(heap, sub)
+
+        return heap
+
+
 
     def assign_bits(self, startbit):
         """
