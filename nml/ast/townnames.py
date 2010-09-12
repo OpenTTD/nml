@@ -15,6 +15,9 @@ class TownNames(object):
     @ivar style_name: Name of the translated string containing the name of the style, if any.
     @type style_name: C{None} or L{String}
 
+    @ivar actFs: Action F instance needed before this one.
+    @type actFs: C{list} of L{ActionF}
+
     @ivar parts: Parts of the names.
     @type parts: C{list} of L{TownNamesPart}
 
@@ -31,6 +34,7 @@ class TownNames(object):
 
         self.id_number = None
         self.style_name = None
+        self.actFs = []
         self.parts = []
 
     def debug_print(self, indentation):
@@ -50,10 +54,13 @@ class TownNames(object):
             part.debug_print(indentation + 2)
 
     def pre_process(self):
+        self.actFs = []
+        self.parts = []
         for param in self.param_list:
-            param.pre_process()
-
-            if isinstance(param, TownNamesPart): self.parts.append(param)
+            if isinstance(param, TownNamesPart):
+                actFs, part = param.make_actions()
+                self.actFs.extend(actFs)
+                self.parts.append(part)
             else:
                 if param.key.value != 'styles':
                     raise generic.ScriptError("Expected 'styles' keyword.", param.pos)
@@ -83,7 +90,7 @@ class TownNames(object):
 
 
     def get_action_list(self):
-        return [actionF.ActionF(self.name, self.id_number, self.style_name, self.parts, self.pos)]
+        return self.actFs + [actionF.ActionF(self.name, self.id_number, self.style_name, self.parts, self.pos)]
 
 
 class TownNamesPart(object):
@@ -113,7 +120,13 @@ class TownNamesPart(object):
         self.startbit = None
         self.num_bits = 0
 
-    def pre_process(self):
+    def make_actions(self):
+        """
+        Construct new actionF instances to store all pieces of this part, if needed.
+
+        @return: Action F that should be defined before, and the processed part.
+        @rtype: C{list} of L{ActionF}, L{TownNamesPart}
+        """
         for piece in self.pieces:
             piece.pre_process()
 
@@ -123,6 +136,7 @@ class TownNamesPart(object):
             raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces), self.pos)
 
         self.total = sum(piece.probability.value for piece in self.pieces)
+        return [], self
 
     def assign_bits(self, startbit):
         """
@@ -180,9 +194,6 @@ class TownNamesParam(object):
         self.key = key
         self.value = value
         self.pos = pos
-
-    def pre_process(self):
-        pass
 
 
 class TownNamesEntryDefinition(object):
