@@ -10,6 +10,10 @@ def signextend(var, info):
     m = expression.ConstantNumeric(1 << (info['size'] - 1))
     return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, var, m, var.pos), m, var.pos)
 
+def muldiv(var, mul, div):
+    var = expression.BinOp(nmlop.MUL, var, expression.ConstantNumeric(mul, var.pos), var.pos)
+    return expression.BinOp(nmlop.DIV, var, expression.ConstantNumeric(div, var.pos), var.pos)
+
 varact2_globalvars = {
     'days_since_1920' : {'var': 0x00, 'start': 0, 'size': 16},
     'years_since_1920' : {'var': 0x01, 'start': 0, 'size': 8},
@@ -71,6 +75,9 @@ varact2vars_vehicles = {
     'waiting_triggers' : {'var': 0x5F, 'start': 0, 'size': 8},
     'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
     'grfid' : {'var': 0x25, 'start': 0, 'size': 32},
+    'vehicle_is_stopped' : {'var': 0xB2, 'start': 1, 'size': 1},
+    'vehicle_is_crashed' : {'var': 0xB2, 'start': 7, 'size': 1},
+    'vehicle_is_broken' : {'var': 0xCB, 'start': 0, 'size': 8, 'function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(1, var.pos), var.pos)},
 }
 
 varact2vars60x_vehicles = {
