@@ -637,7 +637,8 @@ shadow color is used, sprite compression flag 'TILE' must NOT be set.</p>
 <h2><a name="block-town_names">Town names</a></h2>
 <p>To define randomly generated town names, the <tt>town_names</tt> block should
 be used. Such blocks can be used in two ways, as generator of (partial) town
-names for another block, or as top-level town names block, the starting point of the
+names for another block, or as top-level town names block, a starting point
+of town names in the
 grf file. You must have at least one starting point, but you can have more
 than one.</p>
 <p>The general syntax of a town names block is:</p>
@@ -669,7 +670,9 @@ Each entry contains a possible value of piece, and a probability of picking
 that name. The <code>town_names(&lt;name&gt;, &lt;probability&gt;)</code>calls
 a previous <code>town_names</code> block (called 'othernames' in the example),
 and returns the value generated there.
-A part should have at least one and at most 255 entries.</p>
+A part should have at least one. At least up to 255 entries will always work.
+If a part contains even more entries, NML tries to make it fit by creating
+sub-blocks. If that fails, you will get an error.</p>
 <p>The numbers are the probabilities. In the example, the sum of all values is
 6, which means that <code>name1</code> is picked with 1/6 chance,
 <code>name2</code> has a 2/6 chance, and a name generated from the previous
@@ -715,10 +718,10 @@ Setting a negative value reduces the cost in the same manner, e.g. a value of
 and 16 (65536x), respectively. Some example code:</p>
 <pre class="code">
 basecost {
-	PR_BUILD_TUNNEL: 2; //tunnel cost x4
-	PR_BUILD_BRIDGE: -3; //bridge cost x1/8
-	PR_RUNNING: param[1]; //all running costs are set by the factor in grf parameter 1
-	param[2]: param[3]; //base cost with the number given by param 2 is set to the factor in param 3.
+	PR_BUILD_TUNNEL: 2;   // tunnel cost x4
+	PR_BUILD_BRIDGE: -3;  // bridge cost x1/8
+	PR_RUNNING: param[1]; // all running costs are set by the factor in grf parameter 1
+	param[2]: param[3];   // base cost with the number given by param 2 is set to the factor in param 3.
 }
 </pre>
 <p><a href="#refs-basecost-table">This table</a> lists all base costs that can be set. They can be referred to
