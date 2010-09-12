@@ -81,6 +81,37 @@ varact2vars_vehicles = {
     'breakdowns_since_last_service' : {'var': 0xCA, 'start': 0, 'size': 8},
     'reliability' : {'var': 0xCE, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 101, 0x10000)},
 }
+varact2vars_trains = {
+    #0x4786 / 0x10000 is an approximation of 3.5790976, the conversion factor
+    #for train speed
+    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
+    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
+}
+varact2vars_trains.update(varact2vars_vehicles);
+
+varact2vars_roadvehs = {
+    #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
+    #for road vehicle speed
+    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+}
+varact2vars_roadvehs.update(varact2vars_vehicles);
+
+varact2vars_ships = {
+    #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
+    #for ship speed
+    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+}
+varact2vars_ships.update(varact2vars_vehicles);
+
+varact2vars_aircraft = {
+    #0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
+    #for aircraft speed
+    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+}
+varact2vars_aircraft.update(varact2vars_vehicles);
 
 varact2vars60x_vehicles = {
     'count_veh_id': {'var': 0x60, 'start': 0, 'size': 8},
@@ -133,13 +164,13 @@ varact2vars_airporttiles = {
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
-varact2vars[0x00] = varact2vars_vehicles
+varact2vars[0x00] = varact2vars_trains
 varact2vars60x[0x00] = varact2vars60x_vehicles
-varact2vars[0x01] = varact2vars_vehicles
+varact2vars[0x01] = varact2vars_roadvehs
 varact2vars60x[0x01] = varact2vars60x_vehicles
-varact2vars[0x02] = varact2vars_vehicles
+varact2vars[0x02] = varact2vars_ships
 varact2vars60x[0x02] = varact2vars60x_vehicles
-varact2vars[0x03] = varact2vars_vehicles
+varact2vars[0x03] = varact2vars_aircraft
 varact2vars60x[0x03] = varact2vars60x_vehicles
 varact2vars[0x09] = varact2vars_industrytiles
 varact2vars60x[0x09] = varact2vars60x_industrytiles
