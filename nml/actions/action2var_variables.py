@@ -62,6 +62,7 @@ varact2vars_vehicles = {
     'vehicle_is_testing' : {'var': 0x48, 'start': 1, 'size': 1},
     'vehicle_is_offered' : {'var': 0x48, 'start': 2, 'size': 1},
     'build_year' : {'var': 0x49, 'start': 0, 'size': 32},
+    'direction' : {'var': 0x9F, 'start': 0, 'size': 8},
     'cargo_capacity' : {'var': 0xBA, 'start': 0, 'size': 16},
     'cargo_count' : {'var': 0xBC, 'start': 0, 'size': 16},
     'vehicle_type_id' : {'var': 0xC6, 'start': 0, 'size': 16},

@@ -444,11 +444,15 @@ constant_numbers = {
     'AIRPORTTYPE_HELIPORT'               : 2,
     'AIRPORTTYPE_OILRIG'                 : 3,
 
-    #Rotation property for airport layouts
-    'ROTATION_NORTH'                     : 0,
-    'ROTATION_EAST'                      : 2,
-    'ROTATION_SOUTH'                     : 4,
-    'ROTATION_WEST'                      : 6,
+    #Direction for e.g. airport layouts, vehicle direction
+    'DIRECTION_NORTH'                     : 0,
+    'DIRECTION_NORTHEAST'                 : 1,
+    'DIRECTION_EAST'                      : 2,
+    'DIRECTION_SOUTHEAST'                 : 3,
+    'DIRECTION_SOUTH'                     : 4,
+    'DIRECTION_SOUTHWEST'                 : 5,
+    'DIRECTION_WEST'                      : 6,
+    'DIRECTION_NORTHWEST'                 : 7,
 
     #ttdpatch flags
     'CONFIGFLAG_KEEPSMALLAIRPORT'           : 0x0C,
