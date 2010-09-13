@@ -1224,8 +1224,11 @@ this variable will contain 0xFF. Available since OpenTTD r20164.
 <tr><td>vehicle_is_stopped <td> [0 | 1]<td>Value is 1 if the vehicle is stopped, or if it is braking for a stop (trains only).
 <tr><td>vehicle_is_crashed <td> [0 | 1]<td>Value is 1 if the vehicle has crashed.
 <tr><td>vehicle_is_broken <td> [0 | 1]<td>Value is 1 if the vehicle is broken down.
+<tr><td>date_of_last_service <td>date(year, month, day)<td>Not valid before 1920 and after 2090.
 <tr><td>breakdowns_since_last_service <td>0 ... 255 <td>Number of breakdowns since the last service
 <tr><td>reliability <td>0 ... 100 <td>Reliability (percentage)
+<tr><td>age_in_days <td>0 ... 65535 <td>Vehicle age in days.
+<tr><td>max_age_in_days <td>0 ... 65535 <td>Maximum vehicle age in days.
 <tr><td>current_speed <td>(speed units)<td>The current speed of the vehicle in m/s
 <tr><td>max_speed <td>(speed units)<td>The maximum speed of the vehicle in m/s
 </table>
