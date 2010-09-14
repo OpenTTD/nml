@@ -183,7 +183,7 @@ def house_random_colors(value):
 
 def house_accepted_cargos(value):
     if not isinstance(value, Array) or len(value.values) > 3:
-        raise generic.ScriptError("Random colors must be an array with no more than 3 values", value.pos)
+        raise generic.ScriptError("Accepted cargos must be an array with no more than 3 values", value.pos)
     cargoes = [val.reduce_constant().value for val in value.values]
     val = 0
     for i in range(4):
