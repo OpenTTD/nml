@@ -210,7 +210,7 @@ properties[0x07] = {
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
     'random_colours'          : {'custom_function': house_random_colors},
-    'probability'             : {'size': 1, 'num': 0x18},
+    'probability'             : {'size': 1, 'num': 0x18, 'unit_conversion': 16},
     'animation_frames'        : {'size': 1, 'num': 0x1A},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
     'building_class'          : {'size': 1, 'num': 0x1C},
