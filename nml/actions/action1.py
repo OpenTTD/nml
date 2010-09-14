@@ -41,9 +41,10 @@ class SpriteSet(object):
             sprite.debug_print(indentation + 4)
 
 class SpriteGroup(object):
-    def __init__(self, name, spriteview_list):
+    def __init__(self, name, spriteview_list, pos = None):
         self.name = name
         self.spriteview_list = spriteview_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite group:', self.name.value
@@ -51,9 +52,10 @@ class SpriteGroup(object):
             spriteview.debug_print(indentation + 2)
 
 class LayoutSpriteGroup(object):
-    def __init__(self, name, layout_sprite_list):
+    def __init__(self, name, layout_sprite_list, pos = None):
         self.name = name
         self.layout_sprite_list = layout_sprite_list
+        self.pos = pos
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Tile layout sprite group:', self.name.value

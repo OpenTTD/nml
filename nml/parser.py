@@ -485,11 +485,11 @@ class NMLParser(object):
 
     def p_spritegroup_normal(self, t):
         'spritegroup : SPRITEGROUP ID LBRACE spriteview_list RBRACE'
-        t[0] = action1.SpriteGroup(t[2], t[4])
+        t[0] = action1.SpriteGroup(t[2], t[4], t.lineno(1))
 
     def p_spritegroup_layout(self, t):
         'spritegroup : SPRITEGROUP ID LBRACE layout_sprite_list RBRACE'
-        t[0] = action1.LayoutSpriteGroup(t[2], t[4])
+        t[0] = action1.LayoutSpriteGroup(t[2], t[4], t.lineno(1))
 
     def p_spriteview_list(self, t):
         '''spriteview_list : ID SEMICOLON
