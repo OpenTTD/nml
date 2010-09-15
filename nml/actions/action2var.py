@@ -444,13 +444,13 @@ def parse_varaction2(switch_block):
     for r in switch_block.body.ranges:
         if r.result is None:
             if return_action is None: return_action = make_return_varact2(switch_block)
-            act2 = action2.add_ref(return_action.name)
+            act2 = action2.add_ref(return_action.name, switch_block.pos)
             assert return_action == act2
             varaction2.references.append(act2)
             range_result = expression.Identifier(return_action.name, switch_block.pos)
         elif isinstance(r.result, expression.Identifier):
             if r.result.value != 'CB_FAILED':
-                act2 = action2.add_ref(r.result.value)
+                act2 = action2.add_ref(r.result.value, r.result.pos)
                 varaction2.references.append(act2)
             range_result = r.result
         elif isinstance(r.result, expression.ConstantNumeric):
@@ -539,13 +539,13 @@ def parse_varaction2(switch_block):
             default = expression.Identifier('CB_FAILED', switch_block.pos)
         else:
             if return_action is None: return_action = make_return_varact2(switch_block)
-            act2 = action2.add_ref(return_action.name)
+            act2 = action2.add_ref(return_action.name, switch_block.pos)
             assert act2 == return_action
             varaction2.references.append(act2)
             default = expression.Identifier(return_action.name, switch_block.pos)
     elif isinstance(default, expression.Identifier):
         if default.value != 'CB_FAILED':
-            act2 = action2.add_ref(default.value)
+            act2 = action2.add_ref(default.value, default.pos)
             varaction2.references.append(act2)
     elif isinstance(default, expression.ConstantNumeric):
         pass

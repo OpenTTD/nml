@@ -51,9 +51,9 @@ class Action2(base_action.BaseAction):
     def skip_action9(self):
         return False
 
-def add_ref(name):
+def add_ref(name, pos):
     global action2_map
-    if name not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name)
+    if name not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name, pos)
     action2_map[name].num_refs += 1
     return action2_map[name]
 
