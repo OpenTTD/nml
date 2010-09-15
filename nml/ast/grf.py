@@ -1,5 +1,17 @@
-from nml import expression, generic
+from nml import expression, generic, grfstrings, global_constants
 from nml.actions import action8, action14
+
+def parse_grfid(string):
+    bytes = []
+    i = 0
+    while len(bytes) < 4:
+        if string[i] == '\\':
+            bytes.append(int(string[i+1:i+3], 16))
+            i += 3
+        else:
+            bytes.append(ord(string[i]))
+            i += 1
+    return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
 
 class GRF(object):
     def __init__(self, alist, pos):
@@ -23,8 +35,9 @@ class GRF(object):
 
     def pre_process(self):
         self.grfid = self.grfid.reduce()
-        if not isinstance(self.grfid, expression.StringLiteral):
-            raise generic.ScriptError("GRFID must be a string literal", self.grfid.pos)
+        if not isinstance(self.grfid, expression.StringLiteral) or grfstrings.get_string_size(self.grfid.value, False, True) != 4:
+            raise generic.ScriptError("GRFID must be a string literal of length 4", self.grfid.pos)
+        global_constants.constant_numbers['GRFID'] = parse_grfid(self.grfid.value)
         self.name = self.name.reduce()
         if not isinstance(self.name, expression.String):
             raise generic.ScriptError("GRF-name must be a string", self.name.pos)

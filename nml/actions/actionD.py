@@ -29,10 +29,10 @@ class ActionD(base_action.BaseAction):
 class ParameterAssignment(object):
     def __init__(self, param, value):
         self.param = param
-        self.value = value.reduce(global_constants.const_list)
+        self.value = value
 
     def pre_process(self):
-        pass
+        self.value = self.value.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
