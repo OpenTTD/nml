@@ -170,12 +170,14 @@ class NMLLexer(object):
         assert m is not None
         fname = self.lexer.lineno.filename if m.group(3) is None else m.group(3)
         self.set_position(fname, int(m.group(1), 10))
+        self.increment_lines(t.value.count('\n') - 1)
 
     def t_line_directive2(self, t):
         r'\#\s+\d+\s+".*"(\s+\d+\s*)?\n'
         m = line_directive2_pat.match(t.value)
         assert m is not None
         self.set_position(m.group(2), int(m.group(1), 10))
+        self.increment_lines(t.value.count('\n') - 1)
 
     def t_newline(self, t):
         r'\n+'
