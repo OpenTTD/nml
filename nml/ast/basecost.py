@@ -40,7 +40,7 @@ class BaseCost:
                     tmp_list.sort(lambda x, y: cmp(x.name.value, y.name.value))
                     new_costs.extend(tmp_list)
                 else:
-                    raise generic.ScriptError("Unrecognized base cost identifier '%s' encountered" % cost.name.value)
+                    raise generic.ScriptError("Unrecognized base cost identifier '%s' encountered" % cost.name.value, cost.name.pos)
             else:
                 cost.name = cost.name.reduce()
                 if isinstance(cost.name, expression.ConstantNumeric):

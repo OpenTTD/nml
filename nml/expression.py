@@ -190,9 +190,9 @@ class BinOp(Expression):
         if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral):
             if self.op == nmlop.ADD:
                 return StringLiteral(expr1.value + expr2.value, expr1.pos)
-            raise generic.ScriptError("Only the '+'-operator is supported for literal strings.")
+            raise generic.ScriptError("Only the '+'-operator is supported for literal strings.", self.pos)
         if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
-            raise generic.ScriptError("Both operands of a binary operator must be integers.")
+            raise generic.ScriptError("Both operands of a binary operator must be integers.", self.pos)
         simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
         simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
         op = self.op
@@ -272,7 +272,7 @@ class TernaryOp(Expression):
             else:
                 return expr2
         if guard.type() != Type.INTEGER or expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
-            raise generic.ScriptError("All parts of the ternary operator (?:) must be integers.")
+            raise generic.ScriptError("All parts of the ternary operator (?:) must be integers.", self.pos)
         return TernaryOp(guard, expr1, expr2, self.pos)
 
     def supported_by_action2(self, raise_error):
@@ -493,7 +493,7 @@ class FunctionPtr(Expression):
         assert False, "Function pointers should not appear inside expressions."
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        raise generic.ScriptError("'%s' is a function and should be called using the function call syntax." % str(self.name))
+        raise generic.ScriptError("'%s' is a function and should be called using the function call syntax." % str(self.name), self.name.pos)
 
     def type(self):
         return Type.FUNCTION_PTR

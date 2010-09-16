@@ -92,12 +92,12 @@ class RandomSwitch(object):
             if isinstance(choice.probability, expression.Identifier):
                 if choice.probability.value == 'independent':
                     if not isinstance(choice.result, expression.Identifier):
-                        raise generic.ScriptError("Value for 'independent' should be an identifier")
+                        raise generic.ScriptError("Value for 'independent' should be an identifier", choice.result.pos)
                     self.independent.append(choice.result)
                     continue
                 elif choice.probability.value == 'dependent':
                     if not isinstance(choice.result, expression.Identifier):
-                        raise generic.ScriptError("Value for 'dependent' should be an identifier")
+                        raise generic.ScriptError("Value for 'dependent' should be an identifier", choise.result.pos)
                     self.dependent.append(choice.result)
                     continue
                 else:
@@ -210,7 +210,7 @@ def parse_randomswitch(random_switch):
     if feature is None:
         raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % random_switch.feature.value, random_switch.feature.pos)
     if bit_range != 0 and feature not in (0x04, 0x11):
-        raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.")
+        raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.", random_switch.pos)
     bits_available = num_random_bits[feature][bit_range]
     start_bit = sum(num_random_bits[feature][0:bit_range])
     if bits_available == 0:

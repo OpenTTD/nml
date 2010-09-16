@@ -49,10 +49,10 @@ class TemplateUsage(object):
     def expand(self, default_file, parameters = {}):
         real_sprite_list = []
         if self.name.value not in sprite_template_map:
-            raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value)
+            raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
         template = sprite_template_map[self.name.value]
         if len(self.param_list) != len(template.param_list):
-            raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(self.param_list)))
+            raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(self.param_list)), self.pos)
         param_dict = {}
         for i, param in enumerate(self.param_list):
             param = param.reduce([real_sprite_compression_flags, parameters])
@@ -104,12 +104,12 @@ def parse_real_sprite(sprite, default_file, id_dict):
             new_sprite.compression = expression.ConstantNumeric(0x01)
         # only bits 0, 1, 3, and 6 can be set
         if (new_sprite.compression.value & ~0x4B) != 0:
-            raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value))
+            raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
 
         if len(sprite.param_list) >= 8:
             new_sprite.file = sprite.param_list[7].reduce([id_dict])
             if not isinstance(new_sprite.file, expression.StringLiteral):
-                raise generic.ScriptError("Real sprite parameter 8 'file' should be a string literal")
+                raise generic.ScriptError("Real sprite parameter 8 'file' should be a string literal", new_sprite.file.pos)
         elif default_file is not None:
             new_sprite.file = default_file
         else:

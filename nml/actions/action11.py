@@ -11,8 +11,7 @@ class Action11(base_action.BaseAction):
         self.sounds[-1].last = True
 
     def prepare_output(self):
-        if len(self.sounds) == 0:
-            raise generic.ScriptError('Expected at least one sound.')
+        assert len(self.sounds) > 0
         for sound in self.sounds: sound.prepare_output()
 
     def write(self, file):
