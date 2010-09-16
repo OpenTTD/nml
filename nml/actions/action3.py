@@ -54,7 +54,7 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         act3.def_cid = default_graphics.value
 
     if len(graphics_list) != 0 and feature not in [0, 1, 2, 3, 4, 0x10]:
-        raise generic.ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations and railtypes")
+        raise generic.ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations and railtypes", graphics_list[0].action2_id.pos)
 
     for graphics in graphics_list:
         action2.add_ref(graphics.action2_id.value, graphics.action2_id.pos)
