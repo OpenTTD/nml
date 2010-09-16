@@ -8,8 +8,8 @@ class Action8(base_action.BaseAction):
         self.description = description
 
     def write(self, file):
-        name = grfstrings.get_translation(self.name.name.value)
-        desc = grfstrings.get_translation(self.description.name.value)
+        name = grfstrings.get_translation(self.name.name)
+        desc = grfstrings.get_translation(self.description.name)
         size = 6 + grfstrings.get_string_size(name) + grfstrings.get_string_size(desc)
         file.start_sprite(size)
         file.print_bytex(8)

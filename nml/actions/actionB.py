@@ -109,8 +109,8 @@ def parse_error_block(error):
     langs = set(langs)
     for lang in langs:
         if custom_msg:
-            msg = grfstrings.get_translation(error.msg.value, lang)
-        data = None if error.data is None else grfstrings.get_translation(error.data.value, lang)
+            msg = grfstrings.get_translation(error.msg, lang)
+        data = None if error.data is None else grfstrings.get_translation(error.data, lang)
         if len(act6.modifications) > 0: action_list.append(act6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 

@@ -8,16 +8,16 @@ grf_strings = {}
 
 def get_translation(string, lang = DEFAULT_LANGUAGE):
     global grf_strings
-    if string not in grf_strings:
-        raise generic.ScriptError('String "%s" does not exist in the translations.' % string)
+    if string.value not in grf_strings:
+        raise generic.ScriptError('String "%s" does not exist in the translations.' % string.value, string.pos)
     def_trans = None
-    for translation in grf_strings[string]:
+    for translation in grf_strings[string.value]:
         if translation['lang'] == lang:
             return translation['text']
         if translation['lang'] == DEFAULT_LANGUAGE:
             def_trans = translation['text']
     if def_trans is None:
-        raise generic.ScriptError('Default translation of string "%s" is required, but does not exist.' % string)
+        raise generic.ScriptError('Default translation of string "%s" is required, but does not exist.' % string.value, string.pos)
     return def_trans
 
 def utf8_get_size(char):
