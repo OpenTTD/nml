@@ -138,10 +138,10 @@ class LimitNode(BinaryNode):
 
 def grf_name_desc_actions(name, desc, version):
     root = BranchNode("INFO")
-    if len(grfstrings.grf_strings[name.name.value]) > 1:
+    if name.name.value in grfstrings.grf_strings and len(grfstrings.grf_strings[name.name.value]) > 1:
         name_node = TextNode("NAME", name, True)
         root.subnodes.append(name_node)
-    if len(grfstrings.grf_strings[desc.name.value]) > 1:
+    if desc.name.value in grfstrings.grf_strings and len(grfstrings.grf_strings[desc.name.value]) > 1:
         desc_node = TextNode("DESC", desc, True)
         root.subnodes.append(desc_node)
     if version:
