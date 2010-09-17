@@ -1003,7 +1003,7 @@ non_refittable_cargo_classes have no effect.
 <tr><th>property <th>value range <th>comment
 <tr><td>name<td>string<td>	for example string(STR_NAME_EIFFEL_TOWER)
 <tr><td>substitute<td>0 ... 109<td>number of the default house which can replace this one, if this house is not available for some reason.
-<tr><td>override<td>0 ... 109<td>id of the default house which this house replaces. This is ignored, if the default house has already been overridden.
+<tr><td>override<td>0 ... 109<td>id of the default house which this house replaces. This is ignored, if the default house has already been overridden. You can define this property multiple times
 <tr><td>building_flags<td><td>HOUSE_FLAG_XX with XX = [SIZE_1x1, SIZE_2x1, SIZE_1x2, SIZE_2x2, NOT_SLOPED, ANIMATE, CHURCH, STADIUM, ONLY_SE, PROTECTED, SYNC_CALLBACK, RANDOM_ANIMATION]
 <tr><td>population<td>0 ... 255<td>number of inhabitants the building adds to the town, if present
 <tr><td>mail_multiplier<td>0 ... 255<td>
@@ -1021,7 +1021,7 @@ non_refittable_cargo_classes have no effect.
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
 <tr><td>animation_frames<td>0 ... 128<td>number of animation frams
-<tr><td>animation_speed<td>0 ... 255<td>Speed of animation, see <a href=#animation-speed-values>animation speed table</a> for the meaning of the values.
+<tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href=#animation-speed-values>animation speed table</a> for the meaning of the values.
 <tr><td>building_class<td>0 .. 255<td>An arbitrary number. You can check for the presence of buildings of the same class when building new buildings or using animation
 </table>
 <h2><a name="property-industrytiles">Industry tiles</a></h2>
@@ -1316,24 +1316,27 @@ This warning is generated when pixels with palette index 255, or RGB colour 0xFF
 <h1><a name="refs">Additional references</a></h1>
 
 <h2><a name="animation-speed-values">Animation speed</a></h2>
-House, industry and airport tiles can define an animation speed. This property gives the animation speed in multiples of 0.108 seconds, spaced by powers of two:
+House, industry and airport tiles can define an animation speed. This property gives the animation speed in multiples of 0.027 seconds,
+spaced by powers of two. For houses the minimum value is 2 (0.108 seconds).
 <table class="t">
 <tr><th>value<th>length of animation frame in seconds
-<tr><td>0<td> 0.108
-<tr><td>1<td> 0.216
-<tr><td>2<td> 0.432
-<tr><td>3<td> 0.864
-<tr><td>4<td> 1.728
-<tr><td>5<td> 3.456
-<tr><td>6<td> 6.912
-<tr><td>7<td>13.824
-<tr><td>8<td>27.648
-<tr><td>9<td>55.296
-<tr><td>10<td>110.592
-<tr><td>11<td>221.184
-<tr><td>12<td>442.368
-<tr><td>13<td>884.736
-<tr><td>14<td>1769.472
+<tr><td>0<td> 0.027
+<tr><td>1<td> 0.054
+<tr><td>2<td> 0.108
+<tr><td>3<td> 0.216
+<tr><td>4<td> 0.432
+<tr><td>5<td> 0.864
+<tr><td>6<td> 1.728
+<tr><td>7<td> 3.456
+<tr><td>8<td> 6.912
+<tr><td>9<td>13.824
+<tr><td>10<td>27.648
+<tr><td>11<td>55.296
+<tr><td>12<td>110.592
+<tr><td>13<td>221.184
+<tr><td>14<td>442.368
+<tr><td>15<td>884.736
+<tr><td>16<td>1769.472
 </table>
 <h2><a name="refs-default-industries">Default industries</a></h2>
 <ul>
