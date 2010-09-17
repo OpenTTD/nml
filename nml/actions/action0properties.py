@@ -181,6 +181,13 @@ def house_random_colors(value):
             raise generic.ScriptError("Random house colors must be a value between 0 and 15", value.pos)
     return [Action0Property(0x17, ConstantNumeric(colors[0] << 24 | colors[1] << 16 | colors[2] << 8 | colors[3]), 4)]
 
+def house_available_mask(value):
+    # shuffle the bits so that the user isn't confused with yet another climate definition
+    val = value << 12                   # Climate bits
+    val += (value >> 7) & 0x007F        # town zones
+    val += (value >> 4) & 0x0800        # snow bit
+    return [Action0Property(0x13, ConstantNumeric(val), 2)]
+
 def house_accepted_cargos(value):
     if not isinstance(value, Array) or len(value.values) > 3:
         raise generic.ScriptError("Accepted cargos must be an array with no more than 3 values", value.pos)
@@ -205,7 +212,7 @@ properties[0x07] = {
     'local_authority_impact'  : {'size': 2, 'num': 0x10},
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
-    'availability_mask'       : {'size': 2, 'num': 0x13},
+    'availability_mask'       : {'custom_function': house_available_mask},
     'callback_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x14, 0x1D)},
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},

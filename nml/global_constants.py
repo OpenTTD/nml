@@ -254,19 +254,12 @@ constant_numbers = {
     'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, # 0x80 / 8
     
     #town zones
-    'TOWNZONE_EDGE'                 : 0x01,
-    'TOWNZONE_OUTSKIRT'             : 0x02,
-    'TOWNZONE_OUTER_SUBURB'         : 0x04,
-    'TOWNZONE_INNER_SUBURB'         : 0x08,
-    'TOWNZONE_CENTRE'               : 0x10,
-    'TOWNZONE_ALL'                  : 0x1F,
-    'CLIMATEZONE_ARCTIC_SNOW'       : 0x0800,
-    'CLIMATEZONE_TEMPERATE'         : 0x1000,
-    'CLIMATEZONE_ARCTIC_NO_SNOW'    : 0x2000,
-    'CLIMATEZONE_TROPIC'            : 0x4000,
-    'CLIMATEZONE_TOYLAND'           : 0x8000,
-    'CLIMATEZONE_NO_SNOW'           : 0xD800,
-    'CLIMATEZONE_ALL'               : 0xF800,
+    'TOWNZONE_EDGE'                 : 0x08,
+    'TOWNZONE_OUTSKIRT'             : 0x09,
+    'TOWNZONE_OUTER_SUBURB'         : 0x0A,
+    'TOWNZONE_INNER_SUBURB'         : 0x0B,
+    'TOWNZONE_CENTRE'               : 0x0C,
+    'CLIMATE_SNOW'                  : 0x0F,
 
     #industry callback flags
     'IND_CBF_AVAILABILITY'          : 0x0001,
