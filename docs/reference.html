@@ -98,6 +98,7 @@
 <li><a href="#warnings">Warnings</a></li>
 <li><a href="#refs">Additional references</a>
 <ul>
+    <li><a href="#refs-animation-speed-values">Animation speed</a></li>
 	<li><a href="#refs-default-industries">Default industries</a></li>
 	<li><a href="#refs-basecost-table">Base cost table</a></li>
 	<li><a href="#refs-sounds">List of sound effects</a></li>
@@ -1021,7 +1022,7 @@ non_refittable_cargo_classes have no effect.
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
 <tr><td>animation_frames<td>0 ... 128<td>number of animation frams
-<tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href=#animation-speed-values>animation speed table</a> for the meaning of the values.
+<tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.
 <tr><td>building_class<td>0 .. 255<td>An arbitrary number. You can check for the presence of buildings of the same class when building new buildings or using animation
 </table>
 <h2><a name="property-industrytiles">Industry tiles</a></h2>
@@ -1315,28 +1316,28 @@ This warning is generated when pixels with palette index 255, or RGB colour 0xFF
 
 <h1><a name="refs">Additional references</a></h1>
 
-<h2><a name="animation-speed-values">Animation speed</a></h2>
-House, industry and airport tiles can define an animation speed. This property gives the animation speed in multiples of 0.027 seconds,
-spaced by powers of two. For houses the minimum value is 2 (0.108 seconds).
+<h2><a name="refs-animation-speed-values">Animation speed</a></h2>
+House, industry and airport tiles can define an animation speed. This property gives the animation speed in ticks,
+spaced by powers of two. For houses the minimum value is 2 (=4 ticks). The ingame length as well real length is given as rounded values for reference only, assuming normal game speed.
 <table class="t">
-<tr><th>value<th>length of animation frame in seconds
-<tr><td>0<td> 0.027
-<tr><td>1<td> 0.054
-<tr><td>2<td> 0.108
-<tr><td>3<td> 0.216
-<tr><td>4<td> 0.432
-<tr><td>5<td> 0.864
-<tr><td>6<td> 1.728
-<tr><td>7<td> 3.456
-<tr><td>8<td> 6.912
-<tr><td>9<td>13.824
-<tr><td>10<td>27.648
-<tr><td>11<td>55.296
-<tr><td>12<td>110.592
-<tr><td>13<td>221.184
-<tr><td>14<td>442.368
-<tr><td>15<td>884.736
-<tr><td>16<td>1769.472
+<tr><th>value<th>animation<br>length in ticks<th>ingame<th>real time
+<tr><td>0<td>1<td><td>0.03 s
+<tr><td>1<td>2<td><td>0.06 s
+<tr><td>2<td>4<td><td>0.11 s
+<tr><td>3<td>8<td><td>0.22 s
+<tr><td>4<td>16<td><td>0.45 s
+<tr><td>5<td>32<td>half a day<td>0.9 s
+<tr><td>6<td>64<td>nearly 1 day<td>1.8 s
+<tr><td>7<td>128<td>2 days<td>3&frac12; s
+<tr><td>8<td>256<td>3&frac12; days<td>7 s
+<tr><td>9<td>512<td>7 days<td>15 s
+<tr><td>10<td>1024<td>14 days<td>30 s
+<tr><td>11<td>2048<td>28 days<td>1 min
+<tr><td>12<td>4096<td>55 days<td>2 min
+<tr><td>13<td>8192<td>3&frac12; months<td>4 min
+<tr><td>14<td>16384<td>7&frac12; months<td>7&frac12; min
+<tr><td>15<td>32768<td>15 months<td>15 min
+<tr><td>16<td>65536<td>2&frac12; years<td>30 min
 </table>
 <h2><a name="refs-default-industries">Default industries</a></h2>
 <ul>
