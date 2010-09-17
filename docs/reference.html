@@ -999,6 +999,31 @@ non_refittable_cargo_classes have no effect.
 <h2><a name="property-canals">Canals</a></h2>
 <h2><a name="property-bridges">Bridges</a></h2>
 <h2><a name="property-houses">Houses</a></h2>
+<table class="t">
+<tr><th>property <th>value range <th>comment
+<tr><td>name<td>string<td>	for example string(STR_NAME_EIFFEL_TOWER)
+<tr><td>substitute<td>0 ... 109<td>number of the default house which can replace this one, if this house is not available for some reason.
+<tr><td>override<td>0 ... 109<td>id of the default house which this house replaces. This is ignored, if the default house has already been overridden.
+<tr><td>building_flags<td><td>HOUSE_FLAG_XX with XX = [SIZE_1x1, SIZE_2x1, SIZE_1x2, SIZE_2x2, NOT_SLOPED, ANIMATE, CHURCH, STADIUM, ONLY_SE, PROTECTED, SYNC_CALLBACK, RANDOM_ANIMATION]
+<tr><td>population<td>0 ... 255<td>number of inhabitants the building adds to the town, if present
+<tr><td>mail_multiplier<td>0 ... 255<td>
+<tr><td>pax_acceptance<td>0 ... 1<td>Can be increased in steps of 0.125. A station accepts a cargo, if the combined acceptance of all houses in range is at least 1.
+<tr><td>mail_acceptance<td>0 ... 1<td>
+<tr><td>cargo_acceptance<td>0 ... 1<td>Like passenger acceptance. Additionally flag can be added which defines one of the cargo type: HOUSE_ACCEPT_GOODS, HOUSE_ACCEPT_FOOD, HOUSE_ACCEPT_FIZZY_DRINKS; FIZZY_DRINKS has in toyland the same meaning as FOOD in other climates.
+<tr><td>accepted_cargo<td><td>up to three cargo labels, e.g. MAIL, PASS, COAL
+<tr><td>local_authority_impact<td>0 ... 65525<td>amount of happyness increase of the city council, if the building is destroyed
+<tr><td>removal_cost_multiplier<td>0 ... 255<td>
+<tr><td>probability<td>0 ... 16<td>Probability with respect to the default houses (=1). Mind that these are relative probabilities with respect to all houses defined. If all probabilities are defined as 16, they'll all have the same probability as if they had all a probability of 1.
+<tr><td>years_available<td>array of two int<td>[xx, yy] where xx and yy indicate the introduction year and the last year the building can be built
+<tr><td>minimum_lifetime<td>0 ... 255<td>number of years the building will remain at least
+<tr><td>availability_mask<td>BitMask(TOWNZONE_EDGE, ...)<td>A bit mask where the valid values are one or more of<br>TOWNZONE_EDGE, TOWNZONE_OUTSKIRT, TOWNZONE_OUTER_SUBURB, TOWNZONE_INNER_SUBURB, TOWNZONE_CENTRE, TOWNZONE_ALL, CLIMATE_SNOW, CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPIC, CLIMATE_TOYLAND<br> If you want to allow the house in snowy regions, you need to set CLIMATE_SNOW; CLIMATE_ARTIC allows the house only in the non-snowy regions there.
+<tr><td>callback_flags<td><td>HOUSE_CBF_XX with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
+<tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
+<tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
+<tr><td>animation_frames<td>0 ... 128<td>number of animation frams
+<tr><td>animation_speed<td>0 ... 255<td>Speed of animation, see <a href=#animation-speed-values>animation speed table</a> for the meaning of the values.
+<tr><td>building_class<td>0 .. 255<td>An arbitrary number. You can check for the presence of buildings of the same class when building new buildings or using animation
+</table>
 <h2><a name="property-industrytiles">Industry tiles</a></h2>
 <h2><a name="property-industries">Industries</a></h2>
 <h2><a name="property-cargos">Cargos</a></h2>
@@ -1168,7 +1193,7 @@ specified height of the year is used in the calculation.
 </table>
 
 <h2><a name="vars-vehicles">Vehicles</a></h2>
-Pleas note that while those variables are available for all vehicles types, some of them only make sense
+Please note that while those variables are available for all vehicles types, some of them only make sense
 for one or more vehicle types. For example checking current_railtype for a non-rail vehicle doesn't make
 sense at all.
 <table class="t">
@@ -1290,6 +1315,26 @@ This warning is generated when pixels with palette index 255, or RGB colour 0xFF
 
 <h1><a name="refs">Additional references</a></h1>
 
+<h2><a name="animation-speed-values">Animation speed</a></h2>
+House, industry and airport tiles can define an animation speed. This property gives the animation speed in multiples of 0.108 seconds, spaced by powers of two:
+<table class="t">
+<tr><th>value<th>length of animation frame in seconds
+<tr><td>0<td> 0.108
+<tr><td>1<td> 0.216
+<tr><td>2<td> 0.432
+<tr><td>3<td> 0.864
+<tr><td>4<td> 1.728
+<tr><td>5<td> 3.456
+<tr><td>6<td> 6.912
+<tr><td>7<td>13.824
+<tr><td>8<td>27.648
+<tr><td>9<td>55.296
+<tr><td>10<td>110.592
+<tr><td>11<td>221.184
+<tr><td>12<td>442.368
+<tr><td>13<td>884.736
+<tr><td>14<td>1769.472
+</table>
 <h2><a name="refs-default-industries">Default industries</a></h2>
 <ul>
 <li>INDUSTRYTYPE_COAL_MINE</li>
@@ -1335,7 +1380,7 @@ This warning is generated when pixels with palette index 255, or RGB colour 0xFF
 </ul>
 
 <h2><a name="refs-basecost-table">Base cost table</a></h2>
-<table>
+<table class="t">
 <tr><th>Number<th>Identifier<th>Category<th>Default value<th>Version<th>Remarks
 <tr><td>0<td>PR_STATION_VALUE<td>-<td>100<td><td>Used for some misc. purposes
 <tr><td>1<td>PR_BUILD_RAIL<td>PR_CONSTRUCTION<td>100<td><td>
