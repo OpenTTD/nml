@@ -105,9 +105,6 @@ class TownNamesPart(object):
     @ivar pos: Position information of the parts block.
     @type pos: L{Position}
 
-    @ivar total: Sum of probabilities.
-    @type total: C{int}
-
     @ivar startbit: First bit to use for this part, if defined.
     @type startbit: C{int} or C{None}
 
@@ -118,7 +115,6 @@ class TownNamesPart(object):
         self.pos = pos
         self.pieces = pieces
 
-        self.total = 0
         self.startbit = None
         self.num_bits = 0
 
@@ -145,7 +141,6 @@ class TownNamesPart(object):
         if len(self.pieces) > 255:
             raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces), self.pos)
 
-        self.total = sum(piece.probability.value for piece in self.pieces)
         return actFs, self
 
     def move_pieces(self):
@@ -276,16 +271,20 @@ class TownNamesPart(object):
         @return: Number of bits needed for this piece.
         @rtype:  C{int}
         """
+        assert len(self.pieces) <= 255
+        total = sum(piece.probability.value for piece in self.pieces)
+
         self.startbit = startbit
         n = 1
-        while self.total > (1 << n): n = n + 1
+        while total > (1 << n): n = n + 1
         self.num_bits = n
         return n
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Town names part (total %d)' % self.total
+        total = sum(piece.probability.value for piece in self.pieces)
+        print indentation*' ' + 'Town names part (total %d)' % total
         for piece in self.pieces:
-            piece.debug_print(indentation + 2, self.total)
+            piece.debug_print(indentation + 2, total)
 
     def get_length(self):
         size = 3 # textcount, firstbit, bitcount bytes.
