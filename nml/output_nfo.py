@@ -2,9 +2,9 @@
 import codecs
 from nml import generic, grfstrings, output_base
 
-class OutputNFO(output_base.OutputBase):
+class OutputNFO(output_base.BinaryOutputBase):
     def __init__(self, filename):
-        output_base.OutputBase.__init__(self)
+        output_base.BinaryOutputBase.__init__(self)
         self.sprite_num = 0
         self.file = None
         self.filename = filename
@@ -75,7 +75,7 @@ class OutputNFO(output_base.OutputBase):
         self.file.write("\n")
 
     def start_sprite(self, size, is_real_sprite = False):
-        output_base.OutputBase.start_sprite(self, size)
+        output_base.BinaryOutputBase.start_sprite(self, size)
         self.print_decimal(self.sprite_num, 2)
         self.sprite_num += 1
         if not is_real_sprite:

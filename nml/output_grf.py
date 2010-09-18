@@ -3,9 +3,9 @@ import os
 from nml import generic, palette, output_base, lz77, grfstrings
 
 
-class OutputGRF(output_base.OutputBase):
+class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
-        output_base.OutputBase.__init__(self)
+        output_base.BinaryOutputBase.__init__(self)
         self.filename = filename
         self.file = None
         self.compress_grf = compress_grf
@@ -87,7 +87,7 @@ class OutputGRF(output_base.OutputBase):
     def start_sprite(self, size, type = 0xFF):
         #The compression byte (=type) is counted when *not* 0xFF
         size += (type != 0xFF)
-        output_base.OutputBase.start_sprite(self, size + 2)
+        output_base.BinaryOutputBase.start_sprite(self, size + 2)
         self.print_word(size)
         self.print_byte(type)
         if type == 0xFF: self._byte_count -= 1

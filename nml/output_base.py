@@ -1,7 +1,7 @@
 """
 Abstract base class that implements common functionality for output classes
 """
-class OutputBase(object):
+class BinaryOutputBase(object):
     def __init__(self):
         self._in_sprite = False
 

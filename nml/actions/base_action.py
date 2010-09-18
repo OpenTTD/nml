@@ -12,7 +12,7 @@ class BaseAction(object):
         Write this action to the given outputfile.
 
         @param file: The outputfile to write the data to.
-        @type file: L{OutputBase}
+        @type file: L{BinaryOutputBase}
         """
         raise NotImplementedError('write is not implemented in %r' % type(self))
 

@@ -152,7 +152,7 @@ def nml(inputfile, output_debug, outputfiles):
     for action in actions:
         action.prepare_output()
     for outputfile in outputfiles:
-        if isinstance(outputfile, output_base.OutputBase):
+        if isinstance(outputfile, output_base.BinaryOutputBase):
             for action in actions:
                 action.write(outputfile)
 
