@@ -5,6 +5,14 @@ class OutputBase(object):
     """
     Base class for output to a data file.
 
+    The file is opened with L{open}. Once that is done, data can be written
+    using the L{file} data member. When finished writing, the file should be
+    closed with L{close}.
+
+    Derived classes should implement L{open_file} to perform the actual opening
+    of the file. L{pre_close} is called to warn them of pending closure of the
+    file.
+
     @ivar filename: Name of the data file.
     @type filename: C{str}
 
@@ -14,6 +22,22 @@ class OutputBase(object):
     def __init__(self, filename):
         self.filename = filename
         self.file = None
+
+    def open(self):
+        """
+        Open the output file.
+        """
+        self.file = self.open_file()
+
+    def open_file(self):
+        """
+        Construct the file handle of the output file.
+
+        @return: File handle of the opened file.
+        @rtype: C{file}
+        """
+        raise NotImplementedError("Implement me in %s" % type(self))
+
 
     def pre_close(self):
         """

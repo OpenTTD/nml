@@ -8,8 +8,8 @@ class OutputNML(output_base.OutputBase):
     def __init__(self, filename):
         output_base.OutputBase.__init__(self, filename)
 
-    def open(self):
-        self.file = codecs.open(self.filename, 'w', 'utf-8')
+    def open_file(self):
+        return codecs.open(self.filename, 'w', 'utf-8')
 
 
     def write(self, text):

@@ -9,8 +9,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
 
-    def open(self):
-        self.file = open(self.filename, 'wb')
+    def open_file(self):
+        return open(self.filename, 'wb')
 
     def pre_close(self):
         output_base.BinaryOutputBase.pre_close(self)
