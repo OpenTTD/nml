@@ -19,12 +19,21 @@ class BinaryOutputBase(OutputBase):
     """
     Base class for output to a binary data file.
 
-    @ivar _in_sprite: ???
+    @ivar _in_sprite: Set to true if we are currently outputting a sprite.
+                        Outputting anything when not in a sprite causes an assert.
     @type _in_sprite: C{bool}
+
+    @ivar _byte_count: Number of bytes written in the current sprite.
+    @type _byte_count: C{int}
+
+    @ivar _expected_count: Number of bytes expected in the current sprite.
+    @type _expected_count: C{int}
     """
     def __init__(self, filename):
         OutputBase.__init__(self, filename)
         self._in_sprite = False
+        self._expected_count = 0
+        self._byte_count = 0
 
     def prepare_byte(self, value):
         assert self._in_sprite
