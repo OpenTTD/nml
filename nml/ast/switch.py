@@ -97,7 +97,7 @@ class RandomSwitch(object):
                     continue
                 elif choice.probability.value == 'dependent':
                     if not isinstance(choice.result, expression.Identifier):
-                        raise generic.ScriptError("Value for 'dependent' should be an identifier", choise.result.pos)
+                        raise generic.ScriptError("Value for 'dependent' should be an identifier", choice.result.pos)
                     self.dependent.append(choice.result)
                     continue
                 else:
