@@ -17,10 +17,6 @@ class OutputNFO(output_base.BinaryOutputBase):
                         '// Escapes: DR DF DC DM DnF DnC DO\n'
                         '// Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel\n\n')
 
-    def close(self):
-        assert not self._in_sprite
-        self.file.close()
-
     def print_byte(self, value):
         value = self.prepare_byte(value)
         self.file.write("\\b" + str(value) + " ")

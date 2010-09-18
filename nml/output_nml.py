@@ -11,9 +11,6 @@ class OutputNML(output_base.OutputBase):
     def open(self):
         self.file = codecs.open(self.filename, 'w', 'utf-8')
 
-    def close(self):
-        self.file.close()
-
 
     def write(self, text):
         self.file.write(text)

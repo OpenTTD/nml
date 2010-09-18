@@ -12,14 +12,13 @@ class OutputGRF(output_base.BinaryOutputBase):
     def open(self):
         self.file = open(self.filename, 'wb')
 
-    def close(self):
-        assert not self._in_sprite
+    def pre_close(self):
+        output_base.BinaryOutputBase.pre_close(self)
         #terminate with 6 zero bytes (zero-size sprite + checksum)
         i = 0
         while i < 6:
             self.wb(0)
             i += 1
-        self.file.close()
 
     def wb(self, byte):
         self.file.write(chr(byte))

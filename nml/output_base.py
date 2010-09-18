@@ -15,6 +15,19 @@ class OutputBase(object):
         self.filename = filename
         self.file = None
 
+    def pre_close(self):
+        """
+        File is about to be closed, last chance to append data.
+        """
+        pass
+
+    def close(self):
+        """
+        Close the file.
+        """
+        self.pre_close()
+        self.file.close()
+
 class BinaryOutputBase(OutputBase):
     """
     Base class for output to a binary data file.
@@ -34,6 +47,9 @@ class BinaryOutputBase(OutputBase):
         self._in_sprite = False
         self._expected_count = 0
         self._byte_count = 0
+
+    def pre_close(self):
+        assert not self._in_sprite
 
     def prepare_byte(self, value):
         assert self._in_sprite
