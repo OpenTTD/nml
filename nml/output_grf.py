@@ -5,9 +5,7 @@ from nml import generic, palette, output_base, lz77, grfstrings
 
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
-        output_base.BinaryOutputBase.__init__(self)
-        self.filename = filename
-        self.file = None
+        output_base.BinaryOutputBase.__init__(self, filename)
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
 

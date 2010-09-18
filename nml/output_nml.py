@@ -4,17 +4,9 @@ from nml import output_base
 class OutputNML(output_base.OutputBase):
     """
     Class for outputting NML.
-
-    @ivar filename: Filename
-    @type filename: C{str}
-
-    @ivar file: File handle if opened.
-    @type file: C{file} or C{None}
     """
     def __init__(self, filename):
-        output_base.OutputBase.__init__(self)
-        self.filename = filename
-        self.file = None
+        output_base.OutputBase.__init__(self, filename)
 
     def open(self):
         self.file = codecs.open(self.filename, 'w', 'utf-8')

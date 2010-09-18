@@ -4,10 +4,8 @@ from nml import generic, grfstrings, output_base
 
 class OutputNFO(output_base.BinaryOutputBase):
     def __init__(self, filename):
-        output_base.BinaryOutputBase.__init__(self)
+        output_base.BinaryOutputBase.__init__(self, filename)
         self.sprite_num = 0
-        self.file = None
-        self.filename = filename
 
     def open(self):
         self.file = codecs.open(self.filename, 'w', 'utf-8')

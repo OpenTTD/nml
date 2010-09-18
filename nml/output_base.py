@@ -4,16 +4,26 @@ Abstract base classes that implements common functionality for output classes
 class OutputBase(object):
     """
     Base class for output to a data file.
+
+    @ivar filename: Name of the data file.
+    @type filename: C{str}
+
+    @ivar file: Output file handle, if opened.
+    @type file: C{file} or C{None}
     """
-    def __init__(self):
-        pass
+    def __init__(self, filename):
+        self.filename = filename
+        self.file = None
 
 class BinaryOutputBase(OutputBase):
     """
     Base class for output to a binary data file.
+
+    @ivar _in_sprite: ???
+    @type _in_sprite: C{bool}
     """
-    def __init__(self):
-        OutputBase.__init__(self)
+    def __init__(self, filename):
+        OutputBase.__init__(self, filename)
         self._in_sprite = False
 
     def prepare_byte(self, value):
