@@ -1,6 +1,7 @@
 import codecs
+from nml import output_base
 
-class OutputNML(object):
+class OutputNML(output_base.OutputBase):
     """
     Class for outputting NML.
 
@@ -11,6 +12,7 @@ class OutputNML(object):
     @type file: C{file} or C{None}
     """
     def __init__(self, filename):
+        output_base.OutputBase.__init__(self)
         self.filename = filename
         self.file = None
 

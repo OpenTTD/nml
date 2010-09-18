@@ -1,8 +1,19 @@
 """
-Abstract base class that implements common functionality for output classes
+Abstract base classes that implements common functionality for output classes
 """
-class BinaryOutputBase(object):
+class OutputBase(object):
+    """
+    Base class for output to a data file.
+    """
     def __init__(self):
+        pass
+
+class BinaryOutputBase(OutputBase):
+    """
+    Base class for output to a binary data file.
+    """
+    def __init__(self):
+        OutputBase.__init__(self)
         self._in_sprite = False
 
     def prepare_byte(self, value):
