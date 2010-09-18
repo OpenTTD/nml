@@ -1,6 +1,8 @@
 """
 Abstract base classes that implements common functionality for output classes
 """
+import StringIO
+
 class OutputBase(object):
     """
     Base class for output to a data file.
@@ -25,9 +27,9 @@ class OutputBase(object):
 
     def open(self):
         """
-        Open the output file.
+        Open the output file. Data gets stored in-memory.
         """
-        self.file = self.open_file()
+        self.file = StringIO.StringIO()
 
     def open_file(self):
         """
@@ -47,9 +49,13 @@ class OutputBase(object):
 
     def close(self):
         """
-        Close the file.
+        Close the file, copy collected output to the real file.
         """
         self.pre_close()
+
+        real_file = self.open_file()
+        real_file.write(self.file.getvalue())
+        real_file.close()
         self.file.close()
 
 class BinaryOutputBase(OutputBase):
