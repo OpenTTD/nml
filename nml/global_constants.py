@@ -4,6 +4,7 @@ constant_numbers = {
     #climates
     'CLIMATE_TEMPERATE'     : 0x00,
     'CLIMATE_ARCTIC'        : 0x01,
+    'CLIMATE_TROPIC'        : 0x02,
     'CLIMATE_TROPICAL'      : 0x02,
     'CLIMATE_TOYLAND'       : 0x03,
 
