@@ -42,8 +42,8 @@ reserved = {
     'tilelayout' : 'TILELAYOUT',
 }
 
-line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\n|"(.*)"\n)')
-line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"(\s+\d+\s*)?\n')
+line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')
+line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"(\s+\d+\s*)?\r?\n')
 
 class NMLLexer(object):
 
@@ -165,7 +165,7 @@ class NMLLexer(object):
         pass
 
     def t_line_directive1(self, t):
-        r'\#line\s+\d+\s*(\n|".*"\n)'
+        r'\#line\s+\d+\s*(\r?\n|".*"\r?\n)'
         m = line_directive1_pat.match(t.value)
         assert m is not None
         fname = self.lexer.lineno.filename if m.group(3) is None else m.group(3)
@@ -173,7 +173,7 @@ class NMLLexer(object):
         self.increment_lines(t.value.count('\n') - 1)
 
     def t_line_directive2(self, t):
-        r'\#\s+\d+\s+".*"(\s+\d+\s*)?\n'
+        r'\#\s+\d+\s+".*"(\s+\d+\s*)?\r?\n'
         m = line_directive2_pat.match(t.value)
         assert m is not None
         self.set_position(m.group(2), int(m.group(1), 10))
