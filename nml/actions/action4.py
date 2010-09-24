@@ -52,4 +52,6 @@ def get_string_action4s(feature, string_range, string, id = None):
     for translation in grfstrings.grf_strings[string.name.value]:
         actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
 
+    actions.sort(key=lambda action: action.lang);
+
     return (id, size == 2, actions)
