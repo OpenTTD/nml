@@ -309,6 +309,7 @@ class TownNamesPart(object):
         file.print_bytex(self.num_bits)
         for piece in self.pieces:
             piece.write(file)
+            file.newline()
 
 
 class TownNamesParam(object):

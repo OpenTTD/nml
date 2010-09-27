@@ -119,9 +119,11 @@ class ActionF(base_action.BaseAction):
     def write_styles(self, handle):
         if len(self.style_names) == 0: return
 
+        handle.newline()
         for lang, txt in self.style_names:
             handle.print_bytex(lang)
             handle.print_string(txt, final_zero = True)
+            handle.newline()
         handle.print_bytex(0)
 
     # Parts
