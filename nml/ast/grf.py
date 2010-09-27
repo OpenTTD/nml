@@ -130,9 +130,9 @@ class ParameterSetting(object):
                 raise generic.ScriptError("setting-max_value is only valid for 'int' settings", value.pos)
             self.max_val = value.reduce_constant()
         elif name == 'def_value':
-            if self.type != 'int':
-                raise generic.ScriptError("setting-def_value is only valid for 'int' settings", value.pos)
             self.def_val = value.reduce_constant()
+            if self.type == 'bool' and self.def_val != 0 and self.def_val != 1:
+                raise generic.ScriptError("setting-def_value must be either 0 or 1 for 'bool' settings", value.pos)
         else:
             raise generic.ScriptError("Unknown setting-property " + name, value.pos)
 
