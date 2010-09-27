@@ -404,6 +404,38 @@ class Parameter(Expression):
     def supported_by_actionD(self, raise_error):
         return True
 
+class OtherGRFParameter(Expression):
+    def __init__(self, grfid, num, pos = None):
+        Expression.__init__(self, pos)
+        self.grfid = grfid
+        self.num = num
+        if not isinstance(self.grfid, int):
+            if not isinstance(self.grfid, StringLiteral) or grfstrings.get_string_size(self.grfid.value, False, True) != 4:
+                raise generic.ScriptError("GRFID must be string literal of length 4", self.grfid.pos)
+            self.grfid = generic.parse_string_to_dword(self.grfid.value)
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'OtherGRFParameter:'
+        self.grfid.debug_print(indentation + 2)
+        self.num.debug_print(indentation + 2)
+
+    def __str__(self):
+        return 'param[%s, %s]' % (str(self.grfid), str(self.num))
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        num = self.num.reduce(id_dicts)
+        if num.type() != Type.INTEGER:
+            raise generic.ScriptError("Parameter number must be an integer.", num.pos)
+        return OtherGRFParameter(self.grfid, num, self.pos)
+
+    def supported_by_action2(self, raise_error):
+        if raise_error:
+            raise generic.ScriptError("Reading parameters from another GRF is not supported in a switch-block.", self.pos)
+        return False
+
+    def supported_by_actionD(self, raise_error):
+        return True
+
 class Variable(Expression):
     def __init__(self, num, shift = None, mask = None, param = None, pos = None):
         Expression.__init__(self, pos)

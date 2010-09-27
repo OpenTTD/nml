@@ -142,6 +142,17 @@ def parse_actionD(assignment):
             op = nmlop.ASSIGN
             param1 = expression.ConstantNumeric(0)
         param2 = expression.ConstantNumeric(0)
+    elif isinstance(assignment.value, expression.OtherGRFParameter):
+        op = nmlop.ASSIGN
+        if isinstance(assignment.value.num, expression.ConstantNumeric):
+            param1 = assignment.value.num
+        else:
+            tmp_param, tmp_param_actions = get_tmp_parameter(assignment.value.num)
+            act6.modify_bytes(tmp_param, 1, 3)
+            action_list.extend(tmp_param_actions)
+            param1 = expression.ConstantNumeric(0)
+        param2 = expression.ConstantNumeric(0xFE)
+        data = expression.ConstantNumeric(assignment.value.grfid)
     elif isinstance(assignment.value, expression.BinOp):
         op = assignment.value.op
         expr1 = assignment.value.expr1
