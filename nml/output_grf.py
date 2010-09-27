@@ -81,6 +81,9 @@ class OutputGRF(output_base.BinaryOutputBase):
     def newline(self):
         pass
 
+    def comment(self, msg):
+        pass
+
     def start_sprite(self, size, type = 0xFF):
         #The compression byte (=type) is counted when *not* 0xFF
         size += (type != 0xFF)

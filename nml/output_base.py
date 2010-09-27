@@ -148,6 +148,12 @@ class BinaryOutputBase(OutputBase):
         """
         raise NotImplementedError("Implement newline() in %r" % type(self))
 
+    def comment(self, msg):
+        """
+        Output a textual comment.
+        """
+        raise NotImplementedError("Implement comment() in %r" % type(self))
+
 
     def start_sprite(self, size):
         assert not self._in_sprite

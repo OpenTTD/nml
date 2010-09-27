@@ -69,6 +69,9 @@ class OutputNFO(output_base.BinaryOutputBase):
     def newline(self):
         self.file.write("\n")
 
+    def comment(self, msg):
+        self.file.write("// " + msg + "\n")
+
     def start_sprite(self, size, is_real_sprite = False):
         output_base.BinaryOutputBase.start_sprite(self, size)
         self.print_decimal(self.sprite_num, 2)
