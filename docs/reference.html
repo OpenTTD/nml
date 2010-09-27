@@ -235,7 +235,45 @@ the value to the unit that is written to the output file. You can only use
 a unit if the expression is constant. <a href="#units">List of valid units</a></p>
 
 <h3><a name="block-item-graphics">Graphics</a></h3>
-<p>In general the layout for defining graphics is like</p>
+
+<h3><a name="block-item-livery_override">Livery override</a></h3>
+<div class="img_right">
+<img title="Livery override: different engines, same cars, different car sprites" alt="LiveryOverride example" src="LiveryOverride.png" hspace="5" vspace="5"><br>
+Same cars, different engine, different car sprites
+</div>
+<p>A livery override block offers the option to change the look and
+behaviour of a wagon depending on the engine it is attached to.
+E.g. passenger wagons could adapt their livery to match the engine,
+to make the consist look like a multiple-unit train. The spritegroup
+needs to be defined before it can be used in a livery override. A livery
+override block is always part of the engine definition and looks like</p>
+<pre class="exl">
+livery_override (vehicleID) {
+	spritegroup_name
+}
+</pre>
+<p>Concerning this example it is assumed that it is preceeded by the graphics
+definitions given as example in the <a href="#block-item-graphics">graphics definition</a>
+and that a vehicleID "passenger_wagon" is defined. The passenger wagon will get a
+different look (spritegroup "turbotrain_passenger_group") in this example when attached
+to the engine "turbotrain". Is the wagon attached to another engine, it might use its
+default graphics which are assigned elsewhere to "passenger_wagon".</p>
+<pre class="code">
+// Turbotrain engine:
+item(FEAT_TRAINS, turbotrain, 20) {
+	property { // Properties for the engine
+		sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
+		misc_flags:                   TRAIN_FLAG_MU;          // We use special sprites for passenger wagons
+	}
+	graphics {
+		turbotrain_engine_group;                              // Graphics for the engine
+	}
+	livery_override(passenger_wagon) {
+		turbotrain_passenger_group;                           // Graphics for "passenger_wagon" when attached to the engine
+	}
+}
+</pre>
+<h2><a name="block-spriteblock">Spriteblock</a></h2><p>In general the layout for defining graphics is like</p>
 <pre class="code">
 spriteblock(FEATURE) {
 	spriteset (SPRITESET_NAME, graphics_file) {
@@ -283,44 +321,6 @@ spriteblock(FEAT_TRAINS) {
 	}
 }
 </pre>
-<h3><a name="block-item-livery_override">Livery override</a></h3>
-<div class="img_right">
-<img title="Livery override: different engines, same cars, different car sprites" alt="LiveryOverride example" src="LiveryOverride.png" hspace="5" vspace="5"><br>
-Same cars, different engine, different car sprites
-</div>
-<p>A livery override block offers the option to change the look and
-behaviour of a wagon depending on the engine it is attached to.
-E.g. passenger wagons could adapt their livery to match the engine,
-to make the consist look like a multiple-unit train. The spritegroup
-needs to be defined before it can be used in a livery override. A livery
-override block is always part of the engine definition and looks like</p>
-<pre class="exl">
-livery_override (vehicleID) {
-	spritegroup_name
-}
-</pre>
-<p>Concerning this example it is assumed that it is preceeded by the graphics
-definitions given as example in the <a href="#block-item-graphics">graphics definition</a>
-and that a vehicleID "passenger_wagon" is defined. The passenger wagon will get a
-different look (spritegroup "turbotrain_passenger_group") in this example when attached
-to the engine "turbotrain". Is the wagon attached to another engine, it might use its
-default graphics which are assigned elsewhere to "passenger_wagon".</p>
-<pre class="code">
-// Turbotrain engine:
-item(FEAT_TRAINS, turbotrain, 20) {
-	property { // Properties for the engine
-		sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
-		misc_flags:                   TRAIN_FLAG_MU;          // We use special sprites for passenger wagons
-	}
-	graphics {
-		turbotrain_engine_group;                              // Graphics for the engine
-	}
-	livery_override(passenger_wagon) {
-		turbotrain_passenger_group;                           // Graphics for "passenger_wagon" when attached to the engine
-	}
-}
-</pre>
-<h2><a name="block-spriteblock">Spriteblock</a></h2>
 <h3><a name="block-spriteblock-spriteset">Spriteset</a></h3>
 <h3><a name="block-spriteblock-spritegroup">Spritegroup</a></h3>
 
