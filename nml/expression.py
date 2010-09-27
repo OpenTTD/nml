@@ -779,6 +779,19 @@ def builtin_cargotype_available(name, args, pos):
         raise generic.ScriptError("Cargo labels must be string literals of length 4", label.pos)
     return SpecialCheck((0x0B, r'\7C'), generic.parse_string_to_dword(label.value), args[0].pos)
 
+def builtin_railtype_available(name, args, pos):
+    """
+    railtype_available(cargo_label) builtin function.
+
+    @return 1 if the railtype label is available, 0 otherwise.
+    """
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
+    label = args[0].reduce()
+    if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
+        raise generic.ScriptError("Railtype labels must be string literals of length 4", label.pos)
+    return SpecialCheck((0x0D, None), generic.parse_string_to_dword(label.value), args[0].pos)
+
 #}
 
 function_table = {
@@ -794,6 +807,7 @@ function_table = {
     'hasbit' : builtin_hasbit,
     'version_openttd' : builtin_version_openttd,
     'cargotype_available' : builtin_cargotype_available,
+    'railtype_available' : builtin_railtype_available,
 }
 
 commutative_operators = set([
