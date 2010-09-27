@@ -40,6 +40,7 @@ class Action2(base_action.BaseAction):
             self.id = free_action2_ids.pop()
 
     def write_sprite_start(self, file, size):
+        file.comment("Name: " + self.name)
         file.start_sprite(size + 3)
         file.print_bytex(2)
         file.print_bytex(self.feature)
