@@ -1,5 +1,5 @@
 import datetime, calendar
-from nml import generic, nmlop
+from nml import generic, nmlop, grfstrings
 
 class Type(object):
     """
@@ -626,6 +626,18 @@ class Array(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values], self.pos)
 
+class SpecialCheck(Expression):
+    def __init__(self, op, value, pos = None):
+        Expression.__init__(self, pos)
+        self.op = op
+        self.value = value
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return SpecialCheck(self.op, self.value, self.pos)
+
+    def supported_by_actionD(self, raise_error):
+        return True
+
 #{ Builtin functions
 
 def builtin_min(name, args, pos):
@@ -754,6 +766,19 @@ def builtin_version_openttd(name, args, pos):
     build = args[3].reduce_constant().value if len(args) == 4 else 0x80000
     return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
 
+def builtin_cargotype_available(name, args, pos):
+    """
+    cargotype_available(cargo_label) builtin function.
+
+    @return 1 if the cargo label is available, 0 otherwise.
+    """
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
+    label = args[0].reduce()
+    if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
+        raise generic.ScriptError("Cargo labels must be string literals of length 4", label.pos)
+    return SpecialCheck((0x0B, r'\7C'), generic.parse_string_to_dword(label.value), args[0].pos)
+
 #}
 
 function_table = {
@@ -768,6 +793,7 @@ function_table = {
     'LOAD_PERM' : builtin_load,
     'hasbit' : builtin_hasbit,
     'version_openttd' : builtin_version_openttd,
+    'cargotype_available' : builtin_cargotype_available,
 }
 
 commutative_operators = set([

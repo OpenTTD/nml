@@ -70,6 +70,12 @@ def parse_actionD(assignment):
         actions.extend(cond_block.get_action_list())
         return actions
 
+    if isinstance(assignment.value, expression.SpecialCheck):
+        actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
+        actions.append(nml.actions.action7.SkipAction(9, 0, 4, assignment.value.op, assignment.value.value, 1))
+        actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(1))))
+        return actions
+
     if isinstance(assignment.value, expression.BinOp):
         op = assignment.value.op
         if op == nmlop.HASBIT:

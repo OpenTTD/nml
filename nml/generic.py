@@ -14,6 +14,17 @@ def check_range(value, min_value, max_value, name, pos):
     if not min_value <= value <= max_value:
         raise RangeError(value, min_value, max_value, name, pos)
 
+def parse_string_to_dword(string):
+    bytes = []
+    i = 0
+    while len(bytes) < 4:
+        if string[i] == '\\':
+            bytes.append(int(string[i+1:i+3], 16))
+            i += 3
+        else:
+            bytes.append(ord(string[i]))
+            i += 1
+    return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
 
 class Position(object):
     """
