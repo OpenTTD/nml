@@ -108,15 +108,15 @@ class TownNamesPart(object):
     @ivar startbit: First bit to use for this part, if defined.
     @type startbit: C{int} or C{None}
 
-    @ivar num_bits: Number of bits to use.
-    @type num_bits: C{int}
+    @ivar num_bits: Number of bits to use, if defined.
+    @type num_bits: C{int} or C{None}
     """
     def __init__(self, pieces, pos):
         self.pos = pos
         self.pieces = pieces
 
         self.startbit = None
-        self.num_bits = 0
+        self.num_bits = None
 
     def make_actions(self):
         """
@@ -178,13 +178,21 @@ class TownNamesPart(object):
             sub = (sub[0] + prob, sub[1], sub[2])
             heapq.heappush(heap, sub)
 
+        # To ensure the chances do not get messed up due to one part needing less bits for its
+        # selection, all parts are forced to use the same number of bits.
+        max_prob = max(sub[0] for sub in heap)
+        num_bits = 1
+        while (1 << num_bits) < max_prob:
+            num_bits = num_bits + 1
+
         # Assign to action F
         actFs = []
         for _prob, _idx, sub in heap:
             actF_name = expression.Identifier("**townname #%d**" % townname_serial, None)
             townname_serial = townname_serial + 1
-            parts = [TownNamesPart(sub, self.pos)]
-            actF = actionF.ActionF(actF_name, None, None, parts, self.pos)
+            town_part = TownNamesPart(sub, self.pos)
+            town_part.set_numbits(num_bits)
+            actF = actionF.ActionF(actF_name, None, None, [town_part], self.pos)
             actFs.append(actF)
 
             # Remove pieces of 'sub' from self.pieces
@@ -214,10 +222,19 @@ class TownNamesPart(object):
         total = sum(piece.probability.value for piece in self.pieces)
 
         self.startbit = startbit
-        n = 1
-        while total > (1 << n): n = n + 1
-        self.num_bits = n
-        return n
+        if self.num_bits is None:
+            n = 1
+            while total > (1 << n): n = n + 1
+            self.num_bits = n
+        assert (1 << self.num_bits) >= total
+        return self.num_bits
+
+    def set_numbits(self, numbits):
+        """
+        Set the number of bits that this part should use.
+        """
+        assert self.num_bits is None
+        self.num_bits = numbits
 
     def debug_print(self, indentation):
         total = sum(piece.probability.value for piece in self.pieces)
