@@ -166,19 +166,21 @@ class TownNamesPart(object):
         heap = [] # Heap of (summed probability, subset-of-pieces)
         i = 0
         while i < nactf:
-            heapq.heappush(heap, (0, []))
+            # Index 'i' is added to have a unique sorting when lists have equal total probabilities.
+            heapq.heappush(heap, (0, i, []))
             i = i + 1
 
-        rev_pieces = sorted(((p.probability.value, p) for p in self.pieces), reverse = True)
-        for prob, piece in rev_pieces:
+        # Index 'idx' is added to have a unique sorting when pieces have equal probabilities.
+        rev_pieces = sorted(((p.probability.value, idx, p) for idx, p in enumerate(self.pieces)), reverse = True)
+        for prob, _idx, piece in rev_pieces:
             sub = heapq.heappop(heap)
-            sub[1].append(piece)
-            sub = (sub[0] + prob, sub[1])
+            sub[2].append(piece)
+            sub = (sub[0] + prob, sub[1], sub[2])
             heapq.heappush(heap, sub)
 
         # Assign to action F
         actFs = []
-        for _prob, sub in heap:
+        for _prob, _idx, sub in heap:
             actF_name = expression.Identifier("**townname #%d**" % townname_serial, None)
             townname_serial = townname_serial + 1
             parts = [TownNamesPart(sub, self.pos)]
