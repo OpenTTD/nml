@@ -191,13 +191,11 @@ def house_available_mask(value):
 def house_accepted_cargos(value):
     if not isinstance(value, Array) or len(value.values) > 3:
         raise generic.ScriptError("Accepted cargos must be an array with no more than 3 values", value.pos)
-    cargoes = [val.reduce_constant().value for val in value.values]
+    cargoes = [val.reduce_constant().value for val in value.values] + [0xFF for _ in range(4)]
     val = 0
     for i in range(4):
-        if i < len(cargoes):
-            val = val | (cargoes[i] << (i * 8))
-        else:
-            val = val | (0xFF << (i * 8))
+        val = val | (cargoes[i] << (i * 8))
+
     return [Action0Property(0x1E, ConstantNumeric(val), 4)]
 
 properties[0x07] = {
