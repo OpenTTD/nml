@@ -45,7 +45,8 @@ def op_to_cond_op(op):
     if op == nmlop.CMP_LE: return (5, r'\7>')
 
 def parse_conditional(expr):
-    '''Parse an expression and return enougn information to use
+    '''
+    Parse an expression and return enough information to use
     that expression as a conditional statement.
     Return value is a tuple with the following elements:
     - Parameter number (as integer) to use in comparison or None for unconditional skip
@@ -104,16 +105,16 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
             length += 1
             continue
         if allow9 and action.skip_action9():
-            #If action7 was ok, we wouldn't be in this block.
-            #Set allow7 to False in here so in case both
-            #action7 and action9 don't work at least one
-            #of allow7/allow9 is True. This is possible because
-            #all previous actions could be skipped at least one.
+            # If action7 was ok, we wouldn't be in this block.
+            # Set allow7 to False in here so in case both
+            # action7 and action9 don't work at least one
+            # of allow7/allow9 is True. This is possible because
+            # all previous actions could be skipped at least one.
             allow7 = False
             length += 1
             continue
-        #neither action7 nor action9 can be used. add all
-        #previous actions to the list and start a new block
+        # neither action7 nor action9 can be used. add all
+        # previous actions to the list and start a new block
         feature = 7 if allow7 else 9
         if length < 0x10:
             target = length
@@ -146,10 +147,10 @@ def parse_conditional_block(cond):
 
     multiple_blocks = cond.else_block is not None
     if multiple_blocks:
-        #the skip all parameter is used to skip all blocks after one
-        #of the conditionals was true. We can't always skip directly
-        #to the end of the blocks since action7/action9 can't always
-        #be mixed
+        # the skip all parameter is used to skip all blocks after one
+        # of the conditionals was true. We can't always skip directly
+        # to the end of the blocks since action7/action9 can't always
+        # be mixed
         param_skip_all, action_list = actionD.get_tmp_parameter(expression.ConstantNumeric(0xFFFFFFFF))
     else:
         action_list = []
@@ -160,8 +161,8 @@ def parse_conditional_block(cond):
         blocks.append({'expr': cond.expr, 'statements': cond.block, 'last_block': cond.else_block is None})
         cond = cond.else_block
 
-    #use parse_conditional here, we also need to know if all generated
-    #actions (like action6) can be skipped safely
+    # use parse_conditional here, we also need to know if all generated
+    # actions (like action6) can be skipped safely
     for block in blocks:
         block['param_dst'], block['cond_actions'], block['cond_type'], block['cond_value'], block['cond_value_size'] = parse_conditional(block['expr'])
         if not block['last_block']:
@@ -171,11 +172,11 @@ def parse_conditional_block(cond):
         for stmt in block['statements']:
             block['action_list'].extend(stmt.get_action_list())
 
-    #Main problem: action10 can't be skipped by action9, so we're
-    #nearly forced to use action7, but action7 can't safely skip action6
-    #Solution: use temporary parameter, set to 0 for not skip, !=0 for skip.
-    #then skip every block of actions (as large as possible) with either
-    #action7 or action9, depending on which of the two works.
+    # Main problem: action10 can't be skipped by action9, so we're
+    # nearly forced to use action7, but action7 can't safely skip action6
+    # Solution: use temporary parameter, set to 0 for not skip, !=0 for skip.
+    # then skip every block of actions (as large as possible) with either
+    # action7 or action9, depending on which of the two works.
 
     for i in range(0, len(blocks)):
         block = blocks[i]
