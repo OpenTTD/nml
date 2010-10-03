@@ -94,8 +94,7 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
     actions = []
     start, length = 0, 0
     allow7, allow9 = True, True
-    for i in range(0, len(action_list)):
-        action = action_list[i]
+    for action in action_list:
         if length == 0 and not action.skip_needed():
             actions.append(action)
             start += 1
@@ -178,8 +177,7 @@ def parse_conditional_block(cond):
     # then skip every block of actions (as large as possible) with either
     # action7 or action9, depending on which of the two works.
 
-    for i in range(0, len(blocks)):
-        block = blocks[i]
+    for i, block in enumerate(blocks):
         param = block['param_dst']
         if i == 0: action_list.extend(block['cond_actions'])
         else:

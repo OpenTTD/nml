@@ -137,9 +137,9 @@ class IDListProp(object):
 
     def write(self, file):
         file.print_bytex(self.prop_num)
-        for i in range(0, len(self.id_list)):
+        for i, id_val in enumerate(self.id_list):
             if i > 0 and i % 5 == 0: file.newline()
-            file.print_string(self.id_list[i].value, False, True)
+            file.print_string(id_val.value, False, True)
         file.newline()
 
     def get_size(self):
@@ -165,9 +165,9 @@ class ByteListProp(object):
     def write(self, file):
         file.print_bytex(self.prop_num)
         file.newline()
-        for i in range(0, len(self.data)):
+        for i, data_val in enumerate(self.data):
             if i > 0 and i % 8 == 0: file.newline()
-            file.print_bytex(ord(self.data[i]))
+            file.print_bytex(ord(data_val))
         file.newline()
 
     def get_size(self):
