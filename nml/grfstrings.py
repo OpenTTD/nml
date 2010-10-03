@@ -157,7 +157,7 @@ def parse_command(command):
         ret += '"'
     return ret
 
-def parse_grf_string(orig_string):
+def parse_grf_string(orig_string, pos):
     ret = []
     special_chars = {r'"': r'\"', r'\\': r'\\\\'}
 
@@ -167,7 +167,7 @@ def parse_grf_string(orig_string):
         if c == '{':
             j = orig_string.find('}', i+1)
             if j < 0:
-                raise generic.ScriptError("Command block without ending '}'")
+                raise generic.ScriptError("Command block without ending '}'", pos)
             ret.append(parse_command(orig_string[i+1:j]))
             i = j + 1
         else:
@@ -197,15 +197,15 @@ def read_lang_files(lang_dir):
                         raise generic.ScriptError("Only one 'lang: ' line allowed per language file.", pos)
                     lang = int(line[6:8], 16)
                 else:
+                    pos = generic.LinePosition(filename, idx + 1)
                     if lang == -1:
-                        pos = generic.LinePosition(filename, idx + 1)
                         raise generic.ScriptError("Language ID ('lang: ') not set.", pos)
                     i = line.index(':')
                     name = line[:i].strip()
                     value = line[i+1:]
                     if not name in grf_strings:
                         grf_strings[name] = []
-                    grf_strings[name].append({'lang': lang, 'text': parse_grf_string(value)})
+                    grf_strings[name].append({'lang': lang, 'text': parse_grf_string(value, pos)})
         except UnicodeDecodeError:
             generic.print_warning("Language file \"%s\" contains non-utf8 characters. Ignoring (part of) the contents" % filename)
 
