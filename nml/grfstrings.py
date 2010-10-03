@@ -158,28 +158,23 @@ def parse_command(command):
     return ret
 
 def parse_grf_string(orig_string):
-    ret = ''
-    ignore = 0
+    ret = []
     special_chars = {r'"': r'\"', r'\\': r'\\\\'}
-    for i in range(len(orig_string)):
-        if ignore > 0:
-            ignore = ignore - 1
-            continue
+
+    i = 0
+    while i < len(orig_string):
         c = orig_string[i]
         if c == '{':
-            has_end = False
-            for j in range(i + 1, len(orig_string)):
-                if orig_string[j] == '}':
-                    has_end = True
-                    ret += parse_command(orig_string[i+1:j])
-                    ignore = j - i
-                    break
-            if not has_end: raise generic.ScriptError("Command block without ending '}'")
-        elif c in special_chars:
-            ret += special_chars[c]
+            j = orig_string.find('}', i+1)
+            if j < 0:
+                raise generic.ScriptError("Command block without ending '}'")
+            ret.append(parse_command(orig_string[i+1:j]))
+            i = j + 1
         else:
-            ret += c
-    return ret
+            ret.append(special_chars.get(c, c))
+            i = i + 1
+
+    return ''.join(ret)
 
 def read_lang_files(lang_dir):
     """
