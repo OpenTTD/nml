@@ -200,7 +200,11 @@ def read_lang_files(lang_dir):
                     pos = generic.LinePosition(filename, idx + 1)
                     if lang == -1:
                         raise generic.ScriptError("Language ID ('lang: ') not set.", pos)
-                    i = line.index(':')
+
+                    i = line.find(':')
+                    if i < 0:
+                        raise generic.ScriptError("Missing a colon.", pos)
+
                     name = line[:i].strip()
                     value = line[i+1:]
                     if not name in grf_strings:
