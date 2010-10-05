@@ -142,15 +142,27 @@ class BinaryOutputBase(OutputBase):
         """
         raise NotImplementedError("Implement print_dwordx() in %r" % type(self))
 
-    def newline(self):
+    def newline(self, msg = "", prefix = "\t"):
         """
-        Output a seperator.
+        Output a line separator, prefixed with L{prefix}, C{"// "}, and the
+        L{msg}, if the latter is not empty.
+
+        @param msg: Optional message to output first.
+        @type  msg: C{str}
+
+        @param prefix: Additional white space in front of the comment.
+        @type  prefix: C{str}
         """
         raise NotImplementedError("Implement newline() in %r" % type(self))
 
     def comment(self, msg):
         """
-        Output a textual comment.
+        Output a textual comment at a line by itself.
+
+        @param msg: Comment message.
+        @type  msg: C{str}
+
+        @note: Only use if no bytes have been written to the current line.
         """
         raise NotImplementedError("Implement comment() in %r" % type(self))
 

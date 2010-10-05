@@ -78,7 +78,7 @@ class OutputGRF(output_base.BinaryOutputBase):
     def print_decimal(self, value, size):
         self.print_varx(value, size)
 
-    def newline(self):
+    def newline(self, msg = "", prefix = "\t"):
         pass
 
     def comment(self, msg):

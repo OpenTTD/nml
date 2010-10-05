@@ -58,7 +58,7 @@ class OutputNFO(output_base.BinaryOutputBase):
         if final_zero:
             self.print_bytex(0)
             # get_string_size already includes the final 0 byte
-            # but pritn_bytex also increases _byte_count, so decrease
+            # but print_bytex also increases _byte_count, so decrease
             # it here by one to correct it.
             self._byte_count -= 1
 
@@ -66,8 +66,10 @@ class OutputNFO(output_base.BinaryOutputBase):
         assert self._in_sprite
         self.file.write(str(value) + " ")
 
-    def newline(self):
-        self.file.write("\n")
+    def newline(self, msg = "", prefix = "\t"):
+        if msg != "": msg = prefix + "// " + msg
+        self.file.write(msg + "\n")
+
 
     def comment(self, msg):
         self.file.write("// " + msg + "\n")
