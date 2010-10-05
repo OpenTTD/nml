@@ -1,22 +1,16 @@
 import sys, os, codecs, optparse
-from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo
-from nml.actions import action2var, action8, sprite_count
+from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf
+from nml.actions import action2var, action8, sprite_count, real_sprite
 from nml.ast import general
+
+try:
+    import Image
+except ImportError:
+    pass
 
 developmode = False # Give 'nice' error message instead of a stack dump.
 
 version = version_info.get_version()
-
-OutputGRF = None
-def get_output_grf():
-    global OutputGRF
-    if OutputGRF: return OutputGRF
-    try:
-        from nml.output_grf import OutputGRF
-        return OutputGRF
-    except ImportError:
-        print "PIL (python-imaging) wasn't found, no support for writing grf files"
-        sys.exit(3)
 
 def parse_cli(argv):
     """
@@ -90,13 +84,13 @@ def main(argv):
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
     outputs = []
-    if opts.grf_filename: outputs.append(get_output_grf()(opts.grf_filename, opts.compress, opts.crop))
+    if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop))
     if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename))
     if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
-        if outext == '.grf': outputs.append(get_output_grf()(output, opts.compress, opts.crop))
+        if outext == '.grf': outputs.append(output_grf.OutputGRF(output, opts.compress, opts.crop))
         elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output))
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         else:
@@ -145,6 +139,16 @@ def nml(inputfile, output_debug, outputfiles):
             actions[i].resolve_tmp_storage()
         elif isinstance(actions[i], action8.Action8):
             has_action8 = True
+
+    sprite_files = set()
+    for action in actions:
+        if isinstance(action, real_sprite.RealSpriteAction):
+            if action.sprite.is_empty: continue
+            sprite_files.add(action.sprite.file.value)
+
+    if not Image and len(sprite_files) > 0:
+        print "PIL (python-imaging) wasn't found, no support for using graphics"
+        sys.exit(3)
 
     if has_action8:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions

@@ -1,7 +1,10 @@
-import Image
 import os
 from nml import generic, palette, output_base, lz77, grfstrings
 
+try:
+    import Image
+except ImportError:
+    pass
 
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
