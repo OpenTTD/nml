@@ -277,9 +277,13 @@ raw_palette_data = [
 #Convert palettes to strings for fast comparision
 palette_data = [''.join([chr(c) for c in pal]) for pal in raw_palette_data]
 
+palette_name = ["DOS", "WIN", "DOS_TOYLAND", "WIN_TOYLAND"]
+
 def validate_palette(image, filename):
     palette = image.palette.palette
     if len(palette) != 768:
         raise generic.ImageError("Invalid palette; does not contain 256 entries.", filename)
-    if palette not in palette_data:
-        raise generic.ImageError("Palette is not recognized as a valid palette.", filename)
+    for i, pal in enumerate(palette_data):
+        if pal != palette: continue
+        return palette_name[i]
+    raise generic.ImageError("Palette is not recognized as a valid palette.", filename)

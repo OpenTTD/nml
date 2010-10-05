@@ -1,6 +1,6 @@
 import sys, os, codecs, optparse
-from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf
-from nml.actions import action2var, action8, sprite_count, real_sprite
+from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, palette
+from nml.actions import action2var, action8, sprite_count, real_sprite, action14
 from nml.ast import general
 
 try:
@@ -149,6 +149,24 @@ def nml(inputfile, output_debug, outputfiles):
     if not Image and len(sprite_files) > 0:
         print "PIL (python-imaging) wasn't found, no support for using graphics"
         sys.exit(3)
+
+    used_palette = "ANY"
+    last_file = None
+    for f in sprite_files:
+        if not os.path.exists(f):
+            raise generic.ImageError("File doesn't exist", f)
+        im = Image.open(f)
+        if im.mode != "P":
+            raise generic.ImageError("image does not have a palette", f)
+        pal = palette.validate_palette(im, f)
+        if used_palette != "ANY" and used_palette != pal:
+            raise generic.ImageError("Image has '%s' palette, but \"%s\" has the '%s' palette" % (pal, last_file, used_palette), f)
+        last_file = f
+        used_palette = pal
+
+    palette_bytes = {"WIN": "W", "DOS": "D", "ANY": "A"}
+    if used_palette in palette_bytes:
+        actions = action14.PaletteAction(palette_bytes[used_palette]) + actions
 
     if has_action8:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions

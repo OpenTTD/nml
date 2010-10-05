@@ -108,6 +108,17 @@ class BinaryNode(Action14Node):
         file.print_varx(self.val, self.size)
         file.newline()
 
+class UsedPaletteNode(BinaryNode):
+    def __init__(self, pal):
+        BinaryNode.__init__(self, "PALS", 1)
+        self.pal = pal
+
+    def write(self, file):
+        self.write_type_id(file)
+        file.print_word(self.size)
+        file.print_string(self.pal, False, True)
+        file.newline()
+
 class SettingMaskNode(BinaryNode):
     def __init__(self, param_num, first_bit, num_bits):
         BinaryNode.__init__(self, "MASK", 3)
@@ -191,4 +202,10 @@ def param_desc_actions(params):
         param_num += 1
     if len(param_root.subnodes) > 0:
         root.subnodes.append(param_root)
+    return [Action14([root])]
+
+def PaletteAction(pal):
+    root = BranchNode("INFO")
+    pal_node = UsedPaletteNode(pal)
+    root.subnodes.append(pal_node)
     return [Action14([root])]
