@@ -94,7 +94,7 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
     actions = []
     start, length = 0, 0
     allow7, allow9 = True, True
-    for action in action_list:
+    for i, action in enumerate(action_list):
         if length == 0 and not action.skip_needed():
             actions.append(action)
             start += 1
