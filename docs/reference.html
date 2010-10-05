@@ -1031,30 +1031,33 @@ non_refittable_cargo_classes have no effect.
 <tr><td>callback_flags<td><td>HOUSE_CBF_XX with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
-<tr><td>animation_frames<td>0 ... 128<td>number of animation frams
+<tr><td>animation_frames<td>0 ... 128<td>number of animation frames
 <tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.
 <tr><td>building_class<td>0 .. 255<td>An arbitrary number. You can check for the presence of buildings of the same class when building new buildings or using animation
 </table>
 <h2><a name="property-industrytiles">Industry tiles</a></h2>
 <h2><a name="property-industries">Industries</a></h2>
 <h2><a name="property-cargos">Cargos</a></h2>
-Available cargo classes are:
+<p>Available cargo classes are listed in the following table. Cargos may be in
+more than one class. To combine multiple cargo classes, use the binary OR
+operator. For example, <code>CC_EXPRESS | CC_REFRIGERATED</code> is used for food.</p>
 <table class="t">
 <tr><th>name <th> type of cargo
 <tr><td>CC_NONE <td> No cargo
 <tr><td>CC_PASSENGERS<td> passengers, also tourists (ECS)
 <tr><td>CC_MAIL<td> mail
-<tr><td>CC_EXPRESS<td> express goods
+<tr><td>CC_EXPRESS<td> express goods, also tourists (ECS)
 <tr><td>CC_ARMOURED<td> valuables, diamonds, gold and alike
 <tr><td>CC_BULK<td> coal, ore, grain,...
 <tr><td>CC_PIECE_GOODS<td> containers, crates, livestock
 <tr><td>CC_LIQUID<td> oil, milk, water, ...
 <tr><td>CC_REFRIGERATED<td> food, milk, ...
-<tr><td>CC_HAZARDOUS<td> chemicals? uranium, ...
+<tr><td>CC_HAZARDOUS<td> chemicals?, uranium, ...
 <tr><td>CC_COVERED<td> grain, cement, fruit, ...
-<tr><td>CC_OVERSIZED<td> ./.
-<tr><td>CC_ALL_NORMAL<td> all except special classes like oversized and not yet defined ones
-<tr><td>CC_ALL<td> all cargo classes
+<tr><td>CC_OVERSIZED<td> vehicles, ...
+<tr><td>CC_SPECIAL<td> Special cargo, used for refit tricks. (e.g. regearing in NARS)
+<tr><td>CC_ALL_NORMAL<td> All cargo classes except CC_SPECIAL
+<tr><td>CC_ALL<td> All cargo classes
 </table>
 <h2><a name="property-airports">Airports</a></h2>
 <h2><a name="property-railtypes">Railtypes</a></h2>
