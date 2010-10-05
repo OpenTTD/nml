@@ -44,6 +44,10 @@ def two_byte_property(value, low_prop, high_prop):
     high_byte = ConstantNumeric(value.value >> 8)
     return [Action0Property(low_prop, low_byte, 1), Action0Property(high_prop, high_byte, 1)]
 
+def append_cargo_type(feature):
+    propnums = [0x15, 0x10, 0x0C]
+    return lambda value: [Action0Property(propnums[feature], ConstantNumeric(0xFF), 1)]
+
 general_veh_props = {
     'reliability_decay' : {'size': 1, 'num': 0x02},
     'vehicle_life' : {'size': 1, 'num': 0x03},
@@ -63,14 +67,13 @@ properties[0x00] = {
     'sprite_id' : {'size': 1, 'num': 0x12},
     'dual_headed' : {'size': 1, 'num': 0x13},
     'cargo_capacity' : {'size': 1, 'num': 0x14},
-    'cargo_type' : {'size': 1, 'num': 0x15},
     'weight' : {'custom_function': lambda x: two_byte_property(x, 0x16, 0x24), 'unit_type': 'weight'},
     'cost_factor' : {'size': 1, 'num': 0x17},
     'ai_engine_rank' : {'size': 1, 'num': 0x18},
     'engine_class' : {'size': 1, 'num': 0x19},
     'extra_power_per_wagon' : {'size': 2, 'num': 0x1B, 'unit_type': 'power'},
     'refit_cost' : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_types' : {'size': 4, 'num': 0x1D},
+    'refittable_cargo_types' : {'size': 4, 'num': 0x1D, 'append_function': append_cargo_type(0x00)},
     'callback_flags' : {'size': 1, 'num': 0x1E},
     'tractive_effort_coefficient' : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient' : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
@@ -80,8 +83,8 @@ properties[0x00] = {
     'bitmask_vehicle_info' : {'size': 1, 'num': 0x25},
     'retire_early' : {'size': 1, 'num': 0x26},
     'misc_flags' : {'size': 1, 'num': 0x27},
-    'refittable_cargo_classes' : {'size': 2, 'num': 0x28},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29},
+    'refittable_cargo_classes' : {'size': 2, 'num': 0x28, 'append_function': append_cargo_type(0x00)},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29, 'append_function': append_cargo_type(0x00)},
     'introduction_date' : {'size': 4, 'num': 0x2A},
 }
 properties[0x00].update(general_veh_props)
@@ -99,20 +102,19 @@ properties[0x01] = {
     'running_cost_base' : {'size': 4, 'num': 0x0A},
     'sprite_id' : {'size': 1, 'num': 0x0E},
     'cargo_capacity' : {'size': 1, 'num': 0x0F},
-    'cargo_type' : {'size': 1, 'num': 0x10},
     'cost_factor' : {'size': 1, 'num': 0x11},
     'sound_effect' : {'size': 1, 'num': 0x12},
     'power' : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': 0.1},
     'weight' : {'size': 1, 'num': 0x14, 'unit_type': 'weight'},
-    'refittable_cargo_types' : {'size': 4, 'num': 0x16},
+    'refittable_cargo_types' : {'size': 4, 'num': 0x16, 'append_function': append_cargo_type(0x01)},
     'callback_flags' : {'size': 1, 'num': 0x17},
     'tractive_effort_coefficient' : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
     'air_drag_coefficient' : {'size': 1, 'num': 0x19, 'unit_conversion': 255},
     'refit_cost' : {'size': 1, 'num': 0x1A},
     'retire_early' : {'size': 1, 'num': 0x1B},
     'misc_flags' : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_classes' : {'size': 2, 'num': 0x1D},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E},
+    'refittable_cargo_classes' : {'size': 2, 'num': 0x1D, 'append_function': append_cargo_type(0x01)},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E, 'append_function': append_cargo_type(0x01)},
     'introduction_date' : {'size': 4, 'num': 0x1F},
 }
 properties[0x01].update(general_veh_props)
@@ -122,19 +124,18 @@ properties[0x02] = {
     'is_refittable' : {'size': 1, 'num': 0x09},
     'cost_factor' : {'size': 1, 'num': 0x0A},
     'speed' : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': 7.1581952},
-    'cargo_type' : {'size': 1, 'num': 0x0C},
     'cargo_capacity' : {'size': 2, 'num': 0x0D},
     'running_cost_factor' : {'size': 1, 'num': 0x0F},
     'sound_effect' : {'size': 1, 'num': 0x10},
-    'refittable_cargo_types' : {'size': 4, 'num': 0x11},
+    'refittable_cargo_types' : {'size': 4, 'num': 0x11, 'append_function': append_cargo_type(0x02)},
     'callback_flags' : {'size': 1, 'num': 0x12},
     'refit_cost' : {'size': 1, 'num': 0x15},
     'ocean_speed_fraction' : {'size': 1, 'num': 0x14},
     'canal_speed_fraction' : {'size': 1, 'num': 0x15},
     'retire_early' : {'size': 1, 'num': 0x16},
     'misc_flags' : {'size': 1, 'num': 0x17},
-    'refittable_cargo_classes' : {'size': 2, 'num': 0x18},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
+    'refittable_cargo_classes' : {'size': 2, 'num': 0x18, 'append_function': append_cargo_type(0x02)},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19, 'append_function': append_cargo_type(0x02)},
     'introduction_date' : {'size': 4, 'num': 0x1A},
 }
 properties[0x02].update(general_veh_props)

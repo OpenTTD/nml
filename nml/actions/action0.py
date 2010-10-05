@@ -97,6 +97,9 @@ def parse_property(feature, name, value, id, unit):
         else:
             props = []
 
+    if 'append_function' in prop:
+        props.extend(prop['append_function'](value))
+
     return (props, action_list, mods, action_list_append)
 
 def parse_property_block(prop_list, feature, id):

@@ -896,7 +896,7 @@ Valid language IDs are
 <tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base running costs</td></tr>
 </table>
 
-<p>To determine whether your vehicle can be refitted to a certain cargo openttd uses the following table:</p>
+<p>To determine whether your vehicle can be refitted to a certain cargo, OpenTTD uses the following table:</p>
 <table class="t">
 <tr><th>Cargo matches refittable_cargo_classes</th><th>Cargo matches non_refittable_cargo_classes</th><th>Cargo in refittable_cargo_types</th><th>Result</th></tr>
 <tr><td>No</td><td>Doesn't matter</td><td>No</td><td>Not refittable</td></tr>
@@ -906,8 +906,12 @@ Valid language IDs are
 <tr><td>Yes</td><td>Yes</td><td>No</td><td>Not refittable</td></tr>
 <tr><td>Yes</td><td>Yes</td><td>Yes</td><td>Refittable</td></tr>
 </table>
-You should use refittable_cargo_classes and non_refittable_cargo_classes to decide to which cargos your vehicle is refittable, and only
-use refittable_cargo_types as a last resort to include/exclude some cargo type.
+<p>You should use refittable_cargo_classes and non_refittable_cargo_classes to
+decide to which cargos your vehicle is refittable, and only use
+refittable_cargo_types as a last resort to include/exclude some cargo type.</p>
+<p>Note that the default cargo cannot be selected explicitly. Instead it is
+automatically set to use the first refittable cargo, whenever one of the
+refitting properties is set.</p>
 
 <h2><a name="property-trains">Trains</a></h2>
 <table class="t">
@@ -931,7 +935,6 @@ to setting <tt>track_type</tt> to ELRL.
 <tr><td> running_cost_base</td><td>RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
 <tr><td> dual_headed<td> [0 | 1]<td>1 = dual_headed, otherwise normal engine
 <tr><td> cargo_capacity<td> (cargo units)<td>
-<tr><td> cargo_type<td> (cargo label)<td> use one from your cargo translation table
 <tr><td> weight<td> 0 .. 1279 t (mass units)<td>
 <tr><td> ai_engine_rank<td> 0 ... 255<td>TTDPatch only: Higher values make the engine for the TTDPatch AI more attractive
 <tr><td> engine_class<td> ENGINE_CLASS_XXX<td>XXX=[STEAM | DIESEL | ELECTRIC | MONORAIL | MAGLEV]
@@ -963,7 +966,6 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td></td></tr>
 <tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr>
 <tr><td> cargo_capacity</td><td>               0 ... 255</td><td></td></tr>
-<tr><td> cargo_type</td><td>                   (cargo label)</td><td>use one from your cargo translation table</td></tr>
 <tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>See available <a href="#refs-sounds">sound effects</a>.</td></tr>
 
 </table>
@@ -984,7 +986,6 @@ non_refittable_cargo_classes have no effect.
 <tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="#refs-sounds">sound effects</a>.
 <tr><td> ocean_speed_fraction<td>0 ... 1<td> fraction of base speed on ocean tiles
 <tr><td> canal_speed_fraction<td>0 ... 1<td> fraction of base speed on canal tiles
-<tr><td> cargo_type<td> (cargo label)<td> use one from your cargo translation table
 
 </table>
 <h2><a name="property-planes">Planes</a></h2>
