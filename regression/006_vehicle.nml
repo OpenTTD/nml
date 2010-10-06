@@ -60,7 +60,6 @@ item(FEAT_ROADVEHS, foster_express_tram, 89) {
 		refittable_cargo_classes:     CC_PASSENGERS | CC_MAIL;
 		non_refittable_cargo_classes: CC_NONE;                  // Disallow other cargos
 		misc_flags:                   ROADVEH_FLAG_TRAM;        // This is a tram
-		cargo_type:                   PASS;
 	}
 	graphics {
 		foster_express_group;

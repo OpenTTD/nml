@@ -6,81 +6,87 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d38 
+0 * 4 \d39 
 
-1 * 19 14 "C" "INFO" 
+1 * 16 14 "C" "INFO" 
+"B" "PALS" \w1 "W" 
+00 
+00 
+2 * 19 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
 00 
 00 
-2 * 16 14 "C" "INFO" 
+3 * 16 14 "C" "INFO" 
 "B" "NPAR" \w1 00 
 00 
 00 
-3 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
-4 * 6 01 00 \b1 FF \wx0008 
+4 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+5 * 6 01 00 \b1 FF \wx0008 
 
-5 opengfx_trains_start.pcx 142 112 01 22 8 -3 -10 
-6 opengfx_trains_start.pcx 158 112 01 15 21 -14 -7 
-7 opengfx_trains_start.pcx 190 112 01 12 31 -16 -8 
-8 opengfx_trains_start.pcx 238 112 01 16 21 -6 -7 
-9 opengfx_trains_start.pcx 270 112 01 24 8 -3 -10 
-10 opengfx_trains_start.pcx 286 112 01 16 21 -15 -6 
-11 opengfx_trains_start.pcx 318 112 01 12 32 -16 -8 
-12 opengfx_trains_start.pcx 366 112 01 15 21 -6 -7 
+6 opengfx_trains_start.pcx 142 112 01 22 8 -3 -10 
+7 opengfx_trains_start.pcx 158 112 01 15 21 -14 -7 
+8 opengfx_trains_start.pcx 190 112 01 12 31 -16 -8 
+9 opengfx_trains_start.pcx 238 112 01 16 21 -6 -7 
+10 opengfx_trains_start.pcx 270 112 01 24 8 -3 -10 
+11 opengfx_trains_start.pcx 286 112 01 16 21 -15 -6 
+12 opengfx_trains_start.pcx 318 112 01 12 32 -16 -8 
+13 opengfx_trains_start.pcx 366 112 01 15 21 -6 -7 
 
 // Name: turbotrain_engine_group
-13 * 9 02 00 FE \b1 \b1 
+14 * 9 02 00 FE \b1 \b1 
 \w0 
 \w0 
 
-14 * 6 01 00 \b1 FF \wx0008 
+15 * 6 01 00 \b1 FF \wx0008 
 
-15 arctic_railwagons.pcx 0 0 01 24 8 -3 -12 
-16 arctic_railwagons.pcx 16 0 01 17 22 -14 -9 
-17 arctic_railwagons.pcx 48 0 01 12 32 -16 -8 
-18 arctic_railwagons.pcx 96 0 01 17 22 -6 -9 
-19 arctic_railwagons.pcx 0 0 01 24 8 -3 -12 
-20 arctic_railwagons.pcx 16 0 01 17 22 -14 -9 
-21 arctic_railwagons.pcx 48 0 01 12 32 -16 -8 
-22 arctic_railwagons.pcx 96 0 01 17 22 -6 -9 
+16 arctic_railwagons.pcx 0 0 01 24 8 -3 -12 
+17 arctic_railwagons.pcx 16 0 01 17 22 -14 -9 
+18 arctic_railwagons.pcx 48 0 01 12 32 -16 -8 
+19 arctic_railwagons.pcx 96 0 01 17 22 -6 -9 
+20 arctic_railwagons.pcx 0 0 01 24 8 -3 -12 
+21 arctic_railwagons.pcx 16 0 01 17 22 -14 -9 
+22 arctic_railwagons.pcx 48 0 01 12 32 -16 -8 
+23 arctic_railwagons.pcx 96 0 01 17 22 -6 -9 
 
 // Name: normal_passenger_group
-23 * 9 02 00 FD \b1 \b1 
+24 * 9 02 00 FD \b1 \b1 
 \w0 
 \w0 
 
-24 * 6 01 00 \b1 FF \wx0008 
+25 * 6 01 00 \b1 FF \wx0008 
 
-25 opengfx_trains_start.pcx 142 139 01 21 8 -3 -10 
-26 opengfx_trains_start.pcx 158 139 01 15 20 -13 -7 
-27 opengfx_trains_start.pcx 190 139 01 10 28 -12 -6 
-28 opengfx_trains_start.pcx 238 139 01 16 20 -6 -7 
-29 opengfx_trains_start.pcx 270 139 01 21 8 -3 -10 
-30 opengfx_trains_start.pcx 286 139 01 15 20 -15 -6 
-31 opengfx_trains_start.pcx 318 139 01 10 28 -16 -6 
-32 opengfx_trains_start.pcx 366 139 01 16 20 -6 -7 
+26 opengfx_trains_start.pcx 142 139 01 21 8 -3 -10 
+27 opengfx_trains_start.pcx 158 139 01 15 20 -13 -7 
+28 opengfx_trains_start.pcx 190 139 01 10 28 -12 -6 
+29 opengfx_trains_start.pcx 238 139 01 16 20 -6 -7 
+30 opengfx_trains_start.pcx 270 139 01 21 8 -3 -10 
+31 opengfx_trains_start.pcx 286 139 01 15 20 -15 -6 
+32 opengfx_trains_start.pcx 318 139 01 10 28 -16 -6 
+33 opengfx_trains_start.pcx 366 139 01 16 20 -6 -7 
 
 // Name: turbotrain_passenger_group
-33 * 9 02 00 FC \b1 \b1 
+34 * 9 02 00 FC \b1 \b1 
 \w0 
 \w0 
 
-34 * 11 00 00 \b2 01 FF \wx0014 
+35 * 11 00 00 \b2 01 FF \wx0014 
 12 FD 
 27 04 
 
-35 * 9 03 00 01 FF \wx0014 \b0 
+36 * 9 03 00 01 FF \wx0014 \b0 
 \wx00FE 
 
-36 * 9 03 00 81 FF \wx001B \b0 
+37 * 9 03 00 81 FF \wx001B \b0 
 \wx00FC 
 
-37 * 17 00 00 \b4 01 FF \wx001B 
+38 * 21 00 00 \b6 01 FF \wx001B 
 12 FD 
 27 04 
 28 \wx0001 
+15 FF 
 29 \wx0000 
+15 FF 
 
-38 * 9 03 00 01 FF \wx001B \b0 
+39 * 9 03 00 01 FF \wx001B \b0 
 \wx00FD 
 

@@ -6,7 +6,11 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 3 11 \w2 
-1 ** beef.wav
-2 * 8 FE 00 \dx87654321 \wx0003 
+0 * 16 14 "C" "INFO" 
+"B" "PALS" \w1 "A" 
+00 
+00 
+1 * 3 11 \w2 
+2 ** beef.wav
+3 * 8 FE 00 \dx87654321 \wx0003 
 

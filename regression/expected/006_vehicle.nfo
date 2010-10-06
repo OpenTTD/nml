@@ -6,46 +6,50 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d21 
+0 * 4 \d22 
 
-1 * 19 14 "C" "INFO" 
+1 * 16 14 "C" "INFO" 
+"B" "PALS" \w1 "W" 
+00 
+00 
+2 * 19 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
 00 
 00 
-2 * 16 14 "C" "INFO" 
+3 * 16 14 "C" "INFO" 
 "B" "NPAR" \w1 00 
 00 
 00 
-3 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
-4 * 32 00 08 \b1 06 FF \wx0000 
+4 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+5 * 32 00 08 \b1 06 FF \wx0000 
 09 "PASS" "MAIL" "GOOD" "IORE" "GOLD" 
 "FOOD" 
 
-5 * 6 01 01 \b1 FF \wx0008 
+6 * 6 01 01 \b1 FF \wx0008 
 
-6 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
-7 opengfx_generic_trams1.pcx 64 56 01 19 20 -14 -5 
-8 opengfx_generic_trams1.pcx 96 56 01 15 28 -14 -8 
-9 opengfx_generic_trams1.pcx 144 56 01 19 20 -6 -7 
-10 opengfx_generic_trams1.pcx 176 56 01 18 8 -3 -10 
-11 opengfx_generic_trams1.pcx 192 56 01 19 20 -14 -9 
-12 opengfx_generic_trams1.pcx 224 56 01 15 28 -14 -8 
-13 opengfx_generic_trams1.pcx 272 56 01 19 20 -6 -7 
+7 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
+8 opengfx_generic_trams1.pcx 64 56 01 19 20 -14 -5 
+9 opengfx_generic_trams1.pcx 96 56 01 15 28 -14 -8 
+10 opengfx_generic_trams1.pcx 144 56 01 19 20 -6 -7 
+11 opengfx_generic_trams1.pcx 176 56 01 18 8 -3 -10 
+12 opengfx_generic_trams1.pcx 192 56 01 19 20 -14 -9 
+13 opengfx_generic_trams1.pcx 224 56 01 15 28 -14 -8 
+14 opengfx_generic_trams1.pcx 272 56 01 19 20 -6 -7 
 
 // Name: foster_express_group
-14 * 9 02 01 FE \b1 \b1 
+15 * 9 02 01 FE \b1 \b1 
 \w0 
 \w0 
 
-15 * 9 0D 00 \D= FF 00 \dx00000009 
+16 * 9 0D 00 \D= FF 00 \dx00000009 
 
-16 * 9 0D 40 \D* 00 FF \dx00000005 
+17 * 9 0D 40 \D* 00 FF \dx00000005 
 
-17 * 7 06 
+18 * 7 06 
 40 01 FF \wx002E 
 FF 
 
-18 * 57 00 01 \b21 01 FF \wx0059 
+19 * 59 00 01 \b22 01 FF \wx0059 
 06 03 
 04 28 
 03 1E 
@@ -64,14 +68,15 @@ FF
 19 80 
 0F 00 
 1D \wx0003 
+10 FF 
 1E \wx0000 
+10 FF 
 1C 01 
-10 00 
 
-19 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
+20 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
 
-20 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00 
+21 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00 
 
-21 * 9 03 01 01 FF \wx0059 \b0 
+22 * 9 03 01 01 FF \wx0059 \b0 
 \wx00FE 
 

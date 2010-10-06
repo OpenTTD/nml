@@ -6,17 +6,21 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 9 0B 00 1F 02 "zorg" 00 
+0 * 16 14 "C" "INFO" 
+"B" "PALS" \w1 "A" 
+00 
+00 
+1 * 9 0B 00 1F 02 "zorg" 00 
 
-1 * 9 0B 00 7F 02 "care" 00 
+2 * 9 0B 00 7F 02 "care" 00 
 
-2 * 9 0D 40 \D= FF 00 \dx0000000E 
+3 * 9 0D 40 \D= FF 00 \dx0000000E 
 
-3 * 9 0D 42 \D* 02 FF \dx0000000C 
+4 * 9 0D 42 \D* 02 FF \dx0000000C 
 
-4 * 5 0D 41 \D+ 42 01 
+5 * 5 0D 41 \D+ 42 01 
 
-5 * 66 0B 03 1F FF "De wissels zijn bevroren, onze excuses voor het ongemak." 00 "42" 00 40 41 
+6 * 66 0B 03 1F FF "De wissels zijn bevroren, onze excuses voor het ongemak." 00 "42" 00 40 41 
 
-6 * 42 0B 03 7F FF "Something bad (tm) has happened." 00 "42" 00 40 41 
+7 * 42 0B 03 7F FF "Something bad (tm) has happened." 00 "42" 00 40 41 
 
