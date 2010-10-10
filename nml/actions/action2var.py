@@ -2,6 +2,30 @@ from nml.actions import action2, action6, actionD, action2var_variables, action4
 from nml import expression, generic, global_constants, nmlop, unit
 
 class Action2Var(action2.Action2):
+    """
+    Variational Action2. This is the NFO equivalent of a switch-block in NML.
+    It computes a single integer from one or more variables and picks it's
+    return value based on the result of the computation. The return value can
+    be either a 15bit integer or a reference to another action2.
+
+    @ivar type_byte: The size (byte, word, double word) and access type (own 
+                     object or related object). 0x89 (own object, double word)
+                     and 0x8A (related object, double word) and the only
+                     supported values.
+    @type type_byte: C{int}
+
+    @ivar tmp_locations: List of address in the temporary storage that are free
+                         to be used in this varaction2.
+    @type tmp_locations: C{list} of C{int}
+
+    @ivar ranges: List of return value ranges. Each range contains a minimum and
+                  a maximum value and a return value. The list is checked in order,
+                  if the result of the computation is between the miminum and
+                  maximum (inclusive) of one range the result of that range is
+                  returned. The result can be either an integer of another
+                  action2.
+    @ivar ranges: C{list} of L{SwitchRange}
+    """
     def __init__(self, feature, name, type_byte):
         action2.Action2.__init__(self, feature, name)
         self.type_byte = type_byte
