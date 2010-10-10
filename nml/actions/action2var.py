@@ -2,10 +2,9 @@ from nml.actions import action2, action6, actionD, action2var_variables, action4
 from nml import expression, generic, global_constants, nmlop, unit
 
 class Action2Var(action2.Action2):
-    def __init__(self, feature, name, type_byte, varsize):
+    def __init__(self, feature, name, type_byte):
         action2.Action2.__init__(self, feature, name)
         self.type_byte = type_byte
-        self.varsize = varsize
         #0x00 - 0x7F: available to user
         #0x80 - 0x85: used for production CB
         #0x86 - 0x100: available as temp. registers
@@ -39,12 +38,13 @@ class Action2Var(action2.Action2):
 
     def write(self, file):
         #type_byte, num_ranges, default_result = 4
-        size = 4 + (2 + 2 * self.varsize) * len(self.ranges)
+        #2 bytes for the result, 8 bytes for the min/max range.
+        size = 4 + (2 + 8) * len(self.ranges)
         for var in self.var_list:
             if isinstance(var, nmlop.Operator):
                 size += 1
             else:
-                size += var.get_size(self.varsize)
+                size += var.get_size()
 
         self.write_sprite_start(file, size)
         file.print_bytex(self.type_byte)
@@ -54,13 +54,13 @@ class Action2Var(action2.Action2):
                 file.newline()
                 file.print_bytex(var.act2_num, var.act2_str)
             else:
-                var.write(file, self.varsize)
+                var.write(file, 4)
         file.print_byte(len(self.ranges))
         file.newline()
         for r in self.ranges:
             file.print_wordx(r.result)
-            file.print_varx(r.min.value, self.varsize)
-            file.print_varx(r.max.value, self.varsize)
+            file.print_varx(r.min.value, 4)
+            file.print_varx(r.max.value, 4)
             file.newline()
         file.print_wordx(self.default_result)
         file.newline()
@@ -95,11 +95,11 @@ class VarAction2Var(object):
                 #no div or add, just divide by 1
                 file.print_varx(1, size)
 
-    def get_size(self, varsize):
-        #var number [+ parameter] + shift num + and mask
-        size = 2 + varsize
+    def get_size(self):
+        #var number (1) [+ parameter (1)] + shift num (1) + and mask (4) [+ add (4) + div/mod (4)]
+        size = 6
         if self.parameter is not None: size += 1
-        if self.add is not None or self.div is not None or self.mod is not None: size += varsize * 2
+        if self.add is not None or self.div is not None or self.mod is not None: size += 8
         return size
 
     def supported_by_actionD(self, raise_error):
@@ -111,8 +111,8 @@ class VarAction2StoreTempVar(VarAction2Var):
         VarAction2Var.__init__(self, 0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
         #mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
 
-    def get_size(self, varsize):
-        return 2 + varsize
+    def get_size(self):
+        return 6
 
 def get_mask(size):
     if size == 1: return 0xFF
@@ -130,8 +130,8 @@ class VarAction2LoadTempVar(VarAction2Var):
         self.mask = expression.ConstantNumeric(get_mask(size))
         VarAction2Var.write(self, file, size)
 
-    def get_size(self, varsize):
-        return 3 + varsize
+    def get_size(self):
+        return 7
 
 class Modification(object):
     def __init__(self, param, size, offset):
@@ -180,7 +180,7 @@ def pow2(expr):
     expr = expression.BinOp(nmlop.ROT_RIGHT, expression.ConstantNumeric(1), expr)
     return expr
 
-def parse_varaction2_expression(expr, varsize):
+def parse_varaction2_expression(expr):
     extra_actions = []
     mods = []
     var_list = []
@@ -247,7 +247,7 @@ def parse_varaction2_expression(expr, varsize):
 
     elif isinstance(expr, expression.TernaryOp) and not expr.supported_by_actionD(False):
         guard = expression.Boolean(expr.guard).reduce()
-        actions, mods, var_list, var_list_size = parse_varaction2_expression(guard, varsize)
+        actions, mods, var_list, var_list_size = parse_varaction2_expression(guard)
         extra_actions.extend(actions)
         guard_var = VarAction2StoreTempVar()
         inverted_guard_var = VarAction2StoreTempVar()
@@ -260,7 +260,7 @@ def parse_varaction2_expression(expr, varsize):
         var_list.append(inverted_guard_var)
         var_list.append(nmlop.VAL2)
         # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
-        var_list_size += 4 + guard_var.get_size(varsize) + inverted_guard_var.get_size(varsize) + var.get_size(varsize)
+        var_list_size += 4 + guard_var.get_size() + inverted_guard_var.get_size() + var.get_size()
         expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
         expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
         expr = expression.BinOp(nmlop.ADD, expr1, expr2)
@@ -268,13 +268,13 @@ def parse_varaction2_expression(expr, varsize):
     if isinstance(expr, expression.ConstantNumeric):
         var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expr)
         var_list.append(var)
-        var_list_size += var.get_size(varsize)
+        var_list_size += var.get_size()
 
     elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
-        mods.append(Modification(expr.num.value, varsize, var_list_size + 2))
+        mods.append(Modification(expr.num.value, 4, var_list_size + 2))
         var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
         var_list.append(var)
-        var_list_size += var.get_size(varsize)
+        var_list_size += var.get_size()
         target = expression.ConstantNumeric(0)
 
     elif isinstance(expr, expression.Variable):
@@ -285,13 +285,13 @@ def parse_varaction2_expression(expr, varsize):
         var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
         var.add, var.div, var.mod = expr.add, expr.div, expr.mod
         var_list.append(var)
-        var_list_size += var.get_size(varsize)
+        var_list_size += var.get_size()
 
     elif expr.supported_by_actionD(False):
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
         extra_actions.extend(tmp_param_actions)
         num = expression.ConstantNumeric(tmp_param)
-        tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expression.Parameter(num), varsize)
+        tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expression.Parameter(num))
         extra_actions.extend(tmp_actions)
         for mod in tmp_mods:
             mod.offset += var_list_size
@@ -314,7 +314,7 @@ def parse_varaction2_expression(expr, varsize):
         else:
             #The expression is so complex we need to compute it first, store the
             #result and load it back later.
-            tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr2, varsize)
+            tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr2)
             extra_actions.extend(tmp_actions)
             for mod in tmp_mods:
                 mod.offset += var_list_size
@@ -325,11 +325,11 @@ def parse_varaction2_expression(expr, varsize):
             var_list.append(tmp_var)
             var_list.append(nmlop.VAL2)
             #the +2 is for both operators
-            var_list_size += tmp_var_list_size + 2 + tmp_var.get_size(varsize)
+            var_list_size += tmp_var_list_size + 2 + tmp_var.get_size()
             expr2 = VarAction2LoadTempVar(tmp_var)
 
         #parse expr1
-        tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr1, varsize)
+        tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr1)
         extra_actions.extend(tmp_actions)
         for mod in tmp_mods:
             mod.offset += var_list_size
@@ -342,9 +342,9 @@ def parse_varaction2_expression(expr, varsize):
 
         if isinstance(expr2, VarAction2LoadTempVar):
             var_list.append(expr2)
-            var_list_size += expr2.get_size(varsize)
+            var_list_size += expr2.get_size()
         else:
-            tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr2, varsize)
+            tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr2)
             #it can be constant, parameter or variable
             assert len(tmp_var_list) == 1 or expr.op == nmlop.VAL2
             extra_actions.extend(tmp_actions)
@@ -361,7 +361,7 @@ def parse_varaction2_expression(expr, varsize):
     return (extra_actions, mods, var_list, var_list_size)
 
 def make_return_varact2(switch_block):
-    act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89, 4)
+    act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89)
     act.var_list = [VarAction2Var(0x1C, expression.ConstantNumeric(0), expression.ConstantNumeric(0xFFFFFFFF))]
     act.default_result = expression.Identifier('CB_FAILED', switch_block.pos)
     return act
@@ -400,10 +400,9 @@ def parse_varaction2(switch_block):
     action6.free_parameters.save()
     act6 = action6.Action6()
     return_action = None
-    varsize = 4
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
     if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
-    varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range, varsize)
+    varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range)
 
     func60x = lambda name, value: expression.FunctionPtr(name, parse_60x_var, value)
     expr = switch_block.expr.reduce(global_constants.const_list + \
@@ -413,7 +412,7 @@ def parse_varaction2(switch_block):
 
     offset = 4 #first var
 
-    action_list, mods, var_list, var_list_size = parse_varaction2_expression(expr, varsize)
+    action_list, mods, var_list, var_list_size = parse_varaction2_expression(expr)
     for mod in mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = var_list
@@ -439,7 +438,7 @@ def parse_varaction2(switch_block):
         elif isinstance(r.result, expression.ConstantNumeric):
             range_result = r.result
         elif isinstance(r.result, expression.Parameter) and isinstance(r.result.num, expression.ConstantNumeric):
-            act6.modify_bytes(r.result.num.value, varsize, offset)
+            act6.modify_bytes(r.result.num.value, 4, offset)
             range_result = expression.ConstantNumeric(0)
         elif isinstance(r.result, expression.String):
             str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, r.result)
@@ -462,16 +461,16 @@ def parse_varaction2(switch_block):
         elif isinstance(r.min, expression.ConstantNumeric):
             range_min = r.min
         elif isinstance(r.min, expression.Parameter) and isinstance(r.min.num, expression.ConstantNumeric):
-            act6.modify_bytes(r.min.num.value, varsize, offset)
+            act6.modify_bytes(r.min.num.value, 4, offset)
             range_min = expression.ConstantNumeric(0)
             check_range = False
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.min)
             action_list.extend(tmp_param_actions)
-            act6.modify_bytes(tmp_param, varsize, offset)
+            act6.modify_bytes(tmp_param, 4, offset)
             range_min = expression.ConstantNumeric(0)
             check_range = False
-        offset += varsize
+        offset += 4
 
 
         if r.unit:
@@ -482,16 +481,16 @@ def parse_varaction2(switch_block):
         elif isinstance(r.max, expression.ConstantNumeric):
             range_max = r.max
         elif isinstance(r.max, expression.Parameter) and isinstance(r.max.num, expression.ConstantNumeric):
-            act6.modify_bytes(r.max.num.value, varsize, offset)
+            act6.modify_bytes(r.max.num.value, 4, offset)
             range_max = expression.ConstantNumeric(0)
             check_range = False
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.max)
             action_list.extend(tmp_param_actions)
-            act6.modify_bytes(tmp_param, varsize, offset)
+            act6.modify_bytes(tmp_param, 4, offset)
             range_max = expression.ConstantNumeric(0)
             check_range = False
-        offset += varsize
+        offset += 4
 
         range_overlap = False
         if check_range:
@@ -533,7 +532,7 @@ def parse_varaction2(switch_block):
     elif isinstance(default, expression.ConstantNumeric):
         pass
     elif isinstance(default, expression.Parameter) and isinstance(default.num, expression.ConstantNumeric):
-        act6.modify_bytes(default.num.value, varsize, offset)
+        act6.modify_bytes(default.num.value, 4, offset)
         default = expression.ConstantNumeric(0)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(default)
