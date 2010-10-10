@@ -1,23 +1,6 @@
 from nml.actions import action2, action6, actionD, action2var_variables, action4
 from nml import expression, generic, global_constants, nmlop, unit
 
-class Action2Operator(object):
-    ADD   = r'\2+'
-    SUB   = r'\2-'
-    MUL   = r'\2*'
-    AND   = r'\2&'
-    OR    = r'\2|'
-    XOR   = r'\2^'
-    DIVU  = r'\2u/'
-    DIVS  = r'\2/'
-    MODU  = r'\2u%'
-    MODS  = r'\2%'
-    MIN   = r'\2<'
-    MAX   = r'\2>'
-    VAL2  = r'\2r'
-    STO_TMP = r'\2sto'
-    STO_PERM = r'10'
-
 class Action2Var(action2.Action2):
     def __init__(self, feature, name, type_byte, varsize):
         action2.Action2.__init__(self, feature, name)
