@@ -10,12 +10,16 @@
 "B" "PALS" \w1 "A" 
 00 
 00 
+// param[64] = param[0]
 1 * 5 0D 40 \D= 00 00 
 
+// param[65] = (param[64] None -8)
 2 * 9 0D 41 \Du<< 40 FF \dxFFFFFFF8 
 
+// param[66] = (param[64] None -16)
 3 * 9 0D 42 \Du<< 40 FF \dxFFFFFFF0 
 
+// param[67] = (param[64] None -24)
 4 * 9 0D 43 \Du<< 40 FF \dxFFFFFFE8 
 
 5 * 22 06 

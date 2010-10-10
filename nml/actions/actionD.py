@@ -34,6 +34,13 @@ class ActionD(base_action.BaseAction):
     def write(self, file):
         size = 5
         if self.data is not None: size += 4
+
+        #print the statement for easier debugging
+        str1 = "param[%s]" % self.param1 if self.param1.value != 0xFF else str(self.data)
+        str2 = "param[%s]" % self.param2 if self.param2.value != 0xFF else str(self.data)
+        str_total = self.op.to_string(str1, str2) if self.op != nmlop.ASSIGN else str1
+        file.comment("param[%s] = %s" % (self.target, str_total))
+
         file.start_sprite(size)
         file.print_bytex(0x0D)
         self.target.write(file, 1)
