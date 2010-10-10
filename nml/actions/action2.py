@@ -20,6 +20,9 @@ class Action2(base_action.BaseAction):
 
     @ivar id: Number of this action2.
     @type id: C{int}, or C{None} if no number is allocated yet.
+
+    @ivar references: All Action2's that are references by this Action2.
+    @type references: C{set}
     """
     def __init__(self, feature, name):
         global action2_map
@@ -31,6 +34,7 @@ class Action2(base_action.BaseAction):
         self.name = name
         self.num_refs = 0
         self.id = None
+        self.references = set()
 
     def prepare_output(self):
         global free_action2_ids
@@ -51,6 +55,18 @@ class Action2(base_action.BaseAction):
 
     def skip_action9(self):
         return False
+
+    def remove_tmp_location(self, location):
+        """
+        Recursively remove a location from the list of available temporary
+        storage locations. It is not only removed from the the list of the
+        current Action2Var but also from all Action2Var it calls.
+        """
+        if location not in self.tmp_locations: return
+        self.tmp_locations.remove(location)
+        for act2 in self.references:
+            if isinstance(act2, Action2Var):
+                act2.remove_tmp_location(location)
 
 def add_ref(name, pos):
     global action2_map

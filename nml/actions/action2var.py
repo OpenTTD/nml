@@ -9,17 +9,23 @@ class Action2Var(action2.Action2):
         #0x80 - 0x85: used for production CB
         #0x86 - 0x100: available as temp. registers
         self.tmp_locations = range(0x86, 0x100)
-        self.references = []
         self.ranges = []
 
+    def remove_tmp_location(self, location):
+        #if we already removed the location from the list of available
+        #locations in this Action2Var, we also removed it from all
+        #referenced action2's.
+        if location not in self.tmp_locations: return
+        self.tmp_locations.remove(location)
+        #Remove it also from all referenced action2's.
+        action2.Action2.remove_tmp_location(self, location)
+
     def resolve_tmp_storage(self):
-        self.references = set(self.references)
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):
-                var.mask = expression.ConstantNumeric(self.tmp_locations.pop())
-                for act2 in self.references:
-                    if isinstance(act2, Action2Var) and var.mask.value in act2.tmp_locations:
-                        act2.tmp_locations.remove(var.mask.value)
+                location = self.tmp_locations(0)
+                self.remove_tmp_location(location)
+                var.mask = expression.ConstantNumeric(location)
 
     def prepare_output(self):
         action2.Action2.prepare_output(self)
@@ -428,12 +434,12 @@ def parse_varaction2(switch_block):
             if return_action is None: return_action = make_return_varact2(switch_block)
             act2 = action2.add_ref(return_action.name, switch_block.pos)
             assert return_action == act2
-            varaction2.references.append(act2)
+            varaction2.references.add(act2)
             range_result = expression.Identifier(return_action.name, switch_block.pos)
         elif isinstance(r.result, expression.Identifier):
             if r.result.value != 'CB_FAILED':
                 act2 = action2.add_ref(r.result.value, r.result.pos)
-                varaction2.references.append(act2)
+                varaction2.references.add(act2)
             range_result = r.result
         elif isinstance(r.result, expression.ConstantNumeric):
             range_result = r.result
@@ -523,12 +529,12 @@ def parse_varaction2(switch_block):
             if return_action is None: return_action = make_return_varact2(switch_block)
             act2 = action2.add_ref(return_action.name, switch_block.pos)
             assert act2 == return_action
-            varaction2.references.append(act2)
+            varaction2.references.add(act2)
             default = expression.Identifier(return_action.name, switch_block.pos)
     elif isinstance(default, expression.Identifier):
         if default.value != 'CB_FAILED':
             act2 = action2.add_ref(default.value, default.pos)
-            varaction2.references.append(act2)
+            varaction2.references.add(act2)
     elif isinstance(default, expression.ConstantNumeric):
         pass
     elif isinstance(default, expression.Parameter) and isinstance(default.num, expression.ConstantNumeric):
