@@ -5,8 +5,8 @@ free_labels = free_number_list.FreeNumberList(range(0xFF, 0x0F, -1))
 free_labels.save() # FreeNumberList needs at least one call to save before the first pop
 
 class SkipAction(base_action.BaseAction):
-    def __init__(self, feature, var, varsize, condtype, value, label):
-        self.feature = feature
+    def __init__(self, action_type, var, varsize, condtype, value, label):
+        self.action_type = action_type
         self.label = label
         self.var = var
         self.varsize = varsize
@@ -17,7 +17,7 @@ class SkipAction(base_action.BaseAction):
     def write(self, file):
         size = 5 + self.varsize
         file.start_sprite(size)
-        file.print_bytex(self.feature)
+        file.print_bytex(self.action_type)
         file.print_bytex(self.var)
         file.print_bytex(self.varsize)
         file.print_bytex(self.condtype[0], self.condtype[1])
@@ -27,14 +27,14 @@ class SkipAction(base_action.BaseAction):
         file.end_sprite()
 
     def skip_action7(self):
-        return self.feature == 7
+        return self.action_type == 7
 
     def skip_action9(self):
-        return self.feature == 9 or self.label == 0
+        return self.action_type == 9 or self.label == 0
 
 class UnconditionalSkipAction(SkipAction):
-    def __init__(self, feature, label):
-        SkipAction.__init__(self, feature, 0x9A, 1, (0, r'\71'), 0, label)
+    def __init__(self, action_type, label):
+        SkipAction.__init__(self, action_type, 0x9A, 1, (0, r'\71'), 0, label)
 
 def op_to_cond_op(op):
     #The operators are reversed as we want to skip if the expression is true
@@ -114,14 +114,14 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
             continue
         # neither action7 nor action9 can be used. add all
         # previous actions to the list and start a new block
-        feature = 7 if allow7 else 9
+        action_type = 7 if allow7 else 9
         if length < 0x10:
             target = length
             label = None
         else:
             target = free_labels.pop()
             label = action10.Action10(target)
-        actions.append(SkipAction(feature, param, value_size, condtype, value, target))
+        actions.append(SkipAction(action_type, param, value_size, condtype, value, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
         start = i
@@ -129,14 +129,14 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
         allow7, allow9 = action.skip_action7(), action.skip_action9()
 
     if length > 0:
-        feature = 7 if allow7 else 9
+        action_type = 7 if allow7 else 9
         if length < 0x10:
             target = length
             label = None
         else:
             target = free_labels.pop()
             label = action10.Action10(target)
-        actions.append(SkipAction(feature, param, value_size, condtype, value, target))
+        actions.append(SkipAction(action_type, param, value_size, condtype, value, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
     return actions
