@@ -131,7 +131,7 @@ class ParameterSetting(object):
             self.max_val = value.reduce_constant()
         elif name == 'def_value':
             self.def_val = value.reduce_constant()
-            if self.type == 'bool' and self.def_val != 0 and self.def_val != 1:
+            if self.type == 'bool' and self.def_val.value != 0 and self.def_val.value != 1:
                 raise generic.ScriptError("setting-def_value must be either 0 or 1 for 'bool' settings", value.pos)
         else:
             raise generic.ScriptError("Unknown setting-property " + name, value.pos)
