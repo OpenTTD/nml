@@ -3,6 +3,27 @@ from nml.actions import base_action, action6
 import nml
 
 class ActionD(base_action.BaseAction):
+    """
+    ActionD class
+    General procedure: target = param1 op param2
+    If one of the params is 0xFF, the value of 'data' is read instead.
+
+    @ivar target: Number of the target parameter
+    @ivar target: L{ConstantNumeric}
+
+    @ivar param1: Paramter number of the first operand
+    @type param1: L{ConstantNumeric}
+
+    @ivar op: (Binary) operator to use.
+    @type op: L{Operator}
+
+    @ivar param2: Paramter number of the second operand
+    @type param2: L{ConstantNumeric}
+
+    @ivar data: Numerical data that will be used instead of parameter value,
+                    if the parameter number is 0xFF. None if n/a.
+    @type data: L{ConstantNumeric} or C{None}
+    """
     def __init__(self, target, param1, op, param2, data = None):
         self.target = target
         self.param1 = param1
@@ -27,6 +48,16 @@ class ActionD(base_action.BaseAction):
         return False
 
 class ParameterAssignment(object):
+    """
+    AST-node for a parameter assignment.
+    NML equivalent: param[$num] = $expr;
+
+    @ivar param: Parameter number to be assigned.
+    @type param: L{Expression}
+
+    @ivar value: Value to assign to this parameter
+    @type value: L{Expression}
+    """
     def __init__(self, param, value):
         self.param = param
         self.value = value
