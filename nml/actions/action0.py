@@ -27,7 +27,7 @@ class Action0(base_action.BaseAction):
             prop.write(file)
         file.end_sprite()
 
-first_free_id = 0x12 * [0]
+first_free_id = [116, 88, 11, 41] + 0x0E * [0]
 
 def get_free_id(feature):
     global first_free_id
