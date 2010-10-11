@@ -1210,6 +1210,7 @@ specified height of the year is used in the calculation.
 Please note that while those variables are available for all vehicles types, some of them only make sense
 for one or more vehicle types. For example checking current_railtype for a non-rail vehicle doesn't make
 sense at all.
+<h3><a name="vars-vehicles-normal">Variables without parameter</a></h3>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
 <tr><td>position_in_consist <td>0 ... 255<td>
@@ -1271,12 +1272,52 @@ this variable will contain 0xFF. Available since OpenTTD r20164.
 <tr><td>current_speed <td>(speed units)<td>The current speed of the vehicle in m/s
 <tr><td>max_speed <td>(speed units)<td>The maximum speed of the vehicle in m/s
 </table>
-Variables that require an argument:
+<h3><a name="vars-vehicles-parameter">Variables that require an argument</a></h3>
 <table class="t">
 <tr><th>name</th><th>Argument</th><th>value range</th><th>comment</th></tr>
 <tr><td>count_veh_id</td><td>The vehicle ID to look for.</td><td>0..255</td><td>The number of vehicles in the current consist that have
 the given ID.</td></tr>
 </table>
+<h3><a name="vars-vehicles-callbacks">Callbacks for vehicles</a></h3>
+<table class="t">
+<tr><th>name<th>use
+<tr><td>VEH_CB_WAGON_POWER           <td>decide upon whether a wagon has power
+<tr><td>VEH_CB_WAGON_LENGTH          <td>decide upon the length of the wagon
+<tr><td>VEH_CB_LOAD_AMOUNT           <td>decide upon the loading speed (amount loaded per tick)
+<tr><td>VEH_CB_REFITTED_CAPACITY     <td>decide upon the capacity after refit
+<tr><td>VEH_CB_ARTICULATED_PARTS     <td>decide upon the ID of the next vehicle added to the articulated vehicle chain
+<tr><td>VEH_CB_CARGO_SUFFIX          <td>decide upon cargo subtype display for refit
+<tr><td>VEH_CB_CAN_ATTACH_WAGON      <td>decide whether a wagon can be attached
+<tr><td>VEH_CB_TEXT_PURCHASE_SCREEN  <td>decide upon an additional text for the purchase screen
+<tr><td>VEH_CB_COLOUR_MAPPING        <td>decide upon the colour mapping instead of company colour
+<tr><td>VEH_CB_START_STOP_CHECK      <td>decide whether a vehicle may be started. Return 0xFF to succeed or an error message.
+<tr><td>VEH_CB_32DAY                 <td>Triggers one or both of <it>Trigger vehicle trigger 10</it> (bit 0) and <it>Update colour map via VEH_CB_COLOUR_MAPPING</it> (bit 1)
+<tr><td>VEH_CB_SOUND_EFFECT          <td>decide whether and which sound is being played for certain situations
+<tr><td>VEH_CB_AUTOREPLACE_SELECT    <td>decide upon appropriate replacement vehicles
+<tr><td>VEH_CB_VEHICLE_PROPERTIES    <td>Change vehicle properties
+</table>
+<p>The appropriate vehicle properties for <it>VEH_CB_VEHICLE_PROPERTIES</it> are
+<table class="t">
+<tr><th>vehicle type<th>property
+<tr><td>all<td>loading_speed
+<tr><td><td>cost_factor
+<tr><td><td>running_cost_factor
+<tr><td>trains<td>speed
+<tr><td><td>power
+<tr><td><td>cargo_capacity
+<tr><td><td>weight
+<tr><td><td>tractive_effort_coefficient
+<tr><td><td>shorten_vehicle
+<tr><td><td>visual_effect
+<tr><td><td>bitmask_vehicle_info
+<tr><td>vehicles<td>cargo_capacity
+<tr><td>ships<td>speed
+<tr><td><td>cargo_capacity
+<tr><td>planes<td>speed
+<tr><td><td>passenger_capacity
+<tr><td><td>mail_capacity
+</table>
+</p>
 <h2><a name="vars-stations">Stations</a></h2>
 <h2><a name="vars-canals">Canals</a></h2>
 <h2><a name="vars-bridges">Bridges</a></h2>
