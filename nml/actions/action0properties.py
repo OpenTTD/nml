@@ -105,7 +105,7 @@ properties[0x01] = {
     'cost_factor' : {'size': 1, 'num': 0x11},
     'sound_effect' : {'size': 1, 'num': 0x12},
     'power' : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': 0.1},
-    'weight' : {'size': 1, 'num': 0x14, 'unit_type': 'weight'},
+    'weight' : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
     'refittable_cargo_types' : {'size': 4, 'num': 0x16, 'append_function': append_cargo_type(0x01)},
     'callback_flags' : {'size': 1, 'num': 0x17},
     'tractive_effort_coefficient' : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
