@@ -71,6 +71,37 @@ constant_numbers = {
     'VEH_CB_AUTOREPLACE_SELECT'     : 0x34,
     'VEH_CB_VEHICLE_PROPERTIES'     : 0x36,
 
+    #properties for callback 0x36
+    'PROP_TRAINS_LOADING_SPEED'                 : 0x07,
+    'PROP_TRAINS_SPEED'                         : 0x09,
+    'PROP_TRAINS_POWER'                         : 0x0B,
+    'PROP_TRAINS_RUNNING_COST_FACTOR'           : 0x0D,
+    'PROP_TRAINS_CARGO_CAPACITY'                : 0x14,
+    'PROP_TRAINS_WEIGHT'                        : 0x16,
+    'PROP_TRAINS_COST_FACTOR'                   : 0x17,
+    'PROP_TRAINS_TRACTIVE_EFFORT_COEFFICIENT'   : 0x1F,
+    'PROP_TRAINS_SHORTEN_VEHICLE'               : 0x21,
+    'PROP_TRAINS_VISUAL_EFFECT'                 : 0x22,
+    'PROP_TRAINS_BITMASK_VEHICLE_INFO'          : 0x25,
+
+    'PROP_ROADVEHS_LOADING_SPEED'               : 0x07,
+    'PROP_ROADVEHS_RUNNING_COST_FACTOR'         : 0x09,
+    'PROP_ROADVEHS_CARGO_CAPACITY'              : 0x0F,
+    'PROP_ROADVEHS_COST_FACTOR'                 : 0x11,
+
+    'PROP_SHIPS_LOADING_SPEED'                  : 0x07,
+    'PROP_SHIPS_COST_FACTOR'                    : 0x0A,
+    'PROP_SHIPS_SPEED'                          : 0x0B,
+    'PROP_SHIPS_CARGO_CAPACITY'                 : 0x0D,
+    'PROP_SHIPS_RUNNING_COST_FACTOR'            : 0x0F,
+
+    'PROP_AIRCRAFT_LOADING_SPEED'               : 0x07,
+    'PROP_AIRCRAFT_COST_FACTOR'                 : 0x0B,
+    'PROP_AIRCRAFT_SPEED'                       : 0x0C,
+    'PROP_AIRCRAFT_RUNNING_COST_FACTOR'         : 0x0E,
+    'PROP_AIRCRAFT_PASSENGER_CAPACITY'          : 0x0F,
+    'PROP_AIRCRAFT_MAIL_CAPACITY'               : 0x11,
+
     #shorten factor
     'SHORTEN_TO_8_8' : 0x00,
     'SHORTEN_TO_7_8' : 0x01,

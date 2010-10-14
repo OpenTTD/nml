@@ -1296,27 +1296,64 @@ the given ID.</td></tr>
 <tr><td>VEH_CB_AUTOREPLACE_SELECT    <td>decide upon appropriate replacement vehicles
 <tr><td>VEH_CB_VEHICLE_PROPERTIES    <td>Change vehicle properties
 </table>
-<p>The appropriate vehicle properties for <it>VEH_CB_VEHICLE_PROPERTIES</it> are
+<p>In order to set properties for vehicles via callback <code>VEH_CB_VEHICLE_PROPERTIES</code> it's necessary to query the general variable <code>extra_callback_info1</code>
+which can take different values depending upon the vehicle type:
 <table class="t">
-<tr><th>vehicle type<th>property
-<tr><td>all<td>loading_speed
-<tr><td><td>cost_factor
-<tr><td><td>running_cost_factor
-<tr><td>trains<td>speed
-<tr><td><td>power
-<tr><td><td>cargo_capacity
-<tr><td><td>weight
-<tr><td><td>tractive_effort_coefficient
-<tr><td><td>shorten_vehicle
-<tr><td><td>visual_effect
-<tr><td><td>bitmask_vehicle_info
-<tr><td>vehicles<td>cargo_capacity
-<tr><td>ships<td>speed
-<tr><td><td>cargo_capacity
-<tr><td>planes<td>speed
-<tr><td><td>passenger_capacity
-<tr><td><td>mail_capacity
+<tr><th>vehicle type<th>property<th>value
+<tr><td>all<td>loading_speed<td>PROP_XXX_LOADING_SPEED
+<tr><td><td>cost_factor<td>PROP_XXX_COST_FACTOR
+<tr><td><td>running_cost_factor<td>PROP_XXX_RUNNING_COST_FACTOR
+<tr><td>trains<td>speed<td>PROP_TRAINS_SPEED
+<tr><td><td>power<td>PROP_TRAINS_POWER
+<tr><td><td>cargo_capacity<td>PROP_TRAINS_CARGO_CAPACITY
+<tr><td><td>weight<td>PROP_TRAINS_WEIGHT
+<tr><td><td>tractive_effort_coefficient<td>PROP_TRAINS_TRACTIVE_EFFORT_COEFFICIENT
+<tr><td><td>shorten_vehicle<td>PROP_TRAINS_SHORTEN_VEHICLE
+<tr><td><td>visual_effect<td>PROP_TRAINS_VISUAL_EFFECT
+<tr><td><td>bitmask_vehicle_info<td>PROP_TRAINS_BITMASK_VEHICLE_INFO
+<tr><td>vehicles<td>cargo_capacity<td>PROP_ROADVEHS_CARGO_CAPACITY
+<tr><td>ships<td>speed<td>PROP_SHIPS_SPEED
+<tr><td><td>cargo_capacity<td>PROP_SHIPS_CARGO_CAPACITY
+<tr><td>planes<td>speed<td>PROP_AIRCRAFT_SPEED
+<tr><td><td>passenger_capacity<td>PROP_AIRCRAFT_PASSENGER_CAPACITY
+<tr><td><td>mail_capacity<td>PROP_AIRCRAFT_MAIL_CAPACITY
 </table>
+where for the properties available for all vehicle types XXX can either be TRAINS, ROADVEHS, SHIPS or AIRCRAFT.
+Note also that the return values don't yet support units, you'll need to enter the properties untranslated (e.g. road vehicle
+weights are in quantities of 0.25 tons).
+
+Example:
+<pre class="code">
+switch (FEAT_TRAINS, SELF, tank_wagon_cb_property_weight_switch, cargo_type_in_veh) {
+    // wagons transporting food need some extra stuff and are heavier
+    WATR: return 25;
+    MILK: return 25;
+    CB_FAILED; // use value set in the property block for other cargos
+}
+
+switch (FEAT_TRAINS, SELF, tank_wagon_cb_property_switch, extra_callback_info1) {
+    PROP_TRAINS_WEIGHT          : tank_wagon_cb_property_weight_switch;
+    PROP_TRAINS_CARGO_CAPACITY  : tank_wagon_cb_capacity_switch;
+    CB_FAILED; // we don't set other properties
+}
+
+switch (FEAT_TRAINS, SELF, tank_wagon_switch, current_callback) {
+    VEH_CB_REFITTED_CAPACITY:  tank_wagon_cb_capacity_switch; // switch not shown here
+    VEH_CB_VEHICLE_PROPERTIES: tank_wagon_cb_property_switch;
+    tank_wagon_graphics_switch; // go to graphics branch, if no callback asked for; not shown here
+}
+
+item(FEAT_TRAINS, tank_wagon) {
+    property {
+        callback_flags:                 VEH_CBF_REFITTED_CAPACITY; // activate callback
+        cargo_capacity:                 30;
+        weight:                         24 ton;
+    }
+    graphics {
+        tank_wagon_switch;
+    }
+}
+</pre>
 </p>
 <h2><a name="vars-stations">Stations</a></h2>
 <h2><a name="vars-canals">Canals</a></h2>
