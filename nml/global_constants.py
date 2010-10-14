@@ -413,7 +413,7 @@ constant_numbers = {
     'INDUSTRYTYPE_TOWN'                  : 0xFF,
 
     #industry production type flags (industry property 0x0B, prod_flags)
-    'PRODUCTIONTYPE_EXACTIVE'            : 0x01,
+    'PRODUCTIONTYPE_EXTRACTIVE'          : 0x01,
     'PRODUCTIONTYPE_ORGANIC'             : 0x02,
     'PRODUCTIONTYPE_PROCESSING'          : 0x04,
     'PRODUCTIONTYPE_NONE'                : 0x00,

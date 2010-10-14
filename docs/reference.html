@@ -884,14 +884,14 @@ Valid language IDs are
 <tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
 <tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
 <tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
-<tr><td> model_life</td><td>                   0 ... 255 (years)</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
+<tr><td> model_life</td><td>                   0 ... 255 (years) or VEHICLE_NEVER_EXPIRES</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
 <tr><td> retire_early</td><td>                 (years)</td><td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.</td></tr>
 <tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
-<tr><td> reliability_decay</td><td>            0 ... 255</td><td>n/a</td></tr>
+<tr><td> reliability_decay</td><td>            0 ... 255</td><td>Default vehicles use 20. The higher the value the faster reliability decays, the more frequent service is needed. 0 means reliability never decreases if the vehicle is not too old</td></tr>
 <tr><td> refittable_cargo_classes</td><td>     bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="#property-cargos">cargo classes</a></td><td></td></tr>
 <tr><td> refittable_cargo_types</td><td>       bit mask of entries into the cargo translation table</td><td>example: <code>bitmask(PASS, MAIL, GOOD)</code></td></tr>
-<tr><td> loading_speed <td>                    0 ... 255 (cargo units)</td><td> units loaded per tick</td></tr>
+<tr><td> loading_speed <td>                    0 ... 255 (cargo units)</td><td>Units of cargo loaded per tick. Default vehicles use 5 for trains and road vehicles, 10 for ships and 20 for aircraft</td></tr>
 <tr><td> cost_factor</td><td>                  0 ... 255</td><td>multiplicator to the base purchase cost</td></tr>
 <tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base running costs</td></tr>
 </table>
