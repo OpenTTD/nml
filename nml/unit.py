@@ -10,3 +10,4 @@ units['m/s'] = {'type': 'speed', 'convert': 1}
 units['hp'] = {'type': 'power', 'convert': 1}
 
 units['ton'] = {'type': 'weight', 'convert': 1}
+units['tons'] = {'type': 'weight', 'convert': 1}
