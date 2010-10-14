@@ -10,6 +10,7 @@
 <h1>Contents</h1>
 <ul>
 <li><a href="#preface">Preface</a></li>
+<li><a href="#installation">Getting started</a></li>
 <li><a href="#structure">Language structure</a></li>
 <li><a href="#block-syntax">Block syntax</a>
 <ul>
@@ -125,6 +126,58 @@ accessible to more people.</p>
 
 
 <p><img alt="encoding process of nml" src="compileprocess.png"></p>
+
+<h1><a name="installing">Getting started</a></h1>
+<p>
+NML is a a python-based compiler, capable to compile NML files (along with their
+associated language, sound and graphic files) into grf and / or nfo files. In
+order to work, it requires
+<ul>
+<li>python
+<li>python image library
+<li>ply (downloadable from <a href="http://www.dabeaz.com/ply/">http://www.dabeaz.com/ply/</a>)
+</ul>
+
+Examples for small NML "projects" are found in the <code class="ex">regression</code>
+folder of NML. Generally it's assumed that the language files are in a separate
+language folder <code class="ex">lang</code>, thus a project may look like this:
+<pre>
+mynewgrf.nml
+graphics.png
+funny_sound.wav
+
+lang/default.lng
+</pre>
+</p><p>
+The compiler itself <code class="ex">nmlc</code> is a command line tool and can
+take a number of parameters, at least the nml filename which it shall process,
+e.g. <code class="ex">nmlc mynewgrf.nml</code> will compile your nml file into
+the grf-file <code class="ex">mynewgrf.grf</code>.
+</p><p>
+The full syntax is:
+<pre class="code">
+Usage: nmlc [options] <filename>
+Where <filename> is the nml file to parse
+
+Options:
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
+  -d, --debug           write the AST to stdout
+  -s, --stack           Dump stack when an error occurs
+  --grf=&lt;file&gt;          write the resulting grf to &lt;file&gt;
+  --nfo=&lt;file&gt;          write nfo output to &lt;file&gt;
+  -c                    crop extraneous transparent blue from real sprites
+  -u                    save uncompressed data in the grf file
+  --nml=&lt;file&gt;          write optimized nml to &lt;file&gt;
+  -o &lt;file&gt;, --output=&lt;file&gt;
+                        write output(nfo/grf) to &lt;file&gt;
+  -t &lt;file&gt;, --custom-tags=&lt;file&gt;
+                        Load custom tags from &lt;file&gt; [default:
+                        custom_tags.txt]
+  -l &lt;dir&gt;, --lang-dir=&lt;dir&gt;
+                        Load language files from directory &lt;dir&gt; [default:
+                        lang]
+</pre>
 
 <h1><a name="structure">Language structure</a></h1>
 <h2>Blocks</h2>
