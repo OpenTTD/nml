@@ -6,5 +6,6 @@ STR_REGRESSION_ERROR           :Something bad (tm) has happened.
 STR_REGRESSION_CARE            :care
 STR_ANSWER                     :42
 STR_NAME_FOSTER_EXPRESS_TRAM   :Foster Express Tram
+STR_NAME_BULK_WAGON            :NML Test bulk wagon
 
 STR_STATIONS                   :Test Stations

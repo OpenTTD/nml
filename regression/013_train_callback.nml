@@ -1,0 +1,149 @@
+grf {
+	grfid: "NML\13";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+	version: 0;
+}
+
+/* 
+ * ********************************************
+ * Define cargo and railtype translation tables
+ * ********************************************
+ */
+
+cargotable { // cargos needed for special refit orders
+    WDPR, SCRP, CMNT, WOOD, // bulk, bulk+piece+flat, tank, piece
+    LVST, STEL, VEHI, BRCK, // piece+flat, piece, piece, piece
+    WOOL, BUBL, TOYS, FZDR, // flat, flat, flat, tank
+    FRUT, FRVG, FOOD, // bulk, bulk, piece
+
+                                    // cargos only referenced
+    OIL_, GOOD, WATR, MILK,
+    COAL, IORE, AORE, CLAY,
+    GRVL, SAND, GRAI, RSGR,
+    MAIZ, CORE, FERT, CTCD,
+    SULP, WHEA, RFPR, COLA,
+    PETR, PAPR, TOFF, SUGR,
+    PASS, MAIL, BATT, SWET,
+    RUBR, FMSP, ENSP, MNSP,
+    FICR, PLAS, PLST
+}
+
+railtypetable {
+    RAIL, ELRL, MONO, MGLV,
+    TRPD
+}
+
+template tmpl_railwagon(x,y) {
+    [ 0+x, y, 8,24, -3,-12]
+    [ 16+x, y, 22,17, -14, -9]
+    [ 48+x, y, 32,12, -16, -8]
+    [ 96+x, y, 22,17, -6, -9]
+}
+
+spriteblock(FEAT_TRAINS) {
+    spriteset(bulk_wagon_empty_set, "temperate_railwagons.png") { tmpl_railwagon(0,25) }
+    spriteset(bulk_wagon_coal_default_set, "temperate_railwagons.png") { tmpl_railwagon(0,250) }
+    spritegroup bulk_wagon_coal_default_group {
+        loaded: [bulk_wagon_empty_set, bulk_wagon_coal_default_set];
+        loading: [bulk_wagon_empty_set, bulk_wagon_coal_default_set];
+    }
+    spriteset(bulk_wagon_coal_arctic_empty_set, "arctic_railwagons.pcx") { tmpl_railwagon(0,25) }
+    spriteset(bulk_wagon_coal_arctic_full_set, "arctic_railwagons.pcx") { tmpl_railwagon(0,250) }
+    spritegroup bulk_wagon_coal_arctic_group {
+        loaded: [bulk_wagon_coal_arctic_empty_set, bulk_wagon_coal_arctic_full_set];
+        loading: [bulk_wagon_coal_arctic_empty_set, bulk_wagon_coal_arctic_full_set];
+    }
+    spriteset(bulk_wagon_coal2_empty_set, "temperate_railwagons.png") { tmpl_railwagon(0,225) }
+    spriteset(bulk_wagon_coal2_full_set, "temperate_railwagons.png") { tmpl_railwagon(0,350) }
+    spritegroup bulk_wagon_coal2_group {
+        loaded: [bulk_wagon_coal2_empty_set, bulk_wagon_coal2_full_set];
+        loading: [bulk_wagon_coal2_empty_set, bulk_wagon_coal2_full_set];
+    }
+
+    spriteset(bulk_wagon_empty_grain_set, "temperate_railwagons.png") { tmpl_railwagon(0,150) }
+    spriteset(bulk_wagon_grain_set, "temperate_railwagons.png") { tmpl_railwagon(0,275) }
+    spritegroup bulk_wagon_grain_group {
+        loaded: [bulk_wagon_empty_grain_set, bulk_wagon_grain_set];
+        loading: [bulk_wagon_empty_grain_set, bulk_wagon_grain_set];
+    }
+
+}
+
+random_switch (FEAT_TRAINS, SELF, bulk_wagon_coal_default_switch, TRIGGER_VEHICLE_SERVICE) {
+    2: bulk_wagon_coal_default_group;
+    1: bulk_wagon_coal2_group;
+}
+
+switch (FEAT_TRAINS, SELF, bulk_wagon_coal_climate_switch, climate) {
+    CLIMATE_ARCTIC: bulk_wagon_coal_arctic_group;
+    bulk_wagon_coal_default_switch;
+}
+
+switch(FEAT_TRAINS, SELF, bulk_wagon_graphics_switch, cargo_type_in_veh) {
+    COAL: bulk_wagon_coal_climate_switch;
+    bulk_wagon_grain_group; // default to grain
+}
+
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_capacity_switch, cargo_type_in_veh) {
+    FICR: return 25;
+    FRUT: return 20;
+    FRVG: return 20;
+    GRAI: return 25;
+    MAIZ: return 25;
+    RSGR: return 20;
+    WHEA: return 25;
+    CB_FAILED; // return capacity set in properties (30)
+}
+
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_property_weight_switch, cargo_type_in_veh) {
+    COAL: return 18;
+    FRUT: return 18;
+    FRVG: return 18;
+    RSGR: return 18;
+    CB_FAILED; // return weight set in properties (25t)
+}
+
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_property_switch, extra_callback_info1) {
+    0x16: bulk_wagon_cb_property_weight_switch;
+    CB_FAILED;
+}
+
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_switch, current_callback) {
+    VEH_CB_REFITTED_CAPACITY: bulk_wagon_cb_capacity_switch;
+    VEH_CB_VEHICLE_PROPERTIES: bulk_wagon_cb_property_switch;
+    bulk_wagon_graphics_switch;
+}
+
+
+item(FEAT_TRAINS, bulk_wagon) {
+    property {
+        // We try to simulate the stats of the temperate grain wagon
+        name: string(STR_NAME_BULK_WAGON);
+        climates_available: CLIMATE_ALL;
+        refittable_cargo_classes: CC_BULK;
+        non_refittable_cargo_classes: CC_PASSENGERS | CC_MAIL | CC_ARMOURED | CC_LIQUID | CC_REFRIGERATED | CC_HAZARDOUS;
+        refittable_cargo_types: bitmask(WDPR, SCRP, FRUT, FRVG);
+        sprite_id: SPRITE_ID_NEW_TRAIN;
+        introduction_date: date(1880,1,1);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        retire_early: 0;
+        vehicle_life: 30;
+        reliability_decay: 0;
+        loading_speed: 10;
+        cost_factor: 182;
+        running_cost_factor: 5;
+        speed: 0;
+        refit_cost: 40;
+        callback_flags: VEH_CBF_REFITTED_CAPACITY;
+        track_type: RAIL;
+        power: 0;
+        running_cost_base: RUNNING_COST_STEAM;
+        cargo_capacity: 30;
+        weight: 25 ton;
+        bitmask_vehicle_info: 0;
+    }
+    graphics {
+        bulk_wagon_cb_switch;
+    }
+}
