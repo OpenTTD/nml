@@ -93,8 +93,11 @@ properties[0x00].update(general_veh_props)
 def roadveh_speed_prop(value):
     value = value.reduce_constant()
     prop08 = ConstantNumeric(min(value.value, 0xFF))
-    prop15 = ConstantNumeric(value.value / 4)
-    return [Action0Property(0x08, prop08, 1), Action0Property(0x15, prop15, 1)]
+    props = [Action0Property(0x08, prop08, 1)]
+    if value.value > 0xFF:
+        prop15 = ConstantNumeric((value.value + 3) / 4)
+        props.append(Action0Property(0x15, prop15, 1))
+    return props
 
 properties[0x01] = {
     'speed': {'custom_function': roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': 7.1581952},
