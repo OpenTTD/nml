@@ -62,8 +62,8 @@ class LayoutSpriteGroup(object):
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 2)
 
-#vehicles, stations, canals, cargos, airports, railtypes, houses, industry tiles, airport tiles
-action1_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11]
+#vehicles, stations, canals, cargos, airports, railtypes, houses, industry tiles, airport tiles, objects
+action1_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11, 0x0F]
 
 def parse_sprite_block(sprite_block):
     global action1_features
