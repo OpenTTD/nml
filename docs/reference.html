@@ -190,6 +190,7 @@ Following is an example grf-block.</p>
 	grfid : "AB\02\03";
 	name : string(STR_GRF_NAME);
 	desc : string(STR_GRF_DESCRIPTION);
+	version: 1;
 }</pre>
 <p>Let's look at this code line for line.</p>
 <pre class="code">grf {</pre>
@@ -209,6 +210,9 @@ should be replaced by the actual name of the string.</p>
 <pre class="code">	desc : string(STR_GRF_DESCRIPTION);</pre>
 <p>This looks a lot like the previous line, only it sets the description
 instead of the name.</p>
+<pre class="code">	version : 1;</pre>
+<p>For a new grf you should set the version to 1. Everytime you release a new
+version you should increase the version field by at least 1.</p>
 <pre class="code">}</pre>
 <p>This marks the end of the last-opened block, in this case the grf-block.</p>
 
