@@ -7,8 +7,6 @@ class Action2Layout(action2.Action2):
         assert ground_sprite.type == Action2LayoutSpriteType.GROUND
         self.ground_sprite = ground_sprite
         self.sprite_list = sprite_list
-        #required by grf specs
-        assert len(sprite_list) != 0
 
     def write(self, file):
         size = 5
@@ -17,24 +15,31 @@ class Action2Layout(action2.Action2):
                 size += 7
             else:
                 size += 10
+        if len(self.sprite_list) == 0:
+            size += 9
 
         action2.Action2.write_sprite_start(self, file, size)
         file.print_byte(len(self.sprite_list))
         file.print_dwordx(self.ground_sprite.get_sprite_number())
         file.newline()
-        for sprite in self.sprite_list:
-            file.print_dwordx(sprite.get_sprite_number())
-            file.print_byte(sprite.get_bounding_box_param('xoffset'))
-            file.print_byte(sprite.get_bounding_box_param('yoffset'))
-            if sprite.type == Action2LayoutSpriteType.CHILD:
-                file.print_bytex(0x80)
-            else:
-                #normal building sprite
-                file.print_byte(sprite.get_bounding_box_param('zoffset'))
-                file.print_byte(sprite.get_bounding_box_param('xextent'))
-                file.print_byte(sprite.get_bounding_box_param('yextent'))
-                file.print_byte(sprite.get_bounding_box_param('zextent'))
-            file.newline()
+        if len(self.sprite_list) == 0:
+            file.print_dwordx(0) #sprite number 0 == no sprite
+            for i in range(0, 5):
+                file.print_byte(0) #empty bounding box. Note that number of zeros is 5, not 6
+        else:
+            for sprite in self.sprite_list:
+                file.print_dwordx(sprite.get_sprite_number())
+                file.print_byte(sprite.get_bounding_box_param('xoffset'))
+                file.print_byte(sprite.get_bounding_box_param('yoffset'))
+                if sprite.type == Action2LayoutSpriteType.CHILD:
+                    file.print_bytex(0x80)
+                else:
+                    #normal building sprite
+                    file.print_byte(sprite.get_bounding_box_param('zoffset'))
+                    file.print_byte(sprite.get_bounding_box_param('xextent'))
+                    file.print_byte(sprite.get_bounding_box_param('yextent'))
+                    file.print_byte(sprite.get_bounding_box_param('zextent'))
+                file.newline()
         file.end_sprite()
 
 class Action2LayoutRecolorMode(object):
@@ -200,7 +205,5 @@ def get_layout_action2s(spritegroup, feature, spritesets):
 
     if ground_sprite is None:
         raise generic.ScriptError("Sprite group requires exactly one ground sprite")
-    if len(building_sprites) == 0:
-        raise generic.ScriptError("At least one non-ground sprite must be specified per sprite group")
 
     return [Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)]
