@@ -942,8 +942,8 @@ Valid language IDs are
 <table class="t">
 <tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
 <tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
-<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td></td></tr>
-<tr><td> model_life</td><td>                   0 ... 255 (years) or VEHICLE_NEVER_EXPIRES</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000. In TTDPatch, dates after 2044 will be limited to 2044. Unless the engine is introduced within two years after game-start (always 1920 in TTDPatch), a random number of days between 0 and 511 will be added to this.</td></tr>
+<tr><td> model_life</td><td>                   0 ... 254 (years) or VEHICLE_NEVER_EXPIRES</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
 <tr><td> retire_early</td><td>                 (years)</td><td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.</td></tr>
 <tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
 <tr><td> reliability_decay</td><td>            0 ... 255</td><td>Default vehicles use 20. The higher the value the faster reliability decays, the more frequent service is needed. 0 means reliability never decreases if the vehicle is not too old</td></tr>
