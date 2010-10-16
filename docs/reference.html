@@ -423,22 +423,73 @@ spriteblock(FEAT_TRAINS) {
 	(&lt;range&gt;: &lt;return_value&gt;;)*
 	&lt;return_value&gt;;
 }</pre>
-<p><code>&lt;range&gt;</code> can either be a single number or two numbers separated by
-two dots.</p>
-<p><code>&lt;return_value&gt;</code> can be either a literal <code>return</code>,
-a literal <code>return</code> followed by an expression or string, or an <code>ID
-</code> that is the name of another switchblock or spritegroup. If the
-<code>return_value</code> is just a literal <code>return</code>, then the value
-of the computation is returned. If it's a <code>return</code> followed by an
-expression or a string, then that value is returned. Otherwise it's the ID
-of a spritegroup or switch and that block will be evaluated.</p>
+<p>The four parameters have the following meaning:</p>
+<ul>
+<li><code>&lt;expression&gt;</code>: The feature for which this switch is used
+(see <a href="#structure-features">Features</a>).</li>
+<li><code>(SELF|PARENT)</code>Which variables to use. SELF uses the variables
+of the item itself, while PARENT uses the variables of a related object. This
+related object differs per feature, refer to the table below.</li>
+<li><code>&lt;ID&gt;</code>Name of this switch block. This (unique) name can
+be used to refer to the block from other switch- or graphics-blocks.</li>
+<li><code>&lt;expression&gt;</code>The expression that will be evauluated
+to make a descision. This expression may contain <a href="#vars">Variables</a>.</li>
+</ul>
+<table class="t">
+<tr><th>Feature<th>SELF<th>PARENT
+<tr><td>FEAT_TRAINS<td>Engine / wagon / articulated part itself<td>Front engine
+<tr><td>FEAT_ROADVEHS<td>Road vehicle part<td>First road vehicle part
+<tr><td>FEAT_SHIPS<td>Ship<td>Ship
+<tr><td>FEAT_AIRCRAFT<td>Aircraft (a)<td>Aircraft
+<tr><td>FEAT_STATIONS<td>Station tile<td>Town
+<tr><td>FEAT_CANALS<td>Canal tile<td>N/A
+<tr><td>FEAT_BRIDGES<td>Bridge<td>Town
+<tr><td>FEAT_HOUSES<td>House tile<td>Town
+<tr><td>FEAT_GLOBALVARS<td>N/A<td>N/A
+<tr><td>FEAT_INDUSTRYTILES<td>Industry tile<td>Industry to which the tile belongs
+<tr><td>FEAT_INDUSTRIES<td>Industry<td>Town
+<tr><td>FEAT_CARGOS<td>Cargo type<td>N/A
+<tr><td>FEAT_SOUNDEFFECTS<td>N/A<td>N/A
+<tr><td>FEAT_AIRPORTS<td>Airport<td>N/A
+<tr><td>FEAT_SIGNALS<td>N/A<td>N/A
+<tr><td>FEAT_OBJECTS<td>Object tile<td>Town
+<tr><td>FEAT_RAILTYPES<td>Rail tile<td>N/A
+<tr><td>FEAT_AIRPORTTILES<td>Airport tile<td>Airport
+</table>
+<p>(a) Except for mail capacity callbacks, where it refers to the mail compartment.
+To refer to the aircraft itself, use PARENT scope there.</p>
 
+<p><code>&lt;range&gt;</code> can either be a single number or two numbers separated by
+two dots. In the first case, the range matches if the result of the computation is
+equal to the supplied value. If a range (<code>a .. b</code>) is supplied, it matches
+if the computed result is within that range.</p>
+<p>Possible values for <code>&lt;return_value&gt;</code>e are the following:</p>
+<ul>
+<li><code>&lt;ID&gt;;</code> chains to the (random-)switch or spritegroup with the given ID.</li>
+<li><code>return (&lt;expression&gt;|&lt;string&gt;);</code> returns the given expression or
+string as a result of the callback.</li>
+<li><code>return;</code> returns the computed value directly as a callback result. Note that
+the maximum value for callback results is 32511 (0x7EFF).</li>
+<li><code>CB_FAILED;</code> stops processing and returns an explicit failure code.</li>
+</ul>
+
+<p>Some example code is given below. Note that the code does not have an actual
+meaning, it is merely meant to demonstrate all the various options available.</p>
+<pre class="code">
+switch (FEAT_TRAINS, PARENT, some_vehicle_switch, (position_in_consist + param[1]) % 4) {
+	0..2: return string(STRING_FOO_BAR); //return a text message
+	3: return; //return the computed value
+	5...300: return 42; //42 is always a good answer
+	400: other_switch; //chain to some other switch block
+	CB_FAILED; //return a failure result
+}
+</pre>
 <h2><a name="block-randomswitch">Random switch</a></h2>
 <p>While a <a href="#block-switch">switch-block</a> allows making a predictable
 decision, a random_switch allows a randomised choice between several options.</p>
 <pre class="exl">random_switch (&lt;feature&gt;, &lt;type&gt;, &lt;ID&gt;[, &lt;triggers&gt;]) {
-    (&lt;independent&gt;: &lt;other_random&gt;;)*
-    (&lt;dependent&gt;: &lt;other_random&gt;;)*
+	(&lt;independent&gt;: &lt;other_random&gt;;)*
+	(&lt;dependent&gt;: &lt;other_random&gt;;)*
 	(&lt;probability&gt;: &lt;return_value&gt;;)+
 }</pre>
 <p>The first parameter <code>&lt;feature&gt;</code> specifies the feature to use.
