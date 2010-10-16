@@ -67,7 +67,7 @@ action1_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 
 
 def parse_sprite_block(sprite_block):
     global action1_features
-    action_list = [None] #reserve one for action 1
+    action_list = []
     action_list_append = []
     spritesets = {} #map names to action1 entries
     num_sets = 0
@@ -94,6 +94,6 @@ def parse_sprite_block(sprite_block):
             assert isinstance(item, LayoutSpriteGroup)
             action_list_append.extend(action2layout.get_layout_action2s(item, sprite_block.feature.value, spritesets))
 
-    action_list[0] = Action1(sprite_block.feature, num_sets, num_ent)
+    if num_sets > 0: action_list.insert(0, Action1(sprite_block.feature, num_sets, num_ent))
     action_list.extend(action_list_append)
     return action_list
