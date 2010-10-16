@@ -11,7 +11,13 @@
 <ul>
 <li><a href="#preface">Preface</a></li>
 <li><a href="#installation">Getting started</a></li>
-<li><a href="#structure">Language structure</a></li>
+<li><a href="#structure">Language structure</a>
+	<ul>
+		<li><a href="#structure-blocks">Blocks</a></li>
+		<li><a href="#structure-parameters">Parameters</a></li>
+		<li><a href="#structure-features">Features</a></li>
+	</ul>
+</li>
 <li><a href="#block-syntax">Block syntax</a>
 <ul>
 	<li><a href="#block-grf">GRF</a></li>
@@ -180,7 +186,7 @@ Options:
 </pre>
 
 <h1><a name="structure">Language structure</a></h1>
-<h2>Blocks</h2>
+<h2><a name="structure-blocks">Blocks</a></h2>
 <p>NML files are mainly composed from blocks. A block starts with the type of
 the block, optional arguments and then the contents enclosed by curly braces.
 Nearly all NML files will start with a <a href="#block-grf">grf-block</a>. The
@@ -216,7 +222,7 @@ version you should increase the version field by at least 1.</p>
 <pre class="code">}</pre>
 <p>This marks the end of the last-opened block, in this case the grf-block.</p>
 
-<h2>Parameters</h2>
+<h2><a name="structure-parameters">Parameters</a></h2>
 <p>Blocks are not the only item in NML files, you can also do parameter
 assignments. Each NewGRF has 128 parameters available, NML reserves the top 64
 parameters for internal use. If a user sets parameters for your grf, they
@@ -224,6 +230,32 @@ start at parameter 0. Each parameter is available by using
 <code>param[&lt;expression&gt;]</code>. You can set parameter number 4 to 3 by doing:
 <pre class="code">param[4] = 3;</pre>
 
+<h2><a name="structure-features">Features</a></h2>
+<p>NewGRFs can be used to modify various types of items. Examples include trains,
+stations and industries. Such a type of item is called a <em>feature</em>. The
+following table contains a list of features and their identifiers. These
+identifiers may be used to refer to the feature when needed.</p>
+<table class="t">
+<tr><th>Name<th>Description
+<tr><td>FEAT_TRAINS<td>Trains
+<tr><td>FEAT_ROADVEHS<td>Road vehicles
+<tr><td>FEAT_SHIPS<td>Ships
+<tr><td>FEAT_AIRCRAFT<td>Aircraft
+<tr><td>FEAT_STATIONS<td>Train stations
+<tr><td>FEAT_CANALS<td>Canals
+<tr><td>FEAT_BRIDGES<td>Bridges
+<tr><td>FEAT_HOUSES<td>Town houses
+<tr><td>FEAT_GLOBALVARS<td>Various global variables
+<tr><td>FEAT_INDUSTRYTILES<td>Industry tiles (visible part of industries)
+<tr><td>FEAT_INDUSTRIES<td>Industries
+<tr><td>FEAT_CARGOS<td>Cargo types
+<tr><td>FEAT_SOUNDEFFECTS<td>Sound effects
+<tr><td>FEAT_AIRPORTS<td>Airports
+<tr><td>FEAT_SIGNALS<td>Train signals
+<tr><td>FEAT_OBJECTS<td>Non-interactive objects (example: lighthouse)
+<tr><td>FEAT_RAILTYPES<td>Rail types
+<tr><td>FEAT_AIRPORTTILES<td>Airport tiles (visible part of airports)
+</table>
 
 <h1><a name="block-syntax">Block syntax</a></h1>
 <p>In the next sections you'll often see a word enclosed by the less-than and
