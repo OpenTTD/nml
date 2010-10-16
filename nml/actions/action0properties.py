@@ -360,7 +360,7 @@ def object_size(value):
     sizey = value.values[1].reduce_constant()
     if sizex.value < 1 or sizex.value > 15 or sizey.value < 1 or sizey.value > 15:
         raise generic.ScriptError("The size of an object must be at least 1x1 and at most 15x15 tiles", value.pos)
-    return [Action0Property(0x0C, ConstantNumeric(sizey.value << 8 | sizex.value), 1)]
+    return [Action0Property(0x0C, ConstantNumeric(sizey.value << 4 | sizex.value), 1)]
 
 properties[0x0F] = {
     'class': {'size': 4, 'num': 0x08, 'string_literal': 4},
