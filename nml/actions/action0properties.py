@@ -366,7 +366,7 @@ properties[0x0F] = {
     'class': {'size': 4, 'num': 0x08, 'string_literal': 4},
     # strings might be according to specs be either 0xD0 or 0xD4
     'classname': {'size': 2, 'num': 0x09, 'string': 0xD0},
-    'build_window_caption': {'size': 2, 'num': 0x0A, 'string': 0xD0},
+    'name': {'size': 2, 'num': 0x0A, 'string': 0xD0},
     'climates_available' : {'size': 1, 'num': 0x0B},
     'size': {'custom_function': object_size},
     'build_cost_multiplier': {'size': 1, 'num': 0x0D},
