@@ -210,66 +210,6 @@ def pow2(expr):
     expr = expression.BinOp(nmlop.ROT_RIGHT, expression.ConstantNumeric(1), expr)
     return expr
 
-def preprocess_binop(expr):
-    """
-    Several nml operators are not directly support by nfo so we have to work
-    around that by implementing those operators in terms of others.
-
-    @return: A pre-processed version of the expression.
-    @rtype:  L{Expression}
-    """
-    assert isinstance(expr, expression.BinOp)
-    if expr.op == nmlop.CMP_LT:
-        #return value is 0, 1 or 2, we want to map 0 to 1 and the others to 0
-        expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
-        #reduce the problem to 0/1
-        expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
-        #and invert the result
-        expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
-    elif expr.op == nmlop.CMP_GT:
-        #return value is 0, 1 or 2, we want to map 2 to 1 and the others to 0
-        expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
-        #subtract one
-        expr = expression.BinOp(nmlop.SUB, expr, expression.ConstantNumeric(1))
-        #map -1 and 0 to 0
-        expr = expression.BinOp(nmlop.MAX, expr, expression.ConstantNumeric(0))
-    elif expr.op == nmlop.CMP_LE:
-        #return value is 0, 1 or 2, we want to map 2 to 0 and the others to 1
-        expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
-        #swap 0 and 2
-        expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(2))
-        #map 1/2 to 1
-        expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
-    elif expr.op == nmlop.CMP_GE:
-        #return value is 0, 1 or 2, we want to map 1/2 to 1
-        expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
-        expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
-    elif expr.op == nmlop.CMP_EQ:
-        #return value is 0, 1 or 2, we want to map 1 to 1, other to 0
-        expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
-        expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
-    elif expr.op == nmlop.CMP_NEQ:
-        #same as CMP_EQ but invert the result
-        expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
-        expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
-        expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
-
-    elif expr.op == nmlop.SHIFT_LEFT:
-        #a << b ==> a * (2**b)
-        expr = expression.BinOp(nmlop.MUL, expr.expr1, pow2(expr.expr2))
-    elif expr.op == nmlop.SHIFT_RIGHT:
-        #a >> b ==> a / (2**b)
-        expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
-    elif expr.op == nmlop.SHIFTU_RIGHT:
-        #a >>> b ==> (uint)a / (2**b)
-        expr = expression.BinOp(nmlop.DIVU, expr.expr1, pow2(expr.expr2))
-    elif expr.op == nmlop.HASBIT:
-        # hasbit(x, n) ==> (x >> n) & 1
-        expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
-        expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
-
-    return expr
-
 class Varaction2Parser(object):
     def __init__(self):
         self.extra_actions = []
@@ -277,9 +217,160 @@ class Varaction2Parser(object):
         self.var_list = []
         self.var_list_size = 0
 
+
+    def preprocess_binop(self, expr):
+        """
+        Several nml operators are not directly support by nfo so we have to work
+        around that by implementing those operators in terms of others.
+
+        @return: A pre-processed version of the expression.
+        @rtype:  L{Expression}
+        """
+        assert isinstance(expr, expression.BinOp)
+        if expr.op == nmlop.CMP_LT:
+            #return value is 0, 1 or 2, we want to map 0 to 1 and the others to 0
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            #reduce the problem to 0/1
+            expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
+            #and invert the result
+            expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_GT:
+            #return value is 0, 1 or 2, we want to map 2 to 1 and the others to 0
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            #subtract one
+            expr = expression.BinOp(nmlop.SUB, expr, expression.ConstantNumeric(1))
+            #map -1 and 0 to 0
+            expr = expression.BinOp(nmlop.MAX, expr, expression.ConstantNumeric(0))
+        elif expr.op == nmlop.CMP_LE:
+            #return value is 0, 1 or 2, we want to map 2 to 0 and the others to 1
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            #swap 0 and 2
+            expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(2))
+            #map 1/2 to 1
+            expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_GE:
+            #return value is 0, 1 or 2, we want to map 1/2 to 1
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            expr = expression.BinOp(nmlop.MIN, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_EQ:
+            #return value is 0, 1 or 2, we want to map 1 to 1, other to 0
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.CMP_NEQ:
+            #same as CMP_EQ but invert the result
+            expr = expression.BinOp(nmlop.VACT2_CMP, expr.expr1, expr.expr2)
+            expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
+            expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
+
+        elif expr.op == nmlop.SHIFT_LEFT:
+            #a << b ==> a * (2**b)
+            expr = expression.BinOp(nmlop.MUL, expr.expr1, pow2(expr.expr2))
+        elif expr.op == nmlop.SHIFT_RIGHT:
+            #a >> b ==> a / (2**b)
+            expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
+        elif expr.op == nmlop.SHIFTU_RIGHT:
+            #a >>> b ==> (uint)a / (2**b)
+            expr = expression.BinOp(nmlop.DIVU, expr.expr1, pow2(expr.expr2))
+        elif expr.op == nmlop.HASBIT:
+            # hasbit(x, n) ==> (x >> n) & 1
+            expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
+            expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
+
+        return expr
+
+
+    def preprocess_ternaryop(self, expr):
+        assert isinstance(expr, expression.TernaryOp)
+        guard = expression.Boolean(expr.guard).reduce()
+        self.parse(guard)
+        guard_var = VarAction2StoreTempVar()
+        inverted_guard_var = VarAction2StoreTempVar()
+        self.var_list.append(nmlop.STO_TMP)
+        self.var_list.append(guard_var)
+        self.var_list.append(nmlop.XOR)
+        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(1))
+        self.var_list.append(var)
+        self.var_list.append(nmlop.STO_TMP)
+        self.var_list.append(inverted_guard_var)
+        self.var_list.append(nmlop.VAL2)
+        # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
+        self.var_list_size += 4 + guard_var.get_size() + inverted_guard_var.get_size() + var.get_size()
+        expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
+        expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
+        return expression.BinOp(nmlop.ADD, expr1, expr2)
+
+
+    def parse_variable(self, expr):
+        if not isinstance(expr.num, expression.ConstantNumeric):
+            raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
+        if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
+            raise generic.ScriptError("Variable parameter must be a constant number", expr.param.pos)
+        var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
+        var.add, var.div, var.mod = expr.add, expr.div, expr.mod
+        self.var_list.append(var)
+        self.var_list_size += var.get_size()
+
+
+    def parse_binop(self, expr):
+        if expr.op.act2_num is None: expr.supported_by_action2(True)
+
+        if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
+                isinstance(expr.expr2, VarAction2LoadTempVar) or \
+                (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
+                expr.op == nmlop.VAL2:
+            expr2 = expr.expr2
+        elif expr.expr2.supported_by_actionD(False):
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
+            extra_actions.extend(tmp_param_actions)
+            expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param))
+        else:
+            #The expression is so complex we need to compute it first, store the
+            #result and load it back later.
+            self.parse(expr.expr2)
+            tmp_var = VarAction2StoreTempVar()
+            self.var_list.append(nmlop.STO_TMP)
+            self.var_list.append(tmp_var)
+            self.var_list.append(nmlop.VAL2)
+            #the +2 is for both operators
+            self.var_list_size += tmp_var.get_size() + 2
+            expr2 = VarAction2LoadTempVar(tmp_var)
+
+        #parse expr1
+        self.parse(expr.expr1)
+        self.var_list.append(expr.op)
+        self.var_list_size += 1
+
+        if isinstance(expr2, VarAction2LoadTempVar):
+            self.var_list.append(expr2)
+            self.var_list_size += expr2.get_size()
+        else:
+            self.parse(expr2)
+
+
+    def parse_constant(self, expr):
+        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expr)
+        self.var_list.append(var)
+        self.var_list_size += var.get_size()
+
+
+    def parse_param(self, expr):
+        self.mods.append(Modification(expr.num.value, 4, self.var_list_size + 2))
+        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
+        self.var_list.append(var)
+        self.var_list_size += var.get_size()
+
+
+    def parse_via_actionD(self, expr):
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
+        self.extra_actions.extend(tmp_param_actions)
+        num = expression.ConstantNumeric(tmp_param)
+        self.parse(expression.Parameter(num))
+
+
     def parse(self, expr):
+        #Preprocess the expression
         if isinstance(expr, expression.BinOp):
-            expr = preprocess_binop(expr)
+            expr = self.preprocess_binop(expr)
 
         elif isinstance(expr, expression.Boolean):
             expr = expression.BinOp(nmlop.MINU, expr.expr, expression.ConstantNumeric(1))
@@ -291,85 +382,23 @@ class Varaction2Parser(object):
             expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(0xFFFFFFFF))
 
         elif isinstance(expr, expression.TernaryOp) and not expr.supported_by_actionD(False):
-            guard = expression.Boolean(expr.guard).reduce()
-            self.parse(guard)
-            guard_var = VarAction2StoreTempVar()
-            inverted_guard_var = VarAction2StoreTempVar()
-            self.var_list.append(nmlop.STO_TMP)
-            self.var_list.append(guard_var)
-            self.var_list.append(nmlop.XOR)
-            var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(1))
-            self.var_list.append(var)
-            self.var_list.append(nmlop.STO_TMP)
-            self.var_list.append(inverted_guard_var)
-            self.var_list.append(nmlop.VAL2)
-            # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
-            self.var_list_size += 4 + guard_var.get_size() + inverted_guard_var.get_size() + var.get_size()
-            expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
-            expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
-            expr = expression.BinOp(nmlop.ADD, expr1, expr2)
+            expr = self.preprocess_ternaryop(expr)
 
+        #Try to parse the expression to a list of variables+operators
         if isinstance(expr, expression.ConstantNumeric):
-            var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expr)
-            self.var_list.append(var)
-            self.var_list_size += var.get_size()
+            self.parse_constant(expr)
 
         elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
-            self.mods.append(Modification(expr.num.value, 4, self.var_list_size + 2))
-            var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
-            self.var_list.append(var)
-            self.var_list_size += var.get_size()
+            self.parse_param(expr)
 
         elif isinstance(expr, expression.Variable):
-            if not isinstance(expr.num, expression.ConstantNumeric):
-                raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
-            if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
-                raise generic.ScriptError("Variable parameter must be a constant number", expr.param.pos)
-            var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
-            var.add, var.div, var.mod = expr.add, expr.div, expr.mod
-            self.var_list.append(var)
-            self.var_list_size += var.get_size()
+            self.parse_variable(expr)
 
         elif expr.supported_by_actionD(False):
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
-            self.extra_actions.extend(tmp_param_actions)
-            num = expression.ConstantNumeric(tmp_param)
-            self.parse(expression.Parameter(num))
+            self.parse_via_actionD(expr)
 
         elif isinstance(expr, expression.BinOp):
-            if expr.op.act2_num is None: expr.supported_by_action2(True)
-
-            if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
-                    isinstance(expr.expr2, VarAction2LoadTempVar) or \
-                    (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
-                    expr.op == nmlop.VAL2:
-                expr2 = expr.expr2
-            elif expr.expr2.supported_by_actionD(False):
-                tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
-                extra_actions.extend(tmp_param_actions)
-                expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param))
-            else:
-                #The expression is so complex we need to compute it first, store the
-                #result and load it back later.
-                self.parse(expr.expr2)
-                tmp_var = VarAction2StoreTempVar()
-                self.var_list.append(nmlop.STO_TMP)
-                self.var_list.append(tmp_var)
-                self.var_list.append(nmlop.VAL2)
-                #the +2 is for both operators
-                self.var_list_size += tmp_var.get_size() + 2
-                expr2 = VarAction2LoadTempVar(tmp_var)
-
-            #parse expr1
-            self.parse(expr.expr1)
-            self.var_list.append(expr.op)
-            self.var_list_size += 1
-
-            if isinstance(expr2, VarAction2LoadTempVar):
-                self.var_list.append(expr2)
-                self.var_list_size += expr2.get_size()
-            else:
-                self.parse(expr2)
+            self.parse_binop(expr)
 
         else:
             expr.supported_by_action2(True)
