@@ -1,4 +1,4 @@
-from nml import expression, nmlop
+from nml import expression, nmlop, generic
 
 varact2vars = 0x12 * [{}]
 varact2vars60x = 0x12 * [{}]
@@ -152,6 +152,38 @@ varact2vars_industries = {
     'build_type' : {'var': 0xB3, 'start': 0, 'size': 2},
 }
 
+def industry_count(name, args, pos, info):
+    if len(args) < 1 or len(args) > 2:
+        raise generic.ScriptError("'%s'() requires between 1 and 2 argument(s), encountered %d" % (name, len(args)), pos)
+    if not isinstance(args[0], expression.ConstantNumeric):
+        raise generic.ScriptError("First argument of '%s' must be a compile-time constant." % name, arg.pos)
+    generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
+
+    grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
+
+    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), args[0], pos)
+    var.extra_params.append( (0x100, grfid) )
+    return var
+
+def industry_layout_count(name, args, pos, info):
+    if len(args) < 2 or len(args) > 3:
+        raise generic.ScriptError("'%s'() requires between 2 and 3 argument(s), encountered %d" % (name, len(args)), pos)
+    if not isinstance(args[0], expression.ConstantNumeric):
+        raise generic.ScriptError("First argument of '%s' must be a compile-time constant." % name, arg.pos)
+    generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
+
+    grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 2 else args[2]
+
+    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), args[0], pos)
+    var.extra_params.append( (0x100, grfid) )
+    var.extra_params.append( (0x101, expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xFF)).reduce()) )
+    return var
+
+varact2vars60x_industries = {
+    'industry_count': {'var': 0x67, 'start': 0, 'size': 32, 'function': industry_count},
+    'industry_layout_count': {'var': 0x68, 'start': 0, 'size': 32, 'function': industry_layout_count},
+}
+
 varact2vars_railtype = {
     'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
     'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
@@ -177,5 +209,6 @@ varact2vars60x[0x03] = varact2vars60x_vehicles
 varact2vars[0x09] = varact2vars_industrytiles
 varact2vars60x[0x09] = varact2vars60x_industrytiles
 varact2vars[0x0A] = varact2vars_industries
+varact2vars60x[0x0A] = varact2vars60x_industries
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
