@@ -621,6 +621,10 @@ class Identifier(Expression):
         if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
         return self
 
+    def supported_by_actionD(self, raise_error):
+        if raise_error: raise generic.ScriptError("Unknown identifier '%s'" % self.value, self.pos)
+        return False
+
 class StringLiteral(Expression):
     def __init__(self, value, pos):
         Expression.__init__(self, pos)
