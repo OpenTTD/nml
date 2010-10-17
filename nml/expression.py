@@ -446,6 +446,7 @@ class Variable(Expression):
         self.add = None
         self.div = None
         self.mod = None
+        self.extra_params = []
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Action2 variable'
@@ -456,11 +457,14 @@ class Variable(Expression):
                 print (indentation+4)*' ' + 'Procedure call:', self.param
             else:
                 self.param.debug_print(indentation + 4)
+            if len(self.extra_params) > 0: print (indentation+2)*' ' + 'Extra parameters:'
+            for extra_param in self.extra_params:
+                extra_param.debug_print(indentation + 4)
 
     def __str__(self):
         ret = 'var[%s, %s, %s' % (str(self.num), str(self.shift), str(self.mask))
         if self.param is not None:
-            ret += ', %s' & str(self.param)
+            ret += ', %s' % str(self.param)
         ret += ']'
         if self.add is not None:
             ret = '(%s + %s)' % (ret, self.add)
@@ -482,6 +486,7 @@ class Variable(Expression):
         var.add = self.add
         var.div = self.div
         var.mod = self.mod
+        var.extra_params = [(extra_param[0], extra_param[1].reduce(id_dicts, unknown_id_fatal)) for extra_param in self.extra_params]
         return var
 
     def supported_by_action2(self, raise_error):

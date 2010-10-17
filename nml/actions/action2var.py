@@ -47,7 +47,7 @@ class Action2Var(action2.Action2):
     def resolve_tmp_storage(self):
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):
-                location = self.tmp_locations(0)
+                location = self.tmp_locations[0]
                 self.remove_tmp_location(location)
                 var.mask = expression.ConstantNumeric(location)
 
@@ -305,6 +305,35 @@ class Varaction2Parser(object):
             raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
         if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
             raise generic.ScriptError("Variable parameter must be a constant number", expr.param.pos)
+
+        if len(expr.extra_params) > 0:
+            first_var = len(self.var_list) == 0
+            backup_op = None
+            value_backup = None
+            if not first_var:
+                backup_op = self.var_list.pop()
+                value_backup = VarAction2StoreTempVar()
+                self.var_list.append(nmlop.STO_TMP)
+                self.var_list.append(value_backup)
+                self.var_list.append(nmlop.VAL2)
+                self.var_list_size += value_backup.get_size() + 1
+
+            #Last value == 0, and this is right before we're going to use
+            #the extra parameters. Set them to their correct value here.
+            for extra_param in expr.extra_params:
+                self.parse(extra_param[1])
+                self.var_list.append(nmlop.STO_TMP)
+                var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(extra_param[0]))
+                self.var_list.append(var)
+                self.var_list.append(nmlop.VAL2)
+                self.var_list_size += var.get_size() + 2
+
+            if not first_var:
+                value_loadback = VarAction2LoadTempVar(value_backup)
+                self.var_list.append(value_loadback)
+                self.var_list.append(backup_op)
+                self.var_list_size += value_loadback.get_size() + 1
+
         var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
         var.add, var.div, var.mod = expr.add, expr.div, expr.mod
         self.var_list.append(var)
@@ -421,6 +450,8 @@ def parse_var(info, pos):
     return res
 
 def parse_60x_var(name, args, pos, info):
+    if 'function' in info:
+        return info['function'](name, args, pos, info)
     if 'tile' in info:
         narg = 2
         if info['tile'] == 's': minmax = (-8, 7)
