@@ -113,10 +113,19 @@ def parse_ternary_op(assignment):
     return actions
 
 def parse_special_check(assignment):
-    assert isinstance(assignment.value, expression.SpecialCheck)
-    actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
-    actions.append(nml.actions.action7.SkipAction(9, 0, 4, assignment.value.op, assignment.value.value, 1))
-    actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(1))))
+    check = assignment.value
+    assert isinstance(check, expression.SpecialCheck)
+    actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[0])))
+
+    value = check.value
+    size = 4
+    if check.mask is not None:
+        value &= check.mask
+        value += check.mask << 32
+        size = 8
+    actions.append(nml.actions.action7.SkipAction(9, check.varnum, size, check.op, value, 1))
+
+    actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[1]))))
     return actions
 
 def parse_hasbit(assignment):

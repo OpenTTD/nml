@@ -668,13 +668,37 @@ class Array(Expression):
         return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values], self.pos)
 
 class SpecialCheck(Expression):
-    def __init__(self, op, value, pos = None):
+    """
+    Action7/9 special check (e.g. to see whether a cargo is defined)
+
+    @ivar op: Action7/9 operator to use
+    @type op: (C{int}, C{basestring})-tuple
+
+    @ivar varnum: Variable number to read
+    @type varnum: C{int}
+
+    @ivar results: Result of the check when skipping (0) or not skipping (1)
+    @type results: (C{int}, C{int})-tuple
+
+    @ivar value: Value to test
+    @type value: C{int}
+
+    @ivar mask: Mask to to test only certain bits of the value
+    @type mask: C{int}
+
+    @ivar pos: Position information
+    @type pos: L{Position}
+    """
+    def __init__(self, op, varnum, results, value, mask = None, pos = None):
         Expression.__init__(self, pos)
         self.op = op
+        self.varnum = varnum
+        self.results = results
         self.value = value
+        self.mask = mask
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        return SpecialCheck(self.op, self.value, self.pos)
+        return self
 
     def supported_by_actionD(self, raise_error):
         return True
@@ -881,7 +905,7 @@ def builtin_cargotype_available(name, args, pos):
     label = args[0].reduce()
     if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
         raise generic.ScriptError("Cargo labels must be string literals of length 4", label.pos)
-    return SpecialCheck((0x0B, r'\7c'), generic.parse_string_to_dword(label.value), args[0].pos)
+    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), generic.parse_string_to_dword(label.value), None, args[0].pos)
 
 def builtin_railtype_available(name, args, pos):
     """
@@ -894,8 +918,32 @@ def builtin_railtype_available(name, args, pos):
     label = args[0].reduce()
     if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
         raise generic.ScriptError("Railtype labels must be string literals of length 4", label.pos)
-    return SpecialCheck((0x0D, None), generic.parse_string_to_dword(label.value), args[0].pos)
+    return SpecialCheck((0x0D, None), 0, (0, 1), generic.parse_string_to_dword(label.value), None, args[0].pos)
 
+def builtin_grf_status(name, args, pos):
+    """
+    grf_(current|future)_status(grfid[, mask]) builtin function.
+
+    @return 1 if the grf is, or will be, active, 0 otherwise.
+    """
+    if len(args) not in (1, 2):
+        raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
+    labels = []
+    for label in args:
+        label = label.reduce()
+        if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
+            raise generic.ScriptError("GRFIDs must be string literals of length 4", label.pos)
+        labels.append(label)
+    if name == 'grf_current_status':
+        op = (0x06, r'\7G')
+        results = (1, 0)
+    elif name == 'grf_future_status':
+        op = (0x0A, r'\7gg')
+        results = (0, 1)
+    else:
+        assert False, "Unknown grf status function"
+    mask = generic.parse_string_to_dword(labels[1].value) if len(labels) > 1 else None
+    return SpecialCheck(op, 0x88, results, generic.parse_string_to_dword(labels[0].value), mask, args[0].pos)
 #}
 
 function_table = {
@@ -912,6 +960,8 @@ function_table = {
     'version_openttd' : builtin_version_openttd,
     'cargotype_available' : builtin_cargotype_available,
     'railtype_available' : builtin_railtype_available,
+    'grf_current_status' : builtin_grf_status,
+    'grf_future_status' : builtin_grf_status,
 }
 
 commutative_operators = set([

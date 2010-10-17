@@ -21,7 +21,12 @@ class SkipAction(base_action.BaseAction):
         file.print_bytex(self.var)
         file.print_bytex(self.varsize)
         file.print_bytex(self.condtype[0], self.condtype[1])
-        file.print_varx(self.value, self.varsize)
+        if self.varsize == 8:
+            #grfid + mask
+            file.print_dwordx(self.value & 0xFFFFFFFF)
+            file.print_dwordx(self.value >> 32)
+        else:
+            file.print_varx(self.value, self.varsize)
         file.print_bytex(self.label)
         file.newline()
         file.end_sprite()

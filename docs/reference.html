@@ -921,6 +921,11 @@ the constant representing an OpenTTD version
 this game. <i>cargotype</i> must be a literal string of length 4.
 <tr><td>railtype_available(<i>railtype</i>)<td>Check if a railtype is available in this game. 
 <i>railtype</i> must be a literal string of length 4.
+<tr><td>grf_current_status(<i>grfid[, mask]</i>)<td>1 if the given GRF is currently active 0, otherwise.
+If <i>mask</i> is set, only the bits set in the mask will be tested. Both parameters must be a literal string
+of length 4.
+<tr><td>grf_future_status(<i>grfid[, mask]</i>)<td>Same as above, but tests whether the grf
+will become active instead of whether it's currently active.
 </table>
 
 
