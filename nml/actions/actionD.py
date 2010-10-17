@@ -70,11 +70,14 @@ class ParameterAssignment(object):
         self.value = value
 
     def pre_process(self):
+        self.value = self.value.reduce(global_constants.const_list)
+
         #read the normal const list as well, to produce a nicer error message
         self.param = self.param.reduce(global_constants.writable_const_list + global_constants.const_list)
+        if isinstance(self.param, expression.ParameterBit):
+            self.param, self.value = self.param.to_assignment(self.value)
         if not isinstance(self.param, expression.Parameter):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
-        self.value = self.value.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter assignment'
@@ -213,6 +216,9 @@ def transform_bin_op(assignment):
 
 def parse_actionD(assignment):
     assignment.value.supported_by_actionD(True)
+
+    if isinstance(assignment.value, expression.ParameterBit):
+        assignment.value = assignment.value.to_reading()
 
     if isinstance(assignment.value, expression.TernaryOp):
         return parse_ternary_op(assignment)

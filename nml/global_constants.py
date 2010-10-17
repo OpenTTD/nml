@@ -614,10 +614,19 @@ global_parameters = {
     'year_loaded'                        : {'num': 0xA4, 'size': 4},
 }
 
+
+def misc_grf_bit(info, pos):
+    return expression.ParameterBit(expression.ConstantNumeric(info['param'], pos), expression.ConstantNumeric(info['bit'], pos), pos)
+
+misc_grf_bits = {
+    'desert_paved_roads'                 : {'param': 0x9E, 'bit': 1},
+    'train_width_32_px'                  : {'param': 0x9E, 'bit': 3},
+}
+
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_info), cargo_numbers, railtype_table, item_names]
+const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), cargo_numbers, railtype_table, item_names]
 
-writable_const_list = [(global_parameters, write_param_from_info)]
+writable_const_list = [(global_parameters, write_param_from_info), (misc_grf_bits, misc_grf_bit)]
