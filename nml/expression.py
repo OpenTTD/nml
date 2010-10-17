@@ -881,7 +881,7 @@ def builtin_cargotype_available(name, args, pos):
     label = args[0].reduce()
     if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
         raise generic.ScriptError("Cargo labels must be string literals of length 4", label.pos)
-    return SpecialCheck((0x0B, r'\7C'), generic.parse_string_to_dword(label.value), args[0].pos)
+    return SpecialCheck((0x0B, r'\7c'), generic.parse_string_to_dword(label.value), args[0].pos)
 
 def builtin_railtype_available(name, args, pos):
     """
