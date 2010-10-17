@@ -321,7 +321,7 @@ class Varaction2Parser(object):
             expr2 = expr.expr2
         elif expr.expr2.supported_by_actionD(False):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
-            extra_actions.extend(tmp_param_actions)
+            self.extra_actions.extend(tmp_param_actions)
             expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param))
         else:
             #The expression is so complex we need to compute it first, store the
