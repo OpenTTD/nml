@@ -479,6 +479,12 @@ constant_numbers = {
     'DIRECTION_WEST'                      : 6,
     'DIRECTION_NORTHWEST'                 : 7,
 
+    #loading stages
+    'LOADINGSTAGE_INITIALIZE'             : 0x0000,
+    'LOADINGSTAGE_RESERVE'                : 0x0101,
+    'LOADINGSTAGE_ACTIVATE'               : 0x0201,
+    'LOADINGSTAGE_TEST'                   : 0x0401,
+
     #ttdpatch flags
     'CONFIGFLAG_KEEPSMALLAIRPORT'           : 0x0C,
     'CONFIGFLAG_NEWAIRPORTS'                : 0x0D,
@@ -556,6 +562,28 @@ constant_numbers = {
     'CONFIGFLAG_ENGINE_POOL'                : 0x78,
     'CONFIGFLAG_VARIABLE_RUNNING_COSTS'     : 0x7E,
     'CONFIGFLAG_ANY'                        : 0x7F,
+    
+    #palettes
+    'PALETTE_DOS'                           : 0,
+    'PALETTE_WIN'                           : 1,
+
+    #game mode
+    'GAMEMODE_MENU'                         : 0,
+    'GAMEMODE_GMAE'                         : 1,
+    'GAMEMODE_EDITOR'                       : 2,
+
+    #difficulty
+    'DIFFICULTY_EASY'                       : 0,
+    'DIFFICULTY_MEDIUM'                     : 1,
+    'DIFFICULTY_HARD'                       : 2,
+    'DIFFICULTY_CUSTOM'                     : 3,
+
+    #display options
+    'DISPLAY_TOWN_NAMES'                    : 0,
+    'DISPLAY_STATION_NAMES'                 : 1,
+    'DISPLAY_SIGNS'                         : 2,
+    'DISPLAY_ANIMATION'                     : 3,
+    'DISPLAY_FULL_DETAIL'                   : 5,
 
     #Random triggers
     'TRIGGER_ALL'                           : 0x80,
