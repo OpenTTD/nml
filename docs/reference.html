@@ -1333,21 +1333,52 @@ specified height of the year is used in the calculation.
 
 <h1><a name="vars">List of variables</a></h1>
 <h2><a name="vars-general">General</a></h2>
+<p>A number of global variables are available. Some are only available in
+switch-blocks, while others can be used in any expression. This is indicated
+by the second column in the following table:</p>
 <table class="t">
-<tr><th>name <th>value range <th>comment
-<tr><td>climate <td>CLIMATE_XXX with XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND] <td>
-<tr><td>ttdpatch_flags <td> <td>
-<tr><td>trafic_side <td>DRIVE_ON_LEFT | DRIVE_ON_RIGHT <td>
-<tr><td>ttdpatch_version <td> <td>
-<tr><td>ttd_version <td> <td>
-<tr><td>ttd_platform <td>PLATFORM_TTDPATCH | PLATFORM_OPENTTD <td>
-<tr><td>openttd_version<td> <td>use version_openttd(MAJOR, MINOR, BUILD) to test and compare for a
+<tr><th>name <th>Available outside switch blocks <th>Value range <th>Comment
+<tr><td>ttd_platform <td>Yes <td>PLATFORM_TTDPATCH or PLATFORM_OPENTTD <td>
+<tr><td>ttdpatch_version <td>Yes <td> <td>
+<tr><td>openttd_version <td>Yes <td> <td>use version_openttd(MAJOR, MINOR, BUILD) to test and compare for a
     release version and version_openttd(MAJOR, MINOR, BUILD, REVISION) to test for a specific svn
     version of OpenTTD
-<tr><td>date_loaded <td> <td>
-<tr><td>year_loaded <td> <td>
-
+<tr><td>current_palette <td>Yes <td>PALETTE_DOS or PALETTE_WIN <td>
+<tr><td>current_date <td>No <td>days since year 0 <td> Use date (year, month, day) to compare with.
+<tr><td>current_year <td>No <td>years since year 0 <td>
+<tr><td>current_month <td>No <td>0 .. 11 <td>
+<tr><td>current_day_of_month <td>No <td>0 .. 30 <td>
+<tr><td>current_day_of_year <td>No <td>0 .. 364 (365 in leap years) <td>
+<tr><td>is_leapyear <td>No <td>0 or 1 <td>
+<tr><td>date_loaded <td>Yes <td>days since year 0 <td>Set to the time of game load, which is the current date in single player, 
+    and the date the server started in multiplayer. This to prevent desyncs.
+<tr><td>year_loaded <td>Yes <td>years since year 0 <td>See date_loaded.
+<tr><td>animation_counter <td>No <td> 0 .. 65535 <td> Increased by 1 each tick
+<tr><td>climate <td>Yes (a)<td>CLIMATE_XXX with XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND] <td>
+<tr><td>game_mode <td>Yes <td>GAMEMODE_XXX with XXX = [MENU | GAME | EDITOR] <td>
+<tr><td>loading_stage <td>Yes <td>LOADING_STAGE_XXX with XXX = [INITIALIZE | RESERVE | ACTIVATE | TEST] <td>'Phase' of the GRF loading process.
+<tr><td>difficulty_level <td>Yes (a) <td>DIFFICULTY_XXX with XXX = [EASY | MEDIUM | HARD | CUSTOM] <td>
+<tr><td>display_options <td>No <td> bitmask of DISPLAY_XXX with XXX = [TOWN_NAMES | STATION_NAMES | SIGNS | ANIMATION | FULL_DETAIL]
+    <td> Use hasbit(display_options, DISPLAY_XXX) to test a particular bit.
+<tr><td>desert_paved_roads <td>Yes (b) <td>0 or 1 <td> If 1, desert roads have pavement and street lights.
+<tr><td>train_width_32_px <td>Yes (b) <td>0 or 1 <td> If 1, train vehicles are 32 instead of 29 pixels wide in the depot view.
+<tr><td>traininfo_y_offset <td>Yes (b) <td>-128 .. 127 <td>Used to correctly position the depot view of trains.
+<tr><td>snowline_height <td>No <td>16 .. 120 in steps of 8, or 0xFF if no snow. <td>One tile height is equivalent to 8 units.
+<tr><td>traffic_side <td>Yes (a)<td>TRAFFIC_SIDE_LEFT or TRAFFIC_SIDE_RIGHT <td>
+<tr><td>ttdpatch_flags <td>Yes <td> <td>
+<tr><td>current_callback <td>No <td> <td>Set to the ID of the current callback, see the various features for more information / examples.
+<tr><td>extra_callback_info1 <td>No <td>Varies <td>Extra callback information, meaning differs per callback.
+<tr><td>extra_callback_info2 <td>No <td>Varies <td>Extra callback information, meaning differs per callback.
+<tr><td>last_computed_result <td>No <td> <td>Result of the last (previously evaluated) switch block.
 </table>
+<p>(a) The value of these variables can change during the game. Reading them
+from a switch block (which reads the current value) may result in a different
+value than in the rest of the code (which is evaluated when the game is loaded).</p>
+<p>(b) These variables can be written as well as read. Use a normal assignment,
+for example:</p>
+<pre class="code">
+traininfo_y_offset = -2;
+</pre>
 
 <h2><a name="vars-vehicles">Vehicles</a></h2>
 Please note that while those variables are available for all vehicles types, some of them only make sense
