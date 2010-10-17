@@ -196,7 +196,7 @@ def transform_bin_op(assignment):
         # if A is equal to B
         extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
         # Clamp the value to 0/1, see above for details
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.DIV, expression.Parameter(assignment.param), assignment.param))))
+        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.DIV, assignment.param, assignment.param))))
         op = nmlop.SUB
         expr1 = expression.ConstantNumeric(1)
         expr2 = assignment.param
