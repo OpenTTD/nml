@@ -128,13 +128,14 @@ varact2vars_industrytiles = {
 }
 
 varact2vars60x_industrytiles = {
-    'tile_slope': {'var': 0x60, 'start': 0, 'size': 5, 'tile': 's'},
-    'tile_is_same_industry': {'var': 0x60, 'start': 8, 'size': 1, 'tile': 's'},
-    'tile_has_water': {'var': 0x60, 'start': 9, 'size': 1, 'tile': 's'},
-    'terrain_type_nearby_tile': {'var': 0x60, 'start': 10, 'size': 3, 'tile': 's'},
-    'tile_lowest_corner_height': {'var': 0x60, 'start': 16, 'size': 8, 'tile': 's'},
-    'animation_frame_nearby_tile': {'var': 0x61, 'start': 0, 'size': 8, 'tile': 's'},
-    'industrytile_id_nearby_tile': {'var': 0x62, 'start': 0, 'size': 16, 'tile': 's'},
+    'nearby_tile_slope'            : {'var': 0x60, 'start': 0, 'size': 5, 'tile': 's'},
+    'nearby_tile_is_same_industry' : {'var': 0x60, 'start': 8, 'size': 1, 'tile': 's'},
+    'nearby_tile_is_water'         : {'var': 0x60, 'start': 9, 'size': 1, 'tile': 's'},
+    'nearby_tile_terrain_type'     : {'var': 0x60, 'start': 10, 'size': 3, 'tile': 's'},
+    'nearby_tile_height'           : {'var': 0x60, 'start': 16, 'size': 8, 'tile': 's'},
+    'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size': 4, 'tile': 's' },
+    'nearby_tile_animation_frame'  : {'var': 0x61, 'start': 0, 'size': 8, 'tile': 's'},
+    'nearby_tile_industrytile_id'  : {'var': 0x62, 'start': 0, 'size': 16, 'tile': 's'},
 }
 
 varact2vars_industries = {
@@ -186,6 +187,43 @@ varact2vars60x_industries = {
     'industry_layout_distance': {'var': 0x68, 'start': 0, 'size': 16, 'function': industry_layout_count},
 }
 
+varact2vars_objects = {
+    'relative_pos'           : { 'var' : 0x40, 'start':  0, 'size': 24 },
+
+    'terrain_type'           : { 'var' : 0x41, 'start':  0, 'size':  3 },
+    'tile_slope'             : { 'var' : 0x41, 'start':  8, 'size':  5 },
+
+    'build_date'             : { 'var' : 0x42, 'start':  0, 'size': 32 },
+
+    'animation_frame'        : { 'var' : 0x43, 'start':  0, 'size':  8 },
+    'company_color'          : { 'var' : 0x43, 'start':  8, 'size':  8 },
+
+    'owner'                  : { 'var' : 0x44, 'start':  0, 'size':  8 },
+
+    'town_manhattan_dist'    : { 'var' : 0x45, 'start':  0, 'size': 16 },
+    'town_zone'              : { 'var' : 0x45, 'start': 16, 'size':  8 },
+
+    'town_euclidean_dist'    : { 'var' : 0x46, 'start':  0, 'size': 32 },
+}
+
+varact2vars60x_objects = {
+    'nearby_tile_object_id'        : { 'var' : 0x60, 'start':  0, 'size': 16, 'tile': 's' },
+
+    'nearby_tile_random_bits'      : { 'var' : 0x61, 'start':  0, 'size':  8, 'tile': 's' },
+
+    'nearby_tile_slope'            : { 'var' : 0x62, 'start':  0, 'size':  5, 'tile': 's' },
+    'nearby_tile_is_same_object'   : { 'var' : 0x62, 'start':  8, 'size':  1, 'tile': 's' },
+    'nearby_tile_is_water'         : { 'var' : 0x62, 'start':  9, 'size':  1, 'tile': 's' },
+    'nearby_tile_terrain_type'     : { 'var' : 0x62, 'start': 10, 'size':  3, 'tile': 's' },
+    'nearby_tile_height'           : { 'var' : 0x62, 'start': 16, 'size':  8, 'tile': 's' },
+    'nearby_tile_class'            : { 'var' : 0x62, 'start': 24, 'size':  4, 'tile': 's' },
+
+    'nearby_tile_animation_frame'  : { 'var' : 0x63, 'start':  0, 'size':  8, 'tile': 's' },
+
+    'object_type_count'            : { 'var' : 0x64, 'start': 16, 'size': 16, 'function': industry_count },
+    'object_type_nearest'          : { 'var' : 0x64, 'start':  0, 'size': 16, 'function': industry_count },
+}
+
 varact2vars_railtype = {
     'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
     'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
@@ -212,5 +250,7 @@ varact2vars[0x09] = varact2vars_industrytiles
 varact2vars60x[0x09] = varact2vars60x_industrytiles
 varact2vars[0x0A] = varact2vars_industries
 varact2vars60x[0x0A] = varact2vars60x_industries
+varact2vars[0x0F] = varact2vars_objects
+varact2vars60x[0x0F] = varact2vars60x_objects
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
