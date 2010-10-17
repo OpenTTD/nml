@@ -270,138 +270,110 @@ def preprocess_binop(expr):
 
     return expr
 
-def parse_varaction2_expression(expr):
-    extra_actions = []
-    mods = []
-    var_list = []
-    var_list_size = 0
+class Varaction2Parser(object):
+    def __init__(self):
+        self.extra_actions = []
+        self.mods = []
+        self.var_list = []
+        self.var_list_size = 0
 
-    if isinstance(expr, expression.BinOp):
-        expr = preprocess_binop(expr)
+    def parse(self, expr):
+        if isinstance(expr, expression.BinOp):
+            expr = preprocess_binop(expr)
 
-    elif isinstance(expr, expression.Boolean):
-        expr = expression.BinOp(nmlop.MINU, expr.expr, expression.ConstantNumeric(1))
+        elif isinstance(expr, expression.Boolean):
+            expr = expression.BinOp(nmlop.MINU, expr.expr, expression.ConstantNumeric(1))
 
-    elif isinstance(expr, expression.Not):
-        expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(1))
+        elif isinstance(expr, expression.Not):
+            expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(1))
 
-    elif isinstance(expr, expression.BinNot):
-        expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(0xFFFFFFFF))
+        elif isinstance(expr, expression.BinNot):
+            expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(0xFFFFFFFF))
 
-    elif isinstance(expr, expression.TernaryOp) and not expr.supported_by_actionD(False):
-        guard = expression.Boolean(expr.guard).reduce()
-        actions, mods, var_list, var_list_size = parse_varaction2_expression(guard)
-        extra_actions.extend(actions)
-        guard_var = VarAction2StoreTempVar()
-        inverted_guard_var = VarAction2StoreTempVar()
-        var_list.append(nmlop.STO_TMP)
-        var_list.append(guard_var)
-        var_list.append(nmlop.XOR)
-        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(1))
-        var_list.append(var)
-        var_list.append(nmlop.STO_TMP)
-        var_list.append(inverted_guard_var)
-        var_list.append(nmlop.VAL2)
-        # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
-        var_list_size += 4 + guard_var.get_size() + inverted_guard_var.get_size() + var.get_size()
-        expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
-        expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
-        expr = expression.BinOp(nmlop.ADD, expr1, expr2)
+        elif isinstance(expr, expression.TernaryOp) and not expr.supported_by_actionD(False):
+            guard = expression.Boolean(expr.guard).reduce()
+            self.parse(guard)
+            guard_var = VarAction2StoreTempVar()
+            inverted_guard_var = VarAction2StoreTempVar()
+            self.var_list.append(nmlop.STO_TMP)
+            self.var_list.append(guard_var)
+            self.var_list.append(nmlop.XOR)
+            var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(1))
+            self.var_list.append(var)
+            self.var_list.append(nmlop.STO_TMP)
+            self.var_list.append(inverted_guard_var)
+            self.var_list.append(nmlop.VAL2)
+            # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
+            self.var_list_size += 4 + guard_var.get_size() + inverted_guard_var.get_size() + var.get_size()
+            expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
+            expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
+            expr = expression.BinOp(nmlop.ADD, expr1, expr2)
 
-    if isinstance(expr, expression.ConstantNumeric):
-        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expr)
-        var_list.append(var)
-        var_list_size += var.get_size()
+        if isinstance(expr, expression.ConstantNumeric):
+            var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expr)
+            self.var_list.append(var)
+            self.var_list_size += var.get_size()
 
-    elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
-        mods.append(Modification(expr.num.value, 4, var_list_size + 2))
-        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
-        var_list.append(var)
-        var_list_size += var.get_size()
-        target = expression.ConstantNumeric(0)
+        elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
+            self.mods.append(Modification(expr.num.value, 4, self.var_list_size + 2))
+            var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
+            self.var_list.append(var)
+            self.var_list_size += var.get_size()
 
-    elif isinstance(expr, expression.Variable):
-        if not isinstance(expr.num, expression.ConstantNumeric):
-            raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
-        if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
-            raise generic.ScriptError("Variable parameter must be a constant number", expr.param.pos)
-        var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
-        var.add, var.div, var.mod = expr.add, expr.div, expr.mod
-        var_list.append(var)
-        var_list_size += var.get_size()
+        elif isinstance(expr, expression.Variable):
+            if not isinstance(expr.num, expression.ConstantNumeric):
+                raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
+            if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
+                raise generic.ScriptError("Variable parameter must be a constant number", expr.param.pos)
+            var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
+            var.add, var.div, var.mod = expr.add, expr.div, expr.mod
+            self.var_list.append(var)
+            self.var_list_size += var.get_size()
 
-    elif expr.supported_by_actionD(False):
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
-        extra_actions.extend(tmp_param_actions)
-        num = expression.ConstantNumeric(tmp_param)
-        tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expression.Parameter(num))
-        extra_actions.extend(tmp_actions)
-        for mod in tmp_mods:
-            mod.offset += var_list_size
-        mods.extend(tmp_mods)
-        var_list.extend(tmp_var_list)
-        var_list_size += tmp_var_list_size
+        elif expr.supported_by_actionD(False):
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
+            self.extra_actions.extend(tmp_param_actions)
+            num = expression.ConstantNumeric(tmp_param)
+            self.parse(expression.Parameter(num))
 
-    elif isinstance(expr, expression.BinOp):
-        if expr.op.act2_num is None: expr.supported_by_action2(True)
+        elif isinstance(expr, expression.BinOp):
+            if expr.op.act2_num is None: expr.supported_by_action2(True)
 
-        if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
-                isinstance(expr.expr2, VarAction2LoadTempVar) or \
-                (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
-                expr.op == nmlop.VAL2:
-            expr2 = expr.expr2
-        elif expr.expr2.supported_by_actionD(False):
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
-            extra_actions.extend(tmp_param_actions)
-            expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param))
+            if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
+                    isinstance(expr.expr2, VarAction2LoadTempVar) or \
+                    (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
+                    expr.op == nmlop.VAL2:
+                expr2 = expr.expr2
+            elif expr.expr2.supported_by_actionD(False):
+                tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
+                extra_actions.extend(tmp_param_actions)
+                expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param))
+            else:
+                #The expression is so complex we need to compute it first, store the
+                #result and load it back later.
+                self.parse(expr.expr2)
+                tmp_var = VarAction2StoreTempVar()
+                self.var_list.append(nmlop.STO_TMP)
+                self.var_list.append(tmp_var)
+                self.var_list.append(nmlop.VAL2)
+                #the +2 is for both operators
+                self.var_list_size += tmp_var.get_size() + 2
+                expr2 = VarAction2LoadTempVar(tmp_var)
+
+            #parse expr1
+            self.parse(expr.expr1)
+            self.var_list.append(expr.op)
+            self.var_list_size += 1
+
+            if isinstance(expr2, VarAction2LoadTempVar):
+                self.var_list.append(expr2)
+                self.var_list_size += expr2.get_size()
+            else:
+                self.parse(expr2)
+
         else:
-            #The expression is so complex we need to compute it first, store the
-            #result and load it back later.
-            tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr2)
-            extra_actions.extend(tmp_actions)
-            for mod in tmp_mods:
-                mod.offset += var_list_size
-            mods.extend(tmp_mods)
-            var_list.extend(tmp_var_list)
-            tmp_var = VarAction2StoreTempVar()
-            var_list.append(nmlop.STO_TMP)
-            var_list.append(tmp_var)
-            var_list.append(nmlop.VAL2)
-            #the +2 is for both operators
-            var_list_size += tmp_var_list_size + 2 + tmp_var.get_size()
-            expr2 = VarAction2LoadTempVar(tmp_var)
-
-        #parse expr1
-        tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr.expr1)
-        extra_actions.extend(tmp_actions)
-        for mod in tmp_mods:
-            mod.offset += var_list_size
-        mods.extend(tmp_mods)
-        var_list.extend(tmp_var_list)
-        var_list_size += tmp_var_list_size
-
-        var_list.append(expr.op)
-        var_list_size += 1
-
-        if isinstance(expr2, VarAction2LoadTempVar):
-            var_list.append(expr2)
-            var_list_size += expr2.get_size()
-        else:
-            tmp_actions, tmp_mods, tmp_var_list, tmp_var_list_size = parse_varaction2_expression(expr2)
-            #it can be constant, parameter or variable
-            assert len(tmp_var_list) == 1 or expr.op == nmlop.VAL2
-            extra_actions.extend(tmp_actions)
-            for mod in tmp_mods:
-                mod.offset += var_list_size
-            mods.extend(tmp_mods)
-            var_list.extend(tmp_var_list)
-            var_list_size += tmp_var_list_size
-
-    else:
-        expr.supported_by_action2(True)
-        assert False #supported_by_action2 should have raised the correct error already
-
-    return (extra_actions, mods, var_list, var_list_size)
+            expr.supported_by_action2(True)
+            assert False #supported_by_action2 should have raised the correct error already
 
 def make_return_varact2(switch_block):
     act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89)
@@ -455,11 +427,13 @@ def parse_varaction2(switch_block):
 
     offset = 4 #first var
 
-    action_list, mods, var_list, var_list_size = parse_varaction2_expression(expr)
-    for mod in mods:
+    parser = Varaction2Parser()
+    parser.parse(expr)
+    action_list = parser.extra_actions
+    for mod in parser.mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
-    varaction2.var_list = var_list
-    offset += var_list_size + 1 # +1 for the byte num-ranges
+    varaction2.var_list = parser.var_list
+    offset += parser.var_list_size + 1 # +1 for the byte num-ranges
 
     #nvar == 0 is a special case, make sure that isn't triggered here, unless we want it to
     if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
