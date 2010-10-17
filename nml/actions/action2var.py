@@ -369,8 +369,8 @@ class Varaction2Parser(object):
 
     def parse(self, expr):
         #Preprocess the expression
-        if isinstance(expr, expression.ParameterBit):
-            #do this first, since it evaluates to a BinOp
+        if isinstance(expr, expression.SpecialParameter):
+            #do this first, since it may evaluate to a BinOp
             expr = expr.to_reading()
 
         if isinstance(expr, expression.BinOp):

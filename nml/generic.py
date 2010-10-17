@@ -26,6 +26,10 @@ def parse_string_to_dword(string):
             i += 1
     return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
 
+def reverse_lookup(dic, val):
+    #reverse dictionary lookup
+    return [k for k, v in dic.iteritems() if v == val][0]
+
 class Position(object):
     """
     Base class representing a position in a file.

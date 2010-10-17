@@ -674,39 +674,62 @@ class SpecialCheck(Expression):
     def supported_by_actionD(self, raise_error):
         return True
 
-class ParameterBit(Expression):
-    def __init__(self, param_num, bit_num, pos = None):
+class SpecialParameter(Expression):
+    """
+    Class for handling special grf parameters.
+    These can be assigned special, custom methods for reading / writing to them.
+
+    @ivar name: Name of the parameter, for debugging purposes
+    @type name: C{basestring}
+
+    @ivar info: Information about the parameter
+    @type info: C{dict}
+
+    @ivar write_func: Function that will be called when the parameter is the target of an assignment
+                        Arguments:
+                            Dictionary with parameter information (self.info)
+                            Target expression to assign
+                            Position information
+                        Return value is a 2-tuple:
+                            Left side of the assignment (must be a parameter)
+                            Right side of the assignment (may be any expression)
+    @type write_func: C{function}
+
+    @ivar read_func: Function that will be called to read out the parameter value
+                        Arguments:
+                            Dictionary with parameter information (self.info)
+                            Position information
+                        Return value:
+                            Expression that should be evaluated to get the parameter value
+    @type write_func: C{function}
+    """
+
+    def __init__(self, name, info, write_func, read_func, pos = None):
         Expression.__init__(self, pos)
-        self.param_num = param_num
-        self.bit_num = bit_num
+        self.name = name
+        self.info = info
+        self.write_func = write_func
+        self.read_func = read_func
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Parameter bit'
-        self.param_num.debug_print(indentation + 2)
-        self.bit_num.debug_print(indentation + 2)
+        print indentation*' ' + "Special parameter '%s'" % self.name
 
     def __str__(self, indentation):
-        # XXX - not valid in the case of assignments
-        return 'hasbit(param[%s], %s)' % (str(self.param_num), str(self.bit_num))
+        return self.name
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        param_num = self.param_num.reduce(id_dicts)
-        bit_num = self.bit_num.reduce_constant(id_dicts)
-        return ParameterBit(self.param_num, self.bit_num, self.pos)
+        return self
 
     def to_assignment(self, expr):
-        assert isinstance(self.bit_num, ConstantNumeric)
-        param = Parameter(self.param_num, self.param_num.pos)
-
-        #param = (expr != 0) ? param | (1 << bit) : param & ~(1 << bit)
-        expr = BinOp(nmlop.CMP_NEQ, expr, ConstantNumeric(0, self.pos), self.pos)
-        or_expr = BinOp(nmlop.OR, param, ConstantNumeric(1 << self.bit_num.value, self.pos), self.pos)
-        and_expr = BinOp(nmlop.AND, param, ConstantNumeric(~(1 << self.bit_num.value), self.pos), self.pos)
-        expr = TernaryOp(expr, or_expr, and_expr, self.pos)
+        param, expr = self.write_func(self.info, expr, self.pos)
+        param = param.reduce()
+        expr = expr.reduce()
         return (param, expr)
 
     def to_reading(self):
-        return BinOp(nmlop.HASBIT, Parameter(self.param_num, self.param_num.pos), self.bit_num, self.pos)
+        param = self.read_func(self.info, self.pos)
+        param = param.reduce()
+        return param
 
     def supported_by_actionD(self, raise_error):
         return True

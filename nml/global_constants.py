@@ -581,7 +581,16 @@ constant_numbers = {
     'TRIGGER_INDUSTRYTILE_CARGO_DELIVERY'   : 0x04,
 }
 
-def param_from_info(info, pos):
+def signextend(param, info):
+    #r = (x ^ m) - m; with m being (1 << (num_bits -1))
+    m = expression.ConstantNumeric(1 << (info['size'] * 8 - 1))
+    return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, param, m, param.pos), m, param.pos)
+
+def global_param_write(info, expr, pos):
+    if not ('writable' in info and info['writable']): raise generic.ScriptError("Target parameter is not writable.", pos)
+    return expression.Parameter(expression.ConstantNumeric(info['num']), pos), expr
+
+def global_param_read(info, pos):
     param = expression.Parameter(expression.ConstantNumeric(info['num']), pos)
     if info['size'] == 1:
         mask = expression.ConstantNumeric(0xFF)
@@ -591,15 +600,8 @@ def param_from_info(info, pos):
     if 'function' in info: return info['function'](param, info)
     return param
 
-def write_param_from_info(info, pos):
-    if not ('writable' in info and info['writable']):
-        raise generic.ScriptError("Target parameter is not writable.", pos)
-    return expression.Parameter(expression.ConstantNumeric(info['num']), pos)
-
-def signextend(param, info):
-    #r = (x ^ m) - m; with m being (1 << (num_bits -1))
-    m = expression.ConstantNumeric(1 << (info['size'] * 8 - 1))
-    return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, param, m, param.pos), m, param.pos)
+def param_from_info(info, pos):
+    return expression.SpecialParameter(generic.reverse_lookup(global_parameters, info), info, global_param_write, global_param_read, pos)
 
 global_parameters = {
     'climate'                            : {'num': 0x83, 'size': 1},
@@ -614,9 +616,21 @@ global_parameters = {
     'year_loaded'                        : {'num': 0xA4, 'size': 4},
 }
 
+def misc_bit_write(info, expr, pos):
+    param = expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos)
+
+    #param = (expr != 0) ? param | (1 << bit) : param & ~(1 << bit)
+    expr = expression.BinOp(nmlop.CMP_NEQ, expr, expression.ConstantNumeric(0, pos), pos)
+    or_expr = expression.BinOp(nmlop.OR, param, expression.ConstantNumeric(1 << info['bit'], pos), pos)
+    and_expr = expression.BinOp(nmlop.AND, param, expression.ConstantNumeric(~(1 << info['bit']), pos), pos)
+    expr = expression.TernaryOp(expr, or_expr, and_expr, pos)
+    return (param, expr)
+
+def misc_bit_read(info, pos):
+    return expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos), expression.ConstantNumeric(info['bit'], pos), pos)
 
 def misc_grf_bit(info, pos):
-    return expression.ParameterBit(expression.ConstantNumeric(info['param'], pos), expression.ConstantNumeric(info['bit'], pos), pos)
+    return expression.SpecialParameter(generic.reverse_lookup(misc_grf_bits, info), info, misc_bit_write, misc_bit_read, pos)
 
 misc_grf_bits = {
     'desert_paved_roads'                 : {'param': 0x9E, 'bit': 1},
@@ -628,5 +642,3 @@ railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 
 const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), cargo_numbers, railtype_table, item_names]
-
-writable_const_list = [(global_parameters, write_param_from_info), (misc_grf_bits, misc_grf_bit)]
