@@ -122,7 +122,7 @@ varact2vars60x_vehicles = {
 varact2vars_industrytiles = {
     'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
     'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
-    'town_radius_group': {'var': 0x42, 'start': 0, 'size': 3},
+    'town_zone': {'var': 0x42, 'start': 0, 'size': 3},
     'relative_pos': {'var': 0x43, 'start': 0, 'size': 24},
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
