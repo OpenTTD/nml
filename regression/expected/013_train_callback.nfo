@@ -6,7 +6,7 @@
 // Escapes: DR DF DC DM DnF DnC DO
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d55 
+0 * 4 \d53 
 
 1 * 16 14 "C" "INFO" 
 "B" "PALS" \w1 "W" 
@@ -103,27 +103,20 @@
 \wx00FE \wx00FE \wx00FE 
 \wx00FC 
 
-// param[64] = (param[131] & 255)
-45 * 9 0D 40 \D& 83 FF \dx000000FF 
-
-46 * 7 06 
-40 04 FF \wx0006 
-FF 
-
 // Name: bulk_wagon_coal_climate_switch
-47 * 23 02 00 FC 89 
-1A 00 \dx00000000 \b1 
+45 * 23 02 00 FC 89 
+03 00 \dx00000003 \b1 
 \wx00FD \dx00000001 \dx00000001 
 \wx00FA 
 
 // Name: bulk_wagon_graphics_switch
-48 * 23 02 00 FA 89 
+46 * 23 02 00 FA 89 
 47 00 \dx000000FF \b1 
 \wx00FC \dx00000013 \dx00000013 
 \wx00FB 
 
 // Name: bulk_wagon_cb_capacity_switch
-49 * 83 02 00 FB 89 
+47 * 83 02 00 FB 89 
 47 00 \dx000000FF \b7 
 \wx8019 \dx0000002F \dx0000002F 
 \wx8014 \dx0000000C \dx0000000C 
@@ -135,7 +128,7 @@ FF
 \wx0000 
 
 // Name: bulk_wagon_cb_property_weight_switch
-50 * 53 02 00 FC 89 
+48 * 53 02 00 FC 89 
 47 00 \dx000000FF \b4 
 \wx8012 \dx00000013 \dx00000013 
 \wx8012 \dx0000000C \dx0000000C 
@@ -144,19 +137,19 @@ FF
 \wx0000 
 
 // Name: bulk_wagon_cb_property_switch
-51 * 23 02 00 FD 89 
+49 * 23 02 00 FD 89 
 10 00 \dxFFFFFFFF \b1 
 \wx00FC \dx00000016 \dx00000016 
 \wx0000 
 
 // Name: bulk_wagon_cb_switch
-52 * 33 02 00 FC 89 
+50 * 33 02 00 FC 89 
 0C 00 \dx0000FFFF \b2 
 \wx00FB \dx00000015 \dx00000015 
 \wx00FD \dx00000036 \dx00000036 
 \wx00FA 
 
-53 * 72 00 00 \b26 01 FF \wx0074 
+51 * 72 00 00 \b26 01 FF \wx0074 
 06 0F 
 28 \wx0010 
 15 FF 
@@ -184,8 +177,8 @@ FF
 24 00 
 25 00 
 
-54 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
+52 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
 
-55 * 9 03 00 01 FF \wx0074 \b0 
+53 * 9 03 00 01 FF \wx0074 \b0 
 \wx00FC 
 

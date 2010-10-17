@@ -453,10 +453,12 @@ def parse_varaction2(switch_block):
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range)
 
     func60x = lambda name, value: expression.FunctionPtr(name, parse_60x_var, value)
-    expr = switch_block.expr.reduce(global_constants.const_list + \
-        [(action2var_variables.varact2vars[feature], parse_var), \
-        (action2var_variables.varact2_globalvars, parse_var), \
-        (action2var_variables.varact2vars60x[feature], func60x)])
+    #make sure, that variables take precedence about global constants / parameters
+    #this way, use the current climate instead of the climate at load time.
+    expr = switch_block.expr.reduce([(action2var_variables.varact2_globalvars, parse_var), \
+        (action2var_variables.varact2vars[feature], parse_var), \
+        (action2var_variables.varact2vars60x[feature], func60x)] + \
+        global_constants.const_list)
 
     offset = 4 #first var
 

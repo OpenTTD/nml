@@ -605,13 +605,16 @@ def param_from_info(info, pos):
 
 global_parameters = {
     'climate'                            : {'num': 0x83, 'size': 1},
-    'traininfo_y_offset'                 : {'num': 0x84, 'size': 1, 'writable': 1, 'function': signextend},
+    'loading_stage'                      : {'num': 0x84, 'size': 4},
     'ttdpatch_flags'                     : {'num': 0x85, 'size': 4},
     'traffic_side'                       : {'num': 0x86, 'size': 1},
     'ttdpatch_version'                   : {'num': 0x8B, 'size': 4},
-    'ttd_version'                        : {'num': 0x8D, 'size': 1},
+    'current_palette'                    : {'num': 0x8D, 'size': 1},
+    'traininfo_y_offset'                 : {'num': 0x8E, 'size': 1, 'writable': 1, 'function': signextend},
+    'game_mode'                          : {'num': 0x82, 'size': 1},
     'ttd_platform'                       : {'num': 0x9D, 'size': 4},
     'openttd_version'                    : {'num': 0xA1, 'size': 4},
+    'difficulty_level'                   : {'num': 0xA2, 'size': 4},
     'date_loaded'                        : {'num': 0xA3, 'size': 4},
     'year_loaded'                        : {'num': 0xA4, 'size': 4},
 }
