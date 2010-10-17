@@ -1556,7 +1556,23 @@ Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2
 0xFFFF: The tile is not an industry tile or it belongs to another GRF.
 </td></tr>
 </table>
+
 <h2><a name="vars-industries">Industries</a></h2>
+Variables that require some parameters.
+<table class="t">
+<tr><th>name</th><th>arguments</th><th>comment</th></tr>
+<tr><td>industry_count</td><td>industry_type, grfid&nbsp;=&nbsp;-1</td><td>The value of this variable is the number
+of industries of a given type that are currently on the map. industry_type is either the ID of an
+industry. GRFid is the grf in which the industry was defined. The default value is -1, which means
+current newgrf. A grfid of 0 lets you check the number of default industries of a given type.</td></tr>
+<tr><td>industry_distance</td><td>industry_type, grfid&nbsp;=&nbsp;-1</td><td>The value of this variable is the
+manhattan distance the closest instance of the given industry or 0xFFFF if not applicable. See
+industry_count for a description of the parameters.</td></tr>
+<tr><td>industry_layout_count / industry_layout_distance</td><td>industry_type, layout, grfid&nbsp;=&nbsp;-1.</td>
+<td>See industry_count / industry_distance for description of industry_type, grfid and return value. The
+results are filtered to industries that have the given layout number.</td></tr>
+</table>
+
 <h2><a name="vars-cargos">Cargos</a></h2>
 <h2><a name="vars-airports">Airports</a></h2>
 <h2><a name="vars-railtypes">Railtypes</a></h2>

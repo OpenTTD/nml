@@ -180,8 +180,10 @@ def industry_layout_count(name, args, pos, info):
     return var
 
 varact2vars60x_industries = {
-    'industry_count': {'var': 0x67, 'start': 0, 'size': 32, 'function': industry_count},
-    'industry_layout_count': {'var': 0x68, 'start': 0, 'size': 32, 'function': industry_layout_count},
+    'industry_count': {'var': 0x67, 'start': 16, 'size': 8, 'function': industry_count},
+    'industry_distance': {'var': 0x67, 'start': 0, 'size': 16, 'function': industry_count},
+    'industry_layout_count': {'var': 0x68, 'start': 16, 'size': 8, 'function': industry_layout_count},
+    'industry_layout_distance': {'var': 0x68, 'start': 0, 'size': 16, 'function': industry_layout_count},
 }
 
 varact2vars_railtype = {
