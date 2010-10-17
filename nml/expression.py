@@ -244,6 +244,8 @@ class BinOp(Expression):
         return self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
 
     def is_boolean(self):
+        if self.op in (nmlop.AND, nmlop.OR, nmlop.XOR):
+            return self.expr1.is_boolean() and self.expr2.is_boolean()
         return self.op.returns_boolean
 
 class TernaryOp(Expression):
