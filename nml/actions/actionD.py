@@ -59,7 +59,7 @@ class ParameterAssignment(object):
     AST-node for a parameter assignment.
     NML equivalent: param[$num] = $expr;
 
-    @ivar param: Parameter number to be assigned.
+    @ivar param: Target expression to assign (must evaluate to a parameter)
     @type param: L{Expression}
 
     @ivar value: Value to assign to this parameter
@@ -70,6 +70,10 @@ class ParameterAssignment(object):
         self.value = value
 
     def pre_process(self):
+        #read the normal const list as well, to produce a nicer error message
+        self.param = self.param.reduce(global_constants.writable_const_list + global_constants.const_list)
+        if not isinstance(self.param, expression.Parameter):
+            raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
         self.value = self.value.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
@@ -81,7 +85,7 @@ class ParameterAssignment(object):
         return parse_actionD(self)
 
     def __str__(self):
-        return 'param[%s] = %s;\n' % (str(self.param), str(self.value))
+        return '%s = %s;\n' % (str(self.param), str(self.value))
 
 #prevent evaluating common sub-expressions multiple times
 def parse_subexpression(expr, action_list):
@@ -96,7 +100,7 @@ def parse_subexpression(expr, action_list):
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
     param = action6.free_parameters.pop()
-    actions = parse_actionD(ParameterAssignment(expression.ConstantNumeric(param), expr))
+    actions = parse_actionD(ParameterAssignment(expression.Parameter(expression.ConstantNumeric(param)), expr))
     return (param, actions)
 
 def parse_ternary_op(assignment):
@@ -154,7 +158,7 @@ def transform_bin_op(assignment):
     if op == nmlop.CMP_LE:
         extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
         op = nmlop.CMP_LT
-        expr1 = expression.Parameter(assignment.param)
+        expr1 = assignment.param
         expr2 = expression.ConstantNumeric(1)
 
     if op == nmlop.CMP_GT:
@@ -164,7 +168,7 @@ def transform_bin_op(assignment):
     if op == nmlop.CMP_LT:
         extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
         op = nmlop.SHIFTU_LEFT #shift left by negative number = shift right
-        expr1 = expression.Parameter(assignment.param)
+        expr1 = assignment.param
         expr2 = expression.ConstantNumeric(-31)
 
     elif op == nmlop.CMP_NEQ:
@@ -173,18 +177,18 @@ def transform_bin_op(assignment):
         # We rely here on the (ondocumented) behavior of both OpenTTD and TTDPatch
         # that expr/0==expr. What we do is compute A/A, which will result in 1 if
         # A != 0 and in 0 if A == 0
-        expr1 = expression.Parameter(assignment.param)
-        expr2 = expression.Parameter(assignment.param)
+        expr1 = assignment.param
+        expr2 = assignment.param
 
     elif op == nmlop.CMP_EQ:
         # We compute A==B by doing not(A - B) which will result in a value != 0
         # if A is equal to B
         extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
         # Clamp the value to 0/1, see above for details
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.DIV, expression.Parameter(assignment.param), expression.Parameter(assignment.param)))))
+        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.DIV, expression.Parameter(assignment.param), assignment.param))))
         op = nmlop.SUB
         expr1 = expression.ConstantNumeric(1)
-        expr2 = expression.Parameter(assignment.param)
+        expr2 = assignment.param
 
     if op == nmlop.SHIFT_RIGHT or op == nmlop.SHIFTU_RIGHT:
         if isinstance(expr2, expression.ConstantNumeric):
@@ -237,7 +241,8 @@ def parse_actionD(assignment):
     action6.free_parameters.save()
     action_list = []
     act6 = action6.Action6()
-    target = assignment.param
+    assert isinstance(assignment.param, expression.Parameter)
+    target = assignment.param.num
     if isinstance(target, expression.Parameter) and isinstance(target.num, expression.ConstantNumeric):
         act6.modify_bytes(target.num.value, 1, 1)
         target = expression.ConstantNumeric(0)

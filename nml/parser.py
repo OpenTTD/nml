@@ -612,8 +612,8 @@ class NMLParser(object):
     # Various misc. main script blocks that don't belong anywhere else
     #
     def p_param_assignment(self, t):
-        'param_assignment : param EQ expression SEMICOLON'
-        t[0] = actionD.ParameterAssignment(t[1].num, t[3])
+        'param_assignment : expression EQ expression SEMICOLON'
+        t[0] = actionD.ParameterAssignment(t[1], t[3])
 
     def p_error_block(self, t):
         'error_block : ERROR LPAREN expression_list RPAREN SEMICOLON'

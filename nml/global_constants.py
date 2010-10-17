@@ -1,4 +1,4 @@
-from nml import expression, nmlop
+from nml import expression, generic, nmlop
 
 constant_numbers = {
     #climates
@@ -585,13 +585,25 @@ def param_from_info(info, pos):
     param = expression.Parameter(expression.ConstantNumeric(info['num']), pos)
     if info['size'] == 1:
         mask = expression.ConstantNumeric(0xFF)
-        return expression.BinOp(nmlop.AND, param, mask)
+        param = expression.BinOp(nmlop.AND, param, mask)
     else:
         assert info['size'] == 4
-        return param
+    if 'function' in info: return info['function'](param, info)
+    return param
+
+def write_param_from_info(info, pos):
+    if not ('writable' in info and info['writable']):
+        raise generic.ScriptError("Target parameter is not writable.", pos)
+    return expression.Parameter(expression.ConstantNumeric(info['num']), pos)
+
+def signextend(param, info):
+    #r = (x ^ m) - m; with m being (1 << (num_bits -1))
+    m = expression.ConstantNumeric(1 << (info['size'] * 8 - 1))
+    return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, param, m, param.pos), m, param.pos)
 
 global_parameters = {
     'climate'                            : {'num': 0x83, 'size': 1},
+    'traininfo_y_offset'                 : {'num': 0x84, 'size': 1, 'writable': 1, 'function': signextend},
     'ttdpatch_flags'                     : {'num': 0x85, 'size': 4},
     'traffic_side'                       : {'num': 0x86, 'size': 1},
     'ttdpatch_version'                   : {'num': 0x8B, 'size': 4},
@@ -607,3 +619,5 @@ railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 
 const_list = [constant_numbers, (global_parameters, param_from_info), cargo_numbers, railtype_table, item_names]
+
+writable_const_list = [(global_parameters, write_param_from_info)]
