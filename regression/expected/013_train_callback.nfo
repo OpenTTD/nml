@@ -99,47 +99,47 @@
 // Name: bulk_wagon_coal_climate_switch
 43 * 23 02 00 FC 89 
 03 00 \dx00000003 \b1 
-\wx00FD \dx00000001 \dx00000001 
+\wx00FD \dx00000001 \dx00000001 	// 1 .. 1: bulk_wagon_coal_arctic_group;
 \wx00FA 
 
 // Name: bulk_wagon_graphics_switch
 44 * 23 02 00 FA 89 
 47 00 \dx000000FF \b1 
-\wx00FC \dx00000013 \dx00000013 
+\wx00FC \dx00000013 \dx00000013 	// 19 .. 19: bulk_wagon_coal_climate_switch;
 \wx00FB 
 
 // Name: bulk_wagon_cb_capacity_switch
 45 * 83 02 00 FB 89 
 47 00 \dx000000FF \b7 
-\wx8019 \dx0000002F \dx0000002F 
-\wx8014 \dx0000000C \dx0000000C 
-\wx8014 \dx0000000D \dx0000000D 
-\wx8019 \dx00000019 \dx00000019 
-\wx8019 \dx0000001B \dx0000001B 
-\wx8014 \dx0000001A \dx0000001A 
-\wx8019 \dx00000020 \dx00000020 
+\wx8019 \dx0000002F \dx0000002F 	// 47 .. 47: return 25;
+\wx8014 \dx0000000C \dx0000000C 	// 12 .. 12: return 20;
+\wx8014 \dx0000000D \dx0000000D 	// 13 .. 13: return 20;
+\wx8019 \dx00000019 \dx00000019 	// 25 .. 25: return 25;
+\wx8019 \dx0000001B \dx0000001B 	// 27 .. 27: return 25;
+\wx8014 \dx0000001A \dx0000001A 	// 26 .. 26: return 20;
+\wx8019 \dx00000020 \dx00000020 	// 32 .. 32: return 25;
 \wx0000 
 
 // Name: bulk_wagon_cb_property_weight_switch
 46 * 53 02 00 FC 89 
 47 00 \dx000000FF \b4 
-\wx8012 \dx00000013 \dx00000013 
-\wx8012 \dx0000000C \dx0000000C 
-\wx8012 \dx0000000D \dx0000000D 
-\wx8012 \dx0000001A \dx0000001A 
+\wx8012 \dx00000013 \dx00000013 	// 19 .. 19: return 18;
+\wx8012 \dx0000000C \dx0000000C 	// 12 .. 12: return 18;
+\wx8012 \dx0000000D \dx0000000D 	// 13 .. 13: return 18;
+\wx8012 \dx0000001A \dx0000001A 	// 26 .. 26: return 18;
 \wx0000 
 
 // Name: bulk_wagon_cb_property_switch
 47 * 23 02 00 FD 89 
 10 00 \dxFFFFFFFF \b1 
-\wx00FC \dx00000016 \dx00000016 
+\wx00FC \dx00000016 \dx00000016 	// 22 .. 22: bulk_wagon_cb_property_weight_switch;
 \wx0000 
 
 // Name: bulk_wagon_cb_switch
 48 * 33 02 00 FC 89 
 0C 00 \dx0000FFFF \b2 
-\wx00FB \dx00000015 \dx00000015 
-\wx00FD \dx00000036 \dx00000036 
+\wx00FB \dx00000015 \dx00000015 	// 21 .. 21: bulk_wagon_cb_capacity_switch;
+\wx00FD \dx00000036 \dx00000036 	// 54 .. 54: bulk_wagon_cb_property_switch;
 \wx00FA 
 
 49 * 72 00 00 \b26 01 FF \wx0074 
