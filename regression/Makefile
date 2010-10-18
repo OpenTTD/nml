@@ -10,7 +10,7 @@ NMLC ?= ../nmlc
 
 all: clean
 	$(_V) mkdir output
-	$(_V) for i in $(TEST_FILES); do $(NMLC) --nfo output/$$i.nfo --grf output/$$i.grf $$i.nml; done
+	$(_V) for i in $(TEST_FILES); do $(NMLC) --nfo output/$$i.nfo --grf output/$$i.grf $$i.nml || echo "in $$i"; done
 	$(_V) diff -u output expected
 
 clean:
