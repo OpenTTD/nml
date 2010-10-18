@@ -1,4 +1,5 @@
-from nml.actions import base_action, real_sprite
+from nml import expression
+from nml.actions import base_action, real_sprite, actionD, action6
 
 class ActionA(base_action.BaseAction):
     """
@@ -30,5 +31,19 @@ def parse_actionA(replaces):
     @type  replaces: L{ReplaceSprite}
     """
     real_sprite_list = real_sprite.parse_sprite_list(replaces.sprite_list, replaces.pcx)
+    action_list = []
 
-    return [ActionA([(len(real_sprite_list), replaces.start_id)])] + real_sprite_list
+    if isinstance(replaces.start_id, expression.ConstantNumeric):
+        sprite_num = replaces.start_id.value
+    else:
+        if isinstance(replaces.start_id, expression.Parameter) and isinstance(replaces.start_id.num, expression.ConstantNumeric):
+            param_num = replaces.start_id.num
+        else:
+            param_num, tmp_param_actions = actionD.get_tmp_parameter(replaces.start_id)
+            action_list.extend(tmp_param_actions)
+        act6 = action6.Action6();
+        act6.modify_bytes(param_num.value, 2, 3)
+        action_list.append(act6)
+        sprite_num = 0
+
+    return action_list + [ActionA([(len(real_sprite_list), sprite_num)])] + real_sprite_list

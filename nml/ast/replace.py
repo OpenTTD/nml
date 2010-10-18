@@ -1,4 +1,4 @@
-from nml import expression, generic
+from nml import expression, generic, global_constants
 from nml.actions import actionA, action5
 
 
@@ -17,7 +17,7 @@ class ReplaceSprite(object):
     @type pos: L{Position}
 
     @ivar start_id: First sprite to replace. Extracted from C{param_list} during pre-processing.
-    @type start_id: C{int}
+    @type start_id: C{Expression}
 
     @ivar pcx: Default image file to use for sprites. Extracted from C{param_list} during pre-processing.
     @type pcx: C{None} if not specified, else L{StringLiteral}
@@ -31,7 +31,7 @@ class ReplaceSprite(object):
         num_params = len(self.param_list)
         if not (1 <= num_params <= 2):
             raise generic.ScriptError("replace-block requires 1 or 2 parameters, encountered " + str(num_params), self.pos)
-        self.start_id = self.param_list[0].reduce_constant().value
+        self.start_id = self.param_list[0].reduce(global_constants.const_list)
         if num_params >= 2:
             self.pcx = self.param_list[1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
@@ -40,7 +40,8 @@ class ReplaceSprite(object):
             self.pcx = None
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Replace sprites starting at', self.start_id
+        print indentation*' ' + 'Replace sprites starting at'
+        self.start_id.debug_print(indentation+2)
         print (indentation+2)*' ' + 'Source:', self.pcx.value if self.pcx is not None else 'None'
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
