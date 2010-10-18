@@ -91,7 +91,7 @@ class Action2Var(action2.Action2):
             file.print_wordx(r.result)
             file.print_varx(r.min.value, 4)
             file.print_varx(r.max.value, 4)
-            file.newline()
+            file.newline(r.comment)
         file.print_wordx(self.default_result)
         file.newline()
         file.end_sprite()
@@ -170,11 +170,12 @@ class Modification(object):
         self.offset = offset
 
 class SwitchRange(object):
-    def __init__(self, min, max, result, unit = None):
+    def __init__(self, min, max, result, unit = None, comment = None):
         self.min = min.reduce(global_constants.const_list)
         self.max = max.reduce(global_constants.const_list)
         self.result = result.reduce(global_constants.const_list, False) if result is not None else None
         self.unit = unit
+        self.comment = comment
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Min:'
@@ -507,28 +508,35 @@ def parse_varaction2(switch_block):
 
     used_ranges = []
     for r in switch_block.body.ranges:
+        comment = str(r.min) + " .. " + str(r.max) + ": "
         if r.result is None:
+            comment += "return;"
             if return_action is None: return_action = make_return_varact2(switch_block)
             act2 = action2.add_ref(return_action.name, switch_block.pos)
             assert return_action == act2
             varaction2.references.add(act2)
             range_result = expression.Identifier(return_action.name, switch_block.pos)
         elif isinstance(r.result, expression.Identifier):
+            comment += r.result.value + ';'
             if r.result.value != 'CB_FAILED':
                 act2 = action2.add_ref(r.result.value, r.result.pos)
                 varaction2.references.add(act2)
             range_result = r.result
         elif isinstance(r.result, expression.ConstantNumeric):
+            comment += "return %d;" % r.result.value
             range_result = r.result
         elif isinstance(r.result, expression.Parameter) and isinstance(r.result.num, expression.ConstantNumeric):
+            comment += "return %s;" % str(r.result)
             act6.modify_bytes(r.result.num.value, 4, offset)
             range_result = expression.ConstantNumeric(0)
         elif isinstance(r.result, expression.String):
+            comment += "return %s;" % str(r.result)
             str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, r.result)
             action_list.extend(actions)
             range_result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.result)
+            comment += "return param[%d];" % tmp_param
             action_list.extend(tmp_param_actions)
             act6.modify_bytes(tmp_param, 2, offset)
             range_result = expression.ConstantNumeric(0)
@@ -594,7 +602,7 @@ def parse_varaction2(switch_block):
                         i += 1
 
         if not range_overlap:
-            varaction2.ranges.append(SwitchRange(range_min, range_max, range_result))
+            varaction2.ranges.append(SwitchRange(range_min, range_max, range_result, comment=comment))
 
     default = switch_block.body.default
 
