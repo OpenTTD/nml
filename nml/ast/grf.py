@@ -41,6 +41,7 @@ class GRF(object):
         if not isinstance(self.desc, expression.String):
             raise generic.ScriptError("GRF-description must be a string", self.desc.pos)
         self.version = self.version.reduce_constant()
+        self.min_compatible_version = self.min_compatible_version.reduce_constant()
         param_num = 0
         for param in self.params:
             param.pre_process(expression.ConstantNumeric(param_num))
@@ -56,6 +57,8 @@ class GRF(object):
         self.desc.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Version:'
         self.version.debug_print(indentation + 4)
+        print (2+indentation)*' ' + 'Minimal compatible version:'
+        self.min_compatible_version.debug_print(indentation + 4)
 
     def get_action_list(self):
         global palette_node
