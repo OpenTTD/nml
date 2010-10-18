@@ -56,7 +56,8 @@ class Item(object):
         validate_item_block(body)
 
     def pre_process(self):
-        pass
+        for b in self.body:
+            b.pre_process()
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Item, feature', hex(self.feature.value)
@@ -95,9 +96,12 @@ class Property(object):
     def __init__(self, name, value, unit, pos):
         self.pos = pos
         self.name = name
-        self.value = value.reduce(global_constants.const_list, unknown_id_fatal = False)
+        self.value = value
         self.unit = unit
-        if unit is not None and not (isinstance(self.value, expression.ConstantNumeric) or isinstance(self.value, expression.ConstantFloat)):
+
+    def pre_process(self):
+        self.value = self.value.reduce(global_constants.const_list, unknown_id_fatal = False)
+        if self.unit is not None and not (isinstance(self.value, expression.ConstantNumeric) or isinstance(self.value, expression.ConstantFloat)):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant", self.pos)
 
     def debug_print(self, indentation):
@@ -112,6 +116,10 @@ class PropertyBlock(object):
     def __init__(self, prop_list, pos):
         self.prop_list = prop_list
         self.pos = pos
+
+    def pre_process(self):
+        for prop in self.prop_list:
+            prop.pre_process()
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Property block:'
@@ -135,6 +143,9 @@ class LiveryOverride(object):
         self.wagon_id = wagon_id
         self.pos = pos
 
+    def pre_process(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Liverry override, wagon id:'
         self.wagon_id.debug_print(indentation + 2)
@@ -151,6 +162,9 @@ class GraphicsBlock(object):
     def __init__(self, graphics_list, default_graphics):
         self.graphics_list = graphics_list
         self.default_graphics = default_graphics
+
+    def pre_process(self):
+        pass
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics block:'
