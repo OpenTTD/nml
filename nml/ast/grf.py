@@ -32,8 +32,7 @@ class GRF(object):
         self.desc = self.desc.reduce()
         if not isinstance(self.desc, expression.String):
             raise generic.ScriptError("GRF-description must be a string", self.desc.pos)
-        if self.version:
-            self.version = self.version.reduce_constant()
+        self.version = self.version.reduce_constant()
         param_num = 0
         for param in self.params:
             param.pre_process(expression.ConstantNumeric(param_num))
@@ -41,14 +40,14 @@ class GRF(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
-        if self.grfid is not None:
-            print (2+indentation)*' ' + 'grfid:', self.grfid.value
-        if self.name is not None:
-            print (2+indentation)*' ' + 'Name:'
-            self.name.debug_print(indentation + 4)
-        if self.desc is not None:
-            print (2+indentation)*' ' + 'Description:'
-            self.desc.debug_print(indentation + 4)
+        print (2+indentation)*' ' + 'grfid:'
+        self.grfid.debug_print(indentation + 4)
+        print (2+indentation)*' ' + 'Name:'
+        self.name.debug_print(indentation + 4)
+        print (2+indentation)*' ' + 'Description:'
+        self.desc.debug_print(indentation + 4)
+        print (2+indentation)*' ' + 'Version:'
+        self.version.debug_print(indentation + 4)
 
     def get_action_list(self):
         action14_root = action14.BranchNode("INFO")

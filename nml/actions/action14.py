@@ -154,9 +154,8 @@ def grf_name_desc_actions(root, name, desc, version):
     if desc.name.value in grfstrings.grf_strings and len(grfstrings.grf_strings[desc.name.value]) > 1:
         desc_node = TextNode("DESC", desc, True)
         root.subnodes.append(desc_node)
-    if version:
-        version_node = BinaryNode("VRSN", 4, version.value)
-        root.subnodes.append(version_node)
+    version_node = BinaryNode("VRSN", 4, version.value)
+    root.subnodes.append(version_node)
 
 def param_desc_actions(root, params):
     num_params = 0
