@@ -1,6 +1,12 @@
 from nml import expression, generic, grfstrings, global_constants
 from nml.actions import action8, action14
 
+palette_node = None
+
+def set_palette_used(pal):
+    if palette_node:
+        palette_node.pal = pal
+
 class GRF(object):
     def __init__(self, alist, pos):
         self.pos = pos
@@ -50,10 +56,13 @@ class GRF(object):
         self.version.debug_print(indentation + 4)
 
     def get_action_list(self):
+        global palette_node
+        palette_node = action14.UsedPaletteNode("A")
         action14_root = action14.BranchNode("INFO")
         action14.grf_name_desc_actions(action14_root, self.name, self.desc, self.version)
         action14.param_desc_actions(action14_root, self.params)
-        return [action14.Action14([action14_root]), action8.Action8(self.grfid, self.name, self.desc)]
+        action14_root.subnodes.append(palette_node)
+        return action14.get_actions(action14_root) + [action8.Action8(self.grfid, self.name, self.desc)]
 
     def __str__(self):
         ret = 'grf {\n'

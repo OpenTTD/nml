@@ -5,11 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 16 14 "C" "INFO" 
-"B" "PALS" \w1 "A" 
-00 
-00 
-1 * 21 00 10 \b3 01 FF \wx0000 
+0 * 21 00 10 \b3 01 FF \wx0000 
 08 "RAIL" 
 14 \wx0028 
 0E \b1 "ELRL" 

@@ -5,11 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 16 14 "C" "INFO" 
-"B" "PALS" \w1 "A" 
-00 
-00 
-1 * 52 0F 00 
+0 * 52 0F 00 
 02 04 00 05 0A "small" 00 
 0A "medium" 00 
 02 "big" 00 
@@ -20,11 +16,11 @@
 01 "city" 00 
 
 
-2 * 20 0F 01 
+1 * 20 0F 01 
 01 01 00 01 01 "tiny village" 00 
 
 
-3 * 73 0F 82 
+2 * 73 0F 82 
 00 "US Stations" 00 
 1F "Test stationnnetjes" 00 
 7F "Test Stations" 00 

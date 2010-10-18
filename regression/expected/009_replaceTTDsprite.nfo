@@ -5,20 +5,17 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d6 
+0 * 4 \d5 
 
-1 * 16 14 "C" "INFO" 
+1 * 35 14 "C" "INFO" 
+"B" "VRSN" \w4 \dx00000000 
+"B" "NPAR" \w1 00 
 "B" "PALS" \w1 "W" 
 00 
 00 
-2 * 27 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-00 
-00 
-3 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
-4 * 5 0A \b1 \b2 \w3092 
+2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+3 * 5 0A \b1 \b2 \w3092 
 
-5 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
-6 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 4 
+4 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
+5 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 4 
 

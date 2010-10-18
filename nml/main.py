@@ -1,7 +1,7 @@
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, palette
-from nml.actions import action2var, action8, sprite_count, real_sprite, action14
-from nml.ast import general
+from nml.actions import action2var, action8, sprite_count, real_sprite
+from nml.ast import general, grf
 
 try:
     import Image
@@ -166,7 +166,7 @@ def nml(inputfile, output_debug, outputfiles):
 
     palette_bytes = {"WIN": "W", "DOS": "D", "ANY": "A"}
     if used_palette in palette_bytes:
-        actions = action14.PaletteAction(palette_bytes[used_palette]) + actions
+        grf.set_palette_used(palette_bytes[used_palette])
 
     if has_action8:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions

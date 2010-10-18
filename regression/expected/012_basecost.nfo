@@ -5,38 +5,35 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d21 
+0 * 4 \d20 
 
-1 * 16 14 "C" "INFO" 
+1 * 35 14 "C" "INFO" 
+"B" "VRSN" \w4 \dx00000000 
+"B" "NPAR" \w1 00 
 "B" "PALS" \w1 "A" 
 00 
 00 
-2 * 27 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-00 
-00 
-3 * 52 08 07 "NML\12" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 07 "NML\12" "NML regression test" 00 "A test newgrf testing NML" 00 
 // param[64] = (param[2] + 8)
-4 * 9 0D 40 \D+ 02 FF \dx00000008 
+3 * 9 0D 40 \D+ 02 FF \dx00000008 
 
-5 * 7 06 
+4 * 7 06 
 40 01 FF \wx0008 
 FF 
 
-6 * 9 00 08 \b1 01 FF \wx0001 
+5 * 9 00 08 \b1 01 FF \wx0001 
 08 00 
 
-7 * 14 00 08 \b1 06 FF \wx002A 
+6 * 14 00 08 \b1 06 FF \wx002A 
 08 06 06 06 06 06 06 
 
 // param[66] = (param[1] + 1)
-8 * 9 0D 42 \D+ 01 FF \dx00000001 
+7 * 9 0D 42 \D+ 01 FF \dx00000001 
 
 // param[65] = (param[66] + 8)
-9 * 9 0D 41 \D+ 42 FF \dx00000008 
+8 * 9 0D 41 \D+ 42 FF \dx00000008 
 
-10 * 27 06 
+9 * 27 06 
 41 01 FF \wx0008 
 41 01 FF \wx0009 
 41 01 FF \wx000A 
@@ -44,40 +41,40 @@ FF
 41 01 FF \wx000C 
 FF 
 
-11 * 13 00 08 \b1 05 FF \wx000F 
+10 * 13 00 08 \b1 05 FF \wx000F 
 08 00 00 00 00 00 
 
-12 * 9 00 08 \b1 01 FF \wx0034 
+11 * 9 00 08 \b1 01 FF \wx0034 
 08 15 
 
 // param[67] = param[11]
-13 * 5 0D 43 \D= 0B 00 
+12 * 5 0D 43 \D= 0B 00 
 
-14 * 7 06 
+13 * 7 06 
 43 01 FF \wx0003 
 FF 
 
 // param[66] = param[0]
-15 * 5 0D 42 \D= 00 00 
+14 * 5 0D 42 \D= 00 00 
 
 // param[69] = (param[11] + 1)
-16 * 9 0D 45 \D+ 0B FF \dx00000001 
+15 * 9 0D 45 \D+ 0B FF \dx00000001 
 
-17 * 7 06 
+16 * 7 06 
 45 01 FF \wx0003 
 FF 
 
 // param[68] = param[0]
-18 * 5 0D 44 \D= 00 00 
+17 * 5 0D 44 \D= 00 00 
 
 // param[67] = (param[68] + 8)
-19 * 9 0D 43 \D+ 44 FF \dx00000008 
+18 * 9 0D 43 \D+ 44 FF \dx00000008 
 
-20 * 12 06 
+19 * 12 06 
 42 02 FF \wx0005 
 43 01 FF \wx0008 
 FF 
 
-21 * 9 00 08 \b1 01 FF \wx00FF 
+20 * 9 00 08 \b1 01 FF \wx00FF 
 08 00 
 

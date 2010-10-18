@@ -21,6 +21,41 @@ class Action14(base_action.BaseAction):
 
         file.end_sprite()
 
+def split_action14(node, max_size):
+    if node.get_size() <= max_size:
+        return [node, None]
+    if not isinstance(node, BranchNode):
+        return [None, node]
+    new_node = BranchNode(node.id)
+    rest = BranchNode(node.id)
+    copy_to_rest = False
+    for subnode in node.subnodes:
+        if copy_to_rest:
+            rest.subnodes.append(subnode)
+            continue
+
+        new_subnode, subnode_rest = split_action14(subnode, max_size - new_node.get_size())
+        if new_subnode is not None:
+            new_node.subnodes.append(new_subnode)
+        if subnode_rest is not None:
+            rest.subnodes.append(subnode_rest)
+            copy_to_rest = True
+
+    assert len(rest.subnodes) > 0
+    if len(new_node.subnodes) == 0:
+        return [None, rest]
+    return [new_node, rest]
+
+def get_actions(root):
+    action_list = []
+    while True:
+        node, root = split_action14(root, 65535)
+        assert node is not None
+        action_list.append(Action14([node]))
+        if root is None:
+            break
+
+    return action_list
 
 class Action14Node(object):
     def __init__(self, type_string, id):
