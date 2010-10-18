@@ -42,7 +42,7 @@ class GRF(object):
         param_num = 0
         for param in self.params:
             param.pre_process(expression.ConstantNumeric(param_num))
-            param_num = param.num.value
+            param_num = param.num.value + 1
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
