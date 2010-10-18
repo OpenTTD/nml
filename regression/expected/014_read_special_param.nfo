@@ -7,8 +7,9 @@
 
 0 * 4 \d10 
 
-1 * 212 14 "C" "INFO" 
+1 * 223 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
+"B" "MINV" \w4 \dx00000000 
 "B" "NPAR" \w1 03 
 "C" "PARA" 
 "C" \d0 

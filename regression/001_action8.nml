@@ -3,4 +3,5 @@ grf {
 	name: string(STR_REGRESSION_NAME);
 	desc: string(STR_REGRESSION_DESC);
 	version: 0;
+	min_compatible_version: 0;
 }
