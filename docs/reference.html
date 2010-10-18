@@ -82,6 +82,7 @@
 	<li><a href="#property-industries">Industries</a></li>
 	<li><a href="#property-cargos">Cargos</a></li>
 	<li><a href="#property-airports">Airports</a></li>
+	<li><a href="#property-objects">Objects</a></li>
 	<li><a href="#property-railtypes">Railtypes</a></li>
 	<li><a href="#property-airporttiles">Airport tiles</a></li>
 	<li><a href="#property-snowline">Snowline</a></li>
@@ -99,6 +100,7 @@
 	<li><a href="#vars-industries">Industries</a></li>
 	<li><a href="#vars-cargos">Cargos</a></li>
 	<li><a href="#vars-airports">Airports</a></li>
+	<li><a href="#vars-objects">Objects</a></li>
 	<li><a href="#vars-railtypes">Railtypes</a></li>
 	<li><a href="#vars-airporttiles">Airport tiles</a></li>
 </ul>
@@ -1218,7 +1220,34 @@ operator. For example, <code>CC_EXPRESS | CC_REFRIGERATED</code> is used for foo
 <tr><td>CC_ALL_NORMAL<td> All cargo classes except CC_SPECIAL
 <tr><td>CC_ALL<td> All cargo classes
 </table>
+
 <h2><a name="property-airports">Airports</a></h2>
+
+<h2><a name="property-objects">Objects</a></h2>
+<table class="t">
+<tr><th>property</th><th>value range</th><th>comment</th></tr>
+<tr><td>class</td><td>String literal of length 4</td><td></td></tr>
+<tr><td>classname</td><td>string</td><td>You only need to set this for one object
+in every class.</td></tr>
+<tr><td>name</td><td>string</td><td></td></tr>
+<tr><td>climates_available</td><td>BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC
+| TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
+<tr><td>size</td><td>[x, y]</td><td>Size in x and y direction. Both x and y must be compiletime constants</td></tr>
+<tr><td>build_cost_multiplier</td><td></td><td>multiplicator to the base purchase cost</td></tr>
+<tr><td>remove_cost_multiplier</td><td></td><td>multiplicator to the base removal cost</td></tr>
+<tr><td>introduction_date</td><td>date</td><td></td></tr>
+<tr><td>end_of_life_date</td><td>date</td><td>Must be at least 365 days after introduction_date</td></tr>
+<tr><td>object_flags</td><td></td><td></td></tr>
+<tr><td>animation_info</td><td></td><td></td></tr>
+<tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
+<tr><td>animation_triggers</td><td></td><td></td></tr>
+<tr><td>callback_flags</td><td></td><td></td></tr>
+<tr><td>height</td><td>0..255</td><td>Height of the object / 8. For example if your object is 16 pixels height you should
+set height to 2. In OpenTTD this property is used to determine the height of the build object window; the height for the
+object preview is set to 32 + "value of property" * 8. The property is also used to determine how high a bridge must be
+if it is allowed by the bit in object_flags.</td></tr>
+</table>
+
 <h2><a name="property-railtypes">Railtypes</a></h2>
 <table class="t">
 <tr><th>property</th><th>value range</th><th>comment</th></tr>
@@ -1591,6 +1620,7 @@ results are filtered to industries that have the given layout number.</td></tr>
 
 <h2><a name="vars-cargos">Cargos</a></h2>
 <h2><a name="vars-airports">Airports</a></h2>
+<h2><a name="vars-objects">Objects</a></h2>
 <h2><a name="vars-railtypes">Railtypes</a></h2>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
