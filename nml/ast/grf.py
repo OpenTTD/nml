@@ -14,6 +14,7 @@ class GRF(object):
         self.desc = None
         self.grfid = None
         self.version = None
+        self.min_compatible_version = None
         self.params = []
         generic.OnlyOnce.enforce(self, "GRF-block")
         for assignment in alist:
@@ -23,9 +24,10 @@ class GRF(object):
             elif assignment.name.value == "desc": self.desc = assignment.value
             elif assignment.name.value == "grfid": self.grfid = assignment.value
             elif assignment.name.value == "version": self.version = assignment.value
+            elif assignment.name.value == "min_compatible_version": self.min_compatible_version = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
-        if None in (self.name, self.desc, self.grfid, self.version):
-            raise generic.ScriptError("A GRF-block requires the 'name', 'desc', 'grfid', and 'version' properties to be set.", self.pos)
+        if None in (self.name, self.desc, self.grfid, self.version, self.min_compatible_version):
+            raise generic.ScriptError("A GRF-block requires the 'name', 'desc', 'grfid', 'version' and 'min_compatible_version' properties to be set.", self.pos)
 
     def pre_process(self):
         self.grfid = self.grfid.reduce()
@@ -59,7 +61,7 @@ class GRF(object):
         global palette_node
         palette_node = action14.UsedPaletteNode("A")
         action14_root = action14.BranchNode("INFO")
-        action14.grf_name_desc_actions(action14_root, self.name, self.desc, self.version)
+        action14.grf_name_desc_actions(action14_root, self.name, self.desc, self.version, self.min_compatible_version)
         action14.param_desc_actions(action14_root, self.params)
         action14_root.subnodes.append(palette_node)
         return action14.get_actions(action14_root) + [action8.Action8(self.grfid, self.name, self.desc)]

@@ -182,7 +182,7 @@ class LimitNode(BinaryNode):
         file.print_dword(self.max_val)
         file.newline()
 
-def grf_name_desc_actions(root, name, desc, version):
+def grf_name_desc_actions(root, name, desc, version, min_compatible_version):
     if name.name.value in grfstrings.grf_strings and len(grfstrings.grf_strings[name.name.value]) > 1:
         name_node = TextNode("NAME", name, True)
         root.subnodes.append(name_node)
@@ -191,6 +191,8 @@ def grf_name_desc_actions(root, name, desc, version):
         root.subnodes.append(desc_node)
     version_node = BinaryNode("VRSN", 4, version.value)
     root.subnodes.append(version_node)
+    min_compatible_version_node = BinaryNode("MINV", 4, min_compatible_version.value)
+    root.subnodes.append(min_compatible_version_node)
 
 def param_desc_actions(root, params):
     num_params = 0

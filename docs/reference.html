@@ -197,7 +197,8 @@ Following is an example grf-block.</p>
 	grfid : "AB\02\03";
 	name : string(STR_GRF_NAME);
 	desc : string(STR_GRF_DESCRIPTION);
-	version: 1;
+	version: 10;
+	min_compatible_version: 5;
 }</pre>
 <p>Let's look at this code line for line.</p>
 <pre class="code">grf {</pre>
@@ -217,9 +218,18 @@ should be replaced by the actual name of the string.</p>
 <pre class="code">	desc : string(STR_GRF_DESCRIPTION);</pre>
 <p>This looks a lot like the previous line, only it sets the description
 instead of the name.</p>
-<pre class="code">	version : 1;</pre>
+<pre class="code">	version : 10;</pre>
 <p>For a new grf you should set the version to 1. Everytime you release a new
 version you should increase the version field by at least 1.</p>
+<pre class="code">	min_compatible_version : 5;</pre>
+<p>For a new grf you should set the min_compatible_version to 1. Everytime you change
+something in your newgrf which makes it incompatible to previous versions, you should
+set min_compatible_version to the current version. Changes which make a NewGRF
+incompatible to previous versions are most functional changes to existing behaviour, 
+among others: changing vehicleIDs as well as some of their properties, changing
+industry layouts, railtype compatibility, changing (de-)activation conditions... 
+Adding new, additional things and expandig existing behaviour (without changing the
+current one) is mostly considered safe).</p>
 <pre class="code">}</pre>
 <p>This marks the end of the last-opened block, in this case the grf-block.</p>
 
@@ -289,6 +299,7 @@ The rest of the ID may consist of letters, underscores and numbers.</dd>
 	name: &lt;string&gt;;
 	desc: &lt;string&gt;;
 	version: &lt;expression&gt;;
+	min_compatible_version: &lt;expression&gt;;
 }</pre>
 <p>Example:</p>
 <pre class="code">grf {
@@ -296,6 +307,7 @@ The rest of the ID may consist of letters, underscores and numbers.</dd>
 	name: string(STR_GRF_NAME);
 	desc: string(STR_GRF_DESC);
 	version: 1;
+	min_compatible_version: 1;
 }</pre>
 
 <h2><a name="block-item">Item</a></h2>
