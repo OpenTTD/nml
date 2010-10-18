@@ -51,10 +51,10 @@ class GRF(object):
             self.desc.debug_print(indentation + 4)
 
     def get_action_list(self):
-        action_list = action14.grf_name_desc_actions(self.name, self.desc, self.version)
-        action_list.extend(action14.param_desc_actions(self.params))
-        action_list.append(action8.Action8(self.grfid, self.name, self.desc))
-        return action_list
+        action14_root = action14.BranchNode("INFO")
+        action14.grf_name_desc_actions(action14_root, self.name, self.desc, self.version)
+        action14.param_desc_actions(action14_root, self.params)
+        return [action14.Action14([action14_root]), action8.Action8(self.grfid, self.name, self.desc)]
 
     def __str__(self):
         ret = 'grf {\n'

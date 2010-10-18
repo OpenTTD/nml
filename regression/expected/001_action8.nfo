@@ -5,18 +5,15 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d4 
+0 * 4 \d3 
 
 1 * 16 14 "C" "INFO" 
 "B" "PALS" \w1 "A" 
 00 
 00 
-2 * 19 14 "C" "INFO" 
+2 * 27 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
-00 
-00 
-3 * 16 14 "C" "INFO" 
 "B" "NPAR" \w1 00 
 00 
 00 
-4 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+3 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 

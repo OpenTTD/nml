@@ -147,8 +147,7 @@ class LimitNode(BinaryNode):
         file.print_dword(self.max_val)
         file.newline()
 
-def grf_name_desc_actions(name, desc, version):
-    root = BranchNode("INFO")
+def grf_name_desc_actions(root, name, desc, version):
     if name.name.value in grfstrings.grf_strings and len(grfstrings.grf_strings[name.name.value]) > 1:
         name_node = TextNode("NAME", name, True)
         root.subnodes.append(name_node)
@@ -158,15 +157,11 @@ def grf_name_desc_actions(name, desc, version):
     if version:
         version_node = BinaryNode("VRSN", 4, version.value)
         root.subnodes.append(version_node)
-    if len(root.subnodes) > 0:
-        return [Action14([root])]
-    return []
 
-def param_desc_actions(params):
+def param_desc_actions(root, params):
     num_params = 0
     for param_desc in params:
         num_params += len(param_desc.setting_list)
-    root = BranchNode("INFO")
     root.subnodes.append(BinaryNode("NPAR", 1, num_params))
     param_root = BranchNode("PARA")
     param_num = 0
@@ -202,7 +197,6 @@ def param_desc_actions(params):
         param_num += 1
     if len(param_root.subnodes) > 0:
         root.subnodes.append(param_root)
-    return [Action14([root])]
 
 def PaletteAction(pal):
     root = BranchNode("INFO")

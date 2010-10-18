@@ -5,22 +5,19 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d53 
+0 * 4 \d52 
 
 1 * 16 14 "C" "INFO" 
 "B" "PALS" \w1 "W" 
 00 
 00 
-2 * 19 14 "C" "INFO" 
+2 * 27 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
-00 
-00 
-3 * 16 14 "C" "INFO" 
 "B" "NPAR" \w1 00 
 00 
 00 
-4 * 52 08 07 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00 
-5 * 208 00 08 \b1 32 FF \wx0000 
+3 * 52 08 07 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00 
+4 * 208 00 08 \b1 32 FF \wx0000 
 09 "WDPR" "SCRP" "CMNT" "WOOD" "LVST" 
 "STEL" "VEHI" "BRCK" "WOOL" "BUBL" 
 "TOYS" "FZDR" "FRUT" "FRVG" "FOOD" 
@@ -32,90 +29,90 @@
 "MAIL" "BATT" "SWET" "RUBR" "FMSP" 
 "ENSP" "MNSP" "FICR" "PLAS" "PLST" 
 
-6 * 28 00 08 \b1 05 FF \wx0000 
+5 * 28 00 08 \b1 05 FF \wx0000 
 12 "RAIL" "ELRL" "MONO" "MGLV" "TRPD" 
 
-7 * 6 01 00 \b8 FF \wx0004 
+6 * 6 01 00 \b8 FF \wx0004 
 
-8 temperate_railwagons.png 0 25 01 24 8 -3 -12 
-9 temperate_railwagons.png 16 25 01 17 22 -14 -9 
-10 temperate_railwagons.png 48 25 01 12 32 -16 -8 
-11 temperate_railwagons.png 96 25 01 17 22 -6 -9 
+7 temperate_railwagons.png 0 25 01 24 8 -3 -12 
+8 temperate_railwagons.png 16 25 01 17 22 -14 -9 
+9 temperate_railwagons.png 48 25 01 12 32 -16 -8 
+10 temperate_railwagons.png 96 25 01 17 22 -6 -9 
 
-12 temperate_railwagons.png 0 250 01 24 8 -3 -12 
-13 temperate_railwagons.png 16 250 01 17 22 -14 -9 
-14 temperate_railwagons.png 48 250 01 12 32 -16 -8 
-15 temperate_railwagons.png 96 250 01 17 22 -6 -9 
+11 temperate_railwagons.png 0 250 01 24 8 -3 -12 
+12 temperate_railwagons.png 16 250 01 17 22 -14 -9 
+13 temperate_railwagons.png 48 250 01 12 32 -16 -8 
+14 temperate_railwagons.png 96 250 01 17 22 -6 -9 
 
-16 arctic_railwagons.pcx 0 25 01 24 8 -3 -12 
-17 arctic_railwagons.pcx 16 25 01 17 22 -14 -9 
-18 arctic_railwagons.pcx 48 25 01 12 32 -16 -8 
-19 arctic_railwagons.pcx 96 25 01 17 22 -6 -9 
+15 arctic_railwagons.pcx 0 25 01 24 8 -3 -12 
+16 arctic_railwagons.pcx 16 25 01 17 22 -14 -9 
+17 arctic_railwagons.pcx 48 25 01 12 32 -16 -8 
+18 arctic_railwagons.pcx 96 25 01 17 22 -6 -9 
 
-20 arctic_railwagons.pcx 0 250 01 24 8 -3 -12 
-21 arctic_railwagons.pcx 16 250 01 17 22 -14 -9 
-22 arctic_railwagons.pcx 48 250 01 12 32 -16 -8 
-23 arctic_railwagons.pcx 96 250 01 17 22 -6 -9 
+19 arctic_railwagons.pcx 0 250 01 24 8 -3 -12 
+20 arctic_railwagons.pcx 16 250 01 17 22 -14 -9 
+21 arctic_railwagons.pcx 48 250 01 12 32 -16 -8 
+22 arctic_railwagons.pcx 96 250 01 17 22 -6 -9 
 
-24 temperate_railwagons.png 0 225 01 24 8 -3 -12 
-25 temperate_railwagons.png 16 225 01 17 22 -14 -9 
-26 temperate_railwagons.png 48 225 01 12 32 -16 -8 
-27 temperate_railwagons.png 96 225 01 17 22 -6 -9 
+23 temperate_railwagons.png 0 225 01 24 8 -3 -12 
+24 temperate_railwagons.png 16 225 01 17 22 -14 -9 
+25 temperate_railwagons.png 48 225 01 12 32 -16 -8 
+26 temperate_railwagons.png 96 225 01 17 22 -6 -9 
 
-28 temperate_railwagons.png 0 350 01 24 8 -3 -12 
-29 temperate_railwagons.png 16 350 01 17 22 -14 -9 
-30 temperate_railwagons.png 48 350 01 12 32 -16 -8 
-31 temperate_railwagons.png 96 350 01 17 22 -6 -9 
+27 temperate_railwagons.png 0 350 01 24 8 -3 -12 
+28 temperate_railwagons.png 16 350 01 17 22 -14 -9 
+29 temperate_railwagons.png 48 350 01 12 32 -16 -8 
+30 temperate_railwagons.png 96 350 01 17 22 -6 -9 
 
-32 temperate_railwagons.png 0 150 01 24 8 -3 -12 
-33 temperate_railwagons.png 16 150 01 17 22 -14 -9 
-34 temperate_railwagons.png 48 150 01 12 32 -16 -8 
-35 temperate_railwagons.png 96 150 01 17 22 -6 -9 
+31 temperate_railwagons.png 0 150 01 24 8 -3 -12 
+32 temperate_railwagons.png 16 150 01 17 22 -14 -9 
+33 temperate_railwagons.png 48 150 01 12 32 -16 -8 
+34 temperate_railwagons.png 96 150 01 17 22 -6 -9 
 
-36 temperate_railwagons.png 0 275 01 24 8 -3 -12 
-37 temperate_railwagons.png 16 275 01 17 22 -14 -9 
-38 temperate_railwagons.png 48 275 01 12 32 -16 -8 
-39 temperate_railwagons.png 96 275 01 17 22 -6 -9 
+35 temperate_railwagons.png 0 275 01 24 8 -3 -12 
+36 temperate_railwagons.png 16 275 01 17 22 -14 -9 
+37 temperate_railwagons.png 48 275 01 12 32 -16 -8 
+38 temperate_railwagons.png 96 275 01 17 22 -6 -9 
 
 // Name: bulk_wagon_coal_default_group
-40 * 13 02 00 FE \b2 \b2 
+39 * 13 02 00 FE \b2 \b2 
 \w0 \w1 
 \w0 \w1 
 
 // Name: bulk_wagon_coal_arctic_group
-41 * 13 02 00 FD \b2 \b2 
+40 * 13 02 00 FD \b2 \b2 
 \w2 \w3 
 \w2 \w3 
 
 // Name: bulk_wagon_coal2_group
-42 * 13 02 00 FC \b2 \b2 
+41 * 13 02 00 FC \b2 \b2 
 \w4 \w5 
 \w4 \w5 
 
 // Name: bulk_wagon_grain_group
-43 * 13 02 00 FB \b2 \b2 
+42 * 13 02 00 FB \b2 \b2 
 \w6 \w7 
 \w6 \w7 
 
 // Name: bulk_wagon_coal_default_switch
-44 * 15 02 00 FA 80 02 \b0 04 
+43 * 15 02 00 FA 80 02 \b0 04 
 \wx00FE \wx00FE \wx00FE 
 \wx00FC 
 
 // Name: bulk_wagon_coal_climate_switch
-45 * 23 02 00 FC 89 
+44 * 23 02 00 FC 89 
 03 00 \dx00000003 \b1 
 \wx00FD \dx00000001 \dx00000001 
 \wx00FA 
 
 // Name: bulk_wagon_graphics_switch
-46 * 23 02 00 FA 89 
+45 * 23 02 00 FA 89 
 47 00 \dx000000FF \b1 
 \wx00FC \dx00000013 \dx00000013 
 \wx00FB 
 
 // Name: bulk_wagon_cb_capacity_switch
-47 * 83 02 00 FB 89 
+46 * 83 02 00 FB 89 
 47 00 \dx000000FF \b7 
 \wx8019 \dx0000002F \dx0000002F 
 \wx8014 \dx0000000C \dx0000000C 
@@ -127,7 +124,7 @@
 \wx0000 
 
 // Name: bulk_wagon_cb_property_weight_switch
-48 * 53 02 00 FC 89 
+47 * 53 02 00 FC 89 
 47 00 \dx000000FF \b4 
 \wx8012 \dx00000013 \dx00000013 
 \wx8012 \dx0000000C \dx0000000C 
@@ -136,19 +133,19 @@
 \wx0000 
 
 // Name: bulk_wagon_cb_property_switch
-49 * 23 02 00 FD 89 
+48 * 23 02 00 FD 89 
 10 00 \dxFFFFFFFF \b1 
 \wx00FC \dx00000016 \dx00000016 
 \wx0000 
 
 // Name: bulk_wagon_cb_switch
-50 * 33 02 00 FC 89 
+49 * 33 02 00 FC 89 
 0C 00 \dx0000FFFF \b2 
 \wx00FB \dx00000015 \dx00000015 
 \wx00FD \dx00000036 \dx00000036 
 \wx00FA 
 
-51 * 72 00 00 \b26 01 FF \wx0074 
+50 * 72 00 00 \b26 01 FF \wx0074 
 06 0F 
 28 \wx0010 
 15 FF 
@@ -176,8 +173,8 @@
 24 00 
 25 00 
 
-52 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
+51 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
 
-53 * 9 03 00 01 FF \wx0074 \b0 
+52 * 9 03 00 01 FF \wx0074 \b0 
 \wx00FC 
 
