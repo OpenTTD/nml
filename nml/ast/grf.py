@@ -34,8 +34,10 @@ class GRF(object):
             raise generic.ScriptError("GRF-description must be a string", self.desc.pos)
         if self.version:
             self.version = self.version.reduce_constant()
+        param_num = 0
         for param in self.params:
-            param.pre_process()
+            param.pre_process(expression.ConstantNumeric(param_num))
+            param_num = param.num.value
 
     def debug_print(self, indentation):
         print indentation*' ' + 'GRF'
@@ -142,10 +144,14 @@ class ParameterDescription(object):
         self.num = num
         self.pos = pos
 
-    def pre_process(self):
+    def pre_process(self, num):
+        if self.num is None: self.num = num
         for setting in self.setting_list:
             setting.pre_process()
-        if len(self.setting_list) > 1:
-            for setting in self.setting_list:
-                if setting.type != 'bool':
+        for setting in self.setting_list:
+            if setting.type == 'int':
+                if len(self.setting_list) > 1:
                     raise generic.ScriptError("When packing multiple settings in one parameter only bool settings are allowed", self.pos)
+                global_constants.settings[setting.name.value] = {'num': self.num.value, 'size': 4}
+            else:
+                global_constants.misc_grf_bits[setting.name.value] = {'param': self.num.value, 'bit': setting.bit_num.value};

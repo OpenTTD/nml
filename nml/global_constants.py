@@ -668,8 +668,12 @@ misc_grf_bits = {
     'train_width_32_px'                  : {'param': 0x9E, 'bit': 3},
 }
 
+def setting_from_info(info, pos):
+    return expression.SpecialParameter(generic.reverse_lookup(settings, info), info, global_param_write, global_param_read, pos)
+
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
+settings = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), cargo_numbers, railtype_table, item_names]
+const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), cargo_numbers, railtype_table, item_names, (settings, setting_from_info)]

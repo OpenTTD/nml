@@ -5,13 +5,13 @@ from nml.ast import general
 class Conditional(object):
     def __init__(self, expr, block, else_block, pos):
         self.expr = expr
-        if self.expr is not None:
-            self.expr = self.expr.reduce(global_constants.const_list)
         self.block = block
         self.else_block = else_block
         self.pos = pos
 
     def pre_process(self):
+        if self.expr is not None:
+            self.expr = self.expr.reduce(global_constants.const_list)
         for b in self.block:
             b.pre_process()
         if self.else_block is not None:
