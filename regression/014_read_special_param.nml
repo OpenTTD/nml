@@ -1,0 +1,39 @@
+grf {
+	grfid: "NML\14";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+	version: 0;
+	param {
+		int_param {
+			type: int;
+			min_value: 0;
+			max_value: 2;
+			def_value: 0;
+			name: string(STR_PARAM_NAME);
+			desc: string(STR_PARAM_DESC);
+		}
+	}
+	param {
+		bool_param_1 {
+			type: bool;
+			def_value: 0;
+		}
+		bool_param_2 {
+			type: bool;
+			def_value: 1;
+			bit: 2;
+		}
+	}
+}
+
+/* Read a user-changeable integer setting */
+param[0x10] = int_param;
+
+/* Read a user-changeable bool setting */
+param[0x11] = bool_param_1;
+
+/* Read a user-changeable bool setting */
+param[0x12] = bool_param_2;
+
+/* Read a setting from another newgrf */
+param[0x13] = param["NML\01", 0];
