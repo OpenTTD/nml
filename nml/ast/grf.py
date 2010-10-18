@@ -162,4 +162,5 @@ class ParameterDescription(object):
                     raise generic.ScriptError("When packing multiple settings in one parameter only bool settings are allowed", self.pos)
                 global_constants.settings[setting.name.value] = {'num': self.num.value, 'size': 4}
             else:
-                global_constants.misc_grf_bits[setting.name.value] = {'param': self.num.value, 'bit': setting.bit_num.value};
+                bit = 0 if setting.bit_num is None else setting.bit_num.value
+                global_constants.misc_grf_bits[setting.name.value] = {'param': self.num.value, 'bit': bit};
