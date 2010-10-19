@@ -45,6 +45,7 @@ SHIFT_RIGHT = Operator( True,     None, None,  True,   None, None, False, '>>', 
 SHIFTU_RIGHT= Operator( True,     None, None,  True,   None, None, False, '>>>',unsigned_rshift)
 HASBIT      = Operator( True,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) != 0)
 #A few operators that are generated internally but can't be directly written in nml
+NOTHASBIT   = Operator( True,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) == 0)
 VAL2        = Operator( True,   r'\2r',   15, False,   None, None, False, None, lambda a, b: b)
 ASSIGN      = Operator(False,     None, None,  True, r'\D=',    0, False, None, None)
 SHIFTU_LEFT = Operator(False,     None, None,  True, r'\Du<<',  5, False, None, None)
@@ -59,3 +60,4 @@ MAX.to_string = lambda expr1, expr2: 'max(%s, %s)' % (expr1, expr2)
 STO_TMP.to_string = lambda expr1, expr2: 'STORE_TEMP(%s, %s)' % (expr1, expr2)
 STO_PERM.to_string = lambda expr1, expr2: 'STORE_PERM(%s, %s)' % (expr1, expr2)
 HASBIT.to_string = lambda expr1, expr2: 'hasbit(%s, %s)' % (expr1, expr2)
+NOTHASBIT.to_string = lambda expr1, expr2: '!hasbit(%s, %s)' % (expr1, expr2)

@@ -276,6 +276,11 @@ class Varaction2Parser(object):
             # hasbit(x, n) ==> (x >> n) & 1
             expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
             expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
+        elif expr.op == nmlop.NOTHASBIT:
+            # !hasbit(x, n) ==> ((x >> n) & 1) ^ 1
+            expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
+            expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
+            expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
 
         return expr
 

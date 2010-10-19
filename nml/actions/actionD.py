@@ -129,7 +129,7 @@ def parse_special_check(assignment):
     return actions
 
 def parse_hasbit(assignment):
-    assert isinstance(assignment.value, expression.BinOp) and assignment.value.op == nmlop.HASBIT
+    assert isinstance(assignment.value, expression.BinOp) and (assignment.value.op == nmlop.HASBIT or assignment.value.op == nmlop.NOTHASBIT)
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
     cond_block = nml.ast.conditional.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None, None)
     actions.extend(cond_block.get_action_list())
@@ -236,7 +236,7 @@ def parse_actionD(assignment):
 
     if isinstance(assignment.value, expression.BinOp):
         op = assignment.value.op
-        if op == nmlop.HASBIT:
+        if op == nmlop.HASBIT or op == nmlop.NOTHASBIT:
             return parse_hasbit(assignment)
         elif op == nmlop.MIN or op == nmlop.MAX:
             return parse_min_max(assignment)

@@ -63,7 +63,7 @@ def parse_conditional(expr):
     if expr is None:
         return (None, [], (2, r'\7='), 0, 4)
     if isinstance(expr, expression.BinOp):
-        if expr.op == nmlop.HASBIT:
+        if expr.op == nmlop.HASBIT or expr.op == nmlop.NOTHASBIT:
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
                 param = expr.expr1.num.value
                 actions = []
@@ -81,7 +81,8 @@ def parse_conditional(expr):
                 act6.modify_bytes(param, 1, 4)
                 actions.append(act6)
                 bit_num = 0
-            return (param, actions, (1, r'\70'), bit_num , 1)
+            comp_type = (1, r'\70') if expr.op == nmlop.HASBIT else (0, r'\71')
+            return (param, actions, comp_type, bit_num , 1)
         elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LE, nmlop.CMP_GE) \
                 and isinstance(expr.expr2, expression.ConstantNumeric):
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):

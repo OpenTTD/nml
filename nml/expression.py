@@ -365,6 +365,8 @@ class Not(Expression):
             if expr.op == nmlop.CMP_GE: return BinOp(nmlop.CMP_LT, expr.expr1, expr.expr2)
             if expr.op == nmlop.CMP_LT: return BinOp(nmlop.CMP_GE, expr.expr1, expr.expr2)
             if expr.op == nmlop.CMP_GT: return BinOp(nmlop.CMP_LE, expr.expr1, expr.expr2)
+            if expr.op == nmlop.HASBIT: return BinOp(nmlop.NOTHASBIT, expr.expr1, expr.expr2)
+            if expr.op == nmlop.NOTHASBIT: return BinOp(nmlop.HASBIT, expr.expr1, expr.expr2)
         return Not(expr)
 
     def supported_by_action2(self, raise_error):
