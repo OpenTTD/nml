@@ -44,11 +44,23 @@ used_strings = {
 }
 
 def get_global_string_actions():
+    texts = []
     actions = []
     for string_range, strings in used_strings.iteritems():
         for string_name, id in strings.iteritems():
             for translation in grfstrings.grf_strings[string_name]:
-                actions.append(Action4(0x08, translation['lang'], 2, (string_range << 8) | id, [translation['text']]))
+                texts.append( (translation['lang'], (string_range << 8) | id, translation['text']) )
+    last_lang = -1
+    last_id = -1
+    texts.sort(key=lambda text: (-text[0], text[1]))
+    for text in texts:
+        if text[0] != last_lang or text[1] - 1 != last_id:
+            actions.append(Action4(0x08, text[0], 2, text[1], [text[2]]))
+        else:
+            actions[-1].texts.append(text[2])
+        last_lang = text[0]
+        last_id = text[1]
+        #actions.append(Action4(0x08, translation['lang'], 2, (string_range << 8) | id, [translation['text']]))
     return actions
 
 def get_string_action4s(feature, string_range, string, id = None):
