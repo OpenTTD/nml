@@ -2,25 +2,28 @@ from nml import generic, grfstrings
 from nml.actions import base_action
 
 class Action4(base_action.BaseAction):
-    def __init__(self, feature, lang, size, id, text):
+    def __init__(self, feature, lang, size, id, texts):
         self.feature = feature
         self.lang = lang
         self.size = size
         self.id = id
-        self.text = text
+        self.texts = texts
 
     def prepare_output(self):
         if self.size == 2: self.lang = self.lang | 0x80
 
     def write(self, file):
-        size = 4 + self.size + grfstrings.get_string_size(self.text)
+        size = 4 + self.size
+        for text in self.texts:
+            size += grfstrings.get_string_size(text)
         file.start_sprite(size)
         file.print_bytex(4)
         file.print_bytex(self.feature)
         file.print_bytex(self.lang)
-        file.print_bytex(1)
+        file.print_bytex(len(self.texts))
         file.print_varx(self.id, self.size)
-        file.print_string(self.text)
+        for text in self.texts:
+            file.print_string(text)
         file.newline()
         file.end_sprite()
 
@@ -45,7 +48,7 @@ def get_global_string_actions():
     for string_range, strings in used_strings.iteritems():
         for string_name, id in strings.iteritems():
             for translation in grfstrings.grf_strings[string_name]:
-                actions.append(Action4(0x08, translation['lang'], 2, (string_range << 8) | id, translation['text']))
+                actions.append(Action4(0x08, translation['lang'], 2, (string_range << 8) | id, [translation['text']]))
     return actions
 
 def get_string_action4s(feature, string_range, string, id = None):
@@ -70,7 +73,7 @@ def get_string_action4s(feature, string_range, string, id = None):
     actions = []
     if write_action4s:
         for translation in grfstrings.grf_strings[string.name.value]:
-            actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
+            actions.append(Action4(feature, translation['lang'], size, id, [translation['text']]))
 
     actions.sort(key=lambda action: action.lang);
 
