@@ -204,6 +204,8 @@ def get_layout_action2s(spritegroup, feature, spritesets):
             building_sprites.append(sprite)
 
     if ground_sprite is None:
-        raise generic.ScriptError("Sprite group requires exactly one ground sprite")
+        #set to 0 for no ground sprite
+        ground_sprite = Action2LayoutSprite(Action2LayoutSpriteType.GROUND)
+        set_sprite_property(ground_sprite, 'ttdsprite', expression.ConstantNumeric(0), spritesets)
 
     return [Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)]
