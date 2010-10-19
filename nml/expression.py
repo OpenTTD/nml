@@ -733,14 +733,18 @@ class SpecialParameter(Expression):
                         Return value:
                             Expression that should be evaluated to get the parameter value
     @type write_func: C{function}
+
+    @ivar is_bool: Does read_func return a boolean value?
+    @type is_bool: C{bool}
     """
 
-    def __init__(self, name, info, write_func, read_func, pos = None):
+    def __init__(self, name, info, write_func, read_func, is_bool, pos = None):
         Expression.__init__(self, pos)
         self.name = name
         self.info = info
         self.write_func = write_func
         self.read_func = read_func
+        self.is_bool = is_bool
 
     def debug_print(self, indentation):
         print indentation*' ' + "Special parameter '%s'" % self.name
@@ -750,6 +754,9 @@ class SpecialParameter(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
+
+    def is_boolean(self):
+        return self.is_bool
 
     def to_assignment(self, expr):
         param, expr = self.write_func(self.info, expr, self.pos)

@@ -629,7 +629,7 @@ def global_param_read(info, pos):
     return param
 
 def param_from_info(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(global_parameters, info), info, global_param_write, global_param_read, pos)
+    return expression.SpecialParameter(generic.reverse_lookup(global_parameters, info), info, global_param_write, global_param_read, False, pos)
 
 global_parameters = {
     'climate'                            : {'num': 0x83, 'size': 1},
@@ -661,7 +661,7 @@ def misc_bit_read(info, pos):
     return expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos), expression.ConstantNumeric(info['bit'], pos), pos)
 
 def misc_grf_bit(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(misc_grf_bits, info), info, misc_bit_write, misc_bit_read, pos)
+    return expression.SpecialParameter(generic.reverse_lookup(misc_grf_bits, info), info, misc_bit_write, misc_bit_read, True, pos)
 
 misc_grf_bits = {
     'desert_paved_roads'                 : {'param': 0x9E, 'bit': 1},
@@ -669,7 +669,7 @@ misc_grf_bits = {
 }
 
 def setting_from_info(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(settings, info), info, global_param_write, global_param_read, pos)
+    return expression.SpecialParameter(generic.reverse_lookup(settings, info), info, global_param_write, global_param_read, False, pos)
 
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
