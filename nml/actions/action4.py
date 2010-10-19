@@ -35,13 +35,24 @@ string_ranges = {
     0xDC: {'random_id': True, 'ids': range(0xFF, -1, -1)},
 }
 
+used_strings = {
+    0xD0: {},
+    0xDC: {},
+}
+
 def get_string_action4s(feature, string_range, string, id = None):
     global string_ranges
     if not string.name.value in grfstrings.grf_strings: raise generic.ScriptError("Unknown string: " + string.name.value, string.pos)
+    write_action4s = True
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:
-            id = string_ranges[string_range]['ids'].pop()
+            if string.name.value in used_strings[string_range]:
+                id = used_strings[string_range][string.name.value]
+                write_action4s = False
+            else:
+                id = string_ranges[string_range]['ids'].pop()
+                used_strings[string_range][string.name.value] = id
         id = id | (string_range << 8)
     elif feature <= 3:
         size = 3
@@ -49,8 +60,9 @@ def get_string_action4s(feature, string_range, string, id = None):
         size = 1
 
     actions = []
-    for translation in grfstrings.grf_strings[string.name.value]:
-        actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
+    if write_action4s:
+        for translation in grfstrings.grf_strings[string.name.value]:
+            actions.append(Action4(feature, translation['lang'], size, id, translation['text']))
 
     actions.sort(key=lambda action: action.lang);
 
