@@ -40,6 +40,14 @@ used_strings = {
     0xDC: {},
 }
 
+def get_global_string_actions():
+    actions = []
+    for string_range, strings in used_strings.iteritems():
+        for string_name, id in strings.iteritems():
+            for translation in grfstrings.grf_strings[string_name]:
+                actions.append(Action4(0x08, translation['lang'], 2, (string_range << 8) | id, translation['text']))
+    return actions
+
 def get_string_action4s(feature, string_range, string, id = None):
     global string_ranges
     if not string.name.value in grfstrings.grf_strings: raise generic.ScriptError("Unknown string: " + string.name.value, string.pos)
@@ -47,9 +55,9 @@ def get_string_action4s(feature, string_range, string, id = None):
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:
+            write_action4s = False
             if string.name.value in used_strings[string_range]:
                 id = used_strings[string_range][string.name.value]
-                write_action4s = False
             else:
                 id = string_ranges[string_range]['ids'].pop()
                 used_strings[string_range][string.name.value] = id
