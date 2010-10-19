@@ -510,9 +510,9 @@ class NMLParser(object):
         else: t[0] = spriteblock.SpriteView(t[1], [t[3]], t.lineno(1))
 
     def p_layout_sprite_list(self, t):
-        '''layout_sprite_list : layout_sprite
+        '''layout_sprite_list :
                               | layout_sprite_list layout_sprite'''
-        if len(t) == 2: t[0] = [t[1]]
+        if len(t) == 1: t[0] = []
         else: t[0] = t[1] + [t[2]]
 
     def p_layout_sprite(self, t):
