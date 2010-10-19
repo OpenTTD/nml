@@ -161,7 +161,6 @@ def parse_conditional_block(cond):
 
     blocks = []
     while cond is not None:
-        end_label = free_labels.pop()
         blocks.append({'expr': cond.expr, 'statements': cond.block, 'last_block': cond.else_block is None})
         cond = cond.else_block
 
