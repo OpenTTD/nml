@@ -32,6 +32,7 @@ class SpriteSet(object):
             self.pcx = None
         self.sprite_list = sprite_list
         self.pos = pos
+        register_spriteset(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite set:', self.name.value
