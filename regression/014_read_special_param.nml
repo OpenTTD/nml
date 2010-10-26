@@ -38,3 +38,14 @@ param[0x12] = bool_param_2;
 
 /* Read a setting from another newgrf */
 param[0x13] = param["NML\01", 0];
+
+/* Read and write a misc grf bit */
+desert_paved_roads = 1;
+param[0x14] = train_width_32_px;
+
+/* Read and write a special grf parameter */
+traininfo_y_offset = -2;
+param[0x15] = year_loaded;
+
+/* Read a patch variable */
+param[0x16] = map_size;

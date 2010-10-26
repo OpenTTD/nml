@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d10 
+0 * 4 \d20 
 
 1 * 223 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -55,4 +55,33 @@
 
 // param[19] = param[0]
 10 * 9 0D 13 \D= 00 FE \dx014C4D4E 
+
+// param[158] = (param[158] | 2)
+11 * 9 0D 9E \D| 9E FF \dx00000002 
+
+// param[20] = 0
+12 * 9 0D 14 \D= FF 00 \dx00000000 
+
+13 * 6 09 9E 01 \70 03 01 
+
+// param[20] = 1
+14 * 9 0D 14 \D= FF 00 \dx00000001 
+
+// param[142] = -2
+15 * 9 0D 8E \D= FF 00 \dxFFFFFFFE 
+
+// param[21] = param[164]
+16 * 5 0D 15 \D= A4 00 
+
+// param[66] = param[19]
+17 * 9 0D 42 \D= 13 FE \dx0000FFFF 
+
+// param[65] = (param[66] & 255)
+18 * 9 0D 41 \D& 42 FF \dx000000FF 
+
+// param[64] = (param[65] + 12)
+19 * 9 0D 40 \D+ 41 FF \dx0000000C 
+
+// param[22] = (1 << param[64])
+20 * 9 0D 16 \D<< FF 40 \dx00000001 
 
