@@ -11,3 +11,6 @@ STR_PARAM_NAME                 :Name of the int setting
 STR_PARAM_DESC                 :Description of a setting
 
 STR_STATIONS                   :Test Stations
+
+STR_OBJ_MISC_CLASS             :Miscellaneous
+STR_OBJ_BASIC                  :Basic object
