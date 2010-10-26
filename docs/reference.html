@@ -1398,6 +1398,7 @@ by the second column in the following table:</p>
 <tr><td>date_loaded <td>Yes <td>days since year 0 <td>Set to the time of game load, which is the current date in single player, 
     and the date the server started in multiplayer. This to prevent desyncs.
 <tr><td>year_loaded <td>Yes <td>years since year 0 <td>See date_loaded.
+<tr><td>starting_year <td>Yes <td>years since year 0 <td>Years before 1920 are clamped to 1920
 <tr><td>animation_counter <td>No <td> 0 .. 65535 <td> Increased by 1 each tick
 <tr><td>climate <td>Yes (a)<td>CLIMATE_XXX with XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND] <td>
 <tr><td>game_mode <td>Yes <td>GAMEMODE_XXX with XXX = [MENU | GAME | EDITOR] <td>
@@ -1410,11 +1411,20 @@ by the second column in the following table:</p>
 <tr><td>traininfo_y_offset <td>Yes (b) <td>-128 .. 127 <td>Used to correctly position the depot view of trains.
 <tr><td>snowline_height <td>No <td>16 .. 120 in steps of 8, or 0xFF if no snow. <td>One tile height is equivalent to 8 units.
 <tr><td>traffic_side <td>Yes (a)<td>TRAFFIC_SIDE_LEFT or TRAFFIC_SIDE_RIGHT <td>
+<tr><td>freight_trains <td>Yes <td>1 .. 255 <td>Weight multiplier for freight trains
+<tr><td>plane_speed <td>Yes <td>1 .. 4<td>Speed multplier for planes. Value of 1 is equal to the original speed (1/4), while 4 means that planes move at full speed (4/4)
 <tr><td>ttdpatch_flags <td>Yes <td> <td>
 <tr><td>current_callback <td>No <td> <td>Set to the ID of the current callback, see the various features for more information / examples.
 <tr><td>extra_callback_info1 <td>No <td>Varies <td>Extra callback information, meaning differs per callback.
 <tr><td>extra_callback_info2 <td>No <td>Varies <td>Extra callback information, meaning differs per callback.
 <tr><td>last_computed_result <td>No <td> <td>Result of the last (previously evaluated) switch block.
+<tr><td>base_sprite_2cc <td>Yes <td>0 .. 65535<td>Base sprite for 2cc (dual company colour) colour-maps
+<tr><td>map_type <td>Yes <td>MAP_TYPE_XXX with XXX = [RECTANGULAR | X_BIGGER | Y_BIGGER] <td>
+<tr><td>map_min_edge <td>Yes <td>64 .. 2048 <td>Length of the smallest map edge (in tiles)
+<tr><td>map_max_edge <td>Yes <td>64 .. 2048 <td>Length of the biggest map edge (in tiles)
+<tr><td>map_x_edge <td>Yes <td>64 .. 2048 <td>Length of the x (top-left) map edge (in tiles)
+<tr><td>map_y_edge <td>Yes <td>64 .. 2048 <td>Length of the y (top-right) map edge (in tiles)
+<tr><td>map_size <td>Yes <td>64*64 .. 2048*2048 <td>Total number of tiles on the map
 </table>
 <p>(a) The value of these variables can change during the game. Reading them
 from a switch block (which reads the current value) may result in a different
