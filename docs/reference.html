@@ -112,8 +112,9 @@
 	<li><a href="#refs-default-industries">Default industries</a></li>
 	<li><a href="#refs-basecost-table">Base cost table</a></li>
 	<li><a href="#refs-sounds">List of sound effects</a></li>
-    <li><a href="#refs-vehicleIDs">List of default vehicle IDs</a></li>
-    <li><a href="#refs-houseProperties">List of default house properties</a></li>
+	<li><a href="#refs-vehicleIDs">List of default vehicle IDs</a></li>
+	<li><a href="#refs-houseProperties">List of default house properties</a></li>
+	<li><a href="#refs-town-zones">List of town zones</a></li>
 
 </ul>
 </li>
@@ -1188,7 +1189,11 @@ non_refittable_cargo_classes have no effect.
 <tr><td>probability<td>0 ... 16<td>Probability with respect to the default houses (=1). Mind that these are relative probabilities with respect to all houses defined. If all probabilities are defined as 16, they'll all have the same probability as if they had all a probability of 1.
 <tr><td>years_available<td>array of two int<td>[xx, yy] where xx and yy indicate the introduction year and the last year the building can be built
 <tr><td>minimum_lifetime<td>0 ... 255<td>number of years the building will remain at least
-<tr><td>availability_mask<td>BitMask(TOWNZONE_EDGE, ...)<td>A bit mask where the valid values are one or more of<br>TOWNZONE_EDGE, TOWNZONE_OUTSKIRT, TOWNZONE_OUTER_SUBURB, TOWNZONE_INNER_SUBURB, TOWNZONE_CENTRE, TOWNZONE_ALL, CLIMATE_SNOW, CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPIC, CLIMATE_TOYLAND<br> If you want to allow the house in snowy regions, you need to set CLIMATE_SNOW; CLIMATE_ARTIC allows the house only in the non-snowy regions there.
+<tr><td>availability_mask<td>[BitMask(<a href="#refs-town-zones">town zones</a>), BitMask(CLIMATE_XXX)]<td>An array with two bitmasks, the first
+bitmask is a mask of town zones where this house is available. The second bitmask is a mask of climates, valid values: CLIMATE_SNOW,
+CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPIC, CLIMATE_TOYLAND<br>If you want to allow the house in snowy regions, you need to
+set CLIMATE_SNOW; CLIMATE_ARTIC allows the house only in the non-snowy regions there. Don't use CLIMATE_ALL here because it doesn't
+include CLIMATE_SNOW and as such might lead to unexpected results.
 <tr><td>callback_flags<td><td>HOUSE_CBF_XX with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
@@ -1673,11 +1678,32 @@ results are filtered to industries that have the given layout number.</td></tr>
 <h2><a name="vars-cargos">Cargos</a></h2>
 <h2><a name="vars-airports">Airports</a></h2>
 <h2><a name="vars-objects">Objects</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>relative_pos</td><td></td><td></td></tr>
+<tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>tile_slope</td><td>Which corners are raised on the given tile.</td><td>
+Bit 0: west corner is above the lowest corner.<br>
+Bit 1: south corner is above the lowest corner.<br>
+Bit 2: east corner is above the lowest corner.<br>
+Bit 3: north corner is above the lowest corner.<br>
+Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).
+</td></tr>
+<tr><td>build_date</td><td></td><td>The date this object was build.</td></tr>
+<tr><td>animation_frame</td><td>0..255</td><td>Current animation frame</td></tr>
+<tr><td>company_color</td><td>0..15</td><td>Color used for the company color mask</td></tr>
+<tr><td>owner</td><td>0..0x10</td><td>CompanyID of the owner of the object or 0x10 if it was build in the scenario editor</td></tr>
+<tr><td>town_manhattan_dist</td><td></td><td>Manhattan distance to the nearest town</td></tr>
+<tr><td>town_euclidean_dist</td><td></td><td>Euclidean distance to the nearest town</td></tr>
+<tr><td>town_zone</td><td><a href="#refs-town-zones">town zone</a></td><td>The town zone of the current tile. The town zone from the closest town (measured in manhattan
+distance) is used.</td></tr>
+</table>
+
 <h2><a name="vars-railtypes">Railtypes</a></h2>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>terrain_type</td><td>         TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
-<tr><td>enhanced_tunnels</td><td>     0</td><td>should custom tunnel entrances be modified other values than 0 might be returned</td></tr>
+<tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>enhanced_tunnels</td><td>0</td><td>should custom tunnel entrances be modified other values than 0 might be returned</td></tr>
 <tr><td>level_crossing_status</td><td>LEVEL_CROSSING_CLOSED, LEVEL_CROSSING_OPEN</td><td></td></tr>
 <tr><td>build_date <td>0 .. 5000000 <td>for depots only: build date of the depot in days since 0
 </table>
@@ -2374,6 +2400,15 @@ spaced by powers of two. For houses the minimum value is 2 (=4 ticks). The ingam
 <tr><td>109<td>piggy-bank<td>toyland<td>EDGE ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>18<td>7<td>3<td>2<td>-4<td>95<td>85
 </table>
 
+
+<h2><a name="refs-town-zones">List town zones</a></h2>
+<table class="t">
+<tr><td>TOWNZONE_EDGE</td></tr>
+<tr><td>TOWNZONE_OUTSKIRT</td></tr>
+<tr><td>TOWNZONE_OUTER_SUBURB</td></tr>
+<tr><td>TOWNZONE_INNER_SUBURB</td></tr>
+<tr><td>TOWNZONE_CENTRE</td></tr>
+</table>
 
 </body>
 </html>

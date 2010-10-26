@@ -7,6 +7,7 @@ constant_numbers = {
     'CLIMATE_TROPIC'        : 0x02,
     'CLIMATE_TROPICAL'      : 0x02,
     'CLIMATE_TOYLAND'       : 0x03,
+    'CLIMATE_SNOW'          : 0x0B, # Only for house property available_mask
 
     'CLIMATE_NONE'          : 0x00,
     'CLIMATE_ALL'           : 0x0F,
@@ -286,12 +287,11 @@ constant_numbers = {
     'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, # 0x80 / 8
     
     #town zones
-    'TOWNZONE_EDGE'                 : 0x08,
-    'TOWNZONE_OUTSKIRT'             : 0x09,
-    'TOWNZONE_OUTER_SUBURB'         : 0x0A,
-    'TOWNZONE_INNER_SUBURB'         : 0x0B,
-    'TOWNZONE_CENTRE'               : 0x0C,
-    'CLIMATE_SNOW'                  : 0x0F,
+    'TOWNZONE_EDGE'                 : 0x00,
+    'TOWNZONE_OUTSKIRT'             : 0x01,
+    'TOWNZONE_OUTER_SUBURB'         : 0x02,
+    'TOWNZONE_INNER_SUBURB'         : 0x03,
+    'TOWNZONE_CENTRE'               : 0x04,
 
     #industry callback flags
     'IND_CBF_AVAILABILITY'          : 0x0001,

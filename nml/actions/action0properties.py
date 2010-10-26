@@ -186,11 +186,11 @@ def house_random_colors(value):
     return [Action0Property(0x17, ConstantNumeric(colors[0] << 24 | colors[1] << 16 | colors[2] << 8 | colors[3]), 4)]
 
 def house_available_mask(value):
-    # shuffle the bits so that the user isn't confused with yet another climate definition
-    val = value << 12                   # Climate bits
-    val += (value >> 7) & 0x007F        # town zones
-    val += (value >> 4) & 0x0800        # snow bit
-    return [Action0Property(0x13, ConstantNumeric(val), 2)]
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("availability_mask must be an array with exactly 2 values", value.pos)
+    town_zones = value.values[0].reduce_constant().value
+    climates = value.values[1].reduce_constant().value
+    return [Action0Property(0x13, ConstantNumeric(town_zones | (climates & 0x800) | ((climates & 0x0F) << 12)), 2)]
 
 def house_accepted_cargos(value):
     if not isinstance(value, Array) or len(value.values) > 3:
