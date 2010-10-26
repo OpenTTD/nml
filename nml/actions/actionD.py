@@ -295,6 +295,11 @@ def parse_actionD(assignment):
             param1 = expression.ConstantNumeric(0)
         param2 = expression.ConstantNumeric(0xFE)
         data = expression.ConstantNumeric(assignment.value.grfid)
+    elif isinstance(assignment.value, expression.PatchVariable):
+        op = nmlop.ASSIGN
+        param1 = expression.ConstantNumeric(assignment.value.num)
+        param2 = expression.ConstantNumeric(0xFE)
+        data = expression.ConstantNumeric(0xFFFF)
     elif isinstance(assignment.value, expression.BinOp):
         op, expr1, expr2, extra_actions = transform_bin_op(assignment)
         action_list.extend(extra_actions)

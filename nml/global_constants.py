@@ -585,6 +585,11 @@ constant_numbers = {
     'DISPLAY_ANIMATION'                     : 3,
     'DISPLAY_FULL_DETAIL'                   : 5,
 
+    #map types (ttdp variable 0x13)
+    'MAP_TYPE_X_BIGGER'                     : 0, #bit 0 and 1 clear
+    'MAP_TYPE_RECTANGULAR'                  : 1, #bit 0 set
+    'MAP_TYPE_Y_BIGGER'                     : 2, #bit 0 clear, bit 1 set
+
     #Random triggers
     'TRIGGER_ALL'                           : 0x80,
 
@@ -668,6 +673,43 @@ misc_grf_bits = {
     'train_width_32_px'                  : {'param': 0x9E, 'bit': 3},
 }
 
+def add_1920(param, info):
+    return expression.BinOp(nmlop.ADD, param, expression.ConstantNumeric(1920, param.pos), param.pos)
+
+def map_exponentiate(param, info):
+    #map (log2(x) - a) to x, i.e. do 1 << (x + a)
+    param = expression.BinOp(nmlop.ADD, param, expression.ConstantNumeric(info['log_offset'], param.pos), param.pos)
+    return expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(1, param.pos), param, param.pos)
+
+def patch_variable_write(info, expr, pos):
+    raise generic.ScriptError("Target parameter '%s' is not writable." % generic.reverse_lookup(patch_variables, info), pos)
+
+def patch_variable_read(info, pos):
+    expr = expression.PatchVariable(info['num'], pos)
+    if info['start'] != 0:
+        expr = expression.BinOp(nmlop.SHIFT_RIGHT, expr, expression.ConstantNumeric(info['start'], pos), pos)
+    if info['size'] != 32:
+        expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric((1 << info['size']) - 1, pos), pos)
+    if 'function' in info:
+        expr = info['function'](expr, info)
+    return expr
+
+def patch_variable(info, pos):
+    return expression.SpecialParameter(generic.reverse_lookup(patch_variables, info), info, patch_variable_write, patch_variable_read, False, pos)
+
+patch_variables = {
+    'starting_year' : {'num': 0x0B, 'start': 0, 'size': 32, 'function': add_1920},
+    'freight_trains' : {'num': 0x0E, 'start': 0, 'size': 32},
+    'plane_speed' : {'num': 0x10, 'start': 0, 'size': 32},
+    'base_sprite_2cc' : {'num': 0x11, 'start': 0, 'size': 32},
+    'map_type' : {'num': 0x13, 'start': 24, 'size': 2},
+    'map_min_edge' : {'num': 0x13, 'start': 20, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
+    'map_max_edge' : {'num': 0x13, 'start': 16, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
+    'map_x_edge' : {'num': 0x13, 'start': 12, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
+    'map_y_edge' : {'num': 0x13, 'start': 8, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
+    'map_size' : {'num': 0x13, 'start': 0, 'size': 8, 'log_offset': 12, 'function': map_exponentiate},
+}
+
 def setting_from_info(info, pos):
     return expression.SpecialParameter(generic.reverse_lookup(settings, info), info, global_param_write, global_param_read, False, pos)
 
@@ -676,4 +718,4 @@ railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 settings = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), cargo_numbers, railtype_table, item_names, (settings, setting_from_info)]
+const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), (patch_variables, patch_variable), cargo_numbers, railtype_table, item_names, (settings, setting_from_info)]
