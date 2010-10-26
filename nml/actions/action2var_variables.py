@@ -218,8 +218,6 @@ varact2vars_objects = {
 }
 
 varact2vars60x_objects = {
-    'nearby_tile_object_id'        : { 'var' : 0x60, 'start':  0, 'size': 16, 'tile': 's' },
-
     'nearby_tile_random_bits'      : { 'var' : 0x61, 'start':  0, 'size':  8, 'tile': 's' },
 
     'nearby_tile_slope'            : { 'var' : 0x62, 'start':  0, 'size':  5, 'tile': 's' },
@@ -231,7 +229,7 @@ varact2vars60x_objects = {
 
     'nearby_tile_animation_frame'  : { 'var' : 0x63, 'start':  0, 'size':  8, 'tile': 's' },
 
-    'object_type_count'            : { 'var' : 0x64, 'start': 16, 'size': 16, 'function': industry_count },
+    'object_type_count'            : { 'var' : 0x64, 'start': 16, 'size':  8, 'function': industry_count },
     'object_type_nearest'          : { 'var' : 0x64, 'start':  0, 'size': 16, 'function': industry_count },
 }
 

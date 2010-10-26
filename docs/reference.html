@@ -115,6 +115,7 @@
 	<li><a href="#refs-vehicleIDs">List of default vehicle IDs</a></li>
 	<li><a href="#refs-houseProperties">List of default house properties</a></li>
 	<li><a href="#refs-town-zones">List of town zones</a></li>
+	<li><a href="#refs-tile-classes">List of tile classes</a></li>
 
 </ul>
 </li>
@@ -1639,19 +1640,19 @@ item(FEAT_TRAINS, tank_wagon) {
 Variables that require a signed x,y offset. The offset is relative to the current tile. Offset 0,0 means the current tile.
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>tile_slope</td><td>Which corners are raised on the given tile.</td><td>
+<tr><td>nearby_tile_slope</td><td>Which corners are raised on the given tile.</td><td>
 Bit 0: west corner is above the lowest corner.<br>
 Bit 1: south corner is above the lowest corner.<br>
 Bit 2: east corner is above the lowest corner.<br>
 Bit 3: north corner is above the lowest corner.<br>
 Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).
 </td></tr>
-<tr><td>tile_is_same_industry</td><td>1 if the tile is part of the same industry, 0 otherwise</td><td></td></tr>
-<tr><td>tile_has_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
-<tr><td>terrain_type_nearby_tile</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
-<tr><td>tile_lowest_corner_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
-<tr><td>animation_frame_nearby_tile</td><td>0..255</td><td>Animation frame of the given tile</td></tr>
-<tr><td>terrain_type_nearby_tile</td><td>0x00aa, 0xFFbb, 0xFFFE or 0xFFFF</td><td>
+<tr><td>nearby_tile_is_same_industry</td><td>1 if the tile is part of the same industry, 0 otherwise</td><td></td></tr>
+<tr><td>nearby_tile_is_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
+<tr><td>nearby_tile_terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>nearby_tile_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
+<tr><td>nearby_tile_animation_frame</td><td>0..255</td><td>Animation frame of the given tile</td></tr>
+<tr><td>nearby_tile_industrytile_id</td><td>0x00aa, 0xFFbb, 0xFFFE or 0xFFFF</td><td>
 0x00aa: The tile is an industry tile that is part of this GRF, the tile id is aa.<br>
 0xFFbb: The tile is an original industry tile with id bb.<br>
 0xFFFE: The tile is an industry tile defined in another GRF.<br>
@@ -1697,6 +1698,24 @@ Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2
 <tr><td>town_euclidean_dist</td><td></td><td>Euclidean distance to the nearest town</td></tr>
 <tr><td>town_zone</td><td><a href="#refs-town-zones">town zone</a></td><td>The town zone of the current tile. The town zone from the closest town (measured in manhattan
 distance) is used.</td></tr>
+</table>
+
+Variables that require some parameters.
+<table class="t">
+<tr><th>name</th>                        <th>arguments</th>           <th>value range</th> <th>comment</th></tr>
+<tr><td>nearby_tile_random_bits</td>     <td>x, y offset (-8..7)</td> <td></td> <td>Random bits of the given tile</td></tr>
+<tr><td>nearby_tile_slope</td>           <td>x, y offset (-8..7)</td> <td></td> <td>See tile_slope</td></tr>
+<tr><td>nearby_tile_is_same_object</td>  <td>x, y offset (-8..7)</td> <td>0..1</td> <td>Is the given tile part of the same object?</td></tr>
+<tr><td>nearby_tile_is_water</td>        <td>x, y offset (-8..7)</td> <td>0..1</td> <td>Is the given tile a water tile?</td></tr>
+<tr><td>nearby_tile_terrain_type</td>    <td>x, y offset (-8..7)</td> <td></td> <td>See terrain_type</td></tr>
+<tr><td>nearby_tile_height</td>          <td>x, y offset (-8..7)</td> <td></td> <td>The minimum height of the given tile</td></tr>
+<tr><td>nearby_tile_class</td>           <td>x, y offset (-8..7)</td> <td><a href="#refs-tile-classes">Tile class</a></td> <td></td></tr>
+<tr><td>nearby_tile_animation_frame</td> <td>x, y offset (-8..7)</td> <td></td> <td>See animation_frame</td></tr>
+<tr><td>object_type_count</td>           <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Number of objects with the given
+object id currently on the map. Grfid is the grfid of the newgrf you want to check the object count of (default is current grf).</td></tr>
+<tr><td>object_type_nearest</td>         <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Manhattan distance to the closest object
+of the given type. Grfid is the grfid of the newgrf you want to check the minimum object idstance of (default is current grf). If the given
+object type is not yet build this will return 0xFFFF</td></tr>
 </table>
 
 <h2><a name="vars-railtypes">Railtypes</a></h2>
@@ -2408,6 +2427,10 @@ spaced by powers of two. For houses the minimum value is 2 (=4 ticks). The ingam
 <tr><td>TOWNZONE_OUTER_SUBURB</td></tr>
 <tr><td>TOWNZONE_INNER_SUBURB</td></tr>
 <tr><td>TOWNZONE_CENTRE</td></tr>
+</table>
+
+<h2><a name="refs-tile-classes">List of tile classes</a></h2>
+<table class="t">
 </table>
 
 </body>
