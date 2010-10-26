@@ -72,7 +72,7 @@ class Action2LayoutSprite(object):
         assert not (self.is_set('sprite') and self.is_set('ttdsprite'))
         if not (self.is_set('sprite') or self.is_set('ttdsprite')):
             raise generic.ScriptError("Either 'sprite' or 'ttdsprite' must be set for this layout sprite", self.pos)
-        sprite_num = self.get_param('ttdsprite') | (1 << 31) if self.is_set('ttdsprite') else self.get_param('sprite')
+        sprite_num = self.get_param('ttdsprite') if self.is_set('ttdsprite') else self.get_param('sprite') | (1 << 31)
         recolor = self.get_param('recolor')
         if recolor == -1:
             sprite_num |= 1 << 14
