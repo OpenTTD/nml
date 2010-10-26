@@ -612,6 +612,18 @@ constant_numbers = {
     'TRIGGER_INDUSTRYTILE_TILELOOP'         : 0x01,
     'TRIGGER_INDUSTRYTILE_256_TICKS'        : 0x02,
     'TRIGGER_INDUSTRYTILE_CARGO_DELIVERY'   : 0x04,
+
+    #Tile classes
+    'TILE_CLASS_GROUND'                     : 0x00,
+    'TILE_CLASS_RAIL'                       : 0x01,
+    'TILE_CLASS_ROAD'                       : 0x02,
+    'TILE_CLASS_HOUSE'                      : 0x03,
+    'TILE_CLASS_TREES'                      : 0x04,
+    'TILE_CLASS_STATION'                    : 0x05,
+    'TILE_CLASS_WATER'                      : 0x06,
+    'TILE_CLASS_INDUSTRY'                   : 0x08,
+    'TILE_CLASS_TUNNEL_BRIDGE'              : 0x09,
+    'TILE_CLASS_OBJECTS'                    : 0x0A,
 }
 
 def signextend(param, info):
