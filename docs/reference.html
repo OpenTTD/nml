@@ -479,7 +479,8 @@ To refer to the aircraft itself, use PARENT scope there.</p>
 <p><code>&lt;range&gt;</code> can either be a single number or two numbers separated by
 two dots. In the first case, the range matches if the result of the computation is
 equal to the supplied value. If a range (<code>a .. b</code>) is supplied, it matches
-if the computed result is within that range.</p>
+if the computed result is within that range. If several lines of the switch block match
+the expression being tested the first applicable result will be returned.</p>
 <p>Possible values for <code>&lt;return_value&gt;</code>e are the following:</p>
 <ul>
 <li><code>&lt;ID&gt;;</code> chains to the (random-)switch or spritegroup with the given ID.</li>
