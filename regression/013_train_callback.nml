@@ -71,7 +71,7 @@ spriteblock(FEAT_TRAINS) {
 
 }
 
-random_switch (FEAT_TRAINS, SELF, bulk_wagon_coal_default_switch, TRIGGER_VEHICLE_SERVICE) {
+random_switch (FEAT_TRAINS, SELF, bulk_wagon_coal_default_switch, bitmask(TRIGGER_VEHICLE_SERVICE)) {
     2: bulk_wagon_coal_default_group;
     1: bulk_wagon_coal2_group;
 }
@@ -121,9 +121,9 @@ item(FEAT_TRAINS, bulk_wagon) {
     property {
         // We try to simulate the stats of the temperate grain wagon
         name: string(STR_NAME_BULK_WAGON);
-        climates_available: CLIMATE_ALL;
-        refittable_cargo_classes: CC_BULK;
-        non_refittable_cargo_classes: CC_PASSENGERS | CC_MAIL | CC_ARMOURED | CC_LIQUID | CC_REFRIGERATED | CC_HAZARDOUS;
+        climates_available: ALL_CLIMATES;
+        refittable_cargo_classes: bitmask(CC_BULK);
+        non_refittable_cargo_classes: bitmask(CC_PASSENGERS, CC_MAIL, CC_ARMOURED, CC_LIQUID, CC_REFRIGERATED, CC_HAZARDOUS);
         refittable_cargo_types: bitmask(WDPR, SCRP, FRUT, FRVG);
         sprite_id: SPRITE_ID_NEW_TRAIN;
         introduction_date: date(1880,1,1);
@@ -136,7 +136,7 @@ item(FEAT_TRAINS, bulk_wagon) {
         running_cost_factor: 5;
         speed: 0;
         refit_cost: 40;
-        callback_flags: VEH_CBF_REFITTED_CAPACITY;
+        callback_flags: bitmask(VEH_CBF_REFITTED_CAPACITY);
         track_type: RAIL;
         power: 0;
         running_cost_base: RUNNING_COST_STEAM;

@@ -58,9 +58,9 @@ item(FEAT_ROADVEHS, foster_express_tram, 89) {
 		tractive_effort_coefficient:  0.3;
 		air_drag_coefficient:         0.5;
 		cargo_capacity:               param[0] * 5;             // passengers
-		refittable_cargo_classes:     CC_PASSENGERS | CC_MAIL;
-		non_refittable_cargo_classes: CC_NONE;                  // Disallow other cargos
-		misc_flags:                   ROADVEH_FLAG_TRAM;        // This is a tram
+		refittable_cargo_classes:     bitmask(CC_PASSENGERS, CC_MAIL);
+		non_refittable_cargo_classes: NO_CARGO_CLASS;           // Disallow other cargos
+		misc_flags:                   bitmask(ROADVEH_FLAG_TRAM); // This is a tram
 	}
 	graphics {
 		foster_express_group;

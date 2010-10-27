@@ -348,7 +348,7 @@ Example:</p>
 <pre class="code">item (FEAT_ROADVEHS, hereford_tram) {
 	property {
 		name:               string(STR_NAME_HEREFORD_TRAM);
-		climates_available: CLIMATE_ALL;
+		climates_available: ALL_CLIMATES;
 		introduction_date:  date(1940,1,1);
 		speed:              60 km/h;
 	}
@@ -396,7 +396,7 @@ default graphics which are assigned elsewhere to "passenger_wagon".</p>
 item(FEAT_TRAINS, turbotrain, 20) {
 	property { // Properties for the engine
 		sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
-		misc_flags:                   TRAIN_FLAG_MU;          // We use special sprites for passenger wagons
+		misc_flags:                   bitmask(TRAIN_FLAG_MU); // We use special sprites for passenger wagons
 	}
 	graphics {
 		turbotrain_engine_group;                              // Graphics for the engine
@@ -565,9 +565,9 @@ block from other (random-)switch-blocks. The last parameter
 <code>&lt;triggers&gt;</code> is optional and allows re-randomizing when
 certain conditions occur. The events and accompanying trigger names are
 given in the following tables. To re-randomize graphics when any of a set of
-events occurs, use <code>TRIGGER_A | TRIGGER_B | ... | TRIGGER_Z</code>
-To re-randomize only when <em>all</em> of the events have occured, add <code>TRIGGER_ALL</code> to the list of used triggers, e.g. use
-<code>TRIGGER_ALL | TRIGGER_A | ...</code></p>
+events occurs, use <code>bitmask(TRIGGER_A, TRIGGER_B, .. , TRIGGER_Z)</code>
+To re-randomize only when <em>all</em> of the events have occured, add <code>TRIGGER_ALL_NEEDED</code>
+to the list of used triggers, e.g. use <code>bitmask(TRIGGER_ALL_NEEDED, TRIGGER_A, ...)</code></p>
 
 <table class="t">
 <caption>Vehicle triggers</caption>
@@ -579,7 +579,7 @@ To re-randomize only when <em>all</em> of the events have occured, add <code>TRI
 <tr><td>TRIGGER_VEHICLE_32_CALLBACK</td><td>32-day callback returned 1</td></tr>
 </table>
 <p>To re-randomize when the consist has been emptied and then receives new cargo, use
-<code>TRIGGER_VEHICLE_UNLOAD_ALL | TRIGGER_VEHICLE_ANY_LOAD | TRIGGER_ALL</code></p>
+<code>bitmask(TRIGGER_VEHICLE_UNLOAD_ALL, TRIGGER_VEHICLE_ANY_LOAD, TRIGGER_ALL_NEEDED)</code></p>
 
 <table class="t">
 <caption>Station triggers</caption>
@@ -631,7 +631,7 @@ by the sum of all probabilities. If this sum is not equal to a power of two (2,
 4, 8, 16, ...), then rounding is done and the probabilities may be inexact. For
 information about <code>&lt;return_value&gt;</code>, see the
 <a href="#block-switch">switch-block</a>. Let's conclude with an example:
-<pre class="code">random_switch (FEAT_TRAINS, SELF, random_42, TRIGGER_VEHICLE_UNLOAD_ALL | TRIGGER_VEHICLE_ANY_LOAD | TRIGGER_ALL) {
+<pre class="code">random_switch (FEAT_TRAINS, SELF, random_42, bitmask(TRIGGER_VEHICLE_UNLOAD_ALL, TRIGGER_VEHICLE_ANY_LOAD, TRIGGER_ALL_NEEDED)) {
     /* re-randomize when vehicle has been emptied and then received new cargo */
     independent: random_43; // desicion should be independent from random_43, which is defined elsewhere
     6: group_open;          // 6/11 chance to display open wagon
@@ -1068,7 +1068,8 @@ Valid language IDs are
 <h2><a name="property-vehicles">Properties common to all vehicle types</a></h2>
 <table class="t">
 <tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
-<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
+<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES.
+To make a vehicle available in all climates except toyland you could use: ALL_CLIMATES & ~bitmask(CLIMATE_TOYLAND).</td></tr>
 <tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000. In TTDPatch, dates after 2044 will be limited to 2044. Unless the engine is introduced within two years after game-start (always 1920 in TTDPatch), a random number of days between 0 and 511 will be added to this.</td></tr>
 <tr><td> model_life</td><td>                   0 ... 254 (years) or VEHICLE_NEVER_EXPIRES</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
 <tr><td> retire_early</td><td>                 (years)</td><td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.</td></tr>
@@ -1106,9 +1107,9 @@ refitting properties is set.</p>
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>SPRITE_ID_NEW_TRAIN</td><td>defines base set spriteID to use or this constant</td></tr>
 <tr><td> speed<td> 0 ... 65000 (speed units)<td>Max speed for engines, speed limit for wagons
-<tr><td> misc_flags</td><td>                   TRAIN_FLAG_XXX</td><td>XXX=[TILT | 2CC | MU]</td></tr>
+<tr><td> misc_flags</td><td> bitmask(TRAIN_FLAG_XXX, ...)</td><td>XXX=[TILT | 2CC | MU]</td></tr>
 <tr><td> refit_cost<td> <td> in 50% units of the purchase price cost base
-<tr><td> callback_flags<td> VEH_CBF_XXX<td>XXX = [WAGON_POWER | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [WAGON_POWER | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> track_type<td>item from railtypetable<td>Default railtype table: RAIL, ELRL, MONO, MGLV.
@@ -1140,10 +1141,10 @@ to setting <tt>track_type</tt> to ELRL.
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr>
 <tr><td> speed</td><td>                        0 ... 514km/h (speed units)</td><td></td></tr>
-<tr><td> misc_flags</td><td>                   ROADVEH_FLAG_XXX</td><td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
+<tr><td> misc_flags</td><td>                   bitmask(ROADVEH_FLAG_XXX, ...)</td><td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
 You can combine them with the binary or-operator (|). Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> refit_costs<td> <td> in 25% units of the purchase price cost base
-<tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
@@ -1163,7 +1164,7 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
 <tr><td> misc_flags <td> SHIP_FLAG_2CC <td> No other flags defined
 <tr><td> refit_costs<td> <td> in 1/32 of the default refit cost base
-<tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true. Note: if you do not set this property to 1 than refittable_cargo_classes /
@@ -1180,9 +1181,9 @@ non_refittable_cargo_classes have no effect.
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_AIRCRAFT <td> define base set spriteID to replace or this constant
 <tr><td> speed<td> 0 .. 3280 km/h (speed units)<td>
-<tr><td> misc_flags<td> AIRCRAFT_FLAG_2CC<td>
+<tr><td> misc_flags<td> bitmask(AIRCRAFT_FLAG_2CC)<td>
 <tr><td> refit_cost<td> <td> in 1/32 of default refit cost base
-<tr><td> callback_flags<td> CBF_XXX<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_helicopter<td> AIRCRAFT_TYPE_XXX<td>XXX=[NORMAL | HELICOPTER]
@@ -1213,12 +1214,16 @@ non_refittable_cargo_classes have no effect.
 <tr><td>probability<td>0 ... 16<td>Probability with respect to the default houses (=1). Mind that these are relative probabilities with respect to all houses defined. If all probabilities are defined as 16, they'll all have the same probability as if they had all a probability of 1.
 <tr><td>years_available<td>array of two int<td>[xx, yy] where xx and yy indicate the introduction year and the last year the building can be built
 <tr><td>minimum_lifetime<td>0 ... 255<td>number of years the building will remain at least
-<tr><td>availability_mask<td>[BitMask(<a href="#refs-town-zones">town zones</a>), BitMask(CLIMATE_XXX)]<td>An array with two bitmasks, the first
-bitmask is a mask of town zones where this house is available. The second bitmask is a mask of climates, valid values: CLIMATE_SNOW,
-CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPIC, CLIMATE_TOYLAND<br>If you want to allow the house in snowy regions, you need to
-set CLIMATE_SNOW; CLIMATE_ARTIC allows the house only in the non-snowy regions there. Don't use CLIMATE_ALL here because it doesn't
-include CLIMATE_SNOW and as such might lead to unexpected results.
-<tr><td>callback_flags<td><td>HOUSE_CBF_XX with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
+<tr><td>availability_mask<td>[BitMask(<a href="#refs-town-zones">town zones</a>), BitMask(CLIMATE_XXX, ...)]<td>An array with two bitmasks, the first
+bitmask is a mask of town zones where this house is available. The second bitmask is a mask of climates combined with the special value ABOVE_SNOWLINE
+which you need to set for houses available in the arctic climate above the snowline.<br>
+Examples:
+<ul>
+<li>Available in the centre town zone in toyland only: <code>[bitmask(TOWNZONE_CENTRE), bitmask(CLIMATE_TOYLAND)]</code></li>
+<li>Available in all town zones in the arctic climate both above and below the snowline: <code>[ALL_TOWNZONES, bitmask(CLIMATE_ARCTIC, ABOVE_SNOWLINE)]</code></li>
+<li>Available everywhere except on the town edge: <code>[ALL_TOWNZONES & ~bitmask(TOWNZONE_EDGE), ALL_CLIMATES | bitmask(ABOVE_SNOWLINE)</code></li>
+</ul>
+<tr><td>callback_flags<td><td>bitmask(HOUSE_CBF_XX) with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
 <tr><td>animation_frames<td>0 ... 128<td>number of animation frames
@@ -1229,11 +1234,10 @@ include CLIMATE_SNOW and as such might lead to unexpected results.
 <h2><a name="property-industries">Industries</a></h2>
 <h2><a name="property-cargos">Cargos</a></h2>
 <p>Available cargo classes are listed in the following table. Cargos may be in
-more than one class. To combine multiple cargo classes, use the binary OR
-operator. For example, <code>CC_EXPRESS | CC_REFRIGERATED</code> is used for food.</p>
+more than one class. To combine multiple cargo classes, use the builtin function bitmask.
+For example, <code>bitmask(CC_EXPRESS, CC_REFRIGERATED)</code> is used for food.</p>
 <table class="t">
 <tr><th>name <th> type of cargo
-<tr><td>CC_NONE <td> No cargo
 <tr><td>CC_PASSENGERS<td> passengers, also tourists (ECS)
 <tr><td>CC_MAIL<td> mail
 <tr><td>CC_EXPRESS<td> express goods, also tourists (ECS)
@@ -1246,8 +1250,9 @@ operator. For example, <code>CC_EXPRESS | CC_REFRIGERATED</code> is used for foo
 <tr><td>CC_COVERED<td> grain, cement, fruit, ...
 <tr><td>CC_OVERSIZED<td> vehicles, ...
 <tr><td>CC_SPECIAL<td> Special cargo, used for refit tricks. (e.g. regearing in NARS)
-<tr><td>CC_ALL_NORMAL<td> All cargo classes except CC_SPECIAL
-<tr><td>CC_ALL<td> All cargo classes
+<tr><td>NO_CARGO_CLASS<td>Special value that you can used to instead of 0.
+<tr><td>ALL_NORMAL_CARGO_CLASSES<td> All cargo classes except CC_SPECIAL. This is the same as <code>bitmask(CC_PASSENGERS, CC_MAIL, ..., CC_OVERSIZED)</code>.
+<tr><td>ALL_CARGO_CLASSES<td> All cargo classes. Same as <code>ALL_NORMAL_CARGO_CLASSES | bitmask(CC_SPECIAL)</code>
 </table>
 
 <h2><a name="property-airports">Airports</a></h2>
@@ -1263,17 +1268,17 @@ you are technically free to chose your own class, it's highly recommended you st
 in every class.</td></tr>
 <tr><td>name</td><td>string</td><td></td></tr>
 <tr><td>climates_available</td><td>BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC
-| TROPIC | TOYLAND], alternatively CLIMATE_NONE or CLIMATE_ALL</td></tr>
+| TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES</td></tr>
 <tr><td>size</td><td>[x, y]</td><td>Size in x and y direction. Both x and y must be compiletime constants</td></tr>
 <tr><td>build_cost_multiplier</td><td></td><td>multiplicator to the base purchase cost</td></tr>
 <tr><td>remove_cost_multiplier</td><td></td><td>multiplicator to the base removal cost</td></tr>
 <tr><td>introduction_date</td><td>date</td><td>The date this object becomes available to build.</td></tr>
 <tr><td>end_of_life_date</td><td>date</td><td>The last date this object is buildable. Must be at least 365 days after introduction_date</td></tr>
-<tr><td>object_flags</td><td>OBJ_FLAG_XXX | OBJ_FLAG_YYY</td><td>See <a href="#object-flags">list of object flags</a></td></tr>
+<tr><td>object_flags</td><td>bitmask(OBJ_FLAG_XXX, OBJ_FLAG_YYY)</td><td>See <a href="#object-flags">list of object flags</a></td></tr>
 <tr><td>animation_info</td><td></td><td></td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
 <tr><td>animation_triggers</td><td></td><td></td></tr>
-<tr><td>callback_flags</td><td>OBJ_CBF_XXX | OBJ_CBF_YYY</td><td>XXX = [SLOPE_CHECK | DECIDE_ANIM | DECIDE_ANIM_SPEED |
+<tr><td>callback_flags</td><td>bitmask(OBJ_CBF_XXX, OBJ_CBF_YYY)</td><td>XXX = [SLOPE_CHECK | DECIDE_ANIM | DECIDE_ANIM_SPEED |
 DECIDE_COLOUR | ADDITIONAL_TEXT | AUTOSLOPE]</td></tr>
 <tr><td>height</td><td>0..255</td><td>Height of the object / 8. For example if your object is 16 pixels height you should
 set height to 2. In OpenTTD this property is used to determine the height of the build object window; the height for the
@@ -1330,7 +1335,7 @@ also replaces the ground tile of the object completely. Does not work when objec
 <tr><td>new_engine_text</td><td>         string</td><td></td></tr>
 <tr><td>compatible_railtype_list</td><td>list of railtype labels</td><td>e.g. ["RAIL", "ELRL", "MONO"]</td></tr>
 <tr><td>powered_railtype_list</td><td>   list of railtype labels</td><td></td></tr>
-<tr><td>railtype_flags</td><td>          RAILTYPE_FLAG_CATANERY | RAILTYPE_FLAG_NO_LEVEL_CROSSING (OpenTTD r20049)</td><td></td></tr>
+<tr><td>railtype_flags</td><td>          bitmask(RAILTYPE_FLAG_CATANERY, RAILTYPE_FLAG_NO_LEVEL_CROSSING (OpenTTD r20049))</td><td></td></tr>
 <tr><td>curve_speed_multiplier</td><td>  0...65525</td><td>max curve speed is defined as multiple of the base curve speed (see below)</td></tr>
 <tr><td>station graphics</td><td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV</td><td></td></tr>
 <tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track as multiplier to PR_BUILD_RAIL basecost</td></tr>
@@ -1471,7 +1476,7 @@ by the second column in the following table:</p>
 <tr><td>year_loaded <td>Yes <td>years since year 0 <td>See date_loaded.
 <tr><td>starting_year <td>Yes <td>years since year 0 <td>Years before 1920 are clamped to 1920
 <tr><td>animation_counter <td>No <td> 0 .. 65535 <td> Increased by 1 each tick
-<tr><td>climate <td>Yes (a)<td>CLIMATE_XXX with XXX = [TEMPERATE | ARCTIC | TROPIC | TOYLAND] <td>
+<tr><td>climate <td>Yes (a)<td>CLIMATE_XXX with XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND] <td>
 <tr><td>game_mode <td>Yes <td>GAMEMODE_XXX with XXX = [MENU | GAME | EDITOR] <td>
 <tr><td>loading_stage <td>Yes <td>LOADING_STAGE_XXX with XXX = [INITIALIZE | RESERVE | ACTIVATE | TEST] <td>'Phase' of the GRF loading process.
 <tr><td>difficulty_level <td>Yes (a) <td>DIFFICULTY_XXX with XXX = [EASY | MEDIUM | HARD | CUSTOM] <td>
@@ -1801,17 +1806,17 @@ spaced by powers of two. For houses the minimum value is 2 (=4 ticks). The ingam
 <li>INDUSTRYTYPE_OIL_REFINERY</li>
 <li>INDUSTRYTYPE_OIL_RIG</li>
 <li>INDUSTRYTYPE_TEMPERATE_FACTORY</li>
-<li>INDUSTRYTYPE_TROPIC_FACTORY</li>
+<li>INDUSTRYTYPE_TROPICAL_FACTORY</li>
 <li>INDUSTRYTYPE_PRINTING_WORKS</li>
 <li>INDUSTRYTYPE_STEEL_MILL</li>
 <li>INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM</li>
-<li>INDUSTRYTYPE_TROPIC_FARM</li>
+<li>INDUSTRYTYPE_TROPICAL_FARM</li>
 <li>INDUSTRYTYPE_COPPER_ORE_MINE</li>
 <li>INDUSTRYTYPE_OIL_WELLS</li>
 <li>INDUSTRYTYPE_FOOD_PROCESSING_PLANT</li>
 <li>INDUSTRYTYPE_PAPER_MILL</li>
 <li>INDUSTRYTYPE_TEMPERATE_BANK</li>
-<li>INDUSTRYTYPE_TROPIC_ARCTIC_BANK</li>
+<li>INDUSTRYTYPE_TROPICAL_ARCTIC_BANK</li>
 <li>INDUSTRYTYPE_GOLD_MINE</li>
 <li>INDUSTRYTYPE_DIAMOND_MINE</li>
 <li>INDUSTRYTYPE_IRON_ORE_MINE</li>

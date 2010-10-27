@@ -26,13 +26,13 @@ item (FEAT_OBJECTS, obj_basic) {
 		class                  : "MISC";
 		classname              : string(STR_OBJ_MISC_CLASS);
 		name                   : string(STR_OBJ_BASIC);
-		climates_available     : CLIMATE_ALL & ~bitmask(CLIMATE_TOYLAND);
+		climates_available     : ALL_CLIMATES & ~bitmask(CLIMATE_TOYLAND);
 		size                   : [ 1, 1 ];
 		introduction_date      : date(1900, 1, 1);
 		end_of_life_date       : date(1930, 1, 1);
 		build_cost_multiplier  : 1;
 		remove_cost_multiplier : 1;
-		object_flags           : OBJ_FLAG_ALLOW_BRIDGE;
+		object_flags           : bitmask(OBJ_FLAG_ALLOW_BRIDGE);
 		height                 : 4;
 	}
 	graphics {

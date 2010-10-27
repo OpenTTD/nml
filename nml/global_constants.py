@@ -2,35 +2,35 @@ from nml import expression, generic, nmlop
 
 constant_numbers = {
     #climates
-    'CLIMATE_TEMPERATE'     : 0x00,
-    'CLIMATE_ARCTIC'        : 0x01,
-    'CLIMATE_TROPIC'        : 0x02,
-    'CLIMATE_TROPICAL'      : 0x02,
-    'CLIMATE_TOYLAND'       : 0x03,
-    'CLIMATE_SNOW'          : 0x0B, # Only for house property available_mask
+    'CLIMATE_TEMPERATE'     : 0,
+    'CLIMATE_ARCTIC'        : 1,
+    'CLIMATE_TROPIC'        : 2,
+    'CLIMATE_TROPICAL'      : 2,
+    'CLIMATE_TOYLAND'       : 3,
+    'ABOVE_SNOWLINE'        : 11, # Only for house property available_mask
 
-    'CLIMATE_NONE'          : 0x00,
-    'CLIMATE_ALL'           : 0x0F,
+    'NO_CLIMATE'            : 0x00,
+    'ALL_CLIMATES'          : 0x0F,
 
     #never expire
     'VEHICLE_NEVER_EXPIRES' : 0xFF,
 
     #cargo classes
-    'CC_NONE'         : 0x0000,
-    'CC_PASSENGERS'   : 0x0001,
-    'CC_MAIL'         : 0x0002,
-    'CC_EXPRESS'      : 0x0004,
-    'CC_ARMOURED'     : 0x0008,
-    'CC_BULK'         : 0x0010,
-    'CC_PIECE_GOODS'  : 0x0020,
-    'CC_LIQUID'       : 0x0040,
-    'CC_REFRIGERATED' : 0x0080,
-    'CC_HAZARDOUS'    : 0x0100,
-    'CC_COVERED'      : 0x0200,
-    'CC_OVERSIZED'    : 0x0400,
-    'CC_SPECIAL'      : 0x8000,
-    'CC_ALL_NORMAL'   : 0x04FF,
-    'CC_ALL'          : 0x84FF,
+    'CC_PASSENGERS'   : 0,
+    'CC_MAIL'         : 1,
+    'CC_EXPRESS'      : 2,
+    'CC_ARMOURED'     : 3,
+    'CC_BULK'         : 4,
+    'CC_PIECE_GOODS'  : 5,
+    'CC_LIQUID'       : 6,
+    'CC_REFRIGERATED' : 7,
+    'CC_HAZARDOUS'    : 8,
+    'CC_COVERED'      : 9,
+    'CC_OVERSIZED'    : 10,
+    'CC_SPECIAL'      : 15,
+    'NO_CARGO_CLASS'           : 0,
+    'ALL_NORMAL_CARGO_CLASSES' : 0x07FF,
+    'ALL_CARGO_CLASSES'        : 0x87FF,
 
     #engine class
     'ENGINE_CLASS_STEAM'    : 0x00,
@@ -47,14 +47,14 @@ constant_numbers = {
     'RUNNING_COST_NONE'     : 0x0000,
 
     #vehicle cb flags
-    'VEH_CBF_WAGON_POWER'       : 0x01,
-    'VEH_CBF_WAGON_LENGTH'      : 0x02,
-    'VEH_CBF_LOAD_AMOUNT'       : 0x04,
-    'VEH_CBF_REFITTED_CAPACITY' : 0x08,
-    'VEH_CBF_ARTICULATED_PARTS' : 0x10,
-    'VEH_CBF_CARGO_SUFFIX'      : 0x20,
-    'VEH_CBF_COLOR_MAPPING'     : 0x40,
-    'VEH_CBF_SOUND_EFFECT'      : 0x80,
+    'VEH_CBF_WAGON_POWER'       : 0,
+    'VEH_CBF_WAGON_LENGTH'      : 1,
+    'VEH_CBF_LOAD_AMOUNT'       : 2,
+    'VEH_CBF_REFITTED_CAPACITY' : 3,
+    'VEH_CBF_ARTICULATED_PARTS' : 4,
+    'VEH_CBF_CARGO_SUFFIX'      : 5,
+    'VEH_CBF_COLOR_MAPPING'     : 6,
+    'VEH_CBF_SOUND_EFFECT'      : 7,
 
     #corresponding callbacks
     'VEH_CB_WAGON_POWER'            : 0x10,
@@ -122,26 +122,27 @@ constant_numbers = {
     'DISABLE_WAGON_POWER'    : 0x80,
 
     #train misc flags
-    'TRAIN_FLAG_TILT' : 0x01,
-    'TRAIN_FLAG_2CC'  : 0x02,
-    'TRAIN_FLAG_MU'   : 0x04,
+    'TRAIN_FLAG_TILT' : 0,
+    'TRAIN_FLAG_2CC'  : 1,
+    'TRAIN_FLAG_MU'   : 2,
 
     #roadveh misc flags
-    'ROADVEH_FLAG_TRAM' : 0x01,
-    'ROADVEH_FLAG_2CC'  : 0x02,
+    'ROADVEH_FLAG_TRAM' : 0,
+    'ROADVEH_FLAG_2CC'  : 1,
 
     #ship misc flags
-    'SHIP_FLAG_2CC'  : 0x02,
+    'SHIP_FLAG_2CC'  : 1,
 
     #aircrafts misc flags
-    'AIRCRAFT_FLAG_2CC'  : 0x02,
+    'AIRCRAFT_FLAG_2CC'  : 1,
 
     #for those, who can't tell the difference between a train and an aircraft:
-    'VEHICLE_FLAG_2CC' : 0x02,
+    'VEHICLE_FLAG_2CC' : 1,
 
     #ai flags
     'AI_FLAG_PASSENGER' : 0x01,
     'AI_FLAG_CARGO'     : 0x00,
+
 
     #sound effects
     'SOUND_SPLAT'                          : 0x00,
@@ -236,19 +237,19 @@ constant_numbers = {
     'GROUNDSPRITE_DESERT'      : 4550,
     
     #house callback flags
-    'HOUSE_CBF_BUILD'               : 0x01,
-    'HOUSE_CBF_ANIM_NEXT_FRAME'     : 0x02,
-    'HOUSE_CBF_ANIM_STARTSTOP'      : 0x04,
-    'HOUSE_CBF_CONSTRUCTION_ANIM'   : 0x08,
-    'HOUSE_CBF_COLOUR'              : 0x10,
-    'HOUSE_CBF_CARGO_AMOUNT_ACCEPT' : 0x20,
-    'HOUSE_CBF_ANIM_FRAME_LENGTH'   : 0x40,
-    'HOUSE_CBF_DESTRUCTION'         : 0x80,
-    'HOUSE_CBF_CARGO_TYPE_ACCEPT'   : 0x100,
-    'HOUSE_CBF_CARGO_PRODUCTION'    : 0x200,
-    'HOUSE_CBF_PROTECTION'          : 0x400,
-    'HOUSE_CBF_FOUNDATIONS'         : 0x800,
-    'HOUSE_CBF_AUTOSLOPE'           : 0x1000,
+    'HOUSE_CBF_BUILD'               : 0,
+    'HOUSE_CBF_ANIM_NEXT_FRAME'     : 1,
+    'HOUSE_CBF_ANIM_STARTSTOP'      : 2,
+    'HOUSE_CBF_CONSTRUCTION_ANIM'   : 3,
+    'HOUSE_CBF_COLOUR'              : 4,
+    'HOUSE_CBF_CARGO_AMOUNT_ACCEPT' : 5,
+    'HOUSE_CBF_ANIM_FRAME_LENGTH'   : 6,
+    'HOUSE_CBF_DESTRUCTION'         : 7,
+    'HOUSE_CBF_CARGO_TYPE_ACCEPT'   : 8,
+    'HOUSE_CBF_CARGO_PRODUCTION'    : 9,
+    'HOUSE_CBF_PROTECTION'          : 10,
+    'HOUSE_CBF_FOUNDATIONS'         : 11,
+    'HOUSE_CBF_AUTOSLOPE'           : 12,
 
     #corresponding callbacks
     'HOUSE_CB_BUILD'                : 0x17,
@@ -268,18 +269,18 @@ constant_numbers = {
     'HOUSE_CB_AUTOSLOPE'            : 0x14F,
 
     #house flags
-    'HOUSE_FLAG_SIZE_1x1'           : 0x01,
-    'HOUSE_FLAG_NOT_SLOPED'         : 0x02,
-    'HOUSE_FLAG_SIZE_2x1'           : 0x04,
-    'HOUSE_FLAG_SIZE_1x2'           : 0x08,
-    'HOUSE_FLAG_SIZE_2x2'           : 0x10,
-    'HOUSE_FLAG_ANIMATE'            : 0x20,
-    'HOUSE_FLAG_CHURCH'             : 0x40,
-    'HOUSE_FLAG_STADIUM'            : 0x80,
-    'HOUSE_FLAG_ONLY_SE'            : 0x0100,
-    'HOUSE_FLAG_PROTECTED'          : 0x0200,
-    'HOUSE_FLAG_SYNC_CALLBACK'      : 0x0400,
-    'HOUSE_FLAG_RANDOM_ANIMATION'   : 0x0800,
+    'HOUSE_FLAG_SIZE_1x1'           : 0,
+    'HOUSE_FLAG_NOT_SLOPED'         : 1,
+    'HOUSE_FLAG_SIZE_2x1'           : 2,
+    'HOUSE_FLAG_SIZE_1x2'           : 3,
+    'HOUSE_FLAG_SIZE_2x2'           : 4,
+    'HOUSE_FLAG_ANIMATE'            : 5,
+    'HOUSE_FLAG_CHURCH'             : 6,
+    'HOUSE_FLAG_STADIUM'            : 7,
+    'HOUSE_FLAG_ONLY_SE'            : 8,
+    'HOUSE_FLAG_PROTECTED'          : 9,
+    'HOUSE_FLAG_SYNC_CALLBACK'      : 10,
+    'HOUSE_FLAG_RANDOM_ANIMATION'   : 11,
 
     #cargo acceptance
     'HOUSE_ACCEPT_GOODS'            : 0x00,
@@ -287,27 +288,28 @@ constant_numbers = {
     'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, # 0x80 / 8
     
     #town zones
-    'TOWNZONE_EDGE'                 : 0x00,
-    'TOWNZONE_OUTSKIRT'             : 0x01,
-    'TOWNZONE_OUTER_SUBURB'         : 0x02,
-    'TOWNZONE_INNER_SUBURB'         : 0x03,
-    'TOWNZONE_CENTRE'               : 0x04,
+    'TOWNZONE_EDGE'                 : 0,
+    'TOWNZONE_OUTSKIRT'             : 1,
+    'TOWNZONE_OUTER_SUBURB'         : 2,
+    'TOWNZONE_INNER_SUBURB'         : 3,
+    'TOWNZONE_CENTRE'               : 4,
+    'ALL_TOWNZONES'                 : 0x1F,
 
     #industry callback flags
-    'IND_CBF_AVAILABILITY'          : 0x0001,
-    'IND_CBF_PROD_CB_CARGO_ARRIVE'  : 0x0002,
-    'IND_CBF_PROD_CB_256_TICKS'     : 0x0004,
-    'IND_CBF_LOCATION_CHECK'        : 0x0008,
-    'IND_CBF_RANDOM_PROD_CHANGE'    : 0x0010,
-    'IND_CBF_MONTLY_PROD_CHANGE'    : 0x0020,
-    'IND_CBF_CARGO_SUBTYPE_DISPLAY' : 0x0040,
-    'IND_CBF_EXTRA_TEXT_FUND'       : 0x0080,
-    'IND_CBF_EXTRA_TEXT_INDUSTRY'   : 0x0100,
-    'IND_CBF_CONTROL_SPECIAL'       : 0x0200,
-    'IND_CBF_STOP_ACCEPT_CARGO'     : 0x0400,
-    'IND_CBF_COLOR'                 : 0x0800,
-    'IND_CBF_CARGO_INPUT'           : 0x1000,
-    'IND_CBF_CARGO_OUTPUT'          : 0x2000,
+    'IND_CBF_AVAILABILITY'          : 0,
+    'IND_CBF_PROD_CB_CARGO_ARRIVE'  : 1,
+    'IND_CBF_PROD_CB_256_TICKS'     : 2,
+    'IND_CBF_LOCATION_CHECK'        : 3,
+    'IND_CBF_RANDOM_PROD_CHANGE'    : 4,
+    'IND_CBF_MONTLY_PROD_CHANGE'    : 5,
+    'IND_CBF_CARGO_SUBTYPE_DISPLAY' : 6,
+    'IND_CBF_EXTRA_TEXT_FUND'       : 7,
+    'IND_CBF_EXTRA_TEXT_INDUSTRY'   : 8,
+    'IND_CBF_CONTROL_SPECIAL'       : 9,
+    'IND_CBF_STOP_ACCEPT_CARGO'     : 10,
+    'IND_CBF_COLOR'                 : 11,
+    'IND_CBF_CARGO_INPUT'           : 12,
+    'IND_CBF_CARGO_OUTPUT'          : 13,
 
     #corresponding callbacks
     'IND_CB_AVAILABILITY'           : 0x22,
@@ -323,37 +325,33 @@ constant_numbers = {
     'IND_CB_CARGO_INPUT'            : 0x14B,
     'IND_CB_CARGO_OUTPUT'           : 0x14C,
 
-    #object labels
-    'OBJ_TRANSMITTER'          : "TRNS",
-    'OBJ_LIGHTHOUSE'           : "LTHS",
-
     #object flags
-    'OBJ_FLAG_ONLY_SE'         : 0x01,
-    'OBJ_FLAG_IRREMOVABLE'     : 0x02,
-    'OBJ_FLAG_ANYTHING_REMOVE' : 0x04,
-    'OBJ_FLAG_ON_WATER'        : 0x08,
-    'OBJ_FLAG_REMOVE_IS_INCOME': 0x10,
-    'OBJ_FLAG_NO_FOUNDATIONS'  : 0x20,
-    'OBJ_FLAG_ANIMATED'        : 0x40,
-    'OBJ_FLAG_ONLY_INGAME'     : 0x80,
-    'OBJ_FLAG_2CC'             : 0x100,
-    'OBJ_FLAG_NOT_ON_LAND'     : 0x200,
-    'OBJ_FLAG_DRAW_WATER'      : 0x400,
-    'OBJ_FLAG_ALLOW_BRIDGE'    : 0x800,
-    'OBJ_FLAG_RANDOM_ANIMATION': 0x1000,
+    'OBJ_FLAG_ONLY_SE'         : 0,
+    'OBJ_FLAG_IRREMOVABLE'     : 1,
+    'OBJ_FLAG_ANYTHING_REMOVE' : 2,
+    'OBJ_FLAG_ON_WATER'        : 3,
+    'OBJ_FLAG_REMOVE_IS_INCOME': 4,
+    'OBJ_FLAG_NO_FOUNDATIONS'  : 5,
+    'OBJ_FLAG_ANIMATED'        : 6,
+    'OBJ_FLAG_ONLY_INGAME'     : 7,
+    'OBJ_FLAG_2CC'             : 8,
+    'OBJ_FLAG_NOT_ON_LAND'     : 9,
+    'OBJ_FLAG_DRAW_WATER'      : 10,
+    'OBJ_FLAG_ALLOW_BRIDGE'    : 11,
+    'OBJ_FLAG_RANDOM_ANIMATION': 12,
 
     #object animation triggers
-    'OBJ_ANIM_IS_BUILT'        : 0x01,
-    'OBJ_ANIM_PERIODIC'        : 0x02,
-    'OBJ_ANIM_SYNC'            : 0x04,
+    'OBJ_ANIM_IS_BUILT'        : 0,
+    'OBJ_ANIM_PERIODIC'        : 1,
+    'OBJ_ANIM_SYNC'            : 2,
 
     #object callback flags
-    'OBJ_CBF_SLOPE_CHECK'      : 0x01,
-    'OBJ_CBF_DECIDE_ANIM'      : 0x02,
-    'OBJ_CBF_DECIDE_ANIM_SPEED': 0x04,
-    'OBJ_CBF_DECIDE_COLOUR'    : 0x08,
-    'OBJ_CBF_ADDITIONAL_TEXT'  : 0x10,
-    'OBJ_CBF_AUTOSLOPE'        : 0x20,
+    'OBJ_CBF_SLOPE_CHECK'      : 0,
+    'OBJ_CBF_DECIDE_ANIM'      : 1,
+    'OBJ_CBF_DECIDE_ANIM_SPEED': 2,
+    'OBJ_CBF_DECIDE_COLOUR'    : 3,
+    'OBJ_CBF_ADDITIONAL_TEXT'  : 4,
+    'OBJ_CBF_AUTOSLOPE'        : 5,
 
     #corresponding callbacks
     'OBJ_CB_SLOPE_CHECK'            : 0x157,
@@ -365,11 +363,11 @@ constant_numbers = {
     'OBJ_CB_AUTOSLOPE'              : 0x15D,
 
     #airport tile callback flags
-    'APT_CBF_DECIDE_ANIM'       : 0x01,
-    'APT_CBF_DECIDE_ANIM_SPEED' : 0x02,
-    'APT_CBF_SLOPE_CHECK'       : 0x10,
-    'APT_CBF_FOUNDATIONS'       : 0x20,
-    'APT_CBF_AUTOSLOPE'         : 0x40,
+    'APT_CBF_DECIDE_ANIM'       : 0,
+    'APT_CBF_DECIDE_ANIM_SPEED' : 1,
+    'APT_CBF_SLOPE_CHECK'       : 4,
+    'APT_CBF_FOUNDATIONS'       : 5,
+    'APT_CBF_AUTOSLOPE'         : 6,
 
     #corresponding callbacks
     'APT_CB_DECIDE_ANIM'        : 0x153,
@@ -377,8 +375,8 @@ constant_numbers = {
     'APT_CB_FOUNDATIONS'        : 0x150,
 
     #railtype flags
-    'RAILTYPE_FLAG_CATANERY'          : 0x01,
-    'RAILTYPE_FLAG_NO_LEVEL_CROSSING' : 0x02, # for OpenTTD > r20049
+    'RAILTYPE_FLAG_CATANERY'          : 0,
+    'RAILTYPE_FLAG_NO_LEVEL_CROSSING' : 1, # for OpenTTD > r20049
 
     #type of default station graphics used for a railtype
     'RAILTYPE_STATION_NORMAL'   : 0,
@@ -418,15 +416,15 @@ constant_numbers = {
     'INDUSTRYTYPE_FOOD_PROCESSING_PLANT' : 0x0D,
     'INDUSTRYTYPE_PAPER_MILL'            : 0x0E,
     'INDUSTRYTYPE_GOLD_MINE'             : 0x0F,
-    'INDUSTRYTYPE_TROPIC_ARCTIC_BANK'    : 0x10,
+    'INDUSTRYTYPE_TROPICAL_ARCTIC_BANK'  : 0x10,
     'INDUSTRYTYPE_DIAMOND_MINE'          : 0x11,
     'INDUSTRYTYPE_IRON_ORE_MINE'         : 0x12,
     'INDUSTRYTYPE_FRUIT_PLANTATION'      : 0x13,
     'INDUSTRYTYPE_RUBBER_PLANTATION'     : 0x14,
     'INDUSTRYTYPE_WATER_WELL'            : 0x15,
     'INDUSTRYTYPE_WATER_TOWER'           : 0x16,
-    'INDUSTRYTYPE_TROPIC_FACTORY'        : 0x17,
-    'INDUSTRYTYPE_TROPIC_FARM'           : 0x18,
+    'INDUSTRYTYPE_TROPICAL_FACTORY'      : 0x17,
+    'INDUSTRYTYPE_TROPICAL_FARM'         : 0x18,
     'INDUSTRYTYPE_LUMBER_MILL'           : 0x19,
     'INDUSTRYTYPE_CANDYFLOSS_FOREST'     : 0x1A,
     'INDUSTRYTYPE_SWEETS_FACTORY'        : 0x1B,
@@ -444,10 +442,10 @@ constant_numbers = {
     'INDUSTRYTYPE_TOWN'                  : 0xFF,
 
     #industry production type flags (industry property 0x0B, prod_flags)
-    'PRODUCTIONTYPE_EXTRACTIVE'          : 0x01,
-    'PRODUCTIONTYPE_ORGANIC'             : 0x02,
-    'PRODUCTIONTYPE_PROCESSING'          : 0x04,
-    'PRODUCTIONTYPE_NONE'                : 0x00,
+    'PRODUCTIONTYPE_EXTRACTIVE'          : 0,
+    'PRODUCTIONTYPE_ORGANIC'             : 1,
+    'PRODUCTIONTYPE_PROCESSING'          : 2,
+    'NO_PRODUCTIONTYPE'                  : 0x00,
 
     #traffic side (right hand traffic when bit 4 is set)
     'TRAFFIC_SIDE_LEFT'                  : 0x00,
@@ -591,27 +589,27 @@ constant_numbers = {
     'MAP_TYPE_Y_BIGGER'                     : 2, #bit 0 clear, bit 1 set
 
     #Random triggers
-    'TRIGGER_ALL'                           : 0x80,
+    'TRIGGER_ALL_NEEDED'                    : 7,
 
-    'TRIGGER_VEHICLE_NEW_LOAD'              : 0x01,
-    'TRIGGER_VEHICLE_SERVICE'               : 0x02,
-    'TRIGGER_VEHICLE_UNLOAD_ALL'            : 0x04,
-    'TRIGGER_VEHICLE_ANY_LOAD'              : 0x08,
-    'TRIGGER_VEHICLE_32_CALLBACK'           : 0x10,
+    'TRIGGER_VEHICLE_NEW_LOAD'              : 0,
+    'TRIGGER_VEHICLE_SERVICE'               : 1,
+    'TRIGGER_VEHICLE_UNLOAD_ALL'            : 2,
+    'TRIGGER_VEHICLE_ANY_LOAD'              : 3,
+    'TRIGGER_VEHICLE_32_CALLBACK'           : 4,
 
-    'TRIGGER_STATION_NEW_CARGO'             : 0x01,
-    'TRIGGER_STATION_NO_MORE_CARGO'         : 0x02,
-    'TRIGGER_STATION_TRAIN_ARRIVES'         : 0x04,
-    'TRIGGER_STATION_TRAIN_LEAVES'          : 0x08,
-    'TRIGGER_STATION_TRAIN_LOADS_UNLOADS'   : 0x10,
-    'TRIGGER_STATION_TRAIN_RESERVES'        : 0x20,
+    'TRIGGER_STATION_NEW_CARGO'             : 0,
+    'TRIGGER_STATION_NO_MORE_CARGO'         : 1,
+    'TRIGGER_STATION_TRAIN_ARRIVES'         : 2,
+    'TRIGGER_STATION_TRAIN_LEAVES'          : 3,
+    'TRIGGER_STATION_TRAIN_LOADS_UNLOADS'   : 4,
+    'TRIGGER_STATION_TRAIN_RESERVES'        : 5,
 
-    'TRIGGER_HOUSE_TILELOOP'                : 0x01,
-    'TRIGGER_HOUSE_TOP_TILELOOP'            : 0x02,
+    'TRIGGER_HOUSE_TILELOOP'                : 0,
+    'TRIGGER_HOUSE_TOP_TILELOOP'            : 1,
 
-    'TRIGGER_INDUSTRYTILE_TILELOOP'         : 0x01,
-    'TRIGGER_INDUSTRYTILE_256_TICKS'        : 0x02,
-    'TRIGGER_INDUSTRYTILE_CARGO_DELIVERY'   : 0x04,
+    'TRIGGER_INDUSTRYTILE_TILELOOP'         : 0,
+    'TRIGGER_INDUSTRYTILE_256_TICKS'        : 1,
+    'TRIGGER_INDUSTRYTILE_CARGO_DELIVERY'   : 2,
 
     #Tile classes
     'TILE_CLASS_GROUND'                     : 0x00,
