@@ -21,7 +21,11 @@
 </li>
 <li><a href="#block-syntax">Block syntax</a>
 <ul>
-	<li><a href="#block-grf">GRF</a></li>
+	<li><a href="#block-grf">GRF</a>
+		<ul>
+			<li><a href="#block-grf-settings">Settings</a></li>
+		</ul>
+	</li>
 	<li><a href="#block-item">Item</a>
 		<ul>
 			<li><a href="#block-item-property">Property</a></li>
@@ -316,6 +320,7 @@ The rest of the ID may consist of letters, underscores and numbers.</dd>
 	desc: &lt;string&gt;;
 	version: &lt;expression&gt;;
 	min_compatible_version: &lt;expression&gt;;
+	&lt;settings&gt;
 }</pre>
 <p>Example:</p>
 <pre class="code">grf {
@@ -325,6 +330,11 @@ The rest of the ID may consist of letters, underscores and numbers.</dd>
 	version: 1;
 	min_compatible_version: 1;
 }</pre>
+
+<h3><a name="block-grf-settings">Settings</a></h3>
+<p>As part of the grf block you can specify some settings that the user will be able to
+change. These can for example be used to disable parts of your NewGRF or to change between
+multiple graphics in case that's not possible at runtime.</p>
 
 <h2><a name="block-item">Item</a></h2>
 <pre class="exl">item (&lt;expression&gt; [, &lt;ID&gt; [, &lt;expression&gt;]]) {
