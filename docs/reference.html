@@ -1503,12 +1503,18 @@ sense at all.
 <h3><a name="vars-vehicles-normal">Variables without parameter</a></h3>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>position_in_consist <td>0 ... 255<td>
-<tr><td>position_in_consist_from_end <td>0 ... 255 <td>
-<tr><td>num_vehs_in_consist <td>0 ... 255 <td>
-<tr><td>position_in_vehid_chain <td>0 ... 255 <td>
-<tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>
-<tr><td>num_vehs_in_vehid_chain <td>0 ... 255 <td>
+<tr><td>position_in_consist <td>0 ... 255<td>The position of the current vehicle-part from the start of the vehicle. The engine will
+get value 0, the first wagon (or second engine) gets value 1, etc.
+<tr><td>position_in_consist_from_end <td>0 ... 255 <td>Same as position_in_consist but counted from the end. The last wagon will
+get value 0.
+<tr><td>num_vehs_in_consist <td>1 ... 256 <td>The total number of vehicles-parts in this vehicle. For aircraft this will include
+the shadow and the rotor.
+<tr><td>position_in_vehid_chain <td>0 ... 255 <td>See position_in_consist, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>See position_in_consist_from_end, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>num_vehs_in_vehid_chain <td>1 ... 256 <td>See num_vehs_in_consist, but not of the complete vehicle but only all consecutive
+parts with the same id.
 <tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td><a href="#property-cargos">cargo classes</a>
 <tr><td>most_common_refit <td><a href="#property-cargos">cargo class</a><td>cargo class most often refit to
 <tr><td><a name="bitmask_consist_info">bitmask_consist_info</a><td>Bitmask 8 bit<td>OR of all
