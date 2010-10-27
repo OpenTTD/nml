@@ -732,6 +732,9 @@ class SpecialCheck(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
+    def __str__(self):
+        return 'SpecialCheck'
+
     def supported_by_actionD(self, raise_error):
         return True
 

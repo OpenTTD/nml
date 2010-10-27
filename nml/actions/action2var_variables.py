@@ -33,13 +33,16 @@ varact2_globalvars = {
     'current_year' : {'var': 0x24, 'start': 0, 'size': 32},
 }
 
+def func_add_constant(const):
+    return lambda var, info: expression.BinOp(nmlop.ADD, var, expression.ConstantNumeric(const), var.pos)
+
 varact2vars_vehicles = {
     'position_in_consist' : {'var': 0x40, 'start': 0, 'size': 8},
     'position_in_consist_from_end' : {'var': 0x40, 'start': 8, 'size': 8},
-    'num_vehs_in_consist' : {'var': 0x40, 'start': 16, 'size': 8},
+    'num_vehs_in_consist' : {'var': 0x40, 'start': 16, 'size': 8, 'function': func_add_constant(1)},
     'position_in_vehid_chain' : {'var': 0x41, 'start': 0, 'size': 8},
     'position_in_vehid_chain_from_end' : {'var': 0x41, 'start': 8, 'size': 8},
-    'num_vehs_in_vehid_chain' : {'var': 0x41, 'start': 16, 'size': 8},
+    'num_vehs_in_vehid_chain' : {'var': 0x41, 'start': 16, 'size': 8, 'function': func_add_constant(1)},
     'cargo_classes_in_consist' : {'var': 0x42, 'start': 0, 'size': 8},
     'most_common_refit' : {'var': 0x42, 'start': 16, 'size': 8},
     'bitmask_consist_info' : {'var': 0x42, 'start': 24, 'size': 8},
@@ -77,7 +80,7 @@ varact2vars_vehicles = {
     'vehicle_is_stopped' : {'var': 0xB2, 'start': 1, 'size': 1},
     'vehicle_is_crashed' : {'var': 0xB2, 'start': 7, 'size': 1},
     'vehicle_is_broken' : {'var': 0xCB, 'start': 0, 'size': 8, 'function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(1, var.pos), var.pos)},
-    'date_of_last_service' : {'var': 0x92, 'start': 0, 'size': 16, 'function': lambda var, info: expression.BinOp(nmlop.ADD, var, expression.ConstantNumeric(701265, var.pos), var.pos)},
+    'date_of_last_service' : {'var': 0x92, 'start': 0, 'size': 16, 'function': func_add_constant(701265)},
     'breakdowns_since_last_service' : {'var': 0xCA, 'start': 0, 'size': 8},
     'reliability' : {'var': 0xCE, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 101, 0x10000)},
     'age_in_days' : {'var': 0xC0, 'start': 0, 'size': 16},
