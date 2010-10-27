@@ -11,6 +11,7 @@
 <ul>
 <li><a href="#preface">Preface</a></li>
 <li><a href="#installation">Getting started</a></li>
+<li><a href="#graphic-files">Graphic files</a></li>
 <li><a href="#structure">Language structure</a>
 	<ul>
 		<li><a href="#structure-blocks">Blocks</a></li>
@@ -138,7 +139,7 @@ accessible to more people.</p>
 
 <p><img alt="encoding process of nml" src="compileprocess.png"></p>
 
-<h1><a name="installing">Getting started</a></h1>
+<h1><a name="installation">Getting started</a></h1>
 <p>
 NML is a a python-based compiler, capable to compile NML files (along with their
 associated language, sound and graphic files) into grf and / or nfo files. In
@@ -189,6 +190,17 @@ Options:
                         Load language files from directory &lt;dir&gt; [default:
                         lang]
 </pre>
+
+<h1><a name="graphic-files">Graphic files</a></h1>
+<p>All graphic files must be in a format that can be loaded by the python imaging library
+and they must have a valid palette. You can chose either the dos palette (recommended) or
+the windows palette.</p>
+<p>Palette files for severel editors:
+<ul>
+<li><a href="ttd-newgrf-dos.gpl">Dos palette for GIMP</a></li>
+<li><a href="ttd-newgrf-win.gpl">Windows palette for GIMP</a></li>
+</ul>
+</p>
 
 <h1><a name="structure">Language structure</a></h1>
 <h2><a name="structure-blocks">Blocks</a></h2>
