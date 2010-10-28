@@ -193,8 +193,8 @@ class NMLParser(object):
         t[0] = expression.FunctionCall(t[1], t[3], t[1].pos)
 
     def p_array(self, t):
-        'array : LBRACKET expression_list RBRACKET'
-        t[0] = t[2]
+        'expression : LBRACKET expression_list RBRACKET'
+        t[0] = expression.Array(t[2], t.lineno(1))
 
     def p_expression_string(self, t):
         'expression : STRING_LITERAL'
@@ -319,15 +319,12 @@ class NMLParser(object):
         '''property_assignment : ID COLON expression SEMICOLON
                                | ID COLON expression UNIT SEMICOLON
                                | ID COLON string SEMICOLON
-                               | ID COLON array SEMICOLON
                                | NUMBER COLON expression SEMICOLON
                                | NUMBER COLON expression UNIT SEMICOLON
-                               | NUMBER COLON string SEMICOLON
-                               | NUMBER COLON array SEMICOLON'''
+                               | NUMBER COLON string SEMICOLON'''
         name = t[1] if isinstance(t[1], expression.Identifier) else expression.ConstantNumeric(t[1], t.lineno(1))
-        val = expression.Array(t[3], t[1].pos) if isinstance(t[3], list) else t[3]
         unit = None if len(t) == 5 else item.Unit(t[4])
-        t[0] = item.Property(name, val, unit, t.lineno(1))
+        t[0] = item.Property(name, t[3], unit, t.lineno(1))
 
     def p_graphics_block(self, t):
         'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
