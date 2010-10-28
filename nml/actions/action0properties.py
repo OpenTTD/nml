@@ -39,6 +39,21 @@ class Action0Property(object):
 properties = 0x12 * [None]
 
 def two_byte_property(value, low_prop, high_prop):
+    """
+    Decode a two byte value into two action 0 properties.
+
+    @param value: Value to encode.
+    @type  value: L{ConstantNumeric}
+
+    @param low_prop: Property number for the low 8 bits of the value.
+    @type  low_prop: C{int}
+
+    @param high_prop: Property number for the high 8 bits of the value.
+    @type  high_prop: C{int}
+
+    @return: Sequence of two action 0 properties (low part, high part).
+    @rtype:  C{list} of L{Action0Property}
+    """
     value = value.reduce_constant()
     low_byte = ConstantNumeric(value.value & 0xFF)
     high_byte = ConstantNumeric(value.value >> 8)
