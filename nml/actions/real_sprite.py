@@ -4,6 +4,10 @@ class RealSprite(object):
     def __init__(self, param_list = None):
         self.param_list = param_list
         self.is_empty = False
+        self.xpos = None
+        self.ypos = None
+        self.xsize = None
+        self.ysize = None
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Real sprite, parameters:'
@@ -74,40 +78,50 @@ real_sprite_compression_flags = {
 
 
 def parse_real_sprite(sprite, default_file, id_dict):
-    if len(sprite.param_list) == 0:
+    # the number of parameters
+    num_param = len(sprite.param_list)
+    if num_param == 0:
         sprite.is_empty = True
         return RealSpriteAction(sprite)
-    elif not 6 <= len(sprite.param_list) <= 8:
-        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 6 to 8.")
+    elif not (2 <= num_param <= 4 or 6 <= num_param <= 8):
+        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2, 3, 4, 6, 7 or 8.")
     try:
         # create new sprite struct, needed for template expansion
         new_sprite = RealSprite()
 
-        new_sprite.xpos  = sprite.param_list[0].reduce_constant([id_dict])
-        new_sprite.ypos  = sprite.param_list[1].reduce_constant([id_dict])
-        new_sprite.xsize = sprite.param_list[2].reduce_constant([id_dict])
-        new_sprite.ysize = sprite.param_list[3].reduce_constant([id_dict])
-        new_sprite.xrel  = sprite.param_list[4].reduce_constant([id_dict])
-        new_sprite.yrel  = sprite.param_list[5].reduce_constant([id_dict])
+        param_offset = 0
 
-        generic.check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", new_sprite.xpos.pos)
-        generic.check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", new_sprite.ypos.pos)
-        generic.check_range(new_sprite.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'", new_sprite.xsize.pos)
-        generic.check_range(new_sprite.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'", new_sprite.ysize.pos)
+        if num_param >= 6:
+            # xpos, ypos, xsize and ysize are all optional. If not specified they'll default
+            # to 0, 0, image_width, image_height
+            new_sprite.xpos  = sprite.param_list[0].reduce_constant([id_dict])
+            new_sprite.ypos  = sprite.param_list[1].reduce_constant([id_dict])
+            new_sprite.xsize = sprite.param_list[2].reduce_constant([id_dict])
+            new_sprite.ysize = sprite.param_list[3].reduce_constant([id_dict])
+            generic.check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", new_sprite.xpos.pos)
+            generic.check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", new_sprite.ypos.pos)
+            generic.check_range(new_sprite.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'", new_sprite.xsize.pos)
+            generic.check_range(new_sprite.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'", new_sprite.ysize.pos)
+            param_offset += 4
+
+        new_sprite.xrel  = sprite.param_list[param_offset].reduce_constant([id_dict])
+        new_sprite.yrel  = sprite.param_list[param_offset + 1].reduce_constant([id_dict])
         generic.check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'", new_sprite.xrel.pos)
         generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'", new_sprite.yrel.pos)
+        param_offset += 2
 
-        if len(sprite.param_list) >= 7:
-            new_sprite.compression = sprite.param_list[6].reduce_constant([real_sprite_compression_flags, id_dict])
+        if num_param > param_offset:
+            new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
             new_sprite.compression.value |= 0x01
+            param_offset += 1
         else:
             new_sprite.compression = expression.ConstantNumeric(0x01)
         # only bits 0, 1, 3, and 6 can be set
         if (new_sprite.compression.value & ~0x4B) != 0:
             raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
 
-        if len(sprite.param_list) >= 8:
-            new_sprite.file = sprite.param_list[7].reduce([id_dict])
+        if num_param > param_offset:
+            new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
             if not isinstance(new_sprite.file, expression.StringLiteral):
                 raise generic.ScriptError("Real sprite parameter 8 'file' should be a string literal", new_sprite.file.pos)
         elif default_file is not None:
