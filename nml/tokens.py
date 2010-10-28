@@ -40,6 +40,7 @@ reserved = {
     'livery_override' : 'LIVERYOVERRIDE',
     'exit' : 'SKIP_ALL',
     'tilelayout' : 'TILELAYOUT',
+    'alternative_sprites' : 'ALT_SPRITES',
 }
 
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')

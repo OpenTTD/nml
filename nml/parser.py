@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites
 from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -58,6 +58,7 @@ class NMLParser(object):
                       | snowline
                       | cargotable
                       | railtype
+                      | alt_sprites
                       | tilelayout'''
         t[0] = t[1]
 
@@ -79,6 +80,7 @@ class NMLParser(object):
                           | replace
                           | replace_new
                           | font_glyph
+                          | alt_sprites
                           | property_block
                           | graphics_block
                           | liveryoverride_block
@@ -473,6 +475,10 @@ class NMLParser(object):
         t[0] = font.FontGlyphBlock(t[3 + offset], t[6 + offset], t.lineno(1))
         if len(t) == 9: t[0].name = t[2].value
 
+    def p_alt_sprites(self, t):
+        'alt_sprites : ALT_SPRITES LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
+        t[0] = alt_sprites.AltSpritesBlock(t[3], t[6], t.lineno(1))
+
     #
     # Sprite blocks and their contents
     #
@@ -482,8 +488,10 @@ class NMLParser(object):
 
     def p_spriteset_list(self, t):
         '''spriteset_list : spriteset
+                          | alt_sprites
                           | spritegroup
                           | spriteset_list spriteset
+                          | spriteset_list alt_sprites
                           | spriteset_list spritegroup'''
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[2]]
