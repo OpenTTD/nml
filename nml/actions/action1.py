@@ -79,7 +79,7 @@ def parse_sprite_block(sprite_block):
 
     for item in sprite_block.spriteset_list:
         if isinstance(item, SpriteSet):
-            real_sprite_list = real_sprite.parse_sprite_list(item.sprite_list, item.pcx)
+            real_sprite_list = real_sprite.parse_sprite_list(item.sprite_list, item.pcx, block_name = item.name)
             action_list.extend(real_sprite_list)
             spritesets[item.name.value] = num_sets
             num_sets += 1

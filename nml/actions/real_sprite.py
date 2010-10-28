@@ -40,6 +40,7 @@ class RealSpriteAction(object):
     def __init__(self, sprite):
         self.sprite = sprite
         self.last = False
+        self.block_name = None
 
     def prepare_output(self):
         pass
@@ -154,7 +155,7 @@ def parse_real_sprite(sprite, default_file, id_dict):
 
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list, default_file, parameters = {}, mark_last = True):
+def parse_sprite_list(sprite_list, default_file, parameters = {}, mark_last = True, block_name = None):
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
@@ -162,4 +163,5 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, mark_last = Tr
         else:
             real_sprite_list.extend(sprite.expand(default_file, parameters))
     if mark_last: real_sprite_list[-1].last = True
+    if block_name: real_sprite_list[0].block_name = block_name
     return real_sprite_list

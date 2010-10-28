@@ -173,8 +173,11 @@ def nml(inputfile, output_debug, outputfiles):
     if has_action8:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
 
-    for action in actions:
+    block_names = {}
+    for num, action in enumerate(actions):
         action.prepare_output()
+        if isinstance(action, real_sprite.RealSpriteAction) and action.block_name:
+            block_names[action.block_name] = num
     for outputfile in outputfiles:
         if isinstance(outputfile, output_base.BinaryOutputBase):
             for action in actions:
