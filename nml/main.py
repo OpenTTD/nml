@@ -1,7 +1,7 @@
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, palette
 from nml.actions import action2var, action8, sprite_count, real_sprite, action4
-from nml.ast import general, grf
+from nml.ast import general, grf, alt_sprites
 
 try:
     import Image
@@ -36,6 +36,8 @@ def parse_cli(argv):
                         help="Load custom tags from <file> [default: %default]")
     opt_parser.add_option("-l", "--lang-dir", dest="lang_dir", default="lang",  metavar="<dir>",
                         help="Load language files from directory <dir> [default: %default]")
+    opt_parser.add_option("-a", "--sprites-dir", dest="sprites_dir", default="sprites",  metavar="<dir>",
+                        help="Store 32bpp sprites in directory <dir> [default: %default]")
 
     try:
         opts, args = opt_parser.parse_args(argv)
@@ -97,7 +99,7 @@ def main(argv):
             print "Unknown output format %s" % outext
             sys.exit(2)
 
-    ret = nml(input, opts.debug, outputs)
+    ret = nml(input, opts.debug, outputs, opts.sprites_dir)
 
     input.close()
     sys.exit(ret)
@@ -105,7 +107,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, output_debug, outputfiles):
+def nml(inputfile, output_debug, outputfiles, sprites_dir):
     generic.OnlyOnce.clear()
 
     script = inputfile.read()
@@ -184,6 +186,9 @@ def nml(inputfile, output_debug, outputfiles):
                 action.write(outputfile)
 
     for outputfile in outputfiles: outputfile.close()
+
+    for block in alt_sprites.alt_sprites_list:
+        block.process(sprites_dir, block_names)
 
     return 0
 

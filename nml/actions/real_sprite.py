@@ -73,7 +73,7 @@ class TemplateUsage(object):
         for param in self.param_list:
             param.debug_print(indentation + 4)
 
-    def expand(self, default_file, parameters = {}):
+    def expand(self, default_file, parameters, allow_compression):
         real_sprite_list = []
         if self.name.value not in sprite_template_map:
             raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
@@ -87,7 +87,7 @@ class TemplateUsage(object):
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
 
-        real_sprite_list.extend(parse_sprite_list(template.sprite_list, default_file, param_dict, False))
+        real_sprite_list.extend(parse_sprite_list(template.sprite_list, default_file, param_dict, False, allow_compression))
         return real_sprite_list
 
 real_sprite_compression_flags = {
@@ -100,7 +100,7 @@ real_sprite_compression_flags = {
 }
 
 
-def parse_real_sprite(sprite, default_file, id_dict):
+def parse_real_sprite(sprite, default_file, id_dict, allow_compression):
     # the number of parameters
     num_param = len(sprite.param_list)
     if num_param == 0:
@@ -130,15 +130,16 @@ def parse_real_sprite(sprite, default_file, id_dict):
         generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'", new_sprite.yrel.pos)
         param_offset += 2
 
-        if num_param > param_offset:
-            new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
-            new_sprite.compression.value |= 0x01
-            param_offset += 1
-        else:
-            new_sprite.compression = expression.ConstantNumeric(0x01)
-        # only bits 0, 1, 3, and 6 can be set
-        if (new_sprite.compression.value & ~0x4B) != 0:
-            raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
+        if allow_compression:
+            if num_param > param_offset:
+                new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
+                new_sprite.compression.value |= 0x01
+                param_offset += 1
+            else:
+                new_sprite.compression = expression.ConstantNumeric(0x01)
+            # only bits 0, 1, 3, and 6 can be set
+            if (new_sprite.compression.value & ~0x4B) != 0:
+                raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
 
         if num_param > param_offset:
             new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
@@ -155,13 +156,13 @@ def parse_real_sprite(sprite, default_file, id_dict):
 
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list, default_file, parameters = {}, mark_last = True, block_name = None):
+def parse_sprite_list(sprite_list, default_file, parameters = {}, mark_last = True, block_name = None, allow_compression = True):
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
-            real_sprite_list.append(parse_real_sprite(sprite, default_file, parameters))
+            real_sprite_list.append(parse_real_sprite(sprite, default_file, parameters, allow_compression))
         else:
-            real_sprite_list.extend(sprite.expand(default_file, parameters))
+            real_sprite_list.extend(sprite.expand(default_file, parameters, allow_compression))
     if mark_last: real_sprite_list[-1].last = True
     if block_name: real_sprite_list[0].block_name = block_name
     return real_sprite_list

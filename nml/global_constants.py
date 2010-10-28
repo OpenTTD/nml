@@ -660,6 +660,12 @@ constant_numbers = {
     # Animation looping
     'ANIMATION_NON_LOOPING'                 : 0,
     'ANIMATION_LOOPING'                     : 1,
+
+    #Zoom levels
+    'ZOOM_LEVEL_NORMAL'                     : 2,
+    'ZOOM_LEVEL_Z0'                         : 0,
+    'ZOOM_LEVEL_Z1'                         : 1,
+    'ZOOM_LEVEL_Z2'                         : 2,
 }
 
 def signextend(param, info):
