@@ -200,7 +200,7 @@ Options:
 <p>All graphic files must be in a format that can be loaded by the python imaging library
 and they must have a valid palette. You can chose either the dos palette (recommended) or
 the windows palette.</p>
-<p>Palette files for severel editors:
+<p>Palette files for several editors:
 <ul>
 <li><a href="ttd-newgrf-dos.gpl">Dos palette for GIMP</a></li>
 <li><a href="ttd-newgrf-win.gpl">Windows palette for GIMP</a></li>
@@ -240,16 +240,16 @@ should be replaced by the actual name of the string.</p>
 <p>This looks a lot like the previous line, only it sets the description
 instead of the name.</p>
 <pre class="code">	version : 10;</pre>
-<p>For a new grf you should set the version to 1. Everytime you release a new
+<p>For a new grf you should set the version to 1. Every time you release a new
 version you should increase the version field by at least 1.</p>
 <pre class="code">	min_compatible_version : 5;</pre>
-<p>For a new grf you should set the min_compatible_version to 1. Everytime you change
+<p>For a new grf you should set the min_compatible_version to 1. Every time you change
 something in your newgrf which makes it incompatible to previous versions, you should
 set min_compatible_version to the current version. Changes which make a NewGRF
 incompatible to previous versions are most functional changes to existing behaviour, 
 among others: changing vehicleIDs as well as some of their properties, changing
 industry layouts, railtype compatibility, changing (de-)activation conditions... 
-Adding new, additional things and expandig existing behaviour (without changing the
+Adding new, additional things and expanding existing behaviour (without changing the
 current one) is mostly considered safe).</p>
 <pre class="code">}</pre>
 <p>This marks the end of the last-opened block, in this case the grf-block.</p>
@@ -472,8 +472,8 @@ of the item itself, while PARENT uses the variables of a related object. This
 related object differs per feature, refer to the table below.</li>
 <li><code>&lt;ID&gt;</code>Name of this switch block. This (unique) name can
 be used to refer to the block from other switch- or graphics-blocks.</li>
-<li><code>&lt;expression&gt;</code>The expression that will be evauluated
-to make a descision. This expression may contain <a href="#vars">Variables</a>.</li>
+<li><code>&lt;expression&gt;</code>The expression that will be evaluated
+to make a decision. This expression may contain <a href="#vars">Variables</a>.</li>
 </ul>
 <table class="t">
 <tr><th>Feature<th>SELF<th>PARENT
@@ -634,7 +634,7 @@ information about <code>&lt;return_value&gt;</code>, see the
 <a href="#block-switch">switch-block</a>. Let's conclude with an example:
 <pre class="code">random_switch (FEAT_TRAINS, SELF, random_42, bitmask(TRIGGER_VEHICLE_UNLOAD_ALL, TRIGGER_VEHICLE_ANY_LOAD, TRIGGER_ALL_NEEDED)) {
     /* re-randomize when vehicle has been emptied and then received new cargo */
-    independent: random_43; // desicion should be independent from random_43, which is defined elsewhere
+    independent: random_43; // decision should be independent from random_43, which is defined elsewhere
     6: group_open;          // 6/11 chance to display open wagon
     3: group_closed;        // 3/11 chance to display closed wagon (with cover)
     2: group_halfopen;      // 2/11 chance to display a half-covered wagon
@@ -1070,7 +1070,7 @@ Valid language IDs are
 <table class="t">
 <tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
 <tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES.
-To make a vehicle available in all climates except toyland you could use: ALL_CLIMATES & ~bitmask(CLIMATE_TOYLAND).</td></tr>
+To make a vehicle available in all climates except toyland you could use: ALL_CLIMATES &amp; ~bitmask(CLIMATE_TOYLAND).</td></tr>
 <tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000. In TTDPatch, dates after 2044 will be limited to 2044. Unless the engine is introduced within two years after game-start (always 1920 in TTDPatch), a random number of days between 0 and 511 will be added to this.</td></tr>
 <tr><td> model_life</td><td>                   0 ... 254 (years) or VEHICLE_NEVER_EXPIRES</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
 <tr><td> retire_early</td><td>                 (years)</td><td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.</td></tr>
@@ -1210,7 +1210,7 @@ non_refittable_cargo_classes have no effect.
 <tr><td>mail_acceptance<td>0 ... 1<td>
 <tr><td>cargo_acceptance<td>0 ... 1<td>Like passenger acceptance. Additionally flag can be added which defines one of the cargo type: HOUSE_ACCEPT_GOODS, HOUSE_ACCEPT_FOOD, HOUSE_ACCEPT_FIZZY_DRINKS; FIZZY_DRINKS has in toyland the same meaning as FOOD in other climates.
 <tr><td>accepted_cargo<td><td>up to three cargo labels, e.g. MAIL, PASS, COAL
-<tr><td>local_authority_impact<td>0 ... 65525<td>amount of happyness increase of the city council, if the building is destroyed
+<tr><td>local_authority_impact<td>0 ... 65525<td>amount of happiness increase of the city council, if the building is destroyed
 <tr><td>removal_cost_multiplier<td>0 ... 255<td>
 <tr><td>probability<td>0 ... 16<td>Probability with respect to the default houses (=1). Mind that these are relative probabilities with respect to all houses defined. If all probabilities are defined as 16, they'll all have the same probability as if they had all a probability of 1.
 <tr><td>years_available<td>array of two int<td>[xx, yy] where xx and yy indicate the introduction year and the last year the building can be built
@@ -1222,7 +1222,7 @@ Examples:
 <ul>
 <li>Available in the centre town zone in toyland only: <code>[bitmask(TOWNZONE_CENTRE), bitmask(CLIMATE_TOYLAND)]</code></li>
 <li>Available in all town zones in the arctic climate both above and below the snowline: <code>[ALL_TOWNZONES, bitmask(CLIMATE_ARCTIC, ABOVE_SNOWLINE)]</code></li>
-<li>Available everywhere except on the town edge: <code>[ALL_TOWNZONES & ~bitmask(TOWNZONE_EDGE), ALL_CLIMATES | bitmask(ABOVE_SNOWLINE)</code></li>
+<li>Available everywhere except on the town edge: <code>[ALL_TOWNZONES &amp; ~bitmask(TOWNZONE_EDGE), ALL_CLIMATES | bitmask(ABOVE_SNOWLINE)</code></li>
 </ul>
 <tr><td>callback_flags<td><td>bitmask(HOUSE_CBF_XX) with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
@@ -1350,7 +1350,7 @@ for the same class the name defined in the last NewGRF will be used.</p>
 <tr><th>Name</th><th>Meaning</th></tr>
 <tr><td>OBJ_FLAG_ONLY_SE</td><td>Only available in the scenario editor (incompatible with OBJ_FLAG_ONLY_INGAME)</td></tr>
 <tr><td>OBJ_FLAG_IRREMOVABLE</td><td>Object cannot be removed with the normal dynamite tool. In OpenTTD you can only
-remove the object with the magic bullzoder cheat, in TTDPatch you can remove it by holding ctrl while using the
+remove the object with the magic bulldozer cheat, in TTDPatch you can remove it by holding ctrl while using the
 bulldozer tool. The cost of removing this object is multiplied by 25.</td></tr>
 <tr><td>OBJ_FLAG_ANYTHING_REMOVE</td><td>Anything can remove this object (owned land behavior)</td></tr>
 <tr><td>OBJ_FLAG_ON_WATER</td><td>Allow construction of the object on water </td></tr>
@@ -1381,7 +1381,7 @@ also replaces the ground tile of the object completely. Does not work when objec
 <tr><td>railtype_flags</td><td>          bitmask(RAILTYPE_FLAG_CATANERY, RAILTYPE_FLAG_NO_LEVEL_CROSSING (OpenTTD r20049))</td><td></td></tr>
 <tr><td>curve_speed_multiplier</td><td>  0...65525</td><td>max curve speed is defined as multiple of the base curve speed (see below)</td></tr>
 <tr><td>station graphics</td><td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV</td><td></td></tr>
-<tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track as multiplier to PR_BUILD_RAIL basecost</td></tr>
+<tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track as multiplier to PR_BUILD_RAIL base cost</td></tr>
 <tr><td>speed_limit</td><td>             0 ... 65525 km/h (speed units)</td><td>A speed limit of 0 means unlimited speed</td></tr>
 <tr><td>acceleration_model</td><td>      ACC_MODEL_RAIL, ACC_MODEL_MONORAIL, ACC_MODEL_MAGLEV</td><td>ACC_MODEL_RAIL and ACC_MODEL_MONORAIL behave the same currently</td></tr>
 <tr><td>map_colour</td><td>              0 ... 255</td><td>entry in the colour palette</td></tr>
@@ -1424,7 +1424,7 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <tr><td>CATENERY_PYLONS</td><td>8</td><td></td></tr>
 <tr><td>BRIDGE_SURFACES</td><td>6</td><td></td></tr>
 <tr><td>LEVEL_CROSSINGS*</td><td>10</td><td>For each direction: one track sprite and 4 sprites for road lights etc</td></tr>
-<tr><td>DEPOTS*</td><td>6</td><td>2 sprites for each southish, 1 sprite for each nothish depot. Like original depots.</td></tr>
+<tr><td>DEPOTS*</td><td>6</td><td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.</td></tr>
 <tr><td>FENCES</td><td>8</td><td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301</td></tr>
 </table>
 
@@ -1480,7 +1480,7 @@ snowline {
 It starts with the <code>snowline</code> keyword, and contains a number of
 <code>&lt;day-of-the-year&gt; : &lt;height&gt;</code>pairs. These define the
 height of the snowline at that day in the year. The day of the year value is
-actually an integer from 1 upto and including 365, so you may also define a
+actually an integer from 1 up to and including 365, so you may also define a
 day as a number. Heights run from 2 (for snow everywhere) to 29, although 17
 is already sufficient to remove all traces of snow from the game.
 <p>For the days not listed, the program computes a height. It can do that in
@@ -1531,7 +1531,7 @@ by the second column in the following table:</p>
 <tr><td>snowline_height <td>No <td>16 .. 120 in steps of 8, or 0xFF if no snow. <td>One tile height is equivalent to 8 units.
 <tr><td>traffic_side <td>Yes (a)<td>TRAFFIC_SIDE_LEFT or TRAFFIC_SIDE_RIGHT <td>
 <tr><td>freight_trains <td>Yes <td>1 .. 255 <td>Weight multiplier for freight trains
-<tr><td>plane_speed <td>Yes <td>1 .. 4<td>Speed multplier for planes. Value of 1 is equal to the original speed (1/4), while 4 means that planes move at full speed (4/4)
+<tr><td>plane_speed <td>Yes <td>1 .. 4<td>Speed multiplier for planes. Value of 1 is equal to the original speed (1/4), while 4 means that planes move at full speed (4/4)
 <tr><td>ttdpatch_flags <td>Yes <td> <td>
 <tr><td>current_callback <td>No <td> <td>Set to the ID of the current callback, see the various features for more information / examples.
 <tr><td>extra_callback_info1 <td>No <td>Varies <td>Extra callback information, meaning differs per callback.
@@ -1791,7 +1791,7 @@ Variables that require some parameters.
 <tr><td>object_type_count</td>           <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Number of objects with the given
 object id currently on the map. Grfid is the grfid of the newgrf you want to check the object count of (default is current grf).</td></tr>
 <tr><td>object_type_nearest</td>         <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Manhattan distance to the closest object
-of the given type. Grfid is the grfid of the newgrf you want to check the minimum object idstance of (default is current grf). If the given
+of the given type. Grfid is the grfid of the newgrf you want to check the minimum object distance of (default is current grf). If the given
 object type is not yet build this will return 0xFFFF</td></tr>
 </table>
 
