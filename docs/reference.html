@@ -1069,7 +1069,7 @@ Valid language IDs are
 <h2><a name="property-vehicles">Properties common to all vehicle types</a></h2>
 <table class="t">
 <tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
-<tr><td> climates_available</td><td>           BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES.
+<tr><td> climates_available</td><td>           bitmask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES.
 To make a vehicle available in all climates except toyland you could use: ALL_CLIMATES &amp; ~bitmask(CLIMATE_TOYLAND).</td></tr>
 <tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000. In TTDPatch, dates after 2044 will be limited to 2044. Unless the engine is introduced within two years after game-start (always 1920 in TTDPatch), a random number of days between 0 and 511 will be added to this.</td></tr>
 <tr><td> model_life</td><td>                   0 ... 254 (years) or VEHICLE_NEVER_EXPIRES</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
@@ -1215,7 +1215,7 @@ non_refittable_cargo_classes have no effect.
 <tr><td>probability<td>0 ... 16<td>Probability with respect to the default houses (=1). Mind that these are relative probabilities with respect to all houses defined. If all probabilities are defined as 16, they'll all have the same probability as if they had all a probability of 1.
 <tr><td>years_available<td>array of two int<td>[xx, yy] where xx and yy indicate the introduction year and the last year the building can be built
 <tr><td>minimum_lifetime<td>0 ... 255<td>number of years the building will remain at least
-<tr><td>availability_mask<td>[BitMask(<a href="#refs-town-zones">town zones</a>), BitMask(CLIMATE_XXX, ...)]<td>An array with two bitmasks, the first
+<tr><td>availability_mask<td>[bitmask(<a href="#refs-town-zones">town zones</a>), bitmask(CLIMATE_XXX, ...)]<td>An array with two bitmasks, the first
 bitmask is a mask of town zones where this house is available. The second bitmask is a mask of climates combined with the special value ABOVE_SNOWLINE
 which you need to set for houses available in the arctic climate above the snowline.<br>
 Examples:
@@ -1310,7 +1310,7 @@ you are technically free to chose your own class, it's highly recommended you st
 <tr><td>classname</td><td>string</td><td>You only need to set this for one object
 in every class.</td></tr>
 <tr><td>name</td><td>string</td><td></td></tr>
-<tr><td>climates_available</td><td>BitMask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC
+<tr><td>climates_available</td><td>bitmask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC
 | TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES</td></tr>
 <tr><td>size</td><td>[x, y]</td><td>Size in x and y direction. Both x and y must be compiletime constants</td></tr>
 <tr><td>build_cost_multiplier</td><td></td><td>multiplicator to the base purchase cost</td></tr>
