@@ -372,7 +372,7 @@ a unit if the expression is constant. <a href="#units">List of valid units</a></
 
 <h3><a name="block-item-livery_override">Livery override</a></h3>
 <div class="img_right">
-<img title="Livery override: different engines, same cars, different car sprites" alt="LiveryOverride example" src="LiveryOverride.png" hspace="5" vspace="5"><br>
+<img title="Livery override: different engines, same cars, different car sprites" alt="LiveryOverride example" src="liveryoverride.png" hspace="5" vspace="5"><br>
 Same cars, different engine, different car sprites
 </div>
 <p>A livery override block offers the option to change the look and
@@ -1227,7 +1227,7 @@ Examples:
 <tr><td>callback_flags<td><td>bitmask(HOUSE_CBF_XX) with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
-<tr><td>animation_info<td>array(2)<td>the first value is 0 or 1 and defines whether the animation loops, the 2nd value gives the number of animation frames from 1 to 128; e.g [1, 32] would define 32 animation frames which loop.
+<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..128 frames</td></tr>
 <tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.
 <tr><td>building_class<td>0 .. 255<td>An arbitrary number. You can check for the presence of buildings of the same class when building new buildings or using animation
 </table>
@@ -1244,7 +1244,7 @@ Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_car
 <tr><td>land_shape_flags</td><td>bitmask(<a href="#land-shape-flags">Land shape flags</a>)</td><td></td></tr>
 <tr><td>callback_flags</td><td>bitmask(INDTILE_CBF_XXX, INDTILE_CBF_YYY)</td><td>XXX = ANIM_NEXT_FRAME | ANIM_SPEED | CARGO_AMOUNT_ACCEPT
 | CARGO_TYPE_ACCEPT | SLOPE_IS_SUITABLE | FOUNDATIONS | AUTOSLOPE</td></tr>
-<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..256 frames (but &gt;= 253 may give problems)</td></tr>
+<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..253 frames</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
 <tr><td>triggers_anim_start_stop</td><td>bitmask(<a href="#industrytiles-animation-control">Animation control callback triggers</a>)</td><td></td></tr>
 <tr><td>special_flags</td><td>0..1</td><td>Set to 1 if INDTILE_CB_ANIM_NEXT_FRAME needs random bits</td></tr>
@@ -1318,7 +1318,7 @@ in every class.</td></tr>
 <tr><td>introduction_date</td><td>date</td><td>The date this object becomes available to build.</td></tr>
 <tr><td>end_of_life_date</td><td>date</td><td>The last date this object is buildable. Must be at least 365 days after introduction_date</td></tr>
 <tr><td>object_flags</td><td>bitmask(OBJ_FLAG_XXX, OBJ_FLAG_YYY)</td><td>See <a href="#object-flags">list of object flags</a></td></tr>
-<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..256 frames (but &gt;= 253 may give problems)</td></tr>
+<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..253 frames</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
 <tr><td>animation_triggers</td><td></td><td></td></tr>
 <tr><td>callback_flags</td><td>bitmask(OBJ_CBF_XXX, OBJ_CBF_YYY)</td><td>XXX = [SLOPE_CHECK | DECIDE_ANIM | DECIDE_ANIM_SPEED |
