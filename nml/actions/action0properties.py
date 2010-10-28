@@ -302,7 +302,7 @@ properties[0x09] = {
     'callback_flags': {'size': 1, 'num': 0x0E},
     'animation_info': {'custom_function': lambda value: animation_info(0x0F, value)},
     'animation_speed': {'size': 1, 'num': 0x10},
-    'triggers_anim_start_stop': {'size': 1, 'num': 0x11},
+    'animation_triggers': {'size': 1, 'num': 0x11},
     'special_flags': {'size': 1, 'num': 0x12},
 }
 

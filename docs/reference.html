@@ -1246,7 +1246,7 @@ Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_car
 | CARGO_TYPE_ACCEPT | SLOPE_IS_SUITABLE | FOUNDATIONS | AUTOSLOPE</td></tr>
 <tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..253 frames</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
-<tr><td>triggers_anim_start_stop</td><td>bitmask(<a href="#industrytiles-animation-control">Animation control callback triggers</a>)</td><td></td></tr>
+<tr><td>animation_triggers</td><td>bitmask(<a href="#industrytiles-animation-control">Animation control callback triggers</a>)</td><td>Triggers which control whether the animatin is started or stopped</td></tr>
 <tr><td>special_flags</td><td>0..1</td><td>Set to 1 if INDTILE_CB_ANIM_NEXT_FRAME needs random bits</td></tr>
 </table>
 
