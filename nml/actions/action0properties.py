@@ -260,13 +260,41 @@ def industrytile_cargos(value):
         prop_num += 1
     return props
 
+def animation_info(prop_num, value):
+    """
+    Convert animation info array of two elements to an animation info property.
+    The first is 0/1, and defines whether or not the animation loops. The second is the number of frames - 1, at most 256 frames.
+
+    @param prop_num: Property number.
+    @type  prop_num: C{int}
+
+    @param value: Array of animation info.
+    @type  value: C{Array}
+
+    @return: Animation property.
+    @rtype:  C{list} of L{Action0Property}
+    """
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("animation_info must be an array with exactly 2 constant values", value.pos)
+    looping = value.values[0].reduce_constant().value
+    frames  = value.values[1].reduce_constant().value
+    if looping not in (0, 1):
+        raise generic.ScriptError("First field of the animation_info array must be either 0 or 1", value.values[0].pos)
+    if frames < 1 or frames > 256:
+        raise generic.ScriptError("Second field of the animation_info array must be between 1 and 256", value.values[1].pos)
+    if frame >= 253:
+        generic.print_warning("Such a long animation (>= 253 frames) may cause problems", value.values[1].pos)
+
+    return [Action0Property(prop_num, ConstantNumeric(looping * 256 + frames - 1), 2)]
+
+
 properties[0x09] = {
     'substitute': {'size': 1, 'num': 0x08},
     'override': {'size': 1, 'num': 0x09},
     'accepted_cargos' : {'custom_function': industrytile_cargos},
     'land_shape_flags': {'size': 1, 'num': 0x0D},
     'callback_flags': {'size': 1, 'num': 0x0E},
-    'animation_info': {'size': 2, 'num': 0x0F},
+    'animation_info': {'custom_function': lambda value: animation_info(0x0F, value)},
     'animation_speed': {'size': 1, 'num': 0x10},
     'triggers_anim_start_stop': {'size': 1, 'num': 0x11},
     'special_flags': {'size': 1, 'num': 0x12},
@@ -404,7 +432,7 @@ properties[0x0F] = {
     'introduction_date': {'size': 4, 'num': 0x0E},
     'end_of_life_date': {'size': 4, 'num': 0x0F},
     'object_flags': {'size': 2, 'num': 0x10},
-    'animation_info': {'size': 2, 'num': 0x11},
+    'animation_info': {'custom_function': lambda value: animation_info(0x11, value)},
     'animation_speed': {'size': 1, 'num': 0x12},
     'animation_triggers': {'size': 1, 'num': 0x13},
     'remove_cost_multiplier': {'size': 1, 'num': 0x14},
@@ -456,7 +484,7 @@ properties[0x11] = {
     'substitute': {'size': 1, 'num': 0x08},
     'override': {'size': 1, 'num': 0x09},
     'callback_flags': {'size': 1, 'num': 0x0E},
-    'animation_info': {'size': 2, 'num': 0x0F},
+    'animation_info': {'custom_function': lambda value: animation_info(0x0F, value)},
     'animation_speed': {'size': 1, 'num': 0x10},
     'animation_triggers': {'size': 1, 'num': 0x11},
 }

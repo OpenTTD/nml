@@ -656,6 +656,10 @@ constant_numbers = {
     'LSF_CANNOT_LOWER_SE_EDGE'              : 3,
     'LSF_ONLY_ON_FLAT_LAND'                 : 4,
     'LSF_ALLOW_ON_WATER'                    : 5,
+
+    # Animation looping
+    'ANIMATION_NON_LOOPING'                 : 0,
+    'ANIMATION_LOOPING'                     : 1,
 }
 
 def signextend(param, info):
