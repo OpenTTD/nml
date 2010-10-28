@@ -235,7 +235,7 @@ constant_numbers = {
     'GROUNDSPRITE_NORMAL'      : 3981,
     'GROUNDSPRITE_SNOW'        : 4550,
     'GROUNDSPRITE_DESERT'      : 4550,
-    
+
     #house callback flags
     'HOUSE_CBF_BUILD'               : 0,
     'HOUSE_CBF_ANIM_NEXT_FRAME'     : 1,
@@ -286,7 +286,7 @@ constant_numbers = {
     'HOUSE_ACCEPT_GOODS'            : 0x00,
     'HOUSE_ACCEPT_FOOD'             : 0x10, # 0x80 / 8
     'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, # 0x80 / 8
-    
+
     #town zones
     'TOWNZONE_EDGE'                 : 0,
     'TOWNZONE_OUTSKIRT'             : 1,
@@ -586,7 +586,7 @@ constant_numbers = {
     'CONFIGFLAG_ENGINE_POOL'                : 0x78,
     'CONFIGFLAG_VARIABLE_RUNNING_COSTS'     : 0x7E,
     'CONFIGFLAG_ANY'                        : 0x7F,
-    
+
     #palettes
     'PALETTE_DOS'                           : 0,
     'PALETTE_WIN'                           : 1,
