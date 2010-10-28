@@ -21,11 +21,15 @@ class ReplaceSprite(object):
 
     @ivar pcx: Default image file to use for sprites. Extracted from C{param_list} during pre-processing.
     @type pcx: C{None} if not specified, else L{StringLiteral}
+
+    @ivar name: Name of this block.
+    @type name: C{None] if not given, else C{str}
     """
     def __init__(self, param_list, sprite_list, pos):
         self.param_list = param_list
         self.sprite_list = sprite_list
         self.pos = pos
+        self.name = None
 
     def pre_process(self):
         num_params = len(self.param_list)
@@ -43,6 +47,7 @@ class ReplaceSprite(object):
         print indentation*' ' + 'Replace sprites starting at'
         self.start_id.debug_print(indentation+2)
         print (indentation+2)*' ' + 'Source:', self.pcx.value if self.pcx is not None else 'None'
+        if self.name: print (indentation+2)*' ' + 'Name:', self.name
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -72,11 +77,15 @@ class ReplaceNewSprite(object):
 
     @ivar offset: Offset into the block of sprites. Extracted from C{param_list} during pre-processing.
     @type offset: C{int}
+
+    @ivar name: Name of this block.
+    @type name: C{None] if not given, else C{str}
     """
     def __init__(self, param_list, sprite_list, pos):
         self.param_list = param_list
         self.sprite_list = sprite_list
         self.pos = pos
+        self.name = None
 
     def pre_process(self):
         num_params = len(self.param_list)

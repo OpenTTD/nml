@@ -15,6 +15,7 @@ class FontGlyphBlock(object):
             self.pcx = None
         self.sprite_list = sprite_list
         self.pos = pos
+        self.name = None
 
     def pre_process(self):
         pass
