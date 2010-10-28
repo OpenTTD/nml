@@ -54,15 +54,15 @@ def write_32bpp_sprite(sprite_info, filename):
     if not os.path.exists(sprite_info.file.value):
         raise generic.ImageError("File doesn't exist", sprite_info.file.value)
     im = Image.open(sprite_info.file.value)
-    if im.mode != "RGB":
-        raise generic.ImageError("Not an RGB image", sprite_info.file.value)
+    if im.mode != "RGBA":
+        raise generic.ImageError("Not an RGBA image", sprite_info.file.value)
     x = sprite_info.xpos.value
     y = sprite_info.ypos.value
     size_x = sprite_info.xsize.value
     size_y = sprite_info.ysize.value
     sprite = im.crop((x, y, x + size_x, y + size_y))
     sprite.info["x_offs"] = str(sprite_info.xrel.value)
-    sprite.info["y_offs"] = str(sprite_info.xrel.value)
+    sprite.info["y_offs"] = str(sprite_info.yrel.value)
     pngsave(sprite, filename)
 
 #
