@@ -63,6 +63,40 @@ def append_cargo_type(feature):
     propnums = [0x15, 0x10, 0x0C]
     return lambda value: [Action0Property(propnums[feature], ConstantNumeric(0xFF), 1)]
 
+def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
+    """
+    Convert animation info array of two elements to an animation info property.
+    The first is 0/1, and defines whether or not the animation loops. The second is the number of frames, at most 253 frames.
+
+    @param prop_num: Property number.
+    @type  prop_num: C{int}
+
+    @param value: Array of animation info.
+    @type  value: C{Array}
+
+    @param loop_bit: Bit the loop information is stored.
+    @type  loop_bit: C{int}
+
+    @param max_frame: Max frames possible.
+    @type  max_frame: C{int}
+
+    @param prop_size: Property size in bytes.
+    @type  prop_size: C{int}
+
+    @return: Animation property.
+    @rtype:  C{list} of L{Action0Property}
+    """
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("animation_info must be an array with exactly 2 constant values", value.pos)
+    looping = value.values[0].reduce_constant().value
+    frames  = value.values[1].reduce_constant().value
+    if looping not in (0, 1):
+        raise generic.ScriptError("First field of the animation_info array must be either 0 or 1", value.values[0].pos)
+    if frames < 1 or frames > max_frames:
+        raise generic.ScriptError("Second field of the animation_info array must be between 1 and " + str(max_frame), value.values[1].pos)
+
+    return [Action0Property(prop_num, ConstantNumeric(looping << loop_bit + frames - 1), prop_size)]
+
 general_veh_props = {
     'reliability_decay' : {'size': 1, 'num': 0x02},
     'vehicle_life' : {'size': 1, 'num': 0x03},
@@ -235,7 +269,7 @@ properties[0x07] = {
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
     'random_colours'          : {'custom_function': house_random_colors},
     'probability'             : {'size': 1, 'num': 0x18, 'unit_conversion': 16},
-    'animation_frames'        : {'size': 1, 'num': 0x1A},
+    'animation_info'          : {'custom_function': lambda value: animation_info(0x1A, value, 7, 128, 1)},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
     'building_class'          : {'size': 1, 'num': 0x1C},
     'accepted_cargos'         : {'custom_function': house_accepted_cargos},
@@ -259,34 +293,6 @@ def industrytile_cargos(value):
         props.append(Action0Property(prop_num, ConstantNumeric(0), 2))
         prop_num += 1
     return props
-
-def animation_info(prop_num, value):
-    """
-    Convert animation info array of two elements to an animation info property.
-    The first is 0/1, and defines whether or not the animation loops. The second is the number of frames - 1, at most 256 frames.
-
-    @param prop_num: Property number.
-    @type  prop_num: C{int}
-
-    @param value: Array of animation info.
-    @type  value: C{Array}
-
-    @return: Animation property.
-    @rtype:  C{list} of L{Action0Property}
-    """
-    if not isinstance(value, Array) or len(value.values) != 2:
-        raise generic.ScriptError("animation_info must be an array with exactly 2 constant values", value.pos)
-    looping = value.values[0].reduce_constant().value
-    frames  = value.values[1].reduce_constant().value
-    if looping not in (0, 1):
-        raise generic.ScriptError("First field of the animation_info array must be either 0 or 1", value.values[0].pos)
-    if frames < 1 or frames > 256:
-        raise generic.ScriptError("Second field of the animation_info array must be between 1 and 256", value.values[1].pos)
-    if frame >= 253:
-        generic.print_warning("Such a long animation (>= 253 frames) may cause problems", value.values[1].pos)
-
-    return [Action0Property(prop_num, ConstantNumeric(looping * 256 + frames - 1), 2)]
-
 
 properties[0x09] = {
     'substitute': {'size': 1, 'num': 0x08},

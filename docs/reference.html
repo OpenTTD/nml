@@ -1227,7 +1227,7 @@ Examples:
 <tr><td>callback_flags<td><td>bitmask(HOUSE_CBF_XX) with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
-<tr><td>animation_frames<td>0 ... 128<td>number of animation frames
+<tr><td>animation_info<td>array(2)<td>the first value is 0 or 1 and defines whether the animation loops, the 2nd value gives the number of animation frames from 1 to 128; e.g [1, 32] would define 32 animation frames which loop.
 <tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.
 <tr><td>building_class<td>0 .. 255<td>An arbitrary number. You can check for the presence of buildings of the same class when building new buildings or using animation
 </table>
