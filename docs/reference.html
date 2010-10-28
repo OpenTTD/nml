@@ -1244,7 +1244,7 @@ Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_car
 <tr><td>land_shape_flags</td><td>bitmask(<a href="#land-shape-flags">Land shape flags</a>)</td><td></td></tr>
 <tr><td>callback_flags</td><td>bitmask(INDTILE_CBF_XXX, INDTILE_CBF_YYY)</td><td>XXX = ANIM_NEXT_FRAME | ANIM_SPEED | CARGO_AMOUNT_ACCEPT
 | CARGO_TYPE_ACCEPT | SLOPE_IS_SUITABLE | FOUNDATIONS | AUTOSLOPE</td></tr>
-<tr><td>animation_info</td><td></td><td></td></tr>
+<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..256 frames (but &gt;= 253 may give problems)</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
 <tr><td>triggers_anim_start_stop</td><td>bitmask(<a href="#industrytiles-animation-control">Animation control callback triggers</a>)</td><td></td></tr>
 <tr><td>special_flags</td><td>0..1</td><td>Set to 1 if INDTILE_CB_ANIM_NEXT_FRAME needs random bits</td></tr>
@@ -1318,7 +1318,7 @@ in every class.</td></tr>
 <tr><td>introduction_date</td><td>date</td><td>The date this object becomes available to build.</td></tr>
 <tr><td>end_of_life_date</td><td>date</td><td>The last date this object is buildable. Must be at least 365 days after introduction_date</td></tr>
 <tr><td>object_flags</td><td>bitmask(OBJ_FLAG_XXX, OBJ_FLAG_YYY)</td><td>See <a href="#object-flags">list of object flags</a></td></tr>
-<tr><td>animation_info</td><td></td><td></td></tr>
+<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..256 frames (but &gt;= 253 may give problems)</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
 <tr><td>animation_triggers</td><td></td><td></td></tr>
 <tr><td>callback_flags</td><td>bitmask(OBJ_CBF_XXX, OBJ_CBF_YYY)</td><td>XXX = [SLOPE_CHECK | DECIDE_ANIM | DECIDE_ANIM_SPEED |
