@@ -295,6 +295,32 @@ constant_numbers = {
     'TOWNZONE_CENTRE'               : 4,
     'ALL_TOWNZONES'                 : 0x1F,
 
+    #industry tile callback flags
+    'INDTILE_CBF_ANIM_NEXT_FRAME'     : 0,
+    'INDTILE_CBF_ANIM_SPEED'          : 1,
+    'INDTILE_CBF_CARGO_AMOUNT_ACCEPT' : 2,
+    'INDTILE_CBF_CARGO_TYPE_ACCEPT'   : 3,
+    'INDTILE_CBF_SLOPE_IS_SUITABLE'   : 4,
+    'INDTILE_CBF_FOUNDATIONS'         : 5,
+    'INDTILE_CBF_AUTOSLOPE'           : 6,
+
+    #corresponding callbacks
+    'INDTILE_CB_ANIM_STARTSTOP'       : 0x25,
+    'INDTILE_CB_ANIM_NEXT_FRAME'      : 0x26,
+    'INDTILE_CB_ANIM_SPEED'           : 0x27,
+    'INDTILE_CB_CARGO_AMOUNT_ACCEPT'  : 0x2B,
+    'INDTILE_CB_CARGO_TYPE_ACCEPT'    : 0x2C,
+    'INDTILE_CB_SLOPE_IS_SUITABLE'    : 0x2F,
+    'INDTILE_CB_FOUNDATIONS'          : 0x30,
+    'INDTILE_CB_AUTOSLOPE'            : 0x3F,
+
+    #Triggers for the animation start/stop callback
+    'INDTILE_TRIGGER_CONSTRUCTION_STATE'         : 0,
+    'INDTILE_TRIGGER_TILE_LOOP'                  : 1,
+    'INDTILE_TRIGGER_INDUSTRY_LOOP'              : 2,
+    'INDTILE_TRIGGER_INDUSTRY_RECEIVED_CARGO'    : 3,
+    'INDTILE_TRIGGER_INDUSTRY_DISTRIBUTES_CARGO' : 4,
+
     #industry callback flags
     'IND_CBF_AVAILABILITY'          : 0,
     'IND_CBF_PROD_CB_CARGO_ARRIVE'  : 1,
@@ -622,6 +648,14 @@ constant_numbers = {
     'TILE_CLASS_INDUSTRY'                   : 0x08,
     'TILE_CLASS_TUNNEL_BRIDGE'              : 0x09,
     'TILE_CLASS_OBJECTS'                    : 0x0A,
+
+    #Land shape flags for industry tiles
+    'LSF_CANNOT_LOWER_NW_EDGE'              : 0,
+    'LSF_CANNOT_LOWER_NE_EDGE'              : 1,
+    'LSF_CANNOT_LOWER_SW_EDGE'              : 2,
+    'LSF_CANNOT_LOWER_SE_EDGE'              : 3,
+    'LSF_ONLY_ON_FLAT_LAND'                 : 4,
+    'LSF_ALLOW_ON_WATER'                    : 5,
 }
 
 def signextend(param, info):

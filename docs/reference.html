@@ -115,6 +115,7 @@
 <ul>
     <li><a href="#refs-animation-speed-values">Animation speed</a></li>
 	<li><a href="#refs-default-industries">Default industries</a></li>
+	<li><a href="#refs-default-industrytiles">Default industry tiles</a></li>
 	<li><a href="#refs-basecost-table">Base cost table</a></li>
 	<li><a href="#refs-sounds">List of sound effects</a></li>
 	<li><a href="#refs-vehicleIDs">List of default vehicle IDs</a></li>
@@ -1230,8 +1231,50 @@ Examples:
 <tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.
 <tr><td>building_class<td>0 .. 255<td>An arbitrary number. You can check for the presence of buildings of the same class when building new buildings or using animation
 </table>
+
 <h2><a name="property-industrytiles">Industry tiles</a></h2>
+<table class="t">
+<tr><th>property</th><th>value range</th><th>comment</th></tr>
+<tr><td>substitute</td><td><a href="#refs-default-industrytiles">0..174</a></td><td>number of the default industry tile which can replace this one, if this tile is not available for some reason.</td></tr>
+<tr><td>override</td><td><a href="#refs-default-industrytiles">0..174</a></td><td>id of the default industry tile which this tile replaces. This is ignored, if the default industry tile has already been overridden. You can define this property multiple times</td></tr>
+<tr><td>accepted_cargos</td><td>Array with up to 3 [cargo_id, amount]-pairs.</td><td>The cargos that are accepted by this tile. CargoID is a cargo type from 
+your cargo translation table, amount is the acceptance of the given cargo in 1/8 units.<br>
+Example: to make a tile accept both COAL and IORE you could use this: <code>accepted_cargos: [[COAL, 8], [IORE, 8]];</code><br>
+Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_cargos: [];</code></td></tr>
+<tr><td>land_shape_flags</td><td>bitmask(<a href="#land-shape-flags">Land shape flags</a>)</td><td></td></tr>
+<tr><td>callback_flags</td><td>bitmask(INDTILE_CBF_XXX, INDTILE_CBF_YYY)</td><td>XXX = ANIM_NEXT_FRAME | ANIM_SPEED | CARGO_AMOUNT_ACCEPT
+| CARGO_TYPE_ACCEPT | SLOPE_IS_SUITABLE | FOUNDATIONS | AUTOSLOPE</td></tr>
+<tr><td>animation_info</td><td></td><td></td></tr>
+<tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href=#refs-animation-speed-values>animation speed table</a> for the meaning of the values.</td></tr>
+<tr><td>triggers_anim_start_stop</td><td>bitmask(<a href="#industrytiles-animation-control">Animation control callback triggers</a>)</td><td></td></tr>
+<tr><td>special_flags</td><td>0..1</td><td>Set to 1 if INDTILE_CB_ANIM_NEXT_FRAME needs random bits</td></tr>
+</table>
+
+<h3><a name="land-shape-flags">Land shape flags</a></h3>
+<table class="t">
+<tr><th>Flag</th><th>Meaning</th></tr>
+<tr><td>LSF_CANNOT_LOWER_NW_EDGE</td><td>North-west edge cannot be lowered</td></tr>
+<tr><td>LSF_CANNOT_LOWER_NE_EDGE</td><td>North-east edge cannot be lowered</td></tr>
+<tr><td>LSF_CANNOT_LOWER_SW_EDGE</td><td>South-west edge cannot be lowered</td></tr>
+<tr><td>LSF_CANNOT_LOWER_SE_EDGE</td><td>South-east edge cannot be lowered</td></tr>
+<tr><td>LSF_ONLY_ON_FLAT_LAND</td><td>This tile can only be built on flat land</td></tr>
+<tr><td>LSF_ALLOW_ON_WATER</td><td>The land/water check is disabled for this tile so it can be built on water. If you need
+more control over this use callback 0x2F.</td></tr>
+</table>
+
+<h3><a name="industrytiles-animation-control">Animation control callback triggers</a></h3>
+<table class="t">
+<tr><th>Trigger</th><th>Meaning</th></tr>
+<tr><td>INDTILE_TRIGGER_CONSTRUCTION_STATE</td><td>the construction state changes </td></tr>
+<tr><td>INDTILE_TRIGGER_TILE_LOOP</td><td>the tile is processed in the periodic processing loop </td></tr>
+<tr><td>INDTILE_TRIGGER_INDUSTRY_LOOP</td><td>the industry of the tile is processed in the periodic processing loop (synchronized animation) </td></tr>
+<tr><td>INDTILE_TRIGGER_INDUSTRY_RECEIVED_CARGO</td><td>the industry of the tile receives input cargo from a station </td></tr>
+<tr><td>INDTILE_TRIGGER_INDUSTRY_DISTRIBUTES_CARGO</td><td>the industry distributes its output cargo to one of the stations nearby</td></tr>
+</table>
+
 <h2><a name="property-industries">Industries</a></h2>
+
+
 <h2><a name="property-cargos">Cargos</a></h2>
 <p>Available cargo classes are listed in the following table. Cargos may be in
 more than one class. To combine multiple cargo classes, use the builtin function bitmask.
@@ -1840,6 +1883,46 @@ spaced by powers of two. For houses the minimum value is 2 (=4 ticks). The ingam
 <li>INDUSTRYTYPE_UNKNOWN</li>
 <li>INDUSTRYTYPE_TOWN</li>
 </ul>
+
+<h2><a name="refs-default-industrytiles">Default industry tiles</a></h2>
+<table class="t">
+<tr><td>00..06</td><td>coal mine</td></tr>
+<tr><td>07..10</td><td>power station</td></tr>
+<tr><td>11..15</td><td>sawmill</td></tr>
+<tr><td>16..17</td><td>forest</td></tr>
+<tr><td>18..23</td><td>oil refinery</td></tr>
+<tr><td>24..28</td><td>oil rig</td></tr>
+<tr><td>29..32</td><td>oil wells</td></tr>
+<tr><td>33..38</td><td>farm</td></tr>
+<tr><td>39..42</td><td>factory (temperate climate)</td></tr>
+<tr><td>43..45</td><td>printing works</td></tr>
+<tr><td>47..51</td><td>copper ore mine</td></tr>
+<tr><td>52..57</td><td>steel mill</td></tr>
+<tr><td>58..59</td><td>bank (temperate climate)</td></tr>
+<tr><td>60..63</td><td>food processing plant</td></tr>
+<tr><td>64..71</td><td>paper mill</td></tr>
+<tr><td>72..88</td><td>gold mine</td></tr>
+<tr><td>89..90</td><td>bank (sub-arctic or sub-tropical climate)</td></tr>
+<tr><td>91..99</td><td>diamond mine</td></tr>
+<tr><td>100..115</td><td>iron ore mine</td></tr>
+<tr><td>116</td><td>fruit plantation</td></tr>
+<tr><td>117</td><td>rubber plantation</td></tr>
+<tr><td>118..119</td><td>water supply</td></tr>
+<tr><td>120</td><td>water tower</td></tr>
+<tr><td>121..124</td><td>factory (sub-tropical climate)</td></tr>
+<tr><td>125..128</td><td>lumber mill</td></tr>
+<tr><td>129..130</td><td>candyfloss forest</td></tr>
+<tr><td>131..134</td><td>sweet factory</td></tr>
+<tr><td>135..136</td><td>battery farm</td></tr>
+<tr><td>137</td><td>cola wells</td></tr>
+<tr><td>138..141</td><td>toy shop</td></tr>
+<tr><td>142..147</td><td>toy factory</td></tr>
+<tr><td>148..155</td><td>plastic fountains (various stages of cyclic animation)</td></tr>
+<tr><td>156..159</td><td>fizzy drink factory</td></tr>
+<tr><td>160..163</td><td>bubble generator</td></tr>
+<tr><td>164..166</td><td>toffee quarry</td></tr>
+<tr><td>167..174</td><td>sugar mine</td></tr>
+</table>
 
 <h2><a name="refs-basecost-table">Base cost table</a></h2>
 <table class="t">

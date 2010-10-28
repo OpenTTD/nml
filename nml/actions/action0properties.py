@@ -227,17 +227,33 @@ properties[0x07] = {
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
 }
 
+def industrytile_cargos(value):
+    if not isinstance(value, Array) or len(value.values) > 3:
+        raise generic.ScriptError("accepted_cargos must be an array with no more than 3 values", value.pos)
+    prop_num = 0x0A
+    props = []
+    for cargo_amount_pair in value.values:
+        if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
+            raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
+        cargo_id = cargo_amount_pair.values[0].reduce_constant().value
+        cargo_amount = cargo_amount_pair.values[1].reduce_constant().value
+        props.append(Action0Property(prop_num, ConstantNumeric((cargo_amount << 8) | cargo_id), 2))
+        prop_num += 1
+
+    while prop_num <= 0x0C:
+        props.append(Action0Property(prop_num, ConstantNumeric(0), 2))
+        prop_num += 1
+    return props
+
 properties[0x09] = {
     'substitute': {'size': 1, 'num': 0x08},
     'override': {'size': 1, 'num': 0x09},
-    'cargo_1': {'size': 2, 'num': 0x0A},
-    'cargo_2': {'size': 2, 'num': 0x0B},
-    'cargo_3': {'size': 2, 'num': 0x0C},
+    'accepted_cargos' : {'custom_function': industrytile_cargos},
     'land_shape_flags': {'size': 1, 'num': 0x0D},
     'callback_flags': {'size': 1, 'num': 0x0E},
     'animation_info': {'size': 2, 'num': 0x0F},
     'animation_speed': {'size': 1, 'num': 0x10},
-    'triggers_cb25': {'size': 1, 'num': 0x11},
+    'triggers_anim_start_stop': {'size': 1, 'num': 0x11},
     'special_flags': {'size': 1, 'num': 0x12},
 }
 
