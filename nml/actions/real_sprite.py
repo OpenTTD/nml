@@ -1,4 +1,5 @@
 from nml import generic, expression
+import os, Image
 
 class RealSprite(object):
     def __init__(self, param_list = None):
@@ -13,6 +14,27 @@ class RealSprite(object):
         print indentation*' ' + 'Real sprite, parameters:'
         for param in self.param_list:
             param.debug_print(indentation + 2)
+
+    def check_sprite_size(self):
+        generic.check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", self.xpos.pos)
+        generic.check_range(self.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", self.ypos.pos)
+        generic.check_range(self.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'", self.xsize.pos)
+        generic.check_range(self.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'", self.ysize.pos)
+
+    def validate_size(self):
+        """
+        Check if xpos/ypos/xsize/ysize are already set and if not, set them
+        to 0,0,image_width,image_height.
+        """
+        if self.xpos is not None: return
+        if not os.path.exists(self.file.value):
+            raise generic.ImageError("File doesn't exist", self.file.value)
+        im = Image.open(self.file.value)
+        self.xpos = expression.ConstantNumeric(0)
+        self.ypos = expression.ConstantNumeric(0)
+        self.xsize = expression.ConstantNumeric(im.size[0])
+        self.ysize = expression.ConstantNumeric(im.size[1])
+        self.check_sprite_size()
 
 class RealSpriteAction(object):
     def __init__(self, sprite):
@@ -98,10 +120,7 @@ def parse_real_sprite(sprite, default_file, id_dict):
             new_sprite.ypos  = sprite.param_list[1].reduce_constant([id_dict])
             new_sprite.xsize = sprite.param_list[2].reduce_constant([id_dict])
             new_sprite.ysize = sprite.param_list[3].reduce_constant([id_dict])
-            generic.check_range(new_sprite.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", new_sprite.xpos.pos)
-            generic.check_range(new_sprite.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", new_sprite.ypos.pos)
-            generic.check_range(new_sprite.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'", new_sprite.xsize.pos)
-            generic.check_range(new_sprite.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'", new_sprite.ysize.pos)
+            new_sprite.check_sprite_size()
             param_offset += 4
 
         new_sprite.xrel  = sprite.param_list[param_offset].reduce_constant([id_dict])

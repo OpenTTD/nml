@@ -145,6 +145,7 @@ def nml(inputfile, output_debug, outputfiles):
     for action in actions:
         if isinstance(action, real_sprite.RealSpriteAction):
             if action.sprite.is_empty: continue
+            action.sprite.validate_size()
             sprite_files.add(action.sprite.file.value)
 
     if not Image and len(sprite_files) > 0:
