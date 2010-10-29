@@ -90,6 +90,8 @@ def parse_error_block(error):
     if error.data is not None:
         if not isinstance(error.data, expression.Identifier):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos)
+        if error.data.value not in grfstrings.grf_strings:
+            raise generic.ScriptError("Unknown string '%s'" % (error.data.value), error.data.pos)
         for translation in grfstrings.grf_strings[error.data.value]:
             langs.append(translation['lang'])
 
