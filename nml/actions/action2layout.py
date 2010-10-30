@@ -123,13 +123,8 @@ class Action2LayoutSprite(object):
         return num
 
     def _validate_recolor(self, name, value, spritesets):
-        if isinstance(value, expression.Identifier) and value.value == 'TRANSPARANT':
-            return -1
-        try:
-            num = value.reduce_constant().value
-        except generic.ConstError:
-            raise generic.ScriptError("Value of 'recolor' should be either 'TRANSPARANT' or a compile-time constant sprite number", value.pos)
-        generic.check_range(num, 0, (1 << 14) - 1, "recolor", value.pos)
+        num = value.reduce_constant().value
+        generic.check_range(num, -1, (1 << 14) - 1, "recolor", value.pos)
         return num
 
     def _validate_always_draw(self, name, value, spritesets):

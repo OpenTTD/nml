@@ -666,6 +666,9 @@ constant_numbers = {
     'ZOOM_LEVEL_Z0'                         : 0,
     'ZOOM_LEVEL_Z1'                         : 1,
     'ZOOM_LEVEL_Z2'                         : 2,
+
+    #Transparant recolouring
+    'TRANSPARANT'                           : -1,
 }
 
 def signextend(param, info):
