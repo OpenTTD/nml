@@ -9,7 +9,9 @@ class SpriteBlock(object):
         self.pos = pos
 
     def pre_process(self):
-        pass
+        for spriteset in self.spriteset_list:
+            spriteset.feature = self.feature
+            spriteset.pre_process()
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite block, feature', hex(self.feature.value)

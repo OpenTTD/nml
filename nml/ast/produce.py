@@ -1,5 +1,5 @@
 from nml import expression, generic, global_constants
-from nml.actions import action2production
+from nml.actions import action2, action2production
 
 class Produce(object):
     """
@@ -11,6 +11,9 @@ class Produce(object):
 
     @ivar pos: Position of produce-block.
     @type pos: L{Position}
+
+    @ivar feature: Feature of this block (always FEAT_INDUSTRIES)
+    @type feature: L{Expression}
 
     @ivar name: Name that identifies this block and can be used to refer to it.
     @type name: L{Identifier}
@@ -27,6 +30,7 @@ class Produce(object):
     def __init__(self, param_list, pos):
         self.param_list = param_list
         self.pos = pos
+        self.feature = expression.ConstantNumeric(0x0A) #feature = industries, obviously
 
     def pre_process(self):
         if not (6 <= len(self.param_list) <= 7):
@@ -47,6 +51,7 @@ class Produce(object):
             self.again = self.param_list[6].reduce(global_constants.const_list)
         else:
             self.again = expression.ConstantNumeric(0)
+        action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Produce, name =', str(self.name)

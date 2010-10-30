@@ -32,6 +32,9 @@ class SpriteSet(object):
             self.pcx = None
         self.sprite_list = sprite_list
         self.pos = pos
+        self.feature = None #will be set during pre-processing
+
+    def pre_process(self):
         action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
@@ -49,6 +52,10 @@ class SpriteGroup(object):
         self.name = name
         self.spriteview_list = spriteview_list
         self.pos = pos
+        self.feature = None #will be set during pre-processing
+
+    def pre_process(self):
+        action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite group:', self.name.value
@@ -60,6 +67,10 @@ class LayoutSpriteGroup(object):
         self.name = name
         self.layout_sprite_list = layout_sprite_list
         self.pos = pos
+        self.feature = None #will be set during pre-processing
+
+    def pre_process(self):
+        action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Tile layout sprite group:', self.name.value

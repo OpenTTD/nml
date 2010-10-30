@@ -20,7 +20,7 @@ class Switch(object):
         self.pos = pos
 
     def pre_process(self):
-        pass
+        action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
@@ -106,7 +106,7 @@ class RandomSwitch(object):
         self.pos = pos
 
     def pre_process(self):
-        pass
+        action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Random'
