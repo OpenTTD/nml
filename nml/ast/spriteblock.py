@@ -1,5 +1,5 @@
-from nml import generic, global_constants
-from nml.actions import action1, real_sprite
+from nml import expression, generic, global_constants
+from nml.actions import action1, action2, real_sprite
 from nml.ast import general
 
 class SpriteBlock(object):
@@ -61,6 +61,10 @@ class SpriteView(object):
         self.spriteset_list = spriteset_list
         self.pos = pos
 
+    def check_spritesets(self, feature):
+        for spriteset in self.spriteset_list:
+            action2.resolve_spritegroup(spriteset, feature, False, True)
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite view:', self.name.value
         print (indentation+2)*' ' + 'Sprite sets:'
@@ -72,6 +76,11 @@ class LayoutSprite(object):
         self.type = type
         self.param_list = param_list
         self.pos = pos
+
+    def check_spritesets(self, feature):
+        for layout_param in self.param_list:
+            if isinstance(layout_param.value, expression.Identifier):
+                action2.resolve_spritegroup(layout_param.value, feature, False, True)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Tile layout sprite of type:', self.type
@@ -86,7 +95,4 @@ class LayoutParam(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Layout parameter:', self.name.value
-        if isinstance(self.value, basestring):
-            print (indentation + 2)*' ' + 'String: ', self.value
-        else:
-            self.value.debug_print(indentation + 2)
+        self.value.debug_print(indentation + 2)

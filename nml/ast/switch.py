@@ -20,6 +20,9 @@ class Switch(object):
         self.pos = pos
 
     def pre_process(self):
+        for result in [r.result for r in self.body.ranges] + [self.body.default]:
+            if isinstance(result, expression.Identifier) and result.value != 'CB_FAILED':
+                action2.resolve_spritegroup(result, self.feature.value, True, False)
         action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
@@ -106,6 +109,9 @@ class RandomSwitch(object):
         self.pos = pos
 
     def pre_process(self):
+        for choice in self.choices:
+            if isinstance(choice.result, expression.Identifier) and choice.result.value != 'CB_FAILED':
+                action2.resolve_spritegroup(choice.result, self.feature.value, True, False)
         action2.register_spritegroup(self)
 
     def debug_print(self, indentation):

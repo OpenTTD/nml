@@ -1,6 +1,6 @@
 from nml import expression, generic, global_constants, unit
 from nml.ast import conditional, loop, general
-from nml.actions import action0, action3
+from nml.actions import action0, action2, action3
 
 def validate_item_block(block_list):
     for block in block_list:
@@ -56,6 +56,9 @@ class Item(object):
         validate_item_block(body)
 
     def pre_process(self):
+        global item_feature, item_id
+        item_id = self.id
+        item_feature = self.feature.value
         for b in self.body:
             b.pre_process()
 
@@ -144,6 +147,7 @@ class LiveryOverride(object):
         self.pos = pos
 
     def pre_process(self):
+        self.graphics_block.pre_process()
         pass
 
     def debug_print(self, indentation):
@@ -164,7 +168,9 @@ class GraphicsBlock(object):
         self.default_graphics = default_graphics
 
     def pre_process(self):
-        pass
+        for gfx in [g.action2_id for g in self.graphics_list] + [self.default_graphics]:
+            if isinstance(gfx, expression.Identifier):
+                action2.resolve_spritegroup(gfx, item_feature, True, False)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics block:'
