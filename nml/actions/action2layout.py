@@ -91,7 +91,7 @@ class Action2LayoutSprite(object):
         assert name in self.params
         return self.params[name]['is_set']
 
-    def set_param(self, name, value, spritesets):
+    def set_param(self, name, value):
         assert isinstance(name, expression.Identifier)
         assert isinstance(value, expression.Expression)
         name = name.value
@@ -101,40 +101,39 @@ class Action2LayoutSprite(object):
         if self.is_set(name):
             raise generic.ScriptError("Sprite parameter '%s' can be set only once per sprite." % name, value.pos)
 
-        self.params[name]['value'] = self.params[name]['validator'](name, value, spritesets)
+        self.params[name]['value'] = self.params[name]['validator'](name, value)
         self.params[name]['is_set'] = True
 
-    def _validate_sprite(self, name, value, spritesets):
+    def _validate_sprite(self, name, value):
         if not isinstance(value, expression.Identifier):
             raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier", value.pos)
-        if value.value not in spritesets:
-            raise generic.ScriptError("Unknown sprite set: " + str(value), value.pos)
-        num = spritesets[value.value]
+        spriteset = action2.resolve_spritegroup(value, None, False, True)
+        num = spriteset.action1_num
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
         if self.is_set('ttdsprite'):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
         return num
 
-    def _validate_ttdsprite(self, name, value, spritesets):
+    def _validate_ttdsprite(self, name, value):
         num = value.reduce_constant().value
         generic.check_range(num, 0, (1 << 14) - 1, "ttdsprite", value.pos)
         if self.is_set('sprite'):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
         return num
 
-    def _validate_recolor(self, name, value, spritesets):
+    def _validate_recolor(self, name, value):
         num = value.reduce_constant().value
         generic.check_range(num, -1, (1 << 14) - 1, "recolor", value.pos)
         return num
 
-    def _validate_always_draw(self, name, value, spritesets):
+    def _validate_always_draw(self, name, value):
         num = value.reduce_constant().value
         if num not in (0, 1):
             raise generic.ScriptError("Value of 'always_draw' should be 0 or 1", value.pos)
         #bit has no effect for ground sprites but should be left empty, so ignore it
         return num if self.type != Action2LayoutSpriteType.GROUND else 0
 
-    def _validate_bounding_box(self, name, value, spritesets):
+    def _validate_bounding_box(self, name, value):
         val = value.reduce_constant().value
 
         if self.type == Action2LayoutSpriteType.GROUND:
@@ -156,7 +155,7 @@ class Action2LayoutSprite(object):
 
 layout_action2_features = [0x07, 0x09, 0x0F, 0x11] #houses, industry tiles, objects and airport tiles
 
-def get_layout_action2s(spritegroup, feature, spritesets):
+def get_layout_action2s(spritegroup, feature):
     global layout_action2_features
     ground_sprite = None
     building_sprites = []
@@ -167,7 +166,7 @@ def get_layout_action2s(spritegroup, feature, spritesets):
     for layout_sprite in spritegroup.layout_sprite_list:
         sprite = Action2LayoutSprite(layout_sprite.type, layout_sprite.pos)
         for param in layout_sprite.param_list:
-            sprite.set_param(param.name, param.value, spritesets)
+            sprite.set_param(param.name, param.value)
         if sprite.type == Action2LayoutSpriteType.GROUND:
             if ground_sprite is not None:
                 raise generic.ScriptError("Sprite group can have no more than one ground sprite", spritegroup.pos)
@@ -181,6 +180,6 @@ def get_layout_action2s(spritegroup, feature, spritesets):
             raise generic.ScriptError("Sprite group requires at least one sprite", spritegroup.pos)
         #set to 0 for no ground sprite
         ground_sprite = Action2LayoutSprite(Action2LayoutSpriteType.GROUND)
-        set_sprite_property(ground_sprite, 'ttdsprite', expression.ConstantNumeric(0), spritesets)
+        set_sprite_property(ground_sprite, 'ttdsprite', expression.ConstantNumeric(0))
 
     return [Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)]

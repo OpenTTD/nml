@@ -31,7 +31,7 @@ real_action2_alias = {
 
 real_action2_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10] #vehicles, stations, canals, cargos, railtypes, airports
 
-def get_real_action2s(spritegroup, feature, spritesets):
+def get_real_action2s(spritegroup, feature):
     global real_action2_alias, real_action2_features
     loaded_list = []
     loading_list = []
@@ -48,8 +48,7 @@ def get_real_action2s(spritegroup, feature, spritesets):
             raise generic.ScriptError("Sprite view type '" + view.name.value + "' is not supported for this feature: 0x" + generic.to_hex(feature, 2), view.pos)
 
         for set_name in view.spriteset_list:
-            if set_name.value not in spritesets:
-                raise generic.ScriptError("Unknown sprite set: " + set_name.value, set_name.pos)
-            if type == 0: loaded_list.append(spritesets[set_name.value])
-            else:  loading_list.append(spritesets[set_name.value])
+            spriteset = action2.resolve_spritegroup(set_name, feature, False, True)
+            if type == 0: loaded_list.append(spriteset.action1_num)
+            else:  loading_list.append(spriteset.action1_num)
     return [Action2Real(feature, spritegroup.name.value, loaded_list, loading_list)]

@@ -34,6 +34,7 @@ class SpriteSet(object):
         self.pos = pos
         self.feature = None #will be set during pre-processing
         self.referencing_groups = set() #sprite groups that reference this set
+        self.action1_num = None #set number in action1
 
     def pre_process(self):
         action2.register_spritegroup(self)
@@ -93,7 +94,6 @@ def parse_sprite_block(sprite_block):
     global action1_features
     action_list = []
     action_list_append = []
-    spritesets = {} #map names to action1 entries
     num_sets = 0
     num_ent = -1
 
@@ -104,7 +104,8 @@ def parse_sprite_block(sprite_block):
         if isinstance(item, SpriteSet):
             real_sprite_list = real_sprite.parse_sprite_list(item.sprite_list, item.pcx, block_name = item.name)
             action_list.extend(real_sprite_list)
-            spritesets[item.name.value] = num_sets
+            assert item.action1_num is None
+            item.action1_num = num_sets
             num_sets += 1
 
             if num_ent == -1:
@@ -113,10 +114,10 @@ def parse_sprite_block(sprite_block):
                 raise generic.ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)), item.pos)
 
         elif isinstance(item, SpriteGroup):
-            action_list_append.extend(action2real.get_real_action2s(item, sprite_block.feature.value, spritesets))
+            action_list_append.extend(action2real.get_real_action2s(item, sprite_block.feature.value))
         else:
             assert isinstance(item, LayoutSpriteGroup)
-            action_list_append.extend(action2layout.get_layout_action2s(item, sprite_block.feature.value, spritesets))
+            action_list_append.extend(action2layout.get_layout_action2s(item, sprite_block.feature.value))
 
     if num_sets > 0: action_list.insert(0, Action1(sprite_block.feature, num_sets, num_ent))
     action_list.extend(action_list_append)
