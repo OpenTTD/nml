@@ -1,5 +1,5 @@
 from nml import generic, expression
-from nml.actions import base_action, action2real, action2layout, real_sprite
+from nml.actions import base_action, action2, action2real, action2layout, real_sprite
 
 class Action1(base_action.BaseAction):
     def __init__(self, feature, num_sets, num_ent):
@@ -32,7 +32,7 @@ class SpriteSet(object):
             self.pcx = None
         self.sprite_list = sprite_list
         self.pos = pos
-        register_spriteset(self)
+        action2.register_spriteset(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite set:', self.name.value
@@ -98,32 +98,3 @@ def parse_sprite_block(sprite_block):
     if num_sets > 0: action_list.insert(0, Action1(sprite_block.feature, num_sets, num_ent))
     action_list.extend(action_list_append)
     return action_list
-
-#list of sprite sets
-spriteset_list = {}
-
-def register_spriteset(spriteset):
-    """
-    Register a sprite set, so it can be resolved by name later
-
-    @param spriteset: Spriteset to register
-    @type spriteset: L{SpriteSet}
-    """
-    name = spriteset.name.value
-    if name in spriteset_list:
-        raise generic.ScriptError("Sprite set with name '%s' has already been defined" % name, spriteset.pos)
-    spriteset_list[name] = spriteset
-
-def resolve_spriteset(name):
-    """
-    Resolve a sprite set with a given name
-
-    @param name: Name of the sprite set.
-    @type name: L{Identifier}
-    
-    @return: The sprite set that the name refers to.
-    """
-    if name.value not in spriteset_list:
-        raise generic.ScriptError("Referring to unknown spriteset '%s'" % name.value, name.pos)
-    return spriteset_list[name.value]
-    

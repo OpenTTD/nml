@@ -82,3 +82,31 @@ def remove_ref(name):
     act2.num_refs -= 1
     if act2.num_refs == 0: free_action2_ids.append(act2.id)
     return id
+
+#list of sprite sets
+spriteset_list = {}
+
+def register_spriteset(spriteset):
+    """
+    Register a sprite set, so it can be resolved by name later
+
+    @param spriteset: Spriteset to register
+    @type spriteset: L{SpriteSet}
+    """
+    name = spriteset.name.value
+    if name in spriteset_list:
+        raise generic.ScriptError("Sprite set with name '%s' has already been defined" % name, spriteset.pos)
+    spriteset_list[name] = spriteset
+
+def resolve_spriteset(name):
+    """
+    Resolve a sprite set with a given name
+
+    @param name: Name of the sprite set.
+    @type name: L{Identifier}
+    
+    @return: The sprite set that the name refers to.
+    """
+    if name.value not in spriteset_list:
+        raise generic.ScriptError("Referring to unknown spriteset '%s'" % name.value, name.pos)
+    return spriteset_list[name.value]
