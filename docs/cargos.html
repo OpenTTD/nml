@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+<h1><a name="cargos">Cargoes</h1>
+
+<h2><a name="cargos-vars">Cargo variables</a></h2>
+
+<h2><a name="cargos-property">Cargo properties</a></h2>
+<p>Available cargo classes are listed in the following table. Cargos may be in
+more than one class. To combine multiple cargo classes, use the builtin function bitmask.
+For example, <code>bitmask(CC_EXPRESS, CC_REFRIGERATED)</code> is used for food.</p>
+<table class="t">
+<tr><th>name <th> type of cargo
+<tr><td>CC_PASSENGERS<td> passengers, also tourists (ECS)
+<tr><td>CC_MAIL<td> mail
+<tr><td>CC_EXPRESS<td> express goods, also tourists (ECS)
+<tr><td>CC_ARMOURED<td> valuables, diamonds, gold and alike
+<tr><td>CC_BULK<td> coal, ore, grain,...
+<tr><td>CC_PIECE_GOODS<td> containers, crates, livestock
+<tr><td>CC_LIQUID<td> oil, milk, water, ...
+<tr><td>CC_REFRIGERATED<td> food, milk, ...
+<tr><td>CC_HAZARDOUS<td> chemicals?, uranium, ...
+<tr><td>CC_COVERED<td> grain, cement, fruit, ...
+<tr><td>CC_OVERSIZED<td> vehicles, ...
+<tr><td>CC_SPECIAL<td> Special cargo, used for refit tricks. (e.g. regearing in NARS)
+<tr><td>NO_CARGO_CLASS<td>Special value that you can used to instead of 0.
+<tr><td>ALL_NORMAL_CARGO_CLASSES<td> All cargo classes except CC_SPECIAL. This is the same as <code>bitmask(CC_PASSENGERS, CC_MAIL, ..., CC_OVERSIZED)</code>.
+<tr><td>ALL_CARGO_CLASSES<td> All cargo classes. Same as <code>ALL_NORMAL_CARGO_CLASSES | bitmask(CC_SPECIAL)</code>
+</table>
+
+</body>
+</html>
+

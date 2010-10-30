@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+<h1><a name="railtypes">Rail types</a></h1>
+
+<h2><a name="railtypes-vars">Railtype variables</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>enhanced_tunnels</td><td>0</td><td>should custom tunnel entrances be modified other values than 0 might be returned</td></tr>
+<tr><td>level_crossing_status</td><td>LEVEL_CROSSING_CLOSED, LEVEL_CROSSING_OPEN</td><td></td></tr>
+<tr><td>build_date <td>0 .. 5000000 <td>for depots only: build date of the depot in days since 0
+</table>
+
+<h2><a name="railtypes-property">Railtype properties</a></h2>
+<table class="t">
+<tr><th>property</th><th>value range</th><th>comment</th></tr>
+<tr><td>label</td><td>                   4-byte string</td><td>names of default rail types: "RAIL", "ELRL", "MONO", "MLEV", "3RDR"</td></tr>
+<tr><td>name</td><td>                    string</td><td></td></tr>
+<tr><td>menu_text</td><td>               string</td><td></td></tr>
+<tr><td>build_window_caption</td><td>    string</td><td></td></tr>
+<tr><td>autoreplace_text</td><td>        string</td><td></td></tr>
+<tr><td>new_engine_text</td><td>         string</td><td></td></tr>
+<tr><td>compatible_railtype_list</td><td>list of railtype labels</td><td>e.g. ["RAIL", "ELRL", "MONO"]</td></tr>
+<tr><td>powered_railtype_list</td><td>   list of railtype labels</td><td></td></tr>
+<tr><td>railtype_flags</td><td>          bitmask(RAILTYPE_FLAG_CATANERY, RAILTYPE_FLAG_NO_LEVEL_CROSSING (OpenTTD r20049))</td><td></td></tr>
+<tr><td>curve_speed_multiplier</td><td>  0...65525</td><td>max curve speed is defined as multiple of the base curve speed (see below)</td></tr>
+<tr><td>station graphics</td><td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV</td><td></td></tr>
+<tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track as multiplier to PR_BUILD_RAIL base cost</td></tr>
+<tr><td>speed_limit</td><td>             0 ... 65525 km/h (speed units)</td><td>A speed limit of 0 means unlimited speed</td></tr>
+<tr><td>acceleration_model</td><td>      ACC_MODEL_RAIL, ACC_MODEL_MONORAIL, ACC_MODEL_MAGLEV</td><td>ACC_MODEL_RAIL and ACC_MODEL_MONORAIL behave the same currently</td></tr>
+<tr><td>map_colour</td><td>              0 ... 255</td><td>entry in the colour palette</td></tr>
+</table>
+
+<p>
+The base speeds relevant for the curve_speed_multiplier are:</p>
+<table class="t">
+<tr><th>curve length</th><th>base speed [km/h]</th></tr>
+<tr><td>0 (90 degree turn)</td><td>30</td></tr>
+<tr><td>1</td><td>44</td></tr>
+<tr><td>2</td><td>55</td></tr>
+<tr><td>3</td><td>66</td></tr>
+<tr><td>4</td><td>75</td></tr>
+<tr><td>5</td><td>84</td></tr>
+<tr><td>6</td><td>91</td></tr>
+<tr><td>7</td><td>98</td></tr>
+<tr><td>8</td><td>103</td></tr>
+<tr><td>9</td><td>108</td></tr>
+<tr><td>10</td><td>111</td></tr>
+<tr><td>11</td><td>114</td></tr>
+<tr><td>12+</td><td>115</td></tr>
+</table>
+
+<p>Rail types define a number of fixed graphic blocks:</p>
+<table class="t">
+<tr><th>block name</th><th>number of sprites</th><th>meaning</th></tr>
+<tr><td>GUI</td><td>         16</td><td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu</td></tr>
+<tr><td>TRACKOVERLAY*</td><td>10</td><td>6 flat and 4 slope sprites. Track without landscape</td></tr>
+<tr><td>UNDERLAY*</td><td>    16</td><td>6 flat and 4 slope, one crossing WITH track, 5 junction pieces without track. Tracks with foundations but without landscape</td></tr>
+<tr><td>TUNNELS*</td><td>     4</td><td>4 track sprites, one for each tunnel entrance. Only track with foundations, no landscape</td></tr>
+<tr><td>CATENERY_WIRE</td><td>28</td><td></td></tr>
+<tr><td>CATENERY_PYLONS</td><td>8</td><td></td></tr>
+<tr><td>BRIDGE_SURFACES</td><td>6</td><td></td></tr>
+<tr><td>LEVEL_CROSSINGS*</td><td>10</td><td>For each direction: one track sprite and 4 sprites for road lights etc</td></tr>
+<tr><td>DEPOTS*</td><td>6</td><td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.</td></tr>
+<tr><td>FENCES</td><td>8</td><td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301</td></tr>
+</table>
+
+<p>The entries marked by * are required. A typical implementation for railtypes can look like
+<pre class="code">
+item(FEAT_RAILTYPES, elrail, 0x01) {
+    property {
+        label:                      "SHIN";
+        name:                       string(STR_EL_RAIL);
+        menu_text:                  string(STR_EL_RAIL);
+        build_window_caption:       string(STR_BUILD_CAPTION);
+        autoreplace_text:           string(STR_AUTOREPLACE);
+        new_engine_text:            string(STR_NEW_ENGINE);
+        compatile_railtype_list:    ["SHIN","RAIL","ELRL"];           // Tracks of rail and electrified rail are compatible
+        powered_railtype_list:      ["ELRL","SHIN"];                  // But we got only power when we have electricity
+        railtype_flags:             RAILTYPE_FLAG_CATANERY;           // High speed tracks should not have level crossings
+        curve_speed_multiplier:     1;
+        station_graphics:           RAILTYPE_STATION_MAGLEV;          // We want the most modern stations
+        construction_cost:          32;                               // should be pretty steep
+        speed_limit:                500 km/h;
+        acceleration_model:         ACC_MODEL_RAIL;                   // This is still rail, though
+    }
+    graphics {
+        TRACKOVERLAY:    ground_switch_overlay;     // defines the sprites drawn as overlay for junctions and highlight
+        UNDERLAY:        ground_switch_underlay;    // defines the usual tracks and the underlay for junctions
+        LEVEL_CROSSINGS: level_crossing_switch;     // defines level crossings including traffic lights and blocking bars
+        TUNNELS:         tunnel_switch;             // defines the tracks drawn on a funnel tile
+        DEPOTS:          depot_switch_electric;     // defines the depot sprites
+        BRIDGE_SURFACES: bridge_terrain_switch;     // defines the overlay drawn over bridges
+        FENCES:          fences_group;              // defines the look of fences
+        // we don't define catenery wire and pylons, thus we use the default which comes with the base graphics.
+    }
+}
+</pre>
+The switches and graphics blocks are defined in the usual way as described in sections
+<a href="nml-language.html#block-switch">switches</a>, <a href="nml-language.html#block-randomswitch">random switches</a> and <a href="nml-language.html#block-item-graphics">graphics block</a> sections.
+</p>
+
+</body>
+</html>
+

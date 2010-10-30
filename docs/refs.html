@@ -1,0 +1,757 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+
+<h1><a name="refs">Additional references</a></h1>
+
+<h2><a name="refs-animation-speed-values">Animation speed</a></h2>
+House, industry and airport tiles can define an animation speed. This property gives the animation speed in ticks,
+spaced by powers of two. For houses the minimum value is 2 (=4 ticks). The ingame length as well real length is given as rounded values for reference only, assuming normal game speed.
+<table class="t">
+<tr><th>value<th>animation<br>length in ticks<th>ingame<th>real time
+<tr><td>0<td>1<td><td>0.03 s
+<tr><td>1<td>2<td><td>0.06 s
+<tr><td>2<td>4<td><td>0.11 s
+<tr><td>3<td>8<td><td>0.22 s
+<tr><td>4<td>16<td><td>0.45 s
+<tr><td>5<td>32<td>half a day<td>0.9 s
+<tr><td>6<td>64<td>nearly 1 day<td>1.8 s
+<tr><td>7<td>128<td>2 days<td>3&frac12; s
+<tr><td>8<td>256<td>3&frac12; days<td>7 s
+<tr><td>9<td>512<td>7 days<td>15 s
+<tr><td>10<td>1024<td>14 days<td>30 s
+<tr><td>11<td>2048<td>28 days<td>1 min
+<tr><td>12<td>4096<td>55 days<td>2 min
+<tr><td>13<td>8192<td>3&frac12; months<td>4 min
+<tr><td>14<td>16384<td>7&frac12; months<td>7&frac12; min
+<tr><td>15<td>32768<td>15 months<td>15 min
+<tr><td>16<td>65536<td>2&frac12; years<td>30 min
+</table>
+<h2><a name="refs-default-industries">Default industries</a></h2>
+<ul>
+<li>INDUSTRYTYPE_COAL_MINE</li>
+<li>INDUSTRYTYPE_POWER_PLANT</li>
+<li>INDUSTRYTYPE_SAWMILL</li>
+<li>INDUSTRYTYPE_FOREST</li>
+<li>INDUSTRYTYPE_OIL_REFINERY</li>
+<li>INDUSTRYTYPE_OIL_RIG</li>
+<li>INDUSTRYTYPE_TEMPERATE_FACTORY</li>
+<li>INDUSTRYTYPE_TROPICAL_FACTORY</li>
+<li>INDUSTRYTYPE_PRINTING_WORKS</li>
+<li>INDUSTRYTYPE_STEEL_MILL</li>
+<li>INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM</li>
+<li>INDUSTRYTYPE_TROPICAL_FARM</li>
+<li>INDUSTRYTYPE_COPPER_ORE_MINE</li>
+<li>INDUSTRYTYPE_OIL_WELLS</li>
+<li>INDUSTRYTYPE_FOOD_PROCESSING_PLANT</li>
+<li>INDUSTRYTYPE_PAPER_MILL</li>
+<li>INDUSTRYTYPE_TEMPERATE_BANK</li>
+<li>INDUSTRYTYPE_TROPICAL_ARCTIC_BANK</li>
+<li>INDUSTRYTYPE_GOLD_MINE</li>
+<li>INDUSTRYTYPE_DIAMOND_MINE</li>
+<li>INDUSTRYTYPE_IRON_ORE_MINE</li>
+<li>INDUSTRYTYPE_FRUIT_PLANTATION</li>
+<li>INDUSTRYTYPE_RUBBER_PLANTATION</li>
+<li>INDUSTRYTYPE_WATER_WELL</li>
+<li>INDUSTRYTYPE_WATER_TOWER</li>
+<li>INDUSTRYTYPE_LUMBER_MILL</li>
+<li>INDUSTRYTYPE_CANDYFLOSS_FOREST</li>
+<li>INDUSTRYTYPE_SWEETS_FACTORY</li>
+<li>INDUSTRYTYPE_BATTERY_FARM</li>
+<li>INDUSTRYTYPE_COLA_WELLS</li>
+<li>INDUSTRYTYPE_TOY_SHOP</li>
+<li>INDUSTRYTYPE_TOY_FACTORY</li>
+<li>INDUSTRYTYPE_PLASTIC_FOUNTAIN</li>
+<li>INDUSTRYTYPE_FIZZY_DRINKS_FACTORY</li>
+<li>INDUSTRYTYPE_BUBBLE_GENERATOR</li>
+<li>INDUSTRYTYPE_TOFFE_QUARRY</li>
+<li>INDUSTRYTYPE_SUGAR_MINE</li>
+</ul><ul>
+<li>INDUSTRYTYPE_UNKNOWN</li>
+<li>INDUSTRYTYPE_TOWN</li>
+</ul>
+
+<h2><a name="refs-default-industrytiles">Default industry tiles</a></h2>
+<table class="t">
+<tr><td>00..06</td><td>coal mine</td></tr>
+<tr><td>07..10</td><td>power station</td></tr>
+<tr><td>11..15</td><td>sawmill</td></tr>
+<tr><td>16..17</td><td>forest</td></tr>
+<tr><td>18..23</td><td>oil refinery</td></tr>
+<tr><td>24..28</td><td>oil rig</td></tr>
+<tr><td>29..32</td><td>oil wells</td></tr>
+<tr><td>33..38</td><td>farm</td></tr>
+<tr><td>39..42</td><td>factory (temperate climate)</td></tr>
+<tr><td>43..45</td><td>printing works</td></tr>
+<tr><td>47..51</td><td>copper ore mine</td></tr>
+<tr><td>52..57</td><td>steel mill</td></tr>
+<tr><td>58..59</td><td>bank (temperate climate)</td></tr>
+<tr><td>60..63</td><td>food processing plant</td></tr>
+<tr><td>64..71</td><td>paper mill</td></tr>
+<tr><td>72..88</td><td>gold mine</td></tr>
+<tr><td>89..90</td><td>bank (sub-arctic or sub-tropical climate)</td></tr>
+<tr><td>91..99</td><td>diamond mine</td></tr>
+<tr><td>100..115</td><td>iron ore mine</td></tr>
+<tr><td>116</td><td>fruit plantation</td></tr>
+<tr><td>117</td><td>rubber plantation</td></tr>
+<tr><td>118..119</td><td>water supply</td></tr>
+<tr><td>120</td><td>water tower</td></tr>
+<tr><td>121..124</td><td>factory (sub-tropical climate)</td></tr>
+<tr><td>125..128</td><td>lumber mill</td></tr>
+<tr><td>129..130</td><td>candyfloss forest</td></tr>
+<tr><td>131..134</td><td>sweet factory</td></tr>
+<tr><td>135..136</td><td>battery farm</td></tr>
+<tr><td>137</td><td>cola wells</td></tr>
+<tr><td>138..141</td><td>toy shop</td></tr>
+<tr><td>142..147</td><td>toy factory</td></tr>
+<tr><td>148..155</td><td>plastic fountains (various stages of cyclic animation)</td></tr>
+<tr><td>156..159</td><td>fizzy drink factory</td></tr>
+<tr><td>160..163</td><td>bubble generator</td></tr>
+<tr><td>164..166</td><td>toffee quarry</td></tr>
+<tr><td>167..174</td><td>sugar mine</td></tr>
+</table>
+
+<h2><a name="refs-basecost-table">Base cost table</a></h2>
+<table class="t">
+<tr><th>Number<th>Identifier<th>Category<th>Default value<th>Version<th>Remarks
+<tr><td>0<td>PR_STATION_VALUE<td>-<td>100<td><td>Used for some misc. purposes
+<tr><td>1<td>PR_BUILD_RAIL<td>PR_CONSTRUCTION<td>100<td><td>
+<tr><td>2<td>PR_BUILD_ROAD<td>PR_CONSTRUCTION<td>95<td><td>
+<tr><td>3<td>PR_BUILD_SIGNALS<td>PR_CONSTRUCTION<td>65<td><td>
+<tr><td>4<td>PR_BUILD_BRIDGE<td>PR_CONSTRUCTION<td>275<td><td>
+<tr><td>5<td>PR_BUILD_DEPOT_TRAIN<td>PR_CONSTRUCTION<td>600<td><td>Affects PR_BUILD_WAYPOINT_RAIL
+<tr><td>6<td>PR_BUILD_DEPOT_ROAD<td>PR_CONSTRUCTION<td>500<td><td>
+<tr><td>7<td>PR_BUILD_DEPOT_SHIP<td>PR_CONSTRUCTION<td>700<td><td>
+<tr><td>8<td>PR_BUILD_TUNNEL<td>PR_CONSTRUCTION<td>450<td><td>
+<tr><td>9<td>PR_BUILD_STATION_RAIL<td>PR_CONSTRUCTION<td>200<td><td>Cost per tile
+<tr><td>10<td>PR_BUILD_STATION_RAIL_LENGTH<td>PR_CONSTRUCTION<td>180<td><td>Cost per platform
+<tr><td>11<td>PR_BUILD_STATION_AIRPORT<td>PR_CONSTRUCTION<td>600<td><td>
+<tr><td>12<td>PR_BUILD_STATION_BUS<td>PR_CONSTRUCTION<td>200<td><td>
+<tr><td>13<td>PR_BUILD_STATION_TRUCK<td>PR_CONSTRUCTION<td>200<td><td>
+<tr><td>14<td>PR_BUILD_STATION_DOCK<td>PR_CONSTRUCTION<td>350<td><td>Affects PR_BUILD_WAYPOINT_BUOY
+<tr><td>15<td>PR_BUILD_VEHICLE_TRAIN<td>PR_BUILD_VEHICLE<td>400000<td><td>
+<tr><td>16<td>PR_BUILD_VEHICLE_WAGON<td>PR_BUILD_VEHICLE<td>2000<td><td>
+<tr><td>17<td>PR_BUILD_VEHICLE_AIRCRAFT<td>PR_BUILD_VEHICLE<td>700000<td><td>
+<tr><td>18<td>PR_BUILD_VEHICLE_ROAD<td>PR_BUILD_VEHICLE<td>14000<td><td>
+<tr><td>19<td>PR_BUILD_VEHICLE_SHIP<td>PR_BUILD_VEHICLE<td>65000<td><td>
+<tr><td>20<td>PR_BUILD_TREES<td>PR_CONSTRUCTION<td>20<td><td>
+<tr><td>21<td>PR_TERRAFORM<td>PR_CONSTRUCTION<td>250<td><td>Affects PR_BUILD_FOUNDATION
+<tr><td>22<td>PR_CLEAR_GRASS<td>PR_CONSTRUCTION<td>20<td><td>
+<tr><td>23<td>PR_CLEAR_ROUGH<td>PR_CONSTRUCTION<td>40<td><td>Affects PR_*_UNMOVABLE
+<tr><td>24<td>PR_CLEAR_ROCKS<td>PR_CONSTRUCTION<td>200<td><td>
+<tr><td>25<td>PR_CLEAR_FIELDS<td>PR_CONSTRUCTION<td>500<td><td>
+<tr><td>26<td>PR_CLEAR_TREES<td>PR_CONSTRUCTION<td>20<td><td>
+<tr><td>27<td>PR_CLEAR_RAIL<td>PR_CONSTRUCTION<td>-70<td><td>
+<tr><td>28<td>PR_CLEAR_SIGNALS<td>PR_CONSTRUCTION<td>10<td><td>
+<tr><td>29<td>PR_CLEAR_BRIDGE<td>PR_CONSTRUCTION<td>50<td><td>Affects PR_CLEAR_AQUEDUCT
+<tr><td>30<td>PR_CLEAR_DEPOT_TRAIN<td>PR_CONSTRUCTION<td>80<td><td>Affects PR_CLEAR_WAYPOINT_RAIL
+<tr><td>31<td>PR_CLEAR_DEPOT_ROAD<td>PR_CONSTRUCTION<td>80<td><td>
+<tr><td>32<td>PR_CLEAR_DEPOT_SHIP<td>PR_CONSTRUCTION<td>90<td><td>
+<tr><td>33<td>PR_CLEAR_TUNNEL<td>PR_CONSTRUCTION<td>30<td><td>
+<tr><td>34<td>PR_CLEAR_WATER<td>PR_CONSTRUCTION<td>10000<td><td>Affects PR_*_CANAL, PR_*_LOCK and PR_BUILD_AQUEDUCT
+<tr><td>35<td>PR_CLEAR_STATION_RAIL<td>PR_CONSTRUCTION<td>50<td><td>
+<tr><td>36<td>PR_CLEAR_STATION_AIRPORT<td>PR_CONSTRUCTION<td>30<td><td>
+<tr><td>37<td>PR_CLEAR_STATION_BUS<td>PR_CONSTRUCTION<td>50<td><td>
+<tr><td>38<td>PR_CLEAR_STATION_TRUCK<td>PR_CONSTRUCTION<td>50<td><td>Affects PR_CLEAR_WAYPOINT_BUOY
+<tr><td>39<td>PR_CLEAR_STATION_DOCK<td>PR_CONSTRUCTION<td>55<td><td>
+<tr><td>40<td>PR_CLEAR_HOUSE<td>PR_CONSTRUCTION<td>1600<td><td>Affects PR_CLEAR_INDUSTRY
+<tr><td>41<td>PR_CLEAR_ROAD<td>PR_CONSTRUCTION<td>40<td><td>
+<tr><td>42<td>PR_RUNNING_TRAIN_STEAM<td>PR_RUNNING<td>5600<td><td>
+<tr><td>43<td>PR_RUNNING_TRAIN_DIESEL<td>PR_RUNNING<td>5200<td><td>
+<tr><td>44<td>PR_RUNNING_TRAIN_ELECTRIC<td>PR_RUNNING<td>4800<td><td>
+<tr><td>45<td>PR_RUNNING_AIRCRAFT<td>PR_RUNNING<td>9600<td><td>
+<tr><td>46<td>PR_RUNNING_ROADVEH<td>PR_RUNNING<td>1600<td><td>
+<tr><td>47<td>PR_RUNNING_SHIP<td>PR_RUNNING<td>5600<td><td>
+<tr><td>48<td>PR_BUILD_INDUSTRY<td>PR_CONSTRUCTION<td>1000000<td><td>Affects PR_TOWN_ACTION, PR_BUILD_INDUSTRY_RAW and PR_BUILD_TOWN
+<tr><td>49<td>PR_CLEAR_INDUSTRY<td>PR_CONSTRUCTION<td>1600<td>OTTD r18283<td>Affected by PR_CLEAR_HOUSE
+<tr><td>50<td>PR_BUILD_UNMOVABLE<td>PR_CONSTRUCTION<td>40<td>OTTD r18283<td>Affected by PR_CLEAR_ROUGH
+<tr><td>51<td>PR_CLEAR_UNMOVABLE<td>PR_CONSTRUCTION<td>40<td>OTTD r18283<td>Affected by PR_CLEAR_ROUGH
+<tr><td>52<td>PR_BUILD_WAYPOINT_RAIL<td>PR_CONSTRUCTION<td>600<td>OTTD r18283<td>Affected by PR_BUILD_DEPOT_TRAIN
+<tr><td>53<td>PR_CLEAR_WAYPOINT_RAIL<td>PR_CONSTRUCTION<td>80<td>OTTD r18283<td>Affected by PR_CLEAR_DEPOT_TRAIN
+<tr><td>54<td>PR_BUILD_WAYPOINT_BUOY<td>PR_CONSTRUCTION<td>350<td>OTTD r18283<td>Affected by PR_BUILD_STATION_DOCK
+<tr><td>55<td>PR_CLEAR_WAYPOINT_BUOY<td>PR_CONSTRUCTION<td>50<td>OTTD r18283<td>Affected by PR_CLEAR_WAYPOINT_BUOY
+<tr><td>56<td>PR_TOWN_ACTION<td>PR_CONSTRUCTION<td>1000000<td>OTTD r18283<td>Interactions with local authority, affected by PR_BUILD_INDUSTRY
+<tr><td>57<td>PR_BUILD_FOUNDATION<td>PR_CONSTRUCTION<td>250<td>OTTD r18283<td>Affected by PR_BUILD_FOUNDATION
+<tr><td>58<td>PR_BUILD_INDUSTRY_RAW<td>PR_CONSTRUCTION<td>8000000<td>OTTD r18283<td>Directly building (not prospecting) raw industries, affected by PR_BUILD_INDUSTRY
+<tr><td>59<td>PR_BUILD_TOWN<td>PR_CONSTRUCTION<td>1000000<td>OTTD r18283<td>Affected by PR_BUILD_INDUSTRY
+<tr><td>60<td>PR_BUILD_CANAL<td>PR_CONSTRUCTION<td>5000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>61<td>PR_CLEAR_CANAL<td>PR_CONSTRUCTION<td>5000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>62<td>PR_BUILD_AQUEDUCT<td>PR_CONSTRUCTION<td>10000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>63<td>PR_CLEAR_AQUEDUCT<td>PR_CONSTRUCTION<td>2000<td>OTTD r19720<td>Affected by PR_CLEAR_BRIDGE
+<tr><td>64<td>PR_BUILD_LOCK<td>PR_CONSTRUCTION<td>7500<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+<tr><td>65<td>PR_CLEAR_LOCK<td>PR_CONSTRUCTION<td>2000<td>OTTD r19720<td>Affected by PR_CLEAR_WATER
+</table>
+
+<h2><a name="refs-sounds">List of sound effects</a></h2>
+<ul>
+<li>SOUND_SPLAT</li>
+<li>SOUND_FACTORY_WHISTLE</li>
+<li>SOUND_TRAIN</li>
+<li>SOUND_TRAIN_THROUGH_TUNNEL</li>
+<li>SOUND_SHIP_HORN</li>
+<li>SOUND_FERRY_HORN</li>
+<li>SOUND_PLANE_TAKE_OFF</li>
+<li>SOUND_JET</li>
+<li>SOUND_TRAIN_HORN</li>
+<li>SOUND_MINING_MACHINERY</li>
+<li>SOUND_ELECTRIC_SPARK</li>
+<li>SOUND_STEAM</li>
+<li>SOUND_LEVEL_CROSSING</li>
+<li>SOUND_VEHICLE_BREAKDOWN</li>
+<li>SOUND_TRAIN_BREAKDOWN</li>
+<li>SOUND_CRASH</li>
+<li>SOUND_EXPLOSION</li>
+<li>SOUND_BIG_CRASH</li>
+<li>SOUND_CASHTILL</li>
+<li>SOUND_BEEP</li>
+<li>SOUND_MORSE</li>
+<li>SOUND_SKID_PLANE</li>
+<li>SOUND_HELICOPTER</li>
+<li>SOUND_BUS_START_PULL_AWAY</li>
+<li>SOUND_BUS_START_PULL_AWAY_WITH_HORN</li>
+<li>SOUND_TRUCK_START</li>
+<li>SOUND_TRUCK_START_2</li>
+<li>SOUND_APPLAUSE</li>
+<li>SOUND_OOOOH</li>
+<li>SOUND_SPLAT</li>
+<li>SOUND_SPLAT_2</li>
+<li>SOUND_JACKHAMMER</li>
+<li>SOUND_CAR_HORN</li>
+<li>SOUND_CAR_HORN_2</li>
+<li>SOUND_SHEEP</li>
+<li>SOUND_COW</li>
+<li>SOUND_HORSE</li>
+<li>SOUND_BLACKSMITH_ANVIL</li>
+<li>SOUND_SAWMILL</li>
+<li>SOUND_GOOD_YEAR</li>
+<li>SOUND_BAD_YEAR</li>
+<li>SOUND_RIP</li>
+<li>SOUND_EXTRACT_AND_POP</li>
+<li>SOUND_COMEDY_HIT</li>
+<li>SOUND_MACHINERY</li>
+<li>SOUND_RIP_2</li>
+<li>SOUND_EXTRACT_AND_POP</li>
+<li>SOUND_POP</li>
+<li>SOUND_CARTOON_SOUND</li>
+<li>SOUND_EXTRACT</li>
+<li>SOUND_POP_2</li>
+<li>SOUND_PLASTIC_MINE</li>
+<li>SOUND_WIND</li>
+<li>SOUND_COMEDY_BREAKDOWN</li>
+<li>SOUND_CARTOON_CRASH</li>
+<li>SOUND_BALLOON_SQUEAK</li>
+<li>SOUND_CHAINSAW</li>
+<li>SOUND_HEAVY_WIND</li>
+<li>SOUND_COMEDY_BREAKDOWN_2</li>
+<li>SOUND_JET_OVERHEAD</li>
+<li>SOUND_COMEDY_CAR</li>
+<li>SOUND_ANOTHER_JET_OVERHEAD</li>
+<li>SOUND_COMEDY_CAR_2</li>
+<li>SOUND_COMEDY_CAR_3</li>
+<li>SOUND_COMEDY_CAR_START_AND_PULL_AWAY</li>
+<li>SOUND_MAGLEV</li>
+<li>SOUND_LOON_BIRD</li>
+<li>SOUND_LION</li>
+<li>SOUND_MONKEYS</li>
+<li>SOUND_PLANE_CRASHING</li>
+<li>SOUND_PLANE_ENGINE_SPUTTERING</li>
+<li>SOUND_MAGLEV_2</li>
+<li>SOUND_DISTANT_BIRD</li>
+</ul>
+
+<h2><a name="refs-vehicleIDs">List of default vehicle IDs</a></h2>
+<h3><a name="refs-vehicleIDs-rail-engines">List of default rail engines</a></h3>
+<table class="t">
+<tr><th>Number<th>Name<th>weight (ton)<th>cargo_capacity<th>cost_factor<th>speed (km/h)<th>power (hp)<th>running_cost_factor
+<tr><td>0<td>Kirby Paul Tank (Steam)        <td>47<td>0<td>7<td>64<td>300<td>50
+<tr><td>1<td>MJS 250 (Diesel)               <td>65<td>0<td>8<td>80<td>600<td>65
+<tr><td>2<td>Ploddyphut Choo-Choo           <td>90<td>0<td>10<td>72<td>400<td>90
+
+<tr><td>3<td>Powernaut Choo-Choo            <td>130<td>0<td>15<td>96<td>900<td>130
+<tr><td>4<td>Mightymover Choo-Choo          <td>140<td>0<td>19<td>112<td>1000<td>145
+<tr><td>5<td>Ploddyphut Diesel              <td>95<td>0<td>16<td>120<td>1400<td>125
+<tr><td>6<td>Powernaut Diesel               <td>120<td>0<td>20<td>152<td>2000<td>135
+<tr><td>7<td>Wills 2-8-0 (Steam)            <td>145<td>0<td>14<td>88<td>1100<td>130
+<tr><td>8<td>Chaney 'Jubilee' (Steam)       <td>131<td>0<td>13<td>112<td>1000<td>120
+
+<tr><td>9<td>Ginzu 'A4' (Steam)             <td>162<td>0<td>19<td>128<td>1200<td>140
+<tr><td>10<td>SH '8P' (Steam)               <td>170<td>0<td>22<td>144<td>1600<td>130
+<tr><td>11<td>Manley-Morel DMU (Diesel)     <td>32<td>38<td>11<td>112<td>600<td>85
+<tr><td>12<td>'Dash' (Diesel)               <td>38<td>40<td>14<td>120<td>700<td>70
+<tr><td>13<td>SH/Hendry '25' (Diesel)       <td>72<td>0<td>15<td>128<td>1250<td>95
+<tr><td>14<td>UU '37' (Diesel)              <td>101<td>0<td>17<td>144<td>1750<td>120
+
+<tr><td>15<td>Floss '47' (Diesel)           <td>112<td>0<td>18<td>160<td>2580<td>140
+<tr><td>16<td>CS 4000 (Diesel)              <td>150<td>0<td>23<td>96<td>4000<td>135
+<tr><td>17<td>CS 2400 (Diesel)              <td>120<td>0<td>16<td>112<td>2400<td>105
+<tr><td>18<td>Centennial (Diesel)           <td>207<td>0<td>30<td>112<td>6600<td>155
+<tr><td>19<td>Kelling 3100 (Diesel)         <td>110<td>0<td>18<td>104<td>1500<td>105
+<tr><td>20<td>Turner Turbo (Diesel)         <td>95<td>0<td>35<td>160<td>3500<td>205
+
+<tr><td>21<td>MJS 1000 (Diesel)             <td>120<td>0<td>21<td>104<td>2200<td>145
+<tr><td>22<td>SH '125' (Diesel)             <td>70<td>4<td>20<td>200<td>4500<td>190
+<tr><td>23<td>SH '30' (Electric)            <td>84<td>0<td>26<td>160<td>3600<td>180
+<tr><td>24<td>SH '40' (Electric)            <td>82<td>0<td>30<td>176<td>5000<td>205
+<tr><td>25<td>'T.I.M.' (Electric)           <td>90<td>0<td>40<td>240<td>7000<td>240
+<tr><td>26<td>'AsiaStar' (Electric)         <td>95<td>0<td>43<td>264<td>8000<td>250
+</table>
+<h3><a name="refs-vehicleIDs-rail-wagons">List of default rail wagons</a></h3>
+<table class="t">
+<tr><th>Number<th>Name<th>weight (ton)<th>cargo_capacity<th>cost_factor
+<tr><td>27<td>Passenger Carriage    <td>25<td>40<td>247
+<tr><td>28<td>Mail Van              <td>21<td>30<td>228
+<tr><td>29<td>Coal Truck            <td>18<td>30<td>176
+<tr><td>30<td>Oil Tanker            <td>24<td>30<td>200
+
+<tr><td>31<td>Livestock Van         <td>20<td>25<td>192
+<tr><td>32<td>Goods Van             <td>21<td>25<td>190
+<tr><td>33<td>Grain Hopper          <td>19<td>30<td>182
+<tr><td>34<td>Wood Truck            <td>16<td>30<td>181
+<tr><td>35<td>Iron Ore Hopper       <td>19<td>30<td>179
+<tr><td>36<td>Steel Truck           <td>18<td>20<td>196
+
+<tr><td>37<td>Armoured Van          <td>30<td>20<td>255
+<tr><td>38<td>Food Van              <td>22<td>25<td>191
+<tr><td>39<td>Paper Truck           <td>18<td>20<td>196
+<tr><td>40<td>Copper Ore Hopper     <td>19<td>30<td>179
+<tr><td>41<td>Water Tanker          <td>25<td>25<td>199
+<tr><td>42<td>Fruit Truck           <td>18<td>25<td>182
+
+<tr><td>43<td>Rubber Truck          <td>19<td>21<td>185
+<tr><td>44<td>Sugar Truck           <td>19<td>30<td>176
+<tr><td>45<td>Candyfloss Hopper     <td>20<td>30<td>178
+<tr><td>46<td>Toffee Hopper         <td>20<td>30<td>192
+<tr><td>47<td>Bubble Van            <td>21<td>20<td>190
+<tr><td>48<td>Cola Tanker           <td>24<td>25<td>182
+
+<tr><td>49<td>Sweet Van             <td>21<td>25<td>181
+<tr><td>50<td>Toy Van               <td>21<td>20<td>183
+<tr><td>51<td>Battery Truck         <td>18<td>22<td>196
+<tr><td>52<td>Fizzy Drink Truck     <td>18<td>25<td>193
+<tr><td>53<td>Plastic Truck         <td>18<td>30<td>191
+</table>
+
+<h3><a name="refs-vehicleIDs-monorail-engines">List of default monorail engines</a></h3>
+<table class="t">
+<tr><th>Number<th>Name<th>weight (ton)<th>cargo_capacity<th>cost_factor<th>speed (km/h)<th>power (hp)<th>running_cost_factor
+<tr><td>54<td>'X2001' (Electric)            <td>95<td>0<td>52<td>304<td>9000<td>230
+<tr><td>55<td>'Millennium Z1' (Electric)    <td>85<td>25<td>60<td>336<td>10000<td>240
+<tr><td>56<td>Wizzowow Z99                  <td>95<td>0<td>53<td>320<td>5000<td>230
+</table>
+
+<h3><a name="refs-vehicleIDs-monorail-wagons">List of default monorail wagons</a></h3>
+<table class="t">
+<tr><th>Number<th>Name<th>weight (ton)<th>cargo_capacity<th>cost_factor
+<tr><td>57<td>Passenger Carriage    <td>25<td>45<td>247
+<tr><td>58<td>Mail Van              <td>21<td>35<td>228
+<tr><td>59<td>Coal Truck            <td>18<td>35<td>176
+<tr><td>60<td>Oil Tanker            <td>24<td>35<td>200
+<tr><td>61<td>Livestock Van         <td>20<td>30<td>192
+<tr><td>62<td>Goods Van             <td>21<td>30<td>190
+
+<tr><td>63<td>Grain Hopper          <td>19<td>35<td>182
+<tr><td>64<td>Wood Truck            <td>16<td>35<td>181
+<tr><td>65<td>Iron Ore Hopper       <td>19<td>35<td>179
+<tr><td>66<td>Steel Truck           <td>18<td>25<td>196
+<tr><td>67<td>Armoured Van          <td>30<td>25<td>255
+<tr><td>68<td>Food Van              <td>22<td>30<td>192
+
+<tr><td>69<td>Paper Truck           <td>18<td>25<td>196
+<tr><td>70<td>Copper Ore Hopper     <td>19<td>35<td>179
+<tr><td>71<td>Water Tanker          <td>25<td>30<td>199
+<tr><td>72<td>Fruit Truck           <td>18<td>30<td>182
+<tr><td>73<td>Rubber Truck          <td>19<td>26<td>185
+<tr><td>74<td>Sugar Truck           <td>19<td>25<td>176
+
+<tr><td>75<td>Candyfloss Hopper     <td>20<td>35<td>178
+<tr><td>76<td>Toffee Hopper         <td>20<td>35<td>192
+<tr><td>77<td>Bubble Van            <td>21<td>25<td>190
+<tr><td>78<td>Cola Tanker           <td>24<td>30<td>182
+<tr><td>79<td>Sweet Van             <td>21<td>30<td>181
+<tr><td>80<td>Toy Van               <td>21<td>25<td>183
+
+<tr><td>81<td>Battery Truck         <td>18<td>27<td>196
+<tr><td>82<td>Fizzy Drink Truck     <td>18<td>30<td>193
+<tr><td>83<td>Plastic Truck         <td>18<td>35<td>191
+</table>
+
+<h3><a name="refs-vehicleIDs-maglev-engines">List of default maglev engines</a></h3>
+<table class="t">
+<tr><th>Number<th>Name<th>weight (ton)<th>cargo_capacity<th>cost_factor<th>speed (km/h)<th>power (hp)<th>running_cost_factor
+<tr><td>84<td>Lev1 'Leviathan' (Electric)   <td>105<td>0<td>70<td>400<td>10000<td>250
+
+<tr><td>85<td>Lev2 'Cyclops' (Electric)     <td>120<td>0<td>74<td>448<td>12000<td>253
+<tr><td>86<td>Lev3 'Pegasus' (Electric)     <td>130<td>0<td>82<td>480<td>15000<td>254
+<tr><td>87<td>Lev4 'Chimaera' (Electric)    <td>150<td>0<td>95<td>640<td>20000<td>255
+<tr><td>88<td>Wizzowow Rocketeer            <td>120<td>0<td>70<td>480<td>10000<td>250
+</table>
+
+<h3><a name="refs-vehicleIDs-maglev-wagons">List of default maglev wagons</a></h3>
+<table class="t">
+<tr><th>Number<th>Name<th>weight (ton)<th>cargo_capacity<th>cost_factor
+<tr><td>89<td>Passenger Carriage    <td>25<td>47<td>247
+<tr><td>90<td>Mail Van              <td>21<td>37<td>228
+<tr><td>91<td>Coal Truck            <td>18<td>37<td>176
+<tr><td>92<td>Oil Tanker            <td>24<td>37<td>200
+<tr><td>93<td>Livestock Van         <td>20<td>32<td>192
+<tr><td>94<td>Goods Van             <td>21<td>32<td>190
+
+<tr><td>95<td>Grain Hopper          <td>19<td>37<td>182
+<tr><td>96<td>Wood Truck            <td>16<td>37<td>181
+<tr><td>97<td>Iron Ore Hopper       <td>19<td>37<td>179
+<tr><td>98<td>Steel Truck           <td>18<td>27<td>196
+<tr><td>99<td>Armoured Van          <td>30<td>27<td>255
+<tr><td>100<td>Food Van             <td>22<td>32<td>191
+
+<tr><td>101<td>Paper Truck          <td>18<td>27<td>196
+<tr><td>102<td>Copper Ore Hopper    <td>19<td>37<td>179
+<tr><td>103<td>Water Tanker         <td>25<td>32<td>199
+<tr><td>104<td>Fruit Truck          <td>18<td>32<td>182
+<tr><td>105<td>Rubber Truck         <td>19<td>28<td>185
+<tr><td>106<td>Sugar Truck          <td>19<td>37<td>176
+
+<tr><td>107<td>Candyfloss Hopper    <td>20<td>37<td>178
+<tr><td>108<td>Toffee Hopper        <td>20<td>37<td>192
+<tr><td>109<td>Bubble Van           <td>21<td>27<td>190
+<tr><td>110<td>Cola Tanker          <td>24<td>32<td>182
+<tr><td>111<td>Sweet Van            <td>21<td>32<td>181
+<tr><td>112<td>Toy Van              <td>21<td>27<td>183
+
+<tr><td>113<td>Battery Truck        <td>18<td>29<td>196
+<tr><td>114<td>Fizzy Drink Truck    <td>18<td>32<td>193
+<tr><td>115<td>Plastic Truck        <td>18<td>37<td>191
+</table>
+
+<h3><a name="refs-vehicleIDs-busses">List of default busses</a></h3>
+<table class="t">
+<tr><th>Number<th>Name
+<tr><td>00<td>MPS Regal Bus
+
+<tr><td>01<td>Hereford Leopard Bus
+<tr><td>02<td>Foster Bus
+<tr><td>03<td>Foster MkII Superbus
+<tr><td>04<td>Ploddyphut MkI Bus
+<tr><td>05<td>Ploddyphut MkII Bus
+<tr><td>06<td>Ploddyphut MkIII Bus</table>
+
+<h3><a name="refs-vehicleIDs-trucks">List of default trucks</a></h3>
+<table class="t">
+<tr><th>Number<th>Name
+<tr><td>07<td>Balogh Coal Truck
+<tr><td>08<td>Uhl Coal Truck
+<tr><td>09<td>DW Coal Truck
+<tr><td>10<td>MPS Mail Truck
+
+<tr><td>11<td>Reynard Mail Truck
+<tr><td>12<td>Perry Mail Truck
+<tr><td>13<td>MightyMover Mail Truck
+<tr><td>14<td>Powernaught Mail Truck
+<tr><td>15<td>Wizzowow Mail Truck
+<tr><td>16<td>Witcombe Oil Tanker
+
+<tr><td>17<td>Foster Oil Tanker
+<tr><td>18<td>Perry Oil Tanker
+<tr><td>19<td>Talbott Livestock Van
+<tr><td>20<td>Uhl Livestock Van
+<tr><td>21<td>Foster Livestock Van
+<tr><td>22<td>Balogh Goods Truck
+
+<tr><td>23<td>Craighead Goods Truck
+<tr><td>24<td>Goss Goods Truck
+<tr><td>25<td>Hereford Grain Truck
+<tr><td>26<td>Thomas Grain Truck
+<tr><td>27<td>Goss Grain Truck
+<tr><td>28<td>Witcombe Wood Truck
+
+<tr><td>29<td>Foster Wood Truck
+<tr><td>30<td>Moreland Wood Truck
+<tr><td>31<td>MPS Iron Ore Truck
+<tr><td>32<td>Uhl Iron Ore Truck
+<tr><td>33<td>Chippy Iron Ore Truck
+<tr><td>34<td>Balogh Steel Truck
+
+<tr><td>35<td>Uhl Steel Truck
+<tr><td>36<td>Kelling Steel Truck
+<tr><td>37<td>Balogh Armoured Truck
+<tr><td>38<td>Uhl Armoured Truck
+<tr><td>39<td>Foster Armoured Truck
+<tr><td>40<td>Foster Food Van
+
+<tr><td>41<td>Perry Food Van
+<tr><td>42<td>Chippy Food Van
+<tr><td>43<td>Uhl Paper Truck
+<tr><td>44<td>Balogh Paper Truck
+<tr><td>45<td>MPS Paper Truck
+<tr><td>46<td>MPS Copper Ore Truck
+
+<tr><td>47<td>Uhl Copper Ore Truck
+<tr><td>48<td>Goss Copper Ore Truck
+<tr><td>49<td>Uhl Water Tanker
+<tr><td>50<td>Balogh Water Tanker
+<tr><td>51<td>MPS Water Tanker
+<tr><td>52<td>Balogh Fruit Truck
+
+<tr><td>53<td>Uhl Fruit Truck
+<tr><td>54<td>Kelling Fruit Truck
+<tr><td>55<td>Balogh Rubber Truck
+<tr><td>56<td>Uhl Rubber Truck
+<tr><td>57<td>RMT Rubber Truck
+
+<tr><td>58<td>MightyMover Sugar Truck
+<tr><td>59<td>Powernaught Sugar Truck
+<tr><td>60<td>Wizzowow Sugar Truck
+<tr><td>61<td>MightyMover Cola Truck
+<tr><td>62<td>Powernaught Cola Truck
+
+<tr><td>63<td>Wizzowow Cola Truck
+<tr><td>64<td>MightyMover Candyfloss Truck
+<tr><td>65<td>Powernaught Candyfloss Truck
+<tr><td>66<td>Wizzowow Candyfloss Truck
+<tr><td>67<td>MightyMover Toffee Truck
+<tr><td>68<td>Powernaught Toffee Truck
+
+<tr><td>69<td>Wizzowow Toffee Truck
+<tr><td>70<td>MightyMover Toy Van
+<tr><td>71<td>Powernaught Toy Van
+<tr><td>72<td>Wizzowow Toy Van
+<tr><td>73<td>MightyMover Sweet Lorry
+<tr><td>74<td>Powernaught Sweet Lorry
+
+<tr><td>75<td>Wizzowow Sweet Lorry
+<tr><td>76<td>MightyMover Battery Truck
+<tr><td>77<td>Powernaught Battery Truck
+<tr><td>78<td>Wizzowow Battery Truck
+<tr><td>79<td>MightyMover Fizzy Drink Truck
+<tr><td>80<td>Powernaught Fizzy Drink Truck
+
+<tr><td>81<td>Wizzowow Fizzy Drink Truck
+<tr><td>82<td>MightyMover Plastic Truck
+<tr><td>83<td>Powernaught Plastic Truck
+<tr><td>84<td>Wizzowow Plastic Truck
+<tr><td>85<td>MightyMover Bubble Truck
+<tr><td>86<td>Powernaught Bubble Truck
+
+<tr><td>87<td>Wizzowow Bubble Truck</table>
+
+<h3><a name="refs-vehicleIDs-ships">List of default ships</a></h3>
+<table class="t">
+<tr><th>Number<th>Name
+<tr><td>0<td>MPS Oil Tanker
+<tr><td>1<td>CS-Inc. Oil Tanker
+<tr><td>2<td>MPS Passenger Ferry
+
+<tr><td>3<td>FFP Passenger Ferry
+<tr><td>4<td>Bakewell 300 Hovercraft
+<tr><td>5<td>Chugger-Chug Passenger Ferry
+<tr><td>6<td>Shivershake Passenger Ferry
+<tr><td>7<td>Yate Cargo ship
+<tr><td>8<td>Bakewell Cargo ship
+
+<tr><td>9<td>Mightymover Cargo ship
+<tr><td>10<td>Powernaut Cargo ship</table>
+
+<h3><a name="refs-vehicleIDs-planes">List of default planes</a></h3>
+<table class="t">
+<tr><th>Number<th>Name
+<tr><td>00<td>Sampson U52
+<tr><td>01<td>Coleman Count
+
+<tr><td>02<td>FFP Dart
+<tr><td>03<td>Yate Haugan
+<tr><td>04<td>Bakewell Cotswald LB-3
+<tr><td>05<td>Bakewell Luckett LB-8
+<tr><td>06<td>Bakewell Luckett LB-9
+<tr><td>07<td>Bakewell Luckett LB80
+
+<tr><td>08<td>Bakewell Luckett LB-10
+<tr><td>09<td>Bakewell Luckett LB-11
+<tr><td>10<td>Yate Aerospace YAC 1-11
+<tr><td>11<td>Darwin 100
+<tr><td>12<td>Darwin 200
+<tr><td>13<td>Darwin 300
+
+<tr><td>14<td>Darwin 400
+<tr><td>15<td>Darwin 500
+<tr><td>16<td>Darwin 600
+<tr><td>17<td>Guru Galaxy
+<tr><td>18<td>Airtaxi A21
+<tr><td>19<td>Airtaxi A31
+
+<tr><td>20<td>Airtaxi A32
+<tr><td>21<td>Airtaxi A33
+<tr><td>22<td>Yate Aerospace YAe46
+<tr><td>23<td>Dinger 100
+<tr><td>24<td>AirTaxi A34-1000
+<tr><td>25<td>Yate Z-Shuttle
+
+<tr><td>26<td>Kelling K1
+<tr><td>27<td>Kelling K6
+<tr><td>28<td>Kelling K7
+<tr><td>29<td>Darwin 700
+<tr><td>30<td>FFP Hyperdart 2
+<tr><td>31<td>Dinger 200
+
+<tr><td>32<td>Dinger 1000
+<tr><td>33<td>Ploddyphut 100
+<tr><td>34<td>Ploddyphut 500
+<tr><td>35<td>Flashbang X1
+<tr><td>36<td>Juggerplane M1
+<tr><td>37<td>Flashbang Wizzer</table>
+
+<h3><a name="refs-vehicleIDs-helicopters">List of default helicopters</a></h3>
+<table class="t">
+<tr><th>Number<th>Name
+<tr><td>38<td>Tricario Helicopter
+<tr><td>39<td>Guru X2 Helicopter
+<tr><td>40<td>Powernaut Helicopter</table>
+
+<h2><a name="refs-houseProperties">List of default houses and their properties</a></h2>
+
+<table class="t">
+
+<tr><th>Number<td>Name<td>Climate<td>Town<br>zones<td>Flags<td>Minimum<br>year<br>built<td>Last<br>year<br>built<td>Population<td>Mail<br>generation<td>Passenger<br>acceptance<td>Mail<br>acceptance
+<td>Goods<br>acceptance<td>Remove<br>ratings<br>decrease<td>Remove<br>cost<br>multiplier
+<tr><td>00<td>tall office block<td>temperate<td>CENTRE<td>SIZE_1x1<td>1963 <td>none<td>187<td>70<td>8<td>3<td>4<td>140<td>150
+<tr><td>01<td>office block<td>temperate<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1957<td>none<td>85<td>55 <td>8<td>3<td>4<td>130<td>140
+<tr><td>02<td>small block of flats<td>temperate <td>OUTSKIRT .. INNER_SUBURB<td>SIZE_1x1<td>1968<td>none<td>40<td>20<td>8<td>3<td>1 <td>90<td>100
+<tr><td>03<td>church<td>temperate<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930 <td>none<td>5<td>2<td>2<td>0<td>0<td>230<td>90
+<tr><td>04<td>large office block<td>temperate, sub-arctic, subtropical<td>CENTRE<td>SIZE_1x1, ANIMATE<td>1975<td>none<td>220<td>85<td>10<td>4<td>6<td>160<td>160
+<tr><td>05<td>large office block<td>snow <td>CENTRE<td>SIZE_1x1, ANIMATE<td>1975<td>none<td>220<td>85<td>10<td>4<td>6 <td>160<td>160
+<tr><td>06<td>town houses<td>temperate<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>30<td>12<td>4<td>1<td>0<td>80<td>80 
+<tr><td>07<td>hotel (N part)<td>temperate<td>OUTER_SUBURB, CENTRE<td>SIZE_1x2<td>1959<td>none<td>140<td>22 <td>6<td>1<td>2<td>150<td>180
+<tr><td>08<td>hotel (E part)<td><td><td>N/A<td>1959<td>none<td>0<td>22<td>6<td>1<td>2<td>150 <td>180
+<tr><td>09<td>statue<td>temperate, sub-arctic, subtropical<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1945<td>none <td>0<td>0<td>2<td>0<td>0<td>40<td>65
+<tr><td>10 <td>fountain <td>temperate, sub-arctic, subtropical<td>CENTRE<td>SIZE_1x1<td>1945<td>none<td>0<td>0<td>2 <td>0<td>0<td>40<td>65
+<tr><td>11<td>park (with a pond)<td>temperate<td>OUTER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>0<td>0<td>2<td>0<td>0<td>75 <td>60
+<tr><td>12<td>park (with an alley)<td>temperate<td>INNER_SUBURB<td>SIZE_1x1<td>1935<td>none<td>0<td>0<td>2<td>0<td>0<td>75<td>60 
+<tr><td>13 <td>office block <td>temperate<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1951<td>none<td>150<td>65<td>8 <td>2<td>4<td>110<td>130
+<tr><td>14<td>shops and offices 1<td>temperate<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>1960<td>95<td>48<td>6<td>2<td>3<td>100 <td>110
+<tr><td>15<td>shops and offices 2<td>temperate<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>1960 <td>95<td>48<td>6<td>2<td>3<td>100<td>105
+<tr><td>16 <td>shops and offices 3 <td>temperate<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>1960<td>95<td>48<td>6 <td>2<td>3<td>100<td>107
+<tr><td>17<td>modern office building<td>temperate, sub-arctic, subtropical<td>CENTRE<td>SIZE_1x1<td>1977<td>none<td>130<td>50<td>10<td>3<td>6<td>150 <td>200
+<tr><td>18<td>warehouse<td>temperate<td>CENTRE<td>SIZE_1x1<td>1983<td>none <td>6<td>10<td>6<td>3<td>8<td>110<td>145
+<tr><td>19 <td>office block (with spiral stairway) <td>temperate<td>CENTRE<td>SIZE_1x1<td>1985<td>none<td>110<td>55<td>6<td>2<td>6<td>110<td>155
+<tr><td>20<td>stadium (N part)<td>temperate<td>EDGE ... INNER_SUBURB<td>SIZE_2x2<td>1930<td>none<td>65<td>5<td>4<td>0<td>0<td>300 <td>250
+<tr><td>21<td>stadium (E part)<td><td><td>N/A<td>1930<td>none<td>0 <td>5<td>4<td>0<td>0<td>300<td>250
+<tr><td>22<td>stadium (W part) <td><td><td>N/A<td>1930<td>none<td>0<td>5<td>4<td>0<td>0 <td>300<td>250
+<tr><td>23<td>stadium (S part)<td><td><td>N/A<td>1930<td>none <td>0<td>5<td>4<td>0<td>0<td>300<td>250
+<tr><td>24<td>old houses <td>temperate<td>EDGE, OUTSKIRT<td>SIZE_1x1<td>1930<td>1951<td>15<td>6<td>3 <td>1<td>0<td>75<td>70
+<tr><td>25<td>cottages<td>temperate<td>EDGE<td>SIZE_1x1<td>1930<td>1952<td>12<td>7<td>3<td>1<td>0<td>75   <td>75
+<tr><td>26<td>houses<td>temperate<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1931<td>none <td>13<td>8<td>3<td>1<td>0<td>75<td>71
+<tr><td>27<td>flats <td>temperate<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1935<td>none<td>100<td>35<td>7  <td>2<td>2<td>100<td>135
+<tr><td>28<td>tall office block<td>temperate<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1963<td>none<td>170<td>50<td>8<td>3<td>3<td>170 <td>145
+<tr><td>29<td>shops and offices<td>temperate<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>1955 <td>100<td>40<td>6<td>2<td>3<td>135<td>132
+<tr><td>30<td>shops and offices <td>temperate, subtropical<td>OUTER_SUBURB, CENTRE<td>SIZE_1x1<td>1973<td>none<td>180<td>64<td>8  <td>3<td>3<td>180<td>155
+<tr><td>31<td>theatre<td>temperate<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1930<td>none<td>35<td>23<td>8<td>2<td>2<td>230 <td>220
+<tr><td>32<td>stadium (modern style, N part)<td>temperate, sub-arctic, subtropical<td>EDGE ... INNER_SUBURB<td>SIZE_2x2<td>1958<td>none <td>65<td>5<td>4<td>0<td>0<td>300<td>250
+<tr><td>33 <td>stadium (modern style, E part) <td><td><td>N/A<td>1958<td>none<td>0<td>5<td>4<td>0 <td>0<td>300<td>250
+<tr><td>34<td>stadium (modern style, W part)<td><td><td>N/A<td>1958 <td>none<td>0<td>5<td>4<td>0<td>0<td>300<td>250
+<tr><td>35<td>stadium (modern style, S part)<td><td><td>N/A<td>1958<td>none<td>0<td>5<td>4 <td>0<td>0<td>300<td>250
+<tr><td>36<td>offices ('vertical tube' style)<td>temperate, sub-arctic, subtropical<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>2000<td>none<td>140<td>65<td>8<td>3<td>2<td>250 <td>170
+<tr><td>37<td>houses<td>sub-arctic<td>EDGE, OUTSKIRT<td>SIZE_1x1<td>1930<td>1960 <td>15<td>6<td>3<td>1<td>-1<td>75<td>70
+<tr><td>38 <td>houses <td>snow<td>EDGE, OUTSKIRT<td>SIZE_1x1<td>1930<td>1960<td>15<td>6<td>3 <td>1<td>-1<td>75<td>70
+<tr><td>39<td>cinema<td>temperate<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1945<td>none<td>35<td>23<td>8<td>2<td>2<td>230 <td>210
+<tr><td>40<td>shopping mall (N part)<td>temperate<td>OUTSKIRT ... CENTRE<td>SIZE_2x2<td>1983<td>none <td>180<td>5<td>8<td>2<td>3<td>300<td>250
+<tr><td>41  <td>shopping mall (E part) <td><td><td>N/A<td>1983<td>none<td>0<td>5<td>8<td>2 <td>3<td>300<td>250
+<tr><td>42<td>shopping mall (W part)<td><td><td>N/A<td>1983<td>none<td>0<td>5<td>8<td>2<td>3<td>300<td>250
+<tr><td>43<td>shopping mall (S part)<td><td><td>N/A<td>1983<td>none<td>0<td>5<td>8 <td>2<td>3<td>300<td>250
+<tr><td>44<td>flats<td>sub-arctic<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>80<td>20<td>5<td>2<td>-2<td>90<td>100
+<tr><td>45<td>flats<td>snow<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none <td>80<td>20<td>5<td>2<td>-2<td>90<td>100
+<tr><td>46 <td>houses <td>sub-arctic<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>16<td>6<td>3<td>1<td>-2<td>70<td>70
+<tr><td>47<td>houses<td>snow<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>16<td>6<td>3<td>1<td>-2<td>70 <td>70
+<tr><td>48<td>houses<td>sub-arctic<td>EDGE ... OUTER_SUBURB<td>SIZE_1x1<td>1930<td>1963 <td>14<td>6<td>3<td>1<td>-2<td>70<td>80
+<tr><td>49 <td>houses <td>snow<td>EDGE ... OUTER_SUBURB<td>SIZE_1x1<td>1930<td>1963<td>14<td>6<td>3 <td>1<td>-2<td>70<td>80
+<tr><td>50<td>tall office block<td>sub-arctic, subtropical<td>INNER_OUTSKIRT, CENTRE<td>SIZE_1x1<td>1966<td>none<td>135<td>60<td>8<td>3<td>4<td>120<td>150
+<tr><td>51<td>tall office block<td>snow<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1966<td>none <td>135<td>60<td>8<td>3<td>4<td>120<td>150
+<tr><td>52 <td>tall office block <td>sub-arctic<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1970<td>none<td>170<td>70<td>9 <td>3<td>4<td>130<td>170
+<tr><td>53<td>tall office block<td>snow<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1970<td>none<td>170<td>70<td>9<td>3<td>4<td>130 <td>170
+<tr><td>54<td>tall office block<td>sub-arctic, subtropical<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1974<td>none <td>210<td>80<td>10<td>3<td>5<td>140<td>200
+<tr><td>55 <td>tall office block <td>snow<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1974<td>none<td>210<td>80<td>10 <td>3<td>5<td>140<td>200
+<tr><td>56<td>houses<td>sub-arctic<td>EDGE<td>SIZE_1x1<td>1930<td>none<td>10<td>5<td>2<td>1<td>-1<td>60<td>60
+<tr><td>57<td>houses<td>snow<td>EDGE<td>SIZE_1x1<td>1930<td>none <td>10<td>5<td>2<td>1<td>-1<td>60<td>60
+<tr><td>58 <td>shops and offices <td>sub-arctic<td>OUTSKIRT ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>25<td>20<td>3 <td>1<td>-1<td>80<td>100
+<tr><td>59<td>shops and offices<td>snow<td>OUTSKIRT ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>25<td>20<td>3<td>1<td>-1<td>80 <td>100
+<tr><td>60<td>church<td>sub-arctic<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none <td>6<td>2<td>2<td>0<td>0<td>230<td>85
+<tr><td>61  <td>church <td>snow<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>6<td>2<td>2<td>0<td>0<td>230<td>85
+<tr><td>62<td>houses<td>sub-arctic<td>EDGE ... OUTER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>17<td>7<td>3<td>1<td>-1<td>80<td>80
+<tr><td>63<td>houses<td>snow<td>EDGE ... OUTER_SUBURB<td>SIZE_1x1<td>1930<td>none <td>17<td>7<td>3<td>1<td>-1<td>80<td>80
+<tr><td>64 <td>shops and offices <td>sub-arctic<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>1960<td>90<td>45<td>6 <td>2<td>3<td>110<td>140
+<tr><td>65<td>shops and offices<td>snow<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>1960<td>90<td>45<td>6<td>2<td>3<td>110 <td>140
+<tr><td>66<td>hotel (N part)<td>sub-arctic<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x2<td>1972<td>none <td>140<td>25<td>6<td>1<td>-3<td>160<td>160
+<tr><td>67 <td>hotel (E part) <td><td><td>N/A<td>1972<td>none<td>0<td>25<td>6<td>1 <td>2<td>160<td>160
+<tr><td>68<td>hotel (N part)<td>snow<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x2<td>1972<td>none<td>140<td>25<td>6<td>1<td>-3<td>160<td>160
+<tr><td>69<td>hotel (E part)<td><td><td>N/A<td>1972<td>none<td>0<td>25<td>6<td>1<td>2<td>160<td>160
+<tr><td>70<td>shops and offices<td>sub-arctic, subtropical <td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1963<td>none<td>105<td>50<td>7<td>2<td>3 <td>105<td>130
+<tr><td>71<td>shops and offices<td>snow<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1963 <td>none<td>105<td>50<td>7<td>2<td>3<td>105<td>130
+<tr><td>72<td>tall office block<td>sub-arctic<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1978<td>none<td>190<td>75 <td>9<td>3<td>4<td>135<td>190
+<tr><td>73<td>tall office block<td>snow<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1978<td>none<td>190<td>75<td>9<td>3<td>4<td>135<td>190
+<tr><td>74<td>tall office block (N part)<td>sub-arctic<td>OUTER_SUBURB ... CENTRE<td>SIZE_2x1<td>1967<td>none<td>250<td>60<td>7<td>2<td>2<td>200<td>140
+<tr><td>75<td>tall office block (W part)<td><td><td>N/A<td>1967<td>none<td>0<td>60<td>7 <td>2<td>2<td>200<td>140
+<tr><td>76<td>tall office block (N part)<td>snow<td>OUTER_SUBURB ... CENTRE<td>SIZE_2x1<td>1967<td>none<td>250<td>60<td>7<td>2<td>2<td>200 <td>140 
+<tr><td>77<td>tall office block (W part)<td><td><td>N/A<td>1967<td>none<td>0 <td>60<td>7<td>2<td>2<td>200<td>140
+<tr><td>78<td>houses (with a tree in a corner)<td>subtropical<td>OUTSKIRT ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>16<td>6<td>3<td>1<td>-2<td>80<td>80
+<tr><td>79<td>houses<td>subtropical<td>OUTSKIRT ... CENTRE<td>SIZE_1x1 <td>1930<td>none<td>16<td>6<td>3<td>1<td>-2<td>80<td>80
+<tr><td>80<td>houses<td>subtropical<td>OUTSKIRT ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>16<td>5<td>3<td>1<td>-2<td>80<td>80
+<tr><td>81<td>houses (suburb-type) <td>subtropical<td>EDGE<td>SIZE_1x1<td>1930<td>none<td>7<td>4<td>3<td>1<td>-1<td>30<td>30
+<tr><td>82<td>flats<td>subtropical<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>45<td>15<td>6<td>2<td>1<td>95<td>130
+<tr><td>83<td>church<td>subtropical<td>OUTSKIRT ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>8 <td>3<td>2<td>0<td>0<td>200<td>90
+<tr><td>84<td>houses (with two trees in front)<td>subtropical<td>OUTSKIRT ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>18<td>7<td>3<td>1 <td>-2<td>80<td>80
+<tr><td>85<td>flats<td>subtropical<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1 <td>1973<td>none<td>90<td>24<td>6<td>2<td>1<td>95<td>110
+<tr><td>86<td>flats<td>subtropical<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1962<td>none<td>120<td>25<td>6<td>2<td>1<td>95<td>120
+<tr><td>87<td>tall office block (N part) <td>subtropical<td>INNER_SUBURB, CENTRE<td>SIZE_2x1<td>1984<td>none<td>250<td>80<td>8<td>3<td>4<td>140<td>190
+<tr><td>88<td>tall office block (W part)<td>subtropical<td><td>N/A<td>1984 <td>none<td>0<td>80<td>8<td>3<td>4<td>140<td>190
+<tr><td>89<td>flats<td>subtropical<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>80<td>23<td>6<td>2<td>1<td>95<td>110
+<tr><td>90<td>tall office block<td>subtropical<td>INNER_SUBURB, CENTRE<td>SIZE_1x1<td>1993<td>none<td>180<td>90<td>8<td>3<td>4<td>150<td>180
+<tr><td>91<td>church<td>toyland<td>EDGE ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>8<td>3<td>2<td>0<td>0<td>200<td>90
+<tr><td>92<td>toyland houses<td>toyland<td>EDGE ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>18<td>5 <td>6<td>2<td>2<td>90<td>90
+<tr><td>93<td>toyland houses<td>toyland <td>EDGE, OUTSKIRT<td>SIZE_1x1<td>1930<td>none<td>7<td>3<td>3<td>1<td>1<td>50<td>70
+<tr><td>94<td>toyland houses<td>toyland<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>15<td>6<td>3<td>1<td>2<td>75<td>80
+<tr><td>95<td>toyland houses<td>toyland<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>17<td>6 <td>3<td>1<td>2<td>75<td>80
+<tr><td>96<td>toyland houses<td>toyland <td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>19<td>6<td>3<td>1<td>2 <td>75<td>80
+<tr><td>97<td>toyland houses<td>toyland<td>EDGE ... INNER_SUBURB<td>SIZE_1x1<td>1930<td>none<td>21<td>6<td>3<td>1<td>2<td>75<td>80
+<tr><td>98<td>tall office block<td>toyland<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>75<td>20 <td>8<td>4<td>2<td>130<td>160
+<tr><td>99<td>shoe house (N part)<td>toyland <td>EDGE ... CENTRE<td>SIZE_1x2<td>1930<td>none<td>35<td>9<td>4<td>1<td>2 <td>80<td>90
+<tr><td>100<td>shoe house (E part)<td><td><td>N/A<td>1930<td>none <td>0<td>0<td>4<td>1<td>2<td>80<td>90
+<tr><td>101 <td>tall office block <td>toyland<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>85<td>18<td>8 <td>4<td>2<td>130<td>150
+<tr><td>102<td>igloo<td>toyland<td>EDGE<td>SIZE_1x1<td>1930<td>none<td>11<td>3<td>3<td>1<td>1<td>45  <td>60
+<tr><td>103<td>tepees<td>toyland<td>EDGE<td>SIZE_1x1<td>1930<td>none <td>10<td>3<td>3<td>1<td>1<td>45<td>60    
+<tr><td>104<td>shops and offices <td>toyland<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>67<td>22<td>8 <td>4<td>-4<td>130<td>140
+<tr><td>105<td>shops and offices<td>toyland<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>86<td>23<td>8<td>4<td>-4<td>130 <td>145
+<tr><td>106<td>tall office block<td>toyland<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>95<td>28<td>8<td>4<td>2<td>130<td>165
+<tr><td>107 <td>statue <td>toyland<td>OUTER_SUBURB ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>30<td>10<td>4 <td>1<td>2<td>70<td>90
+<tr><td>108<td>teapot-house<td>toyland<td>EDGE ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>25<td>8<td>3<td>1<td>2<td>65<td>75
+<tr><td>109<td>piggy-bank<td>toyland<td>EDGE ... CENTRE<td>SIZE_1x1<td>1930<td>none<td>18<td>7<td>3<td>2<td>-4<td>95<td>85
+</table>
+
+
+<h2><a name="refs-town-zones">List town zones</a></h2>
+<table class="t">
+<tr><td>TOWNZONE_EDGE</td></tr>
+<tr><td>TOWNZONE_OUTSKIRT</td></tr>
+<tr><td>TOWNZONE_OUTER_SUBURB</td></tr>
+<tr><td>TOWNZONE_INNER_SUBURB</td></tr>
+<tr><td>TOWNZONE_CENTRE</td></tr>
+</table>
+
+<h2><a name="refs-tile-classes">List of tile classes</a></h2>
+<table class="t">
+<tr><td>TILE_CLASS_GROUND</td><td>Clear ground and farmland</td></tr>
+<tr><td>TILE_CLASS_RAIL</td><td>Rail and rail depots</td></tr>
+<tr><td>TILE_CLASS_ROAD</td><td>Road, road depots and level crossings</td></tr>
+<tr><td>TILE_CLASS_HOUSE</td><td>Houses</td></tr>
+<tr><td>TILE_CLASS_TREES</td><td>Clear tile with trees</td></tr>
+<tr><td>TILE_CLASS_STATION</td><td>Station, waypoint, station part of oilrig</td></tr>
+<tr><td>TILE_CLASS_WATER</td><td>Sea, canal, ship depot</td></tr>
+<tr><td>TILE_CLASS_INDUSTRY</td><td>Industry tile</td></tr>
+<tr><td>TILE_CLASS_TUNNEL_BRIDGE</td><td>Tunnel entrance or bridge ramp</td></tr>
+<tr><td>TILE_CLASS_OBJECTS</td><td>Objects</td></tr>
+</table>
+
+</body>
+</html>

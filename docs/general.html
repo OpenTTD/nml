@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+<h1><a name="general">General</a></h1>
+
+<h2><a name="general-vars">General variables</a></h2>
+<p>A number of global variables are available. Some are only available in
+switch-blocks, while others can be used in any expression. This is indicated
+by the second column in the following table:</p>
+<table class="t">
+<tr><th>name <th>Available outside switch blocks <th>Value range <th>Comment
+<tr><td>ttd_platform <td>Yes <td>PLATFORM_TTDPATCH or PLATFORM_OPENTTD <td>
+<tr><td>ttdpatch_version <td>Yes <td> <td>
+<tr><td>openttd_version <td>Yes <td> <td>use version_openttd(MAJOR, MINOR, BUILD) to test and compare for a
+    release version and version_openttd(MAJOR, MINOR, BUILD, REVISION) to test for a specific svn
+    version of OpenTTD
+<tr><td>current_palette <td>Yes <td>PALETTE_DOS or PALETTE_WIN <td>
+<tr><td>current_date <td>No <td>days since year 0 <td> Use date (year, month, day) to compare with.
+<tr><td>current_year <td>No <td>years since year 0 <td>
+<tr><td>current_month <td>No <td>0 .. 11 <td>
+<tr><td>current_day_of_month <td>No <td>0 .. 30 <td>
+<tr><td>current_day_of_year <td>No <td>0 .. 364 (365 in leap years) <td>
+<tr><td>is_leapyear <td>No <td>0 or 1 <td>
+<tr><td>date_loaded <td>Yes <td>days since year 0 <td>Set to the time of game load, which is the current date in single player, 
+    and the date the server started in multiplayer. This to prevent desyncs.
+<tr><td>year_loaded <td>Yes <td>years since year 0 <td>See date_loaded.
+<tr><td>starting_year <td>Yes <td>years since year 0 <td>Years before 1920 are clamped to 1920
+<tr><td>animation_counter <td>No <td> 0 .. 65535 <td> Increased by 1 each tick
+<tr><td>climate <td>Yes (a)<td>CLIMATE_XXX with XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND] <td>
+<tr><td>game_mode <td>Yes <td>GAMEMODE_XXX with XXX = [MENU | GAME | EDITOR] <td>
+<tr><td>loading_stage <td>Yes <td>LOADING_STAGE_XXX with XXX = [INITIALIZE | RESERVE | ACTIVATE | TEST] <td>'Phase' of the GRF loading process.
+<tr><td>difficulty_level <td>Yes (a) <td>DIFFICULTY_XXX with XXX = [EASY | MEDIUM | HARD | CUSTOM] <td>
+<tr><td>display_options <td>No <td> bitmask of DISPLAY_XXX with XXX = [TOWN_NAMES | STATION_NAMES | SIGNS | ANIMATION | FULL_DETAIL]
+    <td> Use hasbit(display_options, DISPLAY_XXX) to test a particular bit.
+<tr><td>desert_paved_roads <td>Yes (b) <td>0 or 1 <td> If 1, desert roads have pavement and street lights.
+<tr><td>train_width_32_px <td>Yes (b) <td>0 or 1 <td> If 1, train vehicles are 32 instead of 29 pixels wide in the depot view.
+<tr><td>traininfo_y_offset <td>Yes (b) <td>-128 .. 127 <td>Used to correctly position the depot view of trains.
+<tr><td>snowline_height <td>No <td>16 .. 120 in steps of 8, or 0xFF if no snow. <td>One tile height is equivalent to 8 units.
+<tr><td>traffic_side <td>Yes (a)<td>TRAFFIC_SIDE_LEFT or TRAFFIC_SIDE_RIGHT <td>
+<tr><td>freight_trains <td>Yes <td>1 .. 255 <td>Weight multiplier for freight trains
+<tr><td>plane_speed <td>Yes <td>1 .. 4<td>Speed multiplier for planes. Value of 1 is equal to the original speed (1/4), while 4 means that planes move at full speed (4/4)
+<tr><td>ttdpatch_flags <td>Yes <td> <td>
+<tr><td>current_callback <td>No <td> <td>Set to the ID of the current callback, see the various features for more information / examples.
+<tr><td>extra_callback_info1 <td>No <td>Varies <td>Extra callback information, meaning differs per callback.
+<tr><td>extra_callback_info2 <td>No <td>Varies <td>Extra callback information, meaning differs per callback.
+<tr><td>last_computed_result <td>No <td> <td>Result of the last (previously evaluated) switch block.
+<tr><td>base_sprite_2cc <td>Yes <td>0 .. 65535<td>Base sprite for 2cc (dual company colour) colour-maps
+<tr><td>map_type <td>Yes <td>MAP_TYPE_XXX with XXX = [RECTANGULAR | X_BIGGER | Y_BIGGER] <td>
+<tr><td>map_min_edge <td>Yes <td>64 .. 2048 <td>Length of the smallest map edge (in tiles)
+<tr><td>map_max_edge <td>Yes <td>64 .. 2048 <td>Length of the biggest map edge (in tiles)
+<tr><td>map_x_edge <td>Yes <td>64 .. 2048 <td>Length of the x (top-left) map edge (in tiles)
+<tr><td>map_y_edge <td>Yes <td>64 .. 2048 <td>Length of the y (top-right) map edge (in tiles)
+<tr><td>map_size <td>Yes <td>64*64 .. 2048*2048 <td>Total number of tiles on the map
+</table>
+<p>(a) The value of these variables can change during the game. Reading them
+from a switch block (which reads the current value) may result in a different
+value than in the rest of the code (which is evaluated when the game is loaded).</p>
+<p>(b) These variables can be written as well as read. Use a normal assignment,
+for example:</p>
+<pre class="code">
+traininfo_y_offset = -2;
+</pre>
+
+<h2><a name="snowline-property">Snowline properties</a></h2>
+The snowline is specified by a <code>snowline</code> statement. See the
+example below:
+<pre class="code">
+snowline {
+	day_of_year(2,  1):  2,
+	day_of_year(11, 1):  4,
+	177: 29,
+	day_of_year(10, 1): 29,
+	linear
+}
+</pre>
+It starts with the <code>snowline</code> keyword, and contains a number of
+<code>&lt;day-of-the-year&gt; : &lt;height&gt;</code>pairs. These define the
+height of the snowline at that day in the year. The day of the year value is
+actually an integer from 1 up to and including 365, so you may also define a
+day as a number. Heights run from 2 (for snow everywhere) to 29, although 17
+is already sufficient to remove all traces of snow from the game.
+<p>For the days not listed, the program computes a height. It can do that in
+two modes, namely in <code>equal</code> mode and in <code>linear</code> mode
+(last line of text in the example). Default mode is <code>equal</code>.
+In <code>equal</code> mode, the height of the snow is the same as the day before,
+unless the day is listed in the <code>snowline</code> statement.
+In <code>linear</code> mode, the height of the snowline gets linearly
+interpolated between two heights specified in the statement.
+In both cases, note that days `wrap around' at the end of the year, to get the
+snow height of January 1st (if not listed in the statement), the last
+specified height of the year is used in the calculation.
+
+</body>
+</html>
+

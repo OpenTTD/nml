@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+<h1><a name="warnings">Warnings</a></h1>
+<p>Sometimes NML gives warnings that might be cryptic or you have no idea why they are given. This section will list these warnings.</p>
+<ul>
+<b>IMAGE at [x: X, y: Y]: I of J pixels (K%) are pure white</b>
+<br>
+This warning is generated when pixels with palette index 255, or RGB colour 0xFFFFFF, are found. These so-called pure white pixels are not used by OpenTTD, or TTDPatch, as they do not work with colour remaps such as the "transparency" colour remap. The pure white is used around the sprites in the PCX files that GRFCodec generates, which made pure white images with sprites common in NewGRF development. As such the pure white pixel test is also a way to detect so cases where the position or size of the sprite is incorrect, i.e. when it covers the white pixels around the sprite.
+</ul>
+
+</body>
+</html>
+

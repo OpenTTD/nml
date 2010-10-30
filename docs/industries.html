@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+<h1><a name="industries">Industries</a></h1>
+
+<h2><a name="industries-vars">Industry variables</a></h2>
+Variables that require some parameters.
+<table class="t">
+<tr><th>name</th><th>arguments</th><th>comment</th></tr>
+<tr><td>industry_count</td><td>industry_type, grfid&nbsp;=&nbsp;-1</td><td>The value of this variable is the number
+of industries of a given type that are currently on the map. industry_type is either the ID of an
+industry. GRFid is the grf in which the industry was defined. The default value is -1, which means
+current newgrf. A grfid of 0 lets you check the number of default industries of a given type.</td></tr>
+<tr><td>industry_distance</td><td>industry_type, grfid&nbsp;=&nbsp;-1</td><td>The value of this variable is the
+manhattan distance the closest instance of the given industry or 0xFFFF if not applicable. See
+industry_count for a description of the parameters.</td></tr>
+<tr><td>industry_layout_count / industry_layout_distance</td><td>industry_type, layout, grfid&nbsp;=&nbsp;-1.</td>
+<td>See industry_count / industry_distance for description of industry_type, grfid and return value. The
+results are filtered to industries that have the given layout number.</td></tr>
+</table>
+
+<h2><a name="industrytiles-vars">Industry tile variables</a></h2>
+Variables that require a signed x,y offset. The offset is relative to the current tile. Offset 0,0 means the current tile.
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>nearby_tile_slope</td><td>Which corners are raised on the given tile.</td><td>
+Bit 0: west corner is above the lowest corner.<br>
+Bit 1: south corner is above the lowest corner.<br>
+Bit 2: east corner is above the lowest corner.<br>
+Bit 3: north corner is above the lowest corner.<br>
+Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).
+</td></tr>
+<tr><td>nearby_tile_is_same_industry</td><td>1 if the tile is part of the same industry, 0 otherwise</td><td></td></tr>
+<tr><td>nearby_tile_is_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
+<tr><td>nearby_tile_terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>nearby_tile_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
+<tr><td>nearby_tile_animation_frame</td><td>0..255</td><td>Animation frame of the given tile</td></tr>
+<tr><td>nearby_tile_industrytile_id</td><td>0x00aa, 0xFFbb, 0xFFFE or 0xFFFF</td><td>
+0x00aa: The tile is an industry tile that is part of this GRF, the tile id is aa.<br>
+0xFFbb: The tile is an original industry tile with id bb.<br>
+0xFFFE: The tile is an industry tile defined in another GRF.<br>
+0xFFFF: The tile is not an industry tile or it belongs to another GRF.
+</td></tr>
+</table>
+
+<h2><a name="industrytiles-property">Industry tile properties</a></h2>
+<table class="t">
+<tr><th>property</th><th>value range</th><th>comment</th></tr>
+<tr><td>substitute</td><td><a href="refs.html#refs-default-industrytiles">0..174</a></td><td>number of the default industry tile which can replace this one, if this tile is not available for some reason.</td></tr>
+<tr><td>override</td><td><a href="refs.html#refs-default-industrytiles">0..174</a></td><td>id of the default industry tile which this tile replaces. This is ignored, if the default industry tile has already been overridden. You can define this property multiple times</td></tr>
+<tr><td>accepted_cargos</td><td>Array with up to 3 [cargo_id, amount]-pairs.</td><td>The cargos that are accepted by this tile. CargoID is a cargo type from 
+your cargo translation table, amount is the acceptance of the given cargo in 1/8 units.<br>
+Example: to make a tile accept both COAL and IORE you could use this: <code>accepted_cargos: [[COAL, 8], [IORE, 8]];</code><br>
+Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_cargos: [];</code></td></tr>
+<tr><td>land_shape_flags</td><td>bitmask(<a href="#land-shape-flags">Land shape flags</a>)</td><td></td></tr>
+<tr><td>callback_flags</td><td>bitmask(INDTILE_CBF_XXX, INDTILE_CBF_YYY)</td><td>XXX = ANIM_NEXT_FRAME | ANIM_SPEED | CARGO_AMOUNT_ACCEPT
+| CARGO_TYPE_ACCEPT | SLOPE_IS_SUITABLE | FOUNDATIONS | AUTOSLOPE</td></tr>
+<tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..253 frames</td></tr>
+<tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href="refs.html#refs-animation-speed-values">animation speed table</a> for the meaning of the values.</td></tr>
+<tr><td>animation_triggers</td><td>bitmask(<a href="#industrytiles-animation-control">Animation control callback triggers</a>)</td><td>Triggers which control whether the animatin is started or stopped</td></tr>
+<tr><td>special_flags</td><td>0..1</td><td>Set to 1 if INDTILE_CB_ANIM_NEXT_FRAME needs random bits</td></tr>
+</table>
+
+<h3><a name="land-shape-flags">Land shape flags</a></h3>
+<table class="t">
+<tr><th>Flag</th><th>Meaning</th></tr>
+<tr><td>LSF_CANNOT_LOWER_NW_EDGE</td><td>North-west edge cannot be lowered</td></tr>
+<tr><td>LSF_CANNOT_LOWER_NE_EDGE</td><td>North-east edge cannot be lowered</td></tr>
+<tr><td>LSF_CANNOT_LOWER_SW_EDGE</td><td>South-west edge cannot be lowered</td></tr>
+<tr><td>LSF_CANNOT_LOWER_SE_EDGE</td><td>South-east edge cannot be lowered</td></tr>
+<tr><td>LSF_ONLY_ON_FLAT_LAND</td><td>This tile can only be built on flat land</td></tr>
+<tr><td>LSF_ALLOW_ON_WATER</td><td>The land/water check is disabled for this tile so it can be built on water. If you need
+more control over this use callback 0x2F.</td></tr>
+</table>
+
+<h3><a name="industrytiles-animation-control">Animation control callback triggers</a></h3>
+<table class="t">
+<tr><th>Trigger</th><th>Meaning</th></tr>
+<tr><td>INDTILE_TRIGGER_CONSTRUCTION_STATE</td><td>the construction state changes </td></tr>
+<tr><td>INDTILE_TRIGGER_TILE_LOOP</td><td>the tile is processed in the periodic processing loop </td></tr>
+<tr><td>INDTILE_TRIGGER_INDUSTRY_LOOP</td><td>the industry of the tile is processed in the periodic processing loop (synchronized animation) </td></tr>
+<tr><td>INDTILE_TRIGGER_INDUSTRY_RECEIVED_CARGO</td><td>the industry of the tile receives input cargo from a station </td></tr>
+<tr><td>INDTILE_TRIGGER_INDUSTRY_DISTRIBUTES_CARGO</td><td>the industry distributes its output cargo to one of the stations nearby</td></tr>
+</table>
+
+<h2><a name="industries-property">Industry properties</a></h2>
+
+
+</body>
+</html>
+

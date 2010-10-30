@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+<h1><a name="vehicles">Vehicles</a></h1>
+
+<h2><a name="vehicles-vars">Vehicle variables</a></h2>
+Please note that while those variables are available for all vehicles types, some of them only make sense
+for one or more vehicle types. For example checking current_railtype for a non-rail vehicle doesn't make
+sense at all.
+<h3><a name="vehicles-normal-vars">Variables without parameter</a></h3>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>position_in_consist <td>0 ... 255<td>The position of the current vehicle-part from the start of the vehicle. The engine will
+get value 0, the first wagon (or second engine) gets value 1, etc.
+<tr><td>position_in_consist_from_end <td>0 ... 255 <td>Same as position_in_consist but counted from the end. The last wagon will
+get value 0.
+<tr><td>num_vehs_in_consist <td>1 ... 256 <td>The total number of vehicles-parts in this vehicle. For aircraft this will include
+the shadow and the rotor.
+<tr><td>position_in_vehid_chain <td>0 ... 255 <td>See position_in_consist, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>See position_in_consist_from_end, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>num_vehs_in_vehid_chain <td>1 ... 256 <td>See num_vehs_in_consist, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td><a href="cargos.html#cargos-property">cargo classes</a>
+<tr><td>most_common_refit <td><a href="cargos.html#cargos-property">cargo class</a><td>cargo class most often refit to
+<tr><td><a name="bitmask_consist_info">bitmask_consist_info</a><td>Bitmask 8 bit<td>OR of all
+<a href="#bitmask_vehicle_info">bitmask_vehicle_info</a> of all vehicles (engines, wagons) in
+the consist. Only available for rail vehicles.
+<tr><td>company_num <td>0 ... 14 <td>company number of the vehicle owner. TTDPatch only supports up to 8 companies (0 ... 7)
+<tr><td>company_type <td>PLAYERTYPE_XX <td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI
+(human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company). OpenTTD only
+uses PLAYERTYPE_HUMAN and PLAYERTYPE_AI. If you cheat yourself to be part of an AI company OpenTTD
+will still report PLAYERTYPE_AI for the company with yourself and the AI and it'll report
+PLAYERTYPE_HUMAN for the now uncontrolled company.
+<tr><td>company_color1 <td>0 ... 15 <td>index into company colour
+<tr><td>company_color2 <td>0 ... 15 <td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
+<tr><td>aircraft_height <td>0 ... 255 <td>Height difference between the aircraft and its shadow. 8 Units are equivalent to one height level on the map.
+<tr><td>airport_type <td>AIRPORTTYPE_XX <td>AIRPORTTYPE_SMALL, AIRPORTTYPE_LARGE, AIRPORTTYPE_HELIPORT or AIRPORTTYPE_OILRIG
+<tr><td>curv_info_prev_cur <td>-2 ... 2 <td>Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>curv_info_cur_next <td>-2 ... 2 <td>Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>curv_info_prev_next <td>-4 ... 4 <td>Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>motion_counter <td>0 ... 15 <td>Is increased every time the vehicle moves a single step on the map. Useful for animations.
+<tr><td>cargo_type_in_veh <td>entry in cargo translation table <td>
+<tr><td>cargo_unit_weight <td>weight per unit in 1/16t <td>
+<tr><td>cargo_classes <td><a href="cargos.html#cargos-property">cargo class</a><td>class of the currently transported cargo
+<tr><td>vehicle_is_available <td> [0 | 1]<td>Value is 1 if the vehicle is available on the open market
+<tr><td>vehicle_is_testing <td> [0 | 1]<td>Value is 1 if the vehicle is currently being tested
+<tr><td>vehicle_is_offered <td> [0 | 1]<td>Value is 1 if the vehicle is currently being offered for exclusive preview
+<tr><td>build_year <td>0 ... 5000000 <td>0-based year when the vehicle was built
+<tr><td>direction <td>DIRECTION_XX <td>XX = NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST or NORTHWEST. e.g. DIRECTION_NORTH.
+<tr><td>cargo_capacity <td>0 ... 65535 <td>Cargo capacity (number of units) of the vehicle
+<tr><td>cargo_count <td>0 ... 65535 <td>Number of cargo units of cargo in the vehicle
+<tr><td>vehicle_type_id <td> <td>ID of the vehicle
+<tr><td>refit_cycle <td>0 ... 255 <td>How many times the vehicle has been refitted to the same cargo type
+<tr><td>vehicle_is_powered <td> [0 | 1]<td> vehicle provides power and is on the correct track type
+<tr><td>vehicle_is_not_powered <td> [0 | 1]<td> vehicle is either on a wrong track type or it doesn't provide power at all
+<tr><td>vehicle_is_potentially_powered <td> [0 | 1]<td> vehicle provides power, if it is on a suitable track type
+<tr><td>vehicle_is_reversed <td> [0 | 1]<td>Value is 1 if the vehicle has reversed an odd number of times
+<tr><td>built_during_preview <td> [0 | 1]<td>Value is 1 if the vehicle was built during the exclusive preview stage
+<tr><td>current_railtype <td> Entry from railtype translation table or 0xFF<td>Don't use this variable unless you've defined
+a railtype translation table. If the train is running on a railtype that is not listed in your railtype translation table
+this variable will contain 0xFF. Available since OpenTTD r20164.
+<tr><td>waiting_triggers <td> <td>Random triggers waiting to be matched. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
+<tr><td>random_bits <td>0 ... 255 <td>Random data that can be used to randomize certain descisions. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
+<tr><td>grfid <td>0 ... 0xFFFFFFFF <td>GRFID that defined the <a href="nml-language.html#block-item-graphics">graphics</a>-block for this vehicle.
+<tr><td>vehicle_is_stopped <td> [0 | 1]<td>Value is 1 if the vehicle is stopped, or if it is braking for a stop (trains only).
+<tr><td>vehicle_is_crashed <td> [0 | 1]<td>Value is 1 if the vehicle has crashed.
+<tr><td>vehicle_is_broken <td> [0 | 1]<td>Value is 1 if the vehicle is broken down.
+<tr><td>date_of_last_service <td>date(year, month, day)<td>Not valid before 1920 and after 2090.
+<tr><td>breakdowns_since_last_service <td>0 ... 255 <td>Number of breakdowns since the last service
+<tr><td>reliability <td>0 ... 100 <td>Reliability (percentage)
+<tr><td>age_in_days <td>0 ... 65535 <td>Vehicle age in days.
+<tr><td>max_age_in_days <td>0 ... 65535 <td>Maximum vehicle age in days.
+<tr><td>current_speed <td>(speed units)<td>The current speed of the vehicle in m/s
+<tr><td>max_speed <td>(speed units)<td>The maximum speed of the vehicle in m/s
+</table>
+<h3><a name="vehicles-parameter-vars">Variables that require an argument</a></h3>
+<table class="t">
+<tr><th>name</th><th>Argument</th><th>value range</th><th>comment</th></tr>
+<tr><td>count_veh_id</td><td>The vehicle ID to look for.</td><td>0..255</td><td>The number of vehicles in the current consist that have
+the given ID.</td></tr>
+</table>
+<h3><a name="vehicles-callbacks-vars">Callbacks for vehicles</a></h3>
+<table class="t">
+<tr><th>name<th>use
+<tr><td>VEH_CB_WAGON_POWER           <td>decide upon whether a wagon has power
+<tr><td>VEH_CB_WAGON_LENGTH          <td>decide upon the length of the wagon
+<tr><td>VEH_CB_LOAD_AMOUNT           <td>decide upon the loading speed (amount loaded per tick)
+<tr><td>VEH_CB_REFITTED_CAPACITY     <td>decide upon the capacity after refit
+<tr><td>VEH_CB_ARTICULATED_PARTS     <td>decide upon the ID of the next vehicle added to the articulated vehicle chain
+<tr><td>VEH_CB_CARGO_SUFFIX          <td>decide upon cargo subtype display for refit
+<tr><td>VEH_CB_CAN_ATTACH_WAGON      <td>decide whether a wagon can be attached
+<tr><td>VEH_CB_TEXT_PURCHASE_SCREEN  <td>decide upon an additional text for the purchase screen
+<tr><td>VEH_CB_COLOUR_MAPPING        <td>decide upon the colour mapping instead of company colour
+<tr><td>VEH_CB_START_STOP_CHECK      <td>decide whether a vehicle may be started. Return 0xFF to succeed or an error message.
+<tr><td>VEH_CB_32DAY                 <td>Triggers one or both of <it>Trigger vehicle trigger 10</it> (bit 0) and <it>Update colour map via VEH_CB_COLOUR_MAPPING</it> (bit 1)
+<tr><td>VEH_CB_SOUND_EFFECT          <td>decide whether and which sound is being played for certain situations
+<tr><td>VEH_CB_AUTOREPLACE_SELECT    <td>decide upon appropriate replacement vehicles
+<tr><td>VEH_CB_VEHICLE_PROPERTIES    <td>Change vehicle properties
+</table>
+<p>In order to set properties for vehicles via callback <code>VEH_CB_VEHICLE_PROPERTIES</code> it's necessary to query the general variable <code>extra_callback_info1</code>
+which can take different values depending upon the vehicle type:
+<table class="t">
+<tr><th>vehicle type<th>property<th>value
+<tr><td>all<td>loading_speed<td>PROP_XXX_LOADING_SPEED
+<tr><td><td>cost_factor<td>PROP_XXX_COST_FACTOR
+<tr><td><td>running_cost_factor<td>PROP_XXX_RUNNING_COST_FACTOR
+<tr><td>trains<td>speed<td>PROP_TRAINS_SPEED
+<tr><td><td>power<td>PROP_TRAINS_POWER
+<tr><td><td>cargo_capacity<td>PROP_TRAINS_CARGO_CAPACITY
+<tr><td><td>weight<td>PROP_TRAINS_WEIGHT
+<tr><td><td>tractive_effort_coefficient<td>PROP_TRAINS_TRACTIVE_EFFORT_COEFFICIENT
+<tr><td><td>shorten_vehicle<td>PROP_TRAINS_SHORTEN_VEHICLE
+<tr><td><td>visual_effect<td>PROP_TRAINS_VISUAL_EFFECT
+<tr><td><td>bitmask_vehicle_info<td>PROP_TRAINS_BITMASK_VEHICLE_INFO
+<tr><td>vehicles<td>cargo_capacity<td>PROP_ROADVEHS_CARGO_CAPACITY
+<tr><td>ships<td>speed<td>PROP_SHIPS_SPEED
+<tr><td><td>cargo_capacity<td>PROP_SHIPS_CARGO_CAPACITY
+<tr><td>planes<td>speed<td>PROP_AIRCRAFT_SPEED
+<tr><td><td>passenger_capacity<td>PROP_AIRCRAFT_PASSENGER_CAPACITY
+<tr><td><td>mail_capacity<td>PROP_AIRCRAFT_MAIL_CAPACITY
+</table>
+where for the properties available for all vehicle types XXX can either be TRAINS, ROADVEHS, SHIPS or AIRCRAFT.
+Note also that the return values don't yet support units, you'll need to enter the properties untranslated (e.g. road vehicle
+weights are in quantities of 0.25 tons).
+
+Example:
+<pre class="code">
+switch (FEAT_TRAINS, SELF, tank_wagon_cb_property_weight_switch, cargo_type_in_veh) {
+    // wagons transporting food need some extra stuff and are heavier
+    WATR: return 25;
+    MILK: return 25;
+    CB_FAILED; // use value set in the property block for other cargos
+}
+
+switch (FEAT_TRAINS, SELF, tank_wagon_cb_property_switch, extra_callback_info1) {
+    PROP_TRAINS_WEIGHT          : tank_wagon_cb_property_weight_switch;
+    PROP_TRAINS_CARGO_CAPACITY  : tank_wagon_cb_capacity_switch;
+    CB_FAILED; // we don't set other properties
+}
+
+switch (FEAT_TRAINS, SELF, tank_wagon_switch, current_callback) {
+    VEH_CB_REFITTED_CAPACITY:  tank_wagon_cb_capacity_switch; // switch not shown here
+    VEH_CB_VEHICLE_PROPERTIES: tank_wagon_cb_property_switch;
+    tank_wagon_graphics_switch; // go to graphics branch, if no callback asked for; not shown here
+}
+
+item(FEAT_TRAINS, tank_wagon) {
+    property {
+        callback_flags:                 VEH_CBF_REFITTED_CAPACITY; // activate callback
+        cargo_capacity:                 30;
+        weight:                         24 ton;
+    }
+    graphics {
+        tank_wagon_switch;
+    }
+}
+</pre>
+</p>
+
+
+<h2><a name="vehicles-property">Properties common to all vehicle types</a></h2>
+<table class="t">
+<tr><td> name</td><td>                         (string)</td><td>for example <code>string(STR_NAME_HEREFORD_TRAM)</code></td></tr>
+<tr><td> climates_available</td><td>           bitmask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES.
+To make a vehicle available in all climates except toyland you could use: ALL_CLIMATES &amp; ~bitmask(CLIMATE_TOYLAND).</td></tr>
+<tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000. In TTDPatch, dates after 2044 will be limited to 2044. Unless the engine is introduced within two years after game-start (always 1920 in TTDPatch), a random number of days between 0 and 511 will be added to this.</td></tr>
+<tr><td> model_life</td><td>                   0 ... 254 (years) or VEHICLE_NEVER_EXPIRES</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
+<tr><td> retire_early</td><td>                 (years)</td><td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.</td></tr>
+<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>Age of a vehicle when it gets old.</td></tr>
+<tr><td> reliability_decay</td><td>            0 ... 255</td><td>Default vehicles use 20. The higher the value the faster reliability decays, the more frequent service is needed. 0 means reliability never decreases if the vehicle is not too old</td></tr>
+<tr><td> refittable_cargo_classes</td><td>     bit set of <a href="cargos.html#cargos-property">cargo classes</a></td><td></td></tr>
+<tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="cargos.html#cargos-property">cargo classes</a></td><td></td></tr>
+<tr><td> refittable_cargo_types</td><td>       bit mask of entries into the cargo translation table</td><td>example: <code>bitmask(PASS, MAIL, GOOD)</code></td></tr>
+<tr><td> loading_speed <td>                    0 ... 255 (cargo units)</td><td>Units of cargo loaded per tick. Default vehicles use 5 for trains and road vehicles, 10 for ships and 20 for aircraft</td></tr>
+<tr><td> cost_factor</td><td>                  0 ... 255</td><td>multiplicator to the base purchase cost</td></tr>
+<tr><td> running_cost_factor</td><td>          0 ... 255</td><td>multiplicator to the base running costs</td></tr>
+</table>
+
+<p>To determine whether your vehicle can be refitted to a certain cargo, OpenTTD uses the following table:</p>
+<table class="t">
+<tr><th>Cargo matches refittable_cargo_classes</th><th>Cargo matches non_refittable_cargo_classes</th><th>Cargo in refittable_cargo_types</th><th>Result</th></tr>
+<tr><td>No</td><td>Doesn't matter</td><td>No</td><td>Not refittable</td></tr>
+<tr><td>No</td><td>Doesn't matter</td><td>Yes</td><td>Refittable</td></tr>
+<tr><td>Yes</td><td>No</td><td>No</td><td>Refittable</td></tr>
+<tr><td>Yes</td><td>No</td><td>Yes</td><td>Not refittable</td></tr>
+<tr><td>Yes</td><td>Yes</td><td>No</td><td>Not refittable</td></tr>
+<tr><td>Yes</td><td>Yes</td><td>Yes</td><td>Refittable</td></tr>
+</table>
+<p>You should use refittable_cargo_classes and non_refittable_cargo_classes to
+decide to which cargos your vehicle is refittable, and only use
+refittable_cargo_types as a last resort to include/exclude some cargo type.</p>
+<p>Note that the default cargo cannot be selected explicitly. Instead it is
+automatically set to use the first refittable cargo, whenever one of the
+refitting properties is set.</p>
+
+<h2><a name="trains-property">Train properties</a></h2>
+<table class="t">
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+
+<!-- properties common to all vehicle types but with different value ranges or meaning -->
+<tr><td> sprite_id</td><td>SPRITE_ID_NEW_TRAIN</td><td>defines base set spriteID to use or this constant</td></tr>
+<tr><td> speed<td> 0 ... 65000 (speed units)<td>Max speed for engines, speed limit for wagons
+<tr><td> misc_flags</td><td> bitmask(TRAIN_FLAG_XXX, ...)</td><td>XXX=[TILT | 2CC | MU]</td></tr>
+<tr><td> refit_cost<td> <td> in 50% units of the purchase price cost base
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [WAGON_POWER | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+
+<!-- properties not present for all vehicle types -->
+<tr><td> track_type<td>item from railtypetable<td>Default railtype table: RAIL, ELRL, MONO, MGLV.
+Note that ELRL is mapped to MONO. If you install a railtypetable yourself you'll always get the
+railtype you specified. If you want a vehicle to run on electric rail and you don't have a
+railtypetable, make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRIC in addition
+to setting <tt>track_type</tt> to ELRL.
+<tr><td> ai_special_flag<td> [AI_FLAG_PASSENGER | AI_FLAG_CARGO]<td> Set to AI_FLAG_PASSENGER to tell computer players that it's an engine that should only be used for passenger service.
+<tr><td> power<td> 0 ... 65000 hp (power units) <td>
+<tr><td> running_cost_base</td><td>RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
+<tr><td> dual_headed<td> [0 | 1]<td>1 = dual_headed, otherwise normal engine
+<tr><td> cargo_capacity<td> (cargo units)<td>
+<tr><td> weight<td> 0 .. 1279 t (mass units)<td>
+<tr><td> ai_engine_rank<td> 0 ... 255<td>TTDPatch only: Higher values make the engine for the TTDPatch AI more attractive
+<tr><td> engine_class<td> ENGINE_CLASS_XXX<td>XXX=[STEAM | DIESEL | ELECTRIC | MONORAIL | MAGLEV]
+<tr><td> extra_power_per_wagon<td> 0 ... 65000 hp (power units) <td>
+<tr><td> tractive_effort_coefficient<td> 0 ... 1<td>
+<tr><td> air_drag_coefficient</td><td>   0 ... 1</td><td></td></tr>
+<tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>XXX=[8_8 | 7_8 | ... | 1_8]
+<tr><td> visual_effect<td> VISUAL_EFFECT_XXX<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE]
+<tr><td> extra_weight_per_wagon<td> 0 ... 255 t (mass units)<td>
+<tr><td> <a name="bitmask_vehicle_info">bitmask_vehicle_info</a><td> 8-bit bitmask<td>Used for obtaining <a href="#bitmask_consist_info">bitmask_consist_info</a>
+<tr><td> <td> <td>
+</table>
+
+<h2><a name="roadvehs-property">Road vehicle properties</a></h2>
+<table class="t">
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+<!-- properties common to all vehicle types but with different value ranges or meaning -->
+<tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>define base set spriteID to replace or this constant</td></tr>
+<tr><td> speed</td><td>                        0 ... 514km/h (speed units)</td><td></td></tr>
+<tr><td> misc_flags</td><td>                   bitmask(ROADVEH_FLAG_XXX, ...)</td><td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
+You can combine them with the binary or-operator (|). Use 0 if you don't want to set any of these flags.</td></tr>
+<tr><td> refit_costs<td> <td> in 25% units of the purchase price cost base
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+
+<!-- properties not present for all vehicle types -->
+<tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
+<tr><td> power</td><td>                        0 ... 2550hp (power units)</td><td></td></tr>
+<tr><td> weight</td><td>                       0 ... 63.75ton (mass units)</td><td></td></tr>
+<tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td></td></tr>
+<tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td></td></tr>
+<tr><td> cargo_capacity</td><td>               0 ... 255</td><td></td></tr>
+<tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>See available <a href="refs.html#refs-sounds">sound effects</a>.</td></tr>
+
+</table>
+<h2><a name="ships-property">Ship properties</a></h2>
+<table class="t">
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+<!-- properties common to all vehicle types but with different value ranges or meaning -->
+<tr><td> sprite_id <td> SPRITE_ID_NEW_SHIP <td> define base set spriteID to replace or this constant
+<tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
+<tr><td> misc_flags <td> SHIP_FLAG_2CC <td> No other flags defined
+<tr><td> refit_costs<td> <td> in 1/32 of the default refit cost base
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+
+<!-- properties not present for all vehicle types -->
+<tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true. Note: if you do not set this property to 1 than refittable_cargo_classes /
+non_refittable_cargo_classes have no effect.
+<tr><td> cargo_capacity<td> (units of cargo)<td>
+<tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="refs.html#refs-sounds">sound effects</a>.
+<tr><td> ocean_speed_fraction<td>0 ... 1<td> fraction of base speed on ocean tiles
+<tr><td> canal_speed_fraction<td>0 ... 1<td> fraction of base speed on canal tiles
+
+</table>
+<h2><a name="planes-property">Plane properties</a></h2>
+<table class="t">
+<tr><th> property</th><th>value range</th><th>comment</th></tr>
+<!-- properties common to all vehicle types but with different value ranges or meaning -->
+<tr><td> sprite_id <td> SPRITE_ID_NEW_AIRCRAFT <td> define base set spriteID to replace or this constant
+<tr><td> speed<td> 0 .. 3280 km/h (speed units)<td>
+<tr><td> misc_flags<td> bitmask(AIRCRAFT_FLAG_2CC)<td>
+<tr><td> refit_cost<td> <td> in 1/32 of default refit cost base
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+
+<!-- properties not present for all vehicle types -->
+<tr><td> is_helicopter<td> AIRCRAFT_TYPE_XXX<td>XXX=[NORMAL | HELICOPTER]
+<tr><td> is_large<td> AIRCRAFT_TYPE_XXX<td>XXX=[SMALL | LARGE]. Set to AIRCRAFT_TYPE_SMALL for helicopters.
+<tr><td> acceleration<td> <td>
+<tr><td> passenger_capacity<td> (units of cargo)<td>
+<tr><td> mail_capacity<td> (units of cargo)<td>
+<tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="refs.html#refs-sounds">sound effects</a>.
+</table>
+
+
+</body>
+</html>
+
