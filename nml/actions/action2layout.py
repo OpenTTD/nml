@@ -155,11 +155,12 @@ class Action2LayoutSprite(object):
 
 layout_action2_features = [0x07, 0x09, 0x0F, 0x11] #houses, industry tiles, objects and airport tiles
 
-def get_layout_action2s(spritegroup, feature):
+def get_layout_action2s(spritegroup):
     global layout_action2_features
     ground_sprite = None
     building_sprites = []
 
+    feature = spritegroup.feature.value
     if feature not in layout_action2_features:
         raise generic.ScriptError("Sprite groups that define tile layouts are not supported for this feature: 0x" + generic.to_hex(feature, 2))
 

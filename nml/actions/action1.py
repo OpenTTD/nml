@@ -114,10 +114,10 @@ def parse_sprite_block(sprite_block):
                 raise generic.ScriptError("All sprite sets in a spriteblock should contain the same number of sprites. Expected " + str(num_ent) + ", got " + str(len(item.sprite_list)), item.pos)
 
         elif isinstance(item, SpriteGroup):
-            action_list_append.extend(action2real.get_real_action2s(item, sprite_block.feature.value))
+            action_list_append.extend(action2real.get_real_action2s(item))
         else:
             assert isinstance(item, LayoutSpriteGroup)
-            action_list_append.extend(action2layout.get_layout_action2s(item, sprite_block.feature.value))
+            action_list_append.extend(action2layout.get_layout_action2s(item))
 
     if num_sets > 0: action_list.insert(0, Action1(sprite_block.feature, num_sets, num_ent))
     action_list.extend(action_list_append)

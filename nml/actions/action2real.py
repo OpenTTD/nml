@@ -31,11 +31,12 @@ real_action2_alias = {
 
 real_action2_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10] #vehicles, stations, canals, cargos, railtypes, airports
 
-def get_real_action2s(spritegroup, feature):
+def get_real_action2s(spritegroup):
     global real_action2_alias, real_action2_features
     loaded_list = []
     loading_list = []
 
+    feature = spritegroup.feature.value
     if feature not in real_action2_features:
         raise generic.ScriptError("Sprite groups that directly combine sprite sets are not supported for this feature: 0x" + generic.to_hex(feature, 2), spritegroup.pos)
 
