@@ -33,6 +33,7 @@ class SpriteSet(object):
         self.sprite_list = sprite_list
         self.pos = pos
         self.feature = None #will be set during pre-processing
+        self.referencing_groups = set() #sprite groups that reference this set
 
     def pre_process(self):
         action2.register_spritegroup(self)
@@ -57,7 +58,7 @@ class SpriteGroup(object):
     def pre_process(self):
         assert self.feature is not None
         for spriteview in self.spriteview_list:
-            spriteview.check_spritesets(self.feature.value)
+            spriteview.check_spritesets(self)
         action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
@@ -75,7 +76,7 @@ class LayoutSpriteGroup(object):
     def pre_process(self):
         assert self.feature is not None
         for layout_sprite in self.layout_sprite_list:
-            layout_sprite.check_spritesets(self.feature.value)
+            layout_sprite.check_spritesets(self)
         action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
