@@ -62,9 +62,12 @@ class SpriteView(object):
         self.pos = pos
 
     def check_spritesets(self, parent_group):
+        used_sets = set()
         for spriteset_name in self.spriteset_list:
             spriteset_ref = action2.resolve_spritegroup(spriteset_name, parent_group.feature.value, False, True)
             spriteset_ref.referencing_groups.add(parent_group)
+            used_sets.add(spriteset_ref)
+        return used_sets
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite view:', self.name.value
@@ -79,10 +82,13 @@ class LayoutSprite(object):
         self.pos = pos
 
     def check_spritesets(self, parent_group):
+        used_sets = set()
         for layout_param in self.param_list:
             if isinstance(layout_param.value, expression.Identifier):
                 spriteset_ref = action2.resolve_spritegroup(layout_param.value, parent_group.feature.value, False, True)
                 spriteset_ref.referencing_groups.add(parent_group)
+                used_sets.add(spriteset_ref)
+        return used_sets
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Tile layout sprite of type:', self.type
