@@ -32,7 +32,7 @@ class SpriteSet(object):
             self.pcx = None
         self.sprite_list = sprite_list
         self.pos = pos
-        action2.register_spriteset(self)
+        action2.register_spritegroup(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite set:', self.name.value
@@ -40,6 +40,9 @@ class SpriteSet(object):
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
+
+#to avoid circular imports, tell action2 about the existence of SpriteSet here
+action2.spriteset_ref = SpriteSet
 
 class SpriteGroup(object):
     def __init__(self, name, spriteview_list, pos = None):

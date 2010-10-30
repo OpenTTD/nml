@@ -83,30 +83,51 @@ def remove_ref(name):
     if act2.num_refs == 0: free_action2_ids.append(act2.id)
     return id
 
-#list of sprite sets
-spriteset_list = {}
+#list of all types of sprite sets and sprite groups
+spritegroup_list = {}
 
-def register_spriteset(spriteset):
+#reference to action1.SpriteSet, set in action1.py to avoid circular imports
+spriteset_ref = None
+
+def register_spritegroup(spritegroup):
     """
-    Register a sprite set, so it can be resolved by name later
+    Register a sprite group, so it can be resolved by name later
 
-    @param spriteset: Spriteset to register
-    @type spriteset: L{SpriteSet}
+    @param spritegroup: Sprite group to register
+    @type spritegroup: L{SpriteSet}, L{SpriteGroup}, L{LayoutSpriteGroup}, L{Produce}, L{Switch} or L{RandomSwitch}
     """
-    name = spriteset.name.value
-    if name in spriteset_list:
-        raise generic.ScriptError("Sprite set with name '%s' has already been defined" % name, spriteset.pos)
-    spriteset_list[name] = spriteset
+    name = spritegroup.name.value
+    if name in spritegroup_list:
+        raise generic.ScriptError("Block with name '%s' has already been defined" % name, spritegroup.pos)
+    spritegroup_list[name] = spritegroup
 
-def resolve_spriteset(name):
+def resolve_spritegroup(name, feature = None, allow_group = True, allow_set = True):
     """
-    Resolve a sprite set with a given name
+    Resolve a sprite group with a given name, then check its feature and type.
+    If the found sprite group does not meet the criteria, an error is raised.
 
-    @param name: Name of the sprite set.
+    @param name: Name of the sprite group.
     @type name: L{Identifier}
-    
-    @return: The sprite set that the name refers to.
+
+    @param feature: Feature number that the found sprite group should have. C{None} if no check is needed.
+    @type feature: C{int} or C{None}
+
+    @param allow_group: Allow a sprite group (all types except SpriteSet) as return value.
+    @type allow_group: C{bool}
+
+    @param allow_set: Allow a SpriteSet as return value.
+    @type allow_set: C{bool}
+
+    @return: The sprite group that the name refers to.
+    @rtype: L{SpriteSet}, L{SpriteGroup}, L{LayoutSpriteGroup}, L{Produce}, L{Switch} or L{RandomSwitch}
     """
-    if name.value not in spriteset_list:
-        raise generic.ScriptError("Referring to unknown spriteset '%s'" % name.value, name.pos)
-    return spriteset_list[name.value]
+    if name.value not in spritegroup_list:
+        raise generic.ScriptError("Unknown identifier encountered: '%s'" % name.value, name.pos)
+    spritegroup = spritegroup_list[name.value]
+    if feature is not None and spritegroup.feature.value != feature:
+        raise generic.ScriptError("'%s' is defined for the wrong feature (expected %d, got %d)" % (name.value, feature, spritegroup.feature.value), name.pos)
+    if not (allow_group or isinstance(spritegroup, spriteset_ref)):
+        raise generic.ScriptError("Expected a sprite set reference: '%s'" % name.value, name.pos)
+    if (not allow_set) and isinstance(spritegroup, spriteset_ref):
+        raise generic.ScriptError("Unexpected sprite set reference: '%s'" % name.value, name.pos)
+    return spritegroup
