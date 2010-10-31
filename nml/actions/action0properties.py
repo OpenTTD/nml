@@ -58,6 +58,10 @@ class Action0Property(object):
 #
 properties = 0x12 * [None]
 
+#
+# Some helper functions that are used for multiple features
+#
+
 def two_byte_property(value, low_prop, high_prop):
     """
     Decode a two byte value into two action 0 properties.
@@ -78,10 +82,6 @@ def two_byte_property(value, low_prop, high_prop):
     low_byte = ConstantNumeric(value.value & 0xFF)
     high_byte = ConstantNumeric(value.value >> 8)
     return [Action0Property(low_prop, low_byte, 1), Action0Property(high_prop, high_byte, 1)]
-
-#
-# Feature 0x00 (??)
-#
 
 def append_cargo_type(feature):
     propnums = [0x15, 0x10, 0x0C]
@@ -121,6 +121,10 @@ def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
 
     return [Action0Property(prop_num, ConstantNumeric(looping << loop_bit + frames - 1), prop_size)]
 
+#
+# General vehicle properties that apply to feature 0x00 .. 0x03
+#
+
 general_veh_props = {
     'reliability_decay'  : {'size': 1, 'num': 0x02},
     'vehicle_life'       : {'size': 1, 'num': 0x03},
@@ -129,6 +133,10 @@ general_veh_props = {
     'loading_speed'      : {'size': 1, 'num': 0x07},
     'name'               : {'num': -1, 'string': None},
 }
+
+#
+# Feature 0x00 (Trains)
+#
 
 properties[0x00] = {
     'track_type'                   : {'size': 1, 'num': 0x05},
@@ -163,7 +171,7 @@ properties[0x00] = {
 properties[0x00].update(general_veh_props)
 
 #
-# Feature 0x01 (??)
+# Feature 0x01 (Road Vehicles)
 #
 
 def roadveh_speed_prop(value):
@@ -199,7 +207,7 @@ properties[0x01] = {
 properties[0x01].update(general_veh_props)
 
 #
-# Feature 0x02 (??)
+# Feature 0x02 (Ships)
 #
 
 properties[0x02] = {
@@ -224,7 +232,7 @@ properties[0x02] = {
 properties[0x02].update(general_veh_props)
 
 #
-# Feature 0x03 (??)
+# Feature 0x03 (Aircraft)
 #
 
 properties[0x03] = {
@@ -249,8 +257,10 @@ properties[0x03] = {
 }
 properties[0x03].update(general_veh_props)
 
+# TODO: Feature 0x04 .. 0x06 (Stations, Canals, Bridges)
+
 #
-# Feature 0x07 (??)
+# Feature 0x07 (Houses)
 #
 
 def house_available_years(value):
@@ -315,8 +325,10 @@ properties[0x07] = {
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
 }
 
+# Feature 0x08 (General Vars) is implemented elsewhere (e.g. basecost, snowline)
+
 #
-# Feature 0x09 (??)
+# Feature 0x09 (Industry Tiles)
 #
 
 def industrytile_cargos(value):
@@ -350,7 +362,7 @@ properties[0x09] = {
 }
 
 #
-# Feature 0x0A (??)
+# Feature 0x0A (Industries)
 #
 
 class IndustryLayoutProp(object):
@@ -440,8 +452,10 @@ properties[0x0B] = {
     'callback_flags'            : {'num' : 0x1A, 'size' : 1},
 }
 
+# TODO: Feature 0x0C (Sound Effects)
+
 #
-# Feature 0x0D (??)
+# Feature 0x0D (Airports)
 #
 
 def airport_years(value):
@@ -495,8 +509,10 @@ properties[0x0D] = {
     'name'             : {'size': 2, 'num': 0x10, 'string': 0xDC},
 }
 
+# Feature 0x0E (Signals) doesn't currently have any action0
+
 #
-# Feature 0x0F (??)
+# Feature 0x0F (Objects)
 #
 
 def object_size(value):
@@ -528,7 +544,7 @@ properties[0x0F] = {
 }
 
 #
-# Feature 0x10 (??)
+# Feature 0x10 (Rail Types)
 #
 
 class RailtypeListProp(object):
@@ -572,7 +588,7 @@ properties[0x10] = {
 }
 
 #
-# Feature 0x11 (??)
+# Feature 0x11 (Airport Tiles)
 #
 
 properties[0x11] = {
