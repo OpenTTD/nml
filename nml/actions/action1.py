@@ -123,7 +123,8 @@ def parse_sprite_set(first_set):
         all_groups.update(new_groups)
 
     #make a list of sprite sets to guarantee iteration order
-    set_list = list(all_sets)
+    set_list = sorted(all_sets, key=lambda val: val.name.value)
+    group_list = sorted(all_groups, key=lambda val: val.name.value)
     real_sprite_list = [real_sprite.parse_sprite_list(item.sprite_list, item.pcx, block_name = item.name) for item in set_list]
 
     if len(set_list) != 0:
@@ -133,7 +134,7 @@ def parse_sprite_set(first_set):
             #not all sprite sets have an equal length, this is an error
             #search for a sprite group to blame so we can show a nice message
             length_map = dict(map(None, set_list, [len(sub) for sub in real_sprite_list]))
-            for g in all_groups:
+            for g in group_list:
                 num = None
                 for s in g.referenced_sets:
                     if num is None:
@@ -152,7 +153,7 @@ def parse_sprite_set(first_set):
             s.action1_num = i
 
     #add the sprite groups
-    for g in all_groups:
+    for g in group_list:
         action_list.extend(g.get_action_list())
 
     return action_list

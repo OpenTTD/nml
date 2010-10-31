@@ -49,54 +49,54 @@
 
 15 * 6 01 00 \b2 FF \wx0004 
 
-16 arctic_railwagons.pcx 0 250 01 24 8 -3 -12 
-17 arctic_railwagons.pcx 16 250 01 17 22 -14 -9 
-18 arctic_railwagons.pcx 48 250 01 12 32 -16 -8 
-19 arctic_railwagons.pcx 96 250 01 17 22 -6 -9 
+16 arctic_railwagons.pcx 0 25 01 24 8 -3 -12 
+17 arctic_railwagons.pcx 16 25 01 17 22 -14 -9 
+18 arctic_railwagons.pcx 48 25 01 12 32 -16 -8 
+19 arctic_railwagons.pcx 96 25 01 17 22 -6 -9 
 
-20 arctic_railwagons.pcx 0 25 01 24 8 -3 -12 
-21 arctic_railwagons.pcx 16 25 01 17 22 -14 -9 
-22 arctic_railwagons.pcx 48 25 01 12 32 -16 -8 
-23 arctic_railwagons.pcx 96 25 01 17 22 -6 -9 
+20 arctic_railwagons.pcx 0 250 01 24 8 -3 -12 
+21 arctic_railwagons.pcx 16 250 01 17 22 -14 -9 
+22 arctic_railwagons.pcx 48 250 01 12 32 -16 -8 
+23 arctic_railwagons.pcx 96 250 01 17 22 -6 -9 
 
 // Name: bulk_wagon_coal_arctic_group
 24 * 13 02 00 FD \b2 \b2 
-\w1 \w0 
-\w1 \w0 
+\w0 \w1 
+\w0 \w1 
 
 25 * 6 01 00 \b2 FF \wx0004 
 
-26 temperate_railwagons.png 0 350 01 24 8 -3 -12 
-27 temperate_railwagons.png 16 350 01 17 22 -14 -9 
-28 temperate_railwagons.png 48 350 01 12 32 -16 -8 
-29 temperate_railwagons.png 96 350 01 17 22 -6 -9 
+26 temperate_railwagons.png 0 225 01 24 8 -3 -12 
+27 temperate_railwagons.png 16 225 01 17 22 -14 -9 
+28 temperate_railwagons.png 48 225 01 12 32 -16 -8 
+29 temperate_railwagons.png 96 225 01 17 22 -6 -9 
 
-30 temperate_railwagons.png 0 225 01 24 8 -3 -12 
-31 temperate_railwagons.png 16 225 01 17 22 -14 -9 
-32 temperate_railwagons.png 48 225 01 12 32 -16 -8 
-33 temperate_railwagons.png 96 225 01 17 22 -6 -9 
+30 temperate_railwagons.png 0 350 01 24 8 -3 -12 
+31 temperate_railwagons.png 16 350 01 17 22 -14 -9 
+32 temperate_railwagons.png 48 350 01 12 32 -16 -8 
+33 temperate_railwagons.png 96 350 01 17 22 -6 -9 
 
 // Name: bulk_wagon_coal2_group
 34 * 13 02 00 FC \b2 \b2 
-\w1 \w0 
-\w1 \w0 
+\w0 \w1 
+\w0 \w1 
 
 35 * 6 01 00 \b2 FF \wx0004 
 
-36 temperate_railwagons.png 0 275 01 24 8 -3 -12 
-37 temperate_railwagons.png 16 275 01 17 22 -14 -9 
-38 temperate_railwagons.png 48 275 01 12 32 -16 -8 
-39 temperate_railwagons.png 96 275 01 17 22 -6 -9 
+36 temperate_railwagons.png 0 150 01 24 8 -3 -12 
+37 temperate_railwagons.png 16 150 01 17 22 -14 -9 
+38 temperate_railwagons.png 48 150 01 12 32 -16 -8 
+39 temperate_railwagons.png 96 150 01 17 22 -6 -9 
 
-40 temperate_railwagons.png 0 150 01 24 8 -3 -12 
-41 temperate_railwagons.png 16 150 01 17 22 -14 -9 
-42 temperate_railwagons.png 48 150 01 12 32 -16 -8 
-43 temperate_railwagons.png 96 150 01 17 22 -6 -9 
+40 temperate_railwagons.png 0 275 01 24 8 -3 -12 
+41 temperate_railwagons.png 16 275 01 17 22 -14 -9 
+42 temperate_railwagons.png 48 275 01 12 32 -16 -8 
+43 temperate_railwagons.png 96 275 01 17 22 -6 -9 
 
 // Name: bulk_wagon_grain_group
 44 * 13 02 00 FB \b2 \b2 
-\w1 \w0 
-\w1 \w0 
+\w0 \w1 
+\w0 \w1 
 
 // Name: bulk_wagon_coal_default_switch
 45 * 15 02 00 FA 80 02 \b0 04 
