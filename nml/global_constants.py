@@ -669,6 +669,18 @@ constant_numbers = {
 
     #Transparant recolouring
     'TRANSPARANT'                           : -1,
+
+    # Town growth effect of cargo
+    'TOWNGROWTH_PASSENGERS'                 : 0x00,
+    'TOWNGROWTH_MAIL'                       : 0x02,
+    'TOWNGROWTH_GOODS'                      : 0x05,
+    'TOWNGROWTH_WATER'                      : 0x09,
+    'TOWNGROWTH_FOOD'                       : 0x0B,
+    'TOWNGROWTH_NONE'                       : 0xFF,
+
+    # Cargo callbacks
+    'CARGO_CB_PROFIT'                       : 0x01,
+    'CARGO_CB_STATION_RATING'               : 0x02,
 }
 
 def signextend(param, info):

@@ -415,6 +415,32 @@ properties[0x0A] = {
 }
 
 #
+# Feature 0x0B (Cargos)
+#
+
+properties[0x0B] = {
+    'number'                    : {'num' : 0x08, 'size' : 1},
+    'type_name'                 : {'num' : 0x09, 'size' : 2, 'string' : 0xDC},
+    'unit_name'                 : {'num' : 0x0A, 'size' : 2, 'string' : 0xDC},
+    'single_unit_text'          : {'num' : 0x0B, 'size' : 2, 'string' : 0xDC},
+    'multiple_units_text'       : {'num' : 0x0C, 'size' : 2, 'string' : 0xDC},
+    'type_abbreviation'         : {'num' : 0x0D, 'size' : 2, 'string' : 0xDC},
+    'sprite'                    : {'num' : 0x0E, 'size' : 2},
+    'weight'                    : {'num' : 0x0F, 'size' : 1, 'unit_type' : 'weight', 'unit_conversion' : 16},
+    'penalty_lowerbound'        : {'num' : 0x10, 'size' : 1},
+    'single_penalty_length'     : {'num' : 0x11, 'size' : 1},
+    'pricefactor'               : {'num' : 0x12, 'size' : 4},
+    'station_list_colour'       : {'num' : 0x13, 'size' : 1},
+    'cargo_payment_list_colour' : {'num' : 0x14, 'size' : 1},
+    'is_freight'                : {'num' : 0x15, 'size' : 1},
+    'cargo_classes'             : {'num' : 0x16, 'size' : 2},
+    'cargo_label'               : {'num' : 0x17, 'size' : 4}, # @TODO: is a cargo-label, how to express that in the value?
+    'town_growth_effect'        : {'num' : 0x18, 'size' : 1},
+    'town_growth_multiplier'    : {'num' : 0x19, 'size' : 2}, # @TODO: should be a float fraction 0..255
+    'callback_flags'            : {'num' : 0x1A, 'size' : 1},
+}
+
+#
 # Feature 0x0D (??)
 #
 

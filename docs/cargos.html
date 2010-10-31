@@ -12,6 +12,37 @@
 <h2><a name="cargos-vars">Cargo variables</a></h2>
 
 <h2><a name="cargos-property">Cargo properties</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>number</td>                   <td>0..31 or 255</td><td>Number of the cargo for bitmasks. 255 for disabling.</td></tr> <!-- Add link to the default cargos -->
+<tr><td>type_name</td>                <td>string</td><td>TextID for the cargo type name</td></tr>
+<tr><td>unit_name</td>                <td>string</td><td>TextID for the name of one unit from the cargo type</td></tr>
+<tr><td>single_unit_text</td>         <td>string</td><td>TextID to be displayed for 1 unit of cargo</td></tr>
+<tr><td>multiple_units_text</td>      <td>string</td><td>TextID to be displayed for multiple units of cargo</td></tr>
+<tr><td>type_abbreviation</td>        <td>string</td><td>TextID for cargo type abbreviation</td></tr>
+<tr><td>sprite</td>                   <td>sprite</td><td>Sprite number for the icon of the cargo</td></tr>
+<tr><td>weight</td>                   <td>0..255</td><td>Weight of one unit of the cargo (measured in 1/16 ton)</td></tr>
+<tr><td>penalty_lowerbound</td>       <td>0..255</td><td>Delivery time until penalty is applied</td></tr>
+<tr><td>single_penalty_length</td>    <td>0..255</td><td>Length of the interval where a single penalty is applied</td></tr>
+<tr><td>price</td>                    <td>int</td><td>Base price</td></tr>
+<tr><td>station_list_colour</td>      <td>0..255</td><td>Color for the station list window</td></tr>
+<tr><td>cargo_payment_list_colour</td><td>0..255</td><td>Color for the cargo payment list window</td></tr>
+<tr><td>is_freight</td>               <td>0 or 1</td><td>Freight status (for the freighttrains switch); 0=not freight, 1=is freight</td></tr>
+<tr><td>cargo_classes</td>            <td>bitmask(<a href="#cargo-classes">cargo classes</a>)</td><td>Cargo classes</td></tr>
+<tr><td>cargo_label</td>              <td>4 letters</td><td>Cargo label</td></tr>
+<tr><td>town_growth_effect</td>       <td>TOWNGROWTH_XXX</td><td>Effect for town growth, see <a href="#town-growth-cargo">Cargo effects on town growth</a></td></tr>
+<tr><td>town_growth_multiplier</td>   <td></td><td></td></tr> <!--float 0..255</td><td>Multiplier for town growth</td></tr>-->
+<tr><td>callback_flags</td>           <td>bitmask(<a href="#cargo-callbacks">cargo callbacks</a>)</td><td>Callback flags</td></tr>
+</table>
+Cargo payment is computed from <code>price</code>, amount of cargo transported,
+distance, and a time delivery factor. Unit of the delivery time is 185 ticks,
+roughly 2.5 days. The factor is constant (with value 255) if delivery time is
+less than <code>penalty_lowerbound</code>. It goes down with rate 1 between
+<code>penalty_lowerbound + single_penalty_length</code>, and goes down with
+rate 2 if the delivery time is even longer. Time delivery factor is never less
+than 31.
+
+<h3><a name="cargo-classes">Cargo classes</a></h3>
 <p>Available cargo classes are listed in the following table. Cargos may be in
 more than one class. To combine multiple cargo classes, use the builtin function bitmask.
 For example, <code>bitmask(CC_EXPRESS, CC_REFRIGERATED)</code> is used for food.</p>
@@ -32,6 +63,24 @@ For example, <code>bitmask(CC_EXPRESS, CC_REFRIGERATED)</code> is used for food.
 <tr><td>NO_CARGO_CLASS<td>Special value that you can used to instead of 0.
 <tr><td>ALL_NORMAL_CARGO_CLASSES<td> All cargo classes except CC_SPECIAL. This is the same as <code>bitmask(CC_PASSENGERS, CC_MAIL, ..., CC_OVERSIZED)</code>.
 <tr><td>ALL_CARGO_CLASSES<td> All cargo classes. Same as <code>ALL_NORMAL_CARGO_CLASSES | bitmask(CC_SPECIAL)</code>
+</table>
+
+<h3><a name="town-growth-cargo">Cargo effects on town growth</a></h3>
+<table class="t">
+<tr><th>value</th><th>effect</th></tr>
+<tr><td>TOWNGROWTH_PASSENGERS</td><td>Affect towns as passengers do</td></tr>
+<tr><td>TOWNGROWTH_MAIL</td>      <td>Affect towns as mail does</td></tr>
+<tr><td>TOWNGROWTH_GOODS</td>     <td>Affect towns as goods/candy does</td></tr>
+<tr><td>TOWNGROWTH_WATER</td>     <td>Affect towns as water does (second required cargo for towngrowth in the desert)</td></tr>
+<tr><td>TOWNGROWTH_FOOD</td>      <td>Affect towns as food/fizzy drinks do (first required cargo for towngrowth in desert/above snowline)</tr></td>
+<tr><td>TOWNGROWTH_NONE</td>      <td>Don't affect town growth (default)</td></tr>
+</table>
+
+<h3><a name="cargo-callbacks">Cargo callbacks</a></h3>
+<table class="t">
+<tr><th>value</th><th>description</th></tr>
+<tr><td>CARGO_CB_PROFIT</td>        <td>Custom profit calculation</td></tr>
+<tr><td>CARGO_CB_STATION_RATING</td><td>Custom station rating calculation</td></tr>
 </table>
 
 </body>
