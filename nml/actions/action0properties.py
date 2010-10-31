@@ -36,6 +36,26 @@ class Action0Property(object):
     def get_size(self):
         return self.size * len(self.values) + 1
 
+# @var properties: A mapping of features to properties.
+#
+# Each property is a mapping of property name to its characteristics.
+# Existing combinations of characteristics:
+#  - 'append_function' + 'num' + 'size'
+#  - 'custom_function'
+#  - 'custom_function' + 'unit_conversion' + 'unit_type'
+#  - 'custom_function' + 'unit_type'
+#  - 'num' + 'size'
+#  - 'num' + 'size' + 'string_literal'
+#  - 'num' + 'size' + 'unit_conversion'
+#  - 'num' + 'size' + 'unit_conversion' + 'unit_type'
+#  - 'num' + 'size' + 'unit_type'
+#  - 'num' + 'string'
+#  - 'num' + 'string' + 'size'
+#
+# @todo: Define meaning of these combinations.
+# @todo: Define meaning of values of each key.
+# @todo: Define meaning of C{None}
+#
 properties = 0x12 * [None]
 
 def two_byte_property(value, low_prop, high_prop):
