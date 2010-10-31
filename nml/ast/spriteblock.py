@@ -4,7 +4,7 @@ from nml.ast import general
 
 class SpriteBlock(object):
     def __init__(self, feature, spriteset_list, pos):
-        self.feature = feature.reduce_constant([general.feature_ids])
+        self.feature = general.parse_feature(feature)
         self.spriteset_list = spriteset_list
         self.pos = pos
 

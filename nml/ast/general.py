@@ -23,3 +23,18 @@ feature_ids = {
     'FEAT_RAILTYPES': 0x10,
     'FEAT_AIRPORTTILES': 0x11,
 }
+
+def parse_feature(expr):
+    """
+    Parse an expression into a valid feature number.
+
+    @param expr: Expression to parse
+    @type expr: L{Expression}
+
+    @return: A constant number representing the parsed feature
+    @rtype: L{ConstantNumeric}
+    """
+    expr = expr.reduce_constant([feature_ids])
+    if expr.value not in feature_ids.values():
+        raise generic.ScriptError("Invalid feature '%s' encountered." + generic.to_hex(expr.value, 2), expr.pos)
+    return expr

@@ -42,6 +42,11 @@ def parse_property(feature, name, value, id, unit):
     action_list_append = []
     mods = []
 
+    #Validate feature
+    assert feature in range (0, len(properties)) #guaranteed by item
+    if properties[feature] is None:
+        raise generic.ScriptError("Setting properties for feature %s is not possible, no properties are defined." % generic.to_hex(feature, 2), name.pos)
+
     if isinstance(name, expression.Identifier):
         if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value, name.pos)
         prop = properties[feature][name.value]

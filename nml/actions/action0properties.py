@@ -36,7 +36,9 @@ class Action0Property(object):
     def get_size(self):
         return self.size * len(self.values) + 1
 
-# @var properties: A mapping of features to properties.
+# @var properties: A mapping of features to properties. This is a list
+# with one item per feature. Entries should be a dictionary of properties,
+# or C{None} if no properties are defined for that feature.
 #
 # Each property is a mapping of property name to its characteristics.
 # First a short summary is given, then the recognized characteristics

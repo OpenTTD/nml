@@ -24,7 +24,7 @@ class Item(object):
     def __init__(self, params, body, pos):
         self.pos = pos
         if len(params) >= 1:
-            self.feature = params[0].reduce_constant([general.feature_ids])
+            self.feature = general.parse_feature(params[0])
         else:
             raise generic.ScriptError("Item block requires at least one parameter, got 0", self.pos)
         if len(params) > 3:
