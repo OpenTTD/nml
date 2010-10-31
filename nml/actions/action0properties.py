@@ -59,6 +59,10 @@ def two_byte_property(value, low_prop, high_prop):
     high_byte = ConstantNumeric(value.value >> 8)
     return [Action0Property(low_prop, low_byte, 1), Action0Property(high_prop, high_byte, 1)]
 
+#
+# Feature 0x00 (??)
+#
+
 def append_cargo_type(feature):
     propnums = [0x15, 0x10, 0x0C]
     return lambda value: [Action0Property(propnums[feature], ConstantNumeric(0xFF), 1)]
@@ -138,6 +142,9 @@ properties[0x00] = {
 }
 properties[0x00].update(general_veh_props)
 
+#
+# Feature 0x01 (??)
+#
 
 def roadveh_speed_prop(value):
     value = value.reduce_constant()
@@ -171,6 +178,10 @@ properties[0x01] = {
 }
 properties[0x01].update(general_veh_props)
 
+#
+# Feature 0x02 (??)
+#
+
 properties[0x02] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'is_refittable'                : {'size': 1, 'num': 0x09},
@@ -191,6 +202,10 @@ properties[0x02] = {
     'introduction_date'            : {'size': 4, 'num': 0x1A},
 }
 properties[0x02].update(general_veh_props)
+
+#
+# Feature 0x03 (??)
+#
 
 properties[0x03] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
@@ -213,6 +228,10 @@ properties[0x03] = {
     'introduction_date'            : {'size': 4, 'num': 0x1A},
 }
 properties[0x03].update(general_veh_props)
+
+#
+# Feature 0x07 (??)
+#
 
 def house_available_years(value):
     if not isinstance(value, Array) or len(value.values) != 2:
@@ -276,6 +295,10 @@ properties[0x07] = {
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
 }
 
+#
+# Feature 0x09 (??)
+#
+
 def industrytile_cargos(value):
     if not isinstance(value, Array) or len(value.values) > 3:
         raise generic.ScriptError("accepted_cargos must be an array with no more than 3 values", value.pos)
@@ -305,6 +328,10 @@ properties[0x09] = {
     'animation_triggers' : {'size': 1, 'num': 0x11},
     'special_flags'      : {'size': 1, 'num': 0x12},
 }
+
+#
+# Feature 0x0A (??)
+#
 
 class IndustryLayoutProp(object):
     def __init__(self, layout_list):
@@ -367,6 +394,10 @@ properties[0x0A] = {
     'nearby_station_name'    : {'size': 2, 'num': 0x24, 'string': 0xDC},
 }
 
+#
+# Feature 0x0D (??)
+#
+
 def airport_years(value):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
@@ -418,6 +449,10 @@ properties[0x0D] = {
     'name'             : {'size': 2, 'num': 0x10, 'string': 0xDC},
 }
 
+#
+# Feature 0x0F (??)
+#
+
 def object_size(value):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Object size must be an array with exactly two values", value.pos)
@@ -445,6 +480,10 @@ properties[0x0F] = {
     'callback_flags'         : {'size': 2, 'num': 0x15},
     'height'                 : {'size': 1, 'num': 0x16},
 }
+
+#
+# Feature 0x10 (??)
+#
 
 class RailtypeListProp(object):
     def __init__(self, prop_num, railtype_list):
@@ -485,6 +524,10 @@ properties[0x10] = {
     'acceleration_model'       : {'size': 1, 'num': 0x15},
     'map_color'                : {'size': 1, 'num': 0x16},
 }
+
+#
+# Feature 0x11 (??)
+#
 
 properties[0x11] = {
     'substitute'         : {'size': 1, 'num': 0x08},
