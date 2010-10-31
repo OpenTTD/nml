@@ -39,23 +39,57 @@ class Action0Property(object):
 # @var properties: A mapping of features to properties.
 #
 # Each property is a mapping of property name to its characteristics.
-# Existing combinations of characteristics:
-#  - 'append_function' + 'num' + 'size'
-#  - 'custom_function'
-#  - 'custom_function' + 'unit_conversion' + 'unit_type'
-#  - 'custom_function' + 'unit_type'
-#  - 'num' + 'size'
-#  - 'num' + 'size' + 'string_literal'
-#  - 'num' + 'size' + 'unit_conversion'
-#  - 'num' + 'size' + 'unit_conversion' + 'unit_type'
-#  - 'num' + 'size' + 'unit_type'
-#  - 'num' + 'string'
-#  - 'num' + 'string' + 'size'
+# First a short summary is given, then the recognized characteristics
+# are outlined below in more detail.
 #
-# @todo: Define meaning of these combinations.
-# @todo: Define meaning of values of each key.
-# @todo: Define meaning of C{None}
+# Summary: If 'string' or 'string_literal' is set, the value should be a
+# string or literal string, else the value is a number. 'unit_type' and
+# 'unit_conversion' are used to convert user-entered values to nfo values.
+# 'custom_function' can be used to create a special mapping of the value to nfo
+# properties, else 'num' and 'size' are used to provide a 'normal' action0.
+# 'append_function' can be used to append one or more other properties.
 #
+# 'string', if set, means that the value of the property should be a string.
+# The value of characteristic indicates the string range to use (usually 0xD0 or 0xDC)
+# If set to None, the string will use the ID of the item (used for vehicle names)
+#
+# 'string_literal', if set, indicates that the value of the property should
+# be a literal (quoted) string. The value of the characteristic is equal to
+# the required length (usually 4) of said literal string.
+#
+# 'unit_type' means that units of the given type (power, speed) can be applied
+# to this property. A list of units can be found in ../unit.py. The value is then
+# converted to a certain reference unit (for example m/s for speed)
+# Leaving this unset means that no units (except 'nfo' which is an identity mapping)
+# can be applied to this property.
+#
+# 'unit_conversion' defines a conversion factor between the value entered by
+# the user and the resulting value in nfo. The entered value (possibly converted
+# to the appropriate reference unit, see 'unit_type' above) is multiplied by
+# this factor and then rounded to an integer to provide the final value.
+# This parameter is not required and defaults to 1.
+#
+# 'custom_function' can be used to bypass the normal way of converting the
+# name / value to an Action0Property. This function is called with one argument,
+# which is the value of the property. It should return a list of Action0Property.
+# To pass extra parameters to the function, a dose of lambda calculus can be used.
+# Consult the code for examples.
+#
+# 'append_function' works similarly to 'custum_function', but instead of
+# replacing the normal property generation it merely adds to it. The parameter
+# and return value are the same, but now the 'normal' action0 property is
+# generated as well.
+#
+# 'num' is the Action0 property number of the action 0 property, as given by the
+# nfo specs. If set to -1, no action0 property will be generated. If
+# 'custom_function' is set, this value is not needed and can be left out.
+#
+# 'size' is the size (in bytes) of the resulting action 0 property. Valid
+# values are 1 (byte), 2 (word) or 4 (dword). For other (or variable) sizes,
+# 'custom_function' is needed. If 'custom_function' is set or 'num' is equal
+# to -1, this parameter is not needed and can be left out.
+#
+
 properties = 0x12 * [None]
 
 #
