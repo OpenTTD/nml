@@ -152,7 +152,7 @@ def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
     frames  = value.values[1].reduce_constant().value
     if looping not in (0, 1):
         raise generic.ScriptError("First field of the animation_info array must be either 0 or 1", value.values[0].pos)
-    if frames < 1 or frames > max_frames:
+    if frames < 1 or frames > max_frame:
         raise generic.ScriptError("Second field of the animation_info array must be between 1 and " + str(max_frame), value.values[1].pos)
 
     return [Action0Property(prop_num, ConstantNumeric(looping << loop_bit + frames - 1), prop_size)]
