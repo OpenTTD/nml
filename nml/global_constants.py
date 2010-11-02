@@ -468,10 +468,10 @@ constant_numbers = {
     'INDUSTRYTYPE_TOWN'                  : 0xFF,
 
     #industry production type flags (industry property 0x0B, prod_flags)
-    'PRODUCTIONTYPE_EXTRACTIVE'          : 0,
-    'PRODUCTIONTYPE_ORGANIC'             : 1,
-    'PRODUCTIONTYPE_PROCESSING'          : 2,
-    'NO_PRODUCTIONTYPE'                  : 0x00,
+    'PRODUCTIONTYPE_EXTRACTIVE'          : 0x01,
+    'PRODUCTIONTYPE_ORGANIC'             : 0x02,
+    'PRODUCTIONTYPE_PROCESSING'          : 0x04,
+    'PRODUCTIONTYPE_NONE'                : 0x00,
 
     #traffic side (right hand traffic when bit 4 is set)
     'TRAFFIC_SIDE_LEFT'                  : 0x00,
