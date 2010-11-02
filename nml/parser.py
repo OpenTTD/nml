@@ -24,10 +24,10 @@ class NMLParser(object):
         ('left','XOR'),
         ('left','AND'),
         ('left','COMP_EQ','COMP_NEQ','COMP_LE','COMP_GE','COMP_LT','COMP_GT'),
-        ('left','SHIFT_LEFT','SHIFT_RIGHT'),
+        ('left','SHIFT_LEFT','SHIFT_RIGHT','SHIFTU_RIGHT'),
         ('left','PLUS','MINUS'),
         ('left','TIMES','DIVIDE','MODULO'),
-        ('left','LOGICAL_NOT'),
+        ('left','LOGICAL_NOT','BINARY_NOT'),
     )
 
     def p_error(self, t):
@@ -58,7 +58,6 @@ class NMLParser(object):
                       | snowline
                       | cargotable
                       | railtype
-                      | alt_sprites
                       | tilelayout'''
         t[0] = t[1]
 
@@ -108,6 +107,10 @@ class NMLParser(object):
 
     def p_expression_id(self, t):
         'expression : ID'
+        t[0] = t[1]
+
+    def p_expression_string(self, t):
+        'expression : string'
         t[0] = t[1]
 
     def p_parenthesed_expression(self, t):
@@ -198,7 +201,7 @@ class NMLParser(object):
         'expression : LBRACKET expression_list RBRACKET'
         t[0] = expression.Array(t[2], t.lineno(1))
 
-    def p_expression_string(self, t):
+    def p_expression_string_literal(self, t):
         'expression : STRING_LITERAL'
         t[0] = t[1]
 
@@ -214,8 +217,7 @@ class NMLParser(object):
         else: t[0] = t[1] + [t[2]]
 
     def p_assignment(self, t):
-        '''assignment : ID COLON string SEMICOLON
-                      | ID COLON expression SEMICOLON'''
+        'assignment : ID COLON expression SEMICOLON'
         t[0] = assignment.Assignment(t[1], t[3], t[1].pos)
 
     def p_param_desc(self, t):
@@ -241,8 +243,7 @@ class NMLParser(object):
         else: t[0] = t[1] + [t[2]]
 
     def p_setting_value(self, t):
-        '''setting_value : ID COLON string SEMICOLON
-                         | ID COLON expression SEMICOLON'''
+        'setting_value : ID COLON expression SEMICOLON'
         t[0] = grf.SettingValue(t[1], t[3])
 
     def p_names_setting_value(self, t):
@@ -320,10 +321,8 @@ class NMLParser(object):
     def p_property_assignment(self, t):
         '''property_assignment : ID COLON expression SEMICOLON
                                | ID COLON expression UNIT SEMICOLON
-                               | ID COLON string SEMICOLON
                                | NUMBER COLON expression SEMICOLON
-                               | NUMBER COLON expression UNIT SEMICOLON
-                               | NUMBER COLON string SEMICOLON'''
+                               | NUMBER COLON expression UNIT SEMICOLON'''
         name = t[1] if isinstance(t[1], expression.Identifier) else expression.ConstantNumeric(t[1], t.lineno(1))
         unit = None if len(t) == 5 else item.Unit(t[4])
         t[0] = item.Property(name, t[3], unit, t.lineno(1))
@@ -411,8 +410,7 @@ class NMLParser(object):
     def p_switch_value(self, t):
         '''switch_value : RETURN expression SEMICOLON
                         | RETURN SEMICOLON
-                        | ID SEMICOLON
-                        | RETURN string SEMICOLON'''
+                        | ID SEMICOLON'''
         if len(t) == 4: t[0] = t[2]
         elif t[1] == 'return': t[0] = None
         else: t[0] = t[1]

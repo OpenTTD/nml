@@ -1,3 +1,3 @@
 // Regression test for error(..) statements (ActionB)
-error(NOTICE, USED_WITH, STR_REGRESSION_CARE);
-error(FATAL, STR_REGRESSION_ERROR, STR_ANSWER, 14, param[1] + 12 * param[2]);
+error(NOTICE, USED_WITH, string(STR_REGRESSION_CARE));
+error(FATAL, STR_REGRESSION_ERROR, string(STR_ANSWER), 14, param[1] + 12 * param[2]);

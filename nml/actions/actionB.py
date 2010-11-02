@@ -89,10 +89,10 @@ def parse_error_block(error):
 
     if error.data is not None:
         error.data = error.data.reduce()
-        if isinstance(error.data, expression.Identifier):
-            if error.data.value not in grfstrings.grf_strings:
-                raise generic.ScriptError("Unknown string '%s'" % (error.data.value), error.data.pos)
-            for translation in grfstrings.grf_strings[error.data.value]:
+        if isinstance(error.data, expression.String):
+            if error.data.name.value not in grfstrings.grf_strings:
+                raise generic.ScriptError("Unknown string '%s'" % (error.data.name.value), error.data.pos)
+            for translation in grfstrings.grf_strings[error.data.name.value]:
                 langs.append(translation['lang'])
         elif not isinstance(error.data, expression.StringLiteral):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos)
@@ -119,7 +119,7 @@ def parse_error_block(error):
         elif isinstance(error.data, expression.StringLiteral):
             data = error.data.value
         else:
-            data = grfstrings.get_translation(error.data, lang)
+            data = grfstrings.get_translation(error.data.name, lang)
         if len(act6.modifications) > 0: action_list.append(act6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 
