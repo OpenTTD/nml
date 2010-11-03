@@ -40,6 +40,7 @@ reserved = {
     'livery_override' : 'LIVERYOVERRIDE',
     'exit' : 'SKIP_ALL',
     'tilelayout' : 'TILELAYOUT',
+    'spritelayout' : 'SPRITELAYOUT',
     'alternative_sprites' : 'ALT_SPRITES',
 }
 

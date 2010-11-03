@@ -133,6 +133,23 @@ class SpriteView(object):
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 4)
 
+class SpriteLayout(object):
+    def __init__(self, name, layout_sprite_list, pos = None):
+        self.name = name
+        self.layout_sprite_list = layout_sprite_list
+        self.pos = pos
+
+    def pre_process(self):
+        pass
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Sprite layout:', self.name.value
+        for layout_sprite in self.layout_sprite_list:
+            layout_sprite.debug_print(indentation + 2)
+
+    def get_action_list(self):
+        return []
+
 class LayoutSpriteGroup(spritegroup_base_class):
     def __init__(self, name, layout_sprite_list, pos = None):
         self.initialize(name)
