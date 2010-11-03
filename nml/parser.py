@@ -52,6 +52,8 @@ class NMLParser(object):
                       | random_switch
                       | produce
                       | spriteblock
+                      | spriteset
+                      | spritegroup
                       | template_declaration
                       | town_names
                       | sounds
