@@ -10,13 +10,13 @@ class SpriteBlock(object):
 
     def pre_process(self):
         for spriteset in self.spriteset_list:
-            spriteset.feature = self.feature
             spriteset.pre_process()
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite block, feature', hex(self.feature.value)
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 2)
+
     def get_action_list(self):
         return action1.parse_sprite_block(self)
 
@@ -61,14 +61,6 @@ class SpriteView(object):
         self.spriteset_list = spriteset_list
         self.pos = pos
 
-    def check_spritesets(self, parent_group):
-        used_sets = set()
-        for spriteset_name in self.spriteset_list:
-            spriteset_ref = action2.resolve_spritegroup(spriteset_name, parent_group.feature.value, False, True)
-            spriteset_ref.referencing_groups.add(parent_group)
-            used_sets.add(spriteset_ref)
-        return used_sets
-
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite view:', self.name.value
         print (indentation+2)*' ' + 'Sprite sets:'
@@ -81,13 +73,12 @@ class LayoutSprite(object):
         self.param_list = param_list
         self.pos = pos
 
-    def check_spritesets(self, parent_group):
-        used_sets = set()
+    # called by LayoutSpriteGroup
+    def collect_spritesets(self):
+        used_sets = []
         for layout_param in self.param_list:
             if isinstance(layout_param.value, expression.Identifier):
-                spriteset_ref = action2.resolve_spritegroup(layout_param.value, parent_group.feature.value, False, True)
-                spriteset_ref.referencing_groups.add(parent_group)
-                used_sets.add(spriteset_ref)
+                used_sets.append(layout_param.value)
         return used_sets
 
     def debug_print(self, indentation):

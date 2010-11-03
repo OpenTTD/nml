@@ -162,15 +162,24 @@ class LiveryOverride(object):
         wagon_id = self.wagon_id.reduce_constant([global_constants.item_names])
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
-class GraphicsBlock(object):
+graphics_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.NONE, True)
+
+class GraphicsBlock(graphics_base_class):
     def __init__(self, graphics_list, default_graphics):
         self.graphics_list = graphics_list
         self.default_graphics = default_graphics
 
     def pre_process(self):
+        global item_feature
+        self.initialize(None, expression.ConstantNumeric(item_feature))
+        graphics_base_class.pre_process(self)
+
+    def collect_references(self):
+        all_refs = []
         for gfx in [g.action2_id for g in self.graphics_list] + [self.default_graphics]:
             if isinstance(gfx, expression.Identifier):
-                action2.resolve_spritegroup(gfx, item_feature, True, False)
+                all_refs.append(gfx)
+        return all_refs
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics block:'
@@ -180,7 +189,9 @@ class GraphicsBlock(object):
 
     def get_action_list(self):
         global item_feature, item_id
-        return action3.parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
+        if self.prepare_output():
+            return action3.parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
+        return []
 
 class GraphicsDefinition(object):
     def __init__(self, cargo_id, action2_id):

@@ -17,13 +17,16 @@ class Action1(base_action.BaseAction):
         file.newline()
         file.end_sprite()
 
-class SpriteSet(object):
+spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False)
+
+class SpriteSet(spriteset_base_class):
     def __init__(self, param_list, sprite_list, pos):
         if not (1 <= len(param_list) <= 2):
             raise generic.ScriptError("Spriteset requires 1 or 2 parameters, encountered " + str(len(param_list)), pos)
-        self.name = param_list[0]
-        if not isinstance(self.name, expression.Identifier):
-            raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", self.name.pos)
+        name = param_list[0]
+        if not isinstance(name, expression.Identifier):
+            raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", name.pos)
+        self.initialize(name)
         if len(param_list) >= 2:
             self.pcx = param_list[1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
@@ -32,12 +35,10 @@ class SpriteSet(object):
             self.pcx = None
         self.sprite_list = sprite_list
         self.pos = pos
-        self.feature = None #will be set during pre-processing
-        self.referencing_groups = set() #sprite groups that reference this set
         self.action1_num = None #set number in action1
 
-    def pre_process(self):
-        action2.register_spritegroup(self)
+    def collect_references(self):
+        return []
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite set:', self.name.value
@@ -47,25 +48,27 @@ class SpriteSet(object):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return parse_sprite_set(self) if self.action1_num is None else []
+        if self.action1_num is None and self.prepare_output():
+            return parse_sprite_set(self)
+        return []
 
 #to avoid circular imports, tell action2 about the existence of SpriteSet here
 action2.spriteset_ref = SpriteSet
 
-class SpriteGroup(object):
+spritegroup_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False)
+
+class SpriteGroup(spritegroup_base_class):
     def __init__(self, name, spriteview_list, pos = None):
-        self.name = name
+        self.initialize(name)
         self.spriteview_list = spriteview_list
         self.pos = pos
-        self.feature = None #will be set during pre-processing
-        self.referenced_sets = set()
         self.parsed = False
 
-    def pre_process(self):
-        assert self.feature is not None
+    def collect_references(self):
+        all_sets = []
         for spriteview in self.spriteview_list:
-            self.referenced_sets.update(spriteview.check_spritesets(self))
-        action2.register_spritegroup(self)
+            all_sets.extend(spriteview.spriteset_list)
+        return all_sets
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite group:', self.name.value
@@ -73,35 +76,38 @@ class SpriteGroup(object):
             spriteview.debug_print(indentation + 2)
 
     def get_action_list(self):
-        actions = [] if self.parsed else action2real.get_real_action2s(self)
-        self.parsed = True
-        return actions
+        if not self.parsed:
+            if not self.prepare_output():
+                return []
+            self.parsed = True
+            return action2real.get_real_action2s(self)
+        return []
 
-class LayoutSpriteGroup(object):
+class LayoutSpriteGroup(spritegroup_base_class):
     def __init__(self, name, layout_sprite_list, pos = None):
-        self.name = name
+        self.initialize(name)
         self.layout_sprite_list = layout_sprite_list
         self.pos = pos
-        self.feature = None #will be set during pre-processing
-        self.referenced_sets = set()
         self.parsed = False
 
-    def pre_process(self):
-        assert self.feature is not None
+    def collect_references(self):
+        all_sets = []
         for layout_sprite in self.layout_sprite_list:
-            self.referenced_sets.update(layout_sprite.check_spritesets(self))
-        action2.register_spritegroup(self)
+            all_sets.extend(layout_sprite.collect_spritesets())
+        return all_sets
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Tile layout sprite group:', self.name.value
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 2)
 
-    
     def get_action_list(self, only_action2 = False):
-        actions = [] if self.parsed else action2layout.get_layout_action2s(self)
-        self.parsed = True
-        return actions
+        if not self.parsed:
+            if not self.prepare_output():
+                return []
+            self.parsed = True
+            return action2layout.get_layout_action2s(self)
+        return []
 
 def parse_sprite_set(first_set):
     all_groups = set() #list of all groups
@@ -115,11 +121,11 @@ def parse_sprite_set(first_set):
         if len(unhandled_sets) == 0: break
         new_groups = set()
         for s in unhandled_sets:
-            new_groups.update(s.referencing_groups)
+            new_groups.update(s.referencing_nodes())
         handled_sets.update(unhandled_sets)
         new_groups.difference_update(all_groups) #remove all elements already seen
         for g in new_groups:
-            all_sets.update(g.referenced_sets)
+            all_sets.update(g.referenced_nodes())
         all_groups.update(new_groups)
 
     #make a list of sprite sets to guarantee iteration order
@@ -136,7 +142,7 @@ def parse_sprite_set(first_set):
             length_map = dict(map(None, set_list, [len(sub) for sub in real_sprite_list]))
             for g in group_list:
                 num = None
-                for s in g.referenced_sets:
+                for s in g.referenced_nodes():
                     if num is None:
                         num = length_map[s]
                     elif num != length_map[s]:

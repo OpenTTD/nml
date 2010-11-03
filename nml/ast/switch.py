@@ -7,23 +7,25 @@ var_ranges = {
     'PARENT' : 0x8A
 }
 
-class Switch(object):
+switch_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, True)
+
+class Switch(switch_base_class):
     def __init__(self, feature, var_range, name, expr, body, pos):
-        self.feature = general.parse_feature(feature)
+        self.initialize(name, general.parse_feature(feature))
         if var_range.value in var_ranges:
             self.var_range = var_ranges[var_range.value]
         else:
             raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % var_range.value, var_range.pos)
-        self.name = name
         self.expr = expr
         self.body = body
         self.pos = pos
 
-    def pre_process(self):
+    def collect_references(self):
+        all_refs = []
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
             if isinstance(result, expression.Identifier) and result.value != 'CB_FAILED':
-                action2.resolve_spritegroup(result, self.feature.value, True, False)
-        action2.register_spritegroup(self)
+                all_refs.append(result)
+        return all_refs
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
@@ -33,7 +35,9 @@ class Switch(object):
         self.body.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return action2var.parse_varaction2(self)
+        if self.prepare_output():
+            return action2var.parse_varaction2(self)
+        return []
 
     def __str__(self):
         var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
@@ -67,12 +71,12 @@ class SwitchBody(object):
             ret += '\t%s;\n' % str(self.default)
         return ret
 
-class RandomSwitch(object):
+class RandomSwitch(switch_base_class):
     def __init__(self, param_list, choices, pos):
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         #feature
-        self.feature = general.parse_feature(param_list[0])
+        feature = general.parse_feature(param_list[0])
 
         #type
         self.type = param_list[1]
@@ -80,7 +84,10 @@ class RandomSwitch(object):
         #name
         if not isinstance(param_list[2], expression.Identifier):
             raise generic.ScriptError("random_switch parameter 3 'name' should be an identifier", pos)
-        self.name = param_list[2]
+        name = param_list[2]
+
+        #initialize base class
+        self.initialize(name, feature)
 
         #triggers
         self.triggers = param_list[3].reduce_constant(global_constants.const_list) if len(param_list) == 4 else expression.ConstantNumeric(0)
@@ -108,11 +115,12 @@ class RandomSwitch(object):
             self.choices.append(choice)
         self.pos = pos
 
-    def pre_process(self):
+    def collect_references(self):
+        all_refs = []
         for choice in self.choices:
             if isinstance(choice.result, expression.Identifier) and choice.result.value != 'CB_FAILED':
-                action2.resolve_spritegroup(choice.result, self.feature.value, True, False)
-        action2.register_spritegroup(self)
+                all_refs.append(choice.result)
+        return all_refs
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Random'
@@ -131,7 +139,9 @@ class RandomSwitch(object):
             choice.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return parse_randomswitch(self)
+        if self.prepare_output():
+            return parse_randomswitch(self)
+        return []
 
     def __str__(self):
         ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), str(self.type), str(self.name), str(self.triggers))
