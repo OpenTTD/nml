@@ -168,7 +168,7 @@ class LayoutSpriteGroup(spritegroup_base_class):
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 2)
 
-    def get_action_list(self, only_action2 = False):
+    def get_action_list(self):
         if not self.parsed:
             if not self.prepare_output():
                 return []
