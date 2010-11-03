@@ -1,6 +1,6 @@
 from nml import generic, expression, tokens, nmlop
 from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites
-from nml.actions import action1, action2var, action2random, actionD, action11, real_sprite
+from nml.actions import action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
 class NMLParser(object):
@@ -499,16 +499,16 @@ class NMLParser(object):
 
     def p_spriteset(self, t):
         'spriteset : SPRITESET LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
-        t[0] = action1.SpriteSet(t[3], t[6], t.lineno(1))
+        t[0] = spriteblock.SpriteSet(t[3], t[6], t.lineno(1))
 
 
     def p_spritegroup_normal(self, t):
         'spritegroup : SPRITEGROUP ID LBRACE spriteview_list RBRACE'
-        t[0] = action1.SpriteGroup(t[2], t[4], t.lineno(1))
+        t[0] = spriteblock.SpriteGroup(t[2], t[4], t.lineno(1))
 
     def p_spritegroup_layout(self, t):
         'spritegroup : SPRITEGROUP ID LBRACE layout_sprite_list RBRACE'
-        t[0] = action1.LayoutSpriteGroup(t[2], t[4], t.lineno(1))
+        t[0] = spriteblock.LayoutSpriteGroup(t[2], t[4], t.lineno(1))
 
     def p_spriteview_list(self, t):
         '''spriteview_list : ID SEMICOLON

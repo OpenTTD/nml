@@ -1,5 +1,5 @@
-from nml import generic, expression
-from nml.actions import base_action, action2, action2real, action2layout, real_sprite
+from nml import generic
+from nml.actions import base_action, real_sprite
 
 class Action1(base_action.BaseAction):
     def __init__(self, feature, num_sets, num_ent):
@@ -16,95 +16,6 @@ class Action1(base_action.BaseAction):
         file.print_varx(self.num_ent, 3)
         file.newline()
         file.end_sprite()
-
-spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False)
-
-class SpriteSet(spriteset_base_class):
-    def __init__(self, param_list, sprite_list, pos):
-        if not (1 <= len(param_list) <= 2):
-            raise generic.ScriptError("Spriteset requires 1 or 2 parameters, encountered " + str(len(param_list)), pos)
-        name = param_list[0]
-        if not isinstance(name, expression.Identifier):
-            raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", name.pos)
-        self.initialize(name)
-        if len(param_list) >= 2:
-            self.pcx = param_list[1].reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("Spriteset-block parameter 2 'file' must be a string literal", self.pcx.pos)
-        else:
-            self.pcx = None
-        self.sprite_list = sprite_list
-        self.pos = pos
-        self.action1_num = None #set number in action1
-
-    def collect_references(self):
-        return []
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite set:', self.name.value
-        print (indentation+2)*' ' + 'Source:  ', self.pcx.value if self.pcx is not None else 'None'
-        print (indentation+2)*' ' + 'Sprites:'
-        for sprite in self.sprite_list:
-            sprite.debug_print(indentation + 4)
-
-    def get_action_list(self):
-        if self.action1_num is None and self.prepare_output():
-            return parse_sprite_set(self)
-        return []
-
-spritegroup_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False)
-
-class SpriteGroup(spritegroup_base_class):
-    def __init__(self, name, spriteview_list, pos = None):
-        self.initialize(name)
-        self.spriteview_list = spriteview_list
-        self.pos = pos
-        self.parsed = False
-
-    def collect_references(self):
-        all_sets = []
-        for spriteview in self.spriteview_list:
-            all_sets.extend(spriteview.spriteset_list)
-        return all_sets
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite group:', self.name.value
-        for spriteview in self.spriteview_list:
-            spriteview.debug_print(indentation + 2)
-
-    def get_action_list(self):
-        if not self.parsed:
-            if not self.prepare_output():
-                return []
-            self.parsed = True
-            return action2real.get_real_action2s(self)
-        return []
-
-class LayoutSpriteGroup(spritegroup_base_class):
-    def __init__(self, name, layout_sprite_list, pos = None):
-        self.initialize(name)
-        self.layout_sprite_list = layout_sprite_list
-        self.pos = pos
-        self.parsed = False
-
-    def collect_references(self):
-        all_sets = []
-        for layout_sprite in self.layout_sprite_list:
-            all_sets.extend(layout_sprite.collect_spritesets())
-        return all_sets
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Tile layout sprite group:', self.name.value
-        for layout_sprite in self.layout_sprite_list:
-            layout_sprite.debug_print(indentation + 2)
-
-    def get_action_list(self, only_action2 = False):
-        if not self.parsed:
-            if not self.prepare_output():
-                return []
-            self.parsed = True
-            return action2layout.get_layout_action2s(self)
-        return []
 
 #vehicles, stations, canals, cargos, airports, railtypes, houses, industry tiles, airport tiles, objects
 spriteset_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11, 0x0F]
