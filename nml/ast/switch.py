@@ -20,6 +20,8 @@ class Switch(switch_base_class):
         self.body = body
         self.pos = pos
 
+    # pre_process is defined by the base class
+
     def collect_references(self):
         all_refs = []
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
@@ -114,6 +116,8 @@ class RandomSwitch(switch_base_class):
                     assert 0, "NOT REACHED"
             self.choices.append(choice)
         self.pos = pos
+
+    # pre_process is defined by the base class
 
     def collect_references(self):
         all_refs = []

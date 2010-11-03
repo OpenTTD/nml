@@ -78,6 +78,8 @@ class SpriteSet(spriteset_base_class):
         self.pos = pos
         self.action1_num = None #set number in action1
 
+    # pre_process is defined by the base class
+
     def collect_references(self):
         return []
 
@@ -101,6 +103,8 @@ class SpriteGroup(spritegroup_base_class):
         self.spriteview_list = spriteview_list
         self.pos = pos
         self.parsed = False
+
+    # pre_process is defined by the base class
 
     def collect_references(self):
         all_sets = []
@@ -156,6 +160,8 @@ class LayoutSpriteGroup(spritegroup_base_class):
         self.layout_sprite_list = layout_sprite_list
         self.pos = pos
         self.parsed = False
+
+    # pre_process is defined by the base class
 
     def collect_references(self):
         all_sets = []

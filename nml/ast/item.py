@@ -171,6 +171,7 @@ class GraphicsBlock(graphics_base_class):
 
     def pre_process(self):
         global item_feature
+        # initialize base class and pre_process it as well (in that order)
         self.initialize(None, expression.ConstantNumeric(item_feature))
         graphics_base_class.pre_process(self)
 

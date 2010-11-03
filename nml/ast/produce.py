@@ -52,6 +52,7 @@ class Produce(produce_base_class):
             self.again = self.param_list[6].reduce(global_constants.const_list)
         else:
             self.again = expression.ConstantNumeric(0)
+        # initialize base class and pre_process it as well (in that order)
         self.initialize(name, expression.ConstantNumeric(0x0A))
         produce_base_class.pre_process(self)
 
