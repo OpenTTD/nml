@@ -3,8 +3,7 @@ from nml.actions import action1, action2, real_sprite
 from nml.ast import general
 
 class SpriteBlock(object):
-    def __init__(self, feature, spriteset_list, pos):
-        self.feature = general.parse_feature(feature)
+    def __init__(self, spriteset_list, pos):
         self.spriteset_list = spriteset_list
         self.pos = pos
 
@@ -13,12 +12,15 @@ class SpriteBlock(object):
             spriteset.pre_process()
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite block, feature', hex(self.feature.value)
+        print indentation*' ' + 'Sprite block'
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 2)
 
     def get_action_list(self):
-        return action1.parse_sprite_block(self)
+        action_list = []
+        for spriteset in self.spriteset_list:
+            action_list.extend(spriteset.get_action_list())
+        return action_list
 
 class TemplateDeclaration(object):
     def __init__(self, name, param_list, sprite_list, pos):

@@ -106,11 +106,18 @@ class LayoutSpriteGroup(spritegroup_base_class):
             return action2layout.get_layout_action2s(self)
         return []
 
+#vehicles, stations, canals, cargos, airports, railtypes, houses, industry tiles, airport tiles, objects
+spriteset_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11, 0x0F]
+
 def parse_sprite_set(first_set):
     all_groups = set() #list of all groups
     all_sets = set([first_set]) #list of all sets
     handled_sets = set() #list of all sets that have already been handled
     action_list = []
+
+    global spriteset_features
+    if first_set.feature.value not in spriteset_features:
+        raise generic.ScriptError("Sprite sets are not supported for this feature: " + generic.to_hex(first_set.feature.value, 2), first_set.feature.pos)
 
     #compile a list of all groups and sets that will be handled in one go
     while 1:
@@ -159,17 +166,4 @@ def parse_sprite_set(first_set):
     for g in group_list:
         action_list.extend(g.get_action_list())
 
-    return action_list
-
-#vehicles, stations, canals, cargos, airports, railtypes, houses, industry tiles, airport tiles, objects
-action1_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11, 0x0F]
-
-def parse_sprite_block(sprite_block):
-    global action1_features
-    if sprite_block.feature.value not in action1_features:
-        raise generic.ScriptError("Sprite blocks are not supported for this feature: 0x" + generic.to_hex(sprite_block.feature.value, 2), sprite_block.feature.pos)
-
-    action_list = []
-    for item in sprite_block.spriteset_list:
-        action_list.extend(item.get_action_list())
     return action_list
