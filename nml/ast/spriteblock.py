@@ -4,6 +4,7 @@ from nml.ast import general
 
 class SpriteBlock(object):
     def __init__(self, spriteset_list, pos):
+        generic.print_warning("Using a spriteblock is deprecated and will not be supported in the future. Place your spriteset(s) and/or spritegroup(s) in the global scope instead.", pos)
         self.spriteset_list = spriteset_list
         self.pos = pos
 
