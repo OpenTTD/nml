@@ -107,7 +107,7 @@ class Action2LayoutSprite(object):
     def _validate_sprite(self, name, value):
         if not isinstance(value, expression.Identifier):
             raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier", value.pos)
-        spriteset = action2.resolve_spritegroup(value, None, False, True)
+        spriteset = action2.resolve_spritegroup(value)
         num = spriteset.action1_num
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
         if self.is_set('ttdsprite'):

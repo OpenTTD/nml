@@ -297,18 +297,15 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
 
     return ASTSpriteGroup
 
-#list of all types of sprite sets and sprite groups
+#list of all registered sprite sets and sprite groups
 spritegroup_list = {}
-
-#reference to action1.SpriteSet, set in action1.py to avoid circular imports
-spriteset_ref = None
 
 def register_spritegroup(spritegroup):
     """
     Register a sprite group, so it can be resolved by name later
 
     @param spritegroup: Sprite group to register
-    @type spritegroup: L{SpriteSet}, L{SpriteGroup}, L{LayoutSpriteGroup}, L{Produce}, L{Switch} or L{RandomSwitch}
+    @type spritegroup: L{ASTSpriteGroup}
     """
     name = spritegroup.name.value
     if name in spritegroup_list:
@@ -317,31 +314,14 @@ def register_spritegroup(spritegroup):
 
 def resolve_spritegroup(name, feature = None, allow_group = True, allow_set = True):
     """
-    Resolve a sprite group with a given name, then check its feature and type.
-    If the found sprite group does not meet the criteria, an error is raised.
+    Resolve a sprite group with a given name
 
     @param name: Name of the sprite group.
     @type name: L{Identifier}
 
-    @param feature: Feature number that the found sprite group should have. C{None} if no check is needed.
-    @type feature: C{int} or C{None}
-
-    @param allow_group: Allow a sprite group (all types except SpriteSet) as return value.
-    @type allow_group: C{bool}
-
-    @param allow_set: Allow a SpriteSet as return value.
-    @type allow_set: C{bool}
-
     @return: The sprite group that the name refers to.
-    @rtype: L{SpriteSet}, L{SpriteGroup}, L{LayoutSpriteGroup}, L{Produce}, L{Switch} or L{RandomSwitch}
+    @rtype: L{ASTSpriteGroup}
     """
     if name.value not in spritegroup_list:
         raise generic.ScriptError("Unknown identifier encountered: '%s'" % name.value, name.pos)
-    spritegroup = spritegroup_list[name.value]
-    if feature is not None and spritegroup.feature.value is not None and spritegroup.feature.value != feature:
-        raise generic.ScriptError("'%s' is defined for the wrong feature (expected %d, got %d)" % (name.value, feature, spritegroup.feature.value), name.pos)
-    if not (allow_group or isinstance(spritegroup, spriteset_ref)):
-        raise generic.ScriptError("Expected a sprite set reference: '%s'" % name.value, name.pos)
-    if (not allow_set) and isinstance(spritegroup, spriteset_ref):
-        raise generic.ScriptError("Unexpected sprite set reference: '%s'" % name.value, name.pos)
-    return spritegroup
+    return spritegroup_list[name.value]

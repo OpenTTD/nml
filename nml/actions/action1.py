@@ -52,9 +52,6 @@ class SpriteSet(spriteset_base_class):
             return parse_sprite_set(self)
         return []
 
-#to avoid circular imports, tell action2 about the existence of SpriteSet here
-action2.spriteset_ref = SpriteSet
-
 spritegroup_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False)
 
 class SpriteGroup(spritegroup_base_class):

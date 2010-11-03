@@ -49,7 +49,7 @@ def get_real_action2s(spritegroup):
             raise generic.ScriptError("Sprite view type '" + view.name.value + "' is not supported for this feature: 0x" + generic.to_hex(feature, 2), view.pos)
 
         for set_name in view.spriteset_list:
-            spriteset = action2.resolve_spritegroup(set_name, feature, False, True)
+            spriteset = action2.resolve_spritegroup(set_name)
             if type == 0: loaded_list.append(spriteset.action1_num)
             else:  loading_list.append(spriteset.action1_num)
     return [Action2Real(feature, spritegroup.name.value, loaded_list, loading_list)]
