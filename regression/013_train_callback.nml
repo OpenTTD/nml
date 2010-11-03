@@ -42,33 +42,31 @@ template tmpl_railwagon(x,y) {
     [ 96+x, y, 22,17, -6, -9]
 }
 
-spriteblock(FEAT_TRAINS) {
-    spriteset(bulk_wagon_empty_set, "temperate_railwagons.png") { tmpl_railwagon(0,25) }
-    spriteset(bulk_wagon_coal_default_set, "temperate_railwagons.png") { tmpl_railwagon(0,250) }
-    spritegroup bulk_wagon_coal_default_group {
-        loaded: [bulk_wagon_empty_set, bulk_wagon_coal_default_set];
-        loading: [bulk_wagon_empty_set, bulk_wagon_coal_default_set];
-    }
-    spriteset(bulk_wagon_coal_arctic_empty_set, "arctic_railwagons.pcx") { tmpl_railwagon(0,25) }
-    spriteset(bulk_wagon_coal_arctic_full_set, "arctic_railwagons.pcx") { tmpl_railwagon(0,250) }
-    spritegroup bulk_wagon_coal_arctic_group {
-        loaded: [bulk_wagon_coal_arctic_empty_set, bulk_wagon_coal_arctic_full_set];
-        loading: [bulk_wagon_coal_arctic_empty_set, bulk_wagon_coal_arctic_full_set];
-    }
-    spriteset(bulk_wagon_coal2_empty_set, "temperate_railwagons.png") { tmpl_railwagon(0,225) }
-    spriteset(bulk_wagon_coal2_full_set, "temperate_railwagons.png") { tmpl_railwagon(0,350) }
-    spritegroup bulk_wagon_coal2_group {
-        loaded: [bulk_wagon_coal2_empty_set, bulk_wagon_coal2_full_set];
-        loading: [bulk_wagon_coal2_empty_set, bulk_wagon_coal2_full_set];
-    }
 
-    spriteset(bulk_wagon_empty_grain_set, "temperate_railwagons.png") { tmpl_railwagon(0,150) }
-    spriteset(bulk_wagon_grain_set, "temperate_railwagons.png") { tmpl_railwagon(0,275) }
-    spritegroup bulk_wagon_grain_group {
-        loaded: [bulk_wagon_empty_grain_set, bulk_wagon_grain_set];
-        loading: [bulk_wagon_empty_grain_set, bulk_wagon_grain_set];
-    }
+spriteset(bulk_wagon_empty_set, "temperate_railwagons.png") { tmpl_railwagon(0,25) }
+spriteset(bulk_wagon_coal_default_set, "temperate_railwagons.png") { tmpl_railwagon(0,250) }
+spritegroup bulk_wagon_coal_default_group {
+    loaded: [bulk_wagon_empty_set, bulk_wagon_coal_default_set];
+    loading: [bulk_wagon_empty_set, bulk_wagon_coal_default_set];
+}
+spriteset(bulk_wagon_coal_arctic_empty_set, "arctic_railwagons.pcx") { tmpl_railwagon(0,25) }
+spriteset(bulk_wagon_coal_arctic_full_set, "arctic_railwagons.pcx") { tmpl_railwagon(0,250) }
+spritegroup bulk_wagon_coal_arctic_group {
+    loaded: [bulk_wagon_coal_arctic_empty_set, bulk_wagon_coal_arctic_full_set];
+    loading: [bulk_wagon_coal_arctic_empty_set, bulk_wagon_coal_arctic_full_set];
+}
+spriteset(bulk_wagon_coal2_empty_set, "temperate_railwagons.png") { tmpl_railwagon(0,225) }
+spriteset(bulk_wagon_coal2_full_set, "temperate_railwagons.png") { tmpl_railwagon(0,350) }
+spritegroup bulk_wagon_coal2_group {
+    loaded: [bulk_wagon_coal2_empty_set, bulk_wagon_coal2_full_set];
+    loading: [bulk_wagon_coal2_empty_set, bulk_wagon_coal2_full_set];
+}
 
+spriteset(bulk_wagon_empty_grain_set, "temperate_railwagons.png") { tmpl_railwagon(0,150) }
+spriteset(bulk_wagon_grain_set, "temperate_railwagons.png") { tmpl_railwagon(0,275) }
+spritegroup bulk_wagon_grain_group {
+    loaded: [bulk_wagon_empty_grain_set, bulk_wagon_grain_set];
+    loading: [bulk_wagon_empty_grain_set, bulk_wagon_grain_set];
 }
 
 random_switch (FEAT_TRAINS, SELF, bulk_wagon_coal_default_switch, bitmask(TRIGGER_VEHICLE_SERVICE)) {
