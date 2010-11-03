@@ -2,6 +2,18 @@ from nml import generic
 from nml.actions import base_action, real_sprite
 
 class Action1(base_action.BaseAction):
+    """
+    Class representing an Action1
+
+    @ivar feature: Feature of this action1
+    @type feature: L{ConstantNumeric}
+
+    @ivar num_sets: Number of (sprite) sets that follow this action 1.
+    @type num_sets: C{int}
+
+    @ivar num_ent: Number of sprites per set (e.g. (usually) 8 for vehicles)
+    @type num_ent: C{int}
+    """
     def __init__(self, feature, num_sets, num_ent):
         self.feature = feature
         self.num_sets = num_sets
@@ -21,6 +33,17 @@ class Action1(base_action.BaseAction):
 spriteset_features = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10, 0x07, 0x09, 0x11, 0x0F]
 
 def parse_sprite_set(first_set):
+    """
+    Parse a sprite set into an action1
+    Depending on the context, multiple action1s, action2s and real sprites will be generated.
+    This is because all sprite sets that go into one sprite group need to be 'compiled' in one go.
+
+    @param first_set: Sprite set to parse
+    @type first_set: L{SpriteSet}
+
+    @return: A list of generated actions
+    @rtype: C{list} of L{BaseAction}
+    """
     all_groups = set() #list of all groups
     all_sets = set([first_set]) #list of all sets
     handled_sets = set() #list of all sets that have already been handled
