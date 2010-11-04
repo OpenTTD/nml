@@ -498,9 +498,9 @@ properties[0x0B] = {
     'cargo_payment_list_colour' : {'num' : 0x14, 'size' : 1},
     'is_freight'                : {'num' : 0x15, 'size' : 1},
     'cargo_classes'             : {'num' : 0x16, 'size' : 2},
-    'cargo_label'               : {'num' : 0x17, 'size' : 4}, # @TODO: is a cargo-label, how to express that in the value?
+    'cargo_label'               : {'num' : 0x17, 'size' : 4, 'string_literal': 4},
     'town_growth_effect'        : {'num' : 0x18, 'size' : 1},
-    'town_growth_multiplier'    : {'num' : 0x19, 'size' : 2}, # @TODO: should be a float fraction 0..255
+    'town_growth_multiplier'    : {'num' : 0x19, 'size' : 2, 'unit_conversion': 0x100},
     'callback_flags'            : {'num' : 0x1A, 'size' : 1},
 }
 
