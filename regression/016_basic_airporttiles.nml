@@ -1,7 +1,7 @@
 spriteset(turbotrain_engine_set, "opengfx_trains_start.pcx") {
 	[142,112,  8,22,   -3,-10]
 }
-spritegroup small_airport_tiles_graphics {
+spritelayout small_airport_tiles_graphics {
 	ground {ttdsprite: GROUNDSPRITE_NORMAL; }
 	childsprite {
 		sprite: turbotrain_engine_set;

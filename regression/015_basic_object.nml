@@ -6,7 +6,7 @@ grf {
 	min_compatible_version: 0;
 }
 
-spritegroup obj_basic_tile {
+spritelayout obj_basic_tile {
 	ground {
 		ttdsprite : 1420;
 	}
