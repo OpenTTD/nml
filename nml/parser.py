@@ -512,8 +512,12 @@ class NMLParser(object):
         t[0] = spriteblock.LayoutSpriteGroup(t[2], t[4], t.lineno(1))
 
     def p_spritelayout(self, t):
-        'spritelayout : SPRITELAYOUT ID LBRACE layout_sprite_list RBRACE'
-        t[0] = spriteblock.SpriteLayout(t[2], t[4], t.lineno(1))
+        '''spritelayout : SPRITELAYOUT ID LBRACE layout_sprite_list RBRACE
+                        | SPRITELAYOUT ID LPAREN id_list RPAREN LBRACE layout_sprite_list RBRACE'''
+        if len(t) == 6:
+            t[0] = spriteblock.SpriteLayout(t[2], [], t[4], t.lineno(1))
+        else:
+            t[0] = spriteblock.SpriteLayout(t[2], t[4], t[7], t.lineno(1))
 
     def p_spriteview_list(self, t):
         '''spriteview_list : ID SEMICOLON

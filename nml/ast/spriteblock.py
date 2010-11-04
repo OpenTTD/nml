@@ -138,8 +138,9 @@ class SpriteView(object):
             spriteset.debug_print(indentation + 4)
 
 class SpriteLayout(object):
-    def __init__(self, name, layout_sprite_list, pos = None):
+    def __init__(self, name, param_list, layout_sprite_list, pos = None):
         self.name = name
+        self.param_list = param_list
         self.layout_sprite_list = layout_sprite_list
         self.pos = pos
 
@@ -148,8 +149,12 @@ class SpriteLayout(object):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite layout:', self.name.value
+        print (indentation+2)*' ' + 'Parameters:'
+        for param in self.param_list:
+            param.debug_print(indentation + 4)
+        print (indentation+2)*' ' + 'Sprites:'
         for layout_sprite in self.layout_sprite_list:
-            layout_sprite.debug_print(indentation + 2)
+            layout_sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
         return []
