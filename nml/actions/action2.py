@@ -83,6 +83,12 @@ def remove_ref(name):
     if act2.num_refs == 0: free_action2_ids.append(act2.id)
     return id
 
+# Features using sprite groups directly: vehicles, canals, cargos, railtypes, airports
+features_sprite_group = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10]
+# Features using sprite layouts: stations, houses, industry tiles, objects and airport tiles
+features_sprite_layout = [0x04, 0x07, 0x09, 0x0F, 0x11]
+# All features that need sprite sets
+features_sprite_set = features_sprite_group + features_sprite_layout
 
 class SpriteGroupRefType:
     """

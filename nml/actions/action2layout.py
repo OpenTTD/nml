@@ -168,16 +168,13 @@ class Action2LayoutSprite(object):
                 generic.check_range(val, 0, 255, name, value.pos)
         return val
 
-layout_action2_features = [0x07, 0x09, 0x0F, 0x11] #houses, industry tiles, objects and airport tiles
-
 def get_layout_action2s(spritegroup):
-    global layout_action2_features
     ground_sprite = None
     building_sprites = []
 
     feature = spritegroup.feature.value
-    if feature not in layout_action2_features:
-        raise generic.ScriptError("Sprite groups that define tile layouts are not supported for this feature: 0x" + generic.to_hex(feature, 2))
+    if feature not in action2.features_sprite_layout:
+        raise generic.ScriptError("Sprite layouts are not supported for this feature: 0x" + generic.to_hex(feature, 2))
 
     for layout_sprite in spritegroup.layout_sprite_list:
         if layout_sprite.type.value not in layout_sprite_types:
@@ -187,7 +184,7 @@ def get_layout_action2s(spritegroup):
             sprite.set_param(param.name, param.value)
         if sprite.type == Action2LayoutSpriteType.GROUND:
             if ground_sprite is not None:
-                raise generic.ScriptError("Sprite group can have no more than one ground sprite", spritegroup.pos)
+                raise generic.ScriptError("Sprite layout can have no more than one ground sprite", spritegroup.pos)
             ground_sprite = sprite
         else:
             building_sprites.append(sprite)
@@ -195,7 +192,7 @@ def get_layout_action2s(spritegroup):
     if ground_sprite is None:
         if len(building_sprites) == 0:
             #no sprites defined at all, that's not very much.
-            raise generic.ScriptError("Sprite group requires at least one sprite", spritegroup.pos)
+            raise generic.ScriptError("Sprite layout requires at least one sprite", spritegroup.pos)
         #set to 0 for no ground sprite
         ground_sprite = Action2LayoutSprite(Action2LayoutSpriteType.GROUND)
         set_sprite_property(ground_sprite, 'ttdsprite', expression.ConstantNumeric(0))
