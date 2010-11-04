@@ -20,9 +20,6 @@ reserved = {
     'template' : 'TEMPLATE', #sprite template for action1
     'spriteset' : 'SPRITESET', #action 1
     'spritegroup' : 'SPRITEGROUP', #action 2
-    'ground' : 'GROUND',
-    'building' : 'BUILDING',
-    'childsprite' : 'CHILDSPRITE',
     'switch' : 'SWITCH', #deterministic varaction2
     'random_switch' : 'RANDOMSWITCH', #random action2
     'produce' : 'PRODUCE', #production action2

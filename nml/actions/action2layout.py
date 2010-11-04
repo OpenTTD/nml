@@ -11,7 +11,7 @@ class Action2Layout(action2.Action2):
     def write(self, file):
         size = 5
         for sprite in self.sprite_list:
-            if sprite.type == Action2LayoutSpriteType.CHILDSPRITE:
+            if sprite.type == Action2LayoutSpriteType.CHILD:
                 size += 7
             else:
                 size += 10
@@ -31,7 +31,7 @@ class Action2Layout(action2.Action2):
                 file.print_dwordx(sprite.get_sprite_number())
                 file.print_byte(sprite.get_param('xoffset'))
                 file.print_byte(sprite.get_param('yoffset'))
-                if sprite.type == Action2LayoutSpriteType.CHILDSPRITE:
+                if sprite.type == Action2LayoutSpriteType.CHILD:
                     file.print_bytex(0x80)
                 else:
                     #normal building sprite
@@ -43,11 +43,17 @@ class Action2Layout(action2.Action2):
         file.end_sprite()
 
 
-#same keywords as in the syntax
 class Action2LayoutSpriteType(object):
-    GROUND      = 'ground'
-    BUILDING    = 'building'
-    CHILDSPRITE = 'childsprite'
+    GROUND   = 0
+    BUILDING = 1
+    CHILD    = 2
+
+#these keywords are used to identify a ground/building/childsprite
+layout_sprite_types = {
+    'ground'      : Action2LayoutSpriteType.GROUND,
+    'building'    : Action2LayoutSpriteType.BUILDING,
+    'childsprite' : Action2LayoutSpriteType.CHILD,
+}
 
 class Action2LayoutSprite(object):
     def __init__(self, type, pos):
@@ -147,7 +153,7 @@ class Action2LayoutSprite(object):
 
         if self.type == Action2LayoutSpriteType.GROUND:
             raise generic.ScriptError(name + " can not be set for ground sprites", value.pos)
-        elif self.type == Action2LayoutSpriteType.CHILDSPRITE:
+        elif self.type == Action2LayoutSpriteType.CHILD:
             if name not in ('xoffset', 'yoffset'):
                 raise generic.ScriptError(name + " can not be set for child sprites", value.pos)
             generic.check_range(val, 0, 255, name, value.pos)
@@ -174,7 +180,9 @@ def get_layout_action2s(spritegroup):
         raise generic.ScriptError("Sprite groups that define tile layouts are not supported for this feature: 0x" + generic.to_hex(feature, 2))
 
     for layout_sprite in spritegroup.layout_sprite_list:
-        sprite = Action2LayoutSprite(layout_sprite.type, layout_sprite.pos)
+        if layout_sprite.type.value not in layout_sprite_types:
+            raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % layout_sprite.type.value, layout_sprite.type.pos)
+        sprite = Action2LayoutSprite(layout_sprite_types[layout_sprite.type.value], layout_sprite.pos)
         for param in layout_sprite.param_list:
             sprite.set_param(param.name, param.value)
         if sprite.type == Action2LayoutSpriteType.GROUND:
