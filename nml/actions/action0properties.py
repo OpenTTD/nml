@@ -157,6 +157,32 @@ def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
 
     return [Action0Property(prop_num, ConstantNumeric(looping << loop_bit + frames - 1), prop_size)]
 
+def cargo_list(value, max_num_cargos, prop_num, prop_size):
+    """
+    Encode an array of cargo types in a single property. If less than the maximum
+    number of cargos are given the rest is filled up with 0xFF (=invalid cargo).
+
+    @param value: Array of cargo types.
+    @type  value: C{Array}
+
+    @param max_num_cargos: The maximum number of cargos in the array.
+    @type  max_num_cargos: C{int}
+
+    @param prop_num: Property number.
+    @type  prop_num: C{int}
+
+    @param prop_size: Property size in bytes.
+    @type  prop_size: C{int}
+    """
+    if not isinstance(value, Array) or len(value.values) > max_num_cargos:
+        raise generic.ScriptError("Cargo list must be an array with no more than %d values" % max_num_cargos, value.pos)
+    cargoes = [val.reduce_constant().value for val in value.values] + [0xFF for _ in range(prop_size)]
+    val = 0
+    for i in range(prop_size):
+        val = val | (cargoes[i] << (i * 8))
+
+    return [Action0Property(prop_num, ConstantNumeric(val), prop_size)]
+
 #
 # General vehicle properties that apply to feature 0x00 .. 0x03
 #
@@ -326,16 +352,6 @@ def house_available_mask(value):
     climates = value.values[1].reduce_constant().value
     return [Action0Property(0x13, ConstantNumeric(town_zones | (climates & 0x800) | ((climates & 0x0F) << 12)), 2)]
 
-def house_accepted_cargos(value):
-    if not isinstance(value, Array) or len(value.values) > 3:
-        raise generic.ScriptError("Accepted cargos must be an array with no more than 3 values", value.pos)
-    cargoes = [val.reduce_constant().value for val in value.values] + [0xFF for _ in range(4)]
-    val = 0
-    for i in range(4):
-        val = val | (cargoes[i] << (i * 8))
-
-    return [Action0Property(0x1E, ConstantNumeric(val), 4)]
-
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08},
     'building_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x09, 0x19)},
@@ -357,7 +373,7 @@ properties[0x07] = {
     'animation_info'          : {'custom_function': lambda value: animation_info(0x1A, value, 7, 128, 1)},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
     'building_class'          : {'size': 1, 'num': 0x1C},
-    'accepted_cargos'         : {'custom_function': house_accepted_cargos},
+    'accepted_cargos'         : {'custom_function': lambda value: cargo_list(value, 3, 0x1E, 4)},
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
 }
 
