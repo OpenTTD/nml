@@ -98,7 +98,7 @@ Default industry type numbers can be found at <a href="refs.html#refs-default-in
 <tr><td>substitute</td><td>industry type</td><td>Number of the industry type replaced, <code>0xFF</code> disables the original industry with the same ID.</td></tr>
 <tr><td>override</td><td>industry type</td><td>Number of the industry type overridden (where your industry does something completely different than the original).</td></tr>
 <tr><td>layouts</td><td></td><td>Industry layout information.</td></tr>
-<tr><td>prod_flags</td><td>bitmask(PRODUCTIONTYPE_EXTRACTIVE, PRODUCTIONTYPE_ORGANIC, PRODUCTIONTYPE_PROCESSING)</td><td>Type of industry</td></tr>
+<tr><td>prod_flags</td><td>One of PRODUCTIONTYPE_EXTRACTIVE, PRODUCTIONTYPE_ORGANIC or PRODUCTIONTYPE_PROCESSING</td><td>Type of industry</td></tr>
 <tr><td>closure_msg</td><td>string</td><td>Message displayed when the industry announces closure.</td></tr>
 <tr><td>prod_increase_msg</td><td>string</td><td>Message displayed when industry increases production.</td></tr>
 <tr><td>prod_decrease_msg</td><td>string</td><td>Message displayed when industry decreases production.</td></tr>
@@ -113,7 +113,7 @@ Default industry type numbers can be found at <a href="refs.html#refs-default-in
 <tr><td>prob_random</td><td>0..10</td><td>Probability of occurring while generating initial industries.</td></tr>
 <tr><td>prob_in_game</td><td>0..10</td><td>Probability of occurring while creating industries during the game.</td></tr>
 <tr><td>map_color</td><td>0..255</td><td>Color of the industry at the mini map.</td></tr>
-<tr><td>spec_flags</td><td></td><td></td></tr>
+<tr><td>spec_flags</td><td>bitmask(flags)</td><td>for flag values see <a href="#industry-special-flags">Industry special flags</a></td></tr>
 <tr><td>new_ind_text</td><td>string</td><td>Message displayed when industry gets built during game play.</td></tr>
 <tr><td>input_multiplier_1</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the first accepted cargo.</td></tr>
 <tr><td>input_multiplier_2</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the second accepted cargo.</td></tr>
@@ -142,6 +142,29 @@ Default industry type numbers can be found at <a href="refs.html#refs-default-in
 <tr><td>IND_CBF_COLOR</td><td></td></tr>
 <tr><td>IND_CBF_CARGO_INPUT</td><td></td></tr>
 <tr><td>IND_CBF_CARGO_OUTPUT</td><td></td></tr>
+</table>
+
+<h3><a name="industry-special-flags">Industry special flags</a></h3>
+<table class="t">
+<tr><th>flag</th><th>meaning</th></tr>
+<tr><td>IND_FLAG_PLANT_FIELDS_PERIODICALLY</td><td>The industry periodically plants fields around itself (temperate and arctic farms) </td></tr>
+<tr><td>IND_FLAG_CUT_TREES</td><td>The industry cuts trees around itself and produces its first output cargo from them (lumber mill) </td></tr>
+<tr><td>IND_FLAG_BUILT_ON_WATER</td><td>The industry is built on water (oil rig) </td></tr>
+<tr><td>IND_FLAG_ONLY_IN_LARGE_TOWNS</td><td>The industry can only be built in towns (i.e. it has to replace houses) with population larger than 1200 (temperate bank) </td></tr>
+<tr><td>IND_FLAG_ONLY_IN_TOWNS</td><td>The industry can only be built in towns (i.e. it has to replace houses) (arctic and tropic banks, water tower) </td></tr>
+<tr><td>IND_FLAG_BUILT_NEAR_TOWN</td><td>The industry is always built near towns (i.e. near town sign; additionally the industry is allowed to replace houses) (toy shop) </td></tr>
+<tr><td>IND_FLAG_PLANT_FIELDS_WHEN_BUILT</td><td>Fields are planted around the industry when it's built (all farms) </td></tr>
+<tr><td>IND_FLAG_NO_PRODUCTION_INCREASE</td><td>The industry cannot increase its production on the temperate climate (oil wells) </td></tr>
+<tr><td>IND_FLAG_BUILT_ONLY_BEFORE_1950</td><td>The industry is built only before 1950 (oil wells) </td></tr>
+<tr><td>IND_FLAG_BUILT_ONLY_AFTER_1960</td><td>The industry is built only after 1960 (oil rig) </td></tr>
+<tr><td>IND_FLAG_AI_CREATES_AIR_AND_SHIP_ROUTES</td><td>AI players will attempt to establish air and ship routes going to this industry (oil rig) </td></tr>
+<tr><td>IND_FLAG_MILITARY_AIRPLANE_CAN_EXPLODE</td><td>The industry can be exploded by a military airplane (oil refinery) </td></tr>
+<tr><td>IND_FLAG_MILITARY_HELICOPTER_CAN_EXPLODE</td><td>The industry can be exploded by a military helicopter (factory) </td></tr>
+<tr><td>IND_FLAG_CAN_CAUSE_SUBSIDENCE</td><td>The industry can cause a subsidence (coal mine) </td></tr>
+<tr><td>IND_FLAG_AUTOMATIC_PRODUCTION_MULTIPLIER</td><td>Automatic production multiplier handing (No industry has this bit set by default.). </td></tr>
+<tr><td>IND_FLAG_RANDOM_BITS_IN_PRODUCTION_CALLBACK</td><td>The production callback needs random bits in var. 10 (No industry has this bit set by default.) </td></tr>
+<tr><td>IND_FLAG_DO_NOT_FORCE_INSTANCE_AT_MAP_GENERATION</td><td>Do not force one instance of this type to appear during initial map generation (No industry has this bit set by default.) </td></tr>
+<tr><td>IND_FLAG_ALLOW_CLOSING_LAST_INSTANCE</td><td>Allow closing down the last instance of this type (No industry has this bit set by default.)</td></tr>
 </table>
 
 </body>
