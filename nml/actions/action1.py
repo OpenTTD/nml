@@ -73,6 +73,10 @@ def parse_sprite_set(first_set):
     total_count = 0 #total number of sprites so far
     for i, item in enumerate(set_list):
         sprites = real_sprite.parse_sprite_list(item.sprite_list, item.pcx, block_name = item.name)
+        for spritenum, sprite in enumerate(sprites):
+            if sprite.label is not None:
+                assert item.labels[sprite.label.value] is None
+                item.labels[sprite.label.value] = spritenum
         real_sprite_list.extend(sprites)
         count = len(sprites)
         assert item.action1_num is None and item.action1_count is None

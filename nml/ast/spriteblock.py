@@ -78,8 +78,16 @@ class SpriteSet(spriteset_base_class):
         self.pos = pos
         self.action1_num = None #set number in action1
         self.action1_count = None #how many actual sprites there are in this spriteset
+        self.labels = {} #mapping of real sprite labels to offsets
 
-    # pre_process is defined by the base class
+    def pre_process(self):
+        spriteset_base_class.pre_process(self)
+        for sprite in self.sprite_list:
+            if sprite.label is not None:
+                val = sprite.label.value
+                if val in self.labels:
+                    raise generic.ScriptError("Duplicate label encountered; '%s' already exists." % val, sprite.label.pos)
+                self.labels[val] = None
 
     def collect_references(self):
         return []

@@ -119,11 +119,14 @@ class Action2LayoutSprite(object):
             if len(value.params) not in (0, 1):
                 raise generic.ScriptError("Expected at most one parameter, encountered " + str(len(value.params)), value.pos)
             if len(value.params) != 0:
-                offset = value.params[0].reduce_constant().value
+                offset = value.params[0] #type: Expression
         else:
-            raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier, possible with offset", value.pos)
+            raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier, possibly with offset", value.pos)
         spriteset = action2.resolve_spritegroup(set_name)
-        generic.check_range(offset, 0, spriteset.action1_count - 1, "offset within spriteset", value.pos)
+        if offset != 0:
+            id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
+            offset = offset.reduce_constant(id_dicts).value
+            generic.check_range(offset, 0, spriteset.action1_count - 1, "offset within spriteset", value.pos)
         num = spriteset.action1_num + offset
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
         if self.is_set('ttdsprite'):
