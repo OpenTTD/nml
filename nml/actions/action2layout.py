@@ -123,6 +123,7 @@ class Action2LayoutSprite(object):
         else:
             raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier, possible with offset", value.pos)
         spriteset = action2.resolve_spritegroup(set_name)
+        generic.check_range(offset, 0, spriteset.action1_count - 1, "offset within spriteset", value.pos)
         num = spriteset.action1_num + offset
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
         if self.is_set('ttdsprite'):
