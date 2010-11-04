@@ -605,10 +605,9 @@ class FunctionCall(Expression):
                 if func_ptr.type() != Type.FUNCTION_PTR:
                     raise generic.ScriptError("'%s' is defined, but it is not a function." % self.name.value, self.pos)
                 return func_ptr.call(param_list)
-            #must be a switch-block, then
-            if len(param_list) != 0:
-                raise generic.ScriptError("'%s' is not defined as a function that accepts parameters." % self.name.value, self.pos)
-            return Variable(ConstantNumeric(0x7E), param=self.name.value, pos = self.pos)
+            if unknown_id_fatal:
+                raise generic.ScriptError("'%s' is not defined as a function." % self.name.value, self.pos)
+            return FunctionCall(self.name, param_list, self.pos)
 
 class String(Expression):
     def __init__(self, name, params, pos):
