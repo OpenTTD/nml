@@ -89,31 +89,24 @@ class NMLParser(object):
                           | basecost'''
         t[0] = t[1]
 
+    def p_constant_num(self, t):
+        'constant_num : NUMBER'
+        t[0] = expression.ConstantNumeric(t[1], t.lineno(1))
+
+    def p_constant_float(self, t):
+        'constant_float : FLOAT'
+        t[0] = expression.ConstantFloat(t[1], t.lineno(1))
+
     #
     # Expressions
     #
-    def p_const_expression(self, t):
-        'expression : NUMBER'
-        t[0] = expression.ConstantNumeric(t[1], t.lineno(1))
-
-    def p_expression_float(self, t):
-        'expression : FLOAT'
-        t[0] = expression.ConstantFloat(t[1], t.lineno(1))
-
-    def p_param_expression(self, t):
-        'expression : param'
-        t[0] = t[1]
-
-    def p_variable_expression(self, t):
-        'expression : variable'
-        t[0] = t[1]
-
-    def p_expression_id(self, t):
-        'expression : ID'
-        t[0] = t[1]
-
-    def p_expression_string(self, t):
-        'expression : string'
+    def p_expression(self, t):
+        '''expression : constant_num
+                      | constant_float
+                      | param
+                      | variable
+                      | ID
+                      | string'''
         t[0] = t[1]
 
     def p_parenthesed_expression(self, t):
@@ -324,9 +317,9 @@ class NMLParser(object):
     def p_property_assignment(self, t):
         '''property_assignment : ID COLON expression SEMICOLON
                                | ID COLON expression UNIT SEMICOLON
-                               | NUMBER COLON expression SEMICOLON
-                               | NUMBER COLON expression UNIT SEMICOLON'''
-        name = t[1] if isinstance(t[1], expression.Identifier) else expression.ConstantNumeric(t[1], t.lineno(1))
+                               | constant_num COLON expression SEMICOLON
+                               | constant_num COLON expression UNIT SEMICOLON'''
+        name = t[1]
         unit = None if len(t) == 5 else item.Unit(t[4])
         t[0] = item.Property(name, t[3], unit, t.lineno(1))
 
