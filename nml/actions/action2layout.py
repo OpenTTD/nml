@@ -105,10 +105,19 @@ class Action2LayoutSprite(object):
         self.params[name]['is_set'] = True
 
     def _validate_sprite(self, name, value):
-        if not isinstance(value, expression.Identifier):
-            raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier", value.pos)
-        spriteset = action2.resolve_spritegroup(value)
-        num = spriteset.action1_num
+        offset = 0
+        if isinstance(value, expression.Identifier):
+            set_name = value
+        elif isinstance(value, expression.FunctionCall):
+            set_name = value.name
+            if len(value.params) not in (0, 1):
+                raise generic.ScriptError("Expected at most one parameter, encountered " + str(len(value.params)), value.pos)
+            if len(value.params) != 0:
+                offset = value.params[0].reduce_constant().value
+        else:
+            raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier, possible with offset", value.pos)
+        spriteset = action2.resolve_spritegroup(set_name)
+        num = spriteset.action1_num + offset
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
         if self.is_set('ttdsprite'):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)

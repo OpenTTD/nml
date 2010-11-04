@@ -182,6 +182,8 @@ class LayoutSprite(object):
         for layout_param in self.param_list:
             if isinstance(layout_param.value, expression.Identifier):
                 used_sets.append(layout_param.value)
+            elif isinstance(layout_param.value, expression.FunctionCall):
+                used_sets.append(layout_param.value.name)
         return used_sets
 
     def debug_print(self, indentation):
