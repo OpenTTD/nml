@@ -436,16 +436,24 @@ class NMLParser(object):
     # Real sprites and related stuff
     #
     def p_real_sprite(self, t):
-        'real_sprite : LBRACKET expression_list RBRACKET'
-        t[0] = real_sprite.RealSprite(t[2])
+        '''real_sprite : LBRACKET expression_list RBRACKET
+                       | ID COLON LBRACKET expression_list RBRACKET'''
+        if len(t) == 4:
+            t[0] = real_sprite.RealSprite(t[2])
+        else:
+            t[0] = real_sprite.RealSprite(t[4], t[1])
 
     def p_template_declaration(self, t):
         'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE spriteset_contents RBRACE'
         t[0] = spriteblock.TemplateDeclaration(t[2], t[4], t[7], t.lineno(1))
 
     def p_template_usage(self, t):
-        'template_usage : ID LPAREN expression_list RPAREN'
-        t[0] = real_sprite.TemplateUsage(t[1], t[3], t.lineno(1))
+        '''template_usage : ID LPAREN expression_list RPAREN
+                          | ID COLON ID LPAREN expression_list RPAREN'''
+        if len(t) == 5:
+            t[0] = real_sprite.TemplateUsage(t[1], t[3], None, t.lineno(1))
+        else:
+            t[0] = real_sprite.TemplateUsage(t[3], t[5], t[1], t.lineno(1))
 
     def p_spriteset_contents(self, t):
         '''spriteset_contents : real_sprite

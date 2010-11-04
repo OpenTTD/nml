@@ -2,8 +2,9 @@ from nml import generic, expression
 import os, Image
 
 class RealSprite(object):
-    def __init__(self, param_list = None):
+    def __init__(self, param_list = None, label = None):
         self.param_list = param_list
+        self.label = label
         self.is_empty = False
         self.xpos = None
         self.ypos = None
@@ -41,6 +42,7 @@ class RealSpriteAction(object):
         self.sprite = sprite
         self.last = False
         self.block_name = None
+        self.label = None
 
     def prepare_output(self):
         pass
@@ -62,9 +64,10 @@ class RealSpriteAction(object):
         return True
 
 class TemplateUsage(object):
-    def __init__(self, name, param_list, pos):
+    def __init__(self, name, param_list, label, pos):
         self.name = name
         self.param_list = param_list
+        self.label = label
         self.pos = pos
 
     def debug_print(self, indentation):
@@ -74,7 +77,6 @@ class TemplateUsage(object):
             param.debug_print(indentation + 4)
 
     def expand(self, default_file, parameters, allow_compression):
-        real_sprite_list = []
         if self.name.value not in sprite_template_map:
             raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
         template = sprite_template_map[self.name.value]
@@ -87,8 +89,7 @@ class TemplateUsage(object):
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
 
-        real_sprite_list.extend(parse_sprite_list(template.sprite_list, default_file, param_dict, False, allow_compression))
-        return real_sprite_list
+        return parse_sprite_list(template.sprite_list, default_file, param_dict, False, None, allow_compression)
 
 real_sprite_compression_flags = {
     'NORMAL'       : 0x00,
@@ -156,13 +157,16 @@ def parse_real_sprite(sprite, default_file, id_dict, allow_compression):
 
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list, default_file, parameters = {}, mark_last = True, block_name = None, allow_compression = True):
+def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = True, block_name = None, allow_compression = True):
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
-            real_sprite_list.append(parse_real_sprite(sprite, default_file, parameters, allow_compression))
+            new_sprites = [parse_real_sprite(sprite, default_file, parameters, allow_compression)]
         else:
-            real_sprite_list.extend(sprite.expand(default_file, parameters, allow_compression))
-    if mark_last: real_sprite_list[-1].last = True
+            new_sprites = sprite.expand(default_file, parameters, allow_compression)
+        if outer_scope and sprite.label is not None:
+            new_sprites[0].label = sprite.label
+        real_sprite_list.extend(new_sprites)
+    if outer_scope: real_sprite_list[-1].last = True
     if block_name: real_sprite_list[0].block_name = block_name
     return real_sprite_list
