@@ -447,6 +447,32 @@ def industry_layouts(value):
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
+class RandomSoundsProp(object):
+    def __init__(self, sound_list):
+        self.sound_list = sound_list
+
+    def write(self, file):
+        file.print_bytex(0x15)
+        file.print_byte(len(self.sound_list))
+        for sound in self.sound_list:
+            sound.write(file, 1)
+        file.newline()
+
+    def get_size(self):
+        return len(self.sound_list) + 2
+
+def random_sounds(value):
+    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, ConstantNumeric), value.values)):
+        raise generic.ScriptError("random_sound_effects must be an array with sounds effects", value.pos)
+    return [RandomSoundsProp(value.values)]
+
+def industry_input_multiplier(value, prop_num):
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("Input multiplier must be an array with exaclty two values", value.pos)
+    mul1 = value.values[0].reduce_constant().value * 256
+    mul2 = value.values[1].reduce_constant().value * 256
+    return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
+
 properties[0x0A] = {
     'substitute'             : {'size': 1, 'num': 0x08},
     'override'               : {'size': 1, 'num': 0x09},
@@ -456,21 +482,21 @@ properties[0x0A] = {
     'prod_increase_msg'      : {'size': 2, 'num': 0x0D},
     'prod_decrease_msg'      : {'size': 2, 'num': 0x0E},
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
-    'prod_cargo_types'       : {'size': 2, 'num': 0x10},
-    'accept_cargo_types'     : {'size': 4, 'num': 0x11},
+    'prod_cargo_types'       : {'custom_function': lambda value: cargo_list(value, 2, 0x10, 2)},
+    'accept_cargo_types'     : {'custom_function': lambda value: cargo_list(value, 3, 0x11, 4)},
     'prod_multiplier_1'      : {'size': 1, 'num': 0x12},
     'prod_multiplier_2'      : {'size': 1, 'num': 0x13},
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
-    'random_sound_effects'   : {'size': 0, 'num': 0x15},
+    'random_sound_effects'   : {'custom_function': random_sounds},
     'conflicting_ind_types'  : {'size': 0, 'num': 0x16},
     'prob_random'            : {'size': 1, 'num': 0x17},
     'prob_in_game'           : {'size': 1, 'num': 0x18},
     'map_color'              : {'size': 1, 'num': 0x19},
     'spec_flags'             : {'size': 4, 'num': 0x1A},
     'new_ind_text'           : {'size': 2, 'num': 0x1B},
-    'input_multiplier_1'     : {'size': 4, 'num': 0x1C},
-    'input_multiplier_2'     : {'size': 4, 'num': 0x1D},
-    'input_multiplier_3'     : {'size': 4, 'num': 0x1E},
+    'input_multiplier_1'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1C)},
+    'input_multiplier_2'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1D)},
+    'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E)},
     'name'                   : {'size': 2, 'num': 0x1F, 'string': 0xDC},
     'prospect_chance'        : {'size': 4, 'num': 0x20, 'unit_conversion': 0xFFFFFFFF},
     'callback_flags'         : {'custom_function': lambda x: two_byte_property(x, 0x21, 0x22)},
