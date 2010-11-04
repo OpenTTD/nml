@@ -65,32 +65,41 @@ def parse_sprite_set(first_set):
     #make a list of sprite sets to guarantee iteration order
     set_list = sorted(all_sets, key=lambda val: val.name.value)
     group_list = sorted(all_groups, key=lambda val: val.name.value)
-    real_sprite_list = [real_sprite.parse_sprite_list(item.sprite_list, item.pcx, block_name = item.name) for item in set_list]
+
+    #sprite sets should be 'flattened' for tile layouts
+    flatten = first_set.feature.value in action2.features_sprite_layout
+
+    real_sprite_list = []
+    total_count = 0 #total number of sprites so far
+    for i, item in enumerate(set_list):
+        sprites = real_sprite.parse_sprite_list(item.sprite_list, item.pcx, block_name = item.name)
+        real_sprite_list.extend(sprites)
+        count = len(sprites)
+        assert item.action1_num is None and item.action1_count is None
+        item.action1_num = total_count if flatten else i
+        item.action1_count = count
+        total_count += count
 
     if len(set_list) != 0:
-        #check that all sprite sets have the same sprite count
-        first_count = len(real_sprite_list[0])
-        if any([len(sub) != first_count for sub in real_sprite_list]):
-            #not all sprite sets have an equal length, this is an error
-            #search for a sprite group to blame so we can show a nice message
-            length_map = dict(map(None, set_list, [len(sub) for sub in real_sprite_list]))
-            for g in group_list:
-                num = None
-                for s in g.referenced_nodes():
-                    if num is None:
-                        num = length_map[s]
-                    elif num != length_map[s]:
-                        raise generic.ScriptError("All sprite sets referred to by a sprite group should have the same number of sprites. Expected %d, got %d." % (num, length_map[s]), g.pos)
+        if flatten:
+            num_sets, num_ent = total_count, 1
+        else:
+            #check that all sprite sets have the same sprite count
+            first_count = set_list[0].action1_count
+            if any([item.action1_count != first_count for item in set_list]):
+                #not all sprite sets have an equal length, this is an error
+                #search for a sprite group to blame so we can show a nice message
+                for g in group_list:
+                    num = None
+                    for s in g.referenced_nodes():
+                        if num is None:
+                            num = s.action1_count
+                        elif num != s.action1_count:
+                            raise generic.ScriptError("All sprite sets referred to by a sprite group should have the same number of sprites. Expected %d, got %d." % (num, s.action1_count), g.pos)
+            num_sets, num_ent = len(set_list), first_count
 
-        #add an action1
-        action_list.append(Action1(first_set.feature, len(set_list), first_count))
-        #add the real sprites
-        for sub in real_sprite_list:
-            action_list.extend(sub)
-        #set the sprite number for the sets
-        for i, s in enumerate(set_list):
-            assert s.action1_num == None
-            s.action1_num = i
+        action_list.append(Action1(first_set.feature, num_sets, num_ent))
+        action_list.extend(real_sprite_list)
 
     #add the sprite groups
     for g in group_list:

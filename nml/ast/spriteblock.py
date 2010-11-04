@@ -77,6 +77,7 @@ class SpriteSet(spriteset_base_class):
         self.sprite_list = sprite_list
         self.pos = pos
         self.action1_num = None #set number in action1
+        self.action1_count = None #how many actual sprites there are in this spriteset
 
     # pre_process is defined by the base class
 
