@@ -90,7 +90,59 @@ more control over this use callback 0x2F.</td></tr>
 </table>
 
 <h2><a name="industries-property">Industry properties</a></h2>
+Industry properties.
+Default industry type numbers can be found at <a href="refs.html#refs-default-industries">default industries</a>.
+<p>
+<table class="t">
+<tr><th>property</th><th>value range</th><th>comment</th></tr>
+<tr><td>substitute</td><td>industry type</td><td>Number of the industry type replaced, <code>0xFF</code> disables the original industry with the same ID.</td></tr>
+<tr><td>override</td><td>industry type</td><td>Number of the industry type overridden (where your industry does something completely different than the original).</td></tr>
+<tr><td>layouts</td><td></td><td>Industry layout information.</td></tr>
+<tr><td>prod_flags</td><td>bitmask(PRODUCTIONTYPE_EXTRACTIVE, PRODUCTIONTYPE_ORGANIC, PRODUCTIONTYPE_PROCESSING)</td><td>Type of industry</td></tr>
+<tr><td>closure_msg</td><td>string</td><td>Message displayed when the industry announces closure.</td></tr>
+<tr><td>prod_increase_msg</td><td>string</td><td>Message displayed when industry increases production.</td></tr>
+<tr><td>prod_decrease_msg</td><td>string</td><td>Message displayed when industry decreases production.</td></tr>
+<tr><td>fund_cost_multiplier</td><td>0..255</td><td>Fund cost multiplier</td></tr>
+<tr><td>prod_cargo_types</td><td>array up to 2 ints</td><td>Types of cargo produced.</td></tr>
+<tr><td>accept_cargo_types</td> <td>array uo to 3 ints</td><td>Types of cargo accepted.</td></tr>
+<tr><td>prod_multiplier_1</td><td>0..255</td><td>Amount of cargo 1 produced every 256 ticks (8 or 9 times a month)</td></tr>
+<tr><td>prod_multiplier_2</td><td>0..255</td><td>Amount of cargo 2 produced every 256 ticks (8 or 9 times a month)</td></tr>
+<tr><td>min_cargo_distr</td><td>0..255</td><td>Minimal amount of cargo before transporting to stations.</td></tr>
+<tr><td>random_sound_effects</td><td>array of ints</td><td>Sound effect numbers that are played some times.</td></tr>
+<tr><td>conflicting_ind_types</td><td>array of 3 ints</td><td>Three industry types that should not be nearby.</td></tr>
+<tr><td>prob_random</td><td>0..10</td><td>Probability of occurring while generating initial industries.</td></tr>
+<tr><td>prob_in_game</td><td>0..10</td><td>Probability of occurring while creating industries during the game.</td></tr>
+<tr><td>map_color</td><td>0..255</td><td>Color of the industry at the mini map.</td></tr>
+<tr><td>spec_flags</td><td></td><td></td></tr>
+<tr><td>new_ind_text</td><td>string</td><td>Message displayed when industry gets built during game play.</td></tr>
+<tr><td>input_multiplier_1</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the first accepted cargo.</td></tr>
+<tr><td>input_multiplier_2</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the second accepted cargo.</td></tr>
+<tr><td>input_multiplier_3</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the third accepted cargo.</td></tr>
+<tr><td>name</td><td>string</td><td>Name of the industry</td></tr>
+<tr><td>prospect_chance</td><td>Fraction between 0 and 1</td><td>Chance of successful prospecting.</td></tr>
+<tr><td>callback_flags</td><td>bitmask(flags)</td><td>for flag values see <a href="#industry-callback-flags">Industry callback flags</a></td></tr>
+<tr><td>remove_cost_multiplier</td><td>int</td><td>multiplier for removing the industry.</td></tr>
+<tr><td>nearby_station_name</td><td>string</td><td>Default additional name for a nearby station</td></tr>
+</table>
 
+<h3><a name="industry-callback-flags">Industry callback flags</a></h3>
+<table class="t">
+<tr><th>flag</th><th>meaning</th></tr>
+<tr><td>IND_CBF_AVAILABILITY</td><td></td></tr>
+<tr><td>IND_CBF_PROD_CB_CARGO_ARRIVE</td><td></td></tr>
+<tr><td>IND_CBF_PROD_CB_256_TICKS</td><td></td></tr>
+<tr><td>IND_CBF_LOCATION_CHECK</td><td></td></tr>
+<tr><td>IND_CBF_RANDOM_PROD_CHANGE</td><td></td></tr>
+<tr><td>IND_CBF_MONTLY_PROD_CHANGE</td><td></td></tr>
+<tr><td>IND_CBF_CARGO_SUBTYPE_DISPLAY</td><td></td></tr>
+<tr><td>IND_CBF_EXTRA_TEXT_FUND</td><td></td></tr>
+<tr><td>IND_CBF_EXTRA_TEXT_INDUSTRY</td><td></td></tr>
+<tr><td>IND_CBF_CONTROL_SPECIAL</td><td></td></tr>
+<tr><td>IND_CBF_STOP_ACCEPT_CARGO</td><td></td></tr>
+<tr><td>IND_CBF_COLOR</td><td></td></tr>
+<tr><td>IND_CBF_CARGO_INPUT</td><td></td></tr>
+<tr><td>IND_CBF_CARGO_OUTPUT</td><td></td></tr>
+</table>
 
 </body>
 </html>
