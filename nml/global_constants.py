@@ -718,6 +718,36 @@ patch_variables = {
     'map_size' : {'num': 0x13, 'start': 0, 'size': 8, 'log_offset': 12, 'function': map_exponentiate},
 }
 
+def config_flag_read(bit, pos):
+    return expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(0x85), pos), expression.ConstantNumeric(bit), pos)
+
+def config_flag(info, pos):
+    return expression.SpecialParameter(generic.reverse_lookup(config_flags, info), info, None, config_flag_read, True, pos)
+
+config_flags = {
+    'long_bridges'            : 0x0F,
+    'gradual_loading'         : 0x2C,
+    'bridge_speed_limits'     : 0x34,
+    'signals_on_traffic_side' : 0x3B,
+    'electrified_railways'    : 0x3C,
+    'temperate_snowline'      : 0x6A,
+    'dynamic_engines'         : 0x78,
+    'variable_runningcosts'   : 0x7E,
+}
+
+def unified_maglev_read(info, pos):
+    bit0 = expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(0x85), pos), expression.ConstantNumeric(0x32), pos)
+    bit1 = expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(0x85), pos), expression.ConstantNumeric(0x33), pos)
+    shifted_bit1 = expression.BinOp(nmlop.SHIFT_LEFT, bit1, expression.ConstantNumeric(1))
+    return expression.BinOp(nmlop.OR, shifted_bit1, bit0)
+
+def unified_maglev(info, pos):
+    return expression.SpecialParameter(generic.reverse_lookup(unified_maglev_var, info), info, None, unified_maglev_read, False, pos)
+
+unified_maglev_var = {
+    'unified_maglev' : 0,
+}
+
 def setting_from_info(info, pos):
     return expression.SpecialParameter(generic.reverse_lookup(settings, info), info, global_param_write, global_param_read, False, pos)
 
@@ -726,4 +756,4 @@ railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 settings = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), (patch_variables, patch_variable), cargo_numbers, railtype_table, item_names, (settings, setting_from_info)]
+const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), (patch_variables, patch_variable), cargo_numbers, railtype_table, item_names, (settings, setting_from_info), (config_flags, config_flag), (unified_maglev_var, unified_maglev)]
