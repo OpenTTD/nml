@@ -74,6 +74,8 @@ class ParameterAssignment(object):
 
         self.param = self.param.reduce(global_constants.const_list)
         if isinstance(self.param, expression.SpecialParameter):
+            if not self.param.can_assign():
+                raise generic.ScriptError("Trying to assign a value to the read-only variable '%s'" % self.param.name, self.param.pos)
             self.param, self.value = self.param.to_assignment(self.value)
         if not isinstance(self.param, expression.Parameter):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)

@@ -692,9 +692,6 @@ def map_exponentiate(param, info):
     param = expression.BinOp(nmlop.ADD, param, expression.ConstantNumeric(info['log_offset'], param.pos), param.pos)
     return expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(1, param.pos), param, param.pos)
 
-def patch_variable_write(info, expr, pos):
-    raise generic.ScriptError("Target parameter '%s' is not writable." % generic.reverse_lookup(patch_variables, info), pos)
-
 def patch_variable_read(info, pos):
     expr = expression.PatchVariable(info['num'], pos)
     if info['start'] != 0:
@@ -706,7 +703,7 @@ def patch_variable_read(info, pos):
     return expr
 
 def patch_variable(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(patch_variables, info), info, patch_variable_write, patch_variable_read, False, pos)
+    return expression.SpecialParameter(generic.reverse_lookup(patch_variables, info), info, None, patch_variable_read, False, pos)
 
 patch_variables = {
     'starting_year' : {'num': 0x0B, 'start': 0, 'size': 32, 'function': add_1920},

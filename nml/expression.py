@@ -764,7 +764,7 @@ class SpecialParameter(Expression):
                             Position information
                         Return value:
                             Expression that should be evaluated to get the parameter value
-    @type write_func: C{function}
+    @type read_func: C{function}
 
     @ivar is_bool: Does read_func return a boolean value?
     @type is_bool: C{bool}
@@ -789,6 +789,9 @@ class SpecialParameter(Expression):
 
     def is_boolean(self):
         return self.is_bool
+
+    def can_assign(self):
+        return self.write_func is not None
 
     def to_assignment(self, expr):
         param, expr = self.write_func(self.info, expr, self.pos)
