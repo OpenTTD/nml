@@ -22,8 +22,9 @@ for the default fallback language 7F.
 Example for a valid language file:
 <pre class="code">
 lang: 7F
-STR_GRF_NAME                                                    :Swedish Rails {VERSION}
-STR_GRF_DESCRIPTION                                             :Swedish rails are a graphical extension for rails.
+STR_GRF_NAME                                                    :{TITLE} 0.1.0 - {VERSION}
+STR_GRF_DESCRIPTION                                             :{TITLE} contains pimped ground tiles.
+STR_NAME_MYVEHICLE                                              :General Robotics Anti-Grav UFO Mark X
 </pre>
 
 Strings may contain a number of special string codes which control how the string is being printed or which values
@@ -31,8 +32,8 @@ to insert into the string. Custom replacements can be stored in the plain text f
 newgrf version which is written by your build script). In the case above the <code>custom_tags.txt</code> could, for
 example read
 <pre class="code">
-VERSION  :nightly-r88M
-TITLE    :SwedishRails nightly-r88M
+VERSION  :alpha-r88
+TITLE    :Example NewGRF 
 </code>
 
 Valid language IDs are

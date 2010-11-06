@@ -20,7 +20,19 @@ numbers by default in most places and doesn't have any textual identifiers.
 While the language is very powerful, it's also hard to learn. NML was started
 mainly to provide a higher level language so coding GRF files will become
 accessible to more people.</p>
-
+<p>
+A good place to discuss NewGRFs which are being developed are the
+<a href="http://tt-forums.net">tt-forums</a>, especially the
+<a href="http://www.tt-forums.net/viewforum.php?f=66">NewGRF sub-sections</a>.
+Questions concerning setup up of NewGRF projects, programming or drawing or
+just discussing features and presenting work being done are well-placed there.
+When you are satisfied with a NewGRF and consider it tested enough that it really
+can be considered to be played with by the general public, you can publish your NewGRF in the 
+<a href="http://www.tt-forums.net/viewforum.php?f=67">NewGRF releases sub-forum</a>
+and you might also consider to publish it to the
+<a href="http://bananas.openttd.org">Online Content Server</a>
+of OpenTTD, so that other players can easily download your NewGRF and use it for
+future games. It will increase the popularity and use of your NewGRF tremendously.</p>
 
 <p><img alt="encoding process of nml" src="compileprocess.png"></p>
 
@@ -30,14 +42,28 @@ NML is a a python-based compiler, capable to compile NML files (along with their
 associated language, sound and graphic files) into grf and / or nfo files. In
 order to work, it requires
 <ul>
-<li>python
-<li>python image library
-<li>ply (downloadable from <a href="http://www.dabeaz.com/ply/">http://www.dabeaz.com/ply/</a>)
+<li><b>python</b>
+    <ul>
+        <li>any version from 2.4 through 2.7 will do, but not 3.x</li>
+        <li>downloadable from from <a href="http://www.python.org/">http://www.python.org/</a>)</li>
+    </ul>
+<li><b>python image library</b>
+    <ul>
+        <li>downloadable from <a href="http://www.pythonware.com/products/pil/">http://www.pythonware.com/products/pil/</a></li>
+    </ul>
+<li><b>ply</b>
+    <ul>
+        <li>downloadable from <a href="http://www.dabeaz.com/ply/">http://www.dabeaz.com/ply/</a></li>
+    </ul>
 </ul>
+
+If you don't install these with the packet manager of your choice (or there is none like on windows),
+you should install these libraries as well as NML itself using <code class="ex">python setup.py install</code> from your
+command prompt.
 
 Examples for small NML "projects" are found in the <code class="ex">regression</code>
 folder of NML. Generally it's assumed that the language files are in a separate
-language folder <code class="ex">lang</code>, thus a project may look like this:
+language folder <code class="ex">lang</code>, thus a simple project may look like this:
 <pre>
 mynewgrf.nml
 graphics.png
@@ -78,8 +104,8 @@ Options:
 
 <h1><a name="graphic-files">Graphic files</a></h1>
 <p>All graphic files must be in a format that can be loaded by the python imaging library
-and they must have a valid palette. You can chose either the dos palette (recommended) or
-the windows palette.</p>
+and they must have a valid palette. You can chose either the DOS palette (recommended as
+it contains a few more colours) or the windows palette.</p>
 <p>Palette files for several editors:
 <ul>
 <li><a href="ttd-newgrf-dos.gpl">Dos palette for GIMP</a></li>
