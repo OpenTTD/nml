@@ -57,7 +57,7 @@ class TemplateDeclaration(object):
     def get_action_list(self):
         return []
 
-spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False)
+spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False, True)
 
 class SpriteSet(spriteset_base_class):
     def __init__(self, param_list, sprite_list, pos):
@@ -145,7 +145,9 @@ class SpriteView(object):
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 4)
 
-class SpriteLayout(spritegroup_base_class):
+spritelayout_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False, True)
+
+class SpriteLayout(spritelayout_base_class):
     def __init__(self, name, param_list, layout_sprite_list, pos = None):
         self.initialize(name)
         self.param_list = param_list

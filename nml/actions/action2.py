@@ -99,7 +99,7 @@ class SpriteGroupRefType:
     SPRITEGROUP = 2 # References to sprite groups
     ALL = 3 # References to both sprite sets and groups
 
-def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by_type, cls_has_explicit_feature):
+def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by_type, cls_has_explicit_feature, cls_allow_parameters = False):
     """
     Metaclass factory which makes base classes for all nodes 'Action 2 graph'
     This graph is made up of all blocks that are eventually compiled to Action2,
@@ -117,6 +117,10 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
     @param cls_has_explicit_feature: Whether the feature of an instance is explicitly set,
                                     or derived from nodes that link to it.
     @type cls_has_explicit_feature: C{bool}
+
+    @param cls_allow_parameters: Whether parameters can be passed when referencing to an instance of this class.
+                                    If true, the derived class is expected to have a C{param_list} variable
+    @type cls_allow_parameters: C{bool}
 
     @return: The constructed class
     @rtype: C{type}
@@ -261,18 +265,20 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             assert self._referring_to_type() != SpriteGroupRefType.NONE
             raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass %r' % type(self))
 
-        def _add_reference(self, target_name):
+        def _add_reference(self, target_ref):
             """
             Add a reference from C{self} to a target with a given name.
 
-            @param target_name: Name of the reference target
-            @type target_name: L{SpriteGroupRef}
+            @param target_ref: Name of the reference target
+            @type target_ref: L{SpriteGroupRef}
             """
 
-            target = resolve_spritegroup(target_name.name, None, True, True)
+            target = resolve_spritegroup(target_ref.name, None, True, True)
             if (target._own_type() & self._referring_to_type() == 0) or \
                     (self._own_type() & target._referred_by_type() == 0):
-                raise generic.ScriptError("Encountered an incorrect type of reference: '%s'" % target_name.name.value, target_name.pos)
+                raise generic.ScriptError("Encountered an incorrect type of reference: '%s'" % target_ref.name.value, target_ref.pos)
+            if len(target_ref.param_list) != 0 and not target._allow_parameters():
+                raise generic.ScriptError("Passing parameters to '%s' is not possible." % target_ref.name.value, target_ref.pos)
             self._referenced_nodes.add(target)
             target._referencing_nodes.add(self)
 
@@ -300,6 +306,9 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
 
         def _has_explicit_feature(self):
             return cls_has_explicit_feature
+
+        def _allow_parameters(self):
+            return cls_allow_parameters
 
     return ASTSpriteGroup
 
