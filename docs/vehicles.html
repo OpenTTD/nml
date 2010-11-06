@@ -118,7 +118,7 @@ which can take different values depending upon the vehicle type:
 <tr><td><td>weight<td>PROP_TRAINS_WEIGHT
 <tr><td><td>tractive_effort_coefficient<td>PROP_TRAINS_TRACTIVE_EFFORT_COEFFICIENT
 <tr><td><td>shorten_vehicle<td>PROP_TRAINS_SHORTEN_VEHICLE
-<tr><td><td>visual_effect<td>PROP_TRAINS_VISUAL_EFFECT
+<tr><td><td>visual_effect_and_powered<td>PROP_TRAINS_VISUAL_EFFECT
 <tr><td><td>bitmask_vehicle_info<td>PROP_TRAINS_BITMASK_VEHICLE_INFO
 <tr><td>vehicles<td>cargo_capacity<td>PROP_ROADVEHS_CARGO_CAPACITY
 <tr><td>ships<td>speed<td>PROP_SHIPS_SPEED
@@ -230,7 +230,9 @@ to setting <tt>track_type</tt> to ELRL.
 <tr><td> tractive_effort_coefficient<td> 0 ... 1<td>
 <tr><td> air_drag_coefficient</td><td>   0 ... 1</td><td></td></tr>
 <tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>XXX=[8_8 | 7_8 | ... | 1_8]
-<tr><td> visual_effect<td> VISUAL_EFFECT_XXX<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE]
+<tr><td> visual_effect_and_powered<td> visual_effect_and_powered(VISUAL_EFFECT_XXX, offset, ENABLE_WAGON_POWER or DISABLE_WAGON_POWER)<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
+type of the visual effect you want for this wagon. Default means "take from engine_class property". Offset is the position of the effect. 0 is default, negative values
+mean more to the front and positive values are backwards. Minimum offset is -8, maximum is 7.
 <tr><td> extra_weight_per_wagon<td> 0 ... 255 t (mass units)<td>
 <tr><td> <a name="bitmask_vehicle_info">bitmask_vehicle_info</a><td> 8-bit bitmask<td>Used for obtaining <a href="#bitmask_consist_info">bitmask_consist_info</a>
 <tr><td> <td> <td>
