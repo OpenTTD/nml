@@ -684,15 +684,51 @@ misc_grf_bits = {
     'train_width_32_px'                  : {'param': 0x9E, 'bit': 3},
 }
 
-def add_1920(param, info):
-    return expression.BinOp(nmlop.ADD, param, expression.ConstantNumeric(1920, param.pos), param.pos)
+def add_1920(expr, info):
+    """
+    Create a new expression that adds 1920 to a given expression.
 
-def map_exponentiate(param, info):
+    @param expr: The expression to add 1920 to.
+    @type expr: L{Expression}
+
+    @param info: Ignored.
+
+    @return: A new expression that adds 1920 to the given expression.
+    @rtype: L{Expression}
+    """
+    return expression.BinOp(nmlop.ADD, expr, expression.ConstantNumeric(1920, expr.pos), expr.pos)
+
+def map_exponentiate(expr, info):
+    """
+    Given a exponent, add an offset ot it and compute the exponentiation with base 2.
+
+    @param expr: The exponent.
+    @type expr: L{Expression}
+
+    @param info: Table with extra information, most notable 'log_offset', the value we need to
+                 add to the given expression before computing the exponentiation.
+    @type info: C{dict}
+
+    @return: An expression computing 2**(expr + info['log_offset']).
+    @rtype: L{Expression}
+    """
     #map (log2(x) - a) to x, i.e. do 1 << (x + a)
-    param = expression.BinOp(nmlop.ADD, param, expression.ConstantNumeric(info['log_offset'], param.pos), param.pos)
-    return expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(1, param.pos), param, param.pos)
+    param = expression.BinOp(nmlop.ADD, param, expression.ConstantNumeric(info['log_offset'], expr.pos), expr.pos)
+    return expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(1, expr.pos), expr, expr.pos)
 
 def patch_variable_read(info, pos):
+    """
+    Helper function to read special patch variables.
+
+    @param info: Generic information about the parameter to read, like parameter number and size.
+    @type info: C{dict}
+
+    @param pos: Position information in the source file.
+    @type pos: L{Position} or C{None}
+
+    @return: An expression that reads the special variables.
+    @rtype: L{Expression}
+    """
     expr = expression.PatchVariable(info['num'], pos)
     if info['start'] != 0:
         expr = expression.BinOp(nmlop.SHIFT_RIGHT, expr, expression.ConstantNumeric(info['start'], pos), pos)
@@ -706,16 +742,16 @@ def patch_variable(info, pos):
     return expression.SpecialParameter(generic.reverse_lookup(patch_variables, info), info, None, patch_variable_read, False, pos)
 
 patch_variables = {
-    'starting_year' : {'num': 0x0B, 'start': 0, 'size': 32, 'function': add_1920},
-    'freight_trains' : {'num': 0x0E, 'start': 0, 'size': 32},
-    'plane_speed' : {'num': 0x10, 'start': 0, 'size': 32},
-    'base_sprite_2cc' : {'num': 0x11, 'start': 0, 'size': 32},
-    'map_type' : {'num': 0x13, 'start': 24, 'size': 2},
-    'map_min_edge' : {'num': 0x13, 'start': 20, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
-    'map_max_edge' : {'num': 0x13, 'start': 16, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
-    'map_x_edge' : {'num': 0x13, 'start': 12, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
-    'map_y_edge' : {'num': 0x13, 'start': 8, 'size': 4, 'log_offset': 6, 'function': map_exponentiate},
-    'map_size' : {'num': 0x13, 'start': 0, 'size': 8, 'log_offset': 12, 'function': map_exponentiate},
+    'starting_year'   : {'num': 0x0B, 'start':  0, 'size': 32, 'function': add_1920},
+    'freight_trains'  : {'num': 0x0E, 'start':  0, 'size': 32},
+    'plane_speed'     : {'num': 0x10, 'start':  0, 'size': 32},
+    'base_sprite_2cc' : {'num': 0x11, 'start':  0, 'size': 32},
+    'map_type'        : {'num': 0x13, 'start': 24, 'size':  2},
+    'map_min_edge'    : {'num': 0x13, 'start': 20, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_max_edge'    : {'num': 0x13, 'start': 16, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_x_edge'      : {'num': 0x13, 'start': 12, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_y_edge'      : {'num': 0x13, 'start':  8, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_size'        : {'num': 0x13, 'start':  0, 'size':  8, 'log_offset': 12, 'function': map_exponentiate},
 }
 
 def config_flag_read(bit, pos):
