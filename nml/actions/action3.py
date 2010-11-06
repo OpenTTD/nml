@@ -50,16 +50,16 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
     if default_graphics is None:
         act3.def_cid = 0
     else:
-        action2.add_ref(default_graphics.value, default_graphics.pos)
-        act3.def_cid = default_graphics.value
+        action2.add_ref(default_graphics.name.value, default_graphics.pos)
+        act3.def_cid = default_graphics.name.value
 
     if len(graphics_list) != 0 and feature not in [0, 1, 2, 3, 4, 0x10]:
-        raise generic.ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations and railtypes", graphics_list[0].action2_id.pos)
+        raise generic.ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations and railtypes", graphics_list[0].spritegroup_ref.pos)
 
     for graphics in graphics_list:
-        action2.add_ref(graphics.action2_id.value, graphics.action2_id.pos)
+        action2.add_ref(graphics.spritegroup_ref.name.value, graphics.spritegroup_ref.pos)
         cargo_id = graphics.cargo_id.reduce_constant(get_cargo_id_list(feature))
-        act3.cid_mappings.append( (cargo_id, graphics.action2_id.value) )
+        act3.cid_mappings.append( (cargo_id, graphics.spritegroup_ref.name.value) )
 
     if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(act3)

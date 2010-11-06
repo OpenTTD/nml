@@ -14,8 +14,8 @@ class Action2Random(action2.Action2):
     def prepare_output(self):
         action2.Action2.prepare_output(self)
         for choice in self.choices:
-            if isinstance(choice.result, expression.Identifier):
-                choice.result = action2.remove_ref(choice.result.value)
+            if isinstance(choice.result, action2.SpriteGroupRef):
+                choice.result = action2.remove_ref(choice.result.name.value)
             else:
                 choice.result = choice.result.value | 0x8000
 
@@ -47,21 +47,20 @@ class RandomChoice(object):
                 raise generic.ScriptError("Value for probability should be higher than 0, encountered %d" % self.probability.value, self.probability.pos)
             if result is None:
                 raise generic.ScriptError("Returning the computed value is not possible in a random_switch, as there is no computed value.", self.probability.pos)
-        self.result = result.reduce(global_constants.const_list, False)
+        if isinstance(result, action2.SpriteGroupRef):
+            self.result = result
+        else:
+            self.result = result.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Probability:'
         self.probability.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        if isinstance(self.result, expression.Identifier):
-            print (indentation+2)*' ' + 'Go to switch:'
-            self.result.debug_print(indentation + 4)
-        else:
-            self.result.debug_print(indentation + 2)
+        self.result.debug_print(indentation + 2)
 
     def __str__(self):
         ret = str(self.probability)
-        if isinstance(self.result, expression.Identifier):
+        if isinstance(self.result, action2.SpriteGroupRef):
             ret += ': %s;' % str(self.result)
         else:
             ret += ': return %s;' % str(self.result)

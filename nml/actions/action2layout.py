@@ -99,7 +99,7 @@ class Action2LayoutSprite(object):
 
     def set_param(self, name, value):
         assert isinstance(name, expression.Identifier)
-        assert isinstance(value, expression.Expression)
+        assert isinstance(value, expression.Expression) or isinstance(value, action2.SpriteGroupRef)
         name = name.value
 
         if not name in self.params:
@@ -111,22 +111,19 @@ class Action2LayoutSprite(object):
         self.params[name]['is_set'] = True
 
     def _validate_sprite(self, name, value):
-        offset = 0
-        if isinstance(value, expression.Identifier):
-            set_name = value
-        elif isinstance(value, expression.FunctionCall):
-            set_name = value.name
-            if len(value.params) not in (0, 1):
-                raise generic.ScriptError("Expected at most one parameter, encountered " + str(len(value.params)), value.pos)
-            if len(value.params) != 0:
-                offset = value.params[0] #type: Expression
-        else:
+        if not isinstance(value, action2.SpriteGroupRef):
             raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier, possibly with offset", value.pos)
-        spriteset = action2.resolve_spritegroup(set_name)
-        if offset != 0:
+        spriteset = action2.resolve_spritegroup(value.name)
+
+        if len(value.param_list) == 0:
+            offset = 0
+        elif len(value.param_list) == 1:
             id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
-            offset = offset.reduce_constant(id_dicts).value
+            offset = value.param_list[0].reduce_constant(id_dicts).value
             generic.check_range(offset, 0, spriteset.action1_count - 1, "offset within spriteset", value.pos)
+        else:
+            raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(value.param_list)), value.pos)
+
         num = spriteset.action1_num + offset
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
         if self.is_set('ttdsprite'):
@@ -134,26 +131,33 @@ class Action2LayoutSprite(object):
         return num
 
     def _validate_ttdsprite(self, name, value):
-        num = value.reduce_constant().value
-        generic.check_range(num, 0, (1 << 14) - 1, "ttdsprite", value.pos)
+        if not isinstance(value, expression.ConstantNumeric):
+            raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
+
+        generic.check_range(value.value, 0, (1 << 14) - 1, "ttdsprite", value.pos)
         if self.is_set('sprite'):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
-        return num
+        return value.value
 
     def _validate_recolor(self, name, value):
-        num = value.reduce_constant().value
-        generic.check_range(num, -1, (1 << 14) - 1, "recolor", value.pos)
-        return num
+        if not isinstance(value, expression.ConstantNumeric):
+            raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
+        generic.check_range(value.value, -1, (1 << 14) - 1, "recolor", value.pos)
+        return value.value
 
     def _validate_always_draw(self, name, value):
-        num = value.reduce_constant().value
-        if num not in (0, 1):
+        if not isinstance(value, expression.ConstantNumeric):
+            raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
+
+        if value.value not in (0, 1):
             raise generic.ScriptError("Value of 'always_draw' should be 0 or 1", value.pos)
         #bit has no effect for ground sprites but should be left empty, so ignore it
-        return num if self.type != Action2LayoutSpriteType.GROUND else 0
+        return value.value if self.type != Action2LayoutSpriteType.GROUND else 0
 
     def _validate_bounding_box(self, name, value):
-        val = value.reduce_constant().value
+        if not isinstance(value, expression.ConstantNumeric):
+            raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
+        val = value.value
 
         if self.type == Action2LayoutSpriteType.GROUND:
             raise generic.ScriptError(name + " can not be set for ground sprites", value.pos)

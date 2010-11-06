@@ -202,7 +202,7 @@ class LayoutParam(object):
         self.name = name
         try:
             self.value = value.reduce_constant(global_constants.const_list)
-        except generic.ConstError, generic.ScriptError:
+        except (generic.ConstError, generic.ScriptError):
             if isinstance(value, expression.Identifier):
                 self.value = action2.SpriteGroupRef(value, [], value.pos)
             elif isinstance(value, expression.FunctionCall):

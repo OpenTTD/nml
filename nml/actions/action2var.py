@@ -57,12 +57,12 @@ class Action2Var(action2.Action2):
             self.var_list[i].shift.value |= 0x20
 
         for r in self.ranges:
-            if isinstance(r.result, expression.Identifier):
-                r.result = action2.remove_ref(r.result.value)
+            if isinstance(r.result, action2.SpriteGroupRef):
+                r.result = action2.remove_ref(r.result.name.value)
             else:
                 r.result = r.result.value | 0x8000
-        if isinstance(self.default_result, expression.Identifier):
-            self.default_result = action2.remove_ref(self.default_result.value)
+        if isinstance(self.default_result, action2.SpriteGroupRef):
+            self.default_result = action2.remove_ref(self.default_result.name.value)
         else:
             self.default_result = self.default_result.value | 0x8000
 
@@ -173,7 +173,12 @@ class SwitchRange(object):
     def __init__(self, min, max, result, unit = None, comment = None):
         self.min = min.reduce(global_constants.const_list)
         self.max = max.reduce(global_constants.const_list)
-        self.result = result.reduce(global_constants.const_list, False) if result is not None else None
+        if result is None:
+            self.result is None
+        elif isinstance(result, action2.SpriteGroupRef):
+            self.result = result
+        else:
+            self.result = result.reduce(global_constants.const_list)
         self.unit = unit
         self.comment = comment
 
@@ -183,10 +188,7 @@ class SwitchRange(object):
         print indentation*' ' + 'Max:'
         self.max.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        if isinstance(self.result, expression.Identifier):
-            print (indentation+2)*' ' + 'Go to switch:'
-            self.result.debug_print(indentation + 4)
-        elif self.result is None:
+        if self.result is None:
             print (indentation+2)*' ' + 'Return computed value'
         else:
             self.result.debug_print(indentation + 2)
@@ -195,7 +197,7 @@ class SwitchRange(object):
         ret = str(self.min)
         if not isinstance(self.min, expression.ConstantNumeric) or not isinstance(self.max, expression.ConstantNumeric) or self.max.value != self.min.value:
             ret += '..' + str(self.max)
-        if isinstance(self.result, expression.Identifier):
+        if isinstance(self.result, expression.SpriteGroupRef):
             ret += ': %s;' % str(self.result)
         elif self.result is None:
             ret += ': return;'
@@ -443,10 +445,13 @@ class Varaction2Parser(object):
             expr.supported_by_action2(True)
             assert False #supported_by_action2 should have raised the correct error already
 
+def make_return_ref(str, pos):
+    return action2.SpriteGroupRef(expression.Identifier(str, pos), [], pos)
+
 def make_return_varact2(switch_block):
     act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89)
     act.var_list = [VarAction2Var(0x1C, expression.ConstantNumeric(0), expression.ConstantNumeric(0xFFFFFFFF))]
-    act.default_result = expression.Identifier('CB_FAILED', switch_block.pos)
+    act.default_result = make_return_ref('CB_FAILED', switch_block.pos)
     return act
 
 def parse_var(info, pos):
@@ -520,11 +525,11 @@ def parse_varaction2(switch_block):
             act2 = action2.add_ref(return_action.name, switch_block.pos)
             assert return_action == act2
             varaction2.references.add(act2)
-            range_result = expression.Identifier(return_action.name, switch_block.pos)
-        elif isinstance(r.result, expression.Identifier):
-            comment += r.result.value + ';'
-            if r.result.value != 'CB_FAILED':
-                act2 = action2.add_ref(r.result.value, r.result.pos)
+            range_result = make_return_ref(return_action.name, switch_block.pos)
+        elif isinstance(r.result, action2.SpriteGroupRef):
+            comment += r.result.name.value + ';'
+            if r.result.name.value != 'CB_FAILED':
+                act2 = action2.add_ref(r.result.name.value, r.result.pos)
                 varaction2.references.add(act2)
             range_result = r.result
         elif isinstance(r.result, expression.ConstantNumeric):
@@ -614,16 +619,16 @@ def parse_varaction2(switch_block):
     if default is None:
         if len(switch_block.body.ranges) == 0:
             #in this case, we can return with nvar == 0 without an extra action2
-            default = expression.Identifier('CB_FAILED', switch_block.pos)
+            default = make_return_ref('CB_FAILED', switch_block.pos)
         else:
             if return_action is None: return_action = make_return_varact2(switch_block)
             act2 = action2.add_ref(return_action.name, switch_block.pos)
             assert act2 == return_action
             varaction2.references.add(act2)
-            default = expression.Identifier(return_action.name, switch_block.pos)
-    elif isinstance(default, expression.Identifier):
-        if default.value != 'CB_FAILED':
-            act2 = action2.add_ref(default.value, default.pos)
+            default = make_return_ref(return_action.name, switch_block.pos)
+    elif isinstance(default, action2.SpriteGroupRef):
+        if default.name.value != 'CB_FAILED':
+            act2 = action2.add_ref(default.name.value, default.pos)
             varaction2.references.add(act2)
     elif isinstance(default, expression.ConstantNumeric):
         pass
