@@ -486,6 +486,117 @@ def parse_60x_var(name, args, pos, info):
         param = args[0]
     return expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
 
+def parse_minmax(value, unit, action_list, act6, offset):
+    """
+    Parse a min or max value in a switch block.
+
+    @param value: Value to parse
+    @type value: L{Expression}
+
+    @param unit: Unit to use
+    @type unit: C{str} or C{None}
+
+    @param action_list: List to append any extra actions to
+    @type action_list: C{list} of L{BaseAction}
+
+    @param act6: Action6 to add any modifications to
+    @type act6: L{Action6}
+
+    @param offset: Current offset to use for action6
+    @type offset: C{int}
+
+    @return: A tuple of two values:
+                - The value to use as min/max
+                - Whether the resulting range may need a sanity check
+    @rtype: C{tuple} of (L{ConstantNumeric} or L{SpriteGroupRef}), C{bool}
+    """
+    check_range = True
+    if unit is not None:
+        if not isinstance(value, expression.ConstantNumeric):
+            raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", value.pos)
+        assert unit in unit.units
+        result = expression.ConstantNumeric(int(value.value / unit.units[unit]['convert']))
+    elif isinstance(value, expression.ConstantNumeric):
+        result = value
+    elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
+        act6.modify_bytes(value.num.value, 4, offset)
+        result = expression.ConstantNumeric(0)
+        check_range = False
+    else:
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
+        action_list.extend(tmp_param_actions)
+        act6.modify_bytes(tmp_param, 4, offset)
+        result = expression.ConstantNumeric(0)
+        check_range = False
+    return (result, check_range)
+
+def parse_result(value, action_list, act6, offset, varaction2, return_action, need_return_action = True):
+    """
+    Parse a result (another switch or CB result) in a switch block.
+
+    @param value: Value to parse
+    @type value: L{Expression}, L{None} or L{SpriteGroupRef}
+
+    @param action_list: List to append any extra actions to
+    @type action_list: C{list} of L{BaseAction}
+
+    @param act6: Action6 to add any modifications to
+    @type act6: L{Action6}
+
+    @param offset: Current offset to use for action6
+    @type offset: C{int}
+
+    @param varaction2: Reference to the resulting varaction2
+    @type varaction2: L{Action2Var}
+
+    @param return_action: Reference to the action2 used to return the computed value, if defined.
+    @type return_action: L{Action2Var} or C{None}
+
+    @param switch_block: Reference to the switch block that is being compiled
+    @type switch_block: L{Switch}
+
+    @return: A tuple of three values:
+                - The value to use as return value
+                - Comment to add to this value
+                - New value of C{return_action} (see the parameter)
+    @rtype: C{tuple} of (L{ConstantNumeric} or L{SpriteGroupRef}), C{str}, (L{Action2Var} or C{None})
+    """
+    if value is None:
+        comment = "return;"
+        if len(switch_block.body.ranges) != 0:
+            if return_action is None: return_action = make_return_varact2(switch_block)
+            act2 = action2.add_ref(return_action.name, switch_block.pos)
+            assert return_action == act2
+            varaction2.references.add(act2)
+            result = make_return_ref(return_action.name, switch_block.pos)
+        else:
+            default = make_return_ref('CB_FAILED', switch_block.pos)
+    elif isinstance(value, action2.SpriteGroupRef):
+        comment = value.name.value + ';'
+        if value.name.value != 'CB_FAILED':
+            act2 = action2.add_ref(value.name.value, value.pos)
+            varaction2.references.add(act2)
+        result = value
+    elif isinstance(value, expression.ConstantNumeric):
+        comment = "return %d;" % value.value
+        result = value
+    elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
+        comment = "return %s;" % str(value)
+        act6.modify_bytes(value.num.value, 4, offset)
+        result = expression.ConstantNumeric(0)
+    elif isinstance(value, expression.String):
+        comment = "return %s;" % str(value)
+        str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, value)
+        action_list.extend(actions)
+        result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
+    else:
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
+        comment = "return param[%d];" % tmp_param
+        action_list.extend(tmp_param_actions)
+        act6.modify_bytes(tmp_param, 2, offset)
+        result = expression.ConstantNumeric(0)
+    return (result, comment, return_action)
+
 def parse_varaction2(switch_block):
     action6.free_parameters.save()
     act6 = action6.Action6()
@@ -519,82 +630,18 @@ def parse_varaction2(switch_block):
     used_ranges = []
     for r in switch_block.body.ranges:
         comment = str(r.min) + " .. " + str(r.max) + ": "
-        if r.result is None:
-            comment += "return;"
-            if return_action is None: return_action = make_return_varact2(switch_block)
-            act2 = action2.add_ref(return_action.name, switch_block.pos)
-            assert return_action == act2
-            varaction2.references.add(act2)
-            range_result = make_return_ref(return_action.name, switch_block.pos)
-        elif isinstance(r.result, action2.SpriteGroupRef):
-            comment += r.result.name.value + ';'
-            if r.result.name.value != 'CB_FAILED':
-                act2 = action2.add_ref(r.result.name.value, r.result.pos)
-                varaction2.references.add(act2)
-            range_result = r.result
-        elif isinstance(r.result, expression.ConstantNumeric):
-            comment += "return %d;" % r.result.value
-            range_result = r.result
-        elif isinstance(r.result, expression.Parameter) and isinstance(r.result.num, expression.ConstantNumeric):
-            comment += "return %s;" % str(r.result)
-            act6.modify_bytes(r.result.num.value, 4, offset)
-            range_result = expression.ConstantNumeric(0)
-        elif isinstance(r.result, expression.String):
-            comment += "return %s;" % str(r.result)
-            str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, r.result)
-            action_list.extend(actions)
-            range_result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
-        else:
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.result)
-            comment += "return param[%d];" % tmp_param
-            action_list.extend(tmp_param_actions)
-            act6.modify_bytes(tmp_param, 2, offset)
-            range_result = expression.ConstantNumeric(0)
 
+        range_result, range_comment, return_action = parse_result(r.result, action_list, act6, offset, varaction2, return_action, switch_block)
+        comment += range_comment
         offset += 2 # size of result
 
-        check_range = True
-        if r.unit:
-            if not isinstance(r.min, expression.ConstantNumeric):
-                raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", r.min.pos)
-            assert r.unit in unit.units
-            range_min = expression.ConstantNumeric(int(r.min.value / unit.units[r.unit]['convert']))
-        elif isinstance(r.min, expression.ConstantNumeric):
-            range_min = r.min
-        elif isinstance(r.min, expression.Parameter) and isinstance(r.min.num, expression.ConstantNumeric):
-            act6.modify_bytes(r.min.num.value, 4, offset)
-            range_min = expression.ConstantNumeric(0)
-            check_range = False
-        else:
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.min)
-            action_list.extend(tmp_param_actions)
-            act6.modify_bytes(tmp_param, 4, offset)
-            range_min = expression.ConstantNumeric(0)
-            check_range = False
+        range_min, check_min = parse_minmax(r.min, r.unit, action_list, act6, offset)
         offset += 4
-
-
-        if r.unit:
-            if not isinstance(r.max, expression.ConstantNumeric):
-                raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", r.max.pos)
-            assert r.unit in unit.units
-            range_max = expression.ConstantNumeric(int(r.max.value / unit.units[r.unit]['convert']))
-        elif isinstance(r.max, expression.ConstantNumeric):
-            range_max = r.max
-        elif isinstance(r.max, expression.Parameter) and isinstance(r.max.num, expression.ConstantNumeric):
-            act6.modify_bytes(r.max.num.value, 4, offset)
-            range_max = expression.ConstantNumeric(0)
-            check_range = False
-        else:
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(r.max)
-            action_list.extend(tmp_param_actions)
-            act6.modify_bytes(tmp_param, 4, offset)
-            range_max = expression.ConstantNumeric(0)
-            check_range = False
+        range_max, check_max = parse_minmax(r.min, r.unit, action_list, act6, offset)
         offset += 4
 
         range_overlap = False
-        if check_range:
+        if check_min and check_max:
             for existing_range in used_ranges:
                 if existing_range[0] <= range_min.value and range_max.value <= existing_range[1]:
                     generic.print_warning("Range overlaps with existing ranges so it'll never be reached", r.min.pos)
@@ -614,33 +661,7 @@ def parse_varaction2(switch_block):
         if not range_overlap:
             varaction2.ranges.append(SwitchRange(range_min, range_max, range_result, comment=comment))
 
-    default = switch_block.body.default
-
-    if default is None:
-        if len(switch_block.body.ranges) == 0:
-            #in this case, we can return with nvar == 0 without an extra action2
-            default = make_return_ref('CB_FAILED', switch_block.pos)
-        else:
-            if return_action is None: return_action = make_return_varact2(switch_block)
-            act2 = action2.add_ref(return_action.name, switch_block.pos)
-            assert act2 == return_action
-            varaction2.references.add(act2)
-            default = make_return_ref(return_action.name, switch_block.pos)
-    elif isinstance(default, action2.SpriteGroupRef):
-        if default.name.value != 'CB_FAILED':
-            act2 = action2.add_ref(default.name.value, default.pos)
-            varaction2.references.add(act2)
-    elif isinstance(default, expression.ConstantNumeric):
-        pass
-    elif isinstance(default, expression.Parameter) and isinstance(default.num, expression.ConstantNumeric):
-        act6.modify_bytes(default.num.value, 4, offset)
-        default = expression.ConstantNumeric(0)
-    else:
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(default)
-        action_list.extend(tmp_param_actions)
-        act6.modify_bytes(tmp_param, 2, offset)
-        default = expression.ConstantNumeric(0)
-
+    default, default_comment, return_action = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, return_action, switch_block)
     varaction2.default_result = default
 
     if len(act6.modifications) > 0: action_list.append(act6)
