@@ -38,6 +38,8 @@ def get_real_action2s(spritegroup):
     if feature not in action2.features_sprite_group:
         raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for this feature: 0x" + generic.to_hex(feature, 2), spritegroup.pos)
 
+    if len(spritegroup.spriteview_list) == 0:
+        raise generic.ScriptError("Sprite groups require at least one sprite set.", spritegroup.pos)
     for view in spritegroup.spriteview_list:
         if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value, view.pos)
         type, feature_list = real_action2_alias[view.name.value]

@@ -522,11 +522,9 @@ class NMLParser(object):
             t[0] = spriteblock.SpriteLayout(t[2], t[4], t[7], t.lineno(1))
 
     def p_spriteview_list(self, t):
-        '''spriteview_list : ID SEMICOLON
-                           | spriteview
+        '''spriteview_list :
                            | spriteview_list spriteview'''
-        if isinstance(t[1], expression.Identifier): t[0] = [spriteblock.SpriteView(expression.Identifier('default', None), [t[1]], t.lineno(1))]
-        elif len(t) == 2: t[0] = [t[1]]
+        if len(t) == 1: t[0] = []
         else: t[0] = t[1] + [t[2]]
 
     def p_spriteview(self, t):
