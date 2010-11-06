@@ -713,7 +713,7 @@ def map_exponentiate(expr, info):
     @rtype: L{Expression}
     """
     #map (log2(x) - a) to x, i.e. do 1 << (x + a)
-    param = expression.BinOp(nmlop.ADD, param, expression.ConstantNumeric(info['log_offset'], expr.pos), expr.pos)
+    expr = expression.BinOp(nmlop.ADD, expr, expression.ConstantNumeric(info['log_offset'], expr.pos), expr.pos)
     return expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(1, expr.pos), expr, expr.pos)
 
 def patch_variable_read(info, pos):
