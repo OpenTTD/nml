@@ -255,8 +255,8 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             This function should collect all references to other nodes from this instance.
             It must be implemented and called iff the C{cls_referring_to_type} metaclass parameter is not 0
 
-            @return: A collection containing all identifiers that link to other nodes.
-            @rtype: C{iterable} of L{Identifier}
+            @return: A collection containing all links to other nodes.
+            @rtype: C{iterable} of L{SpriteGroupRef}
             """
             assert self._referring_to_type() != SpriteGroupRefType.NONE
             raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass %r' % type(self))
@@ -266,13 +266,13 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             Add a reference from C{self} to a target with a given name.
 
             @param target_name: Name of the reference target
-            @type target_name: L{Identifier}
+            @type target_name: L{SpriteGroupRef}
             """
 
-            target = resolve_spritegroup(target_name, None, True, True)
+            target = resolve_spritegroup(target_name.name, None, True, True)
             if (target._own_type() & self._referring_to_type() == 0) or \
                     (self._own_type() & target._referred_by_type() == 0):
-                raise generic.ScriptError("Encountered an incorrect type of reference: '%s'" % target_name.value, target_name.pos)
+                raise generic.ScriptError("Encountered an incorrect type of reference: '%s'" % target_name.name.value, target_name.pos)
             self._referenced_nodes.add(target)
             target._referencing_nodes.add(self)
 

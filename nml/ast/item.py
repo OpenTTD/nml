@@ -177,16 +177,17 @@ class GraphicsBlock(graphics_base_class):
 
     def collect_references(self):
         all_refs = []
-        for gfx in [g.action2_id for g in self.graphics_list] + [self.default_graphics]:
-            if isinstance(gfx, expression.Identifier):
-                all_refs.append(gfx)
+        for sg_ref in [g.spritegroup_ref for g in self.graphics_list] + [self.default_graphics]:
+            if sg_ref is not None:
+                all_refs.append(sg_ref)
         return all_refs
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics block:'
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
-        print (indentation+2)*' ' + 'Default graphics:', self.default_graphics
+        print (indentation+2)*' ' + 'Default graphics:'
+        self.default_graphics.debug_print(indentation + 4)
 
     def get_action_list(self):
         global item_feature, item_id
@@ -195,11 +196,13 @@ class GraphicsBlock(graphics_base_class):
         return []
 
 class GraphicsDefinition(object):
-    def __init__(self, cargo_id, action2_id):
+    def __init__(self, cargo_id, spritegroup_ref):
         self.cargo_id = cargo_id
-        self.action2_id = action2_id
+        self.spritegroup_ref = spritegroup_ref
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics:'
-        print (indentation+2)*' ' + 'Cargo:', self.cargo_id.value
-        print (indentation+2)*' ' + 'Linked to action2:', self.action2_id.value
+        print (indentation+2)*' ' + 'Cargo:'
+        self.cargo_id.debug_print(indentation + 4)
+        print (indentation+2)*' ' + 'Linked to sprite group:'
+        self.spritegroup_ref.debug_print(indentation + 4)

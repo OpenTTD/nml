@@ -57,7 +57,6 @@ class TemplateDeclaration(object):
     def get_action_list(self):
         return []
 
-        
 spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False)
 
 class SpriteSet(spriteset_base_class):
@@ -189,10 +188,8 @@ class LayoutSprite(object):
     def collect_spritesets(self):
         used_sets = []
         for layout_param in self.param_list:
-            if isinstance(layout_param.value, expression.Identifier):
+            if isinstance(layout_param.value, action2.SpriteGroupRef):
                 used_sets.append(layout_param.value)
-            elif isinstance(layout_param.value, expression.FunctionCall):
-                used_sets.append(layout_param.value.name)
         return used_sets
 
     def debug_print(self, indentation):
@@ -203,7 +200,17 @@ class LayoutSprite(object):
 class LayoutParam(object):
     def __init__(self, name, value, pos):
         self.name = name
-        self.value = value.reduce(global_constants.const_list, False)
+        try:
+            self.value = value.reduce_constant(global_constants.const_list)
+        except generic.ConstError, generic.ScriptError:
+            if isinstance(value, expression.Identifier):
+                self.value = action2.SpriteGroupRef(value, [], value.pos)
+            elif isinstance(value, expression.FunctionCall):
+                self.value = action2.SpriteGroupRef(value.name, value.params, value.pos)
+            else:
+                #let it fail again and show an error to the user
+                value.reduce_constant(global_constants.const_list)
+                assert False, "NOT REACHED"
         self.pos = pos
 
     def debug_print(self, indentation):
