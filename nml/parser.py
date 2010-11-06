@@ -352,8 +352,8 @@ class NMLParser(object):
 
     def p_graphics_list(self, t):
         '''graphics_list : graphics_assignment_list
-                         | graphics_assignment_list ID SEMICOLON
-                         | ID SEMICOLON'''
+                         | graphics_assignment_list spritegroup_ref SEMICOLON
+                         | spritegroup_ref SEMICOLON'''
         if len(t) == 2:
             t[0] = item.GraphicsBlock(t[1], None)
         elif len(t) == 4:
@@ -362,7 +362,7 @@ class NMLParser(object):
             t[0] = item.GraphicsBlock([], t[1])
 
     def p_graphics_assignment(self, t):
-        'graphics_assignment : expression COLON ID SEMICOLON'
+        'graphics_assignment : expression COLON spritegroup_ref SEMICOLON'
         t[0] = item.GraphicsDefinition(t[1], t[3])
 
     def p_graphics_assignment_list(self, t):
@@ -424,7 +424,7 @@ class NMLParser(object):
     def p_switch_value(self, t):
         '''switch_value : RETURN expression SEMICOLON
                         | RETURN SEMICOLON
-                        | ID SEMICOLON'''
+                        | spritegroup_ref SEMICOLON'''
         if len(t) == 4: t[0] = t[2]
         elif t[1] == 'return': t[0] = None
         else: t[0] = t[1]
@@ -546,9 +546,9 @@ class NMLParser(object):
         else: t[0] = t[1] + [t[2]]
 
     def p_spriteview(self, t):
-        ''' spriteview : ID COLON id_array SEMICOLON
-                       | ID COLON ID SEMICOLON'''
-        if isinstance(t[3], list): t[0] = spriteblock.SpriteView(t[1], t[3], t.lineno(1))
+        '''spriteview : ID COLON LBRACKET spritegroup_ref_list RBRACKET SEMICOLON
+                      | ID COLON spritegroup_ref SEMICOLON'''
+        if len(t) == 7: t[0] = spriteblock.SpriteView(t[1], t[4], t.lineno(1))
         else: t[0] = spriteblock.SpriteView(t[1], [t[3]], t.lineno(1))
 
     def p_layout_sprite_list(self, t):
