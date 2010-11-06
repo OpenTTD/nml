@@ -221,7 +221,7 @@ properties[0x00] = {
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
     'shorten_vehicle'              : {'size': 1, 'num': 0x21},
-    'visual_effect'                : {'size': 1, 'num': 0x22},
+    'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
     'bitmask_vehicle_info'         : {'size': 1, 'num': 0x25},
     'retire_early'                 : {'size': 1, 'num': 0x26},

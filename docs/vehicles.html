@@ -90,20 +90,20 @@ the given ID.</td></tr>
 <h3><a name="vehicles-callbacks-vars">Callbacks for vehicles</a></h3>
 <table class="t">
 <tr><th>name<th>use
-<tr><td>VEH_CB_WAGON_POWER           <td>decide upon whether a wagon has power
-<tr><td>VEH_CB_WAGON_LENGTH          <td>decide upon the length of the wagon
-<tr><td>VEH_CB_LOAD_AMOUNT           <td>decide upon the loading speed (amount loaded per tick)
-<tr><td>VEH_CB_REFITTED_CAPACITY     <td>decide upon the capacity after refit
-<tr><td>VEH_CB_ARTICULATED_PARTS     <td>decide upon the ID of the next vehicle added to the articulated vehicle chain
-<tr><td>VEH_CB_CARGO_SUFFIX          <td>decide upon cargo subtype display for refit
-<tr><td>VEH_CB_CAN_ATTACH_WAGON      <td>decide whether a wagon can be attached
-<tr><td>VEH_CB_TEXT_PURCHASE_SCREEN  <td>decide upon an additional text for the purchase screen
-<tr><td>VEH_CB_COLOUR_MAPPING        <td>decide upon the colour mapping instead of company colour
-<tr><td>VEH_CB_START_STOP_CHECK      <td>decide whether a vehicle may be started. Return 0xFF to succeed or an error message.
-<tr><td>VEH_CB_32DAY                 <td>Triggers one or both of <it>Trigger vehicle trigger 10</it> (bit 0) and <it>Update colour map via VEH_CB_COLOUR_MAPPING</it> (bit 1)
-<tr><td>VEH_CB_SOUND_EFFECT          <td>decide whether and which sound is being played for certain situations
-<tr><td>VEH_CB_AUTOREPLACE_SELECT    <td>decide upon appropriate replacement vehicles
-<tr><td>VEH_CB_VEHICLE_PROPERTIES    <td>Change vehicle properties
+<tr><td>VEH_CB_VISUAL_EFFECT_AND_POWERED <td>decide upon whether a wagon has power
+<tr><td>VEH_CB_WAGON_LENGTH              <td>decide upon the length of the wagon
+<tr><td>VEH_CB_LOAD_AMOUNT               <td>decide upon the loading speed (amount loaded per tick)
+<tr><td>VEH_CB_REFITTED_CAPACITY         <td>decide upon the capacity after refit
+<tr><td>VEH_CB_ARTICULATED_PARTS         <td>decide upon the ID of the next vehicle added to the articulated vehicle chain
+<tr><td>VEH_CB_CARGO_SUFFIX              <td>decide upon cargo subtype display for refit
+<tr><td>VEH_CB_CAN_ATTACH_WAGON          <td>decide whether a wagon can be attached
+<tr><td>VEH_CB_TEXT_PURCHASE_SCREEN      <td>decide upon an additional text for the purchase screen
+<tr><td>VEH_CB_COLOUR_MAPPING            <td>decide upon the colour mapping instead of company colour
+<tr><td>VEH_CB_START_STOP_CHECK          <td>decide whether a vehicle may be started. Return 0xFF to succeed or an error message.
+<tr><td>VEH_CB_32DAY                     <td>Triggers one or both of <it>Trigger vehicle trigger 10</it> (bit 0) and <it>Update colour map via VEH_CB_COLOUR_MAPPING</it> (bit 1)
+<tr><td>VEH_CB_SOUND_EFFECT              <td>decide whether and which sound is being played for certain situations
+<tr><td>VEH_CB_AUTOREPLACE_SELECT        <td>decide upon appropriate replacement vehicles
+<tr><td>VEH_CB_VEHICLE_PROPERTIES        <td>Change vehicle properties
 </table>
 <p>In order to set properties for vehicles via callback <code>VEH_CB_VEHICLE_PROPERTIES</code> it's necessary to query the general variable <code>extra_callback_info1</code>
 which can take different values depending upon the vehicle type:
@@ -210,7 +210,7 @@ refitting properties is set.</p>
 <tr><td> speed<td> 0 ... 65000 (speed units)<td>Max speed for engines, speed limit for wagons
 <tr><td> misc_flags</td><td> bitmask(TRAIN_FLAG_XXX, ...)</td><td>XXX=[TILT | 2CC | MU]</td></tr>
 <tr><td> refit_cost<td> <td> in 50% units of the purchase price cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [WAGON_POWER | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [VISUAL_EFFECT_AND_POWERED | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> track_type<td>item from railtypetable<td>Default railtype table: RAIL, ELRL, MONO, MGLV.

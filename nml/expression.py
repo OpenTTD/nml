@@ -988,6 +988,22 @@ def builtin_grf_status(name, args, pos):
         assert False, "Unknown grf status function"
     mask = generic.parse_string_to_dword(labels[1].value) if len(labels) > 1 else None
     return SpecialCheck(op, 0x88, results, generic.parse_string_to_dword(labels[0].value), mask, args[0].pos)
+
+def builtin_visual_effect_and_powered(name, args, pos):
+    """
+    visual_effect_and_powered(effect, offset, powered) builtin function. Use this to set
+    the train property visual_effect_and_powered and for the callback VEH_CB_VISUAL_EFFECT_AND_POWERED
+    """
+    if len(args) != 3:
+        raise generic.ScriptError(name + "() must have 3 parameters", pos)
+    from nml import global_constants
+    effect = args[0].reduce_constant([global_constants.item_names]).value
+    offset = BinOp(nmlop.ADD, args[1], ConstantNumeric(8), args[1].pos).reduce_constant().value
+    generic.check_range(offset, 0, 0x0F, "offset in function visual_effect_and_powered", pos)
+    powered = args[2].reduce_constant([global_constants.item_names]).value
+    if powered != 0 and powered != 0x80:
+        raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
+    return ConstantNumeric(effect | offset | powered)
 #}
 
 function_table = {
@@ -1006,6 +1022,7 @@ function_table = {
     'railtype_available' : builtin_railtype_available,
     'grf_current_status' : builtin_grf_status,
     'grf_future_status' : builtin_grf_status,
+    'visual_effect_and_powered' : builtin_visual_effect_and_powered,
 }
 
 commutative_operators = set([
