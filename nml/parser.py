@@ -284,10 +284,6 @@ class NMLParser(object):
                    | non_empty_id_list COMMA'''
         t[0] = [] if len(t) == 1 else t[1]
 
-    def p_id_array(self, t):
-        'id_array : LBRACKET id_list RBRACKET'
-        t[0] = t[2]
-
     def p_generic_assignment(self, t):
         'generic_assignment : expression COLON expression SEMICOLON'
         t[0] = assignment.Assignment(t[1], t[3], t.lineno(1))
