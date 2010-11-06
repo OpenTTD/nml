@@ -331,3 +331,26 @@ def resolve_spritegroup(name, feature = None, allow_group = True, allow_set = Tr
     if name.value not in spritegroup_list:
         raise generic.ScriptError("Unknown identifier encountered: '%s'" % name.value, name.pos)
     return spritegroup_list[name.value]
+
+
+class SpriteGroupRef(object):
+    """
+    Container for a reference to a sprite group / layout
+
+    @ivar name: Name of the referenced item
+    @type name: L{Identifier}
+
+    @ivar param_list: List of parameters to be passed
+    @type param_list: C{list} of L{Expression}
+    """
+    def __init__(self, name, param_list, pos):
+        self.name = name
+        self.param_list = param_list
+        self.pos = pos
+
+    def debug_print(self, indentation):
+        print indentation*' ' +'Reference to:' + str(self.name)
+        if len(self.param_list) != 0:
+            print 'Parameters:'
+            for p in self.param_list:
+                p.debug_print(indentation + 2)

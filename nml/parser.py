@@ -1,6 +1,6 @@
 from nml import generic, expression, tokens, nmlop
 from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites
-from nml.actions import action2var, action2random, actionD, action11, real_sprite
+from nml.actions import action2, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
 class NMLParser(object):
@@ -296,6 +296,24 @@ class NMLParser(object):
         '''generic_assignment_list : 
                                    | generic_assignment_list generic_assignment'''
         t[0] = [] if len(t) == 1 else t[1] + [t[2]]
+
+    def p_spritegroup_ref(self, t):
+        '''spritegroup_ref : ID
+                           | ID LPAREN expression_list RPAREN'''
+        params = [] if len(t) == 2 else t[3]
+        t[0] = action2.SpriteGroupRef(t[1], params, t.lineno(1))
+
+    def p_non_empty_spritegroup_ref_list(self, t):
+        '''non_empty_spritegroup_ref_list : spritegroup_ref
+                                          | non_empty_spritegroup_ref_list COMMA spritegroup_ref'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[3]]
+
+    def p_spritegroup_ref_list(self, t):
+        '''spritegroup_ref_list :
+                                | non_empty_spritegroup_ref_list
+                                | non_empty_spritegroup_ref_list COMMA'''
+        t[0] = [] if len(t) == 1 else t[1]
 
     #
     # Item blocks
