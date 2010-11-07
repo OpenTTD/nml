@@ -304,7 +304,7 @@ properties[0x03] = {
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
     'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.279617},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
-    'running_cost_factor'          : {'size': 1, 'num': 0x0D},
+    'running_cost_factor'          : {'size': 1, 'num': 0x0E},
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},
     'mail_capacity'                : {'size': 1, 'num': 0x11},
     'sound_effect'                 : {'size': 1, 'num': 0x12},
