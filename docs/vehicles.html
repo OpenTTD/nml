@@ -106,32 +106,23 @@ the given ID.</td></tr>
 <tr><td>VEH_CB_VEHICLE_PROPERTIES        <td>Change vehicle properties
 </table>
 <p>In order to set properties for vehicles via callback <code>VEH_CB_VEHICLE_PROPERTIES</code> it's necessary to query the general variable <code>extra_callback_info1</code>
-which can take different values depending upon the vehicle type:
+which can take different values depending upon the vehicle type:</p>
 <table class="t">
-<tr><th>vehicle type<th>property<th>value
-<tr><td>all<td>loading_speed<td>PROP_XXX_LOADING_SPEED
-<tr><td><td>cost_factor<td>PROP_XXX_COST_FACTOR
-<tr><td><td>running_cost_factor<td>PROP_XXX_RUNNING_COST_FACTOR
-<tr><td>trains<td>speed<td>PROP_TRAINS_SPEED
-<tr><td><td>power<td>PROP_TRAINS_POWER
-<tr><td><td>cargo_capacity<td>PROP_TRAINS_CARGO_CAPACITY
-<tr><td><td>weight<td>PROP_TRAINS_WEIGHT
-<tr><td><td>tractive_effort_coefficient<td>PROP_TRAINS_TRACTIVE_EFFORT_COEFFICIENT
-<tr><td><td>shorten_vehicle<td>PROP_TRAINS_SHORTEN_VEHICLE
-<tr><td><td>visual_effect_and_powered<td>PROP_TRAINS_VISUAL_EFFECT
-<tr><td><td>bitmask_vehicle_info<td>PROP_TRAINS_BITMASK_VEHICLE_INFO
-<tr><td>vehicles<td>cargo_capacity<td>PROP_ROADVEHS_CARGO_CAPACITY
-<tr><td>ships<td>speed<td>PROP_SHIPS_SPEED
-<tr><td><td>cargo_capacity<td>PROP_SHIPS_CARGO_CAPACITY
-<tr><td>planes<td>speed<td>PROP_AIRCRAFT_SPEED
-<tr><td><td>passenger_capacity<td>PROP_AIRCRAFT_PASSENGER_CAPACITY
-<tr><td><td>mail_capacity<td>PROP_AIRCRAFT_MAIL_CAPACITY
+<tr><th>property<th>available for<th>value
+<tr><td>cost_factor<td>all<td>PROP_XXX_COST_FACTOR
+<tr><td>running_cost_factor<td>all<td>PROP_XXX_RUNNING_COST_FACTOR
+<tr><td>speed<td>all<td>PROP_XXX_SPEED
+<tr><td>power<td>trains and road vehicles<td>PROP_XXX_POWER
+<tr><td>weight<td>trains and road vehicles<td>PROP_XXX_WEIGHT
+<tr><td>tractive_effort_coefficient<td>trains and road vehicles<td>PROP_XXX_TRACTIVE_EFFORT_COEFFICIENT
+<tr><td>cargo_capacity<td>all except aircraft<td>PROP_XXX_CARGO_CAPACITY
+<tr><td>passenger_capacity<td>aircraft<td>PROP_AIRCRAFT_PASSENGER_CAPACITY
+<tr><td>mail_capacity<td>aircraft<td>PROP_AIRCRAFT_MAIL_CAPACITY
+<tr><td>bitmask_vehicle_info<td>trains<td>PROP_TRAINS_BITMASK_VEHICLE_INFO
 </table>
-where for the properties available for all vehicle types XXX can either be TRAINS, ROADVEHS, SHIPS or AIRCRAFT.
+<p>Where for the properties available for all vehicle types XXX can either be TRAINS, ROADVEHS, SHIPS or AIRCRAFT.
 Note also that the return values don't yet support units, you'll need to enter the properties untranslated (e.g. road vehicle
-weights are in quantities of 0.25 tons).
-
-Example:
+weights are in quantities of 0.25 tons). Example:</p>
 <pre class="code">
 switch (FEAT_TRAINS, SELF, tank_wagon_cb_property_weight_switch, cargo_type_in_veh) {
     // wagons transporting food need some extra stuff and are heavier
@@ -163,7 +154,6 @@ item(FEAT_TRAINS, tank_wagon) {
     }
 }
 </pre>
-</p>
 
 
 <h2><a name="vehicles-property">Properties common to all vehicle types</a></h2>
