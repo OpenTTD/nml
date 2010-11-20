@@ -351,45 +351,50 @@ livery_override (vehicleID) {
 	spritegroup_name
 }
 </pre>
-<p>Concerning this example it is assumed that it is preceeded by the graphics
-definitions given as example in the <a href="#block-item-graphics">graphics definition</a>
-and that a vehicleID "passenger_wagon" is defined. The passenger wagon will get a
-different look (spritegroup "turbotrain_passenger_group") in this example when attached
-to the engine "turbotrain". Is the wagon attached to another engine, it might use its
-default graphics which are assigned elsewhere to "passenger_wagon".</p>
-<pre class="code">
-// Turbotrain engine:
-item(FEAT_TRAINS, turbotrain, 20) {
-	property { // Properties for the engine
-		sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
-		misc_flags:                   bitmask(TRAIN_FLAG_MU); // We use special sprites for passenger wagons
-	}
-	graphics {
-		turbotrain_engine_group;                              // Graphics for the engine
-	}
-	livery_override(passenger_wagon) {
-		turbotrain_passenger_group;                           // Graphics for "passenger_wagon" when attached to the engine
-	}
-}
-</pre>
+For an example see the <a href="#block-spritgroup">spritegroup</a>
 
 <h2><a name="block-tilelayout">Tilelayout</a></h2>
 
 <h2><a name="block-spriteset">Spriteset</a></h2>
-<h2><a name="block-spritegroup">Spritegroup</a></h2>
+A spriteset associates a name with a number piece of an existing image file and describes
+the offsets with respect to some origin the graphics will be painted within the game. Different
+features and situations require that a single set has a certain amount of actual sprites associated.
+E.g. a vehicle usually requires eight sprites in order to provide on view for each of the eight
+possible ingame orientations of a vehicle.
 <pre class="code">
 spriteset (SPRITESET_NAME, graphics_file) {
 	[left_X, upper_Y, width, height, offset_X, offset_Y]
 	...
 }
+</pre>
+<h2><a name="block-spritegroup">Spritegroup</a></h2>
+A spritegroup associates the several spritesets for use and futher reference in the graphics block
+of an item block.
+<pre class="exl">
 spritegroup spritegroup_name {
-	loading: spriteset_name
-	loaded: spriteset_name
+    block_name: spriteset_names
 }
 </pre>
-<p>An example which defines two graphics for a train engine:</p>
+The block_names vary by the feature:
+<h3><a name="block-spritegroup-vehicles">Spritegroups for vehicles</a></h3>
+For vehicles a typical spritegroup looks like
+<pre class="exl">
+spritegroup spritegroup_name {
+	loading: [spriteset_name [, spriteset_name [, spriteset_name [, spriteset_name]]]]
+	loaded: [spriteset_name [, spriteset_name [, spriteset_name [, spriteset_name]]]]
+}
+</pre>
+Vehicles take two different spritesets, <code>loading</code> shows the vehicle while
+it is loading within the station and <code>loaded</code> shows the vehicle while it is travelling.
+Each of those can be an array of up to 4 individual spritesets and must at least be one. They're
+used to show different graphics depending on how much the vehicle is loaded with increasing load
+from left to right. If only one spriteset is given it will always be used.
+
+A simple example for defining a train engine with a livery override. The passenger wagon shows
+different sprites whether it is travelling empty or is filled with people.
 <pre class="code">
-spriteset(turbotrain_engine_set, "sprites/pcx/opengfx_trains_start.pcx") {
+// Define the sprites for the engine
+spriteset(turbotrain_engine_set, "src/gfx/turbotrain.png") {
 	[142,112,  8,22,   -3,-10]
 	[158,112, 21,15,  -14, -7]
 	[190,112, 31,12,  -16, -8]
@@ -399,12 +404,9 @@ spriteset(turbotrain_engine_set, "sprites/pcx/opengfx_trains_start.pcx") {
 	[318,112, 32,12,  -16, -8]
 	[366,112, 21,15,   -6, -7]
 }
-spritegroup turbotrain_engine_group {
-	loading: turbotrain_engine_set;
-	loaded: turbotrain_engine_set;
-}
-
-spriteset(turbotrain_passenger_set, "sprites/pcx/opengfx_trains_start.pcx") {
+// Define the sprites for the passenger wagon when used with this engine
+// Loading sprites with open doors
+spriteset(turbotrain_passenger_loading_set, "src/gfx/turbotrain.png") {
 	[142,139,  8,21,   -3,-10]
 	[158,139, 20,15,  -13, -7]
 	[190,139, 28,10,  -12, -6]
@@ -414,9 +416,79 @@ spriteset(turbotrain_passenger_set, "sprites/pcx/opengfx_trains_start.pcx") {
 	[318,139, 28,10,  -16, -6]
 	[366,139, 20,16,   -6, -7]
 }
+// Passenger wagon is empty. No people shown
+spriteset(turbotrain_passenger_traveling_empty_set, "src/gfx/turbotrain.png") {
+	[142,159,  8,21,   -3,-10]
+	[158,159, 20,15,  -13, -7]
+	[190,159, 28,10,  -12, -6]
+	[238,159, 20,16,   -6, -7]
+	[270,159,  8,21,   -3,-10]
+	[286,159, 20,15,  -15, -6]
+	[318,159, 28,10,  -16, -6]
+	[366,159, 20,16,   -6, -7]
+}
+// Passenger wagon is full. Show people through the window
+spriteset(turbotrain_passenger_traveling_full_set, "src/gfx/turbotrain.png") {
+	[142,159,  8,21,   -3,-10]
+	[158,159, 20,15,  -13, -7]
+	[190,159, 28,10,  -12, -6]
+	[238,159, 20,16,   -6, -7]
+	[270,159,  8,21,   -3,-10]
+	[286,159, 20,15,  -15, -6]
+	[318,159, 28,10,  -16, -6]
+	[366,159, 20,16,   -6, -7]
+}
+
+// Associate graphics with the engine for the different loading stages
+spritegroup turbotrain_engine_group {
+	loading: turbotrain_engine_set;
+	loaded: turbotrain_engine_set;
+}
+// Associate graphics with the wagon for the different loading stages
 spritegroup turbotrain_passenger_group {
 	loading: turbotrain_passenger_set;
-	loaded: turbotrain_passenger_set;
+	loaded: [turbotrain_passenger_traveling_empty_set, turbotrain_passenger_traveling_full_set];
+}
+
+// Define new graphics for the turbotrain (it has vehicleID 20):
+item(FEAT_TRAINS, turbotrain, 20) {
+    property {
+        sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
+        misc_flags:                   bitmask(TRAIN_FLAG_MU); // We use special sprites for passenger and mail wagons
+    }
+    graphics {                           // graphics for engine
+        turbotrain_engine_group;
+    }
+    livery_override(passenger_wagon) {   // graphics for alternative look of passenger wagon when used with this engine
+        turbotrain_passenger_group;
+    }
+}
+</pre>
+
+
+<h3><a name="block-spritegroup-vehicles">Spritegroups for railtypes</a></h3>
+Only the block_name <code>default</code> is used and it only takes one spriteset.
+<pre class="code">
+spritegroup gui_normal_modern_TTD_group {
+	default: gui_normal_modern_TTD;
+}
+</pre>
+<h3><a name="block-spritegroup-vehicles">Spritegroups for airport tiles</a></h3>
+<pre class="code">
+A simple example to illustrate how it works:
+spritegroup airport_building1 {
+    ground { ttdsprite: GROUNDSPRITE_NORMAL; }
+    childsprite { 
+        sprite: spr_small_dirt_ne;
+        always_draw: 1;
+    }
+    building {
+		ttdsprite: 0xA67; // reuse this existing base set sprite
+		xoffset: 0x0F;
+		xextent: 1;
+		zextent: 6;
+		recolor: 0;
+	}
 }
 </pre>
 
