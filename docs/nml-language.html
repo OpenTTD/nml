@@ -228,7 +228,7 @@ The rest of the ID may consist of letters, underscores and numbers.</dd>
 	desc: &lt;string&gt;;
 	version: &lt;expression&gt;;
 	min_compatible_version: &lt;expression&gt;;
-	&lt;settings&gt;
+	&lt;param { ... }&gt;
 }</pre>
 <p>Example:</p>
 <pre class="code">grf {
@@ -239,10 +239,67 @@ The rest of the ID may consist of letters, underscores and numbers.</dd>
 	min_compatible_version: 1;
 }</pre>
 
-<h3><a name="block-grf-settings">Settings</a></h3>
-<p>As part of the grf block you can specify some settings that the user will be able to
-change. These can for example be used to disable parts of your NewGRF or to change between
-multiple graphics in case that's not possible at runtime.</p>
+<h3><a name="block-grf-settings">GRF parameters</a></h3>
+<p>As part of the grf block you can specify some parameter settings that the user will be able to
+change as part of the newgrf configuration. These can for example be used to disable parts of your
+NewGRF or to change between multiple graphics in case that's not possible at runtime. In general
+the settings (sub-)block looks like
+<pre class="exl">
+param {
+	&lt;name&gt; {
+		type:    &lt;type&gt;;
+		name:    &lt;string&gt;;
+		desc:    &lt;string&gt;;
+		min_value: &lt;expression&gt;;
+		max_value: &lt;expression&gt;;
+        def_value: &lt;expression&gt;;
+		names: {
+			0: &lt;string&gt;;
+			1: &lt;string&gt;;
+            .
+            .
+            .
+        };
+    }
+</pre>
+Looking at the single entries:
+<pre class="code">&lt;type&gt;</pre>
+This defines the parameter type. Possible values are <code>bool</code> for on/off statements
+or <code>int</code> for positive integer values
+<pre class="code">name</pre>
+This gives the parameter name as shown in the parameter configuration dialogue of OpenTTD.
+<pre class="code">desc</pre>
+This gives the description which is displayed when the parameter is selected. Here you can
+explain the meaning and impact it will have
+<pre class="code">min_value</pre>
+The minimum acceptable value for the parameter (makes only sense for type int)
+<pre class="code">max_value</pre>
+The maximum acceptable value for the parameter (makes only sense for type int)
+<pre class="code">def_value</pre>
+This sets the default value for this parameter. If left out, the default value of 0 will be
+used. 
+<pre class="code">names</pre>
+If you chose type <code>int</code> and the numbers themselves are only used internally, have
+no direct numerical meaning and are better explained in words, you can use this to associate
+the single numbers with a string which describes it and is shown to the user instead of the
+value.
+A simple example:
+<pre class="code">
+param {
+	param_provide {
+		type:    int;
+		name:    string(STR_PARAM_PROVIDE);
+		desc:    string(STR_PARAM_PROVIDE_DESC);
+		min_value: 0;
+		max_value: 1;
+		def_value: 0;
+		names: {
+			0: string(STR_PARAM_PROVIDE_ENGINES_AND_WAGONS);
+			1: string(STR_PARAM_PROVIDE_WAGONS_ONLY);
+		};
+	}
+</pre>
+</p>
 
 <h2><a name="block-item">Item</a></h2>
 <pre class="exl">item (&lt;expression&gt; [, &lt;ID&gt; [, &lt;expression&gt;]]) {
