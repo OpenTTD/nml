@@ -200,7 +200,7 @@ refitting properties is set.</p>
 <tr><td> speed<td> 0 ... 65000 (speed units)<td>Max speed for engines, speed limit for wagons
 <tr><td> misc_flags</td><td> bitmask(TRAIN_FLAG_XXX, ...)</td><td>XXX=[TILT | 2CC | MU]</td></tr>
 <tr><td> refit_cost<td> <td> in 50% units of the purchase price cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [VISUAL_EFFECT_AND_POWERED | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [VISUAL_EFFECT_AND_POWERED | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> track_type<td>item from railtypetable<td>Default railtype table: RAIL, ELRL, MONO, MGLV.
@@ -237,7 +237,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><td> misc_flags</td><td>                   bitmask(ROADVEH_FLAG_XXX, ...)</td><td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
 You can combine them with the binary or-operator (|). Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> refit_costs<td> <td> in 25% units of the purchase price cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
@@ -257,7 +257,7 @@ You can combine them with the binary or-operator (|). Use 0 if you don't want to
 <tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
 <tr><td> misc_flags <td> SHIP_FLAG_2CC <td> No other flags defined
 <tr><td> refit_costs<td> <td> in 1/32 of the default refit cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true. Note: if you do not set this property to 1 than refittable_cargo_classes /
@@ -276,7 +276,7 @@ non_refittable_cargo_classes have no effect.
 <tr><td> speed<td> 0 .. 3280 km/h (speed units)<td>
 <tr><td> misc_flags<td> bitmask(AIRCRAFT_FLAG_2CC)<td>
 <tr><td> refit_cost<td> <td> in 1/32 of default refit cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_helicopter<td> AIRCRAFT_TYPE_XXX<td>XXX=[NORMAL | HELICOPTER]

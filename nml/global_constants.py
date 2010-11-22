@@ -53,7 +53,7 @@ constant_numbers = {
     'VEH_CBF_REFITTED_CAPACITY'         : 3,
     'VEH_CBF_ARTICULATED_PARTS'         : 4,
     'VEH_CBF_CARGO_SUFFIX'              : 5,
-    'VEH_CBF_COLOR_MAPPING'             : 6,
+    'VEH_CBF_COLOUR_MAPPING'            : 6,
     'VEH_CBF_SOUND_EFFECT'              : 7,
 
     #corresponding callbacks
