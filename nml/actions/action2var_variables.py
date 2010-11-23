@@ -77,6 +77,7 @@ varact2vars_vehicles = {
     'waiting_triggers' : {'var': 0x5F, 'start': 0, 'size': 8},
     'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
     'grfid' : {'var': 0x25, 'start': 0, 'size': 32},
+    'vehicle_is_hidden' : {'var': 0xB2, 'start': 0, 'size': 1},
     'vehicle_is_stopped' : {'var': 0xB2, 'start': 1, 'size': 1},
     'vehicle_is_crashed' : {'var': 0xB2, 'start': 7, 'size': 1},
     'vehicle_is_broken' : {'var': 0xCB, 'start': 0, 'size': 8, 'function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(1, var.pos), var.pos)},
@@ -91,6 +92,7 @@ varact2vars_trains = {
     #for train speed
     'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
+    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
 varact2vars_trains.update(varact2vars_vehicles);
 
@@ -99,6 +101,7 @@ varact2vars_roadvehs = {
     #for road vehicle speed
     'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 0, 'size': 8, 'function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(0xFE, var.pos))},
 }
 varact2vars_roadvehs.update(varact2vars_vehicles);
 
@@ -107,6 +110,7 @@ varact2vars_ships = {
     #for ship speed
     'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
 varact2vars_ships.update(varact2vars_vehicles);
 
@@ -115,6 +119,7 @@ varact2vars_aircraft = {
     #for aircraft speed
     'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+    #No such thing as identical to vehicle_is_in_depot exists for aircraft
 }
 varact2vars_aircraft.update(varact2vars_vehicles);
 

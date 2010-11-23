@@ -70,6 +70,7 @@ this variable will contain 0xFF. Available since OpenTTD r20164.
 <tr><td>waiting_triggers <td> <td>Random triggers waiting to be matched. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
 <tr><td>random_bits <td>0 ... 255 <td>Random data that can be used to randomize certain descisions. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
 <tr><td>grfid <td>0 ... 0xFFFFFFFF <td>GRFID that defined the <a href="nml-language.html#block-item-graphics">graphics</a>-block for this vehicle.
+<tr><td>vehicle_is_hidden <td> [0 | 1]<td>Value is 1 if the vehicle is hidden in a depot or tunnel.
 <tr><td>vehicle_is_stopped <td> [0 | 1]<td>Value is 1 if the vehicle is stopped, or if it is braking for a stop (trains only).
 <tr><td>vehicle_is_crashed <td> [0 | 1]<td>Value is 1 if the vehicle has crashed.
 <tr><td>vehicle_is_broken <td> [0 | 1]<td>Value is 1 if the vehicle is broken down.
@@ -80,6 +81,7 @@ this variable will contain 0xFF. Available since OpenTTD r20164.
 <tr><td>max_age_in_days <td>0 ... 65535 <td>Maximum vehicle age in days.
 <tr><td>current_speed <td>(speed units)<td>The current speed of the vehicle in m/s
 <tr><td>max_speed <td>(speed units)<td>The maximum speed of the vehicle in m/s
+<tr><td>vehicle_is_in_depot <td> [0 | 1]<td>Value is 1 if the vehicle is inside a depot
 </table>
 <h3><a name="vehicles-parameter-vars">Variables that require an argument</a></h3>
 <table class="t">
