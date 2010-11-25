@@ -103,14 +103,14 @@ class RandomSwitch(switch_base_class):
         for choice in choices:
             if isinstance(choice.probability, expression.Identifier):
                 if choice.probability.value == 'independent':
-                    if not isinstance(choice.result, expression.Identifier):
+                    if (not isinstance(choice.result, action2.SpriteGroupRef)) or len(choice.result.param_list) > 0:
                         raise generic.ScriptError("Value for 'independent' should be an identifier", choice.result.pos)
-                    self.independent.append(choice.result)
+                    self.independent.append(choice.result.name)
                     continue
                 elif choice.probability.value == 'dependent':
-                    if not isinstance(choice.result, expression.Identifier):
+                    if (not isinstance(choice.result, action2.SpriteGroupRef)) or len(choice.result.param_list) > 0:
                         raise generic.ScriptError("Value for 'dependent' should be an identifier", choice.result.pos)
-                    self.dependent.append(choice.result)
+                    self.dependent.append(choice.result.name)
                     continue
                 else:
                     assert 0, "NOT REACHED"
