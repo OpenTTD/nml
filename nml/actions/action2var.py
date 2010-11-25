@@ -356,11 +356,11 @@ class Varaction2Parser(object):
         var = VarAction2Var(expr.num.value, expr.shift, mask, expr.param)
 
         if expr.add is not None:
-            var.add = self.parse_expr_to_constant(epxr.add, offset + 4)
+            var.add = self.parse_expr_to_constant(expr.add, offset + 4)
         if expr.div is not None:
-            var.div = self.parse_expr_to_constant(epxr.div, offset + 8)
+            var.div = self.parse_expr_to_constant(expr.div, offset + 8)
         if expr.mod is not None:
-            var.mod = self.parse_expr_to_constant(epxr.mod, offset + 8)
+            var.mod = self.parse_expr_to_constant(expr.mod, offset + 8)
         self.var_list.append(var)
         self.var_list_size += var.get_size()
 
