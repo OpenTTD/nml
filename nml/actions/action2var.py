@@ -308,6 +308,14 @@ class Varaction2Parser(object):
         return expression.BinOp(nmlop.ADD, expr1, expr2)
 
 
+    def parse_expr_to_constant(self, expr, offset):
+        if isinstance(expr, expression.ConstantNumeric): return expr
+
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
+        self.extra_actions.extend(tmp_param_actions)
+        self.mods.append(Modification(tmp_param, 4, self.var_list_size + offset))
+        return expression.ConstantNumeric(0)
+
     def parse_variable(self, expr):
         if not isinstance(expr.num, expression.ConstantNumeric):
             raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
@@ -342,8 +350,17 @@ class Varaction2Parser(object):
                 self.var_list.append(backup_op)
                 self.var_list_size += value_loadback.get_size() + 1
 
-        var = VarAction2Var(expr.num.value, expr.shift, expr.mask, expr.param)
-        var.add, var.div, var.mod = expr.add, expr.div, expr.mod
+        offset = 2 if expr.param is None else 3
+        mask = self.parse_expr_to_constant(expr.mask, offset)
+
+        var = VarAction2Var(expr.num.value, expr.shift, mask, expr.param)
+
+        if expr.add is not None:
+            var.add = self.parse_expr_to_constant(epxr.add, offset + 4)
+        if expr.div is not None:
+            var.div = self.parse_expr_to_constant(epxr.div, offset + 8)
+        if expr.mod is not None:
+            var.mod = self.parse_expr_to_constant(epxr.mod, offset + 8)
         self.var_list.append(var)
         self.var_list_size += var.get_size()
 

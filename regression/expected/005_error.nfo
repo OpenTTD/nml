@@ -15,8 +15,8 @@
 // param[66] = (param[2] * 12)
 3 * 9 0D 42 \D* 02 FF \dx0000000C 
 
-// param[65] = (param[66] + param[1])
-4 * 5 0D 41 \D+ 42 01 
+// param[65] = (param[1] + param[66])
+4 * 5 0D 41 \D+ 01 42 
 
 5 * 66 0B 03 1F FF "De wissels zijn bevroren, onze excuses voor het ongemak." 00 "42" 00 40 41 
 

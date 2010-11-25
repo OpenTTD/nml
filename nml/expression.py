@@ -193,28 +193,48 @@ class BinOp(Expression):
             raise generic.ScriptError("Only the '+'-operator is supported for literal strings.", self.pos)
         if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
             raise generic.ScriptError("Both operands of a binary operator must be integers.", self.pos)
-        simple_expr1 = isinstance(expr1, (ConstantNumeric, Parameter, Variable))
-        simple_expr2 = isinstance(expr2, (ConstantNumeric, Parameter, Variable))
+        # From lowest to highest prio:
+        # -1: everything else (most notable complex expressions like BinOp)
+        #  0: Variable
+        #  1: something supported by actionD/action7 (but not a constant numeric)
+        #  2: ConstantNumeric
+        # If the operator allows it we swap the two expressions so that the one with the lower priority
+        # is on the left. This makes it possible to do some simple assumptions on that later on.
+        if isinstance(expr1, Variable): prio1 = 0
+        elif isinstance(expr1, ConstantNumeric): prio1 = 2
+        elif expr1.supported_by_actionD(False): prio1 = 1
+        else: prio1 = -1
+        if isinstance(expr2, Variable): prio2 = 0
+        elif isinstance(expr2, ConstantNumeric): prio2 = 2
+        elif expr2.supported_by_actionD(False): prio2 = 1
+        else: prio2 = -1
         op = self.op
-        if (simple_expr1 and not simple_expr2) or (isinstance(expr2, (Parameter, Variable)) and isinstance(expr1, ConstantNumeric)):
+        if prio2 < prio1:
             if op in commutative_operators or self.op in (nmlop.CMP_LT, nmlop.CMP_GT):
                 expr1, expr2 = expr2, expr1
                 if op == nmlop.CMP_LT:
                     op = nmlop.CMP_GT
                 elif op == nmlop.CMP_GT:
                     op = nmlop.CMP_LT
-        if isinstance(expr1, Variable) and isinstance(expr2, ConstantNumeric):
-            if op == nmlop.AND and isinstance(expr1.mask, ConstantNumeric):
-                expr1.mask = ConstantNumeric(expr1.mask.value & expr2.value, self.pos)
+        if op == nmlop.AND and isinstance(expr2, ConstantNumeric) and (expr2.value == -1 or expr2.value == 0xFFFFFFFF):
+            return expr1
+        if isinstance(expr1, Variable) and expr2.supported_by_actionD(False):
+            # An action2 Variable has some special fields (mask, add, div and mod) that can be used
+            # to perform some operations on the value. These operations are faster than a normal
+            # advanced varaction2 operator so we try to use them whenever we can.
+            if op == nmlop.AND and expr1.add is None:
+                expr1.mask = BinOp(nmlop.AND, expr1.mask, expr2, self.pos).reduce(id_dicts)
                 return expr1
             if op == nmlop.ADD and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = expr2
-                else: expr1.add = ConstantNumeric(expr1.add.value + expr2.value, self.pos)
+                else: expr1.add = BinOp(nmlop.ADD, expr1.add, expr2, self.pos).reduce(id_dicts)
                 return expr1
             if op == nmlop.SUB and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = ConstantNumeric(-expr2.value)
-                else: expr1.add = ConstantNumeric(expr1.add.value - expr2.value, self.pos)
+                if expr1.add is None: expr1.add = ConstantNumeric(0)
+                expr1.add = BinOp(nmlop.SUB, expr1.add, expr2, self.pos).reduce(id_dicts)
                 return expr1
+            # The div and mod fields cannot be used at the same time. Also whenever either of those
+            # two are used the add field has to be set, so we change it to zero when it's not yet set.
             if op == nmlop.DIV and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.div = expr2
@@ -515,10 +535,10 @@ class Variable(Expression):
                 (param is not None and param.type() != Type.INTEGER):
             raise generic.ScriptError("All parts of a variable access must be integers.", self.pos)
         var = Variable(num, shift, mask, param, self.pos)
-        var.add = self.add
-        var.div = self.div
-        var.mod = self.mod
-        var.extra_params = [(extra_param[0], extra_param[1].reduce(id_dicts, unknown_id_fatal)) for extra_param in self.extra_params]
+        var.add = None if self.add is None else self.add.reduce(id_dicts)
+        var.div = None if self.div is None else self.div.reduce(id_dicts)
+        var.mod = None if self.mod is None else self.mod.reduce(id_dicts)
+        var.extra_params = [(extra_param[0], extra_param[1].reduce(id_dicts)) for extra_param in self.extra_params]
         return var
 
     def supported_by_action2(self, raise_error):
@@ -781,7 +801,7 @@ class SpecialParameter(Expression):
     def debug_print(self, indentation):
         print indentation*' ' + "Special parameter '%s'" % self.name
 
-    def __str__(self, indentation):
+    def __str__(self):
         return self.name
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
