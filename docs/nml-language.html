@@ -161,14 +161,6 @@ current one) is mostly considered safe).</p>
 <pre class="code">}</pre>
 <p>This marks the end of the last-opened block, in this case the grf-block.</p>
 
-<h2><a name="structure-parameters">Parameters</a></h2>
-<p>Blocks are not the only item in NML files, you can also do parameter
-assignments. Each NewGRF has 128 parameters available, NML reserves the top 64
-parameters for internal use. If a user sets parameters for your grf, they
-start at parameter 0. Each parameter is available by using
-<code>param[&lt;expression&gt;]</code>. You can set parameter number 4 to 3 by doing:
-<pre class="code">param[4] = 3;</pre>
-
 <h2><a name="structure-features">Features</a></h2>
 <p>NewGRFs can be used to modify various types of items. Examples include trains,
 stations and industries. Such a type of item is called a <em>feature</em>. The
@@ -969,11 +961,17 @@ Elementary values in expressions are
 <tr><th>Element<th>Syntax (Python RE)<th>Description
 <tr><td>Decimal number<td>[0-9]+<td>one or more digits
 <tr><td>Hexadecimal number<td>0x[0-9A-Fa-f]+<td>"0x" followed by one or more hexadecimal digits
-<tr><td>Floating point number<td>[0-9]+\.[0-9]+<td>a decimal number, a dot, and another decimal number
+<tr><td>Floating point number<td>[0-9]+\.[0-9]+<td>a decimal number, a dot, and another decimal number. Only supported for some properties that expect a floating point number.
 <tr><td>Identifier<td>[a-zA-Z_][a-zA-Z0-9_]*<td>a letter or underscore, optionally followed by more letters, digits, or underscore characters
-<tr><td>Unit<td>nfo|mph|km/h|m/s|hp|ton<td>One of the strings "nfo", "mph", "km/h", "m/s", "hp", or "ton" (without quotes)
 <tr><td>String<td>"([^"\\]|\\.)*"<td>A double quote character, followed by zero or more characters, ending with another double quote character. A character in-between is any single character except a double quote or a back-slash ("\"). It can also be "\\", "\n", "\t", or "\[0-9A-Fa-f][0-9A-Fa-f]" (a back-slash followed by exactly two hexadecimal digits).
+<tr><td>Setting<td>an Identifier<td>The name of a <a href="#block-grf-settings">GRF setting</a>
+<tr><td>Parameter<td>param[<i>&lt;num&gt;</i>]<td>Read/write the parameter with the given number.
+<tr><td>Parameter from another GRF<td>param[<i>&lt;grfid&gt;</i>, <i>&lt;num&gt;</i>]<td>Read the value of a parameter of another grf
+<tr><td>Unit<td>nfo|mph|km/h|m/s|hp|ton<td>One of the strings "nfo", "mph", "km/h", "m/s", "hp", or "ton" (without quotes). Used to set several properties.
 </table>
+
+You can combine those elementary values using operators like you're used to from other languages. The following operators are supported:
++, -, *, /, %, &, |, ^, &&, ||, <<, >>, ==, !=, &lt;=, &gt;=, &lt;, &gt;
 
 <h2><a name="builtin-functions">Builtin functions</a></h2>
 Available builtin functions are
