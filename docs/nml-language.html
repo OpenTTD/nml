@@ -252,15 +252,16 @@ param {
 		desc:    &lt;string&gt;;
 		min_value: &lt;expression&gt;;
 		max_value: &lt;expression&gt;;
-        def_value: &lt;expression&gt;;
+		def_value: &lt;expression&gt;;
 		names: {
 			0: &lt;string&gt;;
 			1: &lt;string&gt;;
-            .
-            .
-            .
-        };
-    }
+			.
+			.
+			.
+		};
+	}
+}
 </pre>
 Looking at the single entries:
 <pre class="code">&lt;type&gt;</pre>
@@ -372,7 +373,7 @@ A spritegroup associates the several spritesets for use and futher reference in 
 of an item block.
 <pre class="exl">
 spritegroup spritegroup_name {
-    block_name: spriteset_names
+	block_name: spriteset_names
 }
 </pre>
 The block_names vary by the feature:
@@ -452,16 +453,16 @@ spritegroup turbotrain_passenger_group {
 
 // Define new graphics for the turbotrain (it has vehicleID 20):
 item(FEAT_TRAINS, turbotrain, 20) {
-    property {
-        sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
-        misc_flags:                   bitmask(TRAIN_FLAG_MU); // We use special sprites for passenger and mail wagons
-    }
-    graphics {                           // graphics for engine
-        turbotrain_engine_group;
-    }
-    livery_override(passenger_wagon) {   // graphics for alternative look of passenger wagon when used with this engine
-        turbotrain_passenger_group;
-    }
+	property {
+		sprite_id:                    SPRITE_ID_NEW_TRAIN;    // We have our own sprites
+		misc_flags:                   bitmask(TRAIN_FLAG_MU); // We use special sprites for passenger and mail wagons
+	}
+	graphics {                           // graphics for engine
+		turbotrain_engine_group;
+	}
+	livery_override(passenger_wagon) {   // graphics for alternative look of passenger wagon when used with this engine
+		turbotrain_passenger_group;
+	}
 }
 </pre>
 
@@ -477,12 +478,12 @@ spritegroup gui_normal_modern_TTD_group {
 <pre class="code">
 A simple example to illustrate how it works:
 spritegroup airport_building1 {
-    ground { ttdsprite: GROUNDSPRITE_NORMAL; }
-    childsprite { 
-        sprite: spr_small_dirt_ne;
-        always_draw: 1;
-    }
-    building {
+	ground { ttdsprite: GROUNDSPRITE_NORMAL; }
+	childsprite { 
+		sprite: spr_small_dirt_ne;
+		always_draw: 1;
+	}
+	building {
 		ttdsprite: 0xA67; // reuse this existing base set sprite
 		xoffset: 0x0F;
 		xextent: 1;
@@ -667,11 +668,11 @@ by the sum of all probabilities. If this sum is not equal to a power of two (2,
 information about <code>&lt;return_value&gt;</code>, see the
 <a href="#block-switch">switch-block</a>. Let's conclude with an example:
 <pre class="code">random_switch (FEAT_TRAINS, SELF, random_42, bitmask(TRIGGER_VEHICLE_UNLOAD_ALL, TRIGGER_VEHICLE_ANY_LOAD, TRIGGER_ALL_NEEDED)) {
-    /* re-randomize when vehicle has been emptied and then received new cargo */
-    independent: random_43; // decision should be independent from random_43, which is defined elsewhere
-    6: group_open;          // 6/11 chance to display open wagon
-    3: group_closed;        // 3/11 chance to display closed wagon (with cover)
-    2: group_halfopen;      // 2/11 chance to display a half-covered wagon
+	/* re-randomize when vehicle has been emptied and then received new cargo */
+	independent: random_43; // decision should be independent from random_43, which is defined elsewhere
+	6: group_open;          // 6/11 chance to display open wagon
+	3: group_closed;        // 3/11 chance to display closed wagon (with cover)
+	2: group_halfopen;      // 2/11 chance to display a half-covered wagon
 }</pre>
 
 <h2><a name="block-template">Template</a></h2>
@@ -911,8 +912,8 @@ to be constant, the following is perfectly valid:</p>
 <p>Sounds are supported by means of the <code>sounds</code> block.
 An example of a sounds block that defines two new sounds is:</p>
 <pre class="code">sounds {
-        load_soundfile("whistle.wav");
-        import_sound(0x87654321, 3);
+	load_soundfile("whistle.wav");
+	import_sound(0x87654321, 3);
 }</pre>
 <p>The block starts with the keyword <code>sounds</code>, followed by one
 or more sound definitions. A sound definition either loads a sound file (like
