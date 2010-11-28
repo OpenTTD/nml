@@ -943,13 +943,10 @@ basecost {
 using either the number in the first or the identifier in the second column.
 Using an identifier from the third column, it is possible to set an entire
 category of base costs at once.</p>
-<p>Recent OpenTTD versions have added a number of base costs. To keep
-compatibility with earlier grfs, a number of 'old' base costs override
-the 'new' ones if the 'new' costs are not set separately. These cases are
-marked in the table. To avoid this behaviour always set the 'new' cost to 0
-if you are changing the 'old' cost but want to keep the new one unchanged.
-Note that this may override other grfs that change base costs, but this is
-currently unavoidable.</p>
+<p>Note that all costs are subject to modification by the game difficulty
+settings. Inflation (if enabled) will increase all costs over time. Recent
+versions of OpenTTD have affected the behaviour of many base costs, refer
+to the notes below the cost table for more information.</p>
 
 <h1><a name="units">Units</a></h1>
 
