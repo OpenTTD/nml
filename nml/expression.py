@@ -439,7 +439,7 @@ class OtherGRFParameter(Expression):
         if not isinstance(self.grfid, int):
             if not isinstance(self.grfid, StringLiteral) or grfstrings.get_string_size(self.grfid.value, False, True) != 4:
                 raise generic.ScriptError("GRFID must be string literal of length 4", self.grfid.pos)
-            self.grfid = generic.parse_string_to_dword(self.grfid.value)
+            self.grfid = generic.parse_string_to_dword(self.grfid)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'OtherGRFParameter:'
@@ -972,7 +972,7 @@ def builtin_cargotype_available(name, args, pos):
     label = args[0].reduce()
     if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
         raise generic.ScriptError("Cargo labels must be string literals of length 4", label.pos)
-    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), generic.parse_string_to_dword(label.value), None, args[0].pos)
+    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), generic.parse_string_to_dword(label), None, args[0].pos)
 
 def builtin_railtype_available(name, args, pos):
     """
@@ -985,7 +985,7 @@ def builtin_railtype_available(name, args, pos):
     label = args[0].reduce()
     if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
         raise generic.ScriptError("Railtype labels must be string literals of length 4", label.pos)
-    return SpecialCheck((0x0D, None), 0, (0, 1), generic.parse_string_to_dword(label.value), None, args[0].pos)
+    return SpecialCheck((0x0D, None), 0, (0, 1), generic.parse_string_to_dword(label), None, args[0].pos)
 
 def builtin_grf_status(name, args, pos):
     """
@@ -1009,8 +1009,8 @@ def builtin_grf_status(name, args, pos):
         results = (0, 1)
     else:
         assert False, "Unknown grf status function"
-    mask = generic.parse_string_to_dword(labels[1].value) if len(labels) > 1 else None
-    return SpecialCheck(op, 0x88, results, generic.parse_string_to_dword(labels[0].value), mask, args[0].pos)
+    mask = generic.parse_string_to_dword(labels[1]) if len(labels) > 1 else None
+    return SpecialCheck(op, 0x88, results, generic.parse_string_to_dword(labels[0]), mask, args[0].pos)
 
 def builtin_visual_effect_and_powered(name, args, pos):
     """

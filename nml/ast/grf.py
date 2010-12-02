@@ -33,7 +33,7 @@ class GRF(object):
         self.grfid = self.grfid.reduce()
         if not isinstance(self.grfid, expression.StringLiteral) or grfstrings.get_string_size(self.grfid.value, False, True) != 4:
             raise generic.ScriptError("GRFID must be a string literal of length 4", self.grfid.pos)
-        global_constants.constant_numbers['GRFID'] = generic.parse_string_to_dword(self.grfid.value)
+        global_constants.constant_numbers['GRFID'] = generic.parse_string_to_dword(self.grfid)
         self.name = self.name.reduce()
         if not isinstance(self.name, expression.String):
             raise generic.ScriptError("GRF-name must be a string", self.name.pos)
