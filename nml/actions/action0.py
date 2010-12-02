@@ -246,3 +246,39 @@ def get_basecost_action(basecost):
         i += 1
     action6.free_parameters.restore()
     return action_list
+
+class LanguageTranslationTable(object):
+    def __init__(self, num, name_list, extra_names):
+        self.num = num
+        self.mappings = []
+        for name, idx in name_list.iteritems():
+            self.mappings.append( (idx, name) )
+            if name in extra_names:
+                for extra_name in extra_names[name]:
+                    self.mappings.append( (idx, extra_name) )
+
+    def write(self, file):
+        file.print_bytex(self.num)
+        for mapping in self.mappings:
+            file.print_bytex(mapping[0])
+            file.print_string(mapping[1])
+        file.print_bytex(0)
+        file.newline()
+
+    def get_size(self):
+        size = 2
+        for mapping in self.mappings:
+            size += 2 + len(mapping[1])
+        return size
+
+def get_language_translation_tables(lang):
+    action0 = Action0(0x08, lang.langid)
+    if lang.genders is not None:
+        action0.prop_list.append(LanguageTranslationTable(0x13, lang.genders, lang.gender_map))
+    if lang.cases is not None:
+        action0.prop_list.append(LanguageTranslationTable(0x14, lang.cases, lang.case_map))
+    if lang.plural is not None:
+        action0.prop_list.append(Action0Property(0x15, expression.ConstantNumeric(lang.plural), 1))
+    if len(action0.prop_list) > 0:
+        return [action0]
+    return []

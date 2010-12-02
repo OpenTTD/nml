@@ -1,6 +1,6 @@
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, palette
-from nml.actions import action2var, action8, sprite_count, real_sprite, action4
+from nml.actions import action2var, action8, sprite_count, real_sprite, action4, action0
 from nml.ast import general, grf, alt_sprites
 
 try:
@@ -136,12 +136,19 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir):
         actions.extend(block.get_action_list())
     actions.extend(action4.get_global_string_actions())
 
-    has_action8 = False
+    action8_index = -1
     for i in range(len(actions) - 1, -1, -1):
         if isinstance(actions[i], action2var.Action2Var):
             actions[i].resolve_tmp_storage()
         elif isinstance(actions[i], action8.Action8):
-            has_action8 = True
+            action8_index = i
+
+    if action8_index != -1:
+        lang_actions = []
+        for lang_pair in grfstrings.langs:
+            lang_id, lang = lang_pair
+            lang_actions.extend(action0.get_language_translation_tables(lang))
+        actions = actions[:action8_index] + lang_actions + actions[action8_index:]
 
     sprite_files = set()
     for action in actions:
@@ -172,7 +179,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir):
     if used_palette in palette_bytes:
         grf.set_palette_used(palette_bytes[used_palette])
 
-    if has_action8:
+    if action8_index != -1:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
 
     block_names = {}
