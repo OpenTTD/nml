@@ -359,7 +359,7 @@ class Language:
                 raise generic.ScriptError("Invalid plural form", pos)
             if value < 0 or value > NUM_PLURAL_FORMS:
                 raise generic.ScriptError("Invalid plural form", pos)
-            self.langid = value
+            self.plural = value
         elif line[:7] == "gender ":
             if self.genders is not None:
                 raise generic.ScriptError("Genders already defined", pos)
