@@ -397,8 +397,11 @@ def read_lang_files(lang_dir):
     @param lang_dir: Name of the directory containing the language files.
     @type  lang_dir: C{str}
     """
-    parse_file(lang_dir + os.sep + "english.lng", True)
+    DEFAULT_LANGUAGE_FILE = "english.lng"
+    if not os.path.exists(lang_dir + os.sep + DEFAULT_LANGUAGE_FILE):
+        raise generic.ScriptError("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + DEFAULT_LANGUAGE_FILE))
+    parse_file(lang_dir + os.sep + DEFAULT_LANGUAGE_FILE, True)
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
-        if filename.endswith("english.lng"): continue
+        if filename.endswith(DEFAULT_LANGUAGE_FILE): continue
         parse_file(filename, False)
     langs.sort()
