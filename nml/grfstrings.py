@@ -186,9 +186,9 @@ class StringCommand(object):
             ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80, 2)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
-                    ret += CHOICE_LIST_DEFAULT[str_type] + '\\' + generic.to_hex(idx + 1, 2)
+                    ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type]
+                    ret += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(idx + 1, 2)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
@@ -196,9 +196,9 @@ class StringCommand(object):
             ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80, 2)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
-                    ret += CHOICE_LIST_DEFAULT[str_type] + '\\' + generic.to_hex(idx + 1, 2)
+                    ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type]
+                    ret += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(idx + 1, 2)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
