@@ -48,24 +48,25 @@ def get_global_string_actions():
     actions = []
     for string_range, strings in used_strings.iteritems():
         for string_name, id in strings.iteritems():
-            for translation in grfstrings.grf_strings[string_name]:
-                texts.append( (translation['lang'], (string_range << 8) | id, translation['text']) )
+            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name)) )
+            for lang_id in grfstrings.get_translations(string_name):
+                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name, lang_id)) )
     last_lang = -1
     last_id = -1
-    texts.sort(key=lambda text: (-text[0], text[1]))
+    texts.sort(key=lambda text: (-1 if text[0] == 0x7F else text[0], text[1]))
     for text in texts:
-        if text[0] != last_lang or text[1] - 1 != last_id:
-            actions.append(Action4(0x08, text[0], 2, text[1], [text[2]]))
+        str_lang, str_id, str_text = text
+        if str_lang != last_lang or str_id - 1 != last_id:
+            actions.append(Action4(0x08, str_lang, 2, str_id, [str_text]))
         else:
-            actions[-1].texts.append(text[2])
-        last_lang = text[0]
-        last_id = text[1]
-        #actions.append(Action4(0x08, translation['lang'], 2, (string_range << 8) | id, [translation['text']]))
+            actions[-1].texts.append(str_text)
+        last_lang = str_lang
+        last_id = str_id
     return actions
 
 def get_string_action4s(feature, string_range, string, id = None):
     global string_ranges
-    if not string.name.value in grfstrings.grf_strings: raise generic.ScriptError("Unknown string: " + string.name.value, string.pos)
+    if not grfstrings.is_valid_string(string.name.value): raise generic.ScriptError("Unknown string: " + string.name.value, string.pos)
     write_action4s = True
     if string_range is not None:
         size = 2
@@ -84,8 +85,9 @@ def get_string_action4s(feature, string_range, string, id = None):
 
     actions = []
     if write_action4s:
-        for translation in grfstrings.grf_strings[string.name.value]:
-            actions.append(Action4(feature, translation['lang'], size, id, [translation['text']]))
+        actions.append(Action4(feature, 0x7F, size, id, [grfstrings.get_translation(string.name.value)]))
+        for lang_id in grfstrings.get_translations(string.name.value):
+            actions.append(Action4(feature, lang_id, size, id, [grfstrings.get_translation(string.name.value, lang_id)]))
 
     actions.sort(key=lambda action: action.lang);
 

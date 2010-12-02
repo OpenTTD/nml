@@ -79,8 +79,8 @@ def parse_error_block(error):
     if isinstance(error.msg, expression.String):
         custom_msg = True
         msg_string = error.msg.name
-        for translation in grfstrings.grf_strings[msg_string.value]:
-            langs.append(translation['lang'])
+        langs.extend(grfstrings.get_translations(msg_string.value))
+        for l in langs: assert l is not None
     else:
         custom_msg = False
         msg = error.msg.reduce_constant([default_error_msg]).value
@@ -88,10 +88,10 @@ def parse_error_block(error):
     if error.data is not None:
         error.data = error.data.reduce()
         if isinstance(error.data, expression.String):
-            if error.data.name.value not in grfstrings.grf_strings:
+            if not grfstrings.is_valid_string(error.data.name.value):
                 raise generic.ScriptError("Unknown string '%s'" % (error.data.name.value), error.data.pos)
-            for translation in grfstrings.grf_strings[error.data.name.value]:
-                langs.append(translation['lang'])
+            langs.extend(grfstrings.get_translations(error.data.name.value))
+            for l in langs: assert l is not None
         elif not isinstance(error.data, expression.StringLiteral):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos)
 
@@ -108,16 +108,17 @@ def parse_error_block(error):
 
     assert len(params) == 2
 
-    langs = set(langs)
+    langs = list(set(langs))
+    langs.sort()
     for lang in langs:
         if custom_msg:
-            msg = grfstrings.get_translation(msg_string, lang)
+            msg = grfstrings.get_translation(msg_string.value, lang)
         if error.data is None:
             data = None
         elif isinstance(error.data, expression.StringLiteral):
             data = error.data.value
         else:
-            data = grfstrings.get_translation(error.data.name, lang)
+            data = grfstrings.get_translation(error.data.name.value, lang)
         if len(act6.modifications) > 0: action_list.append(act6)
         action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
 

@@ -89,24 +89,30 @@ class TextNode(Action14Node):
     def __init__(self, id, string, skip_default_langid = False):
         Action14Node.__init__(self, "T", id)
         self.string = string
-        if self.string.name.value not in grfstrings.grf_strings:
+        if not grfstrings.is_valid_string(self.string.name.value):
             raise generic.ScriptError('Unknown string "%s" in grf-block' % self.string.name.value, self.string.pos)
         self.skip_default_langid = skip_default_langid
 
     def get_size(self):
-        size = 0
-        for translation in grfstrings.grf_strings[self.string.name.value]:
-            if self.skip_default_langid and translation['lang'] == 0x7F: continue
+        if self.skip_default_langid:
+            size = 0
+        else:
+            size = 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string.name.value))
+        for lang_id in grfstrings.get_translations(self.string.name.value):
             # 6 is for "T" (1), id (4), langid (1)
-            size += 6 + grfstrings.get_string_size(translation['text'])
+            size += 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string.name.value, lang_id))
         return size
 
     def write(self, file):
-        for translation in grfstrings.grf_strings[self.string.name.value]:
-            if self.skip_default_langid and translation['lang'] == 0x7F: continue
+        if not self.skip_default_langid:
             self.write_type_id(file)
-            file.print_bytex(translation['lang'])
-            file.print_string(translation['text'])
+            file.print_bytex(0x7F)
+            file.print_string(grfstrings.get_translation(self.string.name.value))
+            file.newline()
+        for lang_id in grfstrings.get_translations(self.string.name.value):
+            self.write_type_id(file)
+            file.print_bytex(lang_id)
+            file.print_string(grfstrings.get_translation(self.string.name.value, lang_id))
             file.newline()
 
 class BranchNode(Action14Node):
@@ -183,10 +189,10 @@ class LimitNode(BinaryNode):
         file.newline()
 
 def grf_name_desc_actions(root, name, desc, version, min_compatible_version):
-    if name.name.value in grfstrings.grf_strings and len(grfstrings.grf_strings[name.name.value]) > 1:
+    if len(grfstrings.get_translations(name.name.value)) > 0:
         name_node = TextNode("NAME", name, True)
         root.subnodes.append(name_node)
-    if desc.name.value in grfstrings.grf_strings and len(grfstrings.grf_strings[desc.name.value]) > 1:
+    if len(grfstrings.get_translations(desc.name.value)) > 0:
         desc_node = TextNode("DESC", desc, True)
         root.subnodes.append(desc_node)
     version_node = BinaryNode("VRSN", 4, version.value)

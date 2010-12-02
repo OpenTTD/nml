@@ -6,7 +6,7 @@ _E ?= @echo
 _SE ?= echo
 
 TEST_FILES = $(basename $(shell ls *.nml))
-NMLC ?= ../nmlc
+NMLC ?= ../nmlc -s
 
 all: clean
 	$(_V) mkdir output
