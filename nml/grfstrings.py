@@ -122,6 +122,11 @@ commands = {
 'SHIP':           {'unicode': r'\UE0B8',    'ascii': r'\B8',    'num_params': 0},
 }
 
+special_commands = [
+'P',
+'G',
+]
+
 def read_extra_commands(custom_tags_file):
     """
     @param custom_tags_file: Filename of the custom tags file.
@@ -148,10 +153,64 @@ def read_extra_commands(custom_tags_file):
 
 class StringCommand(object):
     def __init__(self, name):
-        assert name in commands
+        assert name in commands or name in special_commands
         self.name = name
         self.case = None
         self.arguments = None
+
+    def set_arguments(self, arg_string):
+        self.arguments = []
+        start = -1
+        cur = 0
+        quoted = False
+        whitespace = " \t"
+        while cur < len(arg_string):
+            if start != -1:
+                if (quoted and arg_string[cur] == '"') or (not quoted and arg_string[cur] in whitespace):
+                    self.arguments.append(arg_string[start:cur])
+                    start = -1
+            elif arg_string[cur] not in whitespace:
+                quoted = arg_string[cur] == '"'
+                start = cur + 1 if quoted else cur
+            cur += 1
+        if start != -1 and not quoted:
+            self.arguments.append(arg_string[start:])
+            start = -1
+        return start == -1
+
+    def parse_string(self, str_type):
+        if self.name in commands:
+            return commands[self.name][str_type]
+        assert self.name in special_commands
+        if self.name == 'P':
+            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80, 2)
+            for idx, arg in enumerate(self.arguments):
+                if idx == len(self.arguments) - 1:
+                    ret += CHOICE_LIST_DEFAULT[str_type] + '\\' + generic.to_hex(idx + 1, 2)
+                else:
+                    ret += CHOICE_LIST_ITEM[str_type]
+                ret += arg
+            ret += CHOICE_LIST_END[str_type]
+            return ret
+        if self.name == 'G':
+            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80, 2)
+            for idx, arg in enumerate(self.arguments):
+                if idx == len(self.arguments) - 1:
+                    ret += CHOICE_LIST_DEFAULT[str_type] + '\\' + generic.to_hex(idx + 1, 2)
+                else:
+                    ret += CHOICE_LIST_ITEM[str_type]
+                ret += arg
+            ret += CHOICE_LIST_END[str_type]
+            return ret
+
+    def get_type(self):
+        if self.name in commands:
+            if 'ascii' in commands[self.name]: return 'ascii'
+            else: return 'unicode'
+        if self.name == 'P':
+            for arg in self.arguments:
+                if not can_use_ascii(arg): return 'unicode'
+            return 'ascii'
 
 class NewGRFString(object):
     def __init__(self, string, lang, strip_choice_lists, pos):
@@ -173,7 +232,7 @@ class NewGRFString(object):
                 #Read the command name
                 while end < len(string) and string[end] not in '} =.': end += 1
                 command_name = string[start:end]
-                if command_name not in commands:
+                if command_name not in commands and command_name not in special_commands:
                     raise generic.ScriptError("Undefined command \"%s\"" % command_name, pos)
                 #
                 command = StringCommand(command_name)
@@ -197,7 +256,8 @@ class NewGRFString(object):
                         if end >= len(string):
                             raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
                         if string[end] == '}': break
-                    command.arguments = string[arg_start:end]
+                    if not command.set_arguments(string[arg_start:end]):
+                        raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
                 self.components.append(command)
                 idx = end
             idx += 1
@@ -206,7 +266,8 @@ class NewGRFString(object):
     def get_type(self):
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                if 'ascii' not in commands[comp.name]: return 'unicode'
+                if comp.get_type() == 'unicode':
+                    return 'unicode'
             else:
                 if not can_use_ascii(comp): return 'unicode'
         for case in self.cases:
@@ -214,11 +275,20 @@ class NewGRFString(object):
                 return 'unicode'
         return 'ascii'
 
+    def remove_non_default_commands(self):
+        i = 0
+        while i < len(self.components):
+            comp = self.components[i]
+            if isinstance(comp, StringCommand):
+                if comp.name == 'P' or comp.name == 'G':
+                    self.components[i] = comp.arguments[-1]
+            i += 1
+
     def parse_string(self, str_type):
         ret = ""
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                ret += commands[comp.name][str_type]
+                ret += comp.parse_string(str_type)
             else:
                 ret += comp
         return ret
@@ -236,10 +306,12 @@ def isint(x, base = 10):
 
 NUM_PLURAL_FORMS = 12
 
-BEGIN_CASE_CHOICE_LIST = {'unicode': r'\UE09A\14', 'ascii': r'\9A\14'}
-CHOICE_LIST_ITEM       = {'unicode': r'\UE09A\10', 'ascii': r'\9A\10'}
-CHOICE_LIST_DEFAULT    = {'unicode': r'\UE09A\11', 'ascii': r'\9A\11'}
-CHOICE_LIST_END        = {'unicode': r'\UE09A\12', 'ascii': r'\9A\12'}
+CHOICE_LIST_ITEM         = {'unicode': r'\UE09A\10', 'ascii': r'\9A\10'}
+CHOICE_LIST_DEFAULT      = {'unicode': r'\UE09A\11', 'ascii': r'\9A\11'}
+CHOICE_LIST_END          = {'unicode': r'\UE09A\12', 'ascii': r'\9A\12'}
+BEGIN_GENDER_CHOICE_LIST = {'unicode': r'\UE09A\13', 'ascii': r'\9A\13'}
+BEGIN_CASE_CHOICE_LIST   = {'unicode': r'\UE09A\14', 'ascii': r'\9A\14'}
+BEGIN_PLURAL_CHOICE_LIST = {'unicode': r'\UE09A\15', 'ascii': r'\9A\15'}
 
 class Language:
     def __init__(self):
@@ -342,6 +414,7 @@ class Language:
 
         if default:
             self.strings[string] = NewGRFString(value, self, True, pos)
+            self.strings[string].remove_non_default_commands()
         else:
             if string not in default_lang.strings:
                 generic.print_warning("String name \"%s\" does not exist in master file" % string, pos)

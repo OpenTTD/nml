@@ -528,6 +528,8 @@ properties[0x0B] = {
     'town_growth_effect'        : {'num' : 0x18, 'size' : 1},
     'town_growth_multiplier'    : {'num' : 0x19, 'size' : 2, 'unit_conversion': 0x100},
     'callback_flags'            : {'num' : 0x1A, 'size' : 1},
+    'units_of_cargo'            : {'num' : 0x1B, 'size' : 2, 'string' : 0xDC},
+    'items_of_cargo'            : {'num' : 0x1C, 'size' : 2, 'string' : 0xDC},
 }
 
 # TODO: Feature 0x0C (Sound Effects)
