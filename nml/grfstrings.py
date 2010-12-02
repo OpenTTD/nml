@@ -236,6 +236,11 @@ def isint(x, base = 10):
 
 NUM_PLURAL_FORMS = 12
 
+BEGIN_CASE_CHOICE_LIST = {'unicode': r'\UE09A\14', 'ascii': r'\9A\14'}
+CHOICE_LIST_ITEM       = {'unicode': r'\UE09A\10', 'ascii': r'\9A\10'}
+CHOICE_LIST_DEFAULT    = {'unicode': r'\UE09A\11', 'ascii': r'\9A\11'}
+CHOICE_LIST_END        = {'unicode': r'\UE09A\12', 'ascii': r'\9A\12'}
+
 class Language:
     def __init__(self):
         self.langid = None
@@ -252,9 +257,14 @@ class Language:
         str_type = self.strings[string].get_type()
         parsed_string = ""
         if len(self.strings[string].cases) > 0:
-            #TODO: handle cases
-            pass
+            parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
+            for case_name, case_string in self.strings[string].cases.iteritems():
+                case_id = self.cases[case_name]
+                parsed_string += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(case_id, 2) + case_string.parse_string(str_type)
+            parsed_string += CHOICE_LIST_DEFAULT[str_type]
         parsed_string += self.strings[string].parse_string(str_type)
+        if len(self.strings[string].cases) > 0:
+            parsed_string += CHOICE_LIST_END[str_type]
         return parsed_string
 
     def handle_pragma(self, line, pos):
