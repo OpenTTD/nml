@@ -54,13 +54,12 @@ def get_string_size(string, final_zero = True, force_ascii = False):
     return size
 
 def get_translation(string, lang_id = DEFAULT_LANGUAGE):
-    if lang_id == DEFAULT_LANGUAGE:
-        return default_lang.get_string(string)
     for lang_pair in langs:
         langid, lang = lang_pair
         if langid != lang_id: continue
+        if string not in lang.strings: break
         return lang.get_string(string)
-    raise generic.ScriptError("Unknown string \"%s\"" % string)
+    return default_lang.get_string(string)
 
 def get_translations(string):
     translations = []
@@ -440,7 +439,7 @@ class Language:
 
 
 default_lang = Language()
-default_lang.langid = 0x7F
+default_lang.langid = DEFAULT_LANGUAGE
 langs = []
 
 def parse_file(filename, default):
