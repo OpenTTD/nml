@@ -146,6 +146,7 @@ commands = {
 special_commands = [
 'P',
 'G',
+'G=',
 ]
 
 def read_extra_commands(custom_tags_file):
@@ -199,7 +200,7 @@ class StringCommand(object):
             start = -1
         return start == -1
 
-    def parse_string(self, str_type):
+    def parse_string(self, str_type, lang):
         if self.name in commands:
             return commands[self.name][str_type]
         assert self.name in special_commands
@@ -222,6 +223,10 @@ class StringCommand(object):
                     ret += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(idx + 1, 2)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
+            return ret
+        if self.name == 'G=':
+            ret = SET_STRING_GENDER[str_type]
+            ret += '\\' + generic.to_hex(lang.genders[self.arguments[0]], 2)
             return ret
 
     def get_type(self):
@@ -253,6 +258,8 @@ class NewGRFString(object):
                 #Read the command name
                 while end < len(string) and string[end] not in '} =.': end += 1
                 command_name = string[start:end]
+                if end < len(string) and string[end] == '=':
+                    command_name += '='
                 if command_name not in commands and command_name not in special_commands:
                     raise generic.ScriptError("Undefined command \"%s\"" % command_name, pos)
                 #
@@ -305,11 +312,11 @@ class NewGRFString(object):
                     self.components[i] = comp.arguments[-1]
             i += 1
 
-    def parse_string(self, str_type):
+    def parse_string(self, str_type, lang):
         ret = ""
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                ret += comp.parse_string(str_type)
+                ret += comp.parse_string(str_type, lang)
             else:
                 ret += comp
         return ret
@@ -333,6 +340,7 @@ CHOICE_LIST_END          = {'unicode': r'\UE09A\12', 'ascii': r'\9A\12'}
 BEGIN_GENDER_CHOICE_LIST = {'unicode': r'\UE09A\13', 'ascii': r'\9A\13'}
 BEGIN_CASE_CHOICE_LIST   = {'unicode': r'\UE09A\14', 'ascii': r'\9A\14'}
 BEGIN_PLURAL_CHOICE_LIST = {'unicode': r'\UE09A\15', 'ascii': r'\9A\15'}
+SET_STRING_GENDER        = {'unicode': r'\UE09A\0E', 'ascii': r'\9A\0E'}
 
 class Language:
     def __init__(self):
@@ -354,9 +362,9 @@ class Language:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
             for case_name, case_string in self.strings[string_id].cases.iteritems():
                 case_id = self.cases[case_name]
-                parsed_string += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(case_id, 2) + case_string.parse_string(str_type)
+                parsed_string += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(case_id, 2) + case_string.parse_string(str_type, self)
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
-        parsed_string += self.strings[string_id].parse_string(str_type)
+        parsed_string += self.strings[string_id].parse_string(str_type, self)
         if len(self.strings[string_id].cases) > 0:
             parsed_string += CHOICE_LIST_END[str_type]
         return parsed_string
