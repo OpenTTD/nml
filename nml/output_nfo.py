@@ -51,7 +51,7 @@ class OutputNFO(output_base.BinaryOutputBase):
             if force_ascii:
                 raise generic.ScriptError("Expected ascii string but got a unicode string")
             self.file.write(u'Þ')
-        self.file.write(value)
+        self.file.write(value.replace('"', '\\"'))
         self._byte_count += grfstrings.get_string_size(value, final_zero, force_ascii)
         self.file.write('" ')
         if final_zero:
