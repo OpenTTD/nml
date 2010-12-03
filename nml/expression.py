@@ -128,6 +128,12 @@ class ConstantNumeric(Expression):
     def is_boolean(self):
         return self.value == 0 or self.value == 1
 
+    def __eq__(self, other):
+        return other is not None and other.value - self.value
+
+    def __hash__(self):
+        return self.value
+
 class ConstantFloat(Expression):
     def __init__(self, value, pos):
         Expression.__init__(self, pos)
@@ -655,6 +661,12 @@ class String(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
+    def __eq__(self, other):
+        return other is not None and self.name == other.name and self.params == other.params
+
+    def __hash__(self):
+        return hash(self.name) ^ reduce(lambda x, y: x ^ hash(y), self.params, 0)
+
 class Identifier(Expression):
     def __init__(self, value, pos):
         Expression.__init__(self, pos)
@@ -683,6 +695,12 @@ class Identifier(Expression):
     def supported_by_actionD(self, raise_error):
         if raise_error: raise generic.ScriptError("Unknown identifier '%s'" % self.value, self.pos)
         return False
+
+    def __eq__(self, other):
+        return other is not None and self.value == other.value
+
+    def __hash__(self):
+        return hash(self.value)
 
 class StringLiteral(Expression):
     def __init__(self, value, pos):
