@@ -148,7 +148,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir):
         for lang_pair in grfstrings.langs:
             lang_id, lang = lang_pair
             lang_actions.extend(action0.get_language_translation_tables(lang))
-        actions = actions[:action8_index] + lang_actions + actions[action8_index:]
+        actions = actions[:action8_index + 1] + lang_actions + actions[action8_index + 1:]
 
     sprite_files = set()
     for action in actions:
