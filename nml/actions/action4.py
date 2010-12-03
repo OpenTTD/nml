@@ -48,9 +48,9 @@ def get_global_string_actions():
     actions = []
     for string_range, strings in used_strings.iteritems():
         for string_name, id in strings.iteritems():
-            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name.name.value)) )
+            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name)) )
             for lang_id in grfstrings.get_translations(string_name):
-                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name.name.value, lang_id)) )
+                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name, lang_id)) )
     last_lang = -1
     last_id = -1
     texts.sort(key=lambda text: (-1 if text[0] == 0x7F else text[0], text[1]))
@@ -85,9 +85,9 @@ def get_string_action4s(feature, string_range, string, id = None):
 
     actions = []
     if write_action4s:
-        actions.append(Action4(feature, 0x7F, size, id, [grfstrings.get_translation(string.name.value)]))
+        actions.append(Action4(feature, 0x7F, size, id, [grfstrings.get_translation(string)]))
         for lang_id in grfstrings.get_translations(string):
-            actions.append(Action4(feature, lang_id, size, id, [grfstrings.get_translation(string.name.value, lang_id)]))
+            actions.append(Action4(feature, lang_id, size, id, [grfstrings.get_translation(string, lang_id)]))
 
     actions.sort(key=lambda action: action.lang);
 

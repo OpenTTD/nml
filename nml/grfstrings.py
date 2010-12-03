@@ -54,12 +54,25 @@ def get_string_size(string, final_zero = True, force_ascii = False):
     return size
 
 def get_translation(string, lang_id = DEFAULT_LANGUAGE):
+    """
+    Get the translation of a given string in a certain language. If there is no
+    translation available in the given language return the default translation.
+
+    @param string: the string to get the translation for.
+    @type  string: L{expression.String}
+
+    @param lang_id: The language id of the language to translate the string into.
+    @type  lang_id: C{int}
+
+    @return: Translation of the given string in the given language.
+    @rtype:  C{unicode}
+    """
     for lang_pair in langs:
         langid, lang = lang_pair
         if langid != lang_id: continue
-        if string not in lang.strings: break
-        return lang.get_string(string)
-    return default_lang.get_string(string)
+        if string.name.value not in lang.strings: break
+        return lang.get_string(string.name.value)
+    return default_lang.get_string(string.name.value)
 
 def get_translations(string):
     """

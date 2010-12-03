@@ -97,22 +97,22 @@ class TextNode(Action14Node):
         if self.skip_default_langid:
             size = 0
         else:
-            size = 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string.name.value))
+            size = 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string))
         for lang_id in grfstrings.get_translations(self.string):
             # 6 is for "T" (1), id (4), langid (1)
-            size += 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string.name.value, lang_id))
+            size += 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string, lang_id))
         return size
 
     def write(self, file):
         if not self.skip_default_langid:
             self.write_type_id(file)
             file.print_bytex(0x7F)
-            file.print_string(grfstrings.get_translation(self.string.name.value))
+            file.print_string(grfstrings.get_translation(self.string))
             file.newline()
         for lang_id in grfstrings.get_translations(self.string):
             self.write_type_id(file)
             file.print_bytex(lang_id)
-            file.print_string(grfstrings.get_translation(self.string.name.value, lang_id))
+            file.print_string(grfstrings.get_translation(self.string, lang_id))
             file.newline()
 
 class BranchNode(Action14Node):
