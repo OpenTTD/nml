@@ -88,8 +88,7 @@ def parse_error_block(error):
     if error.data is not None:
         error.data = error.data.reduce()
         if isinstance(error.data, expression.String):
-            if not grfstrings.is_valid_string(error.data.name.value):
-                raise generic.ScriptError("Unknown string '%s'" % (error.data.name.value), error.data.pos)
+            grfstrings.validate_string(error.data)
             langs.extend(grfstrings.get_translations(error.data))
             for l in langs: assert l is not None
         elif not isinstance(error.data, expression.StringLiteral):

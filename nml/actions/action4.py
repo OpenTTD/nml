@@ -66,7 +66,7 @@ def get_global_string_actions():
 
 def get_string_action4s(feature, string_range, string, id = None):
     global string_ranges
-    if not grfstrings.is_valid_string(string.name.value): raise generic.ScriptError("Unknown string: " + string.name.value, string.pos)
+    grfstrings.validate_string(string)
     write_action4s = True
     if string_range is not None:
         size = 2

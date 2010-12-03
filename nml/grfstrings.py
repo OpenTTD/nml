@@ -9,8 +9,9 @@ def utf8_get_size(char):
 
 DEFAULT_LANGUAGE = 0x7F
 
-def is_valid_string(string):
-    return string in default_lang.strings
+def validate_string(string):
+    if string.name.value not in default_lang.strings:
+        raise generic.ScriptError('Unknown string "%s"' % string.name.value, string.pos)
 
 def can_use_ascii(string):
     i = 0

@@ -37,13 +37,11 @@ class GRF(object):
         self.name = self.name.reduce()
         if not isinstance(self.name, expression.String):
             raise generic.ScriptError("GRF-name must be a string", self.name.pos)
-        if not grfstrings.is_valid_string(self.name.name.value):
-            raise generic.ScriptError('Unknown string "%s" used as GRF-name' % self.name.name.value, self.name.pos)
+        grfstrings.validate_string(self.name)
         self.desc = self.desc.reduce()
         if not isinstance(self.desc, expression.String):
             raise generic.ScriptError("GRF-description must be a string", self.desc.pos)
-        if not grfstrings.is_valid_string(self.desc.name.value):
-            raise generic.ScriptError('Unknown string "%s" used as GRF-description' % self.desc.name.value, self.name.pos)
+        grfstrings.validate_string(self.desc)
         self.version = self.version.reduce_constant()
         self.min_compatible_version = self.min_compatible_version.reduce_constant()
         param_num = 0

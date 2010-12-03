@@ -89,8 +89,7 @@ class TextNode(Action14Node):
     def __init__(self, id, string, skip_default_langid = False):
         Action14Node.__init__(self, "T", id)
         self.string = string
-        if not grfstrings.is_valid_string(self.string.name.value):
-            raise generic.ScriptError('Unknown string "%s" in grf-block' % self.string.name.value, self.string.pos)
+        grfstrings.validate_string(self.string)
         self.skip_default_langid = skip_default_langid
 
     def get_size(self):
