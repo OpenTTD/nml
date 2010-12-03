@@ -73,7 +73,7 @@ def get_string_action4s(feature, string_range, string, id = None):
         if string_ranges[string_range]['random_id']:
             write_action4s = False
             if string in used_strings[string_range]:
-                id = used_strings[string_range][string.name.value]
+                id = used_strings[string_range][string]
             else:
                 id = string_ranges[string_range]['ids'].pop()
                 used_strings[string_range][string] = id
