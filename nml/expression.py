@@ -129,7 +129,7 @@ class ConstantNumeric(Expression):
         return self.value == 0 or self.value == 1
 
     def __eq__(self, other):
-        return other is not None and other.value - self.value
+        return other is not None and isinstance(other, ConstantNumeric) and other.value - self.value
 
     def __hash__(self):
         return self.value
@@ -662,7 +662,7 @@ class String(Expression):
         return self
 
     def __eq__(self, other):
-        return other is not None and self.name == other.name and self.params == other.params
+        return other is not None and isinstance(other, String) and self.name == other.name and self.params == other.params
 
     def __hash__(self):
         return hash(self.name) ^ reduce(lambda x, y: x ^ hash(y), self.params, 0)
@@ -697,7 +697,7 @@ class Identifier(Expression):
         return False
 
     def __eq__(self, other):
-        return other is not None and self.value == other.value
+        return other is not None and isinstance(other, Identifier) and self.value == other.value
 
     def __hash__(self):
         return hash(self.value)
