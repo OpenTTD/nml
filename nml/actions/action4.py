@@ -48,9 +48,9 @@ def get_global_string_actions():
     actions = []
     for string_range, strings in used_strings.iteritems():
         for string_name, id in strings.iteritems():
-            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name)) )
-            for lang_id in grfstrings.get_translations(string_name):
-                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name, lang_id)) )
+            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name.name.value)) )
+            for lang_id in grfstrings.get_translations(string_name.name.value):
+                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name.name.value, lang_id)) )
     last_lang = -1
     last_id = -1
     texts.sort(key=lambda text: (-1 if text[0] == 0x7F else text[0], text[1]))
@@ -72,11 +72,11 @@ def get_string_action4s(feature, string_range, string, id = None):
         size = 2
         if string_ranges[string_range]['random_id']:
             write_action4s = False
-            if string.name.value in used_strings[string_range]:
+            if string in used_strings[string_range]:
                 id = used_strings[string_range][string.name.value]
             else:
                 id = string_ranges[string_range]['ids'].pop()
-                used_strings[string_range][string.name.value] = id
+                used_strings[string_range][string] = id
         id = id | (string_range << 8)
     elif feature <= 3:
         size = 3
