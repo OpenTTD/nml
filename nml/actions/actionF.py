@@ -101,13 +101,13 @@ class ActionF(base_action.BaseAction):
 
         # Pull style names if needed.
         if self.style_name is not None:
-            if not grfstrings.is_valid_string(self.style_name.value):
-                raise generic.ScriptError("Unknown string: " + self.style_name.value, self.style_name.pos)
-            self.style_names = [(lang_id, grfstrings.get_translation(self.style_name.value, lang_id)) for lang_id in grfstrings.get_translations(self.style_name.value)]
-            self.style_names.append( (0x7F, grfstrings.get_translation(self.style_name.value)) )
+            if not grfstrings.is_valid_string(self.style_name.name.value):
+                raise generic.ScriptError("Unknown string: " + self.style_name.name.value, self.style_name.pos)
+            self.style_names = [(lang_id, grfstrings.get_translation(self.style_name.name.value, lang_id)) for lang_id in grfstrings.get_translations(self.style_name)]
+            self.style_names.append( (0x7F, grfstrings.get_translation(self.style_name.name.value)) )
             self.style_names.sort()
             if len(self.style_names) == 0:
-                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name.value, self.pos)
+                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name.name.value, self.pos)
         else: self.style_names = []
 
     # Style names

@@ -62,11 +62,20 @@ def get_translation(string, lang_id = DEFAULT_LANGUAGE):
     return default_lang.get_string(string)
 
 def get_translations(string):
+    """
+    Get a list of language ids that have a translation for the given string.
+
+    @param string: the string to get the translations for.
+    @type  string: L{expression.String}
+
+    @return: List of languages that translate the given string.
+    @rtype:  C{list} of C{int}
+    """
     translations = []
     for lang_pair in langs:
         langid, lang = lang_pair
         assert langid is not None
-        if string in lang.strings and lang.get_string(string) != default_lang.get_string(string):
+        if string.name.value in lang.strings and lang.get_string(string.name.value) != default_lang.get_string(string.name.value):
             translations.append(langid)
     return translations
 

@@ -50,7 +50,7 @@ class TownNames(object):
 
         print indentation*' ' + 'Town name ' + name_text
         if self.style_name is not None:
-            print indentation*' ' + "  style name string:", self.style_name.value
+            print indentation*' ' + "  style name string:", self.style_name
         for part in self.parts:
             print indentation*' ' + "-name part:"
             part.debug_print(indentation + 2)
@@ -70,7 +70,7 @@ class TownNames(object):
                     raise generic.ScriptError("Parameters of the 'styles' were not expected.", param.pos)
                 if self.style_name is not None:
                     raise generic.ScriptError("'styles' is already defined.", self.pos)
-                self.style_name = param.value.name
+                self.style_name = param.value
 
         if len(self.parts) == 0:
             raise generic.ScriptError("Missing name parts in a town_names item.", self.pos)

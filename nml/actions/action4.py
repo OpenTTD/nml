@@ -49,7 +49,7 @@ def get_global_string_actions():
     for string_range, strings in used_strings.iteritems():
         for string_name, id in strings.iteritems():
             texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name.name.value)) )
-            for lang_id in grfstrings.get_translations(string_name.name.value):
+            for lang_id in grfstrings.get_translations(string_name):
                 texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name.name.value, lang_id)) )
     last_lang = -1
     last_id = -1
@@ -86,7 +86,7 @@ def get_string_action4s(feature, string_range, string, id = None):
     actions = []
     if write_action4s:
         actions.append(Action4(feature, 0x7F, size, id, [grfstrings.get_translation(string.name.value)]))
-        for lang_id in grfstrings.get_translations(string.name.value):
+        for lang_id in grfstrings.get_translations(string):
             actions.append(Action4(feature, lang_id, size, id, [grfstrings.get_translation(string.name.value, lang_id)]))
 
     actions.sort(key=lambda action: action.lang);

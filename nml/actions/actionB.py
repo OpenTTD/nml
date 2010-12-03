@@ -78,8 +78,8 @@ def parse_error_block(error):
     langs = [0x7F]
     if isinstance(error.msg, expression.String):
         custom_msg = True
-        msg_string = error.msg.name
-        langs.extend(grfstrings.get_translations(msg_string.value))
+        msg_string = error.msg
+        langs.extend(grfstrings.get_translations(msg_string))
         for l in langs: assert l is not None
     else:
         custom_msg = False
@@ -90,7 +90,7 @@ def parse_error_block(error):
         if isinstance(error.data, expression.String):
             if not grfstrings.is_valid_string(error.data.name.value):
                 raise generic.ScriptError("Unknown string '%s'" % (error.data.name.value), error.data.pos)
-            langs.extend(grfstrings.get_translations(error.data.name.value))
+            langs.extend(grfstrings.get_translations(error.data))
             for l in langs: assert l is not None
         elif not isinstance(error.data, expression.StringLiteral):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos)
@@ -112,7 +112,7 @@ def parse_error_block(error):
     langs.sort()
     for lang in langs:
         if custom_msg:
-            msg = grfstrings.get_translation(msg_string.value, lang)
+            msg = grfstrings.get_translation(msg_string.name.value, lang)
         if error.data is None:
             data = None
         elif isinstance(error.data, expression.StringLiteral):

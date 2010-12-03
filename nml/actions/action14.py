@@ -98,7 +98,7 @@ class TextNode(Action14Node):
             size = 0
         else:
             size = 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string.name.value))
-        for lang_id in grfstrings.get_translations(self.string.name.value):
+        for lang_id in grfstrings.get_translations(self.string):
             # 6 is for "T" (1), id (4), langid (1)
             size += 6 + grfstrings.get_string_size(grfstrings.get_translation(self.string.name.value, lang_id))
         return size
@@ -109,7 +109,7 @@ class TextNode(Action14Node):
             file.print_bytex(0x7F)
             file.print_string(grfstrings.get_translation(self.string.name.value))
             file.newline()
-        for lang_id in grfstrings.get_translations(self.string.name.value):
+        for lang_id in grfstrings.get_translations(self.string):
             self.write_type_id(file)
             file.print_bytex(lang_id)
             file.print_string(grfstrings.get_translation(self.string.name.value, lang_id))
@@ -189,10 +189,10 @@ class LimitNode(BinaryNode):
         file.newline()
 
 def grf_name_desc_actions(root, name, desc, version, min_compatible_version):
-    if len(grfstrings.get_translations(name.name.value)) > 0:
+    if len(grfstrings.get_translations(name)) > 0:
         name_node = TextNode("NAME", name, True)
         root.subnodes.append(name_node)
-    if len(grfstrings.get_translations(desc.name.value)) > 0:
+    if len(grfstrings.get_translations(desc)) > 0:
         desc_node = TextNode("DESC", desc, True)
         root.subnodes.append(desc_node)
     version_node = BinaryNode("VRSN", 4, version.value)
