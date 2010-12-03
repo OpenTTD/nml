@@ -71,8 +71,8 @@ def get_translation(string, lang_id = DEFAULT_LANGUAGE):
         langid, lang = lang_pair
         if langid != lang_id: continue
         if string.name.value not in lang.strings: break
-        return lang.get_string(string.name.value)
-    return default_lang.get_string(string.name.value)
+        return lang.get_string(string)
+    return default_lang.get_string(string)
 
 def get_translations(string):
     """
@@ -88,7 +88,7 @@ def get_translations(string):
     for lang_pair in langs:
         langid, lang = lang_pair
         assert langid is not None
-        if string.name.value in lang.strings and lang.get_string(string.name.value) != default_lang.get_string(string.name.value):
+        if string.name.value in lang.strings and lang.get_string(string) != default_lang.get_string(string):
             translations.append(langid)
     return translations
 
@@ -345,18 +345,19 @@ class Language:
         self.strings = {}
 
     def get_string(self, string):
-        assert isinstance(string, basestring)
-        assert string in self.strings
-        str_type = self.strings[string].get_type()
+        string_id = string.name.value
+        assert isinstance(string_id, basestring)
+        assert string_id in self.strings
+        str_type = self.strings[string_id].get_type()
         parsed_string = ""
-        if len(self.strings[string].cases) > 0:
+        if len(self.strings[string_id].cases) > 0:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
-            for case_name, case_string in self.strings[string].cases.iteritems():
+            for case_name, case_string in self.strings[string_id].cases.iteritems():
                 case_id = self.cases[case_name]
                 parsed_string += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(case_id, 2) + case_string.parse_string(str_type)
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
-        parsed_string += self.strings[string].parse_string(str_type)
-        if len(self.strings[string].cases) > 0:
+        parsed_string += self.strings[string_id].parse_string(str_type)
+        if len(self.strings[string_id].cases) > 0:
             parsed_string += CHOICE_LIST_END[str_type]
         return parsed_string
 
