@@ -14,23 +14,6 @@ def check_range(value, min_value, max_value, name, pos):
     if not min_value <= value <= max_value:
         raise RangeError(value, min_value, max_value, name, pos)
 
-def parse_string_to_dword(string):
-    pos = string.pos
-    string = string.value
-    bytes = []
-    i = 0
-    try:
-        while len(bytes) < 4:
-            if string[i] == '\\':
-                bytes.append(int(string[i+1:i+3], 16))
-                i += 3
-            else:
-                bytes.append(ord(string[i]))
-                i += 1
-    except ValueError:
-        raise ScriptError("Cannot convert string to integer id", pos)
-    return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
-
 def reverse_lookup(dic, val):
     #reverse dictionary lookup
     return [k for k, v in dic.iteritems() if v == val][0]

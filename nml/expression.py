@@ -443,9 +443,7 @@ class OtherGRFParameter(Expression):
         self.grfid = grfid
         self.num = num
         if not isinstance(self.grfid, int):
-            if not isinstance(self.grfid, StringLiteral) or grfstrings.get_string_size(self.grfid.value, False, True) != 4:
-                raise generic.ScriptError("GRFID must be string literal of length 4", self.grfid.pos)
-            self.grfid = generic.parse_string_to_dword(self.grfid)
+            self.grfid = parse_string_to_dword(self.grfid)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'OtherGRFParameter:'
@@ -724,6 +722,25 @@ class StringLiteral(Expression):
     def type(self):
         return Type.STRING_LITERAL
 
+def parse_string_to_dword(string):
+    if not isinstance(string, StringLiteral) or grfstrings.get_string_size(string.value, False, True) != 4:
+        raise generic.ScriptError("Expected a string literal of length 4", string.pos)
+    pos = string.pos
+    string = string.value
+    bytes = []
+    i = 0
+    try:
+        while len(bytes) < 4:
+            if string[i] == '\\':
+                bytes.append(int(string[i+1:i+3], 16))
+                i += 3
+            else:
+                bytes.append(ord(string[i]))
+                i += 1
+    except ValueError:
+        raise ScriptError("Cannot convert string to integer id", pos)
+    return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
+
 class Array(Expression):
     def __init__(self, values, pos):
         Expression.__init__(self, pos)
@@ -989,9 +1006,7 @@ def builtin_cargotype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
-        raise generic.ScriptError("Cargo labels must be string literals of length 4", label.pos)
-    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), generic.parse_string_to_dword(label), None, args[0].pos)
+    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), parse_string_to_dword(label), None, args[0].pos)
 
 def builtin_railtype_available(name, args, pos):
     """
@@ -1002,9 +1017,7 @@ def builtin_railtype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
-        raise generic.ScriptError("Railtype labels must be string literals of length 4", label.pos)
-    return SpecialCheck((0x0D, None), 0, (0, 1), generic.parse_string_to_dword(label), None, args[0].pos)
+    return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), None, args[0].pos)
 
 def builtin_grf_status(name, args, pos):
     """
@@ -1014,12 +1027,7 @@ def builtin_grf_status(name, args, pos):
     """
     if len(args) not in (1, 2):
         raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
-    labels = []
-    for label in args:
-        label = label.reduce()
-        if not isinstance(label, StringLiteral) or grfstrings.get_string_size(label.value, False, True) != 4:
-            raise generic.ScriptError("GRFIDs must be string literals of length 4", label.pos)
-        labels.append(label)
+    labels = [label.reduce() for label in args]
     if name == 'grf_current_status':
         op = (0x06, r'\7G')
         results = (1, 0)
@@ -1028,8 +1036,8 @@ def builtin_grf_status(name, args, pos):
         results = (0, 1)
     else:
         assert False, "Unknown grf status function"
-    mask = generic.parse_string_to_dword(labels[1]) if len(labels) > 1 else None
-    return SpecialCheck(op, 0x88, results, generic.parse_string_to_dword(labels[0]), mask, args[0].pos)
+    mask = parse_string_to_dword(labels[1]) if len(labels) > 1 else None
+    return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), mask, args[0].pos)
 
 def builtin_visual_effect_and_powered(name, args, pos):
     """
