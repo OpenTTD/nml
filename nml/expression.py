@@ -659,7 +659,8 @@ class String(Expression):
         return ret
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        return self
+        params = [p.reduce(id_dicts) for p in self.params]
+        return String(self.name, params, self.pos)
 
     def __eq__(self, other):
         return other is not None and isinstance(other, String) and self.name == other.name and self.params == other.params
