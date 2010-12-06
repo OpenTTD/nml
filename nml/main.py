@@ -38,6 +38,8 @@ def parse_cli(argv):
                         help="Load language files from directory <dir> [default: %default]")
     opt_parser.add_option("-a", "--sprites-dir", dest="sprites_dir", default="sprites",  metavar="<dir>",
                         help="Store 32bpp sprites in directory <dir> [default: %default]")
+    opt_parser.add_option("--default-lang", dest="default_lang", default="english.lng",  metavar="<file>",
+                        help="The default language is stored in <file> [default: %default]")
 
     try:
         opts, args = opt_parser.parse_args(argv)
@@ -76,7 +78,7 @@ def main(argv):
     if opts.stack: developmode = True
 
     grfstrings.read_extra_commands(opts.custom_tags)
-    grfstrings.read_lang_files(opts.lang_dir)
+    grfstrings.read_lang_files(opts.lang_dir, opts.default_lang)
 
     if input_filename is None:
         input = sys.stdin

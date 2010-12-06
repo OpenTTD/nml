@@ -504,18 +504,23 @@ def parse_file(filename, default):
         else:
             langs.append((lang.langid, lang))
 
-def read_lang_files(lang_dir):
+def read_lang_files(lang_dir, default_lang_file):
     """
-    Read the language files containing the translations for string constants used in the NML specification.
+    Read the language files containing the translations for string constants
+    used in the NML specification.
 
     @param lang_dir: Name of the directory containing the language files.
     @type  lang_dir: C{str}
+
+    @param default_lang_file: Filename of the language file that has the
+                              default translation which will be used as
+                              fallback for other languages.
+    @type  default_lang_file: C{str}
     """
-    DEFAULT_LANGUAGE_FILE = "english.lng"
-    if not os.path.exists(lang_dir + os.sep + DEFAULT_LANGUAGE_FILE):
-        raise generic.ScriptError("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + DEFAULT_LANGUAGE_FILE))
-    parse_file(lang_dir + os.sep + DEFAULT_LANGUAGE_FILE, True)
+    if not os.path.exists(lang_dir + os.sep + default_lang_file):
+        raise generic.ScriptError("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + default_lang_file))
+    parse_file(lang_dir + os.sep + default_lang_file, True)
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
-        if filename.endswith(DEFAULT_LANGUAGE_FILE): continue
+        if filename.endswith(default_lang_file): continue
         parse_file(filename, False)
     langs.sort()
