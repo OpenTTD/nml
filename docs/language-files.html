@@ -9,19 +9,20 @@ nmlc --lang-dir=path/to/lang-dir path/to/nml-source-file.nml
 Language files MUST have the extension <code>.lng</code><br>
 The language files themselves follow a certain structure:
 <pre class="exl">
-lang: &lt;number&gt;
+##grflangid &lt;number&gt;
 &lt;string-name&gt;                                                   :&lt;text&gt;
 &lt;string-name&gt;                                                   :&lt;text&gt;
 ...
 </pre>
 where the first line must give the language code for the language this file
 describes (see below). The following lines each describe a string. The translated
-string follows immediately the colon. A NewGRF project must contain a language file
-for the default fallback language 7F.
+string follows immediately the colon. An NML project has exactly one fallback
+language, by default this is english.lng. You can change this with the command
+line parameter --default-lang.
 
 Example for a valid language file:
 <pre class="code">
-lang: 7F
+##grflangid 0x01
 STR_GRF_NAME                                                    :{TITLE} 0.1.0 - {VERSION}
 STR_GRF_DESCRIPTION                                             :{TITLE} contains pimped ground tiles.
 STR_NAME_MYVEHICLE                                              :General Robotics Anti-Grav UFO Mark X
@@ -39,7 +40,6 @@ TITLE    :Example NewGRF
 Valid language IDs are
 <table class="t">
 <tr><th>ID <th>language
-<tr><td>7F<td>default fallback
 <tr><td>00<td>American
 <tr><td>01<td>English
 <tr><td>02<td>German
