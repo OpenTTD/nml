@@ -179,11 +179,10 @@ class StringCommand(object):
         assert name in commands or name in special_commands
         self.name = name
         self.case = None
-        self.arguments = None
+        self.arguments = []
         self.offset = None
 
     def set_arguments(self, arg_string):
-        self.arguments = []
         start = -1
         cur = 0
         quoted = False
@@ -191,7 +190,7 @@ class StringCommand(object):
         while cur < len(arg_string):
             if start != -1:
                 if (quoted and arg_string[cur] == '"') or (not quoted and arg_string[cur] in whitespace):
-                    if not quoted and self.offset is None and len(self.arguments) == 0 and isint(arg_string[start:cur]):
+                    if not quoted and self.offset is None and len(self.arguments) == 0 and isint(arg_string[start:cur]) and self.name in ('P', 'G'):
                         self.offset = int(arg_string[start:cur])
                     else:
                         self.arguments.append(arg_string[start:cur])
@@ -205,12 +204,26 @@ class StringCommand(object):
             start = -1
         return start == -1
 
+    def validate_arguments(self, lang, pos):
+        if lang.langid == DEFAULT_LANGUAGE: return
+        if self.name == 'P':
+            if len(self.arguments) != lang.get_num_plurals():
+                raise generic.ScriptError("Invalid number of arguments to plural command, expected %d but got %d" % (lang.get_num_plurals(), len(self.arguments)), pos)
+        elif self.name == 'G':
+            if len(self.arguments) != len(lang.genders):
+                raise generic.ScriptError("Invalid number of arguments to gender command, expected %d but got %d" % (len(lang.genders), len(self.arguments)), pos)
+        elif self.name == 'G=':
+            if len(self.arguments) != 1:
+                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected 1 but got %d" % len(self.arguments), pos)
+        elif len(self.arguments) != 0:
+            raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, pos)
+
     def parse_string(self, str_type, lang):
         if self.name in commands:
             return commands[self.name][str_type]
         assert self.name in special_commands
         if self.name == 'P':
-            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80, 2)
+            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80 + self.offset, 2)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
@@ -220,7 +233,7 @@ class StringCommand(object):
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G':
-            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80, 2)
+            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80 + self.offset, 2)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
@@ -291,6 +304,7 @@ class NewGRFString(object):
                         if string[end] == '}': break
                     if not command.set_arguments(string[arg_start:end]):
                         raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
+                command.validate_arguments(lang, pos)
                 self.components.append(command)
                 idx = end
             idx += 1
@@ -356,6 +370,25 @@ class Language:
         self.cases = None
         self.case_map = {}
         self.strings = {}
+
+    def get_num_plurals(self):
+        if self.plural is None: return 0
+        num_plurals = {
+            0: 2,
+            1: 1,
+            2: 2,
+            3: 3,
+            4: 5,
+            5: 3,
+            6: 3,
+            7: 3,
+            8: 4,
+            9: 2,
+            10: 3,
+            11: 2,
+            12: 4,
+        }
+        return num_plurals[self.plural]
 
     def get_string(self, string):
         string_id = string.name.value
