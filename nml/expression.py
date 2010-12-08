@@ -1054,6 +1054,11 @@ def builtin_visual_effect_and_powered(name, args, pos):
     if powered != 0 and powered != 0x80:
         raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
     return ConstantNumeric(effect | offset | powered)
+
+def builtin_str2number(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    return ConstantNumeric(parse_string_to_dword(args[0]))
 #}
 
 function_table = {
@@ -1073,6 +1078,7 @@ function_table = {
     'grf_current_status' : builtin_grf_status,
     'grf_future_status' : builtin_grf_status,
     'visual_effect_and_powered' : builtin_visual_effect_and_powered,
+    'str2number' : builtin_str2number,
 }
 
 commutative_operators = set([
