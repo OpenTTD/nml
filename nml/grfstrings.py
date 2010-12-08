@@ -180,6 +180,7 @@ class StringCommand(object):
         self.name = name
         self.case = None
         self.arguments = None
+        self.offset = None
 
     def set_arguments(self, arg_string):
         self.arguments = []
@@ -190,7 +191,10 @@ class StringCommand(object):
         while cur < len(arg_string):
             if start != -1:
                 if (quoted and arg_string[cur] == '"') or (not quoted and arg_string[cur] in whitespace):
-                    self.arguments.append(arg_string[start:cur])
+                    if not quoted and self.offset is None and len(self.arguments) == 0 and isint(arg_string[start:cur]):
+                        self.offset = int(arg_string[start:cur])
+                    else:
+                        self.arguments.append(arg_string[start:cur])
                     start = -1
             elif arg_string[cur] not in whitespace:
                 quoted = arg_string[cur] == '"'
