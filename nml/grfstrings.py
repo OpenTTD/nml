@@ -251,10 +251,10 @@ class StringCommand(object):
         if self.name in commands:
             if 'ascii' in commands[self.name]: return 'ascii'
             else: return 'unicode'
-        if self.name == 'P':
+        if self.name == 'P' or self.name == 'G':
             for arg in self.arguments:
                 if not can_use_ascii(arg): return 'unicode'
-            return 'ascii'
+        return 'ascii'
 
 class NewGRFString(object):
     def __init__(self, string, lang, strip_choice_lists, pos):
