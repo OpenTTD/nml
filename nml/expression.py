@@ -1059,6 +1059,22 @@ def builtin_str2number(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     return ConstantNumeric(parse_string_to_dword(args[0]))
+
+def builtin_cargotype(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    from nml import global_constants
+    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
+        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your cargo table", pos)
+    return ConstantNumeric(global_constants.cargo_numbers[args[0].value])
+
+def builtin_railtype(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    from nml import global_constants
+    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.railtype_table:
+        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your railtype table", pos)
+    return ConstantNumeric(global_constants.railtype_table[args[0].value])
 #}
 
 function_table = {
@@ -1079,6 +1095,8 @@ function_table = {
     'grf_future_status' : builtin_grf_status,
     'visual_effect_and_powered' : builtin_visual_effect_and_powered,
     'str2number' : builtin_str2number,
+    'cargotype' : builtin_cargotype,
+    'railtype' : builtin_railtype,
 }
 
 commutative_operators = set([
