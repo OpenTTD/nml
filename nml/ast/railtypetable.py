@@ -8,7 +8,10 @@ class RailtypeTable(object):
         generic.OnlyOnce.enforce(self, "rail type table")
         global_constants.railtype_table.clear()
         for i, railtype in enumerate(railtype_list):
-            global_constants.railtype_table[railtype.value] = i
+            if isinstance(railtype, expression.Identifier):
+                 self.railtype_list[i] = expression.StringLiteral(railtype.value, railtype.pos)
+            expression.parse_string_to_dword(self.railtype_list[i])
+            global_constants.railtype_table[self.railtype_list[i].value] = i
 
     def pre_process(self):
         pass

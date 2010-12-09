@@ -223,6 +223,7 @@ class StringCommand(object):
             return commands[self.name][str_type]
         assert self.name in special_commands
         if self.name == 'P':
+            if self.offset is None: self.offset = 0
             ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80 + self.offset, 2)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
@@ -233,6 +234,7 @@ class StringCommand(object):
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G':
+            if self.offset is None: self.offset = 0
             ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80 + self.offset, 2)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:

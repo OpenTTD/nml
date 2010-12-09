@@ -1,4 +1,4 @@
-from nml import generic, global_constants
+from nml import generic, global_constants, expression
 from nml.actions import action0
 
 class CargoTable(object):
@@ -7,7 +7,10 @@ class CargoTable(object):
         self.pos = pos
         generic.OnlyOnce.enforce(self, "cargo table")
         for i, cargo in enumerate(cargo_list):
-            global_constants.cargo_numbers[cargo.value] = i
+            if isinstance(cargo, expression.Identifier):
+                 self.cargo_list[i] = expression.StringLiteral(cargo.value, cargo.pos)
+            expression.parse_string_to_dword(self.cargo_list[i])
+            global_constants.cargo_numbers[self.cargo_list[i].value] = i
 
     def pre_process(self):
         pass

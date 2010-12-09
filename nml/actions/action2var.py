@@ -414,6 +414,12 @@ class Varaction2Parser(object):
         self.var_list_size += var.get_size()
 
 
+    def parse_string(self, expr):
+        str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, expr)
+        self.extra_actions.extend(actions)
+        self.parse_constant(expression.ConstantNumeric(str_id))
+
+
     def parse_via_actionD(self, expr):
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
         self.extra_actions.extend(tmp_param_actions)
@@ -457,6 +463,9 @@ class Varaction2Parser(object):
 
         elif isinstance(expr, expression.BinOp):
             self.parse_binop(expr)
+
+        elif isinstance(expr, expression.String):
+            self.parse_string(expr)
 
         else:
             expr.supported_by_action2(True)
