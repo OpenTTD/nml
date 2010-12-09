@@ -673,10 +673,21 @@ information about <code>&lt;return_value&gt;</code>, see the
 <pre class="exl">cargotable {
 	ID [, ID]*
 }</pre>
-<p>The cargotable is a list of 4-byte long IDs. For example:</p>
+<p>The cargotable is a list of 4-byte long IDs or literal strings. For example:</p>
 <pre class="code">cargotable {
 	PASS, MAIL, GOOD, COAL
 }</pre>
+
+<h2><a name="block-railtypetable">Railtypetable</a></h2>
+<pre class="exl">railtypetable {
+	ID [, ID]*
+}</pre>
+<p>The railtypetable is a list of 4-byte long IDs or literal strings. For example:</p>
+<pre class="code">railtypetable {
+	RAIL, ELRL, "3RDR"
+}</pre>
+The label 3RDR is written as a string because an identifier can't start with a numeric value. To
+reference it later you can write <code>railtype("3RDR")</code>.
 
 <h2><a name="block-if">If/else</a></h2>
 <pre class="exl">
@@ -1000,6 +1011,8 @@ will become active instead of whether it's currently active.
 <tr><td>visual_effect_and_powered(<i>effect</i>, <i>offset</i>, <i>powered</i><td>Helper function for the train
 property visual_effect_and_powered and the VEH_CB_VISUAL_EFFECT_AND_POWERED callback.
 <tr><td>str2number(<i>4-byte long string</i>)<td>Interpret the given string as a dword and return the value as integer.
+<tr><td>cargotype(<i>4-byte long string</i>)<td>Return the index of the given cargo type in the cargo translation table.
+<tr><td>railtype(<i>4-byte long string</i>)<td>Return the index of the given railtype in the railtype translation table.
 </table>
 
 </body>
