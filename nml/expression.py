@@ -1021,7 +1021,7 @@ def builtin_railtype_available(name, args, pos):
 
 def builtin_grf_status(name, args, pos):
     """
-    grf_(current|future)_status(grfid[, mask]) builtin function.
+    grf_(current_status|future_status|order_behind)(grfid[, mask]) builtin function.
 
     @return 1 if the grf is, or will be, active, 0 otherwise.
     """
@@ -1033,6 +1033,9 @@ def builtin_grf_status(name, args, pos):
         results = (1, 0)
     elif name == 'grf_future_status':
         op = (0x0A, r'\7gg')
+        results = (0, 1)
+    elif name == 'grf_order_behind':
+        op = (0x08, r'\7gG')
         results = (0, 1)
     else:
         assert False, "Unknown grf status function"
@@ -1093,6 +1096,7 @@ function_table = {
     'railtype_available' : builtin_railtype_available,
     'grf_current_status' : builtin_grf_status,
     'grf_future_status' : builtin_grf_status,
+    'grf_order_behind' : builtin_grf_status,
     'visual_effect_and_powered' : builtin_visual_effect_and_powered,
     'str2number' : builtin_str2number,
     'cargotype' : builtin_cargotype,
