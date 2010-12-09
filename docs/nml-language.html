@@ -741,6 +741,10 @@ For example:
 error(NOTICE, USED_WITH, string(STR_REGRESSION_CARE));
 error(FATAL, string(STR_REGRESSION_ERROR), string(STR_ANSWER), 14, param[1] + 12 * param[2]);
 </pre>
+
+<h2><a name="block-othergrf">Testing for other NewGRFs</a></h2>
+See the <a href="nml-language.html#builtin-functions">builtin functions</a> for the functions grf_XXX.
+
 <h2><a name="block-deactivate">Deactivate</a></h2>
 
 <h2><a name="block-replacement">Sprite replacement</a></h2>
@@ -1008,6 +1012,8 @@ If <i>mask</i> is set, only the bits set in the mask will be tested. Both parame
 of length 4.
 <tr><td>grf_future_status(<i>grfid[, mask]</i>)<td>Same as above, but tests whether the grf
 will become active instead of whether it's currently active.
+<tr><td>grf_order_behind(<i>grfid[, mask]</i>)<td>Same as above, but tests whether current grf will become active
+in the order behind the referenced grf.
 <tr><td>visual_effect_and_powered(<i>effect</i>, <i>offset</i>, <i>powered</i><td>Helper function for the train
 property visual_effect_and_powered and the VEH_CB_VISUAL_EFFECT_AND_POWERED callback.
 <tr><td>str2number(<i>4-byte long string</i>)<td>Interpret the given string as a dword and return the value as integer.
