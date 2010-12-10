@@ -1,4 +1,4 @@
-from nml import generic, global_constants
+from nml import generic, global_constants, expression
 from nml.actions import action0
 
 class RailtypeTable(object):
