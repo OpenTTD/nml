@@ -14,7 +14,7 @@ grf {
 
 
 cargotable {
-    PASS, MAIL, GOOD, IORE, GOLD, FOOD
+    PASS, MAIL, GOOD, IORE, "GOLD", "FOOD"
 }
 
 
