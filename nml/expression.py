@@ -345,7 +345,7 @@ class Boolean(Expression):
         return True
 
     def __str__(self):
-        return "(bool)" + str(self.expr)
+        return "!!(%s)" % str(self.expr)
 
 class BinNot(Expression):
     def __init__(self, expr, pos = None):
@@ -786,19 +786,20 @@ class SpecialCheck(Expression):
     @ivar pos: Position information
     @type pos: L{Position}
     """
-    def __init__(self, op, varnum, results, value, mask = None, pos = None):
+    def __init__(self, op, varnum, results, value, to_string, mask = None, pos = None):
         Expression.__init__(self, pos)
         self.op = op
         self.varnum = varnum
         self.results = results
         self.value = value
+        self.to_string = to_string
         self.mask = mask
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
     def __str__(self):
-        return 'SpecialCheck'
+        return self.to_string
 
     def supported_by_actionD(self, raise_error):
         return True
@@ -1013,7 +1014,7 @@ def builtin_cargotype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), parse_string_to_dword(label), None, args[0].pos)
+    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), parse_string_to_dword(label), "%s(%s)" % (name, str(label)), pos = args[0].pos)
 
 def builtin_railtype_available(name, args, pos):
     """
@@ -1024,7 +1025,7 @@ def builtin_railtype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), None, args[0].pos)
+    return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), "%s(%s)" % (name, str(label)), pos = args[0].pos)
 
 def builtin_grf_status(name, args, pos):
     """
@@ -1035,6 +1036,7 @@ def builtin_grf_status(name, args, pos):
     if len(args) not in (1, 2):
         raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
     labels = [label.reduce() for label in args]
+    mask = parse_string_to_dword(labels[1]) if len(labels) > 1 else None
     if name == 'grf_current_status':
         op = (0x06, r'\7G')
         results = (1, 0)
@@ -1046,8 +1048,11 @@ def builtin_grf_status(name, args, pos):
         results = (0, 1)
     else:
         assert False, "Unknown grf status function"
-    mask = parse_string_to_dword(labels[1]) if len(labels) > 1 else None
-    return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), mask, args[0].pos)
+    if mask is None:
+        string = "%s(%s)" % (name, str(label))
+    else:
+        string = "%s(%s, %s)" % (name, str(label), str(mask))
+    return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), string, mask, args[0].pos)
 
 def builtin_visual_effect_and_powered(name, args, pos):
     """
