@@ -534,7 +534,7 @@ def parse_file(filename, default):
         if default:
             raise generic.ScriptError("The default language file (\"%s\") contains non-utf8 characters." % filename)
         generic.print_warning("Language file \"%s\" contains non-utf8 characters. Ignoring (part of) the contents" % filename)
-    except generic.ScriptError as err:
+    except generic.ScriptError, err:
         if default: raise
         generic.print_warning("Error in language file \"%s\": %s" % (filename, err))
     else:
