@@ -26,6 +26,6 @@ class RailtypeTable(object):
 
     def __str__(self):
         ret = 'railtypetable {\n'
-        ret += ', '.join([railtype.value for railtype in self.railtype_list])
+        ret += ', '.join([expression.identifier_to_print(railtype.value) for railtype in self.railtype_list])
         ret += '\n}\n'
         return ret

@@ -1,5 +1,6 @@
 import datetime, calendar
 from nml import generic, nmlop, grfstrings
+import re
 
 class Type(object):
     """
@@ -740,6 +741,12 @@ def parse_string_to_dword(string):
     except ValueError:
         raise ScriptError("Cannot convert string to integer id", pos)
     return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
+
+is_valid_id = re.compile('[a-zA-Z_][a-zA-Z0-9_]{3}$')
+
+def identifier_to_print(value):
+    if is_valid_id.match(value): return value
+    return '"%s"' % value
 
 class Array(Expression):
     def __init__(self, values, pos):

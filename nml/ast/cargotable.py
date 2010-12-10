@@ -25,6 +25,6 @@ class CargoTable(object):
 
     def __str__(self):
         ret = 'cargotable {\n'
-        ret += ', '.join([cargo.value for cargo in self.cargo_list])
+        ret += ', '.join([expression.identifier_to_print(cargo.value) for cargo in self.cargo_list])
         ret += '\n}\n'
         return ret
