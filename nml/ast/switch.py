@@ -148,7 +148,7 @@ class RandomSwitch(switch_base_class):
         return []
 
     def __str__(self):
-        ret = 'random(%s, %s, %s, %s) {\n' % (str(self.feature), str(self.type), str(self.name), str(self.triggers))
+        ret = 'random_switch(%s, %s, %s, %s) {\n' % (str(self.feature), str(self.type), str(self.name), str(self.triggers))
         for dep in self.dependent:
             ret += 'dependent: %s;\n' % str(dep)
         for indep in self.independent:
