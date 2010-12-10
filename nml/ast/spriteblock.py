@@ -57,6 +57,13 @@ class TemplateDeclaration(object):
     def get_action_list(self):
         return []
 
+    def __str__(self):
+        ret = "template %s(%s) {\n" % (str(self.name), ", ".join([str(param) for param in self.param_list]))
+        for sprite in self.sprite_list:
+            ret += "\t%s\n" % str(sprite)
+        ret += "}\n"
+        return ret
+
 spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False, True)
 
 class SpriteSet(spriteset_base_class):
@@ -103,6 +110,14 @@ class SpriteSet(spriteset_base_class):
             return action1.parse_sprite_set(self)
         return []
 
+    def __str__(self):
+        filename = (", " + str(self.pcx)) if self.pcx is not None else ""
+        ret = "spriteset(%s%s) {\n" % (self.name, filename)
+        for sprite in self.sprite_list:
+            ret += "\t%s\n" % str(sprite)
+        ret += "}\n"
+        return ret
+
 spritegroup_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False)
 
 class SpriteGroup(spritegroup_base_class):
@@ -133,6 +148,13 @@ class SpriteGroup(spritegroup_base_class):
             return action2real.get_real_action2s(self)
         return []
 
+    def __str__(self):
+        ret = "spritegroup %s {\n" % (self.name)
+        for spriteview in self.spriteview_list:
+            ret += "\t%s\n" % str(spriteview)
+        ret += "}\n"
+        return ret
+
 class SpriteView(object):
     def __init__(self, name, spriteset_list, pos):
         self.name = name
@@ -144,6 +166,9 @@ class SpriteView(object):
         print (indentation+2)*' ' + 'Sprite sets:'
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 4)
+
+    def __str__(self):
+        return "%s: [%s];" % (str(self.name), ", ".join([str(spriteset) for spriteset in self.spriteset_list]))
 
 spritelayout_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False, True)
 

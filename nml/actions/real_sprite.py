@@ -37,6 +37,12 @@ class RealSprite(object):
         self.ysize = expression.ConstantNumeric(im.size[1])
         self.check_sprite_size()
 
+    def __str__(self):
+        ret = "["
+        ret += ", ".join([str(param) for param in self.param_list])
+        ret += "]"
+        return ret
+
 class RealSpriteAction(object):
     def __init__(self, sprite):
         self.sprite = sprite
@@ -90,6 +96,9 @@ class TemplateUsage(object):
             param_dict[template.param_list[i].value] = param.value
 
         return parse_sprite_list(template.sprite_list, default_file, param_dict, False, None, allow_compression)
+
+    def __str__(self):
+        return "%s(%s)" % (str(self.name), ", ".join([str(param) for param in self.param_list]))
 
 real_sprite_compression_flags = {
     'NORMAL'       : 0x00,

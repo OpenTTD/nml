@@ -55,6 +55,14 @@ class ReplaceSprite(object):
     def get_action_list(self):
         return actionA.parse_actionA(self)
 
+    def __str__(self):
+        name = str(self.name) if self.name is not None else ""
+        ret = "replace %s(%s) {\n" % (name, ", ".join([str(param) for param in self.param_list]))
+        for sprite in self.sprite_list:
+            ret += "\t%s\n" % str(sprite)
+        ret += "}\n"
+        return ret
+
 class ReplaceNewSprite(object):
     """
     AST node for a 'replacenew' block.
