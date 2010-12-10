@@ -72,10 +72,12 @@ class GRF(object):
     def __str__(self):
         ret = 'grf {\n'
         ret += '\tgrfid: %s;\n' % str(self.grfid)
-        if self.name is not None:
-            ret += '\tname: %s;\n' % str(self.name)
-        if self.desc is not None:
-            ret += '\tdesc: %s;\n' % str(self.desc)
+        ret += '\tname: %s;\n' % str(self.name)
+        ret += '\tdesc: %s;\n' % str(self.desc)
+        ret += '\tversion: %s;\n' % str(self.version)
+        ret += '\tmin_compatible_version: %s;\n' % str(self.min_compatible_version)
+        for param in self.params:
+            ret += str(param)
         ret += '}\n'
         return ret
 
@@ -106,6 +108,23 @@ class ParameterSetting(object):
     def pre_process(self):
         for set_val in self.value_list:
             self.set_property(set_val.name.value, set_val.value)
+
+    def __str__(self):
+        ret = "\t\t%s {\n" % str(self.name)
+        ret += "\t\t\ttype: %s;\n" % self.type
+        if self.name_string is not None: ret += "\t\t\tname: %s;\n" % str(self.name_string)
+        if self.desc_string is not None: ret += "\t\t\tdesc: %s;\n" % str(self.desc_string)
+        if self.min_val is not None: ret += "\t\t\tmin_value: %s;\n" % str(self.min_val)
+        if self.max_val is not None: ret += "\t\t\tmax_value: %s;\n" % str(self.max_val)
+        if self.def_val is not None: ret += "\t\t\tdef_value: %s;\n" % str(self.def_val)
+        if self.bit_num is not None: ret += "\t\t\tbit: %s;\n" % str(self.bit_num)
+        if len(self.val_names) > 0:
+            ret += "\t\t\tnames: {\n"
+            for pair in self.val_names:
+                ret += "\t\t\t\t%d: %s;\n" % (pair[0], str(pair[1]))
+            ret += "\t\t\t};\n"
+        ret += "\t\t}\n"
+        return ret
 
     def set_property(self, name, value):
         if name in self.properties_set:
@@ -156,6 +175,13 @@ class ParameterDescription(object):
         self.setting_list = setting_list
         self.num = num
         self.pos = pos
+
+    def __str__(self):
+        ret = "\tparam %d {\n" % self.num.value
+        for setting in self.setting_list:
+            ret += str(setting)
+        ret += "\t}\n"
+        return ret
 
     def pre_process(self, num):
         if self.num is None: self.num = num
