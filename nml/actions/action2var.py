@@ -663,7 +663,7 @@ def parse_varaction2(switch_block):
 
         range_min, check_min = parse_minmax(r.min, r.unit, action_list, act6, offset)
         offset += 4
-        range_max, check_max = parse_minmax(r.min, r.unit, action_list, act6, offset)
+        range_max, check_max = parse_minmax(r.max, r.unit, action_list, act6, offset)
         offset += 4
 
         range_overlap = False
