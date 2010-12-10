@@ -195,6 +195,12 @@ class GraphicsBlock(graphics_base_class):
             return action3.parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
         return []
 
+    def __str__(self):
+        ret = 'graphics {\n'
+        ret += '\t%s;\n' % str(self.default_graphics)
+        ret += '}\n'
+        return ret
+
 class GraphicsDefinition(object):
     def __init__(self, cargo_id, spritegroup_ref):
         self.cargo_id = cargo_id

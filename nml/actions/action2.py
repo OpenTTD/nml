@@ -363,3 +363,6 @@ class SpriteGroupRef(object):
             print 'Parameters:'
             for p in self.param_list:
                 p.debug_print(indentation + 2)
+
+    def __str__(self):
+        return str(self.name)
