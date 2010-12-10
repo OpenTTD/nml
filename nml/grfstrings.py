@@ -1,3 +1,4 @@
+from __future__ import with_statement
 import os, codecs, re, glob
 from nml import generic
 
