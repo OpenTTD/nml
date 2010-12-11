@@ -443,8 +443,6 @@ class OtherGRFParameter(Expression):
         Expression.__init__(self, pos)
         self.grfid = grfid
         self.num = num
-        if not isinstance(self.grfid, int):
-            self.grfid = parse_string_to_dword(self.grfid)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'OtherGRFParameter:'
@@ -455,10 +453,14 @@ class OtherGRFParameter(Expression):
         return 'param[%s, %s]' % (str(self.grfid), str(self.num))
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        grfid = self.grfid.reduce()
+        if isinstance(grfid, StringLiteral):
+            grfid = ConstantNumeric(parse_string_to_dword(grfid))
+        grfid.reduce_constant()
         num = self.num.reduce(id_dicts)
         if num.type() != Type.INTEGER:
             raise generic.ScriptError("Parameter number must be an integer.", num.pos)
-        return OtherGRFParameter(self.grfid, num, self.pos)
+        return OtherGRFParameter(grfid, num, self.pos)
 
     def supported_by_action2(self, raise_error):
         if raise_error:
@@ -741,6 +743,11 @@ def parse_string_to_dword(string):
     except ValueError:
         raise ScriptError("Cannot convert string to integer id", pos)
     return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
+
+def parse_dword_to_string(value):
+    if isinstance(value, ConstantNumeric): value = value.value
+    assert isinstance(value, int)
+    return "\\%02X\\%02X\\%02X\\%02X" % (value >> 24, (value >> 16) & 0xFF, (value >> 8) & 0xFF, value & 0xFF)
 
 is_valid_id = re.compile('[a-zA-Z_][a-zA-Z0-9_]{3}$')
 

@@ -118,7 +118,7 @@ class NMLParser(object):
         t[0] = expression.Parameter(t[3], t.lineno(1))
 
     def p_parameter_other_grf(self, t):
-        'param : PARAMETER LBRACKET STRING_LITERAL COMMA expression RBRACKET'
+        'param : PARAMETER LBRACKET expression COMMA expression RBRACKET'
         t[0] = expression.OtherGRFParameter(t[3], t[5], t.lineno(1))
 
     code_to_op = {

@@ -296,7 +296,7 @@ def parse_actionD(assignment):
             action_list.extend(tmp_param_actions)
             param1 = expression.ConstantNumeric(0)
         param2 = expression.ConstantNumeric(0xFE)
-        data = expression.ConstantNumeric(assignment.value.grfid)
+        data = assignment.value.grfid
     elif isinstance(assignment.value, expression.PatchVariable):
         op = nmlop.ASSIGN
         param1 = expression.ConstantNumeric(assignment.value.num)
