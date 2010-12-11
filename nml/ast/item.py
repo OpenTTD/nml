@@ -162,6 +162,14 @@ class LiveryOverride(object):
         wagon_id = self.wagon_id.reduce_constant([global_constants.item_names])
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
+    def __str__(self):
+        ret = 'livery_override(%s) {\n' % str(self.wagon_id)
+        for graphics in self.graphics_block.graphics_list:
+            ret += "\t%s\n" % str(graphics)
+        if self.graphics_block.default_graphics is not None: ret += '\t%s;\n' % str(self.graphics_block.default_graphics)
+        ret += '}\n'
+        return ret
+
 graphics_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.NONE, True)
 
 class GraphicsBlock(graphics_base_class):
