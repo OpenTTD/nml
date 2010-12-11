@@ -67,10 +67,12 @@ class SwitchBody(object):
         ret = ''
         for r in self.ranges:
             ret += '\t%s\n' % str(r)
-        if self.default is None:
+        if isinstance(self.default, action2.SpriteGroupRef):
+            ret += '\t%s;\n' % str(self.default)
+        elif self.default is None:
             ret += '\treturn;\n'
         else:
-            ret += '\t%s;\n' % str(self.default)
+            ret += '\treturn %s;' % str(self.default)
         return ret
 
 class RandomSwitch(switch_base_class):
