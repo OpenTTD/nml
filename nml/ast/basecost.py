@@ -56,6 +56,13 @@ class BaseCost:
     def get_action_list(self):
         return action0.get_basecost_action(self)
 
+    def __str__(self):
+        ret = "basecost {\n"
+        for cost in self.costs:
+            ret += "\t%s: %s - 8;\n" % (str(cost.name), str(cost.value))
+        ret += "}\n"
+        return ret
+
 base_cost_table = {
     'PR_STATION_VALUE'              : (0,  ''),
     'PR_BUILD_RAIL'                 : (1,  'PR_CONSTRUCTION'),

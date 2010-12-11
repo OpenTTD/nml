@@ -26,4 +26,4 @@ class Assignment(object):
         self.value.debug_print(indentation + 4)
 
     def __str__(self):
-        print "%s: %s;" % (str(self.name), str(self.value))
+        return "%s: %s;" % (str(self.name), str(self.value))
