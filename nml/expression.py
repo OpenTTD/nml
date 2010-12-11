@@ -253,6 +253,15 @@ class BinOp(Expression):
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
+        if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and \
+                isinstance(expr1, BinOp) and expr1.op in (nmlop.ADD, nmlop.SUB) and isinstance(expr1.expr2, ConstantNumeric):
+            val = expr2.value if op == nmlop.ADD else -expr2.value
+            if expr1.op == nmlop.ADD:
+                return BinOp(nmlop.ADD, expr1.expr1, ConstantNumeric(expr1.expr2.value + val), self.pos).reduce()
+            if expr1.op == nmlop.SUB:
+                return BinOp(nmlop.SUB, expr1.expr1, ConstantNumeric(expr1.expr2.value - val), self.pos).reduce()
+        if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and expr2.value == 0:
+            return expr1
         return BinOp(op, expr1, expr2, self.pos)
 
     def supported_by_action2(self, raise_error):
@@ -387,7 +396,7 @@ class Not(Expression):
         if expr.type() != Type.INTEGER:
             raise generic.ScriptError("Not-operator (!) requires an integer argument.", expr.pos)
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value != 0)
-        if isinstance(expr, Not): return expr.expr
+        if isinstance(expr, Not): return Boolean(expr.expr).reduce()
         if isinstance(expr, BinOp):
             if expr.op == nmlop.CMP_EQ: return BinOp(nmlop.CMP_NEQ, expr.expr1, expr.expr2)
             if expr.op == nmlop.CMP_NEQ: return BinOp(nmlop.CMP_EQ, expr.expr1, expr.expr2)
