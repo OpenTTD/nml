@@ -197,7 +197,9 @@ class GraphicsBlock(graphics_base_class):
 
     def __str__(self):
         ret = 'graphics {\n'
-        ret += '\t%s;\n' % str(self.default_graphics)
+        for graphics in self.graphics_list:
+            ret += "\t%s\n" % str(graphics)
+        if self.default_graphics is not None: ret += '\t%s;\n' % str(self.default_graphics)
         ret += '}\n'
         return ret
 
@@ -212,3 +214,6 @@ class GraphicsDefinition(object):
         self.cargo_id.debug_print(indentation + 4)
         print (indentation+2)*' ' + 'Linked to sprite group:'
         self.spritegroup_ref.debug_print(indentation + 4)
+
+    def __str__(self):
+        return "%s: %s;" % (str(self.cargo_id), str(self.spritegroup_ref))
