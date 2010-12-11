@@ -623,21 +623,24 @@ def parse_result(value, action_list, act6, offset, varaction2, return_action, ne
         result = expression.ConstantNumeric(0)
     return (result, comment, return_action)
 
+def reduce_varaction2_expr(switch_block):
+    feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
+    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
+    func60x = lambda name, value: expression.FunctionPtr(name, parse_60x_var, value)
+    #make sure, that variables take precedence about global constants / parameters
+    #this way, use the current climate instead of the climate at load time.
+    return switch_block.expr.reduce([(action2var_variables.varact2_globalvars, parse_var), \
+        (action2var_variables.varact2vars[feature], parse_var), \
+        (action2var_variables.varact2vars60x[feature], func60x)] + \
+        global_constants.const_list)
+
 def parse_varaction2(switch_block):
     action6.free_parameters.save()
     act6 = action6.Action6()
     return_action = None
-    feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
-    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range)
 
-    func60x = lambda name, value: expression.FunctionPtr(name, parse_60x_var, value)
-    #make sure, that variables take precedence about global constants / parameters
-    #this way, use the current climate instead of the climate at load time.
-    expr = switch_block.expr.reduce([(action2var_variables.varact2_globalvars, parse_var), \
-        (action2var_variables.varact2vars[feature], parse_var), \
-        (action2var_variables.varact2vars60x[feature], func60x)] + \
-        global_constants.const_list)
+    expr = reduce_varaction2_expr(switch_block)
 
     offset = 4 #first var
 

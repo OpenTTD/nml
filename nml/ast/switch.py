@@ -20,7 +20,9 @@ class Switch(switch_base_class):
         self.body = body
         self.pos = pos
 
-    # pre_process is defined by the base class
+    def pre_process(self):
+        switch_base_class.pre_process(self)
+        self.expr = action2var.reduce_varaction2_expr(self)
 
     def collect_references(self):
         all_refs = []
