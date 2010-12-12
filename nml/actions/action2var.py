@@ -427,6 +427,14 @@ class Varaction2Parser(object):
         self.parse(expression.Parameter(num))
 
 
+    def parse_expr(self, expr):
+        if isinstance(expr, expression.Array):
+            for expr2 in expr.values:
+                self.parse(expr2)
+                self.var_list.append(nmlop.VAL2)
+        else:
+            self.parse(expr)
+
     def parse(self, expr):
         #Preprocess the expression
         if isinstance(expr, expression.SpecialParameter):
@@ -645,7 +653,7 @@ def parse_varaction2(switch_block):
     offset = 4 #first var
 
     parser = Varaction2Parser()
-    parser.parse(expr)
+    parser.parse_expr(expr)
     action_list = parser.extra_actions
     for mod in parser.mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
