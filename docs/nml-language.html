@@ -500,7 +500,9 @@ related object differs per feature, refer to the table below.</li>
 <li><code>&lt;ID&gt;</code>Name of this switch block. This (unique) name can
 be used to refer to the block from other switch- or graphics-blocks.</li>
 <li><code>&lt;expression&gt;</code>The expression that will be evaluated
-to make a decision. This expression may contain variables.</li>
+to make a decision. This expression may contain variables. Instead of a single
+expression this may also be an array of expressions. In that case all of the
+array elements are evaluated in order and the last one is used to make a decision.</li>
 </ul>
 <table class="t">
 <tr><th>Feature<th>SELF<th>PARENT
