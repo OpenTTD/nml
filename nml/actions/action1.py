@@ -67,7 +67,7 @@ def parse_sprite_set(first_set):
     group_list = sorted(all_groups, key=lambda val: val.name.value)
 
     #sprite sets should be 'flattened' for tile layouts
-    flatten = first_set.feature.value in action2.features_sprite_layout
+    flatten = first_set.feature.value in action2.features_sprite_layout and first_set.feature.value != 0x07
 
     real_sprite_list = []
     total_count = 0 #total number of sprites so far
