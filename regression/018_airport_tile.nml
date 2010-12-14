@@ -1,0 +1,23 @@
+grf {
+	grfid: "test";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+	version: 0;
+	min_compatible_version: 0;
+}
+
+spritelayout dirt_runway_sw_snow {
+	building {
+		ttdsprite: 0xA68;
+		yoffset: 0x0F;
+		yextent: 1;
+		zextent: 6;
+		recolor: 0;
+	}
+}
+
+item(FEAT_AIRPORTTILES, small_airport_tiles) {
+	graphics {
+		dirt_runway_sw_snow;
+	}
+}
