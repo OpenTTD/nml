@@ -154,7 +154,7 @@ def parse_real_sprite(sprite, default_file, id_dict, allow_compression):
         if num_param > param_offset:
             new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
             if not isinstance(new_sprite.file, expression.StringLiteral):
-                raise generic.ScriptError("Real sprite parameter 8 'file' should be a string literal", new_sprite.file.pos)
+                raise generic.ScriptError("Real sprite parameter %d 'file' should be a string literal" % (param_offset + 1), new_sprite.file.pos)
         elif default_file is not None:
             new_sprite.file = default_file
         else:
