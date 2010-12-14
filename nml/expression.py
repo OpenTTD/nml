@@ -750,7 +750,7 @@ def parse_string_to_dword(string):
                 bytes.append(ord(string[i]))
                 i += 1
     except ValueError:
-        raise ScriptError("Cannot convert string to integer id", pos)
+        raise generic.ScriptError("Cannot convert string to integer id", pos)
     return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)
 
 def parse_dword_to_string(value):
