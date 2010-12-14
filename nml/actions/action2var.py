@@ -556,7 +556,7 @@ def parse_minmax(value, unit, action_list, act6, offset):
         check_range = False
     return (result, check_range)
 
-def parse_result(value, action_list, act6, offset, varaction2, return_action, need_return_action = True):
+def parse_result(value, action_list, act6, offset, varaction2, return_action, switch_block):
     """
     Parse a result (another switch or CB result) in a switch block.
 
