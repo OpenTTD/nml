@@ -166,7 +166,7 @@ class SwitchRange(object):
         self.min = min.reduce(global_constants.const_list)
         self.max = max.reduce(global_constants.const_list)
         if result is None:
-            self.result is None
+            self.result = None
         elif isinstance(result, action2.SpriteGroupRef):
             self.result = result
         else:
