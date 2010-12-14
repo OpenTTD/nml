@@ -56,7 +56,7 @@ layout_sprite_types = {
 }
 
 class Action2LayoutSprite(object):
-    def __init__(self, type, pos):
+    def __init__(self, type, pos = None):
         self.type = type
         self.pos = pos
         self.params = {
@@ -203,6 +203,6 @@ def get_layout_action2s(spritegroup):
             raise generic.ScriptError("Sprite layout requires at least one sprite", spritegroup.pos)
         #set to 0 for no ground sprite
         ground_sprite = Action2LayoutSprite(Action2LayoutSpriteType.GROUND)
-        set_sprite_property(ground_sprite, 'ttdsprite', expression.ConstantNumeric(0))
+        ground_sprite.set_param(expression.Identifier('ttdsprite'), expression.ConstantNumeric(0))
 
     return [Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)]

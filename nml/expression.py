@@ -679,7 +679,7 @@ class String(Expression):
         return hash(self.name) ^ reduce(lambda x, y: x ^ hash(y), self.params, 0)
 
 class Identifier(Expression):
-    def __init__(self, value, pos):
+    def __init__(self, value, pos = None):
         Expression.__init__(self, pos)
         self.value = value
 
