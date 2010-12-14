@@ -47,7 +47,7 @@ class OutputNFO(output_base.BinaryOutputBase):
     def print_string(self, value, final_zero = True, force_ascii = False):
         assert self._in_sprite
         self.file.write('"')
-        if not grfstrings.can_use_ascii(value):
+        if not grfstrings.is_ascii_string(value):
             if force_ascii:
                 raise generic.ScriptError("Expected ascii string but got a unicode string")
             self.file.write(u'Þ')

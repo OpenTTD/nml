@@ -56,7 +56,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             self.print_byte(ord(c))
 
     def print_string(self, value, final_zero = True, force_ascii = False):
-        if not grfstrings.can_use_ascii(value):
+        if not grfstrings.is_ascii_string(value):
             if force_ascii:
                 raise generic.ScriptError("Expected ascii string but got a unicode string")
             self.print_byte(0xC3)

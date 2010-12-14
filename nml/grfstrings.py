@@ -11,10 +11,28 @@ def utf8_get_size(char):
 DEFAULT_LANGUAGE = 0x7F
 
 def validate_string(string):
+    """
+    Check if a given string refers to a string that is translated in the language 
+    files and raise an error otherwise.
+
+    @param string: The string to validate.
+    @type  string: L{expression.String}
+    """
     if string.name.value not in default_lang.strings:
         raise generic.ScriptError('Unknown string "%s"' % string.name.value, string.pos)
 
-def can_use_ascii(string):
+def is_ascii_string(string):
+    """
+    Check whether a given string can be written using the ASCII codeset or
+    that we need unicode.
+
+    @param string: The string to check.
+    @type  string: C{basestring}
+
+    @return: True iff the string is ascii-only.
+    @rtype:  C{bool}
+    """
+    assert isinstance(string, basestring)
     i = 0
     while i < len(string):
         if string[i] != '\\':
@@ -32,9 +50,26 @@ def can_use_ascii(string):
     return True
 
 def get_string_size(string, final_zero = True, force_ascii = False):
+    """
+    Get the size (in bytes) of a given string.
+
+    @param string: The string to check.
+    @type  string: C{basestring}
+
+    @param final_zero: Whether or not to account for a zero-byte directly after the string.
+    @type  final_zero: C{bool}
+
+    @param force_ascii: When true, make sure the string is written as ascii as opposed to unicode.
+    @type  force_ascii: C{bool}
+
+    @return: The length (in bytes) of the given string.
+    @rtype:  C{int}
+
+    @raise generic.ScriptError: force_ascii and not is_ascii_string(string).
+    """
     size = 0
     if final_zero: size += 1
-    if not can_use_ascii(string):
+    if not is_ascii_string(string):
         if force_ascii:
             raise generic.ScriptError("Expected ascii string but got a unicode string")
         size += 2
@@ -171,7 +206,7 @@ def read_extra_commands(custom_tags_file):
             if name in commands:
                 generic.print_warning('Warning: overwriting existing tag "' + name + '"')
             commands[name] = {'unicode': value}
-            if can_use_ascii(value):
+            if is_ascii_string(value):
                 commands[name]['ascii'] = value
 
 
@@ -256,7 +291,7 @@ class StringCommand(object):
             else: return 'unicode'
         if self.name == 'P' or self.name == 'G':
             for arg in self.arguments:
-                if not can_use_ascii(arg): return 'unicode'
+                if not is_ascii_string(arg): return 'unicode'
         return 'ascii'
 
 class NewGRFString(object):
@@ -319,7 +354,7 @@ class NewGRFString(object):
                 if comp.get_type() == 'unicode':
                     return 'unicode'
             else:
-                if not can_use_ascii(comp): return 'unicode'
+                if not is_ascii_string(comp): return 'unicode'
         for case in self.cases:
             if case.get_type() == 'unicode':
                 return 'unicode'
