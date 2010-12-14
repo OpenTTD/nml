@@ -1,0 +1,24 @@
+grf {
+	grfid: "test";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+	version: 0;
+	min_compatible_version: 0;
+}
+
+switch(FEAT_INDUSTRIES, SELF, coal_mine_switch, (STORE_TEMP(4, 0x100) & 0) | current_callback) {
+	IND_CB_EXTRA_TEXT_INDUSTRY: return string(STR_COALMINE_EXTRA_TEXT);
+	/* current_callback will never be 0xFFFF, but this way we can test "return;" easily. */
+	0xFFFF: return;
+	CB_FAILED;
+}
+item(FEAT_INDUSTRIES, coal_mine) {
+	property {
+		substitute: INDUSTRYTYPE_COAL_MINE;
+		override: INDUSTRYTYPE_COAL_MINE;
+		callback_flags: bitmask(IND_CBF_EXTRA_TEXT_INDUSTRY);
+	}
+	graphics {
+		coal_mine_switch;
+	}
+}
