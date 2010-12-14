@@ -117,7 +117,7 @@ def parse_real_sprite(sprite, default_file, id_dict, allow_compression):
         sprite.is_empty = True
         return RealSpriteAction(sprite)
     elif not (2 <= num_param <= 4 or 6 <= num_param <= 8):
-        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2, 3, 4, 6, 7 or 8.")
+        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2, 3, 4, 6, 7 or 8.", sprite.param_list[0].pos)
     try:
         # create new sprite struct, needed for template expansion
         new_sprite = RealSprite()
