@@ -23,6 +23,10 @@ class Action2(base_action.BaseAction):
 
     @ivar references: All Action2's that are references by this Action2.
     @type references: C{set}
+
+    @ivar tmp_locations: List of address in the temporary storage that are free
+                         to be used in this varaction2.
+    @type tmp_locations: C{list} of C{int}
     """
     def __init__(self, feature, name):
         global action2_map
@@ -35,6 +39,10 @@ class Action2(base_action.BaseAction):
         self.num_refs = 0
         self.id = None
         self.references = set()
+        #0x00 - 0x7F: available to user
+        #0x80 - 0x85: used for production CB
+        #0x86 - 0x100: available as temp. registers
+        self.tmp_locations = range(0x86, 0x100)
 
     def prepare_output(self):
         global free_action2_ids

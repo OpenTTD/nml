@@ -14,10 +14,6 @@ class Action2Var(action2.Action2):
                      supported values.
     @type type_byte: C{int}
 
-    @ivar tmp_locations: List of address in the temporary storage that are free
-                         to be used in this varaction2.
-    @type tmp_locations: C{list} of C{int}
-
     @ivar ranges: List of return value ranges. Each range contains a minimum and
                   a maximum value and a return value. The list is checked in order,
                   if the result of the computation is between the miminum and
@@ -29,10 +25,6 @@ class Action2Var(action2.Action2):
     def __init__(self, feature, name, type_byte):
         action2.Action2.__init__(self, feature, name)
         self.type_byte = type_byte
-        #0x00 - 0x7F: available to user
-        #0x80 - 0x85: used for production CB
-        #0x86 - 0x100: available as temp. registers
-        self.tmp_locations = range(0x86, 0x100)
         self.ranges = []
 
     def remove_tmp_location(self, location):
