@@ -695,7 +695,7 @@ class Identifier(Expression):
             if self.value in id_d:
                 if search_func_ptr:
                     # XXX - hacky
-                    # Call func with (name, value) instead of (value, name)
+                    # Call func with (name, value) instead of (value, pos)
                     # And do not reduce the resulting value
                     return func(self, id_d[self.value])
                 else:
