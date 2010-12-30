@@ -626,12 +626,21 @@ def parse_result(value, action_list, act6, offset, varaction2, return_action, sw
 def reduce_varaction2_expr(switch_block):
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
     if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
-    func60x = lambda name, value: expression.FunctionPtr(name, parse_60x_var, value)
-    #make sure, that variables take precedence about global constants / parameters
-    #this way, use the current climate instead of the climate at load time.
+
+    # 'normal' and 60+x variables to use
+    vars_normal = action2var_variables.varact2vars[feature]
+    vars_60x = action2var_variables.varact2vars60x[feature]
+
+    # lambda function to convert (value, pos) to a function pointer
+    # since we need the variable name later on, a reverse lookup is needed
+    # TODO pass the function name along to avoid this
+    func60x = lambda value, pos: expression.FunctionPtr(expression.Identifier(generic.reverse_lookup(vars_60x, value), pos), parse_60x_var, value)
+
+    # make sure, that variables take precedence about global constants / parameters
+    # this way, use the current climate instead of the climate at load time.
     return switch_block.expr.reduce([(action2var_variables.varact2_globalvars, parse_var), \
-        (action2var_variables.varact2vars[feature], parse_var), \
-        (action2var_variables.varact2vars60x[feature], func60x)] + \
+        (vars_normal, parse_var), \
+        (vars_60x, func60x)] + \
         global_constants.const_list)
 
 def parse_varaction2(switch_block):

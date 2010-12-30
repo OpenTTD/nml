@@ -694,10 +694,8 @@ class Identifier(Expression):
             id_d, func = (id_dict, lambda x, pos: StringLiteral(x, pos) if isinstance(x, basestring) else ConstantNumeric(x, pos)) if not isinstance(id_dict, tuple) else id_dict
             if self.value in id_d:
                 if search_func_ptr:
-                    # XXX - hacky
-                    # Call func with (name, value) instead of (value, pos)
-                    # And do not reduce the resulting value
-                    return func(self, id_d[self.value])
+                    # Do not reduce function pointers, since they have no (numerical) value
+                    return func(id_d[self.value], self.pos)
                 else:
                     return func(id_d[self.value], self.pos).reduce(id_dicts)
         if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
