@@ -459,17 +459,18 @@ item(FEAT_TRAINS, turbotrain, 20) {
 </pre>
 
 
-<h3><a name="block-spritegroup-vehicles">Spritegroups for railtypes</a></h3>
+<h3><a name="block-spritegroup-railtypes">Spritegroups for railtypes</a></h3>
 Only the block_name <code>default</code> is used and it only takes one spriteset.
 <pre class="code">
 spritegroup gui_normal_modern_TTD_group {
 	default: gui_normal_modern_TTD;
 }
 </pre>
-<h3><a name="block-spritegroup-vehicles">Spritegroups for airport tiles</a></h3>
+<h3><a name="block-spritelayout">Sprite layouts for industry and airport tiles</a></h3>
+Industries and airports don't have sprite groups, but they define layouts on how sprites are supposed to be aranged:
 <pre class="code">
 A simple example to illustrate how it works:
-spritegroup airport_building1 {
+spritelayout airport_building1 {
 	ground { ttdsprite: GROUNDSPRITE_NORMAL; }
 	childsprite { 
 		sprite: spr_small_dirt_ne;
