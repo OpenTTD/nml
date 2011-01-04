@@ -205,10 +205,10 @@ refitting properties is set.</p>
 <tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [VISUAL_EFFECT_AND_POWERED | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
-<tr><td> track_type<td>item from railtypetable<td>Default railtype table: RAIL, ELRL, MONO, MGLV.
-Note that ELRL is mapped to MONO. If you install a railtypetable yourself you'll always get the
-railtype you specified. If you want a vehicle to run on electric rail and you don't have a
-railtypetable, make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRIC in addition
+<tr><td> track_type<td>item from railtypetable<td>Default railtype table: RAIL, MONO, MGLV.
+If you install a railtypetable yourself you'll always get the railtype you specified. If you
+want a vehicle to run on electric rail and you don't have a railtypetable, set <tt>track_type</tt>
+to RAIL and make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRIC.
 to setting <tt>track_type</tt> to ELRL.
 <tr><td> ai_special_flag<td> [AI_FLAG_PASSENGER | AI_FLAG_CARGO]<td> Set to AI_FLAG_PASSENGER to tell computer players that it's an engine that should only be used for passenger service.
 <tr><td> power<td> 0 ... 65000 hp (power units) <td>
