@@ -63,7 +63,7 @@ def get_cli_version():
     result += "Library versions encountered:\n"
     for lib, lib_ver in get_lib_versions().items():
         result += lib + ": " + lib_ver + "\n"
-    return result
+    return result[0:-1] #strip trailing newline
 
 def get_and_write_version():
     version = get_nml_version()
