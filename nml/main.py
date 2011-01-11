@@ -10,7 +10,7 @@ except ImportError:
 
 developmode = False # Give 'nice' error message instead of a stack dump.
 
-version = version_info.get_version()
+version = version_info.get_nml_version()
 
 def parse_cli(argv):
     """
@@ -22,7 +22,7 @@ def parse_cli(argv):
     usage = "Usage: %prog [options] <filename>\n" \
             "Where <filename> is the nml file to parse"
 
-    opt_parser = optparse.OptionParser(usage=usage, version=version)
+    opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
