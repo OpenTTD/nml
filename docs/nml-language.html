@@ -40,12 +40,8 @@ future games. It will increase the popularity and use of your NewGRF tremendousl
 <p>
 NML is a a python-based compiler, capable to compile NML files (along with their
 associated language, sound and graphic files) into grf and / or nfo files. In
-order to work, it requires
+order to work, the following items are required:
 <ul>
-<li><b>NML</b>
-    <ul>
-        <li>the latest (nightly) build can be downloaded from <a href="http://bundles.openttdcoop.org/nml/nightlies/LATEST/">http://bundles.openttdcoop.org/nml/nightlies/LATEST/</a></li>
-    </ul>
 <li><b>python</b>
     <ul>
         <li>any version from 2.5 through 2.7 will do, but not 3.x</li>
@@ -62,12 +58,20 @@ order to work, it requires
     <ul>
         <li>downloadable from <a href="http://www.dabeaz.com/ply/">http://www.dabeaz.com/ply/</a></li>
     </ul>
+<li><b>NML itself</b>
+    <ul>
+        <li>the latest (nightly) build can be downloaded from <a href="http://bundles.openttdcoop.org/nml/nightlies/LATEST/">http://bundles.openttdcoop.org/nml/nightlies/LATEST/</a></li>
+    </ul>
 </ul>
 
 If you don't install these with the packet manager of your choice (or there is none like on windows),
 you should install these libraries as well as NML itself using <code class="ex">python setup.py install</code> from your
 command prompt.
-
+</p><p>
+To verify that everything is installed, enter <code class="ex">nmlc --version</code>
+in your command line. This should output the version of NML as well as the version of the
+installed libraries.
+</p><p>
 Examples for small NML "projects" are found in the <code class="ex">regression</code>
 folder of NML. Generally it's assumed that the language files are in a separate
 language folder <code class="ex">lang</code>, thus a simple project may look like this:
