@@ -501,7 +501,7 @@ class Language:
 
         s = line.find(':')
         if s == -1:
-            raise generic.ScriptError("Line has no ':' delimeter", pos)
+            raise generic.ScriptError("Line has no ':' delimiter", pos)
 
         string = line[:s].strip()
         value = line[s + 1:]
