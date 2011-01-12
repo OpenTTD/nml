@@ -564,8 +564,9 @@ def parse_file(filename, default):
         with codecs.open(filename, "r", "utf-8") as f:
             for idx, line in enumerate(f):
                 pos = generic.LinePosition(filename, idx + 1)
-                if default: default_lang.handle_string(line.rstrip('\n\r'), True, pos)
-                lang.handle_string(line.rstrip('\n\r'), False, pos)
+                line = line.rstrip('\n\r').lstrip(u'\uFEFF')
+                if default: default_lang.handle_string(line, True, pos)
+                lang.handle_string(line, False, pos)
     except UnicodeDecodeError:
         if default:
             raise generic.ScriptError("The default language file (\"%s\") contains non-utf8 characters." % filename)
