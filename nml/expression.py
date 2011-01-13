@@ -939,8 +939,14 @@ def builtin_date(name, args, pos):
         res = BinOp(nmlop.SUB, res, part3)
         res = BinOp(nmlop.ADD, res, part4)
         return res
-    date = datetime.date(year.value, month, day)
-    return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + date.timetuple().tm_yday - 1, pos)
+    days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    day_in_year = 0
+    for i in range(month - 1):
+        day_in_year += days_in_month[i]
+    day_in_year += day
+    if month >= 3 and (year.value % 4 == 0) and ((not year.value % 100 == 0) or (year.value % 400 == 0)):
+        day_in_year += 1
+    return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + day_in_year - 1, pos)
 
 def builtin_day_of_year(name, args, pos):
     """
