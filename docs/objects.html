@@ -117,6 +117,19 @@ also replaces the ground tile of the object completely. Does not work when objec
 <tr><td>OBJ_FLAG_RANDOM_ANIMATION</td><td>Random bits in the "next animation frame" callback</td></tr>
 </table>
 
+<h3><a name="object-callbacks">List of object callbacks</a></h3>
+<table class="t">
+<tr><th>Name</th><th>Meaning</th></tr>
+<tr><td>OBJ_CB_SLOPE_CHECK</td><td>Check for the slope of a tile
+<tr><td>OBJ_CB_DECIDE_ANIM</td><td>Decide whether animation continues: 0xFF stops animation, 0xFE continues with next frame
+<tr><td>OBJ_CB_DECIDE_ANIM_SPEED</td><td>Decide the animation frame to jump to. Or alternatively: 0xFF to stop animation, 0xFE
+to start animation with current frame, 0xFD to keep the current animation frame and do nothing
+<tr><td>OBJ_CB_DECIDE_COLOUR</td><td>Return the colour, or for 2 company colours the two colours, to be used. In the case of 2CC the 2nd company colour
+goes into the high 4 bits of the return value
+<tr><td>OBJ_CB_ADDITIONAL_TEXT</td><td>Return an additional string which is shown in the purchase menu. It should not exceed in length three lines.
+<tr><td>OBJ_CB_AUTOSLOPE</td><td>Return a value different from 0 in order to disable autoslope behaviour.
+</table>
+
 </body>
 </html>
 
