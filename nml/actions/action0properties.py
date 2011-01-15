@@ -617,7 +617,7 @@ properties[0x0F] = {
     'object_flags'           : {'size': 2, 'num': 0x10},
     'animation_info'         : {'custom_function': lambda value: animation_info(0x11, value)},
     'animation_speed'        : {'size': 1, 'num': 0x12},
-    'animation_triggers'     : {'size': 1, 'num': 0x13},
+    'animation_triggers'     : {'size': 2, 'num': 0x13},
     'remove_cost_multiplier' : {'size': 1, 'num': 0x14},
     'callback_flags'         : {'size': 2, 'num': 0x15},
     'height'                 : {'size': 1, 'num': 0x16},
