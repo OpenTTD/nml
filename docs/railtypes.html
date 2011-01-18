@@ -22,6 +22,7 @@
 <table class="t">
 <tr><th>property</th><th>value range</th><th>comment</th></tr>
 <tr><td>label</td><td>                   4-byte string</td><td>names of default rail types: "RAIL", "ELRL", "MONO", "MLEV", "3RDR"</td></tr>
+<tr><td>introduction_date</td><td>       date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000.</td></tr>
 <tr><td>name</td><td>                    string</td><td></td></tr>
 <tr><td>menu_text</td><td>               string</td><td></td></tr>
 <tr><td>build_window_caption</td><td>    string</td><td></td></tr>
@@ -36,6 +37,10 @@
 <tr><td>speed_limit</td><td>             0 ... 65525 km/h (speed units)</td><td>A speed limit of 0 means unlimited speed</td></tr>
 <tr><td>acceleration_model</td><td>      ACC_MODEL_RAIL, ACC_MODEL_MONORAIL, ACC_MODEL_MAGLEV</td><td>ACC_MODEL_RAIL and ACC_MODEL_MONORAIL behave the same currently</td></tr>
 <tr><td>map_colour</td><td>              0 ... 255</td><td>entry in the colour palette</td></tr>
+<tr><td>requires_railtype_list</td><td>  list of railtype labels</td><td>List of rail types on that need to be available to the company of the player for this rail type to be
+            introduced at (or after) the introduction date. This limit does not apply when the rail type is introduced by the introduction of a vehicle.</td></tr>
+<tr><td>introduces_railtype_list</td><td>list of railtype labels</td><td>List of rail types that get introduced when this rail type is introduced. For example, to make sure
+            that when a fast rail type is introduced the slow variant exists.</td></tr>
 </table>
 
 <p>

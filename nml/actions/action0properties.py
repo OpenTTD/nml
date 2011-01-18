@@ -665,6 +665,9 @@ properties[0x10] = {
     'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': 3.5790976},
     'acceleration_model'       : {'size': 1, 'num': 0x15},
     'map_color'                : {'size': 1, 'num': 0x16},
+    'introduction_date'        : {'size': 4, 'num': 0x17},
+    'requires_railtype_list'   : {'custom_function': lambda x: railtype_list(x, 0x18)},
+    'introduces_railtype_list' : {'custom_function': lambda x: railtype_list(x, 0x19)},
 }
 
 #
