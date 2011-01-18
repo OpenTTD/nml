@@ -83,21 +83,21 @@ class BinaryOutputBase(OutputBase):
 
     def prepare_byte(self, value):
         assert self._in_sprite
-        if -0x80 < value < 0 : value += 0x100
+        if -0x80 <= value < 0 : value += 0x100
         assert value >= 0 and value <= 0xFF
         self._byte_count += 1
         return value
 
     def prepare_word(self, value):
         assert self._in_sprite
-        if -0x8000 < value < 0: value += 0x10000
+        if -0x8000 <= value < 0: value += 0x10000
         assert value >= 0 and value <= 0xFFFF
         self._byte_count += 2
         return value
 
     def prepare_dword(self, value):
         assert self._in_sprite
-        if -0x80000000 < value < 0: value += 0x100000000
+        if -0x80000000 <= value < 0: value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
         self._byte_count += 4
         return value
