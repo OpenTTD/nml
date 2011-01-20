@@ -22,7 +22,7 @@
 <table class="t">
 <tr><th>property</th><th>value range</th><th>comment</th></tr>
 <tr><td>label</td><td>                   4-byte string</td><td>names of default rail types: "RAIL", "ELRL", "MONO", "MLEV", "3RDR"</td></tr>
-<tr><td>introduction_date</td><td>       date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000.</td></tr>
+<tr><td>introduction_date</td><td>       date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000. Since OpenTTD r21842</td></tr>
 <tr><td>name</td><td>                    string</td><td></td></tr>
 <tr><td>menu_text</td><td>               string</td><td></td></tr>
 <tr><td>build_window_caption</td><td>    string</td><td></td></tr>
@@ -33,16 +33,32 @@
 <tr><td>railtype_flags</td><td>          bitmask(RAILTYPE_FLAG_CATANERY, RAILTYPE_FLAG_NO_LEVEL_CROSSING (OpenTTD r20049))</td><td></td></tr>
 <tr><td>curve_speed_multiplier</td><td>  0...65525</td><td>max curve speed is defined as multiple of the base curve speed (see below)</td></tr>
 <tr><td>station graphics</td><td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV</td><td></td></tr>
-<tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track as multiplier to PR_BUILD_RAIL base cost</td></tr>
+<tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track as multiplier to PR_BUILD_RAIL base cost. Since OpenTTD r19307</td></tr>
 <tr><td>speed_limit</td><td>             0 ... 65525 km/h (speed units)</td><td>A speed limit of 0 means unlimited speed</td></tr>
 <tr><td>acceleration_model</td><td>      ACC_MODEL_RAIL, ACC_MODEL_MONORAIL, ACC_MODEL_MAGLEV</td><td>ACC_MODEL_RAIL and ACC_MODEL_MONORAIL behave the same currently</td></tr>
-<tr><td>map_colour</td><td>              0 ... 255</td><td>entry in the colour palette</td></tr>
+<tr><td>map_colour</td><td>              0 ... 255</td><td>entry in the colour palette. Since OpenTTD r19307</td></tr>
 <tr><td>requires_railtype_list</td><td>  list of railtype labels</td><td>List of rail types on that need to be available to the company of the player for this rail type to be
-            introduced at (or after) the introduction date. This limit does not apply when the rail type is introduced by the introduction of a vehicle.</td></tr>
+            introduced at (or after) the introduction date. This limit does not apply when the rail type is introduced by the introduction of a vehicle. Since OpenTTD r21842</td></tr>
 <tr><td>introduces_railtype_list</td><td>list of railtype labels</td><td>List of rail types that get introduced when this rail type is introduced. For example, to make sure
-            that when a fast rail type is introduced the slow variant exists.</td></tr>
+            that when a fast rail type is introduced the slow variant exists. Since OpenTTD r21841</td></tr>
+<tr><td>sort_order</td><td>              0 ... 255</td><td>number which defines the sort order among rail types. If this entry is not defined, it gets assinged sort order n*10+7 for the n-th railtype. Since OpenTTD r21866</td></tr>
 </table>
 
+<h3>Sort order</h3>
+<p>
+The sort_order influences the sort order of the drop down lists with rail types. Default values are as follows:
+<table class="t">
+<tr><th>Value</th><th>Meaning</th></tr>
+<tr><td>07</td><td>	normal rail</td></tr>
+<tr><td>17</td><td>	electrified rail</td></tr>
+<tr><td>27</td><td>	monorail</td></tr>
+<tr><td>37</td><td>	maglev</td></tr>
+<tr><td>n7</td><td>	railtype #n</td></tr>
+</table>
+Thus the rail type that (internally) gets index 8 will get a default value of 87. These defaults are to keep the ordering when this property is not supported as they were.
+</p>
+
+<h3>Base speeds for curves</h3>
 <p>
 The base speeds relevant for the curve_speed_multiplier are:</p>
 <table class="t">
@@ -62,6 +78,7 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <tr><td>12+</td><td>115</td></tr>
 </table>
 
+<h3>Graphics blocks for railtypes</h3>
 <p>Rail types define a number of fixed graphic blocks:</p>
 <table class="t">
 <tr><th>block name</th><th>number of sprites</th><th>meaning</th></tr>

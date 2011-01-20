@@ -668,6 +668,7 @@ properties[0x10] = {
     'introduction_date'        : {'size': 4, 'num': 0x17},
     'requires_railtype_list'   : {'custom_function': lambda x: railtype_list(x, 0x18)},
     'introduces_railtype_list' : {'custom_function': lambda x: railtype_list(x, 0x19)},
+    'sort_order'               : {'size': 1, 'num': 0x1A},
 }
 
 #
