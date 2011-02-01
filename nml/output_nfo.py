@@ -3,9 +3,9 @@ import codecs
 from nml import generic, grfstrings, output_base
 
 class OutputNFO(output_base.BinaryOutputBase):
-    def __init__(self, filename):
+    def __init__(self, filename, start_sprite_num):
         output_base.BinaryOutputBase.__init__(self, filename)
-        self.sprite_num = 0
+        self.sprite_num = start_sprite_num
 
     def open_file(self):
         handle = codecs.open(self.filename, 'w', 'utf-8')

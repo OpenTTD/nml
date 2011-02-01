@@ -40,6 +40,7 @@ def parse_cli(argv):
                         help="Store 32bpp sprites in directory <dir> [default: %default]")
     opt_parser.add_option("--default-lang", dest="default_lang", default="english.lng",  metavar="<file>",
                         help="The default language is stored in <file> [default: %default]")
+    opt_parser.add_option("--start-sprite", action="store", type="int", dest="start_sprite_num", default=0, help="Set the first sprite number to write (for use with base_sprite)")
 
     try:
         opts, args = opt_parser.parse_args(argv)
@@ -89,19 +90,19 @@ def main(argv):
 
     outputs = []
     if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop))
-    if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename))
+    if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename, opts.start_sprite_num))
     if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
         if outext == '.grf': outputs.append(output_grf.OutputGRF(output, opts.compress, opts.crop))
-        elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output))
+        elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output, opts.start_sprite_num))
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         else:
             print "Unknown output format %s" % outext
             sys.exit(2)
 
-    ret = nml(input, opts.debug, outputs, opts.sprites_dir)
+    ret = nml(input, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num)
 
     input.close()
     sys.exit(ret)
@@ -109,7 +110,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, output_debug, outputfiles, sprites_dir):
+def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num):
     generic.OnlyOnce.clear()
 
     script = inputfile.read()
@@ -185,7 +186,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir):
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
 
     block_names = {}
-    for num, action in enumerate(actions):
+    for num, action in enumerate(actions, start_sprite_num):
         action.prepare_output()
         if isinstance(action, real_sprite.RealSpriteAction):
 	    if action.block_name:
