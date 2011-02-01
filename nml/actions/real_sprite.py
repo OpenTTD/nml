@@ -49,6 +49,7 @@ class RealSpriteAction(object):
         self.last = False
         self.block_name = None
         self.label = None
+        self.sprite_num = None
 
     def prepare_output(self):
         pass

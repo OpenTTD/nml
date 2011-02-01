@@ -26,16 +26,19 @@ class BaseSprite(object):
         self.param_list = param_list
         self.sprite_list = sprite_list
         self.pos = pos
+        self.sprite_num = None
         self.name = None
 
     def pre_process(self):
         num_params = len(self.param_list)
-        if not (0 <= num_params <= 1):
-            raise generic.ScriptError("base_sprites-block requires 0 or 1 parameters, encountered %d" % num_params, self.pos)
+        if not (0 <= num_params <= 2):
+            raise generic.ScriptError("base_sprites-block requires 0 to 2 parameters, encountered %d" % num_params, self.pos)
+	if num_params >= 2:
+	    self.sprite_num = self.param_list[0].reduce_constant()
         if num_params >= 1:
-            self.pcx = self.param_list[0].reduce()
+            self.pcx = self.param_list[-1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("base_sprites-block parameter 1 'file' must be a string literal", self.pcx.pos)
+                raise generic.ScriptError("The last base_sprites-block parameter 'file' must be a string literal", self.pcx.pos)
         else:
             self.pcx = None
 
@@ -48,7 +51,9 @@ class BaseSprite(object):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
-        return real_sprite.parse_sprite_list(self.sprite_list, self.pcx, block_name = self.name)
+        actions = real_sprite.parse_sprite_list(self.sprite_list, self.pcx, block_name = self.name)
+        actions[0].sprite_num = self.sprite_num
+        return actions
 
     def __str__(self):
         name = str(self.name) if self.name is not None else ""

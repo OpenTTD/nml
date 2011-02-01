@@ -187,8 +187,12 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir):
     block_names = {}
     for num, action in enumerate(actions):
         action.prepare_output()
-        if isinstance(action, real_sprite.RealSpriteAction) and action.block_name:
-            block_names[action.block_name] = num
+        if isinstance(action, real_sprite.RealSpriteAction):
+	    if action.block_name:
+                block_names[action.block_name] = num
+            if action.sprite_num is not None:
+	        if action.sprite_num.value != num:
+		    raise generic.ScriptError("Sprite number %d given in base_sprites-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))
     for outputfile in outputfiles:
         if isinstance(outputfile, output_base.BinaryOutputBase):
             for action in actions:
