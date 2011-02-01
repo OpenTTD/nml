@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites
 from nml.actions import action2, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -81,6 +81,7 @@ class NMLParser(object):
                           | deactivate
                           | replace
                           | replace_new
+                          | base_sprites
                           | font_glyph
                           | alt_sprites
                           | property_block
@@ -482,6 +483,13 @@ class NMLParser(object):
                        | REPLACENEWSPRITE ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
         offset = 1 if len(t) == 9 else 0
         t[0] = replace.ReplaceNewSprite(t[3 + offset], t[6 + offset], t.lineno(0))
+        if len(t) == 9: t[0].name = t[2].value
+
+    def p_base_sprites(self, t):
+        '''base_sprites : BASE_SPRITES LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE
+                        | BASE_SPRITES ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
+        offset = 1 if len(t) == 9 else 0
+        t[0] = base_sprites.BaseSprite(t[3 + offset], t[6 + offset], t.lineno(1))
         if len(t) == 9: t[0].name = t[2].value
 
     def p_font_glyph(self, t):
