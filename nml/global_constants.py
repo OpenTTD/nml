@@ -420,7 +420,7 @@ constant_numbers = {
     'APT_CB_FOUNDATIONS'        : 0x150,
 
     #railtype flags
-    'RAILTYPE_FLAG_CATANERY'          : 0,
+    'RAILTYPE_FLAG_CATENARY'          : 0,
     'RAILTYPE_FLAG_NO_LEVEL_CROSSING' : 1, # for OpenTTD > r20049
 
     #type of default station graphics used for a railtype
