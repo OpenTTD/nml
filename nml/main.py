@@ -23,7 +23,8 @@ def parse_cli(argv):
             "Where <filename> is the nml file to parse"
 
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
-    opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[])
+    opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
+                            custom_tags="custom_tags.txt", lang_dir="lang", sprites_dir="sprites", default_lang="english.lng")
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
@@ -32,15 +33,16 @@ def parse_cli(argv):
     opt_parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     opt_parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
     opt_parser.add_option("-o", "--output", dest="outputs", action="append", metavar="<file>", help="write output(nfo/grf) to <file>")
-    opt_parser.add_option("-t", "--custom-tags", dest="custom_tags", default="custom_tags.txt",  metavar="<file>",
+    opt_parser.add_option("-t", "--custom-tags", dest="custom_tags", metavar="<file>",
                         help="Load custom tags from <file> [default: %default]")
-    opt_parser.add_option("-l", "--lang-dir", dest="lang_dir", default="lang",  metavar="<dir>",
+    opt_parser.add_option("-l", "--lang-dir", dest="lang_dir", metavar="<dir>",
                         help="Load language files from directory <dir> [default: %default]")
-    opt_parser.add_option("-a", "--sprites-dir", dest="sprites_dir", default="sprites",  metavar="<dir>",
+    opt_parser.add_option("-a", "--sprites-dir", dest="sprites_dir", metavar="<dir>",
                         help="Store 32bpp sprites in directory <dir> [default: %default]")
-    opt_parser.add_option("--default-lang", dest="default_lang", default="english.lng",  metavar="<file>",
+    opt_parser.add_option("--default-lang", dest="default_lang", metavar="<file>",
                         help="The default language is stored in <file> [default: %default]")
-    opt_parser.add_option("--start-sprite", action="store", type="int", dest="start_sprite_num", default=0, help="Set the first sprite number to write (for use with base_sprite)")
+    opt_parser.add_option("--start-sprite", action="store", type="int", dest="start_sprite_num", metavar="<num>",
+                        help="Set the first sprite number to write (do not use except when you output nfo that you want to include in other files)")
 
     try:
         opts, args = opt_parser.parse_args(argv)
