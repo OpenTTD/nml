@@ -9,10 +9,10 @@ grf {
 spritelayout dirt_runway_sw_snow {
 	building {
 		ttdsprite: 0xA68;
-		yoffset: 0x0F;
-		yextent: 1;
-		zextent: 6;
-		recolor: 0;
+		yoffset:   0x0F;
+		yextent:   1;
+		zextent:   6;
+		recolour:  0;
 	}
 }
 

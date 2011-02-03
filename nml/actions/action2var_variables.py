@@ -48,8 +48,8 @@ varact2vars_vehicles = {
     'bitmask_consist_info' : {'var': 0x42, 'start': 24, 'size': 8},
     'company_num' : {'var': 0x43, 'start': 0, 'size': 8},
     'company_type' : {'var': 0x43, 'start': 16, 'size': 2},
-    'company_color1' : {'var': 0x43, 'start': 24, 'size': 4},
-    'company_color2' : {'var': 0x43, 'start': 28, 'size': 4},
+    'company_colour1' : {'var': 0x43, 'start': 24, 'size': 4},
+    'company_colour2' : {'var': 0x43, 'start': 28, 'size': 4},
     'aircraft_height' : {'var': 0x44, 'start': 8, 'size': 8},
     'airport_type' : {'var': 0x44, 'start': 0, 'size': 8},
     'curv_info_prev_cur' : {'var': 0x45, 'start': 0, 'size': 4, 'function': signextend},
@@ -154,8 +154,8 @@ varact2vars_industries = {
     'layout_num' : {'var': 0x44, 'start': 0, 'size': 8},
     'company_num' : {'var': 0x45, 'start': 0, 'size': 8},
     'company_type' : {'var': 0x45, 'start': 16, 'size': 2},
-    'company_color1' : {'var': 0x45, 'start': 24, 'size': 4},
-    'company_color2' : {'var': 0x45, 'start': 28, 'size': 4},
+    'company_colour1' : {'var': 0x45, 'start': 24, 'size': 4},
+    'company_colour2' : {'var': 0x45, 'start': 28, 'size': 4},
     'build_date' : {'var': 0x46, 'start': 0, 'size': 32},
     'founder' : {'var': 0xA7, 'start': 0, 'size': 8},
     'build_type' : {'var': 0xB3, 'start': 0, 'size': 2},
@@ -215,7 +215,7 @@ varact2vars_objects = {
     'build_date'             : { 'var' : 0x42, 'start':  0, 'size': 32 },
 
     'animation_frame'        : { 'var' : 0x43, 'start':  0, 'size':  8 },
-    'company_color'          : { 'var' : 0x43, 'start':  8, 'size':  8 },
+    'company_colour'          : { 'var' : 0x43, 'start':  8, 'size':  8 },
 
     'owner'                  : { 'var' : 0x44, 'start':  0, 'size':  8 },
 

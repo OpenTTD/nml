@@ -62,7 +62,7 @@ class Action2LayoutSprite(object):
         self.params = {
             'sprite'      : {'value': 0,  'validator': self._validate_sprite},
             'ttdsprite'   : {'value': 0,  'validator': self._validate_ttdsprite},
-            'recolor'     : {'value': 0,  'validator': self._validate_recolor},
+            'recolour'     : {'value': 0,  'validator': self._validate_recolour},
             'always_draw' : {'value': 0,  'validator': self._validate_always_draw},
             'xoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
             'yoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
@@ -79,12 +79,12 @@ class Action2LayoutSprite(object):
         if not (self.is_set('sprite') or self.is_set('ttdsprite')):
             raise generic.ScriptError("Either 'sprite' or 'ttdsprite' must be set for this layout sprite", self.pos)
         sprite_num = self.get_param('ttdsprite') if self.is_set('ttdsprite') else self.get_param('sprite') | (1 << 31)
-        recolor = self.get_param('recolor')
-        if recolor == -1:
+        recolour = self.get_param('recolour')
+        if recolour == -1:
             sprite_num |= 1 << 14
-        elif recolor != 0:
+        elif recolour != 0:
             sprite_num |= 1 << 15
-            sprite_num |= recolor << 16
+            sprite_num |= recolour << 16
         if self.get_param('always_draw'):
             sprite_num |= 1 << 30
         return sprite_num
@@ -139,10 +139,10 @@ class Action2LayoutSprite(object):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
         return value.value
 
-    def _validate_recolor(self, name, value):
+    def _validate_recolour(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
             raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
-        generic.check_range(value.value, -1, (1 << 14) - 1, "recolor", value.pos)
+        generic.check_range(value.value, -1, (1 << 14) - 1, "recolour", value.pos)
         return value.value
 
     def _validate_always_draw(self, name, value):

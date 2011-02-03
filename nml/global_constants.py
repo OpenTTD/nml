@@ -332,7 +332,7 @@ constant_numbers = {
     'IND_CBF_EXTRA_TEXT_INDUSTRY'   : 8,
     'IND_CBF_CONTROL_SPECIAL'       : 9,
     'IND_CBF_STOP_ACCEPT_CARGO'     : 10,
-    'IND_CBF_COLOR'                 : 11,
+    'IND_CBF_COLOUR'                 : 11,
     'IND_CBF_CARGO_INPUT'           : 12,
     'IND_CBF_CARGO_OUTPUT'          : 13,
 
@@ -346,7 +346,7 @@ constant_numbers = {
     'IND_CB_EXTRA_TEXT_INDUSTRY'    : 0x3A,
     'IND_CB_CONTROL_SPECIAL'        : 0x3B,
     'IND_CB_STOP_ACCEPT_CARGO'      : 0x3D,
-    'IND_CB_COLOR'                  : 0x14A,
+    'IND_CB_COLOUR'                  : 0x14A,
     'IND_CB_CARGO_INPUT'            : 0x14B,
     'IND_CB_CARGO_OUTPUT'           : 0x14C,
 

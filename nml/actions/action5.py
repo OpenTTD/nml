@@ -47,7 +47,7 @@ action5_table = {
     'TTDP_GUI' : (0x07, 93, Action5BlockType.FIXED),
     'CANALS' : (0x08, 65, Action5BlockType.FIXED),
     'ONE_WAY_ROAD' : (0x09, 6, Action5BlockType.FIXED),
-    'COLORMAP_2CC' : (0x0A, 256, Action5BlockType.FIXED),
+    'COLOURMAP_2CC' : (0x0A, 256, Action5BlockType.FIXED),
     'TRAMWAY' : (0x0B, 113, Action5BlockType.FIXED),
     'SNOWY_TEMPERATE_TREES' : (0x0C, 133, Action5BlockType.FIXED),
     'COAST_TILES' : (0x0D, 16, Action5BlockType.FIXED),

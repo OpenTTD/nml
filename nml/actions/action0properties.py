@@ -336,14 +336,14 @@ def house_available_years(value):
             Action0Property(0x21, ConstantNumeric(min_year), 2),
             Action0Property(0x22, ConstantNumeric(max_year), 2)]
 
-def house_random_colors(value):
+def house_random_colours(value):
     if not isinstance(value, Array) or len(value.values) != 4:
-        raise generic.ScriptError("Random colors must be an array with exactly four values", value.pos)
-    colors = [val.reduce_constant().value for val in value.values]
-    for color in colors:
-        if color < 0 or color > 15:
-            raise generic.ScriptError("Random house colors must be a value between 0 and 15", value.pos)
-    return [Action0Property(0x17, ConstantNumeric(colors[0] << 24 | colors[1] << 16 | colors[2] << 8 | colors[3]), 4)]
+        raise generic.ScriptError("Random colours must be an array with exactly four values", value.pos)
+    colours = [val.reduce_constant().value for val in value.values]
+    for colour in colours:
+        if colour < 0 or colour > 15:
+            raise generic.ScriptError("Random house colours must be a value between 0 and 15", value.pos)
+    return [Action0Property(0x17, ConstantNumeric(colours[0] << 24 | colours[1] << 16 | colours[2] << 8 | colours[3]), 4)]
 
 def house_available_mask(value):
     if not isinstance(value, Array) or len(value.values) != 2:
@@ -368,7 +368,7 @@ properties[0x07] = {
     'callback_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x14, 0x1D)},
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
-    'random_colours'          : {'custom_function': house_random_colors},
+    'random_colours'          : {'custom_function': house_random_colours},
     'probability'             : {'size': 1, 'num': 0x18, 'unit_conversion': 16},
     'animation_info'          : {'custom_function': lambda value: animation_info(0x1A, value, 7, 128, 1)},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
@@ -491,7 +491,7 @@ properties[0x0A] = {
     'conflicting_ind_types'  : {'size': 0, 'num': 0x16},
     'prob_random'            : {'size': 1, 'num': 0x17},
     'prob_in_game'           : {'size': 1, 'num': 0x18},
-    'map_color'              : {'size': 1, 'num': 0x19},
+    'map_colour'             : {'size': 1, 'num': 0x19},
     'spec_flags'             : {'size': 4, 'num': 0x1A},
     'new_ind_text'           : {'size': 2, 'num': 0x1B},
     'input_multiplier_1'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1C)},
@@ -664,7 +664,7 @@ properties[0x10] = {
     'construction_cost'        : {'size': 2, 'num': 0x13},
     'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': 3.5790976},
     'acceleration_model'       : {'size': 1, 'num': 0x15},
-    'map_color'                : {'size': 1, 'num': 0x16},
+    'map_colour'               : {'size': 1, 'num': 0x16},
     'introduction_date'        : {'size': 4, 'num': 0x17},
     'requires_railtype_list'   : {'custom_function': lambda x: railtype_list(x, 0x18)},
     'introduces_railtype_list' : {'custom_function': lambda x: railtype_list(x, 0x19)},
