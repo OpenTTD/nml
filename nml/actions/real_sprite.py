@@ -1,5 +1,49 @@
 from nml import generic, expression
+from nml.ast import assignment
 import os, Image
+
+palmap_d2w = [
+          0, 215, 216, 136,  88, 106,  32,  33, #   0..7
+         40, 245,  10,  11,  12,  13,  14,  15, #   8..15
+         16,  17,  18,  19,  20,  21,  22,  23, #  16..23
+         24,  25,  26,  27,  28,  29,  30,  31, #  24..31
+         53,  54,  34,  35,  36,  37,  38,  39, #  32..39
+        178,  41,  42,  43,  44,  45,  46,  47, #  40..47
+         48,  49,  50,  51,  52,  53,  54,  55, #  48..55
+         56,  57,  58,  59,  60,  61,  62,  63, #  56..63
+         64,  65,  66,  67,  68,  69,  70,  71, #  64..71
+         72,  73,  74,  75,  76,  77,  78,  79, #  72..79
+         80,  81,  82,  83,  84,  85,  86,  87, #  80..87
+         96,  89,  90,  91,  92,  93,  94,  95, #  88..95
+         96,  97,  98,  99, 100, 101, 102, 103, #  96..103
+        104, 105,  53, 107, 108, 109, 110, 111, # 104..111
+        112, 113, 114, 115, 116, 117, 118, 119, # 112..119
+        120, 121, 122, 123, 124, 125, 126, 127, # 120..127
+        128, 129, 130, 131, 132, 133, 134, 135, # 128..135
+        170, 137, 138, 139, 140, 141, 142, 143, # 136..143
+        144, 145, 146, 147, 148, 149, 150, 151, # 144..151
+        152, 153, 154, 155, 156, 157, 158, 159, # 152..159
+        160, 161, 162, 163, 164, 165, 166, 167, # 160..167
+        168, 169, 170, 171, 172, 173, 174, 175, # 168..175
+        176, 177, 178, 179, 180, 181, 182, 183, # 176..183
+        184, 185, 186, 187, 188, 189, 190, 191, # 184..191
+        192, 193, 194, 195, 196, 197, 198, 199, # 192..199
+        200, 201, 202, 203, 204, 205, 206, 207, # 200..207
+        208, 209, 210, 211, 212, 213, 214, 215, # 208..215
+        216, 217, 246, 247, 248, 249, 250, 251, # 216..223
+        252, 253, 254, 227, 228, 229, 230, 231, # 224..231
+        232, 233, 234, 235, 236, 237, 238, 239, # 232..239
+        240, 241, 242, 243, 244, 217, 218, 219, # 240..247
+        220, 221, 222, 223, 224, 225, 226, 255, # 248..255
+]
+
+def convert_palette(pal):
+    ret = 256 * [0]
+    for idx, colour in enumerate(pal):
+        if 0xD7 <= idx <=0xE2:
+            continue
+        ret[palmap_d2w[idx]] = palmap_d2w[colour]
+    return ret
 
 class RealSprite(object):
     def __init__(self, param_list = None, label = None):
@@ -60,6 +104,71 @@ class RealSpriteAction(object):
         else:
             file.print_sprite(self.sprite)
         if self.last: file.newline()
+
+    def skip_action7(self):
+        return True
+
+    def skip_action9(self):
+        return True
+
+    def skip_needed(self):
+        return True
+
+class RecolourSprite(object):
+    def __init__(self, mapping):
+        self.mapping = mapping
+        self.label = None
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Recolour sprite, mapping:'
+        for assignment in self.mapping:
+            print (indentation + 2)*' ' + '%s: %s;' % (str(assignment.name), str(assignment.value))
+
+    def __str__(self):
+        ret = "recolour_sprite {\n"
+        for assignment in self.mapping:
+            ret += '%s: %s;' % (str(assignment.name), str(assignment.value))
+        ret += "}"
+        return ret
+
+class RecolourSpriteAction(RealSpriteAction):
+    def __init__(self, sprite):
+        RealSpriteAction.__init__(self, sprite)
+        self.output_table = []
+
+    def prepare_output(self):
+        colour_mapping = {}
+        for assignment in self.sprite.mapping:
+            if assignment.value.max is not None and assignment.name.max.value - assignment.name.min.value != assignment.value.max.value - assignment.value.min.value:
+                raise generic.ScriptError("From and to ranges in a recolour block need to have the same size", assignment.pos)
+            for i in range(assignment.name.max.value - assignment.name.min.value + 1):
+                if 0xD7 <= i <=0xE2:
+                    raise generic.ScriptError("Trying to set recolour index 0x%X which is reserved" % i, assignment.pos)
+                val = assignment.value.min.value
+                if assignment.value.max is not None:
+                    val += i
+                colour_mapping[assignment.name.min.value + i] = val
+        for i in range(256):
+            if 0xD7 <= i <=0xE2:
+                colour = 0
+            elif i in colour_mapping:
+                colour = colour_mapping[i]
+            else:
+                colour = i
+            self.output_table.append(colour)
+
+    def write(self, file):
+        file.start_sprite(257)
+        file.print_bytex(0)
+        if file.palette not in ("DOS", "WIN"):
+            raise generic.ScriptError("Recolour sprites are only supported when writing to the DOS or WIN palette. If you don't have any real sprites use the commandline option -p to set a palette.")
+        colour_table = self.output_table if file.palette == "DOS" else convert_palette(self.output_table)
+        for idx, colour in enumerate(colour_table):
+            if idx % 16 == 0:
+                file.newline()
+            file.print_bytex(colour)
+        if self.last: file.newline()
+        file.end_sprite()
 
     def skip_action7(self):
         return True
@@ -165,6 +274,24 @@ def parse_real_sprite(sprite, default_file, id_dict, allow_compression):
 
     return RealSpriteAction(new_sprite)
 
+
+def parse_recolour_sprite(sprite, id_dict):
+    try:
+        # create new struct, needed for template expansion
+        new_mapping = []
+        for old_assignment in sprite.mapping:
+            from_min_value = old_assignment.name.min.reduce_constant([id_dict])
+            from_max_value = from_min_value if old_assignment.name.max is None else old_assignment.name.max.reduce_constant([id_dict])
+            to_min_value = old_assignment.value.min.reduce_constant([id_dict])
+            to_max_value = None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
+            new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
+        new_sprite = RecolourSprite(new_mapping)
+
+    except generic.ConstError:
+        raise generic.ScriptError("Recolour sprite values should be compile-time constants.")
+
+    return RecolourSpriteAction(new_sprite)
+
 sprite_template_map = {}
 
 def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = True, block_name = None, allow_compression = True):
@@ -172,6 +299,8 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = 
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
             new_sprites = [parse_real_sprite(sprite, default_file, parameters, allow_compression)]
+        elif isinstance(sprite, RecolourSprite):
+            new_sprites = [parse_recolour_sprite(sprite, parameters)]
         else:
             new_sprites = sprite.expand(default_file, parameters, allow_compression)
         if outer_scope and sprite.label is not None:

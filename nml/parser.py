@@ -451,6 +451,27 @@ class NMLParser(object):
         else:
             t[0] = real_sprite.RealSprite(t[4], t[1])
 
+    def p_recolour_assignment_list(self, t):
+        '''recolour_assignment_list :
+                                    | recolour_assignment_list recolour_assignment'''
+        t[0] = [] if len(t) == 1 else t[1] + [t[2]]
+
+    def p_recolour_assignment_1(self, t):
+        'recolour_assignment : expression COLON expression SEMICOLON'
+        t[0] = assignment.Assignment(assignment.Range(t[1], None), assignment.Range(t[3], None), t[1].pos)
+
+    def p_recolour_assignment_2(self, t):
+        'recolour_assignment : expression RANGE expression COLON expression RANGE expression SEMICOLON'
+        t[0] = assignment.Assignment(assignment.Range(t[1], t[3]), assignment.Range(t[5], t[7]), t[1].pos)
+
+    def p_recolour_assignment_3(self, t):
+        'recolour_assignment : expression RANGE expression COLON expression SEMICOLON'
+        t[0] = assignment.Assignment(assignment.Range(t[1], t[3]), assignment.Range(t[5], None), t[1].pos)
+            
+    def p_recolour_sprite(self, t):
+        'real_sprite : RECOLOUR_SPRITE LBRACE recolour_assignment_list RBRACE'
+        t[0] = real_sprite.RecolourSprite(t[3])
+
     def p_template_declaration(self, t):
         'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE spriteset_contents RBRACE'
         t[0] = spriteblock.TemplateDeclaration(t[2], t[4], t[7], t.lineno(1))

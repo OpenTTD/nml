@@ -40,6 +40,7 @@ reserved = {
     'spritelayout' : 'SPRITELAYOUT',
     'alternative_sprites' : 'ALT_SPRITES',
     'base_graphics' : 'BASE_SPRITES',
+    'recolour_sprite' : 'RECOLOUR_SPRITE',
 }
 
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')

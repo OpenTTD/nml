@@ -160,7 +160,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
 
     sprite_files = set()
     for action in actions:
-        if isinstance(action, real_sprite.RealSpriteAction):
+        if isinstance(action, real_sprite.RealSpriteAction) and not isinstance(action, real_sprite.RecolourSpriteAction):
             if action.sprite.is_empty: continue
             action.sprite.validate_size()
             sprite_files.add(action.sprite.file.value)
@@ -188,6 +188,8 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     palette_bytes = {"WIN": "W", "DOS": "D", "ANY": "A"}
     if used_palette in palette_bytes:
         grf.set_palette_used(palette_bytes[used_palette])
+    for outputfile in outputfiles:
+        outputfile.palette = used_palette
 
     if action8_index != -1:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
