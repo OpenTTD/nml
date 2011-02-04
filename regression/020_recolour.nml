@@ -1,0 +1,51 @@
+grf {
+	grfid: "test";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+	version: 0;
+	min_compatible_version: 0;
+}
+
+template company_recolour(offset) {
+    recolour_sprite {
+        0xC6..0xCD: offset..offset+7;
+    }
+}
+
+param[3] = reserve_sprites(3);
+
+replace(param[3]) {
+    recolour_sprite {
+        0xC6: 0x28;
+        0xC7: 0xF5;
+        0xC8..0xCD: 0x0A..0x0F;
+    }
+    company_recolour(0x3E)
+    company_recolour(0x9A)
+}
+
+// To write any recolour sprite to the output nmlc needs to know which palette
+// to use. One option would be to specify the palette via the commandline, but
+// for now just include some graphics so nmlc can determine the palette from that.
+
+// Foster Express tram
+spriteset(foster_express_set, "opengfx_generic_trams1.pcx") {
+	[ 48,56,  8,18,   -3,-10]
+	[ 64,56, 20,19,  -14, -5]
+	[ 96,56, 28,15,  -14, -8]
+	[144,56, 20,19,   -6, -7]
+	[176,56,  8,18,   -3,-10]
+	[192,56, 20,19,  -14, -9]
+	[224,56, 28,15,  -14, -8]
+	[272,56, 20,19,   -6, -7]
+}
+spritegroup foster_express_group {
+	loading: foster_express_set;
+	loaded: foster_express_set;
+}
+
+item(FEAT_ROADVEHS, foster_express_tram) {
+	graphics {
+		foster_express_group;
+	}
+}
