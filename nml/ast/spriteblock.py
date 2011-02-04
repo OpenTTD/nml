@@ -1,27 +1,6 @@
 from nml import expression, generic, global_constants
 from nml.actions import action1, action2, action2layout, action2real, real_sprite
 
-class SpriteBlock(object):
-    def __init__(self, spriteset_list, pos):
-        generic.print_warning("Using a spriteblock is deprecated and will not be supported in the future. Place your spriteset(s) and/or spritegroup(s) in the global scope instead.", pos)
-        self.spriteset_list = spriteset_list
-        self.pos = pos
-
-    def pre_process(self):
-        for spriteset in self.spriteset_list:
-            spriteset.pre_process()
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite block'
-        for spriteset in self.spriteset_list:
-            spriteset.debug_print(indentation + 2)
-
-    def get_action_list(self):
-        action_list = []
-        for spriteset in self.spriteset_list:
-            action_list.extend(spriteset.get_action_list())
-        return action_list
-
 class TemplateDeclaration(object):
     def __init__(self, name, param_list, sprite_list, pos):
         self.name = name

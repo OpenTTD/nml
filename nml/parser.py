@@ -51,7 +51,6 @@ class NMLParser(object):
                       | switch
                       | random_switch
                       | produce
-                      | spriteblock
                       | spriteset
                       | spritegroup
                       | template_declaration
@@ -525,22 +524,8 @@ class NMLParser(object):
         t[0] = alt_sprites.AltSpritesBlock(t[3], t[6], t.lineno(1))
 
     #
-    # Sprite blocks and their contents
+    # Sprite sets/groups and such
     #
-    def p_spriteblock(self, t):
-        'spriteblock : SPRITEBLOCK LPAREN expression RPAREN LBRACE spriteset_list RBRACE'
-        #feature is ignored
-        t[0] = spriteblock.SpriteBlock(t[6], t.lineno(1))
-
-    def p_spriteset_list(self, t):
-        '''spriteset_list : spriteset
-                          | alt_sprites
-                          | spritegroup
-                          | spriteset_list spriteset
-                          | spriteset_list alt_sprites
-                          | spriteset_list spritegroup'''
-        if len(t) == 2: t[0] = [t[1]]
-        else: t[0] = t[1] + [t[2]]
 
     def p_spriteset(self, t):
         'spriteset : SPRITESET LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
