@@ -117,7 +117,7 @@ class RandomSwitch(switch_base_class):
                     self.dependent.append(choice.result.name)
                     continue
                 else:
-                    assert 0, "NOT REACHED"
+                    assert False, "NOT REACHED"
             self.choices.append(choice)
         self.pos = pos
 
