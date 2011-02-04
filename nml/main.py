@@ -24,7 +24,8 @@ def parse_cli(argv):
 
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
-                            custom_tags="custom_tags.txt", lang_dir="lang", sprites_dir="sprites", default_lang="english.lng")
+                            custom_tags="custom_tags.txt", lang_dir="lang", sprites_dir="sprites", default_lang="english.lng",
+                            forced_palette="ANY")
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
@@ -43,6 +44,8 @@ def parse_cli(argv):
                         help="The default language is stored in <file> [default: %default]")
     opt_parser.add_option("--start-sprite", action="store", type="int", dest="start_sprite_num", metavar="<num>",
                         help="Set the first sprite number to write (do not use except when you output nfo that you want to include in other files)")
+    opt_parser.add_option("-p", "--palette", dest="forced_palette", metavar="<palette>", choices = ["DOS", "WIN", "ANY"],
+                        help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DOS', 'WIN', 'ANY'")
 
     try:
         opts, args = opt_parser.parse_args(argv)
@@ -104,7 +107,7 @@ def main(argv):
             print "Unknown output format %s" % outext
             sys.exit(2)
 
-    ret = nml(input, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num)
+    ret = nml(input, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette)
 
     input.close()
     sys.exit(ret)
@@ -112,7 +115,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num):
+def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, forced_palette):
     generic.OnlyOnce.clear()
 
     script = inputfile.read()
@@ -166,7 +169,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num):
         print "PIL (python-imaging) wasn't found, no support for using graphics"
         sys.exit(3)
 
-    used_palette = "ANY"
+    used_palette = forced_palette
     last_file = None
     for f in sprite_files:
         if not os.path.exists(f):
@@ -176,6 +179,8 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num):
             raise generic.ImageError("image does not have a palette", f)
         pal = palette.validate_palette(im, f)
         if used_palette != "ANY" and used_palette != pal:
+            if last_file is None:
+                raise generic.ImageError("Image has '%s' palette, but you forced the '%s' palette" % (pal, used_palette), f)
             raise generic.ImageError("Image has '%s' palette, but \"%s\" has the '%s' palette" % (pal, last_file, used_palette), f)
         last_file = f
         used_palette = pal
