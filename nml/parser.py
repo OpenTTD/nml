@@ -536,11 +536,6 @@ class NMLParser(object):
         'spritegroup : SPRITEGROUP ID LBRACE spriteview_list RBRACE'
         t[0] = spriteblock.SpriteGroup(t[2], t[4], t.lineno(1))
 
-    def p_spritegroup_layout(self, t):
-        'spritegroup : SPRITEGROUP ID LBRACE layout_sprite_list RBRACE'
-        generic.print_warning("Using tile layout sprite groups is deprecated. Rename 'spritegroup' to 'spritelayout' instead.", t.lineno(1))
-        t[0] = spriteblock.SpriteLayout(t[2], [], t[4], t.lineno(1))
-
     def p_spritelayout(self, t):
         '''spritelayout : SPRITELAYOUT ID LBRACE layout_sprite_list RBRACE
                         | SPRITELAYOUT ID LPAREN id_list RPAREN LBRACE layout_sprite_list RBRACE'''
