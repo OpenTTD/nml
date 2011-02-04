@@ -195,7 +195,8 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
 
     block_names = {}
-    for num, action in enumerate(actions, start_sprite_num):
+    for idx, action in enumerate(actions):
+        num = start_sprite_num + idx
         action.prepare_output()
         if isinstance(action, real_sprite.RealSpriteAction):
 	    if action.block_name:
