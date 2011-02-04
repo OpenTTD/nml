@@ -596,7 +596,7 @@ def parse_result(value, action_list, act6, offset, varaction2, return_action, sw
             varaction2.references.add(act2)
             result = make_return_ref(return_action.name, switch_block.pos)
         else:
-            default = make_return_ref('CB_FAILED', switch_block.pos)
+            result = make_return_ref('CB_FAILED', switch_block.pos)
     elif isinstance(value, action2.SpriteGroupRef):
         comment = value.name.value + ';'
         if value.name.value != 'CB_FAILED':
