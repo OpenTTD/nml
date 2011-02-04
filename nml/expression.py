@@ -317,10 +317,10 @@ class TernaryOp(Expression):
         return TernaryOp(guard, expr1, expr2, self.pos)
 
     def supported_by_action2(self, raise_error):
-        return True
+        return self.guard.supported_by_action2(raise_error) and self.expr1.supported_by_action2(raise_error) and self.expr2.supported_by_action2(raise_error)
 
     def supported_by_actionD(self, raise_error):
-        return True
+        return self.guard.supported_by_actionD(raise_error) and self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
 
     def is_boolean(self):
         return self.expr1.is_boolean() and self.expr2.is_boolean()
