@@ -355,7 +355,51 @@ livery_override (vehicleID) {
 	spritegroup_name
 }
 </pre>
-For an example see the <a href="#block-spritgroup">spritegroup</a>
+For an example see the <a href="#block-spritegroup">spritegroup</a>
+
+
+<h2><a name="real_sprites">Realsprites</a></h2>
+<p>Several features will need to reference actual graphics from files you created. You can provide real
+sprites in many different formats, all detailed below. There is a lot of information you'll need to
+provide. Most important are the filename and the location of the sprite in that file. Since most
+blocks that reference realsprites will allow you to specify a default filename, you don't often need
+to give a filename for every separate sprite.<p>
+<p>Allowed formats:
+<pre class="code">
+[left_x, upper_y, width, height, offset_x, offset_y]
+[left_x, upper_y, width, height, offset_x, offset_y, compression]
+[left_x, upper_y, width, height, offset_x, offset_y, filename]
+[left_x, upper_y, width, height, offset_x, offset_y, compression, filename]
+[offset_x, offset_y]
+[offset_x, offset_y, compression]
+[offset_x, offset_y, filename]
+[offset_x, offset_y, compression, filename]</pre>
+If you don't specify left_x, upper_y, width and height it'll default to the complete file. If you don't
+specify the filename it'll take the filename from the block containing this realsprite. It's a fatal error
+not to specify a filename for either the block containing a realsprite or the realsprite itself. If you
+don't specify the compression type it'll default to 1.</p>
+<p>For all parameters you can use expressions as complex as you want as long as they can be resolved
+at compiletime. That means you're free to use for example template parameters, but letting the offset
+depend on a parameter is not allowed.</p>
+
+<h2><a name="recolour_sprites">Recolour sprites</a></h2>
+<p>Recolour sprites are special sprites that are used to recolour other sprites, for example to apply
+company colours. It's basically a remapping of the colour table.
+<pre class="code">
+recolour_sprite {
+	0xC6: 0x28;
+	0xC7: 0xF5;
+	0xC8..0xCD: 0x0A..0x0F;
+}
+</pre>
+The above example will remap colour 0xC6 as 0x28, 0xC7 as 0xF5 and the range 0xC8 to 0xCD to the
+colours 0x0A..0x0F. This is one of the company colour recolour sprites defined in the baseset.
+Please note that in NML every recolour sprite will use the DOS palette. If your actual graphics
+files use te windows palette, nmlc will silently convert the recolour sprite to the windows palette
+before writing it to the output file.</p>
+
+
+<h2><a name="block-template">Template</a></h2>
 
 <h2><a name="block-tilelayout">Tilelayout</a></h2>
 
@@ -367,7 +411,7 @@ E.g. a vehicle usually requires eight sprites in order to provide on view for ea
 possible ingame orientations of a vehicle.
 <pre class="code">
 spriteset (SPRITESET_NAME, graphics_file) {
-	[left_X, upper_Y, width, height, offset_X, offset_Y]
+	<a href="#real_sprites">list of realsprites</a>
 	...
 }
 </pre>
@@ -681,8 +725,6 @@ information about <code>&lt;return_value&gt;</code>, see the
 	2: group_halfopen;      // 2/11 chance to display a half-covered wagon
 }</pre>
 
-<h2><a name="block-template">Template</a></h2>
-
 <h2><a name="block-cargotable">Cargotable</a></h2>
 <pre class="exl">cargotable {
 	ID [, ID]*
@@ -770,7 +812,7 @@ sections will outline the detailed functionality of these blocks and when to use
 <p>Using a <code>replace</code> block, it is possible to replace TTD's built-in sprites.
 The syntax is as follows:</p>
 <pre class="exl">replace(&lt;sprite-id&gt;, &lt;image-file&gt;) {
-	&lt;real-sprites&gt;...
+	<a href="#real_sprites">list of realsprites</a>
 }</pre>
 <p>The first parameter <code>&lt;sprite-id&gt;</code> indicates the sprite number of the
 first sprite to replace. Sprite numbers are equal to the sprite numbers in the base graphics file. The
@@ -799,7 +841,7 @@ sprites. As these sprites are not present in the original base graphics, they ca
 be replaced using a normal <code>replace</code> block. Instead, a <code>replacenew</code>
 block has to be used. The semantics are like this:</p>
 <pre class="exl">replacenew(&lt;type&gt;, &lt;image-file&gt;[, &lt;offset&gt;]) {
-	&lt;real-sprites&gt;...
+	<a href="#real_sprites">list of realsprites</a>
 }</pre>
 <p>The <code>&lt;type&gt;</code> parameter indicates the type of sprites that will
 be replaced. It should be an identifier from the first column of the following table.</p>
@@ -861,7 +903,7 @@ subset of the sprites (starting at <code>offset</code>) will be replaced.</p>
 for glyphs that don't have sprites in normal TTD. The syntax is as follows:</p>
 
 <pre class="exl">font_glpyh (&lt;font-size&gt;, &lt;base-char&gt;, &lt;image-file&gt;) {
-	&lt;real-sprites&gt;...
+	<a href="#real_sprites">list of realsprites</a>
 }</pre>
 
 <p>The first parameter (<code>&lt;font-size&gt;</code>) should be an identifier
