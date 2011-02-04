@@ -1075,6 +1075,21 @@ property visual_effect_and_powered and the VEH_CB_VISUAL_EFFECT_AND_POWERED call
 <tr><td>str2number(<i>4-byte long string</i>)<td>Interpret the given string as a dword and return the value as integer.
 <tr><td>cargotype(<i>4-byte long string</i>)<td>Return the index of the given cargo type in the cargo translation table.
 <tr><td>railtype(<i>4-byte long string</i>)<td>Return the index of the given railtype in the railtype translation table.
+<tr><td>reserve_sprites(<i>number of sprites</i>)<td>Reserve a number of sprites in the TTD sprite range. This is needed
+if you want to use your own recolour sprites. Example:
+<pre clas="code">param[10] = reserve_sprites(1);
+replace(param[10]) {
+	recolour_sprite {
+		// your colour remap.
+	}
+}
+spritelayout xyz {
+	building {
+		...
+		recolour: param[10];
+	}
+}
+</pre>
 </table>
 
 </body>
