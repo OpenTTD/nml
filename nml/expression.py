@@ -194,42 +194,76 @@ class BinOp(Expression):
             return '-' + str(self.expr2)
         return self.op.to_string(self.expr1, self.expr2)
 
+    def get_priority(self, expr):
+        """
+        Get the priority of an expression. For optimalization reason we prefer complexer
+        expressions (= low priority) on the left hand side of this expression. The following
+        priorities are used:
+        -1: everything that doesn't fit in one of the other categories.
+         0: Variables to be parsed in a varaction2
+         1: Expressions that can be parsed via actionD, with the exception of constant numbers
+         2: constant numbers
+
+        @param expr: The expression to get the priority of.
+        @type  expr: L{Expression}
+
+        @return: The priority for the given expression.
+        @rtype: C{int}
+        """
+        if isinstance(expr, Variable): return 0
+        if isinstance(expr, ConstantNumeric): return 2
+        if expr.supported_by_actionD(False): return 1
+        return -1
+
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        # Reducing a BinOp expression is done in several phases:
+        # - Reduce both subexpressions.
+        # - If both subexpressions are constant, compute the result and return it.
+        # - If the operator allows it and the second expression is more complex than
+        #   the first one swap them.
+        # - If the operation is a no-op, delete it.
+        # - Variables (as used in action2var) can have some computations attached to
+        #   them, do that if possible.
+        # - Try to merge multiple additions/subtractions with constant numbers
+
+        # - Reduce both subexpressions.
         expr1 = self.expr1.reduce(id_dicts)
         expr2 = self.expr2.reduce(id_dicts)
+
+        # - If both subexpressions are constant, compute the result and return it.
         if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op.compiletime_func:
             return ConstantNumeric(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
+
         if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral):
             if self.op == nmlop.ADD:
                 return StringLiteral(expr1.value + expr2.value, expr1.pos)
             raise generic.ScriptError("Only the '+'-operator is supported for literal strings.", self.pos)
+
         if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
             raise generic.ScriptError("Both operands of a binary operator must be integers.", self.pos)
-        # From lowest to highest prio:
-        # -1: everything else (most notable complex expressions like BinOp)
-        #  0: Variable
-        #  1: something supported by actionD/action7 (but not a constant numeric)
-        #  2: ConstantNumeric
-        # If the operator allows it we swap the two expressions so that the one with the lower priority
-        # is on the left. This makes it possible to do some simple assumptions on that later on.
-        if isinstance(expr1, Variable): prio1 = 0
-        elif isinstance(expr1, ConstantNumeric): prio1 = 2
-        elif expr1.supported_by_actionD(False): prio1 = 1
-        else: prio1 = -1
-        if isinstance(expr2, Variable): prio2 = 0
-        elif isinstance(expr2, ConstantNumeric): prio2 = 2
-        elif expr2.supported_by_actionD(False): prio2 = 1
-        else: prio2 = -1
+
+        # - If the operator allows it and the second expression is more complex than
+        #   the first one swap them.
         op = self.op
-        if prio2 < prio1:
-            if op in commutative_operators or self.op in (nmlop.CMP_LT, nmlop.CMP_GT):
+        if op in commutative_operators or self.op in (nmlop.CMP_LT, nmlop.CMP_GT):
+            prio1 = self.get_priority(expr1)
+            prio2 = self.get_priority(expr2)
+            if prio2 < prio1:
                 expr1, expr2 = expr2, expr1
                 if op == nmlop.CMP_LT:
                     op = nmlop.CMP_GT
                 elif op == nmlop.CMP_GT:
                     op = nmlop.CMP_LT
+
+        # - If the operation is a no-op, delete it.
         if op == nmlop.AND and isinstance(expr2, ConstantNumeric) and (expr2.value == -1 or expr2.value == 0xFFFFFFFF):
             return expr1
+
+        if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and expr2.value == 0:
+            return expr1
+
+        # - Variables (as used in action2var) can have some computations attached to
+        #   them, do that if possible.
         if isinstance(expr1, Variable) and expr2.supported_by_actionD(False):
             # An action2 Variable has some special fields (mask, add, div and mod) that can be used
             # to perform some operations on the value. These operations are faster than a normal
@@ -255,6 +289,8 @@ class BinOp(Expression):
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
+
+        # - Try to merge multiple additions/subtractions with constant numbers
         if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and \
                 isinstance(expr1, BinOp) and expr1.op in (nmlop.ADD, nmlop.SUB) and isinstance(expr1.expr2, ConstantNumeric):
             val = expr2.value if op == nmlop.ADD else -expr2.value
@@ -262,8 +298,7 @@ class BinOp(Expression):
                 return BinOp(nmlop.ADD, expr1.expr1, ConstantNumeric(expr1.expr2.value + val), self.pos).reduce()
             if expr1.op == nmlop.SUB:
                 return BinOp(nmlop.SUB, expr1.expr1, ConstantNumeric(expr1.expr2.value - val), self.pos).reduce()
-        if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and expr2.value == 0:
-            return expr1
+
         return BinOp(op, expr1, expr2, self.pos)
 
     def supported_by_action2(self, raise_error):
