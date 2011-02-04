@@ -27,15 +27,6 @@ class Action2Var(action2.Action2):
         self.type_byte = type_byte
         self.ranges = []
 
-    def remove_tmp_location(self, location):
-        #if we already removed the location from the list of available
-        #locations in this Action2Var, we also removed it from all
-        #referenced action2's.
-        if location not in self.tmp_locations: return
-        self.tmp_locations.remove(location)
-        #Remove it also from all referenced action2's.
-        action2.Action2.remove_tmp_location(self, location)
-
     def resolve_tmp_storage(self):
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):

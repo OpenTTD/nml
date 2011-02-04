@@ -73,8 +73,7 @@ class Action2(base_action.BaseAction):
         if location not in self.tmp_locations: return
         self.tmp_locations.remove(location)
         for act2 in self.references:
-            if isinstance(act2, Action2Var):
-                act2.remove_tmp_location(location)
+            act2.remove_tmp_location(location)
 
 def add_ref(name, pos):
     global action2_map
