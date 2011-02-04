@@ -227,9 +227,6 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
                         # get the feature of the first item in the set
                         self.feature = n.feature
                         break
-                else:
-                    # No one is referring to us. Let's face it, we're useless
-                    return False
 
                 for node in self._referencing_nodes:
                     if node.feature.value != self.feature.value:
@@ -238,6 +235,12 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
                         else:
                             msg = "Block '%s' cannot be used for feature %s (already used for feature %s)"
                         raise generic.ScriptError(msg % (self.name.value, generic.to_hex(self.feature.value, 2), generic.to_hex(node.feature.value, 2)), node.pos)
+
+                if len(self._referencing_nodes) == 0:
+                    # if we can be 'not used', there ought to be a way to refer to this block
+                    assert self.name is not None
+                    generic.print_warning("Block '%s' is not referenced, ignoring." % self.name.value, self.pos)
+
             return len(self._referencing_nodes) != 0
 
         def referenced_nodes(self):
