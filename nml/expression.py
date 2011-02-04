@@ -818,6 +818,23 @@ class SpecialCheck(Expression):
     def supported_by_actionD(self, raise_error):
         return True
 
+class GRMOp(Expression):
+    def __init__(self, op, feature, count, to_string, pos = None):
+        Expression.__init__(self, pos)
+        self.op = op
+        self.feature = feature
+        self.count = count
+        self.to_string = to_string
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
+
+    def __str__(self):
+        return self.to_string(self)
+
+    def supported_by_actionD(self, raise_error):
+        return True
+
 class SpecialParameter(Expression):
     """
     Class for handling special grf parameters.
@@ -1110,6 +1127,12 @@ def builtin_railtype(name, args, pos):
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.railtype_table:
         raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your railtype table", pos)
     return ConstantNumeric(global_constants.railtype_table[args[0].value])
+
+def builtin_reserve_sprites(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    count = args[0].reduce_constant()
+    return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, pos)
 #}
 
 function_table = {
@@ -1133,6 +1156,7 @@ function_table = {
     'str2number' : builtin_str2number,
     'cargotype' : builtin_cargotype,
     'railtype' : builtin_railtype,
+    'reserve_sprites' : builtin_reserve_sprites,
 }
 
 commutative_operators = set([

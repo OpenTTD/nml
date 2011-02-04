@@ -54,10 +54,26 @@ MINU        = Operator( True,  r'\2u<',    4, False,   None, None, False, None, 
 ROT_RIGHT   = Operator( True, r'\2ror',   17, False,   None, None, False, None, None)
 DIVU        = Operator( True,  r'\2u/',    8,  True, r'\Du/',   9, False, None, None)
 
-
 MIN.to_string = lambda expr1, expr2: 'min(%s, %s)' % (expr1, expr2)
 MAX.to_string = lambda expr1, expr2: 'max(%s, %s)' % (expr1, expr2)
 STO_TMP.to_string = lambda expr1, expr2: 'STORE_TEMP(%s, %s)' % (expr1, expr2)
 STO_PERM.to_string = lambda expr1, expr2: 'STORE_PERM(%s, %s)' % (expr1, expr2)
 HASBIT.to_string = lambda expr1, expr2: 'hasbit(%s, %s)' % (expr1, expr2)
 NOTHASBIT.to_string = lambda expr1, expr2: '!hasbit(%s, %s)' % (expr1, expr2)
+
+
+
+class GRMOperator(object):
+    def __init__(self, op_str, op_num):
+        self.op_str = op_str
+        self.op_num = op_num
+        self.value = op_num
+
+    def __str__(self):
+        return self.op_str
+
+    def write(self, file, size):
+        assert size == 1
+        file.print_bytex(self.op_num, self.op_str)
+
+GRM_RESERVE = GRMOperator(r'\DR', 0)

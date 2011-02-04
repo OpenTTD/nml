@@ -130,6 +130,34 @@ def parse_special_check(assignment):
     actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[1]))))
     return actions
 
+def parse_grm(assignment):
+    assert isinstance(assignment.value, expression.GRMOp)
+
+    action6.free_parameters.save()
+    action_list = []
+    act6 = action6.Action6()
+    assert isinstance(assignment.param, expression.Parameter)
+    target = assignment.param.num
+    if isinstance(target, expression.Parameter) and isinstance(target.num, expression.ConstantNumeric):
+        act6.modify_bytes(target.num.value, 1, 1)
+        target = expression.ConstantNumeric(0)
+    elif not isinstance(target, expression.ConstantNumeric):
+        tmp_param, tmp_param_actions = get_tmp_parameter(target)
+        act6.modify_bytes(tmp_param, 1, 1)
+        target = expression.ConstantNumeric(0)
+        action_list.extend(tmp_param_actions)
+
+    op = nmlop.ASSIGN
+    param1 = assignment.value.op
+    param2 = expression.ConstantNumeric(0xFE)
+    data = expression.ConstantNumeric(0xFF | (assignment.value.feature << 8) | (assignment.value.count << 16))
+
+    if len(act6.modifications) > 0: action_list.append(act6)
+
+    action_list.append(ActionD(target, param1, op, param2, data))
+    action6.free_parameters.restore()
+    return action_list
+
 def parse_hasbit(assignment):
     assert isinstance(assignment.value, expression.BinOp) and (assignment.value.op == nmlop.HASBIT or assignment.value.op == nmlop.NOTHASBIT)
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
@@ -235,6 +263,9 @@ def parse_actionD(assignment):
 
     if isinstance(assignment.value, expression.SpecialCheck):
         return parse_special_check(assignment)
+
+    if isinstance(assignment.value, expression.GRMOp):
+        return parse_grm(assignment)
 
     if isinstance(assignment.value, expression.BinOp):
         op = assignment.value.op
