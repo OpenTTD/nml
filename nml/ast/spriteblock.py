@@ -1,6 +1,5 @@
 from nml import expression, generic, global_constants
 from nml.actions import action1, action2, action2layout, action2real, real_sprite
-from nml.ast import general
 
 class SpriteBlock(object):
     def __init__(self, spriteset_list, pos):

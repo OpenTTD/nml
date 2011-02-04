@@ -1,4 +1,4 @@
-from nml import expression, generic, global_constants
+from nml import expression, generic
 from nml.actions import real_sprite
 
 

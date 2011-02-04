@@ -1,4 +1,4 @@
-from nml.actions import action2, action2var, action6, actionD
+from nml.actions import action2, action6, actionD
 from nml.ast import switch
 from nml import expression, nmlop
 

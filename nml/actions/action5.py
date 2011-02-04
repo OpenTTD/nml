@@ -1,4 +1,4 @@
-from nml import generic, expression
+from nml import generic
 from nml.actions import base_action, real_sprite
 
 class Action5(base_action.BaseAction):

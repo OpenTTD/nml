@@ -1,5 +1,5 @@
-from nml import grfstrings, generic
-from nml.actions import base_action, action7
+from nml import grfstrings
+from nml.actions import base_action
 
 
 class Action14(base_action.BaseAction):

@@ -1,4 +1,4 @@
-from nml import expression, nmlop, generic, free_number_list
+from nml import expression, nmlop, free_number_list
 from nml.actions import base_action, action6, actionD, action10
 
 free_labels = free_number_list.FreeNumberList(range(0xFF, 0x0F, -1))

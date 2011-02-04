@@ -1,5 +1,5 @@
 from nml import generic, expression, global_constants
-from nml.actions import actionB, action0properties
+from nml.actions import action0properties
 
 
 class TileLayout(object):
