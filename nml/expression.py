@@ -493,7 +493,7 @@ class PatchVariable(Expression):
     def debug_print(self, indentation):
         print indentation*' ' + 'PatchVariable: ' + str(self.num)
 
-    def __str__(self, indentation):
+    def __str__(self):
         return "PatchVariable(%d)" % self.num
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
