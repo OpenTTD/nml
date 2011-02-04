@@ -190,6 +190,8 @@ class BinOp(Expression):
         self.expr2.debug_print(indentation + 2)
 
     def __str__(self):
+        if self.op == nmlop.SUB and isinstance(self.expr1, ConstantNumeric) and self.expr1.value == 0:
+            return '-' + str(self.expr2)
         return self.op.to_string(self.expr1, self.expr2)
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
