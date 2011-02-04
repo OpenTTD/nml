@@ -154,6 +154,8 @@ class SpriteLayout(spritelayout_base_class):
     def __init__(self, name, param_list, layout_sprite_list, pos = None):
         self.initialize(name)
         self.param_list = param_list
+        if len(param_list) != 0:
+            generic.print_warning("spritelayout parameters are not (yet) supported, ignoring.", pos)
         self.layout_sprite_list = layout_sprite_list
         self.pos = pos
         self.parsed = False
