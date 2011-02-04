@@ -1,5 +1,5 @@
-from nml import generic, expression
-from nml.actions import action2
+from nml import generic, expression, nmlop
+from nml.actions import action2, action6, actionD
 
 class Action2Layout(action2.Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
@@ -62,7 +62,7 @@ class Action2LayoutSprite(object):
         self.params = {
             'sprite'      : {'value': 0,  'validator': self._validate_sprite},
             'ttdsprite'   : {'value': 0,  'validator': self._validate_ttdsprite},
-            'recolour'     : {'value': 0,  'validator': self._validate_recolour},
+            'recolour'    : {'value': expression.ConstantNumeric(0), 'validator': self._validate_recolour},
             'always_draw' : {'value': 0,  'validator': self._validate_always_draw},
             'xoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
             'yoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
@@ -80,11 +80,14 @@ class Action2LayoutSprite(object):
             raise generic.ScriptError("Either 'sprite' or 'ttdsprite' must be set for this layout sprite", self.pos)
         sprite_num = self.get_param('ttdsprite') if self.is_set('ttdsprite') else self.get_param('sprite') | (1 << 31)
         recolour = self.get_param('recolour')
-        if recolour == -1:
-            sprite_num |= 1 << 14
-        elif recolour != 0:
+        if isinstance(recolour, expression.ConstantNumeric):
+            if recolour.value == -1:
+                sprite_num |= 1 << 14
+            elif recolour.value != 0:
+                sprite_num |= 1 << 15
+                sprite_num |= recolour.value << 16
+        else:
             sprite_num |= 1 << 15
-            sprite_num |= recolour << 16
         if self.get_param('always_draw'):
             sprite_num |= 1 << 30
         return sprite_num
@@ -140,10 +143,10 @@ class Action2LayoutSprite(object):
         return value.value
 
     def _validate_recolour(self, name, value):
-        if not isinstance(value, expression.ConstantNumeric):
-            raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
-        generic.check_range(value.value, -1, (1 << 14) - 1, "recolour", value.pos)
-        return value.value
+        if isinstance(value, expression.ConstantNumeric):
+            generic.check_range(value.value, -1, (1 << 14) - 1, "recolour", value.pos)
+        value.supported_by_actionD(True)
+        return value
 
     def _validate_always_draw(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
@@ -205,4 +208,30 @@ def get_layout_action2s(spritegroup):
         ground_sprite = Action2LayoutSprite(Action2LayoutSpriteType.GROUND)
         ground_sprite.set_param(expression.Identifier('ttdsprite'), expression.ConstantNumeric(0))
 
-    return [Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)]
+    action6.free_parameters.save()
+    actions = []
+    act6 = action6.Action6()
+
+    offset = 6
+    if not isinstance(ground_sprite.get_param('recolour'), expression.ConstantNumeric):
+        orig_palette = expression.ConstantNumeric(ground_sprite.get_sprite_number() >> 16)
+        param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, ground_sprite.get_param('recolour'), orig_palette).reduce())
+        actions.extend(extra_actions)
+        act6.modify_bytes(param, 2, offset)
+    offset += 4
+
+    for sprite in building_sprites:
+        if not isinstance(sprite.get_param('recolour'), expression.ConstantNumeric):
+            orig_palette = expression.ConstantNumeric(sprite.get_sprite_number() >> 16)
+            param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, sprite.get_param('recolour'), orig_palette).reduce())
+            actions.extend(extra_actions)
+            act6.modify_bytes(param, 2, offset)
+        offset += 7 if sprite.type == Action2LayoutSpriteType.CHILD else 10
+
+    if len(act6.modifications) > 0:
+        actions.append(act6)
+
+    actions.append(Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites))
+
+    action6.free_parameters.restore()
+    return actions
