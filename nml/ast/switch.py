@@ -193,55 +193,98 @@ random_types = {
     'BACKWARD_SAMEID' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0xC0},
 }
 
-def parse_randomswitch(random_switch):
-    feature = random_switch.feature.value
+def parse_randomswitch_type(feature, type):
+    """
+    Parse the type of a random switch to determine the type and random bits to use.
 
-    #parse type
-    if isinstance(random_switch.type, expression.Identifier):
-        type_name = random_switch.type.value
+    @param feature: Feature of this random switch
+    @type feature: C{ConstantNumeric}
+
+    @param type: Type of the random switch
+    @type type: L{Expression}
+
+    @return: A tuple containing the following (in order):
+                - The type byte of the resulting random action2.
+                - The type (bit 6+7) of the randomact2 <count>, None if N/A.
+                - An expression making bit 0..3 of <count>, None if N/A.
+                - The first random bit that should be used (often 0)
+                - The number of random bits available
+    @rtype: C{tuple} of (C{int}, C{int} or C{None}, L{Expression} or C{None}, C{int}, C{int})
+    """
+    # Extract type name and possible argument
+    if isinstance(type, expression.Identifier):
+        type_name = type.value
         type_param = None
-    elif isinstance(random_switch.type, expression.FunctionCall):
-        type_name = random_switch.type.name.value
-        if len(random_switch.type.params) == 0:
+    elif isinstance(type, expression.FunctionCall):
+        type_name = type.name.value
+        if len(type.params) == 0:
             type_param = None
-        elif len(random_switch.type.params) == 1:
-            type_param = random_switch.type.params[0]
+        elif len(type.params) == 1:
+            type_param = type.params[0]
         else:
-            raise generic.ScriptError("Value for random_switch parameter 2 'type' can have only one parameter.", random_switch.type.pos)
+            raise generic.ScriptError("Value for random_switch parameter 2 'type' can have only one parameter.", type.pos)
     else:
-        raise generic.ScriptError("random_switch parameter 2 'type' should be an identifier, possibly with a parameter.", random_switch.type.pos)
-    if type_name in random_types:
-        if type_param is None:
-            if random_types[type_name]['param'] == 1:
-                raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' requires a parameter." % type_name, random_switch.type.pos)
-            count_type = None
-        else:
-            if random_types[type_name]['param'] == 0:
-                raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' should not have a parameter." % type_name, random_switch.type.pos)
-            if not (0 <= feature <= 3):
-                raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' is valid only for vehicles." % type_name, random_switch.type.pos)
-            count_type = random_types[type_name]['value']
-            count_expr = type_param
-        type = random_types[type_name]['type']
-        bit_range = random_types[type_name]['range']
+        raise generic.ScriptError("random_switch parameter 2 'type' should be an identifier, possibly with a parameter.", type.pos)
+
+    # Validate type name / param combination
+    if type_name not in random_types:
+        raise generic.ScriptError("Unrecognized value for random_switch parameter 2 'type': " + type_name, type.pos)
+
+    if type_param is None:
+        # No param given
+        if random_types[type_name]['param'] == 1:
+            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' requires a parameter." % type_name, type.pos)
+        count_type = None
+        count_expr = None
     else:
-        raise generic.ScriptError("Unrecognized value for random_switch parameter 2 'type': " + type_name, random_switch.type.pos)
+        # Param given
+        if random_types[type_name]['param'] == 0:
+            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' should not have a parameter." % type_name, type.pos)
+        if not (0 <= feature.value <= 3):
+            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' is valid only for vehicles." % type_name, type.pos)
+        count_type = random_types[type_name]['value']
+        count_expr = type_param
+
+    # Determine type byte
+    type = random_types[type_name]['type']
+    bit_range = random_types[type_name]['range']
     assert (type == 0x84) == (count_type is not None)
 
-    if feature not in num_random_bits:
-        raise generic.ScriptError("Invalid feature for random_switch: " + str(feature), random_switch.feature.pos)
-    if type == 0x83: feature = action2var_variables.varact2parent_scope[feature]
-    if feature is None:
-        raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % random_switch.feature.value, random_switch.feature.pos)
-    if bit_range != 0 and feature not in (0x04, 0x11):
-        raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.", random_switch.pos)
-    bits_available = num_random_bits[feature][bit_range]
-    start_bit = sum(num_random_bits[feature][0:bit_range])
-    if bits_available == 0:
-        raise generic.ScriptError("No random data is available for the given feature and scope, feature: " + str(feature), random_switch.feature.pos)
+    # Check that feature / type combination is valid
+    feature_val = feature.value
+    if feature_val not in num_random_bits:
+        raise generic.ScriptError("Invalid feature for random_switch: " + str(feature_val), feature.pos)
+    if type == 0x83: feature_val = action2var_variables.varact2parent_scope[feature_val]
+    if feature_val is None:
+        raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % feature.value, type.pos)
+    if bit_range != 0 and feature_val not in (0x04, 0x11):
+        raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.", type.pos)
 
+    # Determine random bits to use
+    bits_available = num_random_bits[feature_val][bit_range]
+    start_bit = sum(num_random_bits[feature_val][0:bit_range])
+    if bits_available == 0:
+        raise generic.ScriptError("No random data is available for the given feature and scope, feature: " + str(feature_val), feature.pos)
+
+    return type, count_type, count_expr, start_bit, bits_available
+
+def parse_randomswitch_choices(random_switch):
+    """
+    Parse all choices of a randomswitch block,
+    and determine the total probability and number of random choices needed.
+
+    @param random_switch: RandomSwitch block to parse
+    @type random_switch: L{RandomSwitch}
+
+    @return: A tuple containing the following:
+                - Total probability of all choices
+                - Number of random choices that will be needed
+    """
     #determine total probability
     total_prob = 0
+    if len(random_switch.choices) == 0:
+        raise generic.ScriptError("random_switch requires at least one possible choice", random_switch.pos)
+
     for choice in random_switch.choices:
         total_prob += choice.probability.value
         #make reference
@@ -250,17 +293,36 @@ def parse_randomswitch(random_switch):
                 action2.add_ref(choice.result)
         elif not isinstance(choice.result, expression.ConstantNumeric):
             raise generic.ScriptError("Invalid return value in random_switch.", choice.result.pos)
-    if len(random_switch.choices) == 0:
-        raise generic.ScriptError("random_switch requires at least one possible choice", random_switch.pos)
-    assert total_prob > 0
+    assert total_prob > 0 # RandomChoice enforces that individual probabilities are > 0
 
-    #How many random bits are needed ?
+    # How many random choices are needed ?
+    # This is equal to total_prob rounded up to the nearest power of 2
     nrand = 1
     while nrand < total_prob: nrand <<= 1
-    #verify that enough random data is available
-    if min(1 << bits_available, 0x80) < nrand:
-        raise generic.ScriptError("The maximum sum of all random_switch probabilities is %d, encountered %d." % (min(1 << bits_available, 0x80), total_prob), random_switch.pos)
 
+    return total_prob, nrand
+
+def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nrand):
+    """
+    Handle the dependencies between random chains to determine the random bits to use
+
+    @param random_switch: Random switch to parse
+    @type random_switch: L{RandomSwitch}
+
+    @param start_bit: First available random bit
+    @type start_bit: C{int}
+
+    @param bits_available: Number of random bits available
+    @type bits_available: C{int}
+
+    @param nrand: Number of random choices to use
+    @type nrand: C{int}
+
+    @return: A tuple of two values:
+                - The first random bit to use
+                - The number of random choices to use. This may be higher the the original amount passed as paramter
+    @rtype: C{tuple} of (C{int}, C{int})
+    """
     #Dependent random chains
     act2_to_copy = None
     for dep in random_switch.dependent:
@@ -311,6 +373,28 @@ def parse_randomswitch(random_switch):
                 break
         else:
             raise generic.ScriptError("Independence of all given random_switches is not possible for random_switch '%s'." % random_switch.name.value, random_switch.pos)
+
+    return randbit, nrand
+
+def parse_randomswitch(random_switch):
+    """
+    Parse a randomswitch block into actions
+
+    @param random_switch: RandomSwitch block to parse
+    @type random_switch: L{RandomSwitch}
+
+    @return: List of actions
+    @rtype: C{list} of L{BaseAction}
+    """
+    type, count_type, count_expr, start_bit, bits_available = parse_randomswitch_type(random_switch.feature, random_switch.type)
+
+    total_prob, nrand = parse_randomswitch_choices(random_switch)
+
+    # Verify that enough random data is available
+    if min(1 << bits_available, 0x80) < nrand:
+        raise generic.ScriptError("The maximum sum of all random_switch probabilities is %d, encountered %d." % (min(1 << bits_available, 0x80), total_prob), random_switch.pos)
+
+    randbit, nrand = parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nrand)
 
     #divide the 'extra' probabilities in an even manner
     i = 0
