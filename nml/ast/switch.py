@@ -338,8 +338,14 @@ def parse_randomswitch(random_switch):
             need_varact2 = True
         except generic.ScriptError:
             need_varact2 = True
-        count = count_type if need_varact2 else count_type | expr.value
-        name = random_switch.name.value + '@random'
+        count = count_type
+        name = random_switch.name.value
+        if need_varact2:
+            # our own name will be used by the varaction2 we're going to add
+            name += '@random'
+        else:
+            # add the value to the 'count' parameter
+            count |= expr.value
     else:
         count = None
         name = random_switch.name.value
