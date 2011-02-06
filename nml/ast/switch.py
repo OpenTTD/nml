@@ -7,6 +7,7 @@ var_ranges = {
     'PARENT' : 0x8A
 }
 
+# Used by Switch and RandomSwitch
 switch_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, True)
 
 class Switch(switch_base_class):
@@ -109,19 +110,27 @@ class RandomSwitch(switch_base_class):
                 if choice.probability.value == 'independent':
                     if (not isinstance(choice.result, action2.SpriteGroupRef)) or len(choice.result.param_list) > 0:
                         raise generic.ScriptError("Value for 'independent' should be an identifier", choice.result.pos)
-                    self.independent.append(choice.result.name)
+                    self.independent.append(choice.result)
                     continue
                 elif choice.probability.value == 'dependent':
                     if (not isinstance(choice.result, action2.SpriteGroupRef)) or len(choice.result.param_list) > 0:
                         raise generic.ScriptError("Value for 'dependent' should be an identifier", choice.result.pos)
-                    self.dependent.append(choice.result.name)
+                    self.dependent.append(choice.result)
                     continue
                 else:
                     assert False, "NOT REACHED"
             self.choices.append(choice)
-        self.pos = pos
 
-    # pre_process is defined by the base class
+        self.pos = pos
+        self.random_action2 = None # set during parsing
+
+    def pre_process(self):
+        switch_base_class.pre_process(self)
+        # Make sure, all [in]dependencies refer to existing random switch blocks
+        for dep in self.dependent + self.independent:
+            spritegroup = action2.resolve_spritegroup(dep.name)
+            if not isinstance(spritegroup, RandomSwitch):
+                raise generic.ScriptError("Value of (in)dependent '%s' should refer to a random_switch." % dep.name.value, dep.pos)
 
     def collect_references(self):
         all_refs = []
@@ -139,9 +148,11 @@ class RandomSwitch(switch_base_class):
         print (2+indentation)*' ' + 'Triggers:'
         self.triggers.debug_print(indentation + 4)
         for dep in self.dependent:
-            print (2+indentation)*' ' + 'Dependent on:', dep.value
+            print (2+indentation)*' ' + 'Dependent on:'
+            dep.debug_print(indentation + 4)
         for indep in self.independent:
-            print (2+indentation)*' ' + 'Independent from:', indep.value
+            print (2+indentation)*' ' + 'Independent from:'
+            indep.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Choices:'
         for choice in self.choices:
             choice.debug_print(indentation + 4)
@@ -302,6 +313,22 @@ def parse_randomswitch_choices(random_switch):
 
     return total_prob, nrand
 
+def lookup_random_action2(sg_ref):
+    """
+    Lookup a sprite group reference to find the corresponding random action2
+
+    @param sg_ref: Reference to random action2
+    @type sg_ref: L{SpriteGroupRef}
+
+    @return: Random action2 corresponding to this sprite group, or None if N/A
+    @rtype: L{Action2Random} or C{None}
+    """
+    spritegroup = action2.resolve_spritegroup(sg_ref.name)
+    assert isinstance(spritegroup, RandomSwitch) # Already checked in pre-processing
+    act2 = spritegroup.random_action2
+    assert isinstance(act2, action2random.Action2Random)
+    return act2
+
 def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nrand):
     """
     Handle the dependencies between random chains to determine the random bits to use
@@ -326,11 +353,8 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
     #Dependent random chains
     act2_to_copy = None
     for dep in random_switch.dependent:
-        if dep.value not in action2.action2_map:
-            raise generic.ScriptError("Unknown identifier of random_switch: " + dep.value, dep.pos)
-        act2 = action2.action2_map[dep.value]
-        if not isinstance(act2, action2random.Action2Random):
-            raise generic.ScriptError("Value for 'dependent' (%s) should refer to another random_switch" % dep.value, dep.pos)
+        act2 = lookup_random_action2(dep)
+        if act2 is None: continue # May happen if said random switch is not used and therefore not parsed
         if act2_to_copy is not None:
             if act2_to_copy.randbit != act2.randbit:
                 raise generic.ScriptError("random_switch '%s' cannot be dependent on both '%s' and '%s' as these are independent of eachother." %
@@ -353,11 +377,8 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
     #INdependent random chains
     possible_mask = ((1 << bits_available) - 1) << start_bit
     for indep in random_switch.independent:
-        if indep.value not in action2.action2_map:
-            raise generic.ScriptError("Unknown identifier of random_switch: " + indep.value, indep.pos)
-        act2 = action2.action2_map[indep.value]
-        if not isinstance(act2, action2random.Action2Random):
-            raise generic.ScriptError("Value for 'independent' (%s) should refer to another random_switch" % indep.value, indep.pos)
+        act2 = lookup_random_action2(indep)
+        if act2 is None: continue # May happen if said random switch is not used and therefore not parsed
         possible_mask &= ~((act2.nrand - 1) << act2.randbit)
 
     required_mask = nrand - 1
@@ -433,7 +454,10 @@ def parse_randomswitch(random_switch):
     else:
         count = None
         name = random_switch.name.value
-    action_list = [action2random.Action2Random(random_switch.feature.value, name, type, count, random_switch.triggers.value, randbit, nrand, random_switch.choices)]
+
+    random_action2 = action2random.Action2Random(random_switch.feature.value, name, type, count, random_switch.triggers.value, randbit, nrand, random_switch.choices)
+    action_list = [random_action2]
+    random_switch.random_action2 = random_action2
 
     if need_varact2:
         #Add varaction2 that stores count_expr in temporary register 0x100
