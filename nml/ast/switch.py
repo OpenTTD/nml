@@ -247,7 +247,7 @@ def parse_randomswitch(random_switch):
         #make reference
         if isinstance(choice.result, action2.SpriteGroupRef):
             if choice.result.name.value != 'CB_FAILED':
-                action2.add_ref(choice.result.name.value, choice.result.pos)
+                action2.add_ref(choice.result)
         elif not isinstance(choice.result, expression.ConstantNumeric):
             raise generic.ScriptError("Invalid return value in random_switch.", choice.result.pos)
     if len(random_switch.choices) == 0:

@@ -75,16 +75,41 @@ class Action2(base_action.BaseAction):
         for act2 in self.references:
             act2.remove_tmp_location(location)
 
-def add_ref(name, pos):
-    global action2_map
-    if name not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name, pos)
-    action2_map[name].num_refs += 1
-    return action2_map[name]
+def add_ref(ref):
+    """
+    Add a reference to a certain action2.
+    This is needed so we can correctly reserve / free action2 IDs later on.
+    To be called when creating the actions from the AST.
 
-def remove_ref(name):
-    if name == 'CB_FAILED': return 0
+    @param ref: Reference to the sprite group that corresponds to the action2.
+    @type ref: L{SpriteGroupRef}
+
+    @return: A reference to the action 2.
+    @rtype: L{Action2}
+    """
+    global action2_map
+    name_str = ref.name.value
+    if name_str not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name_str, ref.pos)
+    action2_map[name_str].num_refs += 1
+    return action2_map[name_str]
+
+def remove_ref(ref):
+    """
+    Remove a reference to a certain action2.
+    If there are no further references to this action2, it's ID will be freed,
+    so it can be re-used.
+    To be called during prepare_output.
+
+    @param ref: Reference to the sprite group that corresponds to the action2.
+    @type ref: L{SpriteGroupRef}
+
+    @return: The numeric ID of the action2.
+    @rtype: C{int}
+    """
+    name_str = ref.name.value
+    if name_str == 'CB_FAILED': return 0 # ID 0 is never used so it works as a failure code
     global action2_map, free_action2_ids
-    act2 = action2_map[name]
+    act2 = action2_map[name_str]
     id = act2.id
     act2.num_refs -= 1
     if act2.num_refs == 0: free_action2_ids.append(act2.id)
@@ -361,6 +386,9 @@ class SpriteGroupRef(object):
 
     @ivar param_list: List of parameters to be passed
     @type param_list: C{list} of L{Expression}
+
+    @ivar pos: Position of this reference
+    @type pos: L{Position}
     """
     def __init__(self, name, param_list, pos):
         self.name = name

@@ -41,11 +41,11 @@ class Action2Var(action2.Action2):
 
         for r in self.ranges:
             if isinstance(r.result, action2.SpriteGroupRef):
-                r.result = action2.remove_ref(r.result.name.value)
+                r.result = action2.remove_ref(r.result)
             else:
                 r.result = r.result.value | 0x8000
         if isinstance(self.default_result, action2.SpriteGroupRef):
-            self.default_result = action2.remove_ref(self.default_result.name.value)
+            self.default_result = action2.remove_ref(self.default_result)
         else:
             self.default_result = self.default_result.value | 0x8000
 
@@ -582,16 +582,17 @@ def parse_result(value, action_list, act6, offset, varaction2, return_action, sw
         comment = "return;"
         if len(switch_block.body.ranges) != 0:
             if return_action is None: return_action = make_return_varact2(switch_block)
-            act2 = action2.add_ref(return_action.name, switch_block.pos)
+            # Make SpriteGroupRef
+            result = make_return_ref(return_action.name, switch_block.pos)
+            act2 = action2.add_ref(result)
             assert return_action == act2
             varaction2.references.add(act2)
-            result = make_return_ref(return_action.name, switch_block.pos)
         else:
             result = make_return_ref('CB_FAILED', switch_block.pos)
     elif isinstance(value, action2.SpriteGroupRef):
         comment = value.name.value + ';'
         if value.name.value != 'CB_FAILED':
-            act2 = action2.add_ref(value.name.value, value.pos)
+            act2 = action2.add_ref(value)
             varaction2.references.add(act2)
         result = value
     elif isinstance(value, expression.ConstantNumeric):
