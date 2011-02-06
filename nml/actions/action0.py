@@ -132,7 +132,9 @@ def parse_property_block(prop_list, feature, id):
         action0.prop_list.extend(properties)
 
     if len(act6.modifications) > 0: action_list.append(act6)
-    action_list.append(action0)
+    if len(action0.prop_list) != 0:
+        action_list.append(action0)
+
     action_list.extend(action_list_append)
 
     action6.free_parameters.restore()
