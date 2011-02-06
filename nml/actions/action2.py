@@ -21,8 +21,10 @@ class Action2(base_action.BaseAction):
     @ivar id: Number of this action2.
     @type id: C{int}, or C{None} if no number is allocated yet.
 
-    @ivar references: All Action2's that are references by this Action2.
-    @type references: C{set}
+    @ivar references: All Action2s that are referenced by this Action2.
+                      Keys are referenced Action2s, values are true iff
+                      it's referenced as a procedure call, false otherwise.
+    @type references: C{dict} that maps L{Action2} to C{bool}
 
     @ivar tmp_locations: List of address in the temporary storage that are free
                          to be used in this varaction2.
@@ -38,7 +40,7 @@ class Action2(base_action.BaseAction):
         self.name = name
         self.num_refs = 0
         self.id = None
-        self.references = set()
+        self.references = {}
         #0x00 - 0x7F: available to user
         #0x80 - 0x85: used for production CB
         #0x86 - 0x100: available as temp. registers
@@ -75,7 +77,7 @@ class Action2(base_action.BaseAction):
         for act2 in self.references:
             act2.remove_tmp_location(location)
 
-def add_ref(ref):
+def add_ref(ref, source_act2 = None, reference_as_proc = False):
     """
     Add a reference to a certain action2.
     This is needed so we can correctly reserve / free action2 IDs later on.
@@ -84,14 +86,31 @@ def add_ref(ref):
     @param ref: Reference to the sprite group that corresponds to the action2.
     @type ref: L{SpriteGroupRef}
 
+    @param source_act2: Source action2 that contains the reference, or C{None}
+                        if source is not an action2.
+    @type source_act2: L{Action2} or C{None}
+
+    @param reference_as_proc: True iff the reference source is a procedure call,
+                              which needs special precautions for temp registers.
+    @type reference_as_proc: C{bool}
+
     @return: A reference to the action 2.
     @rtype: L{Action2}
     """
     global action2_map
     name_str = ref.name.value
     if name_str not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name_str, ref.pos)
-    action2_map[name_str].num_refs += 1
-    return action2_map[name_str]
+    act2 = action2_map[name_str]
+
+    # Add reference to list of reference of the source action2, if applicable
+    if source_act2 is not None:
+        if act2 in source_act2.references:
+            source_act2.references[act2] |= reference_as_proc
+        else:
+            source_act2.references[act2] = reference_as_proc
+
+    act2.num_refs += 1
+    return act2
 
 def remove_ref(ref):
     """

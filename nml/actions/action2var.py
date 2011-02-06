@@ -584,16 +584,14 @@ def parse_result(value, action_list, act6, offset, varaction2, return_action, sw
             if return_action is None: return_action = make_return_varact2(switch_block)
             # Make SpriteGroupRef
             result = make_return_ref(return_action.name, switch_block.pos)
-            act2 = action2.add_ref(result)
+            act2 = action2.add_ref(result, varaction2)
             assert return_action == act2
-            varaction2.references.add(act2)
         else:
             result = make_return_ref('CB_FAILED', switch_block.pos)
     elif isinstance(value, action2.SpriteGroupRef):
         comment = value.name.value + ';'
         if value.name.value != 'CB_FAILED':
-            act2 = action2.add_ref(value)
-            varaction2.references.add(act2)
+            act2 = action2.add_ref(value, varaction2)
         result = value
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value
