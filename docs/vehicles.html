@@ -200,7 +200,8 @@ refitting properties is set.</p>
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>SPRITE_ID_NEW_TRAIN</td><td>defines base set spriteID to use or this constant</td></tr>
 <tr><td> speed<td> 0 ... 65000 (speed units)<td>Max speed for engines, speed limit for wagons
-<tr><td> misc_flags</td><td> bitmask(TRAIN_FLAG_XXX, ...)</td><td>XXX=[TILT | 2CC | MU]</td></tr>
+<tr><td> misc_flags</td><td> bitmask(TRAIN_FLAG_XXX, ...)</td><td>XXX=[TILT | 2CC | MU | FLIP] which allows the train to enjoy the tilt bonus, use the 
+2nd company colour, act as a multiple unit or allow the vehicle to be flipped (reversed) in the depot</td></tr>
 <tr><td> refit_cost<td> <td> in 50% units of the purchase price cost base
 <tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [VISUAL_EFFECT_AND_POWERED | WAGON_LENGTH | REFITTED_CAPACITY | LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 

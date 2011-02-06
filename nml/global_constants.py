@@ -124,6 +124,7 @@ constant_numbers = {
     'TRAIN_FLAG_TILT' : 0,
     'TRAIN_FLAG_2CC'  : 1,
     'TRAIN_FLAG_MU'   : 2,
+    'TRAIN_FLAG_FLIP' : 3,
 
     #roadveh misc flags
     'ROADVEH_FLAG_TRAM' : 0,
