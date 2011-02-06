@@ -31,7 +31,7 @@ class Action2Var(action2.Action2):
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):
                 location = self.tmp_locations[0]
-                self.remove_tmp_location(location)
+                self.remove_tmp_location(location, False)
                 var.mask = expression.ConstantNumeric(location)
 
     def prepare_output(self):

@@ -66,16 +66,26 @@ class Action2(base_action.BaseAction):
     def skip_action9(self):
         return False
 
-    def remove_tmp_location(self, location):
+    def remove_tmp_location(self, location, force_recursive):
         """
         Recursively remove a location from the list of available temporary
         storage locations. It is not only removed from the the list of the
-        current Action2Var but also from all Action2Var it calls.
+        current Action2Var but also from all Action2Var it calls. If an
+        Action2Var is referenced as a procedure call, the location is always
+        removed recursively, otherwise only if force_recursive is True.
+
+        @param location: Number of the storage register to remove.
+        @type location: C{int}
+
+        @param force_recursive: Force removing this location recursively,
+                                also for 'chained' action2s.
+        @type force_recursive: C{bool}
         """
         if location not in self.tmp_locations: return
         self.tmp_locations.remove(location)
         for act2 in self.references:
-            act2.remove_tmp_location(location)
+            if force_recursive or self.references[act2]:
+                act2.remove_tmp_location(location, True)
 
 def add_ref(ref, source_act2 = None, reference_as_proc = False):
     """
