@@ -29,7 +29,7 @@ setup(name='nml',
                      'Programming Language :: Python',
                      'Topic :: Software Development :: Compilers',
                      ],
-      packages=['nml', 'nml.actions', 'nml.ast'],
+      packages=['nml', 'nml.actions', 'nml.ast', 'nml.expression'],
       url='http://dev.openttdcoop.org/projects/nml',
       scripts=['nmlc'],
       )
