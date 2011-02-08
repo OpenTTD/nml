@@ -8,11 +8,12 @@ grf {
 
 spritelayout dirt_runway_sw_snow {
 	building {
-		ttdsprite: 0xA68;
-		yoffset:   0x0F;
-		yextent:   1;
-		zextent:   6;
-		palette:   0;
+		ttdsprite:     0xA68;
+		yoffset:       0x0F;
+		yextent:       1;
+		zextent:       6;
+		recolour_mode: RECOLOUR_TRANSPARENT;
+		palette:       PALETTE_TRANSPARENT;
 	}
 }
 

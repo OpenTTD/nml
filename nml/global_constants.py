@@ -609,8 +609,14 @@ constant_numbers = {
     'ZOOM_LEVEL_Z1'                         : 1,
     'ZOOM_LEVEL_Z2'                         : 2,
 
-    #Transparant recolouring
-    'TRANSPARANT'                           : -1,
+    # Recolour modes for layout sprites
+    'RECOLOUR_NONE'                         : 0,
+    'RECOLOUR_TRANSPARENT'                  : 1,
+    'RECOLOUR_REMAP'                        : 2,
+
+    # Possible values for palette
+    'PALETTE_ITEM_COLOUR'                   : 0,
+    'PALETTE_TRANSPARENT'                   : 802,
 
     # Town growth effect of cargo
     'TOWNGROWTH_PASSENGERS'                 : 0x00,

@@ -60,34 +60,45 @@ class Action2LayoutSprite(object):
         self.type = type
         self.pos = pos
         self.params = {
-            'sprite'      : {'value': 0,  'validator': self._validate_sprite},
-            'ttdsprite'   : {'value': 0,  'validator': self._validate_ttdsprite},
-            'palette'     : {'value': expression.ConstantNumeric(0), 'validator': self._validate_palette},
-            'always_draw' : {'value': 0,  'validator': self._validate_always_draw},
-            'xoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
-            'yoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
-            'zoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
-            'xextent'     : {'value': 16, 'validator': self._validate_bounding_box},
-            'yextent'     : {'value': 16, 'validator': self._validate_bounding_box},
-            'zextent'     : {'value': 16, 'validator': self._validate_bounding_box}
+            'sprite'        : {'value': 0,  'validator': self._validate_sprite},
+            'ttdsprite'     : {'value': 0,  'validator': self._validate_ttdsprite},
+            'recolour_mode' : {'value': 0,  'validator': self._validate_recolour_mode},
+            'palette'       : {'value': expression.ConstantNumeric(0), 'validator': self._validate_palette},
+            'always_draw'   : {'value': 0,  'validator': self._validate_always_draw},
+            'xoffset'       : {'value': 0,  'validator': self._validate_bounding_box},
+            'yoffset'       : {'value': 0,  'validator': self._validate_bounding_box},
+            'zoffset'       : {'value': 0,  'validator': self._validate_bounding_box},
+            'xextent'       : {'value': 16, 'validator': self._validate_bounding_box},
+            'yextent'       : {'value': 16, 'validator': self._validate_bounding_box},
+            'zextent'       : {'value': 16, 'validator': self._validate_bounding_box}
         }
         for i in self.params:
             self.params[i]['is_set'] = False
 
     def get_sprite_number(self):
+        # Layout of sprite number
+        # bit  0 - 13: Sprite number
+        # bit 14 - 15: Recolour mode (normal/transparent/remap)
+        # bit 16 - 29: Palette sprite number
+        # bit 30: Always draw sprite, even in transparent mode
+        # bit 31: This is a custom sprite (from action1), not a TTD sprite
         assert not (self.is_set('sprite') and self.is_set('ttdsprite'))
         if not (self.is_set('sprite') or self.is_set('ttdsprite')):
             raise generic.ScriptError("Either 'sprite' or 'ttdsprite' must be set for this layout sprite", self.pos)
+
+        # Make sure that recolouring is set correctly
+        if self.get_param('recolour_mode') == 0 and self.is_set('palette'):
+            raise generic.ScriptError("'palette' may not be set when 'recolour_mode' is RECOLOUR_NONE.")
+        elif self.get_param('recolour_mode') != 0 and not self.is_set('palette'):
+            raise generic.ScriptError("'palette' must be set when 'recolour_mode' is not set to RECOLOUR_NONE.")
+
         sprite_num = self.get_param('ttdsprite') if self.is_set('ttdsprite') else self.get_param('sprite') | (1 << 31)
+        sprite_num |= self.get_param('recolour_mode') << 14
+
         palette = self.get_param('palette')
         if isinstance(palette, expression.ConstantNumeric):
-            if palette.value == -1:
-                sprite_num |= 1 << 14
-            elif palette.value != 0:
-                sprite_num |= 1 << 15
-                sprite_num |= palette.value << 16
-        else:
-            sprite_num |= 1 << 15
+           sprite_num |= palette.value << 16
+
         if self.get_param('always_draw'):
             sprite_num |= 1 << 30
         return sprite_num
@@ -142,9 +153,17 @@ class Action2LayoutSprite(object):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
         return value.value
 
+    def _validate_recolour_mode(self, name, value):
+        if not isinstance(value, expression.ConstantNumeric):
+            raise generic.ScriptError("Expected a compile-time constant.", value.pos)
+
+        if not value.value in (0, 1, 2):
+            raise generic.ScriptError("Value of 'recolour_mode' must be RECOLOUR_NONE, RECOLOUR_TRANSPARENT or RECOLOUR_REMAP.")
+        return value.value
+
     def _validate_palette(self, name, value):
         if isinstance(value, expression.ConstantNumeric):
-            generic.check_range(value.value, -1, (1 << 14) - 1, "palette", value.pos)
+            generic.check_range(value.value, 0, (1 << 14) - 1, "palette", value.pos)
         value.supported_by_actionD(True)
         return value
 

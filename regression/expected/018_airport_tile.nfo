@@ -17,7 +17,7 @@
 2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 // Name: dirt_runway_sw_snow
 3 * 18 02 11 FE \b1 \dx00000000 
-\dx00000A68 \b0 \b15 \b0 \b16 \b1 \b6 
+\dx03224A68 \b0 \b15 \b0 \b16 \b1 \b6 
 
 4 * 7 03 11 01 00 \b0 
 \wx00FE 
