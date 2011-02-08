@@ -151,11 +151,14 @@ class Action2LayoutSprite(object):
     def _validate_always_draw(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
             raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
+        # Not valid for ground sprites, raise error
+        if self.type == Action2LayoutSpriteType.GROUND:
+            raise generic.ScriptError("'always_draw' may not be set for groundsprites, these are always drawn anyways.", value.pos)
 
         if value.value not in (0, 1):
             raise generic.ScriptError("Value of 'always_draw' should be 0 or 1", value.pos)
         #bit has no effect for ground sprites but should be left empty, so ignore it
-        return value.value if self.type != Action2LayoutSpriteType.GROUND else 0
+        return value.value
 
     def _validate_bounding_box(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
