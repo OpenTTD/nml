@@ -12,7 +12,7 @@ spritelayout obj_basic_tile {
 	}
 	building {
 		ttdsprite : 2632;
-		recolour  : 0;
+		palette   : 0;
 		xextent   : 16;
 		yextent   : 16;
 		zextent   : 30;

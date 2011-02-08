@@ -12,7 +12,7 @@ spritelayout dirt_runway_sw_snow {
 		yoffset:   0x0F;
 		yextent:   1;
 		zextent:   6;
-		recolour:  0;
+		palette:   0;
 	}
 }
 

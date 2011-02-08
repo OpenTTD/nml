@@ -62,7 +62,7 @@ class Action2LayoutSprite(object):
         self.params = {
             'sprite'      : {'value': 0,  'validator': self._validate_sprite},
             'ttdsprite'   : {'value': 0,  'validator': self._validate_ttdsprite},
-            'recolour'    : {'value': expression.ConstantNumeric(0), 'validator': self._validate_recolour},
+            'palette'     : {'value': expression.ConstantNumeric(0), 'validator': self._validate_palette},
             'always_draw' : {'value': 0,  'validator': self._validate_always_draw},
             'xoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
             'yoffset'     : {'value': 0,  'validator': self._validate_bounding_box},
@@ -79,13 +79,13 @@ class Action2LayoutSprite(object):
         if not (self.is_set('sprite') or self.is_set('ttdsprite')):
             raise generic.ScriptError("Either 'sprite' or 'ttdsprite' must be set for this layout sprite", self.pos)
         sprite_num = self.get_param('ttdsprite') if self.is_set('ttdsprite') else self.get_param('sprite') | (1 << 31)
-        recolour = self.get_param('recolour')
-        if isinstance(recolour, expression.ConstantNumeric):
-            if recolour.value == -1:
+        palette = self.get_param('palette')
+        if isinstance(palette, expression.ConstantNumeric):
+            if palette.value == -1:
                 sprite_num |= 1 << 14
-            elif recolour.value != 0:
+            elif palette.value != 0:
                 sprite_num |= 1 << 15
-                sprite_num |= recolour.value << 16
+                sprite_num |= palette.value << 16
         else:
             sprite_num |= 1 << 15
         if self.get_param('always_draw'):
@@ -142,9 +142,9 @@ class Action2LayoutSprite(object):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
         return value.value
 
-    def _validate_recolour(self, name, value):
+    def _validate_palette(self, name, value):
         if isinstance(value, expression.ConstantNumeric):
-            generic.check_range(value.value, -1, (1 << 14) - 1, "recolour", value.pos)
+            generic.check_range(value.value, -1, (1 << 14) - 1, "palette", value.pos)
         value.supported_by_actionD(True)
         return value
 
@@ -213,17 +213,17 @@ def get_layout_action2s(spritegroup):
     act6 = action6.Action6()
 
     offset = 6
-    if not isinstance(ground_sprite.get_param('recolour'), expression.ConstantNumeric):
+    if not isinstance(ground_sprite.get_param('palette'), expression.ConstantNumeric):
         orig_palette = expression.ConstantNumeric(ground_sprite.get_sprite_number() >> 16)
-        param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, ground_sprite.get_param('recolour'), orig_palette).reduce())
+        param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, ground_sprite.get_param('palette'), orig_palette).reduce())
         actions.extend(extra_actions)
         act6.modify_bytes(param, 2, offset)
     offset += 4
 
     for sprite in building_sprites:
-        if not isinstance(sprite.get_param('recolour'), expression.ConstantNumeric):
+        if not isinstance(sprite.get_param('palette'), expression.ConstantNumeric):
             orig_palette = expression.ConstantNumeric(sprite.get_sprite_number() >> 16)
-            param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, sprite.get_param('recolour'), orig_palette).reduce())
+            param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, sprite.get_param('palette'), orig_palette).reduce())
             actions.extend(extra_actions)
             act6.modify_bytes(param, 2, offset)
         offset += 7 if sprite.type == Action2LayoutSpriteType.CHILD else 10
