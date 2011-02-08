@@ -173,10 +173,7 @@ class Action2LayoutSprite(object):
             generic.check_range(val, 0, 255, name, value.pos)
         else:
             assert self.type == Action2LayoutSpriteType.BUILDING
-            if name == 'zoffset':
-                if val != 0:
-                    raise generic.ScriptError("Value of 'zoffset' should always be 0", value.pos)
-            elif name in ('xoffset', 'yoffset'):
+            if name in ('xoffset', 'yoffset', 'zoffset'):
                 generic.check_range(val, -128, 127, name, value.pos)
             else:
                 generic.check_range(val, 0, 255, name, value.pos)
