@@ -79,15 +79,15 @@ railtype_sprites = {
     'FENCES'          : 0x09,
 }
 
-object_sprites = {
+purchase_list_sprites = {
     'PURCHASE_LIST'   : 0xFF,
 }
 
 def get_cargo_id_list(feature):
     if feature >= 0 and feature <= 4:
-        return [global_constants.cargo_numbers]
+        return [global_constants.cargo_numbers, purchase_list_sprites]
     if feature == 0x10:
         return [railtype_sprites]
     if feature == 0x0F:
-        return [object_sprites]
+        return [purchase_list_sprites]
     return []
