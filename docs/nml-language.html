@@ -401,8 +401,6 @@ before writing it to the output file.</p>
 
 <h2><a name="block-template">Template</a></h2>
 
-<h2><a name="block-tilelayout">Tilelayout</a></h2>
-
 <h2><a name="block-spriteset">Spriteset</a></h2>
 A spriteset associates a name with a number piece of an existing image file and describes
 the offsets with respect to some origin the graphics will be painted within the game. Different
@@ -521,22 +519,61 @@ spritegroup gui_normal_modern_TTD_group {
 	default: gui_normal_modern_TTD;
 }
 </pre>
-<h3><a name="block-spritelayout">Sprite layouts for industry and airport tiles</a></h3>
-Industries and airports don't have sprite groups, but they define layouts on how sprites are supposed to be aranged:
+<h2><a name="block-tilelayout">Tilelayout for industry, airport and object tiles</a></h2>
+Industries and airports don't have sprite groups, but they define layouts on how sprites are supposed to be aranged.
+A <code>spritelayout</code> can combine multiple sprites into one entity which are then drawn to represent everything
+which will be drawn on, say, a particular tile. Each sprite type can be used several times within a layout and contains
+either a reference to a base sprite number via <code>ttdsprite</code> or references a custom-defined
+<a href="nml-language.html#block-spriteset">spriteset</a> via <code>sprite</code>.
+<ul>
+<li><code>ground</code>: Defines the ground sprite to be used. Either you can reference your own sprite or an existing
+	base set sprite. Pre-defined base set sprites are 
+	<ul>
+	<li><code>GROUNDSPRITE_NORMAL</code> default terrain type for that climate
+		(temperate, toyland: normal, arctic: without snow, tropical: rainforest).
+	<li><code>GROUNDSPRITE_DESERT</code> desert tile
+	<li><code>GROUNDSPRITE_SNOW</code> snowy ground tile
+	</ul>
+<li><code>childsprite</code>:
+	This allows to compose a tile of several existing sprites in an arbitrary arangement (e.g. a vehicle or some other item
+	on an industry tile, or a fence). Child sprites may be drawn conditionally depending upon the transparancy setting via
+	<code>always_draw: 1;</code> - if it shall not be shown in transparent settings, set the value to 0. A child sprite is
+	always drawn within the bounding box (dimensions) as defined within the building sprite. Available attributes are
+	<code>xoffset</code> and <code>yoffset</code> as well as <code>palette</code> and <code>recolour_mode</code> (see below)
+<li><code>building</code>:
+	This is the "main" sprite of the tile and it comes with a number of attributes:
+	<ul>
+	<li><code>xextend</code>
+	<li><code>yextend</code>
+	<li><code>zextend</code>
+	<li><code>xoffset</code>
+	<li><code>yoffset</code>
+	<li><code>zoffset</code>
+	<li><code>recolour_mode</code>: Available recolour modes are
+		<ul>
+		<li><code>RECOLOUR_NONE</code>: no colour translation
+		<li><code>RECOLOUR_REMAP</code>: use a colour translation table as defined by palette
+		<li><code>RECOLOUR_TRANSPARENT</code>: use the translation to the transparent mode
+		</ul>
+	<li><code>palette</code>: This defines the palette which is used for the colour translation, which e.g. allows to use a
+		random company colour. For default values see the appendix on <a href="refs.html#refs-palettes">available palettes</a>.
+	</ul>
+</ul>
 <pre class="code">
 A simple example to illustrate how it works:
 spritelayout airport_building1 {
 	ground { ttdsprite: GROUNDSPRITE_NORMAL; }
 	childsprite { 
-		sprite: spr_small_dirt_ne;
-		always_draw: 1;
+		sprite: spr_small_dirt_ne; // custom spriteset
+		always_draw: 1; // also draw in transparent mode
 	}
 	building {
 		ttdsprite: 0xA67; // reuse this existing base set sprite
 		xoffset: 0x0F;
 		xextent: 1;
 		zextent: 6;
-		recolour: 0;
+		recolour_mode: RECOLOUR_REMAP;
+		palette: PALETTE_ITEM_COLOUR;
 	}
 }
 </pre>

@@ -765,5 +765,60 @@ have an effect on all vehicles of the appropriate type.</p>
 <tr><td>TILE_CLASS_OBJECTS</td><td>Objects</td></tr>
 </table>
 
+<h2><a name="refs-palettes">List default colour translation palettes</a></h2>
+<p>You can use the palette name directly. The numeric value is only given for reference and might come in handy when
+the values are to be used in calculations.</p>
+<table class="t">
+<tr><th>Palette name<th>value</tr>
+<tr><td>PALETTE_ITEM_COLOUR<td> 0</tr>
+<tr><td>PALETTE_TILE_RED_PULSATING<td> 775</tr>
+<tr><td>PALETTE_SEL_TILE_RED<td> 776</tr>
+<tr><td>PALETTE_SEL_TILE_BLUE<td> 777</tr>
+<tr><td>PALETTE_CC_FIRST<td> 778</tr>
+<tr><td>PALETTE_CC_DARK_BLUE<td> 778, # = first</tr>
+<tr><td>PALETTE_CC_PALE_GREEN<td> 779</tr>
+<tr><td>PALETTE_CC_PINK<td> 780</tr>
+<tr><td>PALETTE_CC_YELLOW<td> 781</tr>
+<tr><td>PALETTE_CC_RED<td> 782</tr>
+<tr><td>PALETTE_CC_LIGHT_BLUE<td> 783</tr>
+<tr><td>PALETTE_CC_GREEN<td> 784</tr>
+<tr><td>PALETTE_CC_DARK_GREEN<td> 785</tr>
+<tr><td>PALETTE_CC_BLUE<td> 786</tr>
+<tr><td>PALETTE_CC_CREAM<td> 787</tr>
+<tr><td>PALETTE_CC_MAUVE<td> 788</tr>
+<tr><td>PALETTE_CC_PURPLE<td> 789</tr>
+<tr><td>PALETTE_CC_ORANGE<td> 790</tr>
+<tr><td>PALETTE_CC_BROWN<td> 791</tr>
+<tr><td>PALETTE_CC_GREY<td> 792</tr>
+<tr><td>PALETTE_CC_WHITE<td> 793</tr>
+<tr><td>PALETTE_BARE_LAND<td> 794</tr>
+<tr><td>PALETTE_STRUCT_BLUE<td> 795</tr>
+<tr><td>PALETTE_STRUCT_BROWN<td> 796</tr>
+<tr><td>PALETTE_STRUCT_WHITE<td> 797</tr>
+<tr><td>PALETTE_STRUCT_RED<td> 798</tr>
+<tr><td>PALETTE_STRUCT_GREEN<td> 799</tr>
+<tr><td>PALETTE_STRUCT_CONCRETE<td> 800</tr>
+<tr><td>PALETTE_STRUCT_YELLOW<td> 801</tr>
+<tr><td>PALETTE_TRANSPARENT<td> 802</tr>
+<tr><td>PALETTE_STRUCT_GREY<td> 803</tr>
+<tr><td>PALETTE_CRASH<td> 804</tr>
+<tr><td>PALETTE_CHURCH_RED<td> 1438</tr>
+<tr><td>PALETTE_CHURCH_CREAM<td> 1439</tr>
+<tr><td>base_sprite_2cc<td> n/a</tr>
+</table>
+<p>The base sprite for 2 company colours may vary. Following <code>base_sprite_2cc</code>are the 16x16 colour
+translations for all possible combinations of a company colour with an arbitrary 2nd company colour. The
+order of the colours is the same as for <code>PALETTE_CC_XX</code>:</p>
+<table class="t">
+<tr><td>PALETTE_CC_FIRST<td>PALETTE_CC_FIRST</tr>
+<tr><td>PALETTE_CC_FIRST<td>PALETTE_CC_FIRST+1</tr>
+<tr><td>PALETTE_CC_FIRST<td>...</tr>
+<tr><td>PALETTE_CC_FIRST+1<td>PALETTE_CC_FIRST</tr>
+<tr><td>PALETTE_CC_FIRST+1<td>PALETTE_CC_FIRST+1</tr>
+<tr><td>...<td>...</tr>
+<tr><td>PALETTE_CC_FIRST+15<td>PALETTE_CC_FIRST</tr>
+<tr><td>PALETTE_CC_FIRST+15<td>...</tr>
+<tr><td>PALETTE_CC_FIRST+15<td>PALETTE_CC_FIRST+15</tr>
+</table>
 </body>
 </html>
