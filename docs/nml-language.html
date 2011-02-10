@@ -520,46 +520,9 @@ spritegroup gui_normal_modern_TTD_group {
 }
 </pre>
 <h2><a name="block-spritelayout">Spritelayouts for industry, airport and object tiles</a></h2>
-Industries and airports don't have sprite groups, but they define layouts on how sprites are supposed to be aranged.
+<p>Industries and airports don't have sprite groups, but they define layouts on how sprites are supposed to be arranged.
 A <code>spritelayout</code> can combine multiple sprites into one entity which are then drawn to represent everything
-which will be drawn on, say, a particular tile. Each sprite type can be used several times within a layout and contains
-either a reference to a base sprite number via <code>ttdsprite</code> or references a custom-defined
-<a href="nml-language.html#block-spriteset">spriteset</a> via <code>sprite</code>.
-<ul>
-<li><code>ground</code>: Defines the ground sprite to be used. Either you can reference your own sprite or an existing
-	base set sprite. Pre-defined base set sprites are 
-	<ul>
-	<li><code>GROUNDSPRITE_NORMAL</code> default terrain type for that climate
-		(temperate, toyland: normal, arctic: without snow, tropical: rainforest).
-	<li><code>GROUNDSPRITE_DESERT</code> desert tile
-	<li><code>GROUNDSPRITE_SNOW</code> snowy ground tile
-	</ul>
-<li><code>childsprite</code>:
-	This allows to compose a tile of several existing sprites in an arbitrary arangement (e.g. a vehicle or some other item
-	on an industry tile, or a fence). Child sprites may be drawn conditionally depending upon the transparancy setting via
-	<code>always_draw: 1;</code> - if it shall not be shown in transparent settings, set the value to 0. A child sprite is
-	always drawn within the bounding box (dimensions) as defined within the building sprite. Available attributes are
-	<code>xoffset</code> and <code>yoffset</code> as well as <code>palette</code> and <code>recolour_mode</code> (see below)
-<li><code>building</code>:
-	This is the "main" sprite of the tile and it comes with a number of attributes:
-	<ul>
-	<li><code>xextend</code>
-	<li><code>yextend</code>
-	<li><code>zextend</code>
-	<li><code>xoffset</code>
-	<li><code>yoffset</code>
-	<li><code>zoffset</code>
-	<li><code>recolour_mode</code>: Available recolour modes are
-		<ul>
-		<li><code>RECOLOUR_NONE</code>: no colour translation
-		<li><code>RECOLOUR_REMAP</code>: use a colour translation table as defined by palette
-		<li><code>RECOLOUR_TRANSPARENT</code>: use the translation to the transparent mode. PALETTE_USE_DEFAULT uses the normal
-			company colours as defined by the player in the company settings.
-		</ul>
-	<li><code>palette</code>: This defines the palette which is used for the colour translation, which e.g. allows to use a
-		random company colour. For default values see the appendix on <a href="refs.html#refs-palettes">available palettes</a>.
-	</ul>
-</ul>
+that will be drawn on a particular tile. A simple example to illustrate how it works:</p>
 <pre class="code">
 A simple example to illustrate how it works:
 spritelayout airport_building1 {
@@ -578,6 +541,87 @@ spritelayout airport_building1 {
 	}
 }
 </pre>
+<p>The sprite layout is composed of one or more sprites. Each sprite is defined
+by a <code>ground</code>, <code>building</code> or <code>childsprite</code>
+block. What block to use depends on how the sprite is to be placed on the tile.</p>
+<ul>
+<li><code>ground</code> sprites are drawn at the base of the tile, like grass
+and concrete, rails etc. in normal TTD. With a few exceptions (e.g. when using
+custom foundations), you should always provide a ground sprite, even when the
+building above fully covers it. This because in transparent mode, the building
+becomes invisible. A tile can only have one ground sprite.</li>
+<li><code>building</code> sprites are drawn on top of the ground sprite. To
+determine their location and drawing order (what goes in front of what), they
+have a 3D bounding box.</li>
+<li>With <code>childsprite</code>(s), you can effectively compose sprites from
+multiple parts. When placing these after a building sprite, they will
+use the same bounding box as the previous building sprite. When placing them
+before the first building sprite, they will have no bounding box, as if they
+would use the 'bounding box' of the ground tile. Multiple childsprites may be
+used per ground / building sprite.</li>
+</ul>
+<p>Per sprite, a number of parameters may be set. These are listed below.
+First, to specify what sprite is to be drawn, you need to set either
+<code>sprite</code> or <code>ttdsprite</code>, but not both.</p>
+<ul>
+<li><code>ttdsprite</code>: sets the TTD sprite number to use, usually from the
+	base set. Pre-defined constants for some base set sprites are:
+	<ul>
+	<li><code>GROUNDSPRITE_NORMAL</code> default terrain type for that climate
+		(temperate, toyland: normal, arctic: without snow, tropical: rainforest).
+	<li><code>GROUNDSPRITE_DESERT</code> desert tile
+	<li><code>GROUNDSPRITE_SNOW</code> snowy ground tile
+	</ul>
+<li><code>sprite</code>: selects a <a href="nml-language.html#block-spriteset">spriteset</a> to use. When the
+	value is just a spriteset identifier, it will use the first sprite from that
+	set. If you supply an argument (e.g. <code>sprite: some_sprite_set(2);</code>), the
+	corresponding sprite from the sprite set will be used, with an argument of
+	0 corresponding to the first sprite.
+</ul>
+<p>Next, a couple of attributes allow changing altering the way this sprite is displayed:</p>
+<ul>
+<li><code>recolour_mode</code>: Available recolour modes are
+	<ul>
+	<li><code>RECOLOUR_NONE</code>: Use no colour translation
+	<li><code>RECOLOUR_REMAP</code>: Use a colour translation table as defined by <code>palette</code>.
+		This tables maps all colours of the sprite to a new colour.
+	<li><code>RECOLOUR_TRANSPARENT</code>: Draw the sprite in transparant mode,
+		using a colour translation table as defined by <code>palette</code>.
+		Normally the palette will be set to PALETTE_TO_TRANSPARANT to draw
+		all underlying colours somewhat darker. Note that the selected palette
+		is applied to the colours of the underlying sprite, whatever that happens
+		to be. The supplied sprite is only used to determine what pixels to recolour.
+	</ul>
+<li><code>palette</code>: This defines the palette which is used for the colour translation, which e.g. allows to use a
+	random company colour. For default values see the appendix on <a href="refs.html#refs-palettes">available palettes</a>.
+<li><code>always_draw</code>: If set to 1, this sprite will also be drawn when the user has enabled transparant mode.
+	The default value is 0.
+</ul>
+<p>How to position the sprite depends on the type of sprite:</p>
+<ul>
+	<li><code>ground</code>: Ground sprites cannot be positioned.
+	<li><code>building</code>: A three-dimensional bounding box may be defined. The X-axis runs from top-right to bottom-left
+		and the Y-axis from top-left to bottom-right. The Z axis is vertical. All units are relative to the tile, with a tile
+		being 16 units in the X and Y directions. Extending the bounding box over the edges of a tile is possible, but not
+		recommended as it may lead to glitches. To define the bounding box, the following attributes can be used:
+		<ul>
+			<li><code>xoffset</code>: Offset from the northwestern edge to the start of the bounding box (X).
+			<li><code>yoffset</code>: Offset from the northeastern edge to the start of the bounding box (Y).
+			<li><code>zoffset</code>: Offset from the lowest tile corner (with foundation added) to the start of the bounding box (Z).
+			<li><code>xextent</code>: Size of the bounding box, in the X-direction.
+			<li><code>yextent</code>: Size of the bounding box, in the Y-direction.
+			<li><code>zextent</code>: Size of the bounding box, in the Z-direction.
+		</ul>
+	<li><code>childsprite</code>: Child sprites may be positioned relative to
+	their 'parent' sprite that defines the bounding box.
+	<code>xoffset</code> and <code>yoffset</code> may
+	be set to specify an offset in pixels between the origin of the parent
+	and child sprite. When the parent sprite is the ground sprite, TTDPatch
+	does not support offsets other than 0,0. Note that all child sprites
+	should fit inside the bounding box of the parent sprite to avoid visual
+	glitches.
+</ul>
+
 <h2><a name="block-tilelayout">Tilelayout for industries and airports</a></h2>
 <p>A tile layout describes which industry or airport tiles are associated with
 which position relative to the northernmost (north being the top of the screen)
