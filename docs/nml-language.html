@@ -579,10 +579,10 @@ spritelayout airport_building1 {
 }
 </pre>
 <h2><a name="block-tilelayout">Tilelayout for industries and airports</a></h2>
-A tile layout describes which industry or airport tiles are associated with
-which position relative to the Northern most edge of the industry or airport as
-a whole.
-A typical example looks like
+<p>A tile layout describes which industry or airport tiles are associated with
+which position relative to the northernmost (north being the top of the screen)
+edge of the industry or airport as a whole.
+A typical example looks like:</p>
 <pre class="code">
 tilelayout small_airport_layout_north {
 	rotation: DIRECTION_NORTH;
@@ -601,11 +601,12 @@ tilelayout small_airport_layout_north {
 }
 </pre>
 <p>The actual layout is a list of <code>x-coordinate, y-coordinate: tile;</code> where
-the x- and y-directions refer to the usual directions: x is bottom-left (South-West) to
-top-right (North-East) and the y-direction is perpendicular to that bottom-right
-(South-East) to top-left (North-West).
-</p><p>Airports additionally have to define a <code>rotation</code> which is one of the
-<a href="refs.html#directions">default directions</a>, industries may not define it.</p>
+the x- and y-directions refer to the usual directions: x is top-right (North-East) to
+bottom-left (South-West) and the y-direction is perpendicular to that bottom-right
+(South-East) to top-left (North-West).</p>
+<p>Airports additionally have to define a <code>rotation</code> which is one of the
+<a href="refs.html#refs-directions">default directions</a>. Note that only the four
+main compass directions are valid. Industries may not define a rotation.</p>
 <h2><a name="block-switch">Switch</a></h2>
 <pre class="exl">switch (&lt;expression&gt;, (SELF|PARENT), &lt;ID&gt;, &lt;expression&gt;) {
 	(&lt;range&gt;: &lt;return_value&gt;;)*
