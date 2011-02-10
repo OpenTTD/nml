@@ -576,6 +576,8 @@ def airport_layouts(value):
         layout = tilelayout_names[name.value]
         if 'rotation' not in layout.properties:
             raise generic.ScriptError("Airport layouts must have the 'rotation' property", layout.pos)
+        if layout.properties['rotation'].value not in (0, 2, 4, 6):
+            raise generic.ScriptError("Airport layout rotation is not a valid direction.", layout.properties['rotation'].pos)
         layouts.append(layout)
     return [AirportLayoutProp(layouts)]
 
