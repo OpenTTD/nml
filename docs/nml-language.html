@@ -553,7 +553,8 @@ either a reference to a base sprite number via <code>ttdsprite</code> or referen
 		<ul>
 		<li><code>RECOLOUR_NONE</code>: no colour translation
 		<li><code>RECOLOUR_REMAP</code>: use a colour translation table as defined by palette
-		<li><code>RECOLOUR_TRANSPARENT</code>: use the translation to the transparent mode
+		<li><code>RECOLOUR_TRANSPARENT</code>: use the translation to the transparent mode. PALETTE_USE_DEFAULT uses the normal
+			company colours as defined by the player in the company settings.
 		</ul>
 	<li><code>palette</code>: This defines the palette which is used for the colour translation, which e.g. allows to use a
 		random company colour. For default values see the appendix on <a href="refs.html#refs-palettes">available palettes</a>.
@@ -573,7 +574,7 @@ spritelayout airport_building1 {
 		xextent: 1;
 		zextent: 6;
 		recolour_mode: RECOLOUR_REMAP;
-		palette: PALETTE_ITEM_COLOUR;
+		palette: PALETTE_USE_DEFAULT;
 	}
 }
 </pre>

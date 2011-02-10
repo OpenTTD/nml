@@ -615,7 +615,7 @@ constant_numbers = {
     'RECOLOUR_REMAP'                        : 2,
 
     # Possible values for palette
-    'PALETTE_ITEM_COLOUR'                   : 0,
+    'PALETTE_USE_DEFAULT'                   : 0,
     'PALETTE_TILE_RED_PULSATING'            : 775,
     'PALETTE_SEL_TILE_RED'                  : 776,
     'PALETTE_SEL_TILE_BLUE'                 : 777,
