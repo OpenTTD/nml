@@ -50,6 +50,16 @@ class Switch(switch_base_class):
 
 
 class SwitchBody(object):
+    """
+    AST-node representing the body of a switch block
+    This contains the various ranges as well as the default value
+
+    @ivar ranges: List of ranges
+    @type ranges: C{list} of L{SwitchRange}
+
+    @ivar default: Default result to use if no range matches
+    @type default: L{SpriteGroupRef}, L{Expression} or C{None}, depending on the type of result.
+    """
     def __init__(self, ranges, default):
         self.ranges = ranges
         self.default = default
@@ -58,10 +68,7 @@ class SwitchBody(object):
         for r in self.ranges:
             r.debug_print(indentation)
         print indentation*' ' + 'Default:'
-        if isinstance(self.default, expression.Identifier):
-            print (indentation+2)*' ' + 'Go to switch:'
-            self.default.debug_print(indentation + 4)
-        elif self.default is None:
+        if self.default is None:
             print (indentation+2)*' ' + 'Return computed value'
         else:
             self.default.debug_print(indentation + 2)
@@ -467,7 +474,7 @@ def parse_randomswitch(random_switch):
         va2_range = expression.Identifier('SELF', pos)
         va2_name = expression.Identifier(random_switch.name.value, pos)
         va2_expr = expression.BinOp(nmlop.STO_TMP, count_expr, expression.ConstantNumeric(0x100))
-        va2_body = SwitchBody([], expression.Identifier(name, pos))
+        va2_body = SwitchBody([], action2.SpriteGroupRef(expression.Identifier(name, pos), [], pos))
         switch = Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, pos)
         action_list.extend(switch.get_action_list())
     return action_list

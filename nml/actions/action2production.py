@@ -97,7 +97,7 @@ def get_production_actions(produce):
         va2_feature = expression.ConstantNumeric(0x0A)
         va2_range = expression.Identifier('SELF', pos)
         va2_name = expression.Identifier(produce.name.value, pos)
-        va2_body = switch.SwitchBody([], expression.Identifier(name, pos))
+        va2_body = switch.SwitchBody([], action2.SpriteGroupRef(expression.Identifier(name, pos), [], pos))
         switch_block = switch.Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, pos)
     else:
         name = produce.name.value
