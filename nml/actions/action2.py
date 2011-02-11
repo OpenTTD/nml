@@ -109,7 +109,7 @@ def add_ref(ref, source_act2 = None, reference_as_proc = False):
     """
     global action2_map
     name_str = ref.name.value
-    if name_str not in action2_map: raise generic.ScriptError("Referencing unknown action2 id: " + name_str, ref.pos)
+    assert name_str in action2_map, "Illegal action2 reference encountered."
     act2 = action2_map[name_str]
 
     # Add reference to list of reference of the source action2, if applicable
@@ -138,6 +138,7 @@ def remove_ref(ref):
     name_str = ref.name.value
     if name_str == 'CB_FAILED': return 0 # ID 0 is never used so it works as a failure code
     global action2_map, free_action2_ids
+    assert name_str in action2_map, "Illegal action2 reference encountered."
     act2 = action2_map[name_str]
     id = act2.id
     act2.num_refs -= 1
