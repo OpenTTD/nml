@@ -298,11 +298,7 @@ def parse_randomswitch_choices(random_switch):
 
     for choice in random_switch.choices:
         total_prob += choice.probability.value
-        #make reference
-        if isinstance(choice.result, action2.SpriteGroupRef):
-            if choice.result.name.value != 'CB_FAILED':
-                action2.add_ref(choice.result)
-        elif not isinstance(choice.result, expression.ConstantNumeric):
+        if not isinstance(choice.result, (expression.ConstantNumeric, action2.SpriteGroupRef)):
             raise generic.ScriptError("Invalid return value in random_switch.", choice.result.pos)
     assert total_prob > 0 # RandomChoice enforces that individual probabilities are > 0
 
@@ -458,6 +454,11 @@ def parse_randomswitch(random_switch):
     random_action2 = action2random.Action2Random(random_switch.feature.value, name, type, count, random_switch.triggers.value, randbit, nrand, random_switch.choices)
     action_list = [random_action2]
     random_switch.random_action2 = random_action2
+
+    # Correctly add action2 references, do that now because we need to reference the random action2
+    for choice in random_switch.choices:
+        if choice.result.name.value != 'CB_FAILED':
+            action2.add_ref(choice.result, random_action2)
 
     if need_varact2:
         #Add varaction2 that stores count_expr in temporary register 0x100
