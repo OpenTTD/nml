@@ -31,7 +31,7 @@ class Item(object):
             raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
         if len(params) == 3:
-            self.id = params[2].reduce_constant()
+            self.id = params[2].reduce_constant(global_constants.const_list)
         else:
             self.id = None
 
