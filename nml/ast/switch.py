@@ -464,7 +464,7 @@ def parse_randomswitch(random_switch):
 
     # Correctly add action2 references, do that now because we need to reference the random action2
     for choice in random_switch.choices:
-        if choice.result.name.value != 'CB_FAILED':
+        if isinstance(choice.result, action2.SpriteGroupRef) and choice.result.name.value != 'CB_FAILED':
             action2.add_ref(choice.result, random_action2)
 
     if need_varact2:
