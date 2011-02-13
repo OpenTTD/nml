@@ -33,10 +33,25 @@ class Action2Random(action2.Action2):
         for choice in self.choices:
             for i in range(0, choice.resulting_prob):
                 file.print_wordx(choice.result)
-            file.newline()
+            file.comment(choice.comment)
         file.end_sprite()
 
 class RandomChoice(object):
+    """
+    Class to hold one of the possible choices in a random_switch
+
+    @ivar probability: Relative chance for this choice to be chosen
+    @type probability: L{Expression}
+
+    @ivar result: Result of this choice, either another action2 or a return value
+    @type result: L{SpriteGroupRef} or L{Expression}
+
+    @ivar resulting_prob: Resulting probability for this choice, may be altered during action generation
+    @type resulting_prob: C{int}
+
+    @ivar comment: Comment string to be appended to this choice
+    @type comment: C{str}
+    """
     def __init__ (self, probability, result):
         if isinstance(probability, expression.Identifier) and probability.value in ('dependent', 'independent'):
             self.probability = probability

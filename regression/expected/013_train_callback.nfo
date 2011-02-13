@@ -100,8 +100,8 @@
 
 // Name: bulk_wagon_coal_default_switch
 45 * 15 02 00 FA 80 02 \b0 04 
-\wx00FE \wx00FE \wx00FE 
-\wx00FC 
+\wx00FE \wx00FE \wx00FE // (2/3) -> (3/4): bulk_wagon_coal_default_group;
+\wx00FC // (1/3) -> (1/4): bulk_wagon_coal2_group;
 
 // Name: bulk_wagon_coal_climate_switch
 46 * 23 02 00 FC 89 
