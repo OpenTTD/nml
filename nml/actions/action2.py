@@ -50,6 +50,7 @@ class Action2(base_action.BaseAction):
             self.id = free_action2_ids[0]
         else:
             self.id = free_action2_ids.pop()
+        free_references(self)
 
     def write_sprite_start(self, file, size):
         file.comment("Name: " + self.name)
@@ -130,9 +131,7 @@ def add_ref(ref, source_action, reference_as_proc = False):
 
 def remove_ref(ref):
     """
-    Remove a reference to a certain action2.
-    If there are no further references to this action2, it's ID will be freed,
-    so it can be re-used.
+    Remove a reference to a certain action2 and return its numeric ID.
     To be called during prepare_output.
 
     @param ref: Reference to the sprite group that corresponds to the action2.
@@ -143,13 +142,22 @@ def remove_ref(ref):
     """
     name_str = ref.name.value
     if name_str == 'CB_FAILED': return 0 # ID 0 is never used so it works as a failure code
-    global action2_map, free_action2_ids
+    global action2_map
     assert name_str in action2_map, "Illegal action2 reference encountered."
     act2 = action2_map[name_str]
-    id = act2.id
-    act2.num_refs -= 1
-    if act2.num_refs == 0: free_action2_ids.append(act2.id)
-    return id
+    return act2.id
+
+def free_references(source_action):
+    """
+    Free all references to other action2s from a certain action 2/3
+
+    @param source_action: Action that contains the reference
+    @type  source_action: L{Action2} or L{Action3}
+    """
+    for act2_ref in source_action.references:
+        act2 = act2_ref.action2
+        act2.num_refs -= 1
+        if act2.num_refs == 0: free_action2_ids.append(act2.id)
 
 # Features using sprite groups directly: vehicles, canals, cargos, railtypes, airports
 features_sprite_group = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x0B, 0x0D, 0x10]
