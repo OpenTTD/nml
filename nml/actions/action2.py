@@ -53,6 +53,7 @@ class Action2(base_action.BaseAction):
         free_references(self)
 
     def write_sprite_start(self, file, size):
+        assert self.num_refs == 0, "Action2 reference counting has %d dangling references." % self.num_refs
         file.comment("Name: " + self.name)
         file.start_sprite(size + 3)
         file.print_bytex(2)
