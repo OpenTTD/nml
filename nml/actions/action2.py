@@ -45,12 +45,13 @@ class Action2(base_action.BaseAction):
         self.tmp_locations = range(0x86, 0x100)
 
     def prepare_output(self):
+        free_references(self)
+
         global free_action2_ids
         if self.num_refs == 0:
             self.id = free_action2_ids[0]
         else:
             self.id = free_action2_ids.pop()
-        free_references(self)
 
     def write_sprite_start(self, file, size):
         assert self.num_refs == 0, "Action2 reference counting has %d dangling references." % self.num_refs

@@ -21,7 +21,7 @@
 \wx0000 
 
 // Name: coal_mine_switch
-4 * 54 02 0A FD 89 
+4 * 54 02 0A FE 89 
 1A 20 \dx00000004 
 \2sto 1A 20 \dx00000100 
 \2& 1A 20 \dx00000000 
@@ -37,7 +37,7 @@
 22 01 
 
 6 * 7 03 0A 01 00 \b0 
-\wx00FD 
+\wx00FE 
 
 7 * 35 04 08 FF 01 \wxD000 "\98Extra info for coal mine: \7B" 00 
 

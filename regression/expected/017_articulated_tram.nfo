@@ -38,7 +38,7 @@
 \wx0000 
 
 // Name: foster_express_callbacks
-14 * 23 02 01 FC 89 
+14 * 23 02 01 FE 89 
 0C 00 \dx0000FFFF \b1 
 \wx00FD \dx00000016 \dx00000016 	// 22 .. 22: foster_express_articulated_parts;
 \wx00FE 
@@ -74,5 +74,5 @@
 17 * 27 04 01 7F 01 FF \wx0058 "Foster Express Tram" 00 
 
 18 * 9 03 01 01 FF \wx0058 \b0 
-\wx00FC 
+\wx00FE 
 
