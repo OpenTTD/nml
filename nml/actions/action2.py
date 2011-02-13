@@ -354,7 +354,7 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             @type target_ref: L{SpriteGroupRef}
             """
 
-            target = resolve_spritegroup(target_ref.name, None, True, True)
+            target = resolve_spritegroup(target_ref.name)
             if (target._own_type() & self._referring_to_type() == 0) or \
                     (self._own_type() & target._referred_by_type() == 0):
                 raise generic.ScriptError("Encountered an incorrect type of reference: '%s'" % target_ref.name.value, target_ref.pos)
@@ -408,7 +408,7 @@ def register_spritegroup(spritegroup):
         raise generic.ScriptError("Block with name '%s' has already been defined" % name, spritegroup.pos)
     spritegroup_list[name] = spritegroup
 
-def resolve_spritegroup(name, feature = None, allow_group = True, allow_set = True):
+def resolve_spritegroup(name):
     """
     Resolve a sprite group with a given name
 
