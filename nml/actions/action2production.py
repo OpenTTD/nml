@@ -54,12 +54,11 @@ def get_production_actions(produce):
     action6.free_parameters.save()
 
     #all constants / supported by actionD?
-    all_params = produce.sub_in + produce.add_out + [produce.again]
-    version = 0 if all(map(lambda x: x.supported_by_actionD(False), all_params)) else 1
+    version = 0 if all(map(lambda x: x.supported_by_actionD(False), produce.param_list)) else 1
 
-    cargo_list = len(all_params)*[None]
-    act2_expressions = len(all_params)*[None]
-    for i, c in enumerate(all_params):
+    cargo_list = len(produce.param_list)*[None]
+    act2_expressions = len(produce.param_list)*[None]
+    for i, c in enumerate(produce.param_list):
         if version == 0:
             if isinstance(c, expression.ConstantNumeric):
                 cargo_list[i] = c.value
