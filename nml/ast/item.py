@@ -186,7 +186,7 @@ class GraphicsBlock(graphics_base_class):
     def collect_references(self):
         all_refs = []
         for sg_ref in [g.spritegroup_ref for g in self.graphics_list] + [self.default_graphics]:
-            if sg_ref is not None:
+            if sg_ref is not None: # Default may be None
                 all_refs.append(sg_ref)
         return all_refs
 

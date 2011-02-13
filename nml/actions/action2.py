@@ -22,9 +22,7 @@ class Action2(base_action.BaseAction):
     @type id: C{int}, or C{None} if no number is allocated yet.
 
     @ivar references: All Action2s that are referenced by this Action2.
-                      Keys are referenced Action2s, values are true iff
-                      it's referenced as a procedure call, false otherwise.
-    @type references: C{dict} that maps L{Action2} to C{bool}
+    @type references: C{list} of L{Action2Reference}
 
     @ivar tmp_locations: List of address in the temporary storage that are free
                          to be used in this varaction2.
@@ -40,7 +38,7 @@ class Action2(base_action.BaseAction):
         self.name = name
         self.num_refs = 0
         self.id = None
-        self.references = {}
+        self.references = []
         #0x00 - 0x7F: available to user
         #0x80 - 0x85: used for production CB
         #0x86 - 0x100: available as temp. registers
@@ -83,11 +81,25 @@ class Action2(base_action.BaseAction):
         """
         if location not in self.tmp_locations: return
         self.tmp_locations.remove(location)
-        for act2 in self.references:
-            if force_recursive or self.references[act2]:
-                act2.remove_tmp_location(location, True)
+        for act2_ref in self.references:
+            if force_recursive or act2_ref.is_proc:
+                act2_ref.action2.remove_tmp_location(location, True)
 
-def add_ref(ref, source_act2 = None, reference_as_proc = False):
+class Action2Reference:
+    """
+    Container class to store information about an action2 reference
+
+    @ivar action2: The target action2
+    @type action2: L{Action2}
+
+    @ivar is_proc: Whether this reference is made because of a procedure call
+    @type is_proc: C{bool}
+    """
+    def __init__(self, action2, is_proc):
+        self.action2 = action2
+        self.is_proc = is_proc
+
+def add_ref(ref, source_action, reference_as_proc = False):
     """
     Add a reference to a certain action2.
     This is needed so we can correctly reserve / free action2 IDs later on.
@@ -96,9 +108,8 @@ def add_ref(ref, source_act2 = None, reference_as_proc = False):
     @param ref: Reference to the sprite group that corresponds to the action2.
     @type ref: L{SpriteGroupRef}
 
-    @param source_act2: Source action2 that contains the reference, or C{None}
-                        if source is not an action2.
-    @type source_act2: L{Action2} or C{None}
+    @param source_action: Source action (act2 or act3) that contains the reference.
+    @type source_action: L{Action2} or L{Action3}
 
     @param reference_as_proc: True iff the reference source is a procedure call,
                               which needs special precautions for temp registers.
@@ -112,13 +123,8 @@ def add_ref(ref, source_act2 = None, reference_as_proc = False):
     assert name_str in action2_map, "Illegal action2 reference encountered."
     act2 = action2_map[name_str]
 
-    # Add reference to list of reference of the source action2, if applicable
-    if source_act2 is not None:
-        if act2 in source_act2.references:
-            source_act2.references[act2] |= reference_as_proc
-        else:
-            source_act2.references[act2] = reference_as_proc
-
+    # Add reference to list of references of the source action
+    source_action.references.append(Action2Reference(act2, reference_as_proc))
     act2.num_refs += 1
     return act2
 
