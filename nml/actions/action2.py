@@ -123,7 +123,7 @@ def add_ref(ref, source_action, reference_as_proc = False):
     """
     global action2_map
     name_str = ref.name.value
-    assert name_str in action2_map, "Illegal action2 reference encountered."
+    assert name_str in action2_map, "Illegal action2 reference '%s' encountered." % name_str
     act2 = action2_map[name_str]
 
     # Add reference to list of references of the source action
@@ -442,7 +442,7 @@ class SpriteGroupRef(object):
         self.pos = pos
 
     def debug_print(self, indentation):
-        print indentation*' ' +'Reference to:' + str(self.name)
+        print indentation*' ' +'Reference to: ' + str(self.name)
         if len(self.param_list) != 0:
             print 'Parameters:'
             for p in self.param_list:
