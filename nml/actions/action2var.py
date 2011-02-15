@@ -156,9 +156,8 @@ class SwitchRange(object):
     def __init__(self, min, max, result, unit = None, comment = None):
         self.min = min.reduce(global_constants.const_list)
         self.max = max.reduce(global_constants.const_list)
-        if result is None:
-            self.result = None
-        elif isinstance(result, action2.SpriteGroupRef):
+        # Result may be None here, not pre-processed yet
+        if isinstance(result, action2.SpriteGroupRef) or result is None:
             self.result = result
         else:
             self.result = result.reduce(global_constants.const_list)
@@ -171,10 +170,7 @@ class SwitchRange(object):
         print indentation*' ' + 'Max:'
         self.max.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        if self.result is None:
-            print (indentation+2)*' ' + 'Return computed value'
-        else:
-            self.result.debug_print(indentation + 2)
+        self.result.debug_print(indentation + 2)
 
     def __str__(self):
         ret = str(self.min)
@@ -182,8 +178,6 @@ class SwitchRange(object):
             ret += '..' + str(self.max)
         if isinstance(self.result, action2.SpriteGroupRef):
             ret += ': %s;' % str(self.result)
-        elif self.result is None:
-            ret += ': return;'
         else:
             ret += ': return %s;' % str(self.result)
         return ret
@@ -462,16 +456,6 @@ class Varaction2Parser(object):
             expr.supported_by_action2(True)
             assert False #supported_by_action2 should have raised the correct error already
 
-def make_return_ref(str, pos):
-    return action2.SpriteGroupRef(expression.Identifier(str, pos), [], pos)
-
-def make_return_varact2(switch_block):
-    act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89)
-    act.var_list = [VarAction2Var(0x1C, expression.ConstantNumeric(0), expression.ConstantNumeric(0xFFFFFFFF))]
-    act.default_result = make_return_ref('CB_FAILED', switch_block.pos)
-    act.default_comment = 'Return computed value'
-    return act
-
 def parse_var(info, pos):
     res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), None, pos)
     if 'function' in info:
@@ -548,12 +532,12 @@ def parse_minmax(value, unit, action_list, act6, offset):
         check_range = False
     return (result, check_range)
 
-def parse_result(value, action_list, act6, offset, varaction2, return_action, switch_block):
+def parse_result(value, action_list, act6, offset, varaction2, switch_block):
     """
     Parse a result (another switch or CB result) in a switch block.
 
     @param value: Value to parse
-    @type value: L{Expression}, L{None} or L{SpriteGroupRef}
+    @type value: L{Expression} or L{SpriteGroupRef}
 
     @param action_list: List to append any extra actions to
     @type action_list: C{list} of L{BaseAction}
@@ -567,29 +551,15 @@ def parse_result(value, action_list, act6, offset, varaction2, return_action, sw
     @param varaction2: Reference to the resulting varaction2
     @type varaction2: L{Action2Var}
 
-    @param return_action: Reference to the action2 used to return the computed value, if defined.
-    @type return_action: L{Action2Var} or C{None}
-
     @param switch_block: Reference to the switch block that is being compiled
     @type switch_block: L{Switch}
 
-    @return: A tuple of three values:
+    @return: A tuple of two values:
                 - The value to use as return value
                 - Comment to add to this value
-                - New value of C{return_action} (see the parameter)
-    @rtype: C{tuple} of (L{ConstantNumeric} or L{SpriteGroupRef}), C{str}, (L{Action2Var} or C{None})
+    @rtype: C{tuple} of (L{ConstantNumeric} or L{SpriteGroupRef}), C{str}
     """
-    if value is None:
-        comment = "return;"
-        if len(switch_block.body.ranges) != 0:
-            if return_action is None: return_action = make_return_varact2(switch_block)
-            # Make SpriteGroupRef
-            result = make_return_ref(return_action.name, switch_block.pos)
-            act2 = action2.add_ref(result, varaction2)
-            assert return_action == act2
-        else:
-            result = make_return_ref('CB_FAILED', switch_block.pos)
-    elif isinstance(value, action2.SpriteGroupRef):
+    if isinstance(value, action2.SpriteGroupRef):
         comment = value.name.value + ';'
         if value.name.value != 'CB_FAILED':
             act2 = action2.add_ref(value, varaction2)
@@ -612,7 +582,7 @@ def parse_result(value, action_list, act6, offset, varaction2, return_action, sw
         action_list.extend(tmp_param_actions)
         act6.modify_bytes(tmp_param, 2, offset)
         result = expression.ConstantNumeric(0)
-    return (result, comment, return_action)
+    return (result, comment)
 
 def reduce_varaction2_expr(switch_block):
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
@@ -637,7 +607,6 @@ def reduce_varaction2_expr(switch_block):
 def parse_varaction2(switch_block):
     action6.free_parameters.save()
     act6 = action6.Action6()
-    return_action = None
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range)
 
     expr = reduce_varaction2_expr(switch_block)
@@ -652,15 +621,11 @@ def parse_varaction2(switch_block):
     varaction2.var_list = parser.var_list
     offset += parser.var_list_size + 1 # +1 for the byte num-ranges
 
-    #nvar == 0 is a special case, make sure that isn't triggered here, unless we want it to
-    if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
-        switch_block.body.ranges.append(SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), switch_block.body.default))
-
     used_ranges = []
     for r in switch_block.body.ranges:
         comment = str(r.min) + " .. " + str(r.max) + ": "
 
-        range_result, range_comment, return_action = parse_result(r.result, action_list, act6, offset, varaction2, return_action, switch_block)
+        range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2, switch_block)
         comment += range_comment
         offset += 2 # size of result
 
@@ -690,14 +655,13 @@ def parse_varaction2(switch_block):
         if not range_overlap:
             varaction2.ranges.append(SwitchRange(range_min, range_max, range_result, comment=comment))
 
-    default, default_comment, return_action = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, return_action, switch_block)
+    default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, switch_block)
     varaction2.default_result = default
-    varaction2.default_comment = 'default: ' + default_comment
+    varaction2.default_comment = 'Return computed value' if len(switch_block.body.ranges) == 0 else 'default: ' + default_comment
 
     if len(act6.modifications) > 0: action_list.append(act6)
 
     action_list.append(varaction2)
-    if return_action is not None: action_list.insert(0, return_action)
 
     action6.free_parameters.restore()
     return action_list

@@ -27,7 +27,7 @@
 \2& 1A 20 \dx00000000 
 \2| 0C 00 \dx0000FFFF \b2 
 \wx8000 \dx0000003A \dx0000003A 	// 58 .. 58: return string(STR_COALMINE_EXTRA_TEXT);
-\wx00FE \dx0000FFFF \dx0000FFFF 	// 65535 .. 65535: return;
+\wx00FE \dx0000FFFF \dx0000FFFF 	// 65535 .. 65535: coal_mine_switch@return;
 \wx0000 // default: CB_FAILED;
 
 5 * 15 00 0A \b4 01 FF \wx0000 

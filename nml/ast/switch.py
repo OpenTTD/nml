@@ -20,10 +20,39 @@ class Switch(switch_base_class):
         self.expr = expr
         self.body = body
         self.pos = pos
+        self.return_switch = None
 
     def pre_process(self):
-        switch_base_class.pre_process(self)
         self.expr = action2var.reduce_varaction2_expr(self)
+
+        if any(map(lambda x: x is None, [r.result for r in self.body.ranges] + [self.body.default])):
+            if len(self.body.ranges) == 0:
+                # We already have no ranges, so can just add a bogus default result
+                assert self.body.default is None
+                self.body.default = action2.SpriteGroupRef(expression.Identifier('CB_FAILED', self.pos), [], self.pos)
+            else:
+                # We need to chain to a second switch block that reads our computed value
+                return_name = expression.Identifier(self.name.value + '@return', self.pos)
+                # Load var 0x1C, which is the last computed value. Variable range (SELF/PARENT) doesn't matter.
+                return_var_range = expression.Identifier('SELF', self.pos)
+                return_expr = expression.Variable(expression.ConstantNumeric(0x1C, self.pos), pos=self.pos)
+                # Set result to None, it will be parsed correctly during preprocessing
+                return_body = SwitchBody([], None)
+                self.return_switch = Switch(self.feature, return_var_range, return_name, return_expr, return_body, self.pos)
+                self.return_switch.pre_process()
+
+                # Now replace any 'None' result with a reference to the result action
+                for range in self.body.ranges:
+                    if range.result is None:
+                        range.result = action2.SpriteGroupRef(return_name, [], self.pos)
+                if self.body.default is None:
+                    self.body.default = action2.SpriteGroupRef(return_name, [], self.pos)
+        elif len(self.body.ranges) == 0:
+            # Avoid triggering the 'return computed value' special case
+            self.body.ranges.append(action2var.SwitchRange(expression.ConstantNumeric(0, self.pos), expression.ConstantNumeric(0, self.pos), self.body.default))
+
+        # Now pre-process ourselves
+        switch_base_class.pre_process(self)
 
     def collect_references(self):
         all_refs = []
@@ -34,15 +63,20 @@ class Switch(switch_base_class):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
+        if self.return_switch is not None:
+            print (2+indentation)*' ' + 'Extra switch to return computed value:'
+            self.return_switch.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
         self.body.debug_print(indentation + 4)
 
     def get_action_list(self):
+        action_list = []
         if self.prepare_output():
-            return action2var.parse_varaction2(self)
-        return []
+            if self.return_switch is not None: action_list += self.return_switch.get_action_list()
+            action_list += action2var.parse_varaction2(self)
+        return action_list
 
     def __str__(self):
         var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
@@ -58,7 +92,7 @@ class SwitchBody(object):
     @type ranges: C{list} of L{SwitchRange}
 
     @ivar default: Default result to use if no range matches
-    @type default: L{SpriteGroupRef}, L{Expression} or C{None}, depending on the type of result.
+    @type default: L{SpriteGroupRef}, L{Expression} or C{None} (before pre-processing only), depending on the type of result.
     """
     def __init__(self, ranges, default):
         self.ranges = ranges
@@ -68,10 +102,7 @@ class SwitchBody(object):
         for r in self.ranges:
             r.debug_print(indentation)
         print indentation*' ' + 'Default:'
-        if self.default is None:
-            print (indentation+2)*' ' + 'Return computed value'
-        else:
-            self.default.debug_print(indentation + 2)
+        self.default.debug_print(indentation + 2)
 
     def __str__(self):
         ret = ''
@@ -79,8 +110,6 @@ class SwitchBody(object):
             ret += '\t%s\n' % str(r)
         if isinstance(self.default, action2.SpriteGroupRef):
             ret += '\t%s;\n' % str(self.default)
-        elif self.default is None:
-            ret += '\treturn;\n'
         else:
             ret += '\treturn %s;' % str(self.default)
         return ret
