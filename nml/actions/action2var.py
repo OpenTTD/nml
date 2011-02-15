@@ -76,7 +76,7 @@ class Action2Var(action2.Action2):
             file.print_varx(r.max.value, 4)
             file.newline(r.comment)
         file.print_wordx(self.default_result)
-        file.newline()
+        file.comment(self.default_comment)
         file.end_sprite()
 
 class VarAction2Var(object):
@@ -469,6 +469,7 @@ def make_return_varact2(switch_block):
     act = Action2Var(switch_block.feature.value, switch_block.name.value + '@return', 0x89)
     act.var_list = [VarAction2Var(0x1C, expression.ConstantNumeric(0), expression.ConstantNumeric(0xFFFFFFFF))]
     act.default_result = make_return_ref('CB_FAILED', switch_block.pos)
+    act.default_comment = 'Return computed value'
     return act
 
 def parse_var(info, pos):
@@ -691,6 +692,7 @@ def parse_varaction2(switch_block):
 
     default, default_comment, return_action = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, return_action, switch_block)
     varaction2.default_result = default
+    varaction2.default_comment = 'default: ' + default_comment
 
     if len(act6.modifications) > 0: action_list.append(act6)
 

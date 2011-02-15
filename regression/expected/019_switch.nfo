@@ -18,7 +18,7 @@
 // Name: coal_mine_switch@return
 3 * 13 02 0A FE 89 
 1C 00 \dxFFFFFFFF \b0 
-\wx0000 
+\wx0000 // Return computed value
 
 // Name: coal_mine_switch
 4 * 54 02 0A FE 89 
@@ -28,7 +28,7 @@
 \2| 0C 00 \dx0000FFFF \b2 
 \wx8000 \dx0000003A \dx0000003A 	// 58 .. 58: return string(STR_COALMINE_EXTRA_TEXT);
 \wx00FE \dx0000FFFF \dx0000FFFF 	// 65535 .. 65535: return;
-\wx0000 
+\wx0000 // default: CB_FAILED;
 
 5 * 15 00 0A \b4 01 FF \wx0000 
 08 00 

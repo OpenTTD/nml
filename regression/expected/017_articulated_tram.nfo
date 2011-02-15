@@ -35,13 +35,13 @@
 13 * 23 02 01 FD 89 
 10 00 \dxFFFFFFFF \b1 
 \wx8058 \dx00000001 \dx00000003 	// 1 .. 3: return 88;
-\wx0000 
+\wx0000 // default: CB_FAILED;
 
 // Name: foster_express_callbacks
 14 * 23 02 01 FE 89 
 0C 00 \dx0000FFFF \b1 
 \wx00FD \dx00000016 \dx00000016 	// 22 .. 22: foster_express_articulated_parts;
-\wx00FE 
+\wx00FE // default: foster_express_group;
 
 15 * 66 00 01 \b24 01 FF \wx0058 
 06 0F 
