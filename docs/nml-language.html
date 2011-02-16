@@ -753,8 +753,8 @@ column specifies the object of which the random data is used.</p>
 <tr><td>Objects</td><td>SELF</td><td>8</td><td>Object tile (different per tile)</td></tr>
 <tr><td>Rail types</td><td>SELF</td><td>2</td><td>Rail tile (pseudo-random, based on location)</td></tr>
 </table>
-<p>(a) x can be any expression. It can even contain variables, in that case
-the variables of the vehicle itself are used.</p>
+<p>(a) x can be any expression. It may access parameters or registers,
+but variable accesses are not possible.</p>
 <p>(b) The random bits are initially the same for all tiles of a multi-tile house.</p>
 <p>The third parameter <code>&lt;ID&gt;</code> can be used to refer to this
 block from other (random-)switch-blocks. The last parameter
@@ -826,7 +826,14 @@ The relative probability that this option will be chosen is given by
 by the sum of all probabilities. If this sum is not equal to a power of two (2,
 4, 8, 16, ...), then rounding is done and the probabilities may be inexact. For
 information about <code>&lt;return_value&gt;</code>, see the
-<a href="#block-switch">switch-block</a>. Let's conclude with an example:
+<a href="#block-switch">switch-block</a>.</p>
+<p>Note that re-randomizing is done only during a special callback, CB_RANDOM_TRIGGER.
+This callback is called whenever a trigger event occurs. As a consequence, it's
+<em>absolutely necessary</em> for the random_switch block to be in executed during
+this callback, or trigger-based re-randomizing won't take place. Also, the callback
+may not fail (end with CB_FAILED), so return an arbitrary value or even a sprite set
+instead. This return value is not used anywhere.</p>
+<p>Let's conclude with an example:</p>
 <pre class="code">random_switch (FEAT_TRAINS, SELF, random_42, bitmask(TRIGGER_VEHICLE_UNLOAD_ALL, TRIGGER_VEHICLE_ANY_LOAD, TRIGGER_ALL_NEEDED)) {
 	/* re-randomize when vehicle has been emptied and then received new cargo */
 	independent: random_43; // decision should be independent from random_43, which is defined elsewhere
