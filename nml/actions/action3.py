@@ -29,8 +29,8 @@ class Action3(base_action.BaseAction):
 
     def prepare_output(self):
         action2.free_references(self)
-        self.cid_mappings = [(cargo, action2.remove_ref(cid)) for cargo, cid in self.cid_mappings]
-        self.def_cid = 0 if self.def_cid is None else action2.remove_ref(self.def_cid)
+        self.cid_mappings = [(cargo, cid.get_action2_id()) for cargo, cid in self.cid_mappings]
+        self.def_cid = 0 if self.def_cid is None else self.def_cid.get_action2_id()
 
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)

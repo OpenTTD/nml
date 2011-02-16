@@ -168,7 +168,6 @@ class RandomSwitch(switch_base_class):
             self.choices.append(choice)
 
         self.pos = pos
-        self.random_action2 = None # set during parsing
         self.switch = None
 
     def pre_process(self):
@@ -380,7 +379,7 @@ def lookup_random_action2(sg_ref):
     """
     spritegroup = action2.resolve_spritegroup(sg_ref.name)
     assert isinstance(spritegroup, RandomSwitch) # Already checked in pre-processing
-    act2 = spritegroup.random_action2
+    act2 = spritegroup.get_action2()
     assert isinstance(act2, action2random.Action2Random)
     return act2
 
@@ -488,7 +487,7 @@ def parse_randomswitch(random_switch):
         i += 1
 
     random_action2 = action2random.Action2Random(random_switch.feature.value, random_switch.name.value, type_byte, count, random_switch.triggers.value, randbit, nrand, random_switch.choices)
-    random_switch.random_action2 = random_action2
+    random_switch.set_action2(random_action2)
 
     # Correctly add action2 references, do that now because we need to reference the random action2
     for choice in random_switch.choices:

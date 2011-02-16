@@ -3,8 +3,6 @@ from nml.actions import base_action
 
 free_action2_ids = range(1, 255)
 
-action2_map = {}
-
 class Action2(base_action.BaseAction):
     """
     Abstract Action2 base class.
@@ -29,11 +27,6 @@ class Action2(base_action.BaseAction):
     @type tmp_locations: C{list} of C{int}
     """
     def __init__(self, feature, name):
-        global action2_map
-        if name in action2_map:
-            raise generic.ScriptError('Reusing names of switch/spritegroup blocks is not allowed, trying to use "%s"' % name)
-        action2_map[name] = self
-
         self.feature = feature
         self.name = name
         self.num_refs = 0
@@ -117,37 +110,12 @@ def add_ref(ref, source_action, reference_as_proc = False):
     @param reference_as_proc: True iff the reference source is a procedure call,
                               which needs special precautions for temp registers.
     @type reference_as_proc: C{bool}
-
-    @return: A reference to the action 2.
-    @rtype: L{Action2}
     """
-    global action2_map
-    name_str = ref.name.value
-    assert name_str in action2_map, "Illegal action2 reference '%s' encountered." % name_str
-    act2 = action2_map[name_str]
 
     # Add reference to list of references of the source action
+    act2 = resolve_spritegroup(ref.name).get_action2()
     source_action.references.append(Action2Reference(act2, reference_as_proc))
     act2.num_refs += 1
-    return act2
-
-def remove_ref(ref):
-    """
-    Remove a reference to a certain action2 and return its numeric ID.
-    To be called during prepare_output.
-
-    @param ref: Reference to the sprite group that corresponds to the action2.
-    @type ref: L{SpriteGroupRef}
-
-    @return: The numeric ID of the action2.
-    @rtype: C{int}
-    """
-    name_str = ref.name.value
-    if name_str == 'CB_FAILED': return 0 # ID 0 is never used so it works as a failure code
-    global action2_map
-    assert name_str in action2_map, "Illegal action2 reference encountered."
-    act2 = action2_map[name_str]
-    return act2.id
 
 def free_references(source_action):
     """
@@ -215,12 +183,19 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             - Implement their own __init__ method
             - Call initialize, pre_process and perpare_output (in that order)
             - Implement collect_references
+            - Call set_action2 after generating the corresponding action2 (if applicable)
 
         @ivar _referencing_nodes: Set of nodes that refer to this node
         @type _referencing_nodes: C{set}
 
         @ivar _referenced_nodes: Set of nodes that this node refers to
         @type _referenced_nodes: C{set}
+
+        @ivar _prepared: True iff prepare_output has already been executed
+        @type _prepared: C{bool}
+
+        @ivar _action2: Reference to the action2 that corresponds to this node, if applicable
+        @type _action2: L{Action2}, or C{None} if N/A
 
         @ivar feature: Feature of this node
         @type feature: L{ConstantNumeric}
@@ -255,9 +230,10 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             assert self._referred_by_type() == SpriteGroupRefType.NONE or name is not None
             self._referencing_nodes = set()
             self._referenced_nodes = set()
+            self._prepared = False
+            self._action2 = None
             self.feature = feature
             self.name = name
-            self._prepared = False
 
         def pre_process(self):
             """
@@ -345,6 +321,28 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             """
             assert self._referring_to_type() != SpriteGroupRefType.NONE
             raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass %r' % type(self))
+
+        def set_action2(self, action2):
+            """
+            Set this node's resulting action2
+
+            @param action2: Action2 to set
+            @type action2: L{Action2}
+            """
+            assert self._own_type() == SpriteGroupRefType.SPRITEGROUP
+            assert self._action2 is None
+            self._action2 = action2
+
+        def get_action2(self):
+            """
+            Get this node's resulting action2
+
+            @return: Action2 to get
+            @rtype: L{Action2}
+            """
+            assert self._own_type() == SpriteGroupRefType.SPRITEGROUP
+            assert self._action2 is not None
+            return self._action2
 
         def _add_reference(self, target_ref):
             """
@@ -450,3 +448,18 @@ class SpriteGroupRef(object):
 
     def __str__(self):
         return str(self.name)
+
+    def get_action2_id(self):
+        """
+        Get the action2 set-ID that this reference maps to
+
+        @return: The set ID
+        @rtype: C{int}
+        """
+        if self.name.value == 'CB_FAILED': return 0 # 0 serves as a failed CB result because it is never used
+        try:
+            spritegroup = resolve_spritegroup(self.name)
+        except ScriptError:
+            assert False, "Illegal action2 reference '%s' encountered." % self.name.value
+
+        return spritegroup.get_action2().id

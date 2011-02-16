@@ -67,6 +67,8 @@ def get_production_actions(produce):
 
     if len(act6.modifications) > 0: action_list.append(act6)
     action6.free_parameters.restore()
-    action_list.append(Action2Production(produce.name.value, produce.version, result_list[0:3], result_list[3:5], result_list[5]))
+    prod_action = Action2Production(produce.name.value, produce.version, result_list[0:3], result_list[3:5], result_list[5])
+    action_list.append(prod_action)
+    produce.set_action2(prod_action)
 
     return action_list

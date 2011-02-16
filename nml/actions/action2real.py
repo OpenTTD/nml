@@ -52,4 +52,7 @@ def get_real_action2s(spritegroup):
             spriteset = action2.resolve_spritegroup(set_ref.name)
             if type == 0: loaded_list.append(spriteset.action1_num)
             else:  loading_list.append(spriteset.action1_num)
-    return [Action2Real(feature, spritegroup.name.value, loaded_list, loading_list)]
+
+    action = Action2Real(feature, spritegroup.name.value, loaded_list, loading_list)
+    spritegroup.set_action2(action)
+    return [action]

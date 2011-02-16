@@ -250,7 +250,9 @@ def get_layout_action2s(spritegroup):
     if len(act6.modifications) > 0:
         actions.append(act6)
 
-    actions.append(Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites))
+    layout_action = Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)
+    actions.append(layout_action)
+    spritegroup.set_action2(layout_action)
 
     action6.free_parameters.restore()
     return actions

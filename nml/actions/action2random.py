@@ -15,7 +15,7 @@ class Action2Random(action2.Action2):
         action2.Action2.prepare_output(self)
         for choice in self.choices:
             if isinstance(choice.result, action2.SpriteGroupRef):
-                choice.result = action2.remove_ref(choice.result)
+                choice.result = choice.result.get_action2_id()
             else:
                 choice.result = choice.result.value | 0x8000
 

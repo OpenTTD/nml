@@ -41,11 +41,11 @@ class Action2Var(action2.Action2):
 
         for r in self.ranges:
             if isinstance(r.result, action2.SpriteGroupRef):
-                r.result = action2.remove_ref(r.result)
+                r.result = r.result.get_action2_id()
             else:
                 r.result = r.result.value | 0x8000
         if isinstance(self.default_result, action2.SpriteGroupRef):
-            self.default_result = action2.remove_ref(self.default_result)
+            self.default_result = self.default_result.get_action2_id()
         else:
             self.default_result = self.default_result.value | 0x8000
 
@@ -662,6 +662,7 @@ def parse_varaction2(switch_block):
     if len(act6.modifications) > 0: action_list.append(act6)
 
     action_list.append(varaction2)
+    switch_block.set_action2(varaction2)
 
     action6.free_parameters.restore()
     return action_list
