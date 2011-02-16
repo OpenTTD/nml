@@ -119,18 +119,28 @@ class RandomSwitch(switch_base_class):
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         #feature
-        feature = general.parse_feature(param_list[0])
+        self.feature = general.parse_feature(param_list[0])
 
         #type
         self.type = param_list[1]
+        # Extract type name and possible argument
+        if isinstance(self.type, expression.Identifier):
+            self.type_count = None
+        elif isinstance(self.type, expression.FunctionCall):
+            if len(self.type.params) == 0:
+                self.type_count = None
+            elif len(self.type.params) == 1:
+                self.type_count = self.type.params[0].reduce(global_constants.const_list)
+            else:
+                raise generic.ScriptError("Value for random_switch parameter 2 'type' can have only one parameter.", self.type.pos)
+            self.type = self.type.name
+        else:
+            raise generic.ScriptError("random_switch parameter 2 'type' should be an identifier, possibly with a parameter.", self.type.pos)
 
         #name
         if not isinstance(param_list[2], expression.Identifier):
             raise generic.ScriptError("random_switch parameter 3 'name' should be an identifier", pos)
-        name = param_list[2]
-
-        #initialize base class
-        self.initialize(name, feature)
+        self.name = param_list[2]
 
         #triggers
         self.triggers = param_list[3].reduce_constant(global_constants.const_list) if len(param_list) == 4 else expression.ConstantNumeric(0)
@@ -159,14 +169,34 @@ class RandomSwitch(switch_base_class):
 
         self.pos = pos
         self.random_action2 = None # set during parsing
+        self.switch = None
 
     def pre_process(self):
-        switch_base_class.pre_process(self)
         # Make sure, all [in]dependencies refer to existing random switch blocks
         for dep in self.dependent + self.independent:
             spritegroup = action2.resolve_spritegroup(dep.name)
             if not isinstance(spritegroup, RandomSwitch):
                 raise generic.ScriptError("Value of (in)dependent '%s' should refer to a random_switch." % dep.name.value, dep.pos)
+
+        if self.type_count is not None and not (isinstance(self.type_count, expression.ConstantNumeric) and 1 <= self.type_count.value <= 15):
+            # The 'count' expression is too complex and will need to be stored in grf register 100
+            # Create a switch block for this purpose
+            va2_feature = self.feature
+            va2_range = expression.Identifier('SELF', self.pos)
+            va2_name = expression.Identifier(self.name.value, self.pos)
+
+            # Rename ourself
+            self.name.value += '@random'
+
+            va2_body = SwitchBody([], action2.SpriteGroupRef(expression.Identifier(self.name.value, self.pos), [], self.pos))
+            self.switch = Switch(va2_feature, va2_range, va2_name, self.type_count, va2_body, self.pos)
+
+            self.type_count = expression.ConstantNumeric(0, self.pos) # 0 means 'read from register'
+
+        # Init ourself first
+        self.initialize(self.name, self.feature)
+        switch_base_class.pre_process(self)
+        if self.switch is not None: self.switch.pre_process()
 
     def collect_references(self):
         all_refs = []
@@ -192,11 +222,16 @@ class RandomSwitch(switch_base_class):
         print (2+indentation)*' ' + 'Choices:'
         for choice in self.choices:
             choice.debug_print(indentation + 4)
+        if self.switch is not None:
+            print (indentation+2)*' ' + 'Preceding switch block:'
+            self.switch.debug_print(indentation + 4)
 
     def get_action_list(self):
+        action_list = []
         if self.prepare_output():
-            return parse_randomswitch(self)
-        return []
+            action_list += parse_randomswitch(self)
+            if self.switch is not None: action_list += self.switch.get_action_list()
+        return action_list
 
     def __str__(self):
         ret = 'random_switch(%s, %s, %s, %s) {\n' % (str(self.feature), str(self.type), str(self.name), str(self.triggers))
@@ -240,80 +275,64 @@ random_types = {
     'BACKWARD_SAMEID' : {'type': 0x84, 'range': 0, 'param': 1, 'value': 0xC0},
 }
 
-def parse_randomswitch_type(feature, type):
+def parse_randomswitch_type(random_switch):
     """
     Parse the type of a random switch to determine the type and random bits to use.
 
-    @param feature: Feature of this random switch
-    @type feature: C{ConstantNumeric}
+    @param random_switch: Random switch to parse the type of
+    @type random_switch: L{RandomSwitch}
 
-    @param type: Type of the random switch
-    @type type: L{Expression}
-
-    @return: A tuple containing the following (in order):
+    @return: A tuple containing the following:
                 - The type byte of the resulting random action2.
-                - The type (bit 6+7) of the randomact2 <count>, None if N/A.
-                - An expression making bit 0..3 of <count>, None if N/A.
+                - The value to use as <count>, None if N/A.
                 - The first random bit that should be used (often 0)
                 - The number of random bits available
-    @rtype: C{tuple} of (C{int}, C{int} or C{None}, L{Expression} or C{None}, C{int}, C{int})
+    @rtype: C{tuple} of (C{int}, C{int} or C{None}, C{int}, C{int})
     """
-    # Extract type name and possible argument
-    if isinstance(type, expression.Identifier):
-        type_name = type.value
-        type_param = None
-    elif isinstance(type, expression.FunctionCall):
-        type_name = type.name.value
-        if len(type.params) == 0:
-            type_param = None
-        elif len(type.params) == 1:
-            type_param = type.params[0]
-        else:
-            raise generic.ScriptError("Value for random_switch parameter 2 'type' can have only one parameter.", type.pos)
-    else:
-        raise generic.ScriptError("random_switch parameter 2 'type' should be an identifier, possibly with a parameter.", type.pos)
+    # Extract some stuff we'll often need
+    type_str = random_switch.type.value
+    type_pos = random_switch.type.pos
+    feature_val = random_switch.feature.value
 
     # Validate type name / param combination
-    if type_name not in random_types:
-        raise generic.ScriptError("Unrecognized value for random_switch parameter 2 'type': " + type_name, type.pos)
+    if type_str not in random_types:
+        raise generic.ScriptError("Unrecognized value for random_switch parameter 2 'type': " + type_str, type_pos)
 
-    if type_param is None:
+    if random_switch.type_count is None:
         # No param given
-        if random_types[type_name]['param'] == 1:
-            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' requires a parameter." % type_name, type.pos)
-        count_type = None
-        count_expr = None
+        if random_types[type_str]['param'] == 1:
+            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' requires a parameter." % type_str, type_pos)
+        count = None
     else:
         # Param given
-        if random_types[type_name]['param'] == 0:
-            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' should not have a parameter." % type_name, type.pos)
-        if not (0 <= feature.value <= 3):
-            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' is valid only for vehicles." % type_name, type.pos)
-        count_type = random_types[type_name]['value']
-        count_expr = type_param
+        if random_types[type_str]['param'] == 0:
+            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' should not have a parameter." % type_str, type_pos)
+        if not (0 <= feature_val <= 3):
+            raise generic.ScriptError("Value '%s' for random_switch parameter 2 'type' is valid only for vehicles." % type_str, type_pos)
+        assert isinstance(random_switch.type_count, expression.ConstantNumeric) and 0 <= random_switch.type_count.value <= 15
+        count = random_types[type_str]['value'] | random_switch.type_count.value
 
     # Determine type byte
-    type = random_types[type_name]['type']
-    bit_range = random_types[type_name]['range']
-    assert (type == 0x84) == (count_type is not None)
+    type_byte = random_types[type_str]['type']
+    bit_range = random_types[type_str]['range']
+    assert (type_byte == 0x84) == (count is not None)
 
     # Check that feature / type combination is valid
-    feature_val = feature.value
     if feature_val not in num_random_bits:
-        raise generic.ScriptError("Invalid feature for random_switch: " + str(feature_val), feature.pos)
-    if type == 0x83: feature_val = action2var_variables.varact2parent_scope[feature_val]
+        raise generic.ScriptError("Invalid feature for random_switch: " + str(feature_val), random_switch.feature.pos)
+    if type_byte == 0x83: feature_val = action2var_variables.varact2parent_scope[feature_val]
     if feature_val is None:
-        raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % feature.value, type.pos)
+        raise generic.ScriptError("Feature '%d' does not have a 'PARENT' scope." % feature_val, type_pos)
     if bit_range != 0 and feature_val not in (0x04, 0x11):
-        raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.", type.pos)
+        raise generic.ScriptError("Type 'TILE' is only supported for stations and airport tiles.", type_pos)
 
     # Determine random bits to use
     bits_available = num_random_bits[feature_val][bit_range]
     start_bit = sum(num_random_bits[feature_val][0:bit_range])
     if bits_available == 0:
-        raise generic.ScriptError("No random data is available for the given feature and scope, feature: " + str(feature_val), feature.pos)
+        raise generic.ScriptError("No random data is available for the given feature and scope, feature: " + str(feature_val), random_switch.feature.pos)
 
-    return type, count_type, count_expr, start_bit, bits_available
+    return type_byte, count, start_bit, bits_available
 
 def parse_randomswitch_choices(random_switch):
     """
@@ -443,7 +462,7 @@ def parse_randomswitch(random_switch):
     @return: List of actions
     @rtype: C{list} of L{BaseAction}
     """
-    type, count_type, count_expr, start_bit, bits_available = parse_randomswitch_type(random_switch.feature, random_switch.type)
+    type_byte, count, start_bit, bits_available = parse_randomswitch_type(random_switch)
 
     total_prob, nrand = parse_randomswitch_choices(random_switch)
 
@@ -468,31 +487,7 @@ def parse_randomswitch(random_switch):
         best_choice.resulting_prob += 1
         i += 1
 
-    #handle the 'count' parameter, if necessary
-    need_varact2 = False
-    if count_type is not None:
-        try:
-            expr = count_expr.reduce_constant(global_constants.const_list)
-            if not (1 <= expr.value <= 15):
-                need_varact2 = True
-        except generic.ConstError:
-            need_varact2 = True
-        except generic.ScriptError:
-            need_varact2 = True
-        count = count_type
-        name = random_switch.name.value
-        if need_varact2:
-            # our own name will be used by the varaction2 we're going to add
-            name += '@random'
-        else:
-            # add the value to the 'count' parameter
-            count |= expr.value
-    else:
-        count = None
-        name = random_switch.name.value
-
-    random_action2 = action2random.Action2Random(random_switch.feature.value, name, type, count, random_switch.triggers.value, randbit, nrand, random_switch.choices)
-    action_list = [random_action2]
+    random_action2 = action2random.Action2Random(random_switch.feature.value, random_switch.name.value, type_byte, count, random_switch.triggers.value, randbit, nrand, random_switch.choices)
     random_switch.random_action2 = random_action2
 
     # Correctly add action2 references, do that now because we need to reference the random action2
@@ -501,14 +496,4 @@ def parse_randomswitch(random_switch):
         if isinstance(choice.result, action2.SpriteGroupRef) and choice.result.name.value != 'CB_FAILED':
             action2.add_ref(choice.result, random_action2)
 
-    if need_varact2:
-        #Add varaction2 that stores count_expr in temporary register 0x100
-        pos = random_switch.pos
-        va2_feature = expression.ConstantNumeric(random_switch.feature.value)
-        va2_range = expression.Identifier('SELF', pos)
-        va2_name = expression.Identifier(random_switch.name.value, pos)
-        va2_expr = expression.BinOp(nmlop.STO_TMP, count_expr, expression.ConstantNumeric(0x100))
-        va2_body = SwitchBody([], action2.SpriteGroupRef(expression.Identifier(name, pos), [], pos))
-        switch = Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, pos)
-        action_list.extend(switch.get_action_list())
-    return action_list
+    return [random_action2]
