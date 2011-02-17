@@ -382,11 +382,7 @@ class Varaction2Parser(object):
         self.var_list.append(expr.op)
         self.var_list_size += 1
 
-        if isinstance(expr2, VarAction2LoadTempVar):
-            self.var_list.append(expr2)
-            self.var_list_size += expr2.get_size()
-        else:
-            self.parse(expr2)
+        self.parse(expr2)
 
 
     def parse_constant(self, expr):
