@@ -118,6 +118,13 @@ class BinOp(Expression):
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
+            # Since we have a lot of nml-variables that are in fact only the high bits of an nfo
+            # variable it can happen that we want to shift back the variable to the left.
+            # Don't use any extra opcodes but just reduce the shift-right in that case.
+            if op == nmlop.SHIFT_LEFT and isinstance(expr2, ConstantNumeric) and expr1.add is None and expr2.value < expr1.shift.value:
+                expr1.shift.value -= expr2.value
+                expr1.mask = BinOp(nmlop.SHIFT_LEFT, expr1.mask, expr2).reduce()
+                return expr1
 
         # - Try to merge multiple additions/subtractions with constant numbers
         if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and \
