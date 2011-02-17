@@ -64,10 +64,10 @@ class Action2Var(action2.Action2):
         file.newline()
         for var in self.var_list:
             if isinstance(var, nmlop.Operator):
-                file.newline()
                 file.print_bytex(var.act2_num, var.act2_str)
             else:
                 var.write(file, 4)
+                file.newline(var.comment)
         file.print_byte(len(self.ranges))
         file.newline()
         for r in self.ranges:
@@ -88,6 +88,7 @@ class VarAction2Var(object):
         self.add = None
         self.div = None
         self.mod = None
+        self.comment = ""
 
     def write(self, file, size):
         file.print_bytex(self.var_num)
@@ -280,7 +281,9 @@ class Varaction2Parser(object):
         guard = expression.Boolean(expr.guard).reduce()
         self.parse(guard)
         guard_var = VarAction2StoreTempVar()
+        guard_var.comment = "guard"
         inverted_guard_var = VarAction2StoreTempVar()
+        inverted_guard_var.comment = "!guard"
         self.var_list.append(nmlop.STO_TMP)
         self.var_list.append(guard_var)
         self.var_list.append(nmlop.XOR)
@@ -394,6 +397,7 @@ class Varaction2Parser(object):
     def parse_param(self, expr):
         self.mods.append(Modification(expr.num.value, 4, self.var_list_size + 2))
         var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
+        var.comment = str(expr)
         self.var_list.append(var)
         self.var_list_size += var.get_size()
 
