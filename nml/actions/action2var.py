@@ -132,9 +132,10 @@ def get_mask(size):
     elif size == 2: return 0xFFFF
     return 0xFFFFFFFF
 
-class VarAction2LoadTempVar(VarAction2Var):
+class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
     def __init__(self, tmp_var):
         VarAction2Var.__init__(self, 0x7D, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
+        expression.Expression.__init__(self, None)
         assert isinstance(tmp_var, VarAction2StoreTempVar)
         self.tmp_var = tmp_var
 
@@ -145,6 +146,16 @@ class VarAction2LoadTempVar(VarAction2Var):
 
     def get_size(self):
         return 7
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
+
+    def supported_by_action2(self, raise_error):
+        return True
+
+    def supported_by_actionD(self, raise_error):
+        assert not raise_error
+        return False
 
 class Modification(object):
     def __init__(self, param, size, offset):
@@ -261,7 +272,7 @@ class Varaction2Parser(object):
             expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
             expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
 
-        return expr
+        return expr.reduce()
 
 
     def preprocess_ternaryop(self, expr):
@@ -451,6 +462,10 @@ class Varaction2Parser(object):
 
         elif isinstance(expr, expression.String):
             self.parse_string(expr)
+
+        elif isinstance(expr, VarAction2LoadTempVar):
+            self.var_list.append(expr)
+            self.var_list_size += expr.get_size()
 
         else:
             expr.supported_by_action2(True)
