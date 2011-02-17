@@ -188,7 +188,8 @@ class RandomSwitch(switch_base_class):
             self.name.value += '@random'
 
             va2_body = SwitchBody([], action2.SpriteGroupRef(expression.Identifier(self.name.value, self.pos), [], self.pos))
-            self.switch = Switch(va2_feature, va2_range, va2_name, self.type_count, va2_body, self.pos)
+            expr = expression.BinOp(nmlop.STO_TMP, self.type_count, expression.ConstantNumeric(100))
+            self.switch = Switch(va2_feature, va2_range, va2_name, expr, va2_body, self.pos)
 
             self.type_count = expression.ConstantNumeric(0, self.pos) # 0 means 'read from register'
 
