@@ -295,10 +295,10 @@ def builtin_visual_effect_and_powered(name, args, pos):
     if len(args) != 3:
         raise generic.ScriptError(name + "() must have 3 parameters", pos)
     from nml import global_constants
-    effect = args[0].reduce_constant([global_constants.item_names]).value
+    effect = args[0].reduce_constant(global_constants.const_list).value
     offset = BinOp(nmlop.ADD, args[1], ConstantNumeric(8), args[1].pos).reduce_constant().value
     generic.check_range(offset, 0, 0x0F, "offset in function visual_effect_and_powered", pos)
-    powered = args[2].reduce_constant([global_constants.item_names]).value
+    powered = args[2].reduce_constant(global_constants.const_list).value
     if powered != 0 and powered != 0x80:
         raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
     return ConstantNumeric(effect | offset | powered)
