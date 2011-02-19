@@ -54,13 +54,16 @@ class Action3(base_action.BaseAction):
         return False
 
 def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
+    action6.free_parameters.save()
     action_list = []
     act6 = action6.Action6()
+
     if isinstance(id, expression.ConstantNumeric):
         act3 = Action3(feature, id.value)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
-        size = 3 if feature <= 3 else 1
+        # Vehicles use an extended byte
+        size = 2 if feature <= 3 else 1
         offset = 4 if feature <= 3 else 3
         act6.modify_bytes(tmp_param, size, offset)
         action_list.extend(tmp_param_actions)
@@ -82,6 +85,7 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
 
     if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(act3)
+    action6.free_parameters.restore()
 
     return action_list
 
