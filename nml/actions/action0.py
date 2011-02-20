@@ -137,7 +137,7 @@ def parse_property_block(prop_list, feature, id):
 
     offset += size
     for prop in prop_list:
-        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id.value, prop.unit)
+        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id, prop.unit)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:

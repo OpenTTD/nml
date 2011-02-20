@@ -1,5 +1,5 @@
-from nml import grfstrings
-from nml.actions import base_action
+from nml import expression, grfstrings
+from nml.actions import base_action, action6, actionD
 
 class Action4(base_action.BaseAction):
     def __init__(self, feature, lang, size, id, texts):
@@ -68,27 +68,47 @@ def get_string_action4s(feature, string_range, string, id = None):
     global string_ranges
     grfstrings.validate_string(string)
     write_action4s = True
+    action6.free_parameters.save()
+    actions = []
+
+    mod = None
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:
             write_action4s = False
             if string in used_strings[string_range]:
-                id = used_strings[string_range][string]
+                id_val = used_strings[string_range][string]
             else:
-                id = string_ranges[string_range]['ids'].pop()
-                used_strings[string_range][string] = id
-        id = id | (string_range << 8)
-    elif feature <= 3:
-        size = 3
+                id_val = string_ranges[string_range]['ids'].pop()
+                used_strings[string_range][string] = id_val
+        else:
+            assert id is not None
+            assert isinstance(id, expression.ConstantNumeric)
+            id_val = id.value
+        id_val = id_val | (string_range << 8)
     else:
-        size = 1
+        assert id is not None
+        size = 3 if feature <= 3 else 1
+        if isinstance(id, expression.ConstantNumeric):
+            id_val = id.value
+        else:
+            id_val = 0
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
+            actions.extend(tmp_param_actions)
+            mod = (tmp_param, 2 if feature <= 3 else 1, 5 if feature <= 3 else 4)
 
-    actions = []
     if write_action4s:
-        actions.append(Action4(feature, 0x7F, size, id, [grfstrings.get_translation(string)]))
-        for lang_id in grfstrings.get_translations(string):
-            actions.append(Action4(feature, lang_id, size, id, [grfstrings.get_translation(string, lang_id)]))
+        strings = [(lang_id, grfstrings.get_translation(string, lang_id)) for lang_id in grfstrings.get_translations(string)]
+        # Sort the strings for deterministic ordering and prepend the default language
+        strings = [(0x7F, grfstrings.get_translation(string))] + sorted(strings, key=lambda lang_text: lang_text[0])
 
-    actions.sort(key=lambda action: action.lang);
+        for lang_id, text in strings:
+            if mod is not None:
+                act6 = action6.Action6()
+                act6.modify_bytes(*mod)
+                actions.append(act6)
+            actions.append(Action4(feature, lang_id, size, id_val, [text]))
 
-    return (id, size == 2, actions)
+    action6.free_parameters.restore()
+
+    return (id_val, size == 2, actions)
