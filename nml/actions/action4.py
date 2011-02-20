@@ -2,6 +2,25 @@ from nml import expression, grfstrings
 from nml.actions import base_action, action6, actionD
 
 class Action4(base_action.BaseAction):
+    """
+    Class representing a single action 4.
+    Format: 04 <feature> <language-id> <num-ent> <offset> <text>
+
+    @ivar feature: Feature of this action 4
+    @type feature: C{int}
+
+    @ivar lang: Language ID of the text (set as ##grflangid in the .lng file, 0x7F for default)
+    @type lang: C{int}
+
+    @ivar size: Size of the id, may be 1 (byte), 2 (word) or 3 (ext. byte)
+    @type size: C{int}
+
+    @ivar id: ID of the first string to write
+    @type id: C{int}
+
+    @ivar texts: List of strings to write
+    @type texts: C{list} of C{unicode}
+    """
     def __init__(self, feature, lang, size, id, texts):
         self.feature = feature
         self.lang = lang
@@ -10,6 +29,7 @@ class Action4(base_action.BaseAction):
         self.texts = texts
 
     def prepare_output(self):
+        #To indicate a word value, bit 7 of the lang ID must be set
         if self.size == 2: self.lang = self.lang | 0x80
 
     def write(self, file):
@@ -30,20 +50,33 @@ class Action4(base_action.BaseAction):
     def skip_action9(self):
         return False
 
+# List of various string ranges that may be used
+# Attributes:
+#  - random_id: If true, string IDs may be allocated randomly, else the ID has a special meaning and must be assigned (e.g. for vehicles, string ID = vehicle ID)
+#  - ids: List of free IDs, only needed if random_id is true. Whenever an ID is used, it's removed from the list
 string_ranges = {
-    0xC4: {'random_id': False},
-    0xC5: {'random_id': False},
-    0xC9: {'random_id': False},
-    0xD0: {'random_id': True, 'ids': range(0x3FF, -1, -1)},
-    0xDC: {'random_id': True, 'ids': range(0xFF, -1, -1)},
+    0xC4: {'random_id': False}, # Station class names
+    0xC5: {'random_id': False}, # Station names
+    0xC9: {'random_id': False}, # House name
+    0xD0: {'random_id': True, 'ids': range(0x3FF, -1, -1)}, # Misc. text ids, used for callbacks and such
+    0xDC: {'random_id': True, 'ids': range(0xFF, -1, -1)}, # Misc. persistent text ids, used to set properties
 }
 
+# Mapping of string identifiers to D0xx/DCxx text ids
+# This allows outputting strings only once, instead of everywhere they are used
 used_strings = {
     0xD0: {},
     0xDC: {},
 }
 
 def get_global_string_actions():
+    """
+    Get a list of global string actions
+    i.e. print all D0xx / DCxx texts at once
+
+    @return: A list of all D0xx / DCxx action4s
+    @rtype: C{list} of L{BaseAction}
+    """
     texts = []
     actions = []
     for string_range, strings in used_strings.iteritems():
@@ -51,11 +84,15 @@ def get_global_string_actions():
             texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name)) )
             for lang_id in grfstrings.get_translations(string_name):
                 texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name, lang_id)) )
+
     last_lang = -1
     last_id = -1
+    # Sort to have a deterministic ordering and to have as much consecutive IDs as possible
     texts.sort(key=lambda text: (-1 if text[0] == 0x7F else text[0], text[1]))
+
     for text in texts:
         str_lang, str_id, str_text = text
+        # If possible, append strings to the last action 4 instead of creating a new one
         if str_lang != last_lang or str_id - 1 != last_id:
             actions.append(Action4(0x08, str_lang, 2, str_id, [str_text]))
         else:
@@ -65,6 +102,28 @@ def get_global_string_actions():
     return actions
 
 def get_string_action4s(feature, string_range, string, id = None):
+    """
+    Let a string from the lang files be used in the rest of NML.
+    This may involve adding actions directly, but otherwise an ID is allocated and the string will be written later
+
+    @param feature: Feature that uses the string
+    @type feature: C{int}
+
+    @param string_range: String range to use, either a value from L{string_ranges} or C{None} if N/A (item names)
+    @type string_range: C{int} or C{None}
+
+    @param string: String to parse
+    @type string: L{expression.String}
+
+    @param id: ID to use for this string, or C{None} if it will be allocated dynamically (random_id is true for the string range)
+    @type id: L{Expression} or C{None}
+
+    @return: A tuple of three values:
+                - ID of the string (useful if allocated dynamically)
+                - Whether the actions need to be prepended (True) or appended (False)
+                - Resulting action list
+    @rtype: C{tuple} of (C{int}, C{bool}, C{list} of L{BaseAction})
+    """
     global string_ranges
     grfstrings.validate_string(string)
     write_action4s = True
@@ -75,6 +134,7 @@ def get_string_action4s(feature, string_range, string, id = None):
     if string_range is not None:
         size = 2
         if string_ranges[string_range]['random_id']:
+            # ID is allocated randomly, we will output the actions later
             write_action4s = False
             if string in used_strings[string_range]:
                 id_val = used_strings[string_range][string]
@@ -82,11 +142,13 @@ def get_string_action4s(feature, string_range, string, id = None):
                 id_val = string_ranges[string_range]['ids'].pop()
                 used_strings[string_range][string] = id_val
         else:
+            # ID must be supplied
             assert id is not None
             assert isinstance(id, expression.ConstantNumeric)
             id_val = id.value
         id_val = id_val | (string_range << 8)
     else:
+        # Not a string range, so we must have an idea
         assert id is not None
         size = 3 if feature <= 3 else 1
         if isinstance(id, expression.ConstantNumeric):
@@ -95,6 +157,7 @@ def get_string_action4s(feature, string_range, string, id = None):
             id_val = 0
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
             actions.extend(tmp_param_actions)
+            # Apply ID via action4 later
             mod = (tmp_param, 2 if feature <= 3 else 1, 5 if feature <= 3 else 4)
 
     if write_action4s:
