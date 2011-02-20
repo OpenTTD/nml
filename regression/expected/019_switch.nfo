@@ -32,7 +32,7 @@
 \wx00FE \dx0000FFFF \dx0000FFFF 	// 65535 .. 65535: coal_mine_switch@return;
 \wx0000 // default: CB_FAILED;
 
-5 * 15 00 0A \b4 01 FF \wx0000 
+5 * 13 00 0A \b4 01 00 
 08 00 
 09 00 
 21 00 

@@ -2,6 +2,9 @@ from nml.actions.action0properties import Action0Property, properties
 from nml import generic, expression
 from nml.actions import base_action, action4, action6, actionD
 
+# Features that use an extended byte as ID (vehicles, sounds)
+action0_extended_byte_id = [0, 1, 2, 3, 0x0C]
+
 class Action0(base_action.BaseAction):
     def __init__(self, feature, id):
         self.feature = feature
@@ -13,15 +16,18 @@ class Action0(base_action.BaseAction):
         if self.num_ids is None: self.num_ids = 1
 
     def write(self, file):
-        size = 7
+        size = 7 if self.feature in action0_extended_byte_id else 5
         for prop in self.prop_list: size += prop.get_size()
         file.start_sprite(size)
         file.print_bytex(0)
         file.print_bytex(self.feature)
         file.print_byte(len(self.prop_list))
         file.print_bytex(self.num_ids)
-        file.print_bytex(0xFF)
-        file.print_wordx(self.id)
+        if self.feature in action0_extended_byte_id:
+            file.print_bytex(0xFF)
+            file.print_wordx(self.id)
+        else:
+            file.print_bytex(self.id)
         file.newline()
         for prop in self.prop_list:
             prop.write(file)
@@ -112,15 +118,24 @@ def parse_property_block(prop_list, feature, id):
     action_list = []
     action_list_append = []
     act6 = action6.Action6()
+
+    # ID may be an extended or normal byte, depending on feature
+    if feature in action0_extended_byte_id:
+        offset = 5
+        size = 2
+    else:
+        offset = 4
+        size = 1
+
     if isinstance(id, expression.ConstantNumeric):
         action0 = Action0(feature, id.value)
     else:
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
-        act6.modify_bytes(tmp_param, 2, 5)
+        act6.modify_bytes(tmp_param, size, offset)
         action_list.extend(tmp_param_actions)
         action0 = Action0(feature, 0)
 
-    offset = 7
+    offset += size
     for prop in prop_list:
         properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id.value, prop.unit)
         action_list.extend(extra_actions)
