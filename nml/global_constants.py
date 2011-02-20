@@ -835,9 +835,25 @@ unified_maglev_var = {
 def setting_from_info(info, pos):
     return expression.SpecialParameter(generic.reverse_lookup(settings, info), info, global_param_write, global_param_read, False, pos)
 
+def item_to_id(item, pos):
+    if not isinstance(item.id, expression.ConstantNumeric):
+        raise generic.ScriptError("Referencing item '%s' with a non-constant id is not possible." % item.name, pos)
+    return expression.ConstantNumeric(item.id.value, pos)
+
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 settings = {}
 
-const_list = [constant_numbers, (global_parameters, param_from_info), (misc_grf_bits, misc_grf_bit), (patch_variables, patch_variable), cargo_numbers, railtype_table, item_names, (settings, setting_from_info), (config_flags, config_flag), (unified_maglev_var, unified_maglev)]
+const_list = [
+    constant_numbers,
+    (global_parameters, param_from_info),
+    (misc_grf_bits, misc_grf_bit),
+    (patch_variables, patch_variable),
+    cargo_numbers,
+    railtype_table,
+    (item_names, item_to_id),
+    (settings, setting_from_info),
+    (config_flags, config_flag),
+    (unified_maglev_var, unified_maglev)
+]

@@ -21,6 +21,21 @@ item_feature = None
 item_id = None
 
 class Item(object):
+    """
+    AST-node representing an item block
+
+    @ivar name: Name of the item
+    @type name: L{Identifier} or C{None} if N/A.
+
+    @ivar id: Numeric ID of the item
+    @type id: C{int}
+
+    @ivar body: List of blocks that constitute the body of this item block
+    @type body: 
+
+    @ivar pos: Position information
+    @type pos: L{Position}
+    """
     def __init__(self, params, body, pos):
         self.pos = pos
         if len(params) >= 1:
@@ -31,7 +46,7 @@ class Item(object):
             raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
         if len(params) == 3:
-            self.id = params[2].reduce_constant(global_constants.const_list)
+            self.id = params[2].reduce(global_constants.const_list)
         else:
             self.id = None
 
@@ -40,17 +55,19 @@ class Item(object):
             if not isinstance(self.name, expression.Identifier):
                 raise generic.ScriptError("Item parameter 2 'name' should be an identifier", self.pos)
             if self.name.value in global_constants.item_names:
-                id = expression.ConstantNumeric(global_constants.item_names[self.name.value])
-                if self.id is not None and id.value != self.id.value:
-                    raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, self.id.value, id.value), self.pos)
-                self.id = id
+                existing_id = global_constants.item_names[self.name.value].id
+                if not isinstance(existing_id, expression.ConstantNumeric):
+                    raise generic.ScriptError("Item with name '%s' has already been assigned a non-constant ID, extending this item definition is not possible." % self.name.value, self.pos)
+                if self.id is not None and (not isinstance(self.id, expression.ConstantNumeric) or existing_id.value != self.id.value):
+                    raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, existing_id.value, self.id.value), self.pos)
+                self.id = existing_id
         else:
             self.name = None
 
         if self.id is None:
             self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
         if self.name is not None:
-            global_constants.item_names[self.name.value] = self.id.value
+            global_constants.item_names[self.name.value] = self
 
         self.body = body
         validate_item_block(body)
@@ -159,7 +176,7 @@ class LiveryOverride(object):
 
     def get_action_list(self):
         global item_feature
-        wagon_id = self.wagon_id.reduce_constant([global_constants.item_names])
+        wagon_id = self.wagon_id.reduce_constant([(global_constants.item_names, global_constants.item_to_id)])
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
     def __str__(self):

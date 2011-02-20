@@ -57,7 +57,10 @@ class TileLayout(object):
                 if tile['tile'].value not in global_constants.item_names:
                     raise generic.ScriptError("Unknown tile name", tile['tile'].pos)
                 file.print_bytex(0xFE)
-                file.print_wordx(global_constants.item_names[tile['tile'].value])
+                tile_id = global_constants.item_names[tile['tile'].value].id
+                if not isinstance(tile_id, expression.ConstantNumeric):
+                    raise generic.ScriptError("Tile '%s' cannot be used in a tilelayout, as its ID is not a constant." % tile['tile'].value, tile['tile'].pos)
+                file.print_wordx(tile_id.value)
             file.newline()
         file.print_bytex(0)
         file.print_bytex(0x80)
