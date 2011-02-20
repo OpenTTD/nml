@@ -1,4 +1,5 @@
 from nml import generic, expression
+from nml.actions import base_action
 from nml.ast import assignment
 import os, Image
 
@@ -87,7 +88,7 @@ class RealSprite(object):
         ret += "]"
         return ret
 
-class RealSpriteAction(object):
+class RealSpriteAction(base_action.BaseAction):
     def __init__(self, sprite):
         self.sprite = sprite
         self.last = False
@@ -95,24 +96,12 @@ class RealSpriteAction(object):
         self.label = None
         self.sprite_num = None
 
-    def prepare_output(self):
-        pass
-
     def write(self, file):
         if self.sprite.is_empty:
             file.print_empty_realsprite()
         else:
             file.print_sprite(self.sprite)
         if self.last: file.newline()
-
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
 
 class RecolourSprite(object):
     def __init__(self, mapping):
