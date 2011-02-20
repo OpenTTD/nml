@@ -118,11 +118,10 @@ def get_string_action4s(feature, string_range, string, id = None):
     @param id: ID to use for this string, or C{None} if it will be allocated dynamically (random_id is true for the string range)
     @type id: L{Expression} or C{None}
 
-    @return: A tuple of three values:
+    @return: A tuple of two values:
                 - ID of the string (useful if allocated dynamically)
-                - Whether the actions need to be prepended (True) or appended (False)
-                - Resulting action list
-    @rtype: C{tuple} of (C{int}, C{bool}, C{list} of L{BaseAction})
+                - Resulting action list to be appended
+    @rtype: C{tuple} of (C{int}, C{list} of L{BaseAction})
     """
     global string_ranges
     grfstrings.validate_string(string)
@@ -174,4 +173,4 @@ def get_string_action4s(feature, string_range, string, id = None):
 
     action6.free_parameters.restore()
 
-    return (id_val, size == 2, actions)
+    return (id_val, actions)

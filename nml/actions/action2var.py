@@ -403,7 +403,7 @@ class Varaction2Parser(object):
 
 
     def parse_string(self, expr):
-        str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, expr)
+        str_id, actions = action4.get_string_action4s(0, 0xD0, expr)
         self.extra_actions.extend(actions)
         self.parse_constant(expression.ConstantNumeric(str_id))
 
@@ -588,7 +588,7 @@ def parse_result(value, action_list, act6, offset, varaction2, switch_block):
         result = expression.ConstantNumeric(0)
     elif isinstance(value, expression.String):
         comment = "return %s;" % str(value)
-        str_id, size_2, actions = action4.get_string_action4s(0, 0xD0, value)
+        str_id, actions = action4.get_string_action4s(0, 0xD0, value)
         action_list.extend(actions)
         result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
     else:

@@ -92,12 +92,9 @@ def parse_property(feature, name, value, id, unit):
         elif isinstance(value, expression.String):
             if not 'string' in prop: raise generic.ScriptError("String used as value for non-string property: " + str(prop['num']), value.pos)
             string_range = prop['string']
-            stringid, prepend, string_actions = action4.get_string_action4s(feature, string_range, value, id)
+            stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
             value = expression.ConstantNumeric(stringid)
-            if prepend:
-                action_list.extend(string_actions)
-            else:
-                action_list_append.extend(string_actions)
+            action_list_append.extend(string_actions)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
             mods.append((tmp_param, prop['size'], 1))
