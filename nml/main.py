@@ -142,7 +142,6 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     actions = []
     for block in result:
         actions.extend(block.get_action_list())
-    actions.extend(action4.get_global_string_actions())
 
     action8_index = -1
     for i in range(len(actions) - 1, -1, -1):
@@ -153,9 +152,12 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
 
     if action8_index != -1:
         lang_actions = []
+        # Add plural/gender/case tables
         for lang_pair in grfstrings.langs:
             lang_id, lang = lang_pair
             lang_actions.extend(action0.get_language_translation_tables(lang))
+        # Add global strings
+        actions.extend(action4.get_global_string_actions())
         actions = actions[:action8_index + 1] + lang_actions + actions[action8_index + 1:]
 
     sprite_files = set()
@@ -199,11 +201,11 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
         num = start_sprite_num + idx
         action.prepare_output()
         if isinstance(action, real_sprite.RealSpriteAction):
-	    if action.block_name:
+            if action.block_name:
                 block_names[action.block_name] = num
             if action.sprite_num is not None:
-	        if action.sprite_num.value != num:
-		    raise generic.ScriptError("Sprite number %d given in base_sprites-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))
+                if action.sprite_num.value != num:
+                    raise generic.ScriptError("Sprite number %d given in base_sprites-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))
     for outputfile in outputfiles:
         if isinstance(outputfile, output_base.BinaryOutputBase):
             for action in actions:
