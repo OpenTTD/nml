@@ -249,8 +249,8 @@ class NMLParser(object):
     def p_name_string_list(self, t):
         '''name_string_list : name_string_item
                             | name_string_list name_string_item'''
-        if len(t) == 2: t[0] = [t[1]]
-        else: t[0] = t[1] + [t[2]]
+        if len(t) == 2: t[0] = expression.Array([t[1]], None)
+        else: t[0] = expression.Array(t[1].values + [t[2]], None)
 
     def p_name_string_item(self, t):
         'name_string_item : expression COLON string SEMICOLON'

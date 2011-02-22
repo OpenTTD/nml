@@ -90,6 +90,9 @@ class NameValue(object):
     def __init__(self, num, desc):
         self.num = num
         self.desc = desc
+        
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
 
 class ParameterSetting(object):
     def __init__(self, name, value_list):
@@ -131,7 +134,7 @@ class ParameterSetting(object):
             raise generic.ScriptError("You cannot set the same property twice in a parameter description block", value.pos)
         self.properties_set.add(name)
         if name == 'names':
-            for name_value in value:
+            for name_value in value.values:
                 num = name_value.num.reduce_constant().value
                 desc = name_value.desc
                 if not isinstance(desc, expression.String):
