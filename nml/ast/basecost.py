@@ -25,7 +25,7 @@ class BaseCost:
                 generic.check_range(cost.value.value, -8, 16, 'Base cost value', cost.value.pos)
                 cost.value.value += 8 #8 is the 'neutral value' for base costs
             else:
-                cost.value = expression.BinOp(nmlop.ADD, cost.value, expression.ConstantNumeric(8), cost.value.pos)
+                cost.value = expression.BinOp(nmlop.ADD, cost.value, expression.ConstantNumeric(8), cost.value.pos).reduce()
 
             if isinstance(cost.name, expression.Identifier):
                 if cost.name.value in base_cost_table:

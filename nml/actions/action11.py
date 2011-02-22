@@ -26,6 +26,9 @@ class Action11(base_action.BaseAction):
     def get_action_list(self):
         return [self] + self.sounds
 
+    def __str__(self):
+        return 'sounds {\n\t%s\n}' % '\n\t'.join([str(x) for x in self.sounds])
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Sounds:'
         for sound in self.sounds: sound.debug_print(indentation + 2)
@@ -56,6 +59,9 @@ class LoadBinaryFile(object):
         else:
             size = '???'
         print indentation*' ' + 'load binary file %r (filename %r), %s bytes' % (self.fname.value, name, size)
+
+    def __str__(self):
+        return 'load_soundfile(%s);' % self.fname
 
     def write(self, file):
         file.print_named_filedata(self.fname.value)
@@ -93,6 +99,10 @@ class ImportSound(object):
         value = self.grfid
         if -0x80000000 < value < 0: value += 0x100000000
         print indentation*' ' + 'import sound %d from NewGRF %s' % (self.number, hex(value))
+
+    def __str__(self):
+        grfid = self.grfid if self.grfid >= 0 else 0x100000000 + self.grfid
+        return 'import_sound(0x%X, %d);' % (grfid, self.number)
 
     def write(self, file):
         file.start_sprite(8)

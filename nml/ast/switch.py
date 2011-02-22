@@ -109,7 +109,10 @@ class SwitchBody(object):
         for r in self.ranges:
             ret += '\t%s\n' % str(r)
         if isinstance(self.default, action2.SpriteGroupRef):
-            ret += '\t%s;\n' % str(self.default)
+            if self.default.name.value.endswith('@return'):
+                ret += '\treturn;\n'
+            else:
+                ret += '\t%s;\n' % str(self.default)
         else:
             ret += '\treturn %s;' % str(self.default)
         return ret

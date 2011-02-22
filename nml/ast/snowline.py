@@ -33,6 +33,9 @@ class Snowline(object):
         for dh in self.date_heights:
             dh.debug_print(indentation + 2)
 
+    def __str__(self):
+        return 'snowline {\n\t%s\n\t%s\n}\n' % ('\n\t'.join([str(x) for x in self.date_heights]), str(self.type))
+
     def get_action_list(self):
         return action0.get_snowlinetable_action(compute_table(self))
 
@@ -55,6 +58,9 @@ class SnowlineType(object):
         if self.type not in ('equal', 'linear'):
             raise generic.ScriptError('Unknown type of snow line (only "equal" and "linear" are supported)', self.pos)
 
+    def __str__(self):
+        return self.type + ','
+
 
 class SnowDateHeight(object):
     """
@@ -76,6 +82,9 @@ class SnowDateHeight(object):
 
     def debug_print(self, indentation):
         print " " * indentation + "day: " + str(self.day_of_year) + ", height: " + str(self.height)
+
+    def __str__(self):
+        return '%s: %s,' % (str(self.day_of_year), str(self.height))
 
 
 

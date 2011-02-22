@@ -328,7 +328,8 @@ def builtin_reserve_sprites(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     count = args[0].reduce_constant()
-    return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, pos)
+    func = lambda x: '%s(%d)' % (name, count.value)
+    return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, func, pos)
 #}
 
 function_table = {

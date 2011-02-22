@@ -177,6 +177,9 @@ class SpriteLayout(spritelayout_base_class):
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 4)
 
+    def __str__(self):
+        return 'spritelayout %s {\n%s\n}\n' % (str(self.name), '\n'.join([str(x) for x in self.layout_sprite_list]))
+
     def get_action_list(self):
         if not self.parsed:
             if not self.prepare_output():
@@ -204,6 +207,9 @@ class LayoutSprite(object):
         for layout_param in self.param_list:
             layout_param.debug_print(indentation + 2)
 
+    def __str__(self):
+        return '\t%s {\n\t\t%s\n\t}' % (self.type, '\n\t\t'.join([str(layout_param) for layout_param in self.param_list]))
+
 class LayoutParam(object):
     def __init__(self, name, value, pos):
         self.name = name
@@ -221,3 +227,6 @@ class LayoutParam(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'Layout parameter:', self.name.value
         self.value.debug_print(indentation + 2)
+
+    def __str__(self):
+        return '%s: %s;' % (str(self.name), str(self.value))

@@ -189,7 +189,10 @@ class SwitchRange(object):
         if not isinstance(self.min, expression.ConstantNumeric) or not isinstance(self.max, expression.ConstantNumeric) or self.max.value != self.min.value:
             ret += '..' + str(self.max)
         if isinstance(self.result, action2.SpriteGroupRef):
-            ret += ': %s;' % str(self.result)
+            if self.result.name.value.endswith('@return'):
+                ret += ': return;'
+            else:
+                ret += ': %s;' % str(self.result)
         else:
             ret += ': return %s;' % str(self.result)
         return ret

@@ -90,6 +90,13 @@ class TownNames(object):
                 raise generic.ScriptError("town names ID 0x%x is already used." % self.id_number, self.pos)
             actionF.free_numbers.remove(self.id_number)
 
+    def __str__(self):
+        ret = 'town_names'
+        if self.name is not None:
+            ret += '(%s)' % str(self.name)
+        style_name = 'style_name: %s;\n' % str(self.style_name) if self.style_name is not None else ''
+        ret += '{\n%s%s\n}\n' % (style_name, ''.join([str(part) for part in self.parts]))
+        return ret
 
     def get_action_list(self):
         return self.actFs + [actionF.ActionF(self.name, self.id_number, self.style_name, self.parts, self.pos)]
@@ -242,6 +249,9 @@ class TownNamesPart(object):
         for piece in self.pieces:
             piece.debug_print(indentation + 2, total)
 
+    def __str__(self):
+        return '{\n\t%s\n}\n' % '\n\t'.join([str(piece) for piece in self.pieces])
+
     def get_length(self):
         size = 3 # textcount, firstbit, bitcount bytes.
         size += sum(piece.get_length() for piece in self.pieces)
@@ -322,6 +332,9 @@ class TownNamesEntryDefinition(object):
         else: name_text = "number 0x%x" % self.def_number.value
         print indentation*' ' + ('Insert town_name ID %s with probability %d/%d' % (name_text, self.probability.value, total))
 
+    def __str__(self):
+        return 'town_names(%s, %d),' % (str(self.def_number), self.probability.value)
+
     def get_length(self):
         return 2
 
@@ -373,6 +386,9 @@ class TownNamesEntryText(object):
 
     def debug_print(self, indentation, total):
         print indentation*' ' + ('Text %s with probability %d/%d' % (self.text.value, self.probability.value, total))
+
+    def __str__(self):
+        return 'text(%s, %d),' % (str(self.text), self.probability.value)
 
     def get_length(self):
         return 1 + grfstrings.get_string_size(self.text.value) # probability, text
