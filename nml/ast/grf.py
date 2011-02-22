@@ -4,10 +4,41 @@ from nml.actions import action8, action14
 palette_node = None
 
 def set_palette_used(pal):
+    """
+    Set the used palette in the action 14 node, if applicable
+
+    @param pal: Palette to use
+    @type pal: C{str} of length 1
+    """
     if palette_node:
         palette_node.pal = pal
 
 class GRF(object):
+    """
+    AST Node for a grf block, that supplies (static) information about the GRF
+    This is equivalent to actions 8 and 14
+
+    @ivar pos: Position information
+    @type pos: L{Position}
+
+    @ivar name: Name of the GRF (short)
+    @type name: L{Expression}, should be L{String} else user error
+
+    @ivar desc: Description of the GRF (longer)
+    @type name: L{Expression}, should be L{String} else user error
+
+    @ivar grfid: Globally unique identifier of the GRF
+    @type grfid: L{Expression}, should be L{StringLiteral} of 4 bytes else user error
+
+    @ivar version: Version of this GRF
+    @type version: L{Expression}
+
+    @ivar min_compatible_version: Minimum (older) version of the same GRF that it is compatible with
+    @type min_compatible_version: L{Expression}
+
+    @ivar params: List of user-configurable GRF parameters
+    @type params: C{list} of L{ParameterDescription}
+    """
     def __init__(self, alist, pos):
         self.pos = pos
         self.name = None
@@ -131,6 +162,15 @@ class ParameterSetting(object):
         return ret
 
     def set_property(self, name, value):
+        """
+        Set a single parameter property
+
+        @param name: Name of the property to be set
+        @type name: C{basestring}
+
+        @param value: Value of the property (note: may be an array)
+        @type value: L{Expression}
+        """
         if name in self.properties_set:
             raise generic.ScriptError("You cannot set the same property twice in a parameter description block", value.pos)
         self.properties_set.add(name)
