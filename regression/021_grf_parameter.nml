@@ -1,0 +1,45 @@
+// define the newgrf
+grf {
+    grfid: "test";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 1;
+    min_compatible_version: 0;
+    param (0) {
+        param_NoGrid {
+            type:    bool;
+            name:    string(STR_PARAM_NOGRID);
+            desc:    string(STR_PARAM_NOGRID_DESC);
+            def_value: 1;
+            bit:       0;
+        }
+        transmitter2rock {
+            type:    bool;
+            name:    string(STR_PARAM_TRANSMITTER);
+            desc:    string(STR_PARAM_TRANSMITTER_DESC);
+            def_value: 0;
+            bit:       1;
+        }
+    }
+    param (1) {
+        param_landscape {
+            type:   int;
+            name:   string(STR_PARAM_LANDSCAPE);
+            desc:   string(STR_PARAM_LANDSCAPE_DESC);
+            def_value: 0;
+            min_value: 0;
+            max_value: 1;
+            names: {
+                0: string(STR_PARAM_LANDSCAPE_NORMAL);
+                1: string(STR_PARAM_LANDSCAPE_ALPINE);
+                2: string(STR_PARAM_LANDSCAPE_TEMPERATE);
+                3: string(STR_PARAM_LANDSCAPE_ARCTIC);
+                4: string(STR_PARAM_LANDSCAPE_TROPICAL);
+                5: string(STR_PARAM_LANDSCAPE_TOYLAND);
+            };
+        }
+    }
+}
+
+param[10] = param_landscape;
+

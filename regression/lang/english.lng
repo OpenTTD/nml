@@ -10,9 +10,22 @@ STR_NAME_BULK_WAGON            :NML Test bulk wagon
 STR_PARAM_NAME                 :Name of the int setting
 STR_PARAM_DESC                 :Description of a setting
 
+STR_PARAM_NOGRID               :Disable gridlines
+STR_PARAM_NOGRID_DESC          :This setting allows to replace all ground sprites such that the landscape is painted (mostly) without grid lines. Note that roads and train tracks don't yet follow this rule
+STR_PARAM_TRANSMITTER          :Replace the transmitter tower by a rock
+STR_PARAM_TRANSMITTER_DESC     :Enable to replace the transmitter tower by a rock (useful for early scenarios without telecomunication towers)
+STR_PARAM_LANDSCAPE            :Landscape type
+STR_PARAM_LANDSCAPE_DESC       :Select the landscape (ground tile) type
+STR_PARAM_LANDSCAPE_NORMAL     :normal (according to climate)
+STR_PARAM_LANDSCAPE_ALPINE     :alpine (temperate grass in arctic)
+STR_PARAM_LANDSCAPE_TEMPERATE  :temperate (not implemented)
+STR_PARAM_LANDSCAPE_ARCTIC     :arctic (not implemented)
+STR_PARAM_LANDSCAPE_TROPICAL   :tropical (not implemented)
+STR_PARAM_LANDSCAPE_TOYLAND    :toyland (not implemented)
+
 STR_STATIONS                   :Test Stations
 
 STR_OBJ_MISC_CLASS             :Miscellaneous
 STR_OBJ_BASIC                  :Basic object
 
-STR_COALMINE_EXTRA_TEXT                                         :{BLACK}Extra info for coal mine: {DWORD_S}
+STR_COALMINE_EXTRA_TEXT        :{BLACK}Extra info for coal mine: {DWORD_S}
