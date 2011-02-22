@@ -29,6 +29,15 @@ class Parameter(Expression):
     def supported_by_actionD(self, raise_error):
         return True
 
+    def __eq__(self, other):
+        return other is not None and isinstance(other, Parameter) and self.num == other.num
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.num,))
+
 class OtherGRFParameter(Expression):
     def __init__(self, grfid, num, pos = None):
         Expression.__init__(self, pos)

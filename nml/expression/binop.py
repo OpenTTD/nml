@@ -160,6 +160,15 @@ class BinOp(Expression):
             return self.expr1.is_boolean() and self.expr2.is_boolean()
         return self.op.returns_boolean
 
+    def __eq__(self, other):
+        return other is not None and isinstance(other, BinOp) and self.op == other.op and self.expr1 == other.expr1 and self.expr2 == other.expr2
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.op, self.expr1, self.expr2))
+
 commutative_operators = set([
     nmlop.ADD,
     nmlop.MUL,

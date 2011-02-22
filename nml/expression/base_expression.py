@@ -128,7 +128,7 @@ class ConstantNumeric(Expression):
         return self.value == 0 or self.value == 1
 
     def __eq__(self, other):
-        return other is not None and isinstance(other, ConstantNumeric) and other.value - self.value
+        return other is not None and isinstance(other, ConstantNumeric) and other.value == self.value
 
     def __hash__(self):
         return self.value
