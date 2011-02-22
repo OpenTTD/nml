@@ -87,9 +87,10 @@ class SettingValue(object):
         self.value = value
 
 class NameValue(object):
-    def __init__(self, num, desc):
+    def __init__(self, num, desc, pos = None):
         self.num = num
         self.desc = desc
+        self.pos = pos
         
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self

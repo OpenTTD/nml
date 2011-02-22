@@ -249,12 +249,12 @@ class NMLParser(object):
     def p_name_string_list(self, t):
         '''name_string_list : name_string_item
                             | name_string_list name_string_item'''
-        if len(t) == 2: t[0] = expression.Array([t[1]], None)
-        else: t[0] = expression.Array(t[1].values + [t[2]], None)
+        if len(t) == 2: t[0] = expression.Array([t[1]], t[1].pos)
+        else: t[0] = expression.Array(t[1].values + [t[2]], t[1].pos)
 
     def p_name_string_item(self, t):
         'name_string_item : expression COLON string SEMICOLON'
-        t[0] = grf.NameValue(t[1], t[3])
+        t[0] = grf.NameValue(t[1], t[3], t[1].pos)
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
