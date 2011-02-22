@@ -94,7 +94,7 @@ class TownNames(object):
         ret = 'town_names'
         if self.name is not None:
             ret += '(%s)' % str(self.name)
-        style_name = 'style_name: %s;\n' % str(self.style_name) if self.style_name is not None else ''
+        style_name = 'styles: %s;\n' % str(self.style_name) if self.style_name is not None else ''
         ret += '{\n%s%s\n}\n' % (style_name, ''.join([str(part) for part in self.parts]))
         return ret
 
