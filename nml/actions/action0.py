@@ -78,7 +78,9 @@ def parse_property(feature, name, value, id, unit):
 
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
-    elif 'string_literal' in prop:
+    elif 'string_literal' in prop and (isinstance(value, expression.StringLiteral) or prop['string_literal'] != 4):
+        # Parse non-string exprssions just like integers. User will have to take care of proper value.
+        # This can be used to set a label (=string of length 4) to the value of a parameter.
         if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop['num'], value.pos)
         if len(value.value) != prop['string_literal']:
             raise generic.ScriptError("Value for property %d must be of length %d" % (prop['num'], prop['string_literal']), value.pos)
