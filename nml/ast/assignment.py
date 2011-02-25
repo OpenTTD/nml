@@ -29,6 +29,17 @@ class Assignment(object):
         return "%s: %s;" % (str(self.name), str(self.value))
 
 class Range(object):
+    """
+    Storage container for a range of values (inclusive). This Contains
+    a minimum value and optionally also a maximum value. If the maximum
+    values is omitted, the minimum is also used as maximum.
+
+    @ivar min: The minimum value of this range.
+    @type min: L{Expression}
+
+    @ivar max: THe maximum value of this range.
+    @type max: L{Expression} or C{None}
+    """
     def __init__(self, min, max):
         self.min = min
         self.max = max
