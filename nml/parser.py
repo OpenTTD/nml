@@ -633,21 +633,8 @@ class NMLParser(object):
     # Snow line
     #
     def p_snowline(self, t):
-        """snowline : SNOWLINE LPAREN ID RPAREN LBRACE snowlinedates RBRACE
-                    | SNOWLINE LPAREN ID RPAREN LBRACE snowlinedates SEMICOLON RBRACE"""
+        'snowline : SNOWLINE LPAREN ID RPAREN LBRACE generic_assignment_list RBRACE'
         t[0] = snowline.Snowline(snowline.SnowlineType(t[3]), t[6], t.lineno(1))
-
-    def p_snowlinedates(self, t):
-        """snowlinedates : snowlinedate
-                         | snowlinedates SEMICOLON snowlinedate"""
-        if len(t) == 2:
-            t[0] = [t[1]]
-        else:
-            t[0] = t[1] + [t[3]]
-
-    def p_snowlinedate(self, t):
-        """snowlinedate : expression COLON expression"""
-        t[0] = snowline.SnowDateHeight(t[1], t[3], t.lineno(1))
 
     #
     # Various misc. main script blocks that don't belong anywhere else

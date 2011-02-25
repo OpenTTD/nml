@@ -10,7 +10,7 @@ class Snowline(object):
     @type type: L{SnowlineType}
 
     @ivar date_heights: Height of the snow line at given days in the year.
-    @type date_heights: C{list} of L{SnowDateHeight}
+    @type date_heights: C{list} of L{Assignment}
 
     @ivar pos: Position of the data in the original file.
     @type pos: L{Position}
@@ -57,32 +57,6 @@ class SnowlineType(object):
         return self.type
 
 
-class SnowDateHeight(object):
-    """
-    Snowline height at a certain date in the year.
-
-    @ivar day_of_year: Day of the year, between 1 and 355.
-    @type day_of_year: L{Expression}
-
-    @ivar height: Height of the snow line at the given day.
-    @type height: L{Expression}
-
-    @ivar pos: Position of the data in the original file.
-    @type pos: L{Position}
-    """
-    def __init__(self, day_of_year, height, pos):
-        self.day_of_year = day_of_year
-        self.height = height
-        self.pos = pos
-
-    def debug_print(self, indentation):
-        print " " * indentation + "day: " + str(self.day_of_year) + ", height: " + str(self.height)
-
-    def __str__(self):
-        return '%s: %s;' % (str(self.day_of_year), str(self.height))
-
-
-
 def compute_table(snowline):
     """
     Compute the table with snowline height for each day of the year.
@@ -95,10 +69,10 @@ def compute_table(snowline):
     """
     day_table = [None]*365 # Height at each day, starting at day 0
     for dh in snowline.date_heights:
-        doy = dh.day_of_year.reduce()
+        doy = dh.name.reduce()
         if not isinstance(doy, expression.ConstantNumeric):
             raise generic.ScriptError('Day of year is not a compile-time constant', dh.pos)
-        height = dh.height.reduce()
+        height = dh.value.reduce()
         if not isinstance(height, expression.ConstantNumeric):
             raise generic.ScriptError('Height is not a compile-time constant', dh.pos)
 
