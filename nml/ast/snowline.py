@@ -13,16 +13,11 @@ class Snowline(object):
     @type date_heights: C{list} of L{SnowDateHeight}
 
     @ivar pos: Position of the data in the original file.
-    @type pos: :L{Position}
+    @type pos: L{Position}
     """
-    def __init__(self, height_data, pos):
-        self.date_heights = height_data[0]
-        if len(height_data[1]) > 0:
-            self.type = height_data[1][0]
-            for st in height_data[1][1:]:
-                generic.print_warning('Snowline type "%s" ignored' % st.type, st.pos)
-        else:
-            self.type = SnowlineType('equal', None)
+    def __init__(self, line_type, height_data, pos):
+        self.type = line_type
+        self.date_heights = height_data
         self.pos = pos
 
     def pre_process(self):
@@ -34,7 +29,7 @@ class Snowline(object):
             dh.debug_print(indentation + 2)
 
     def __str__(self):
-        return 'snowline {\n\t%s\n\t%s\n}\n' % ('\n\t'.join([str(x) for x in self.date_heights]), str(self.type))
+        return 'snowline (%s) {\n\t%s\n}\n' % (str(self.type), '\n\t'.join([str(x) for x in self.date_heights]))
 
     def get_action_list(self):
         return action0.get_snowlinetable_action(compute_table(self))
@@ -49,17 +44,17 @@ class SnowlineType(object):
     @type type: C{str}
 
     @ivar pos: Position of the data in the original file.
-    @type pos: :L{Position}
+    @type pos: L{Position}
     """
-    def __init__(self, type, pos):
+    def __init__(self, type):
         self.type = type.value
-        self.pos = pos
+        self.pos = type.pos
 
         if self.type not in ('equal', 'linear'):
             raise generic.ScriptError('Unknown type of snow line (only "equal" and "linear" are supported)', self.pos)
 
     def __str__(self):
-        return self.type + ';'
+        return self.type
 
 
 class SnowDateHeight(object):
@@ -73,7 +68,7 @@ class SnowDateHeight(object):
     @type height: L{Expression}
 
     @ivar pos: Position of the data in the original file.
-    @type pos: :L{Position}
+    @type pos: L{Position}
     """
     def __init__(self, day_of_year, height, pos):
         self.day_of_year = day_of_year
