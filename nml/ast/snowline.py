@@ -59,7 +59,7 @@ class SnowlineType(object):
             raise generic.ScriptError('Unknown type of snow line (only "equal" and "linear" are supported)', self.pos)
 
     def __str__(self):
-        return self.type + ','
+        return self.type + ';'
 
 
 class SnowDateHeight(object):
@@ -84,7 +84,7 @@ class SnowDateHeight(object):
         print " " * indentation + "day: " + str(self.day_of_year) + ", height: " + str(self.height)
 
     def __str__(self):
-        return '%s: %s,' % (str(self.day_of_year), str(self.height))
+        return '%s: %s;' % (str(self.day_of_year), str(self.height))
 
 
 

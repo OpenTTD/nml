@@ -634,12 +634,12 @@ class NMLParser(object):
     #
     def p_snowline(self, t):
         """snowline : SNOWLINE LBRACE snowlinedates RBRACE
-                    | SNOWLINE LBRACE snowlinedates COMMA RBRACE"""
+                    | SNOWLINE LBRACE snowlinedates SEMICOLON RBRACE"""
         t[0] = snowline.Snowline(t[3], t.lineno(1))
 
     def p_snowlinedates(self, t):
         """snowlinedates : snowlinedate
-                         | snowlinedates COMMA snowlinedate"""
+                         | snowlinedates SEMICOLON snowlinedate"""
         if len(t) == 2:
             t[0] = t[1]
         else:
