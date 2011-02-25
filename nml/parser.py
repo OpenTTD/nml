@@ -634,7 +634,7 @@ class NMLParser(object):
     #
     def p_snowline(self, t):
         'snowline : SNOWLINE LPAREN ID RPAREN LBRACE generic_assignment_list RBRACE'
-        t[0] = snowline.Snowline(snowline.SnowlineType(t[3]), t[6], t.lineno(1))
+        t[0] = snowline.Snowline(t[3], t[6], t.lineno(1))
 
     #
     # Various misc. main script blocks that don't belong anywhere else

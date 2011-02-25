@@ -7,7 +7,7 @@ class Snowline(object):
     Snowline curve throughout the year.
 
     @ivar type: Type of snowline.
-    @type type: L{SnowlineType}
+    @type type: C{str}
 
     @ivar date_heights: Height of the snow line at given days in the year.
     @type date_heights: C{list} of L{Assignment}
@@ -16,7 +16,9 @@ class Snowline(object):
     @type pos: L{Position}
     """
     def __init__(self, line_type, height_data, pos):
-        self.type = line_type
+        if line_type.value not in ('equal', 'linear'):
+            raise generic.ScriptError('Unknown type of snow line (only "equal" and "linear" are supported)', line_type.pos)
+        self.type = line_type.value
         self.date_heights = height_data
         self.pos = pos
 
@@ -24,7 +26,7 @@ class Snowline(object):
         pass
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Snowline (type=%s)' % self.type.type
+        print indentation*' ' + 'Snowline (type=%s)' % self.type
         for dh in self.date_heights:
             dh.debug_print(indentation + 2)
 
@@ -33,28 +35,6 @@ class Snowline(object):
 
     def get_action_list(self):
         return action0.get_snowlinetable_action(compute_table(self))
-
-class SnowlineType(object):
-    """
-    Type of snowline.
-
-    @ivar type: Type of the snowline. Allowed values
-                 - equal:  The same as the day before unless specified otherwise
-                 - linear: Linear interpolation of the height between heights at two days given.
-    @type type: C{str}
-
-    @ivar pos: Position of the data in the original file.
-    @type pos: L{Position}
-    """
-    def __init__(self, type):
-        self.type = type.value
-        self.pos = type.pos
-
-        if self.type not in ('equal', 'linear'):
-            raise generic.ScriptError('Unknown type of snow line (only "equal" and "linear" are supported)', self.pos)
-
-    def __str__(self):
-        return self.type
 
 
 def compute_table(snowline):
@@ -108,12 +88,12 @@ def compute_table(snowline):
         unwrapped_end = end
         if end < start: unwrapped_end += 365
 
-        if snowline.type.type == 'equal':
+        if snowline.type == 'equal':
             for day in range(start + 1, unwrapped_end):
                 if day >= 365: day -= 365
                 day_table[day] = startvalue
         else:
-            assert snowline.type.type == 'linear'
+            assert snowline.type == 'linear'
 
             dhd = float(endvalue - startvalue) / float(unwrapped_end - start)
             for day in range(start + 1, unwrapped_end):
