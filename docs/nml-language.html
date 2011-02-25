@@ -1037,6 +1037,26 @@ second for <code>base-char + 1</code> and so on. These sprites should only use
 colour palette indices 0 (transparent), 1 (foreground), and 2 (shadow). If the
 shadow colour is used, sprite compression flag 'TILE' must NOT be set.</p>
 
+
+<h2><a name="block-alt_sprites">32bpp sprites</a></h2>
+<p> A <code>alt_sprites</code> block allows you to specify alternative 32bpp
+sprites that are drop-in replacements for some real spriets in your grf. The
+syntax is as follows:</p>
+
+<pre class="exl">alt_sprites(block_name, zoom_level[, filename]) {
+	<a href="#real_sprites">list of realsprites</a>
+}</pre>
+
+<p>block_name is the name of the replace/replace_new/fontglyph/spriteset-block
+for which you want to provide 32bpp sprites. zoom_level can be one of
+<code>ZOOM_LEVEL_NORMAL, ZOOM_LEVEL_Z0, ZOOM_LEVEL_Z1 or ZOOM_LEVEL_Z2</code>.
+Please note that <code>ZOOM_LEVEL_NORMAL</code> and <ZOOM_LEVEL_Z2</code> are
+exactly the same. Specifying a filename is optional, it's only useful
+if you have multiple sprites in the same file. If every sprite is in a separate
+file you'll have to specify the filename for each realsprite anyway, so you
+can leave it out of the alt_sprites-block.</p>
+
+
 <h2><a name="block-town_names">Town names</a></h2>
 <p>To define randomly generated town names, the <tt>town_names</tt> block should
 be used. Such blocks can be used in two ways, as generator of (partial) town

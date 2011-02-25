@@ -2,9 +2,32 @@ from nml import expression, generic, global_constants
 from nml.actions import real_sprite
 import os, Image
 
+"""
+List with all AltSpritesBlocks encountered in the nml file.
+"""
 alt_sprites_list = []
 
 class AltSpritesBlock(object):
+    """
+    AST Node for alternative graphics. These are normally 32bpp graphics, possible
+    for a higher zoom-level than the default sprites.
+
+    @ivar name: The name of the replace/font_glyph/replace_new/spriteblock-block this
+                block contains alternative graphics for.
+    @type name: L{expression.Identifier}
+
+    @ivar zoom_level: The zoomlevel these graphics are for.
+    @type zoom_level: L{expression.Expression}
+
+    @ivar pcx: Default graphics file for the sprites in this block.
+    @type pcx: L{expression.StringLiteral} or C{None}
+
+    @ivar sprite_list: List of real sprites or templates expanding to real sprites.
+    @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
+
+    @ivar pos: Position information of this alt_sprites block.
+    @type pos: L{Position}
+    """
     def __init__(self, param_list, sprite_list, pos):
         if not (2 <= len(param_list) <= 3):
             raise generic.ScriptError("alternative_sprites-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
@@ -32,9 +55,25 @@ class AltSpritesBlock(object):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
+        # Alternative sprites are not part of the final grf/nfo file, they're wirtten
+        # as separate png files intsead. As such we don't return any actions. Creating
+        # the png files happens in process.
         return []
 
     def process(self, dir_name, block_names):
+        """
+        Create seperate png files for every sprite. For OpenTTD to be able
+        to read those files they have to be in a directory with the same name
+        as the grf and have <sprite_id>.png as name. For the extra-zoom-levels
+        branch the png files have to be named <sprite_id>_z<zoom_level>.png.
+        The default zoom level is number 2.
+
+        @param dir_name: The name of the directory where to create the png files.
+        @type  dir_name: C{str}
+
+        @param block_names: Mapping of block-names to sprite ids.
+        @type  block_names: C{dict} of C{str} to C{int}
+        """
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
         sprite_id = self.name.reduce_constant([block_names]).value
@@ -44,12 +83,24 @@ class AltSpritesBlock(object):
             if sprite.is_empty:
                 sprite_id += 1
                 continue
+            # Both the extra-zoom-levels branch and clean trunk support the filename
+            # without _z2 at the end. Higher zoom-levels are not supported by clean
+            # trunk anyway, so follow the format needed for extra-zoom-levels there.
             postfix = "" if zoom_level == 2 else "_z" + str(zoom_level)
             filename = os.path.join(dir_name, str(sprite_id) + postfix + ".png")
             write_32bpp_sprite(sprite, filename)
             sprite_id += 1
 
 def write_32bpp_sprite(sprite_info, filename):
+    """
+    Actually write a png file with a single sprite.
+
+    @param sprite_info: Information about filename and offsets/size of the sprite in the file.
+    @type  sprite_info: L{RealSprite}
+
+    @param filename: Name of the file to create.
+    @type  filename: C{str}
+    """
     sprite_info.validate_size()
     if not os.path.exists(sprite_info.file.value):
         raise generic.ImageError("File doesn't exist", sprite_info.file.value)
