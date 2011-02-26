@@ -493,7 +493,7 @@ properties[0x0A] = {
     'prob_in_game'           : {'size': 1, 'num': 0x18},
     'map_colour'             : {'size': 1, 'num': 0x19},
     'spec_flags'             : {'size': 4, 'num': 0x1A},
-    'new_ind_text'           : {'size': 2, 'num': 0x1B},
+    'new_ind_msg'            : {'size': 2, 'num': 0x1B},
     'input_multiplier_1'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1C)},
     'input_multiplier_2'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1D)},
     'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E)},
