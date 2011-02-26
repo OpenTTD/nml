@@ -232,7 +232,9 @@ constant_numbers = {
     'AIRCRAFT_SIZE_LARGE'      : 0x01,
 
     #ground sprite IDs
+    'GROUNDSPRITE_CONCRETE'    : 1420,
     'GROUNDSPRITE_NORMAL'      : 3981,
+    'GROUNDSPRITE_WATER'       : 4061,
     'GROUNDSPRITE_SNOW'        : 4550,
     'GROUNDSPRITE_DESERT'      : 4550,
 
