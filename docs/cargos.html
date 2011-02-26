@@ -24,7 +24,7 @@
 <tr><td>weight</td>                   <td>0..255</td><td>Weight of one unit of the cargo (measured in 1/16 ton)</td></tr>
 <tr><td>penalty_lowerbound</td>       <td>0..255</td><td>Delivery time until penalty is applied</td></tr>
 <tr><td>single_penalty_length</td>    <td>0..255</td><td>Length of the interval where a single penalty is applied</td></tr>
-<tr><td>price</td>                    <td>int</td><td>Base price</td></tr>
+<tr><td>price_factor</td>              <td>int</td><td>Base price factor for cargo payments</td></tr>
 <tr><td>station_list_colour</td>      <td>0..255</td><td>Colour for the station list window</td></tr>
 <tr><td>cargo_payment_list_colour</td><td>0..255</td><td>Colour for the cargo payment list window</td></tr>
 <tr><td>is_freight</td>               <td>0 or 1</td><td>Freight status (for the freighttrains switch); 0=not freight, 1=is freight</td></tr>
@@ -34,7 +34,7 @@
 <tr><td>town_growth_multiplier</td>   <td></td><td></td></tr> <!--float 0..255</td><td>Multiplier for town growth</td></tr>-->
 <tr><td>callback_flags</td>           <td>bitmask(<a href="#cargo-callbacks">cargo callbacks</a>)</td><td>Callback flags</td></tr>
 </table>
-Cargo payment is computed from <code>price</code>, amount of cargo transported,
+Cargo payment is computed from <code>price_factor</code>, amount of cargo transported,
 distance, and a time delivery factor. Unit of the delivery time is 185 ticks,
 roughly 2.5 days. The factor is constant (with value 255) if delivery time is
 less than <code>penalty_lowerbound</code>. It goes down with rate 1 between

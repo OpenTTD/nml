@@ -519,7 +519,7 @@ properties[0x0B] = {
     'weight'                    : {'num' : 0x0F, 'size' : 1, 'unit_type' : 'weight', 'unit_conversion' : 16},
     'penalty_lowerbound'        : {'num' : 0x10, 'size' : 1},
     'single_penalty_length'     : {'num' : 0x11, 'size' : 1},
-    'pricefactor'               : {'num' : 0x12, 'size' : 4},
+    'price_factor'              : {'num' : 0x12, 'size' : 4},
     'station_list_colour'       : {'num' : 0x13, 'size' : 1},
     'cargo_payment_list_colour' : {'num' : 0x14, 'size' : 1},
     'is_freight'                : {'num' : 0x15, 'size' : 1},
