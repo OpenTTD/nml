@@ -477,7 +477,7 @@ properties[0x0A] = {
     'substitute'             : {'size': 1, 'num': 0x08},
     'override'               : {'size': 1, 'num': 0x09},
     'layouts'                : {'custom_function': industry_layouts},
-    'prod_flags'             : {'size': 1, 'num': 0x0B},
+    'life_type'              : {'size': 1, 'num': 0x0B},
     'closure_msg'            : {'size': 2, 'num': 0x0C},
     'prod_increase_msg'      : {'size': 2, 'num': 0x0D},
     'prod_decrease_msg'      : {'size': 2, 'num': 0x0E},

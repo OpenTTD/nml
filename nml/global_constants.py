@@ -490,11 +490,11 @@ constant_numbers = {
     'INDUSTRYTYPE_UNKNOWN'               : 0xFE,
     'INDUSTRYTYPE_TOWN'                  : 0xFF,
 
-    #industry production type flags (industry property 0x0B, prod_flags)
-    'PRODUCTIONTYPE_EXTRACTIVE'          : 0x01,
-    'PRODUCTIONTYPE_ORGANIC'             : 0x02,
-    'PRODUCTIONTYPE_PROCESSING'          : 0x04,
-    'PRODUCTIONTYPE_NONE'                : 0x00,
+    #industry life types (industry property 0x0B, life_type)
+    'IND_LIFE_TYPE_BLACK_HOLE'           : 0x00,
+    'IND_LIFE_TYPE_EXTRACTIVE'           : 0x01,
+    'IND_LIFE_TYPE_ORGANIC'              : 0x02,
+    'IND_LIFE_TYPE_PROCESSING'           : 0x04,
 
     #traffic side (right hand traffic when bit 4 is set)
     'TRAFFIC_SIDE_LEFT'                  : 0x00,
