@@ -4,6 +4,7 @@ from base_expression import Type, Expression, ConstantNumeric
 from binop import BinOp
 from bitmask import BitMask
 from parameter import parse_string_to_dword
+from string_literal import StringLiteral
 from variable import Variable
 
 class FunctionCall(Expression):
