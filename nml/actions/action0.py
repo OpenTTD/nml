@@ -298,3 +298,51 @@ def get_language_translation_tables(lang):
     if len(action0.prop_list) > 0:
         return [action0]
     return []
+
+disable_info = {
+    # Vehicles: set climates_available to 0
+    0x00 : {'num': 116, 'props': [{'num': 0x06, 'size': 1, 'value': 0}]},
+    0x01 : {'num':  88, 'props': [{'num': 0x06, 'size': 1, 'value': 0}]},
+    0x02 : {'num':  11, 'props': [{'num': 0x06, 'size': 1, 'value': 0}]},
+    0x03 : {'num':  41, 'props': [{'num': 0x06, 'size': 1, 'value': 0}]},
+
+    # Houses / industries / airports: Set substitute_type to FF
+    0x07 : {'num': 110, 'props': [{'num': 0x08, 'size': 1, 'value': 0xFF}]},
+    0x0A : {'num':  37, 'props': [{'num': 0x08, 'size': 1, 'value': 0xFF}]},
+    0x0D : {'num':  10, 'props': [{'num': 0x08, 'size': 1, 'value': 0xFF}]},
+
+    # Cargos: Set bitnum to FF and label to 0
+    0x0B : {'num':  27, 'props': [{'num': 0x08, 'size': 1, 'value': 0xFF}, {'num': 0x17, 'size': 4, 'value': 0}]},
+}
+
+def get_disable_actions(disable):
+    """
+    Get the action list for a disable_item block
+
+    @param disable: Disable block
+    @type disable: L{DisableItem}
+
+    @return: A list of resulting actions
+    @rtype: C{list} of L{BaseAction}
+    """
+    feature = disable.feature.value
+    if feature not in disable_info:
+        raise generic.ScriptError("disable_item() is not available for feature %d." % feature, disable.pos)
+    if disable.first_id is None:
+        # No ids set -> disable all
+        assert disable.last_id is None
+        first = 0
+        num = disable_info[feature]['num']
+    else:
+        first = disable.first_id.value
+        if disable.last_id is None:
+            num = 1
+        else:
+            num = disable.last_id.value - first + 1
+
+    act0 = Action0(feature, first)
+    act0.num_ids = num
+    for prop in disable_info[feature]['props']:
+        act0.prop_list.append(Action0Property(prop['num'], num * [expression.ConstantNumeric(prop['value'])], prop['size']))
+
+    return [act0]

@@ -23,6 +23,7 @@ reserved = {
     'random_switch' : 'RANDOMSWITCH', #random action2
     'produce' : 'PRODUCE', #production action2
     'error' : 'ERROR', #action B
+    'disable_item' : 'DISABLE_ITEM',
     'replace' : 'REPLACESPRITE', #action A
     'replacenew' : 'REPLACENEWSPRITE', #action 5
     'font_glyph' : 'FONTGLYPH', #action 12

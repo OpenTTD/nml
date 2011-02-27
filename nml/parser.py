@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites
 from nml.actions import action2, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -77,6 +77,7 @@ class NMLParser(object):
                           | loop
                           | item
                           | error_block
+                          | disable_item
                           | deactivate
                           | replace
                           | replace_new
@@ -646,6 +647,10 @@ class NMLParser(object):
     def p_error_block(self, t):
         'error_block : ERROR LPAREN expression_list RPAREN SEMICOLON'
         t[0] = error.Error(t[3], t.lineno(1))
+
+    def p_disable_item(self, t):
+        'disable_item : DISABLE_ITEM LPAREN expression_list RPAREN SEMICOLON'
+        t[0] = disable_item.DisableItem(t[3], t.lineno(1))
 
     def p_cargotable(self, t):
         '''cargotable : CARGOTABLE LBRACE cargotable_list RBRACE
