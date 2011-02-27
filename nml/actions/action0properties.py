@@ -466,6 +466,33 @@ def random_sounds(value):
         raise generic.ScriptError("random_sound_effects must be an array with sounds effects", value.pos)
     return [RandomSoundsProp(value.values)]
 
+class ConflictingTypesProp(object):
+    def __init__(self, types_list):
+        self.types_list = types_list
+        assert len(self.types_list) == 3
+
+    def write(self, file):
+        file.print_bytex(0x16)
+        for type in self.types_list:
+            type.write(file, 1)
+        file.newline()
+
+    def get_size(self):
+        return len(self.types_list) + 1
+
+def industry_conflicting_types(value):
+    if not isinstance(value, Array):
+        raise generic.ScriptError("conflicting_ind_types must be an array of industry types", value.pos)
+    if len(value.values) > 3:
+        raise generic.ScriptError("conflicting_ind_types may have at most three entries", value.pos)
+
+    types_list = []
+    for val in value.values:
+        types_list.append(val.reduce_constant())
+    while len(types_list) < 3:
+        types_list.append(ConstantNumeric(0xFF))
+    return [ConflictingTypesProp(types_list)]
+
 def industry_input_multiplier(value, prop_num):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Input multiplier must be an array with exaclty two values", value.pos)
@@ -488,7 +515,7 @@ properties[0x0A] = {
     'prod_multiplier_2'      : {'size': 1, 'num': 0x13},
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds},
-    'conflicting_ind_types'  : {'size': 0, 'num': 0x16},
+    'conflicting_ind_types'  : {'custom_function': industry_conflicting_types},
     'prob_random'            : {'size': 1, 'num': 0x17},
     'prob_in_game'           : {'size': 1, 'num': 0x18},
     'map_colour'             : {'size': 1, 'num': 0x19},

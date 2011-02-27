@@ -110,7 +110,8 @@ changes that occur by default (when not using the callback). Examples are respec
 <tr><td>prod_multiplier_2</td><td>0..255</td><td>Amount of cargo 2 produced every 256 ticks (8 or 9 times a month)</td></tr>
 <tr><td>min_cargo_distr</td><td>0..255</td><td>Minimal amount of cargo before transporting to stations.</td></tr>
 <tr><td>random_sound_effects</td><td>array of ints</td><td>Sound effect numbers that are played some times.</td></tr>
-<tr><td>conflicting_ind_types</td><td>array of 3 ints</td><td>Three industry types that should not be nearby.</td></tr>
+<tr><td>conflicting_ind_types</td><td>array of up to 3x industry_type(IND_TYPE_OLD | IND_TYPE_NEW, id)</td><td>Three industry types that should not be nearby. Use the builtin-function industry_type(..)
+to define either an old industry (using the global ID) or a new industry from your grf (using the grf-local ID).</td></tr>
 <tr><td>prob_random</td><td>0..10</td><td>Probability of occurring while generating initial industries.</td></tr>
 <tr><td>prob_in_game</td><td>0..10</td><td>Probability of occurring while creating industries during the game.</td></tr>
 <tr><td>map_colour</td><td>0..255</td><td>Colour of the industry at the mini map.</td></tr>
