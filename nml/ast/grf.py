@@ -229,6 +229,7 @@ class ParameterDescription(object):
 
     def pre_process(self, num):
         if self.num is None: self.num = num
+        self.num = self.num.reduce_constant()
         for setting in self.setting_list:
             setting.pre_process()
         for setting in self.setting_list:
