@@ -376,11 +376,24 @@ to give a filename for every separate sprite.<p>
 [offset_x, offset_y, compression, filename]</pre>
 If you don't specify left_x, upper_y, width and height it'll default to the complete file. If you don't
 specify the filename it'll take the filename from the block containing this realsprite. It's a fatal error
-not to specify a filename for either the block containing a realsprite or the realsprite itself. If you
-don't specify the compression type it'll default to 1.</p>
+not to specify a filename for either the block containing a realsprite or the realsprite itself. For possible
+values of compression, see the table below.</p>
 <p>For all parameters you can use expressions as complex as you want as long as they can be resolved
 at compiletime. That means you're free to use for example template parameters, but letting the offset
 depend on a parameter is not allowed.</p>
+<p>The following table contains a list of compression flags. Multiple flags may be combined using the
+binary-OR (|) operator.</p>
+<table class="t">
+<tr><th>Name<th>Description
+<tr><td>NORMAL (default) or TILE<td>Compression algorithm to use for the sprite. TILE compression may be more efficient for sprites with large chunks of transparant blue,
+such as tiles or diagonal vehicle views.
+<tr><td>COMPRESSED or UNCOMPRESSED (default)<td>Whether to store the sprite compressed or uncompressed in memory. Storing compressed is saves memory for large, little-used sprites.
+<tr><td>CROP (default) or NOCROP<td>Whether to crop the sprites when the -c command line option is set.
+</table>
+<p>Example:</p>
+<pre class="exl">
+[0, 0, 64, 31, -31, 0, TILE]
+</pre>
 
 <h2><a name="recolour_sprites">Recolour sprites</a></h2>
 <p>Recolour sprites are special sprites that are used to recolour other sprites, for example to apply
