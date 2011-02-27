@@ -447,6 +447,11 @@ def industry_layouts(value):
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
+def industry_prod_multiplier(value):
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("Prod multiplier must be an array with exaclty two values", value.pos)
+    return [Action0Property(0x12 + i, value.values[i].reduce_constant(), 1) for i in range(0, 2)]
+
 class RandomSoundsProp(object):
     def __init__(self, sound_list):
         self.sound_list = sound_list
@@ -511,8 +516,7 @@ properties[0x0A] = {
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
     'prod_cargo_types'       : {'custom_function': lambda value: cargo_list(value, 2, 0x10, 2)},
     'accept_cargo_types'     : {'custom_function': lambda value: cargo_list(value, 3, 0x11, 4)},
-    'prod_multiplier_1'      : {'size': 1, 'num': 0x12},
-    'prod_multiplier_2'      : {'size': 1, 'num': 0x13},
+    'prod_multiplier'        : {'custom_function': industry_prod_multiplier},
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds},
     'conflicting_ind_types'  : {'custom_function': industry_conflicting_types},

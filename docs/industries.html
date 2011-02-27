@@ -106,8 +106,7 @@ changes that occur by default (when not using the callback). Examples are respec
 <tr><td>fund_cost_multiplier</td><td>0..255</td><td>Fund cost multiplier. Note that in OpenTTD the unmodified base cost is 8x higher for building (not prospecting) raw (=extractive / organic, see life_type) industries.</td></tr>
 <tr><td>prod_cargo_types</td><td>array up to 2 ints</td><td>Types of cargo produced.</td></tr>
 <tr><td>accept_cargo_types</td> <td>array up to 3 ints</td><td>Types of cargo accepted.</td></tr>
-<tr><td>prod_multiplier_1</td><td>0..255</td><td>Amount of cargo 1 produced every 256 ticks (8 or 9 times a month)</td></tr>
-<tr><td>prod_multiplier_2</td><td>0..255</td><td>Amount of cargo 2 produced every 256 ticks (8 or 9 times a month)</td></tr>
+<tr><td>prod_multiplier</td><td>array of 2 ints (0..255)</td><td>Amount of each output cargo to produce every 256 ticks (8 or 9 times a month)</td></tr>
 <tr><td>min_cargo_distr</td><td>0..255</td><td>Minimal amount of cargo before transporting to stations.</td></tr>
 <tr><td>random_sound_effects</td><td>array of ints</td><td>Sound effect numbers that are played some times.</td></tr>
 <tr><td>conflicting_ind_types</td><td>array of up to 3x industry_type(IND_TYPE_OLD | IND_TYPE_NEW, id)</td><td>Three industry types that should not be nearby. Use the builtin-function industry_type(..)
