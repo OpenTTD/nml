@@ -344,7 +344,7 @@ def builtin_industry_type(name, args, pos):
     from nml import global_constants
     type = args[0].reduce_constant(global_constants.const_list).value
     if type not in (0, 1):
-        raise generic.ScriptError("First argument of industry_type() must be 0 or 1", pos)
+        raise generic.ScriptError("First argument of industry_type() must be IND_TYPE_OLD or IND_TYPE_NEW", pos)
 
     # Industry ID uses 6 bits (0 .. 5), so bit 6 is never used
     id = args[1].reduce_constant(global_constants.const_list).value
