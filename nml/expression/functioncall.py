@@ -330,6 +330,27 @@ def builtin_reserve_sprites(name, args, pos):
     count = args[0].reduce_constant()
     func = lambda x: '%s(%d)' % (name, count.value)
     return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, func, pos)
+
+def builtin_industry_type(name, args, pos):
+    """
+    industry_type(IND_TYPE_OLD | IND_TYPE_NEW, id) builtin function
+
+    @return The industry type in the format used by grfs (industry prop 0x16 and var 0x64)
+    """
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have 2 parameters", pos)
+
+    from nml import global_constants
+    type = args[0].reduce_constant(global_constants.const_list).value
+    if type not in (0, 1):
+        raise generic.ScriptError("First argument of industry_type() must be 0 or 1", pos)
+
+    # Industry ID uses 6 bits (0 .. 5), so bit 6 is never used
+    id = args[1].reduce_constant(global_constants.const_list).value
+    if id not in range(0, 64):
+        raise generic.ScriptError("Second argument 'id' of industry_type() must be in range 0..63", pos)
+
+    return ConstantNumeric(type << 7 | id)
 #}
 
 function_table = {
@@ -354,4 +375,5 @@ function_table = {
     'cargotype' : builtin_cargotype,
     'railtype' : builtin_railtype,
     'reserve_sprites' : builtin_reserve_sprites,
+    'industry_type' : builtin_industry_type,
 }

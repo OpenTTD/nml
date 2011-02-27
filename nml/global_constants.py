@@ -376,6 +376,10 @@ constant_numbers = {
     'IND_FLAG_DO_NOT_FORCE_INSTANCE_AT_MAP_GENERATION' : 16,
     'IND_FLAG_ALLOW_CLOSING_LAST_INSTANCE'             : 17,
 
+    #flags for builtin function industry_type(..)
+    'IND_TYPE_OLD'             : 0,
+    'IND_TYPE_NEW'             : 1,
+
     #object flags
     'OBJ_FLAG_ONLY_SE'         : 0,
     'OBJ_FLAG_IRREMOVABLE'     : 1,
