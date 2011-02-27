@@ -448,9 +448,13 @@ def industry_layouts(value):
     return [IndustryLayoutProp(layouts)]
 
 def industry_prod_multiplier(value):
-    if not isinstance(value, Array) or len(value.values) != 2:
-        raise generic.ScriptError("Prod multiplier must be an array with exaclty two values", value.pos)
-    return [Action0Property(0x12 + i, value.values[i].reduce_constant(), 1) for i in range(0, 2)]
+    if not isinstance(value, Array) or len(value.values) > 2:
+        raise generic.ScriptError("Prod multiplier must be an array of up to two values", value.pos)
+    props = []
+    for i in range(0, 2):
+        val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
+        props.append(Action0Property(0x12 + i, val, 1))
+    return props
 
 class RandomSoundsProp(object):
     def __init__(self, sound_list):
@@ -499,10 +503,10 @@ def industry_conflicting_types(value):
     return [ConflictingTypesProp(types_list)]
 
 def industry_input_multiplier(value, prop_num):
-    if not isinstance(value, Array) or len(value.values) != 2:
-        raise generic.ScriptError("Input multiplier must be an array with exaclty two values", value.pos)
-    mul1 = value.values[0].reduce_constant().value * 256
-    mul2 = value.values[1].reduce_constant().value * 256
+    if not isinstance(value, Array) or len(value.values) > 2:
+        raise generic.ScriptError("Input multiplier must be an array of up to two values", value.pos)
+    mul1 = value.values[0].reduce_constant().value * 256 if len(value.values) > 0 else 0
+    mul2 = value.values[1].reduce_constant().value * 256 if len(value.values) > 1 else 0
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
 properties[0x0A] = {

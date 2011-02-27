@@ -104,9 +104,9 @@ changes that occur by default (when not using the callback). Examples are respec
 <tr><td>prod_increase_msg</td><td>string</td><td>Message displayed when industry increases production.</td></tr>
 <tr><td>prod_decrease_msg</td><td>string</td><td>Message displayed when industry decreases production.</td></tr>
 <tr><td>fund_cost_multiplier</td><td>0..255</td><td>Fund cost multiplier. Note that in OpenTTD the unmodified base cost is 8x higher for building (not prospecting) raw (=extractive / organic, see life_type) industries.</td></tr>
-<tr><td>prod_cargo_types</td><td>array up to 2 ints</td><td>Types of cargo produced.</td></tr>
-<tr><td>accept_cargo_types</td> <td>array up to 3 ints</td><td>Types of cargo accepted.</td></tr>
-<tr><td>prod_multiplier</td><td>array of 2 ints (0..255)</td><td>Amount of each output cargo to produce every 256 ticks (8 or 9 times a month)</td></tr>
+<tr><td>prod_cargo_types</td><td>array of up to 2 ints</td><td>Types of cargo produced.</td></tr>
+<tr><td>accept_cargo_types</td> <td>array of up to 3 ints</td><td>Types of cargo accepted.</td></tr>
+<tr><td>prod_multiplier</td><td>array of up to 2 ints (0..255)</td><td>Amount of each output cargo to produce every 256 ticks (8 or 9 times a month)</td></tr>
 <tr><td>min_cargo_distr</td><td>0..255</td><td>Minimal amount of cargo before transporting to stations.</td></tr>
 <tr><td>random_sound_effects</td><td>array of ints</td><td>Sound effect numbers that are played some times.</td></tr>
 <tr><td>conflicting_ind_types</td><td>array of up to 3x industry_type(IND_TYPE_OLD | IND_TYPE_NEW, id)</td><td>Three industry types that should not be nearby. Use the builtin-function industry_type(..)
@@ -116,9 +116,9 @@ to define either an old industry (using the global ID) or a new industry from yo
 <tr><td>map_colour</td><td>0..255</td><td>Colour index from the <a href="nml-language.html#graphic-files">DOS palette</a> to use on the minimap for this industry.</td></tr>
 <tr><td>spec_flags</td><td>bitmask(flags)</td><td>for flag values see <a href="#industry-special-flags">Industry special flags</a></td></tr>
 <tr><td>new_ind_msg</td><td>string</td><td>Message displayed when industry gets built during game play.</td></tr>
-<tr><td>input_multiplier_1</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the first accepted cargo.</td></tr>
-<tr><td>input_multiplier_2</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the second accepted cargo.</td></tr>
-<tr><td>input_multiplier_3</td><td>array of 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the third accepted cargo.</td></tr>
+<tr><td>input_multiplier_1</td><td>array of up to 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the first accepted cargo.</td></tr>
+<tr><td>input_multiplier_2</td><td>array of up to 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the second accepted cargo.</td></tr>
+<tr><td>input_multiplier_3</td><td>array of up to 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the third accepted cargo.</td></tr>
 <tr><td>name</td><td>string</td><td>Name of the industry</td></tr>
 <tr><td>prospect_chance</td><td>Fraction between 0 and 1</td><td>Chance of successful prospecting.</td></tr>
 <tr><td>callback_flags</td><td>bitmask(flags)</td><td>for flag values see <a href="#industry-callback-flags">Industry callback flags</a></td></tr>
