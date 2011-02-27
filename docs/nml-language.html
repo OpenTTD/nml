@@ -930,10 +930,28 @@ error(NOTICE, USED_WITH, string(STR_REGRESSION_CARE));
 error(FATAL, string(STR_REGRESSION_ERROR), string(STR_ANSWER), 14, param[1] + 12 * param[2]);
 </pre>
 
+<h2><a name="block-disable_item">Disable items</a></h2>
+<p>With a <code>disable_item</code> statement, it's possible to disable one or
+more existing items. This works for vehicles, houses, industries, cargos and
+airports. The general syntax is:</p>
+<pre class="exl">
+disable_item(feature[, first_id[, last_id]]);
+</pre>
+<p><code>feature</code> specifies the feature of the item(s) to disable.
+If no further arguments are given, all default items of that feature are
+disabled. If one more argument (<code>first_id</code>) is given, only that ID
+is disabled. With two more arguments, all items from <code>first_id</code> up
+to and including <code>last_id</code> are disabled. For lists of default IDs,
+consult the documentation about that feature. An example:</p>
+<pre class="code">
+/* disable all monorail and maglev vehicles */
+disable(FEAT_TRAINS, 54, 115);
+</pre>
+
+<h2><a name="block-deactivate">Deactivate other NewGRFs</a></h2>
+
 <h2><a name="block-othergrf">Testing for other NewGRFs</a></h2>
 See the <a href="nml-language.html#builtin-functions">builtin functions</a> for the functions grf_XXX.
-
-<h2><a name="block-deactivate">Deactivate</a></h2>
 
 <h2><a name="block-replacement">Sprite replacement</a></h2>
 <p>This section covers the three available methods to replace sprites.
