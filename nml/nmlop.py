@@ -2,7 +2,12 @@ import operator
 from nml import generic
 
 class Operator(object):
-    def __init__(self, act2_supports, act2_str, act2_num, actd_supports, actd_str, actd_num, returns_boolean, token, compiletime_func):
+    def __init__(self,
+            act2_supports = False, act2_str = None, act2_num = None,
+            actd_supports = False, actd_str = None, actd_num = None,
+            returns_boolean = False,
+            token = None,
+            compiletime_func = None):
         self.act2_supports = act2_supports
         self.act2_str = act2_str
         self.act2_num = act2_num
@@ -22,37 +27,190 @@ def unsigned_rshift(a, b):
     return generic.truncate_int32(a >> b)
 
 
-ADD         = Operator( True,   r'\2+',    0,  True, r'\D+',    1, False,  '+', operator.add)
-SUB         = Operator( True,   r'\2-',    1,  True, r'\D-',    2, False,  '-', operator.sub)
-DIV         = Operator( True,   r'\2/',    6,  True, r'\D/',   10, False,  '/', operator.div)
-MOD         = Operator( True,   r'\2%',    7,  True, r'\D%',   12, False,  '%', operator.mod)
-MUL         = Operator( True,   r'\2*',   10,  True, r'\D*',    4, False,  '*', operator.mul)
-AND         = Operator( True,   r'\2&',   11,  True, r'\D&',    7, False,  '&', operator.and_)
-OR          = Operator( True,   r'\2|',   12,  True, r'\D|',    8, False,  '|', operator.or_)
-XOR         = Operator( True,   r'\2^',   13,  True,   None, None, False,  '^', operator.xor)
-CMP_EQ      = Operator( True,     None, None,  True,   None, None,  True, '==', operator.eq)
-CMP_NEQ     = Operator( True,     None, None,  True,   None, None,  True, '!=', operator.ne)
-CMP_LE      = Operator( True,     None, None,  True,   None, None,  True, '<=', operator.le)
-CMP_GE      = Operator( True,     None, None,  True,   None, None,  True, '>=', operator.ge)
-CMP_LT      = Operator( True,     None, None,  True,   None, None,  True,  '<', operator.lt)
-CMP_GT      = Operator( True,     None, None,  True,   None, None,  True,  '>', operator.gt)
-MIN         = Operator( True,   r'\2<',    2,  True,   None, None, False, None, lambda a, b: min(a, b))
-MAX         = Operator( True,   r'\2>',    3,  True,   None, None, False, None, lambda a, b: max(a, b))
-STO_TMP     = Operator( True, r'\2sto',   14, False,   None, None, False, None, None)
-STO_PERM    = Operator( True,r'\2psto',   16, False,   None, None, False, None, None)
-SHIFT_LEFT  = Operator( True,  r'\2<<', None,  True, r'\D<<',   6, False, '<<', operator.lshift)
-SHIFT_RIGHT = Operator( True,  r'\2>>', None,  True,   None, None, False, '>>', operator.rshift)
-SHIFTU_RIGHT= Operator( True, r'\2u>>', None,  True,   None, None, False, '>>>',unsigned_rshift)
-HASBIT      = Operator( True,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) != 0)
+ADD = Operator(
+    act2_supports = True, act2_str = r'\2+', act2_num = 0,
+    actd_supports = True, actd_str = r'\D+', actd_num = 1,
+    token = '+',
+    compiletime_func = operator.add
+)
+
+SUB = Operator(
+    act2_supports = True, act2_str = r'\2-', act2_num = 1,
+    actd_supports = True, actd_str = r'\D-', actd_num = 2,
+    token = '-',
+    compiletime_func = operator.sub
+)
+
+DIV = Operator(
+    act2_supports = True, act2_str = r'\2/', act2_num = 6,
+    actd_supports = True, actd_str = r'\D/', actd_num = 10,
+    token = '=',
+    compiletime_func = operator.div
+)
+
+MOD = Operator(
+    act2_supports = True, act2_str = r'\2%', act2_num = 7,
+    actd_supports = True, actd_str = r'\D%', actd_num = 12,
+    token = '%',
+    compiletime_func = operator.mod
+)
+
+MUL = Operator(
+    act2_supports = True, act2_str = r'\2*', act2_num = 10,
+    actd_supports = True, actd_str = r'\D*', actd_num = 4,
+    token = '*',
+    compiletime_func = operator.mul
+)
+
+AND = Operator(
+    act2_supports = True, act2_str = r'\2&', act2_num = 11,
+    actd_supports = True, actd_str = r'\D&', actd_num = 7,
+    token = '&',
+    compiletime_func = operator.and_
+)
+
+OR = Operator(
+    act2_supports = True, act2_str = r'\2|', act2_num = 12,
+    actd_supports = True, actd_str = r'\D|', actd_num = 8,
+    token = '|',
+    compiletime_func = operator.or_
+)
+
+XOR = Operator(
+    act2_supports = True, act2_str = r'\2^', act2_num = 13,
+    actd_supports = True,
+    token = '^',
+    compiletime_func = operator.xor
+)
+
+CMP_EQ = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    token = '==',
+    compiletime_func = operator.eq
+)
+
+CMP_NEQ = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    token = '!=',
+    compiletime_func = operator.ne
+)
+
+CMP_LE = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    token = '<=',
+    compiletime_func = operator.le
+)
+
+CMP_GE = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    token = '>=',
+    compiletime_func = operator.ge
+)
+
+CMP_LT = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    token = '<',
+    compiletime_func = operator.lt
+)
+
+CMP_GT = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    token = '>',
+    compiletime_func = operator.gt
+)
+
+MIN = Operator(
+    act2_supports = True, act2_str = r'\2<', act2_num = 2,
+    actd_supports = True,
+    compiletime_func = lambda a, b: min(a, b)
+)
+
+MAX = Operator(
+    act2_supports = True, act2_str = r'\2>', act2_num = 3,
+    actd_supports = True,
+    compiletime_func = lambda a, b: max(a, b)
+)
+
+STO_TMP = Operator(
+    act2_supports = True, act2_str = r'\2sto', act2_num = 14,
+)
+
+STO_PERM = Operator(
+    act2_supports = True, act2_str = r'\2psto', act2_num = 16,
+)
+
+SHIFT_LEFT = Operator(
+    act2_supports = True, act2_str = r'\2<<', act2_num = 20,
+    actd_supports = True, actd_str = r'\D<<', actd_num = 6,
+    token = '<<',
+    compiletime_func = operator.lshift
+)
+
+SHIFT_RIGHT = Operator(
+    act2_supports = True, act2_str = r'\2>>', act2_num = 22,
+    actd_supports = True,
+    token = '>>',
+    compiletime_func = operator.rshift
+)
+
+SHIFTU_RIGHT = Operator(
+    act2_supports = True, act2_str = r'\2u>>', act2_num = 21,
+    actd_supports = True,
+    token = '>>>',
+    compiletime_func = unsigned_rshift
+)
+
+HASBIT = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    returns_boolean = True,
+    compiletime_func = lambda a, b: (a & (1 << b)) != 0
+)
+
 #A few operators that are generated internally but can't be directly written in nml
-NOTHASBIT   = Operator( True,     None, None,  True,   None, None,  True, None, lambda a, b: (a & (1 << b)) == 0)
-VAL2        = Operator( True,   r'\2r',   15, False,   None, None, False, None, lambda a, b: b)
-ASSIGN      = Operator(False,     None, None,  True, r'\D=',    0, False, None, None)
-SHIFTU_LEFT = Operator(False,     None, None,  True, r'\Du<<',  5, False, None, None)
-VACT2_CMP   = Operator( True, r'\2cmp',   18, False,   None, None, False, None, None)
-MINU        = Operator( True,  r'\2u<',    4, False,   None, None, False, None, None)
-ROT_RIGHT   = Operator( True, r'\2ror',   17, False,   None, None, False, None, None)
-DIVU        = Operator( True,  r'\2u/',    8,  True, r'\Du/',   9, False, None, None)
+NOTHASBIT = Operator(
+    act2_supports = True,
+    actd_supports = True,
+    returns_boolean = True,
+    compiletime_func = lambda a, b: (a & (1 << b)) == 0
+)
+
+VAL2 = Operator(
+    act2_supports = True, act2_str = r'\2r', act2_num = 15,
+    compiletime_func = lambda a, b: b
+)
+
+ASSIGN = Operator(
+    actd_supports = True, actd_str = r'\D=', actd_num = 0,
+)
+
+SHIFTU_LEFT = Operator(
+    actd_supports = True, actd_str = r'\Du<<', actd_num = 5,
+)
+
+VACT2_CMP = Operator(
+    act2_supports = True, act2_str = r'\2cmp', act2_num = 18,
+)
+
+MINU = Operator(
+    act2_supports = True, act2_str = r'\2u<', act2_num = 4,
+)
+
+ROT_RIGHT = Operator(
+    act2_supports = True, act2_str = r'\2ror', act2_num = 17,
+)
+
+DIVU = Operator(
+    act2_supports = True, act2_str = r'\2u/', act2_num = 8,
+    actd_supports = True, actd_str = r'\Du/', actd_num = 9,
+)
+
 
 MIN.to_string = lambda expr1, expr2: 'min(%s, %s)' % (expr1, expr2)
 MAX.to_string = lambda expr1, expr2: 'max(%s, %s)' % (expr1, expr2)
