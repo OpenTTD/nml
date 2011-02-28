@@ -1,5 +1,5 @@
 from nml import generic, nmlop
-from base_expression import Type, Expression, ConstantNumeric
+from base_expression import Type, Expression, ConstantNumeric, ConstantFloat
 from string_literal import StringLiteral
 from variable import Variable
 
@@ -64,6 +64,9 @@ class BinOp(Expression):
             if self.op == nmlop.ADD:
                 return StringLiteral(expr1.value + expr2.value, expr1.pos)
             raise generic.ScriptError("Only the '+'-operator is supported for literal strings.", self.pos)
+
+        if self.op.supports_floats and isinstance(expr1, (ConstantNumeric, ConstantFloat)) and isinstance(expr2, (ConstantNumeric, ConstantFloat)):
+            return ConstantFloat(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
 
         if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
             raise generic.ScriptError("Both operands of a binary operator must be integers.", self.pos)

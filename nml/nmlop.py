@@ -7,7 +7,8 @@ class Operator(object):
             actd_supports = False, actd_str = None, actd_num = None,
             returns_boolean = False,
             token = None,
-            compiletime_func = None):
+            compiletime_func = None,
+            supports_floats = False):
         self.act2_supports = act2_supports
         self.act2_str = act2_str
         self.act2_num = act2_num
@@ -17,6 +18,7 @@ class Operator(object):
         self.returns_boolean = returns_boolean
         self.token = token
         self.compiletime_func = compiletime_func
+        self.supports_floats = supports_floats
 
     def to_string(self, expr1, expr2):
         return '(%s %s %s)' % (expr1, self.token, expr2)
@@ -31,35 +33,40 @@ ADD = Operator(
     act2_supports = True, act2_str = r'\2+', act2_num = 0,
     actd_supports = True, actd_str = r'\D+', actd_num = 1,
     token = '+',
-    compiletime_func = operator.add
+    compiletime_func = operator.add,
+    supports_floats = True
 )
 
 SUB = Operator(
     act2_supports = True, act2_str = r'\2-', act2_num = 1,
     actd_supports = True, actd_str = r'\D-', actd_num = 2,
     token = '-',
-    compiletime_func = operator.sub
+    compiletime_func = operator.sub,
+    supports_floats = True
 )
 
 DIV = Operator(
     act2_supports = True, act2_str = r'\2/', act2_num = 6,
     actd_supports = True, actd_str = r'\D/', actd_num = 10,
     token = '=',
-    compiletime_func = operator.div
+    compiletime_func = operator.div,
+    supports_floats = True
 )
 
 MOD = Operator(
     act2_supports = True, act2_str = r'\2%', act2_num = 7,
     actd_supports = True, actd_str = r'\D%', actd_num = 12,
     token = '%',
-    compiletime_func = operator.mod
+    compiletime_func = operator.mod,
+    supports_floats = True
 )
 
 MUL = Operator(
     act2_supports = True, act2_str = r'\2*', act2_num = 10,
     actd_supports = True, actd_str = r'\D*', actd_num = 4,
     token = '*',
-    compiletime_func = operator.mul
+    compiletime_func = operator.mul,
+    supports_floats = True
 )
 
 AND = Operator(
@@ -87,54 +94,62 @@ CMP_EQ = Operator(
     act2_supports = True,
     actd_supports = True,
     token = '==',
-    compiletime_func = operator.eq
+    compiletime_func = operator.eq,
+    supports_floats = True
 )
 
 CMP_NEQ = Operator(
     act2_supports = True,
     actd_supports = True,
     token = '!=',
-    compiletime_func = operator.ne
+    compiletime_func = operator.ne,
+    supports_floats = True
 )
 
 CMP_LE = Operator(
     act2_supports = True,
     actd_supports = True,
     token = '<=',
-    compiletime_func = operator.le
+    compiletime_func = operator.le,
+    supports_floats = True
 )
 
 CMP_GE = Operator(
     act2_supports = True,
     actd_supports = True,
     token = '>=',
-    compiletime_func = operator.ge
+    compiletime_func = operator.ge,
+    supports_floats = True
 )
 
 CMP_LT = Operator(
     act2_supports = True,
     actd_supports = True,
     token = '<',
-    compiletime_func = operator.lt
+    compiletime_func = operator.lt,
+    supports_floats = True
 )
 
 CMP_GT = Operator(
     act2_supports = True,
     actd_supports = True,
     token = '>',
-    compiletime_func = operator.gt
+    compiletime_func = operator.gt,
+    supports_floats = True
 )
 
 MIN = Operator(
     act2_supports = True, act2_str = r'\2<', act2_num = 2,
     actd_supports = True,
-    compiletime_func = lambda a, b: min(a, b)
+    compiletime_func = lambda a, b: min(a, b),
+    supports_floats = True
 )
 
 MAX = Operator(
     act2_supports = True, act2_str = r'\2>', act2_num = 3,
     actd_supports = True,
-    compiletime_func = lambda a, b: max(a, b)
+    compiletime_func = lambda a, b: max(a, b),
+    supports_floats = True
 )
 
 STO_TMP = Operator(
