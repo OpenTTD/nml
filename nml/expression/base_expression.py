@@ -59,7 +59,7 @@ class Expression(object):
         @return: A constant number that is the result of this expression.
         """
         expr = self.reduce(id_dicts)
-        if not isinstance(expr, (ConstantNumeric, ConstantFloat)):
+        if not isinstance(expr, ConstantNumeric):
             raise generic.ConstError(self.pos)
         return expr
 

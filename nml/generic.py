@@ -74,7 +74,7 @@ class ScriptError(Exception):
 
 class ConstError(ScriptError):
     def __init__(self, pos = None):
-        ScriptError.__init__(self, "Expected a compile-time constant", pos)
+        ScriptError.__init__(self, "Expected a compile-time integer constant", pos)
 
 class RangeError(ScriptError):
     def __init__(self, value, min_value, max_value, name, pos = None):
