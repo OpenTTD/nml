@@ -51,15 +51,15 @@ def compute_table(snowline):
     for dh in snowline.date_heights:
         doy = dh.name.reduce()
         if not isinstance(doy, expression.ConstantNumeric):
-            raise generic.ScriptError('Day of year is not a compile-time constant', dh.pos)
+            raise generic.ScriptError('Day of year is not a compile-time constant', doy.pos)
         height = dh.value.reduce()
         if not isinstance(height, expression.ConstantNumeric):
-            raise generic.ScriptError('Height is not a compile-time constant', dh.pos)
+            raise generic.ScriptError('Height is not a compile-time constant', height.pos)
 
         if doy.value < 1 or doy.value > 365:
-            raise generic.ScriptError('Day of the year must be between 1 and 365', dh.pos)
+            raise generic.ScriptError('Day of the year must be between 1 and 365', doy.pos)
         if height.value < 2 or height.value > 29:
-            raise generic.ScriptError('Height must be between 2 and 29', dh.pos)
+            raise generic.ScriptError('Height must be between 2 and 29', height.pos)
 
         day_table[doy.value - 1] = height.value
 
