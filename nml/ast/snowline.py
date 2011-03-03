@@ -111,11 +111,20 @@ def compute_table(snowline):
     table = [None] * (12*32)
     for dy in range(365):
         today = datetime.date.fromordinal(dy + 1)
-        table[(today.month - 1) * 32 + today.day - 1] = expression.BinOp(nmlop.MUL, day_table[dy], expression.ConstantNumeric(8)).reduce()
+        if day_table[dy]:
+            expr = expression.BinOp(nmlop.MUL, day_table[dy], expression.ConstantNumeric(8)).reduce()
+        else:
+            expr = None
+        table[(today.month - 1) * 32 + today.day - 1] = expr
 
     for idx, d in enumerate(table):
         if d is None:
             table[idx] = table[idx - 1]
+    #Second loop is needed because we need make sure the first item is also set.
+    for idx, d in enumerate(table):
+        if d is None:
+            table[idx] = table[idx - 1]
+
 
     return table
 
