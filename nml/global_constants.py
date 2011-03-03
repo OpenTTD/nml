@@ -225,6 +225,8 @@ constant_numbers = {
     'SPRITE_ID_NEW_SHIP'     : 0xFF,
     'SPRITE_ID_NEW_AIRCRAFT' : 0xFF,
 
+    'NEW_CARGO_SPRITE'       : 0xFFFF,
+
     #aircraft type/size
     'AIRCRAFT_TYPE_NORMAL'     : 0x00,
     'AIRCRAFT_TYPE_HELICOPTER' : 0x02,
