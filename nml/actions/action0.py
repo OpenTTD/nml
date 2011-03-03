@@ -1,5 +1,5 @@
 from nml.actions.action0properties import Action0Property, properties
-from nml import generic, expression
+from nml import generic, expression, nmlop
 from nml.actions import base_action, action4, action6, actionD
 
 # Features that use an extended byte as ID (vehicles, sounds)
@@ -209,21 +209,43 @@ def get_snowlinetable_action(snowline_table):
     act0.num_ids = 1
 
     data_table = []
-    for idx, val in enumerate(snowline_table):
+    idx = 0
+    while idx < len(snowline_table):
+        val = snowline_table[idx]
         if isinstance(val, expression.ConstantNumeric):
-            data_table.append(val)
+            data_table.append(val.value)
+            idx += 1
             continue
 
-        #Cache lookup, saves some ActionDs
-        if val in tmp_param_map:
-            tmp_param, tmp_param_actions = tmp_param_map[val], []
-        else:
+        if idx + 3 >= len(snowline_table):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(val)
             tmp_param_map[val] = tmp_param
+            act6.modify_bytes(tmp_param, 1, 7 + idx)
+            action_list.extend(tmp_param_actions)
+            data_table.append(0)
+            idx += 1
+            continue
 
-        act6.modify_bytes(tmp_param, 1, 7 + idx)
+        # Merge the next 4 values together in a single parameter.
+        val2 = expression.BinOp(nmlop.SHIFT_LEFT, snowline_table[idx + 1], expression.ConstantNumeric(8))
+        val3 = expression.BinOp(nmlop.SHIFT_LEFT, snowline_table[idx + 2], expression.ConstantNumeric(16))
+        val4 = expression.BinOp(nmlop.SHIFT_LEFT, snowline_table[idx + 3], expression.ConstantNumeric(24))
+        expr = expression.BinOp(nmlop.OR, val, val2)
+        expr = expression.BinOp(nmlop.OR, expr, val3)
+        expr = expression.BinOp(nmlop.OR, expr, val4)
+        expr = expr.reduce()
+        
+        #Cache lookup, saves some ActionDs
+        if expr in tmp_param_map:
+            tmp_param, tmp_param_actions = tmp_param_map[expr], []
+        else:
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
+            tmp_param_map[expr] = tmp_param
+
+        act6.modify_bytes(tmp_param, 4, 7 + idx)
         action_list.extend(tmp_param_actions)
-        data_table.append(0)
+        data_table.extend([0, 0, 0, 0])
+        idx += 4
 
 
     act0.prop_list.append(ByteListProp(0x10, ''.join([chr(x) for x in data_table])))
