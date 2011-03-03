@@ -1,10 +1,11 @@
-import datetime, calendar
+import datetime, calendar, math
 from nml import generic, nmlop
-from base_expression import Type, Expression, ConstantNumeric
+from base_expression import Type, Expression, ConstantNumeric, ConstantFloat
 from binop import BinOp
 from bitmask import BitMask
 from parameter import parse_string_to_dword
 from string_literal import StringLiteral
+from ternaryop import TernaryOp
 from variable import Variable
 
 class FunctionCall(Expression):
@@ -352,6 +353,34 @@ def builtin_industry_type(name, args, pos):
         raise generic.ScriptError("Second argument 'id' of industry_type() must be in range 0..63", pos)
 
     return ConstantNumeric(type << 7 | id)
+
+def builtin_trigonometric(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    if not isinstance(args[0], (ConstantNumeric, ConstantFloat)):
+        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
+    trigonometric_func_table = {
+        'acos': math.acos,
+        'asin': math.asin,
+        'atan': math.atan,
+        'cos': math.cos,
+        'sin': math.sin,
+        'tan': math.tan,
+    }
+    return ConstantFloat(trigonometric_func_table[name](args[0].value), args[0].pos)
+
+def builtin_int(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    if not isinstance(args[0], (ConstantNumeric, ConstantFloat)):
+        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
+    return ConstantNumeric(int(args[0].value), args[0].pos)
+
+def builtin_abs(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    guard = BinOp(nmlop.CMP_LT, args[0], ConstantNumeric(0), args[0].pos)
+    return TernaryOp(guard, BinOp(nmlop.SUB, ConstantNumeric(0), args[0], args[0].pos), args[0], args[0].pos).reduce()
 #}
 
 function_table = {
@@ -377,4 +406,12 @@ function_table = {
     'railtype' : builtin_railtype,
     'reserve_sprites' : builtin_reserve_sprites,
     'industry_type' : builtin_industry_type,
+    'int' : builtin_int,
+    'abs' : builtin_abs,
+    'acos' : builtin_trigonometric,
+    'asin' : builtin_trigonometric,
+    'atan' : builtin_trigonometric,
+    'cos' : builtin_trigonometric,
+    'sin' : builtin_trigonometric,
+    'tan' : builtin_trigonometric,
 }
