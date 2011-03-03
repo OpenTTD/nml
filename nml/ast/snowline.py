@@ -1,5 +1,5 @@
 import datetime
-from nml import generic, expression
+from nml import generic, expression, nmlop
 from nml.actions import action0
 
 class Snowline(object):
@@ -53,15 +53,15 @@ def compute_table(snowline):
         if not isinstance(doy, expression.ConstantNumeric):
             raise generic.ScriptError('Day of year is not a compile-time constant', doy.pos)
         height = dh.value.reduce()
-        if not isinstance(height, expression.ConstantNumeric):
+        if snowline.type != 'equal' and not isinstance(height, expression.ConstantNumeric):
             raise generic.ScriptError('Height is not a compile-time constant', height.pos)
 
         if doy.value < 1 or doy.value > 365:
             raise generic.ScriptError('Day of the year must be between 1 and 365', doy.pos)
-        if height.value < 2 or height.value > 29:
+        if isinstance(height, expression.ConstantNumeric) and (height.value < 2 or height.value > 29):
             raise generic.ScriptError('Height must be between 2 and 29', height.pos)
 
-        day_table[doy.value - 1] = height.value
+        day_table[doy.value - 1] = height
 
     # Find first specified point.
     start = 0
@@ -95,12 +95,12 @@ def compute_table(snowline):
         else:
             assert snowline.type == 'linear'
 
-            dhd = float(endvalue - startvalue) / float(unwrapped_end - start)
+            dhd = float(endvalue.value - startvalue.value) / float(unwrapped_end - start)
             for day in range(start + 1, unwrapped_end):
                 uday = day
                 if uday >= 365: uday -= 365
-                height = startvalue + int(round(dhd * (day - start)))
-                day_table[uday] = height
+                height = startvalue.value + int(round(dhd * (day - start)))
+                day_table[uday] = expression.ConstantNumeric(height)
 
 
         if end == first_point: # All days done
@@ -111,11 +111,11 @@ def compute_table(snowline):
     table = [None] * (12*32)
     for dy in range(365):
         today = datetime.date.fromordinal(dy + 1)
-        table[(today.month - 1) * 32 + today.day - 1] = day_table[dy]
+        table[(today.month - 1) * 32 + today.day - 1] = expression.BinOp(nmlop.MUL, day_table[dy], expression.ConstantNumeric(8)).reduce()
 
     for idx, d in enumerate(table):
         if d is None:
             table[idx] = table[idx - 1]
 
-    return ''.join(chr(d*8) for d in table)
+    return table
 

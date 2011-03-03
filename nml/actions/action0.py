@@ -199,10 +199,38 @@ class ByteListProp(object):
 
 def get_snowlinetable_action(snowline_table):
     assert(len(snowline_table) == 12*32)
-    action0 = Action0(0x08, 0)
-    action0.prop_list.append(ByteListProp(0x10, snowline_table))
-    action0.num_ids = 1
-    return [action0]
+    
+    action6.free_parameters.save()
+    action_list = []
+    tmp_param_map = {} #Cache for tmp parameters
+    act6 = action6.Action6()
+    
+    act0 = Action0(0x08, 0)
+    act0.num_ids = 1
+
+    data_table = []
+    for idx, val in enumerate(snowline_table):
+        if isinstance(val, expression.ConstantNumeric):
+            data_table.append(val)
+            continue
+
+        #Cache lookup, saves some ActionDs
+        if val in tmp_param_map:
+            tmp_param, tmp_param_actions = tmp_param_map[val], []
+        else:
+            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(val)
+            tmp_param_map[val] = tmp_param
+
+        act6.modify_bytes(tmp_param, 1, 7 + idx)
+        action_list.extend(tmp_param_actions)
+        data_table.append(0)
+
+
+    act0.prop_list.append(ByteListProp(0x10, ''.join([chr(x) for x in data_table])))
+    if len(act6.modifications) > 0: action_list.append(act6)
+    action_list.append(act0)
+    action6.free_parameters.restore()
+    return action_list
 
 def get_basecost_action(basecost):
     action6.free_parameters.save()
