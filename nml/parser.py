@@ -56,7 +56,6 @@ class NMLParser(object):
                       | template_declaration
                       | town_names
                       | sounds
-                      | snowline
                       | cargotable
                       | railtype
                       | spritelayout
@@ -87,6 +86,7 @@ class NMLParser(object):
                           | property_block
                           | graphics_block
                           | liveryoverride_block
+                          | snowline
                           | basecost'''
         t[0] = t[1]
 
