@@ -39,5 +39,14 @@ class TernaryOp(Expression):
     def is_boolean(self):
         return self.expr1.is_boolean() and self.expr2.is_boolean()
 
+    def __eq__(self, other):
+        return other is not None and isinstance(other, TernaryOp) and self.guard == other.guard and self.expr1 == other.expr1 and self.expr2 == other.expr2
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash((self.guard, self.expr1, self.expr2))
+
     def __str__(self):
         return "(%s ? %s : %s)" % (str(self.guard), str(self.expr1), str(self.expr2))
