@@ -15,23 +15,24 @@
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
 <tr><td>number</td>                   <td>0..31</td><td>Number of the cargo for bitmasks.</td></tr> <!-- Add link to the default cargos -->
-<tr><td>type_name</td>                <td>string</td><td>TextID for the cargo type name</td></tr>
-<tr><td>unit_name</td>                <td>string</td><td>TextID for the name of one unit from the cargo type</td></tr>
-<tr><td>single_unit_text</td>         <td>string</td><td>TextID to be displayed for 1 unit of cargo</td></tr>
-<tr><td>multiple_units_text</td>      <td>string</td><td>TextID to be displayed for multiple units of cargo</td></tr>
-<tr><td>type_abbreviation</td>        <td>string</td><td>TextID for cargo type abbreviation</td></tr>
+<tr><td>type_name</td>                <td>string</td><td>TextID for the cargo type name. Example string: "Passengers"</td></tr>
+<tr><td>unit_name</td>                <td>string</td><td>TextID for the name of one unit from the cargo type. Currently used for subsidies only (First Passenger service to..). Example string: "Passenger"</td></tr>
+<tr><td>single_unit_text</td>         <td>string</td><td>TextID to be displayed for 1 unit of cargo. Example string: "{WORD_S} ton of Stuff"</td></tr>
+<tr><td>multiple_units_text</td>      <td>string</td><td>TextID to be displayed for multiple units of cargo. Example string: "{WORD_S} tonnes of Stuff"</td></tr>
+<tr><td>type_abbreviation</td>        <td>string</td><td>TextID for cargo type abbreviation. Example string: "{TINYFONT}XX"</td></tr>
 <tr><td>sprite</td>                   <td>sprite</td><td>Sprite number for the icon of the cargo</td></tr>
-<tr><td>weight</td>                   <td>0..255</td><td>Weight of one unit of the cargo (measured in 1/16 ton)</td></tr>
+<tr><td>weight</td>                   <td>float 0..255</td><td>Weight of one unit of the cargo (in tons)</td></tr>
 <tr><td>penalty_lowerbound</td>       <td>0..255</td><td>Delivery time until penalty is applied</td></tr>
 <tr><td>single_penalty_length</td>    <td>0..255</td><td>Length of the interval where a single penalty is applied</td></tr>
-<tr><td>price_factor</td>             <td>int</td><td>Payment for delivering 10 units of cargo across a distance of 20 squares</td></tr>
-<tr><td>station_list_colour</td>      <td>0..255</td><td>Colour for the station list window</td></tr>
-<tr><td>cargo_payment_list_colour</td><td>0..255</td><td>Colour for the cargo payment list window</td></tr>
+<tr><td>price_factor</td>             <td>float</td><td>Payment for delivering 10 units of cargo across a distance of 20 squares (in British Pounds).</td></tr>
+<tr><td>station_list_colour</td>      <td>0..255</td><td>Colour for the station list window (index from the <a href="nml-language.html#graphic-files">DOS palette</a>)</td></tr>
+<tr><td>cargo_payment_list_colour</td><td>0..255</td><td>Colour for the cargo payment list window (index from the <a href="nml-language.html#graphic-files">DOS palette</a>)</td></tr>
 <tr><td>is_freight</td>               <td>0 or 1</td><td>Freight status (for the freighttrains switch); 0=not freight, 1=is freight</td></tr>
 <tr><td>cargo_classes</td>            <td>bitmask(<a href="#cargo-classes">cargo classes</a>)</td><td>Cargo classes</td></tr>
-<tr><td>cargo_label</td>              <td>4 letters</td><td>Cargo label</td></tr>
+<tr><td>cargo_label</td>              <td>4 letters</td><td>Cargo label, as used in the cargo table</td></tr>
 <tr><td>town_growth_effect</td>       <td>TOWNGROWTH_XXX</td><td>Effect for town growth, see <a href="#town-growth-cargo">Cargo effects on town growth</a></td></tr>
-<tr><td>town_growth_multiplier</td>   <td></td><td></td></tr> <!--float 0..255</td><td>Multiplier for town growth</td></tr>-->
+<tr><td>town_growth_multiplier</td>   <td>float 0..255</td><td>Multiplier for town growth. To be used in conjuction with town_growth_effect, when that is not TOWNGROWTH_NONE.
+For example, a value of 4 makes your cargo have the same effect on town growth as 4 units of food/goods/etc.</td></tr>
 <tr><td>callback_flags</td>           <td>bitmask(<a href="#cargo-callbacks">cargo callbacks</a>)</td><td>Callback flags</td></tr>
 </table>
 Cargo payment is computed from <code>price_factor</code>, amount of cargo transported,
