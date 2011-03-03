@@ -15,8 +15,10 @@
 <table class="t">
 <tr><th>property <th>value range <th>comment
 <tr><td>name<td>string<td>	for example string(STR_NAME_EIFFEL_TOWER)
-<tr><td>substitute<td>0 ... 109<td>number of the default house which can replace this one, if this house is not available for some reason.
-<tr><td>override<td>0 ... 109<td>id of the default house which this house replaces. This is ignored, if the default house has already been overridden. You can define this property multiple times
+<tr><td>substitute<td>0 ... 109<td>Number of the default house that replaces this one, if this house is not available for some reason.
+This property <em>must</em> be set first, before any other properties or graphics. All properties of the old type are copied to your new house.
+<tr><td>override<td>0 ... 109<td>id of the default house which this house replaces. This will cause your house to be placed instead of the default house.
+This is ignored, if the default house has already been overridden. You can define this property multiple times
 <tr><td>building_flags<td><td>HOUSE_FLAG_XX with XX = [SIZE_1x1, SIZE_2x1, SIZE_1x2, SIZE_2x2, NOT_SLOPED, ANIMATE, CHURCH, STADIUM, ONLY_SE, PROTECTED, SYNC_CALLBACK, RANDOM_ANIMATION]
 <tr><td>population<td>0 ... 255<td>number of inhabitants the building adds to the town, if present
 <tr><td>mail_multiplier<td>0 ... 255<td>

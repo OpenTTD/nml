@@ -52,8 +52,10 @@ Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2
 <h2><a name="industrytiles-property">Industry tile properties</a></h2>
 <table class="t">
 <tr><th>property</th><th>value range</th><th>comment</th></tr>
-<tr><td>substitute</td><td><a href="refs.html#refs-default-industrytiles">0..174</a></td><td>number of the default industry tile which can replace this one, if this tile is not available for some reason.</td></tr>
-<tr><td>override</td><td><a href="refs.html#refs-default-industrytiles">0..174</a></td><td>id of the default industry tile which this tile replaces. This is ignored, if the default industry tile has already been overridden. You can define this property multiple times</td></tr>
+<tr><td>substitute</td><td><a href="refs.html#refs-default-industrytiles">0..174</a></td><td>Number of the default industry tile that replaces this one, if this industry tile is not available for some reason.
+This property <em>must</em> be set first, before any other properties or graphics. All properties of the old type are copied to your new house.
+<tr><td>override</td><td><a href="refs.html#refs-default-industrytiles">0..174</a></td><td>id of the default industry tile which this industry tile replaces. This will cause your industry tile to be placed instead of the default industry tile.
+This is ignored, if the default industry tile has already been overridden. You can define this property multiple times
 <tr><td>accepted_cargos</td><td>Array with up to 3 [cargo_id, amount]-pairs.</td><td>The cargos that are accepted by this tile. CargoID is a cargo type from 
 your cargo translation table, amount is the acceptance of the given cargo in 1/8 units.<br>
 Example: to make a tile accept both COAL and IORE you could use this: <code>accepted_cargos: [[COAL, 8], [IORE, 8]];</code><br>
@@ -95,8 +97,9 @@ Default industry type numbers can be found at <a href="refs.html#refs-default-in
 <p>
 <table class="t">
 <tr><th>property</th><th>value range</th><th>comment</th></tr>
-<tr><td>substitute</td><td>industry type</td><td>Number of the industry type replaced, <code>0xFF</code> disables the original industry with the same ID.</td></tr>
-<tr><td>override</td><td>industry type</td><td>Number of the industry type overridden (where your industry does something completely different than the original).</td></tr>
+<tr><td>substitute</td><td>industry type</td><td>Number of the original industry type that replaces this one, should it not be available for some reason (e.g. missing NewGRF).
+This <em>must</em> be the first property to be set, before any other properties or graphics. All properties of the old type are copied to your new industry.</td></tr>
+<tr><td>override</td><td>industry type</td><td>Number of the original industry type overridden. This will cause other grfs / industries to consider your industry type the same as the old type. Only set this property if your type is (more or less) the same as the old type.</td></tr>
 <tr><td>layouts</td><td>Array of tilelayouts</td><td>See <a href="nml-language.html#block-tilelayout">Tilelayout</a> syntax.</td></tr>
 <tr><td>life_type</td><td>One of IND_LIFE_TYPE_XXX, XXX = BLACK_HOLE | EXTRACTIVE | ORGANIC | PROCESSING</td><td>The generic type of industry. This determines the production
 changes that occur by default (when not using the callback). Examples are respectively power plants, coal mines, forests en steel mills.</td></tr>
