@@ -518,6 +518,12 @@ constant_numbers = {
     'PLAYERTYPE_HUMAN_IN_AI'             : 2,
     'PLAYERTYPE_AI_IN_HUMAN'             : 3,
 
+    #build types (industry var 0xB3)
+    'BUILDTYPE_UNKNOWN'                  : 0,
+    'BUILDTYPE_GAMEPLAY'                 : 1,
+    'BUILDTYPE_GENERATION'               : 2,
+    'BUILDTYPE_EDITOR'                   : 3,
+
     #airport types (vehicle var 0x44)
     'AIRPORTTYPE_SMALL'                  : 0,
     'AIRPORTTYPE_LARGE'                  : 1,

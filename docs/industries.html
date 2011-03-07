@@ -10,6 +10,20 @@
 <h1><a name="industries">Industries</a></h1>
 
 <h2><a name="industries-vars">Industry variables</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>waiting_cargo_1</td><td>0..65535</td><td>If IND_CBF_PROD_CB_CARGO_ARRIVE or IND_CBF_PROD_CB_256_TICKS are set in the callback_flags property, this variable will contain the amount of the first cargo type awaiting to be processed.</td></tr>
+<tr><td>waiting_cargo_2</td><td>0..65535</td><td>If IND_CBF_PROD_CB_CARGO_ARRIVE or IND_CBF_PROD_CB_256_TICKS are set in the callback_flags property, this variable will contain the amount of the second cargo type awaiting to be processed.</td></tr>
+<tr><td>waiting_cargo_3</td><td>0..65535</td><td>If IND_CBF_PROD_CB_CARGO_ARRIVE or IND_CBF_PROD_CB_256_TICKS are set in the callback_flags property, this variable will contain the amount of the third cargo type awaiting to be processed.</td></tr>
+<tr><td>water_distance</td><td>Distance to the tile</td><td>If the industry is built on water, this variable gives the distance of the closest dry land tile, otherwise it gives the distance of the closest water tile.</td></tr>
+<tr><td>layout_num</td><td>1..255</td><td>Number of the layout being used by the industry.</td></tr>
+<tr><td>company_type</td><td>PLAYERTYPE_XX</td><td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI (human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company). OpenTTD only uses PLAYERTYPE_HUMAN and PLAYERTYPE_AI. If you cheat yourself to be part of an AI company OpenTTD will still report PLAYERTYPE_AI for the company with yourself and the AI and it'll report PLAYERTYPE_HUMAN for the now uncontrolled company.</td></tr>
+<tr><td>company_colour1</td><td>0..15</td><td>Index into company first colour.</td></tr>
+<tr><td>company_colour2</td><td>0..15</td><td>Index into company second colour. It's the same as company_colour1, if no second company colour is chosen.</td></tr>
+<tr><td>build_date</td><td>0..1826212865</td><td>Date of the industry foundation in days since year 0.</td></tr>
+<tr><td>founder</td><td>0..16</td><td>Company number of the industry founder. It will be 16 (0x10) if the industry was generated randomly. TTDPatch only supports up to 8 companies (0..7).</td></tr>
+<tr><td>build_type</td><td>BUILDTYPE_XX</td><td>BUILDTYPE_UNKNOWN (if created in an old version or with newindustries disabled), BUILDTYPE_GAMEPLAY (if founded or created by the in-game random industry generator), BUILDTYPE_GENERATION (if created during random map generation) or BUILDTYPE_EDITOR (if created with the scenario editor).</td></tr>
+</table><br>
 Variables that require some parameters.
 <table class="t">
 <tr><th>name</th><th>arguments</th><th>comment</th></tr>
@@ -26,6 +40,14 @@ results are filtered to industries that have the given layout number.</td></tr>
 </table>
 
 <h2><a name="industrytiles-vars">Industry tile variables</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>construction_state</td><td>0..3</td><td>Current construction state of the industry tile.</td></tr>
+<tr><td>terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
+<tr><td>town_zone</td><td><a href="refs.html#refs-town-zones">town zone</a></td><td>The town zone of the current tile.</td></tr>
+<tr><td>relative_pos</td><td></td><td></td></tr>
+<tr><td>animation_frame</td><td>0..255</td><td>Current animation frame.</td></tr>
+</table><br>
 Variables that require a signed x,y offset. The offset is relative to the current tile. Offset 0,0 means the current tile.
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
@@ -38,8 +60,9 @@ Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2
 </td></tr>
 <tr><td>nearby_tile_is_same_industry</td><td>1 if the tile is part of the same industry, 0 otherwise</td><td></td></tr>
 <tr><td>nearby_tile_is_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
-<tr><td>nearby_tile_terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>nearby_tile_terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
 <tr><td>nearby_tile_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
+<tr><td>nearby_tile_class</td><td><a href="refs.html#refs-tile-classes">Tile class</a></td><td></td></tr>
 <tr><td>nearby_tile_animation_frame</td><td>0..255</td><td>Animation frame of the given tile</td></tr>
 <tr><td>nearby_tile_industrytile_id</td><td>0x00aa, 0xFFbb, 0xFFFE or 0xFFFF</td><td>
 0x00aa: The tile is an industry tile that is part of this GRF, the tile id is aa.<br>
