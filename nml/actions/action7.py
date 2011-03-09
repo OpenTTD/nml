@@ -2,7 +2,6 @@ from nml import expression, nmlop, free_number_list
 from nml.actions import base_action, action6, actionD, action10
 
 free_labels = free_number_list.FreeNumberList(range(0xFF, 0x0F, -1))
-free_labels.save() # FreeNumberList needs at least one call to save before the first pop
 
 class SkipAction(base_action.BaseAction):
     def __init__(self, action_type, var, varsize, condtype, value, label):
@@ -100,6 +99,13 @@ def parse_conditional(expr):
     return (param, actions, (2, r'\7='), 0, 4)
 
 def cond_skip_actions(action_list, param, condtype, value, value_size):
+    if len(free_labels.states) == 0:
+        # We only save a single state (at toplevel nml-blocks) because
+        # we don't know at the start of the block how many labels we need.
+        # Getting the same label for a block that was already used in a
+        # sub-block would be very bad, since the action7/9 would skip
+        # to the action10 of the sub-block.
+        free_labels.save()
     actions = []
     start, length = 0, 0
     allow7, allow9 = True, True
@@ -148,6 +154,8 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
         actions.append(SkipAction(action_type, param, value_size, condtype, value, target))
         actions.extend(action_list[start:start+length])
         if label is not None: actions.append(label)
+    if len(free_labels.states) == 1:
+        free_labels.restore()
     return actions
 
 def parse_conditional_block(cond_list):
