@@ -111,7 +111,7 @@ def parse_ternary_op(assignment):
     assert isinstance(assignment.value, expression.TernaryOp)
     actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr2))
     cond_block = nml.ast.conditional.Conditional(assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)], None)
-    actions.extend(cond_block.get_action_list())
+    actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
     return actions
 
 def parse_special_check(assignment):
@@ -162,7 +162,7 @@ def parse_hasbit(assignment):
     assert isinstance(assignment.value, expression.BinOp) and (assignment.value.op == nmlop.HASBIT or assignment.value.op == nmlop.NOTHASBIT)
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
     cond_block = nml.ast.conditional.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None)
-    actions.extend(cond_block.get_action_list())
+    actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
     return actions
 
 def parse_min_max(assignment):
@@ -183,7 +183,7 @@ def parse_boolean(assignment):
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
     expr = expression.BinOp(nmlop.CMP_NEQ, assignment.value.expr, expression.ConstantNumeric(0))
     cond_block = nml.ast.conditional.Conditional(expr, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None)
-    actions.extend(cond_block.get_action_list())
+    actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
     return actions
 
 def transform_bin_op(assignment):

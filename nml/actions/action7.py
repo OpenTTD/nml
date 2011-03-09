@@ -150,11 +150,10 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
         if label is not None: actions.append(label)
     return actions
 
-def parse_conditional_block(cond):
+def parse_conditional_block(cond_list):
     action6.free_parameters.save()
 
-    multiple_blocks = cond.else_block is not None
-    if multiple_blocks:
+    if len(cond_list.conditionals) > 1:
         # the skip all parameter is used to skip all blocks after one
         # of the conditionals was true. We can't always skip directly
         # to the end of the blocks since action7/action9 can't always
@@ -164,9 +163,8 @@ def parse_conditional_block(cond):
         action_list = []
 
     blocks = []
-    while cond is not None:
-        blocks.append({'expr': cond.expr, 'statements': cond.block, 'last_block': cond.else_block is None})
-        cond = cond.else_block
+    for idx, cond in enumerate(cond_list.conditionals):
+        blocks.append({'expr': cond.expr, 'statements': cond.block, 'last_block': idx + 1 == len(cond_list.conditionals)})
 
     # use parse_conditional here, we also need to know if all generated
     # actions (like action6) can be skipped safely
