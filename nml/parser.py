@@ -375,7 +375,7 @@ class NMLParser(object):
         '''conditional : if_else_parts
                        | if_else_parts ELSE LBRACE skipable_script RBRACE'''
         if len(t) > 2:
-            parts = t[1] + [conditional.Conditional(None, t[4], None, t.lineno(2))]
+            parts = t[1] + [conditional.Conditional(None, t[4], t.lineno(2))]
         else:
             parts = t[1]
 
@@ -388,8 +388,8 @@ class NMLParser(object):
     def p_if_else_parts(self, t):
         '''if_else_parts : IF LPAREN expression RPAREN LBRACE skipable_script RBRACE
                          | if_else_parts ELSE IF LPAREN expression RPAREN LBRACE skipable_script RBRACE'''
-        if len(t) == 8: t[0] = [conditional.Conditional(t[3], t[6], None, t.lineno(1))]
-        else: t[0] = t[1] + [conditional.Conditional(t[5], t[8], None, t.lineno(2))]
+        if len(t) == 8: t[0] = [conditional.Conditional(t[3], t[6], t.lineno(1))]
+        else: t[0] = t[1] + [conditional.Conditional(t[5], t[8], t.lineno(2))]
 
     def p_loop(self, t):
         'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'

@@ -3,10 +3,10 @@ from nml.actions import action7
 from nml.ast import general
 
 class Conditional(object):
-    def __init__(self, expr, block, else_block, pos):
+    def __init__(self, expr, block, pos):
         self.expr = expr
         self.block = block
-        self.else_block = else_block
+        self.else_block = None
         self.pos = pos
 
     def pre_process(self):
