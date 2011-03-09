@@ -7,10 +7,9 @@ def validate_item_block(block_list):
         if isinstance(block, PropertyBlock): continue
         if isinstance(block, GraphicsBlock): continue
         if isinstance(block, LiveryOverride): continue
-        if isinstance(block, conditional.Conditional):
-            while block is not None:
+        if isinstance(block, conditional.ConditionalList):
+            for block in block.conditionals:
                 validate_item_block(block.block)
-                block = block.else_block
             continue
         if isinstance(block, loop.Loop):
             validate_item_block(block.body)
