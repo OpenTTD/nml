@@ -239,4 +239,4 @@ class ParameterDescription(object):
                 global_constants.settings[setting.name.value] = {'num': self.num.value, 'size': 4}
             else:
                 bit = 0 if setting.bit_num is None else setting.bit_num.value
-                global_constants.misc_grf_bits[setting.name.value] = {'param': self.num.value, 'bit': bit};
+                global_constants.misc_grf_bits[setting.name.value] = {'param': self.num.value, 'bit': bit}

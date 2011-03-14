@@ -41,7 +41,7 @@ def parse_actionA(replaces):
         else:
             param_num, tmp_param_actions = actionD.get_tmp_parameter(replaces.start_id)
             action_list.extend(tmp_param_actions)
-        act6 = action6.Action6();
+        act6 = action6.Action6()
         act6.modify_bytes(param_num.value, 2, 3)
         action_list.append(act6)
         sprite_num = 0

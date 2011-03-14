@@ -94,7 +94,7 @@ varact2vars_trains = {
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
-varact2vars_trains.update(varact2vars_vehicles);
+varact2vars_trains.update(varact2vars_vehicles)
 
 varact2vars_roadvehs = {
     #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
@@ -103,7 +103,7 @@ varact2vars_roadvehs = {
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 0, 'size': 8, 'function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(0xFE, var.pos))},
 }
-varact2vars_roadvehs.update(varact2vars_vehicles);
+varact2vars_roadvehs.update(varact2vars_vehicles)
 
 varact2vars_ships = {
     #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
@@ -112,7 +112,7 @@ varact2vars_ships = {
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
-varact2vars_ships.update(varact2vars_vehicles);
+varact2vars_ships.update(varact2vars_vehicles)
 
 varact2vars_aircraft = {
     #0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
@@ -121,8 +121,8 @@ varact2vars_aircraft = {
     'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
     #No such thing as identical to vehicle_is_in_depot exists for aircraft
 }
-varact2vars_aircraft.update(varact2vars_vehicles);
-
+varact2vars_aircraft.update(varact2vars_vehicles)
+    
 varact2vars60x_vehicles = {
     'count_veh_id': {'var': 0x60, 'start': 0, 'size': 8},
 }
