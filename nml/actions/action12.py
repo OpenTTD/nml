@@ -30,7 +30,10 @@ font_sizes = {
 def parse_action12(font_glyphs):
     try:
         font_size = font_glyphs.font_size.reduce_constant([font_sizes])
-        base_char = font_glyphs.base_char.reduce_constant()
+        if isinstance(font_glyphs.base_char, expression.StringLiteral) and len(font_glyphs.base_char.value) == 1:
+            base_char = ord(font_glyphs.base_char.value)
+        else:
+            base_char = font_glyphs.base_char.reduce_constant()
     except generic.ConstError:
         raise generic.ScriptError("Parameters of font_glpyh have to be compile-time constants", font_glyphs.pos)
     if font_size.value not in font_sizes.values():

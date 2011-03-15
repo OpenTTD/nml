@@ -1,4 +1,4 @@
-from nml import expression, generic
+from nml import expression, generic, expression
 from nml.actions import action12
 
 class FontGlyphBlock(object):
