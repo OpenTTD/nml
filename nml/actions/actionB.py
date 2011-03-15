@@ -59,7 +59,6 @@ error_severity = {
 }
 
 def parse_error_block(error):
-    global default_error_msg
     action6.free_parameters.save()
     action_list = []
     act6 = action6.Action6()
@@ -83,7 +82,7 @@ def parse_error_block(error):
         for l in langs: assert l is not None
     else:
         custom_msg = False
-        msg = error.msg.reduce_constant([default_error_msg]).value
+        msg = error.msg.reduce_constant().value
 
     if error.data is not None:
         error.data = error.data.reduce()
