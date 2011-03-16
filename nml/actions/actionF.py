@@ -122,12 +122,12 @@ class ActionF(base_action.BaseAction):
     def write_styles(self, handle):
         if len(self.style_names) == 0: return
 
-        handle.newline()
         for lang, txt in self.style_names:
             handle.print_bytex(lang)
             handle.print_string(txt, final_zero = True)
             handle.newline()
         handle.print_bytex(0)
+        handle.newline()
 
     # Parts
     def get_length_parts(self):
@@ -144,8 +144,8 @@ class ActionF(base_action.BaseAction):
         handle.start_sprite(2 + self.get_length_styles() + self.get_length_parts())
         handle.print_bytex(0xF)
         handle.print_bytex(self.id_number | (0x80 if len(self.style_names) > 0 else 0))
+        handle.newline(str(self.name) if self.name is not None else "")
         self.write_styles(handle)
-        handle.newline()
         self.write_parts(handle)
         handle.end_sprite()
 
