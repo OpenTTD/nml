@@ -41,6 +41,7 @@ reserved = {
     'alternative_sprites' : 'ALT_SPRITES',
     'base_graphics' : 'BASE_SPRITES',
     'recolour_sprite' : 'RECOLOUR_SPRITE',
+    'engine_override' : 'ENGINE_OVERRIDE',
 }
 
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')

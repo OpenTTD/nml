@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites, override
 from nml.actions import action2, action2var, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -87,6 +87,7 @@ class NMLParser(object):
                           | graphics_block
                           | liveryoverride_block
                           | snowline
+                          | engine_override
                           | basecost'''
         t[0] = t[1]
 
@@ -683,6 +684,10 @@ class NMLParser(object):
     def p_skip_all(self, t):
         'skip_all : SKIP_ALL SEMICOLON'
         t[0] = skipall.SkipAll(t.lineno(1))
+
+    def p_engine_override(self, t):
+        'engine_override : ENGINE_OVERRIDE LPAREN expression_list RPAREN SEMICOLON'
+        t[0] = override.EngineOverride(t[3], t.lineno(1))
 
     def p_tilelayout(self, t):
         'tilelayout : TILELAYOUT ID LBRACE tilelayout_list RBRACE'

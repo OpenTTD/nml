@@ -1,6 +1,6 @@
 from nml.actions.action0properties import Action0Property, properties
 from nml import generic, expression, nmlop
-from nml.actions import base_action, action4, action6, actionD
+from nml.actions import base_action, action4, action6, actionD, actionE
 
 # Features that use an extended byte as ID (vehicles, sounds)
 action0_extended_byte_id = [0, 1, 2, 3, 0x0C]
@@ -395,4 +395,26 @@ def get_disable_actions(disable):
     for prop in disable_info[feature]['props']:
         act0.prop_list.append(Action0Property(prop['num'], num * [expression.ConstantNumeric(prop['value'])], prop['size']))
 
+    return [act0]
+
+class EngineOverrideProp(object):
+    def __init__(self, source, target):
+        self.source = actionE.bswap32(source.value)
+        self.target = actionE.bswap32(target.value)
+
+    def write(self, file):
+        file.print_bytex(0x11)
+        file.print_dwordx(self.source)
+        file.print_dwordx(self.target)
+        file.newline()
+
+    def get_size(self):
+        return 9
+
+def get_engine_override_action(override):
+    source = override.source_grfid.reduce_constant()
+    target = override.grfid.reduce_constant()
+    act0 = Action0(0x08, 0)
+    act0.num_ids = 1
+    act0.prop_list.append(EngineOverrideProp(source, target))
     return [act0]
