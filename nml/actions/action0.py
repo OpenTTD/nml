@@ -269,10 +269,10 @@ def get_basecost_action(basecost):
         if isinstance(cost.name, expression.ConstantNumeric):
             index = cost.name.value
         elif isinstance(cost.name, expression.Parameter) and isinstance(cost.name.num, expression.ConstantNumeric):
-            act6.modify_bytes(cost.name.num.value, 2, 5)
+            act6.modify_bytes(cost.name.num.value, 1, 4)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(cost.name)
-            act6.modify_bytes(tmp_param, 2, 5)
+            act6.modify_bytes(tmp_param, 1, 4)
             action_list.extend(tmp_param_actions)
         act0 = Action0(0x08, index)
 
@@ -290,7 +290,7 @@ def get_basecost_action(basecost):
                 else:
                     tmp_param, tmp_param_actions = actionD.get_tmp_parameter(cost.value)
                     tmp_param_map[cost.value] = tmp_param
-                act6.modify_bytes(tmp_param, 1, 7 + num_ids)
+                act6.modify_bytes(tmp_param, 1, 5 + num_ids)
                 action_list.extend(tmp_param_actions)
                 values.append(expression.ConstantNumeric(0))
 
