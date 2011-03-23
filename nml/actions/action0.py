@@ -242,7 +242,7 @@ def get_snowlinetable_action(snowline_table):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
             tmp_param_map[expr] = tmp_param
 
-        act6.modify_bytes(tmp_param, 4, 7 + idx)
+        act6.modify_bytes(tmp_param, 4, 5 + idx)
         action_list.extend(tmp_param_actions)
         data_table.extend([0, 0, 0, 0])
         idx += 4
