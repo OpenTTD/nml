@@ -95,7 +95,12 @@ def compute_table(snowline):
         else:
             assert snowline.type == 'linear'
 
-            dhd = float(endvalue.value - startvalue.value) / float(unwrapped_end - start)
+            if start != end:
+                dhd = float(endvalue.value - startvalue.value) / float(unwrapped_end - start)
+            else:
+                assert startvalue.value == endvalue.value
+                dhd = 0
+
             for day in range(start + 1, unwrapped_end):
                 uday = day
                 if uday >= 365: uday -= 365
