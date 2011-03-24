@@ -178,7 +178,7 @@ def builtin_day_of_year(name, args, pos):
     if month.value < 1 or month.value > 12:
         raise generic.ScriptError('Month should be a value between 1 and 12.', month.pos)
 
-    day = args[0].reduce()
+    day = args[1].reduce()
     if not isinstance(day, ConstantNumeric):
         raise generic.ScriptError('Day should be a compile-time constant.', day.pos)
 
