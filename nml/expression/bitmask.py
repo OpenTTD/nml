@@ -19,7 +19,7 @@ class BitMask(Expression):
             if val.type() != Type.INTEGER:
                 raise generic.ScriptError("Parameters of 'bitmask' must be integers.", orig_expr.pos)
             if isinstance(val, ConstantNumeric) and val.value >= 32:
-                raise generic.ScriptError("Parameters of 'bitmask' cannot be greater then 31", orig_expr.pos)
+                raise generic.ScriptError("Parameters of 'bitmask' cannot be greater than 31", orig_expr.pos)
             val = BinOp(nmlop.SHIFT_LEFT, ConstantNumeric(1), val, val.pos)
             ret = BinOp(nmlop.OR, ret, val, self.pos)
         return ret.reduce()
