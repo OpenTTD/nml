@@ -56,20 +56,20 @@ class BinOp(Expression):
         expr1 = self.expr1.reduce(id_dicts)
         expr2 = self.expr2.reduce(id_dicts)
 
+        # Make sure the combination of operands / operator is valid
+        if self.op.validate_func is not None:
+            self.op.validate_func(expr1, expr2, self.pos)
+
         # - If both subexpressions are constant, compute the result and return it.
-        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op.compiletime_func:
+        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op.compiletime_func is not None:
             return ConstantNumeric(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
 
         if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral):
-            if self.op == nmlop.ADD:
-                return StringLiteral(expr1.value + expr2.value, expr1.pos)
-            raise generic.ScriptError("Only the '+'-operator is supported for literal strings.", self.pos)
+            assert self.op == nmlop.ADD
+            return StringLiteral(expr1.value + expr2.value, expr1.pos)
 
-        if self.op.supports_floats and isinstance(expr1, (ConstantNumeric, ConstantFloat)) and isinstance(expr2, (ConstantNumeric, ConstantFloat)):
+        if isinstance(expr1, (ConstantNumeric, ConstantFloat)) and isinstance(expr2, (ConstantNumeric, ConstantFloat)) and self.op.compiletime_func is not None:
             return ConstantFloat(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
-
-        if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
-            raise generic.ScriptError("Both operands of a binary operator must be integers.", self.pos)
 
         # - If the operator allows it and the second expression is more complex than
         #   the first one swap them.

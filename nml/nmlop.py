@@ -1,4 +1,5 @@
 import operator
+from expression.base_expression import Type, ConstantNumeric, ConstantFloat
 from nml import generic
 
 class Operator(object):
@@ -8,7 +9,7 @@ class Operator(object):
             returns_boolean = False,
             token = None,
             compiletime_func = None,
-            supports_floats = False):
+            validate_func = None):
         self.act2_supports = act2_supports
         self.act2_str = act2_str
         self.act2_num = act2_num
@@ -18,7 +19,7 @@ class Operator(object):
         self.returns_boolean = returns_boolean
         self.token = token
         self.compiletime_func = compiletime_func
-        self.supports_floats = supports_floats
+        self.validate_func = validate_func
 
     def to_string(self, expr1, expr2):
         return '(%s %s %s)' % (expr1, self.token, expr2)
@@ -28,13 +29,40 @@ def unsigned_rshift(a, b):
         a += 0x100000000
     return generic.truncate_int32(a >> b)
 
+def validate_func_int(expr1, expr2, pos):
+    if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
+        raise generic.ScriptError("Binary operator requires both operands to be integers.", pos)
+
+def validate_func_float(expr1, expr2, pos):
+    if expr1.type() not in (Type.INTEGER, Type.FLOAT) or expr2.type() not in (Type.INTEGER, Type.FLOAT):
+        raise generic.ScriptError("Binary operator requires both operands to be integers or floats.", pos)
+    # If one is a float, the other must be constant since we can't handle floats at runtime
+    if (expr1.type() == Type.FLOAT and not isinstance(expr2, (ConstantNumeric, ConstantFloat))) or \
+            (expr2.type() == Type.FLOAT and not isinstance(expr1, (ConstantNumeric, ConstantFloat))):
+        raise generic.ScriptError("Floating-point operations are only possible when both operands are compile-time constants.", pos)
+
+def validate_func_add(expr1, expr2, pos):
+    if (expr1.type() == Type.STRING_LITERAL) ^ (expr2.type() == Type.STRING_LITERAL):
+        raise generic.ScriptError("Concatenating a string literal and a number is not possible.", pos)
+    if expr1.type() != Type.STRING_LITERAL:
+        validate_func_float(expr1, expr2, pos)
+
+def validate_func_div_mod(expr1, expr2, pos):
+    validate_func_float(expr1, expr2, pos)
+    if isinstance(expr2, (ConstantNumeric, ConstantFloat)) and expr2.value == 0:
+        raise generic.ScriptError("Division and modulo require the right hand side to be nonzero.", pos)
+
+def validate_func_rhs_positive(expr1, expr2, pos):
+    validate_func_int(expr1, expr2, pos)
+    if isinstance(expr2, ConstantNumeric) and expr2.value < 0:
+        raise generic.ScriptError("Right hand side of the operator may not be a negative number.", pos)
 
 ADD = Operator(
     act2_supports = True, act2_str = r'\2+', act2_num = 0,
     actd_supports = True, actd_str = r'\D+', actd_num = 1,
     token = '+',
     compiletime_func = operator.add,
-    supports_floats = True
+    validate_func = validate_func_add,
 )
 
 SUB = Operator(
@@ -42,7 +70,7 @@ SUB = Operator(
     actd_supports = True, actd_str = r'\D-', actd_num = 2,
     token = '-',
     compiletime_func = operator.sub,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 DIV = Operator(
@@ -50,7 +78,7 @@ DIV = Operator(
     actd_supports = True, actd_str = r'\D/', actd_num = 10,
     token = '=',
     compiletime_func = operator.div,
-    supports_floats = True
+    validate_func = validate_func_div_mod,
 )
 
 MOD = Operator(
@@ -58,7 +86,7 @@ MOD = Operator(
     actd_supports = True, actd_str = r'\D%', actd_num = 12,
     token = '%',
     compiletime_func = operator.mod,
-    supports_floats = True
+    validate_func = validate_func_div_mod,
 )
 
 MUL = Operator(
@@ -66,28 +94,31 @@ MUL = Operator(
     actd_supports = True, actd_str = r'\D*', actd_num = 4,
     token = '*',
     compiletime_func = operator.mul,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 AND = Operator(
     act2_supports = True, act2_str = r'\2&', act2_num = 11,
     actd_supports = True, actd_str = r'\D&', actd_num = 7,
     token = '&',
-    compiletime_func = operator.and_
+    compiletime_func = operator.and_,
+    validate_func = validate_func_int,
 )
 
 OR = Operator(
     act2_supports = True, act2_str = r'\2|', act2_num = 12,
     actd_supports = True, actd_str = r'\D|', actd_num = 8,
     token = '|',
-    compiletime_func = operator.or_
+    compiletime_func = operator.or_,
+    validate_func = validate_func_int,
 )
 
 XOR = Operator(
     act2_supports = True, act2_str = r'\2^', act2_num = 13,
     actd_supports = True,
     token = '^',
-    compiletime_func = operator.xor
+    compiletime_func = operator.xor,
+    validate_func = validate_func_int,
 )
 
 CMP_EQ = Operator(
@@ -95,7 +126,7 @@ CMP_EQ = Operator(
     actd_supports = True,
     token = '==',
     compiletime_func = operator.eq,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 CMP_NEQ = Operator(
@@ -103,7 +134,7 @@ CMP_NEQ = Operator(
     actd_supports = True,
     token = '!=',
     compiletime_func = operator.ne,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 CMP_LE = Operator(
@@ -111,7 +142,7 @@ CMP_LE = Operator(
     actd_supports = True,
     token = '<=',
     compiletime_func = operator.le,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 CMP_GE = Operator(
@@ -119,7 +150,7 @@ CMP_GE = Operator(
     actd_supports = True,
     token = '>=',
     compiletime_func = operator.ge,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 CMP_LT = Operator(
@@ -127,7 +158,7 @@ CMP_LT = Operator(
     actd_supports = True,
     token = '<',
     compiletime_func = operator.lt,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 CMP_GT = Operator(
@@ -135,57 +166,63 @@ CMP_GT = Operator(
     actd_supports = True,
     token = '>',
     compiletime_func = operator.gt,
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 MIN = Operator(
     act2_supports = True, act2_str = r'\2<', act2_num = 2,
     actd_supports = True,
     compiletime_func = lambda a, b: min(a, b),
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 MAX = Operator(
     act2_supports = True, act2_str = r'\2>', act2_num = 3,
     actd_supports = True,
     compiletime_func = lambda a, b: max(a, b),
-    supports_floats = True
+    validate_func = validate_func_float,
 )
 
 STO_TMP = Operator(
     act2_supports = True, act2_str = r'\2sto', act2_num = 14,
+    validate_func = validate_func_rhs_positive,
 )
 
 STO_PERM = Operator(
     act2_supports = True, act2_str = r'\2psto', act2_num = 16,
+    validate_func = validate_func_rhs_positive,
 )
 
 SHIFT_LEFT = Operator(
     act2_supports = True, act2_str = r'\2<<', act2_num = 20,
     actd_supports = True, actd_str = r'\D<<', actd_num = 6,
     token = '<<',
-    compiletime_func = operator.lshift
+    compiletime_func = operator.lshift,
+    validate_func = validate_func_rhs_positive,
 )
 
 SHIFT_RIGHT = Operator(
     act2_supports = True, act2_str = r'\2>>', act2_num = 22,
     actd_supports = True,
     token = '>>',
-    compiletime_func = operator.rshift
+    compiletime_func = operator.rshift,
+    validate_func = validate_func_rhs_positive,
 )
 
 SHIFTU_RIGHT = Operator(
     act2_supports = True, act2_str = r'\2u>>', act2_num = 21,
     actd_supports = True,
     token = '>>>',
-    compiletime_func = unsigned_rshift
+    compiletime_func = unsigned_rshift,
+    validate_func = validate_func_rhs_positive,
 )
 
 HASBIT = Operator(
     act2_supports = True,
     actd_supports = True,
     returns_boolean = True,
-    compiletime_func = lambda a, b: (a & (1 << b)) != 0
+    compiletime_func = lambda a, b: (a & (1 << b)) != 0,
+    validate_func = validate_func_rhs_positive,
 )
 
 #A few operators that are generated internally but can't be directly written in nml
@@ -193,12 +230,12 @@ NOTHASBIT = Operator(
     act2_supports = True,
     actd_supports = True,
     returns_boolean = True,
-    compiletime_func = lambda a, b: (a & (1 << b)) == 0
+    compiletime_func = lambda a, b: (a & (1 << b)) == 0,
 )
 
 VAL2 = Operator(
     act2_supports = True, act2_str = r'\2r', act2_num = 15,
-    compiletime_func = lambda a, b: b
+    compiletime_func = lambda a, b: b,
 )
 
 ASSIGN = Operator(
