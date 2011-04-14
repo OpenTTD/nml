@@ -39,8 +39,12 @@ future games. It will increase the popularity and use of your NewGRF tremendousl
 <h1><a name="installation">Getting started</a></h1>
 <p>
 NML is a a python-based compiler, capable to compile NML files (along with their
-associated language, sound and graphic files) into grf and / or nfo files. In
-order to work, the following items are required:
+associated language, sound and graphic files) into grf and / or nfo files.
+
+Windows users can install the <a href="http://bundles.openttdcoop.org/nml/nightlies/LATEST/">windows binary</a>
+which contains a binary which bundles all required libraries. Users on other OS need to
+install them separately, best by means of their packet manager.
+In order to work, the following items are required:
 <ul>
 <li><b>python</b>
     <ul>
@@ -64,7 +68,8 @@ order to work, the following items are required:
     </ul>
 </ul>
 
-If you don't install these with the packet manager of your choice (or there is none like on windows),
+If you don't install these with the packet manager of your choice (or there is none like on windows and you don't use the
+pre-compiled binary file),
 you should install these libraries as well as NML itself using <code class="ex">python setup.py install</code> from your
 command prompt.
 </p><p>
@@ -123,6 +128,10 @@ it contains a few more colours) or the windows palette.</p>
 <li><a href="ttd-newgrf-win.gpl">Windows palette for GIMP</a></li>
 <li><a href="ttd-newgrf-win.act">Windows palette for Photoshop</a></li>
 </ul>
+
+<b>Note</b>: Windows versions do NOT support graphics in the pcx format due
+to missiong support within the PIL.
+
 </p>
 
 <h1><a name="structure">Language structure</a></h1>
