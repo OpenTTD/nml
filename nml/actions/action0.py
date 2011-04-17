@@ -220,7 +220,7 @@ def get_snowlinetable_action(snowline_table):
         if idx + 3 >= len(snowline_table):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(val)
             tmp_param_map[val] = tmp_param
-            act6.modify_bytes(tmp_param, 1, 7 + idx)
+            act6.modify_bytes(tmp_param, 1, 6 + idx)
             action_list.extend(tmp_param_actions)
             data_table.append(0)
             idx += 1
@@ -242,7 +242,7 @@ def get_snowlinetable_action(snowline_table):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
             tmp_param_map[expr] = tmp_param
 
-        act6.modify_bytes(tmp_param, 4, 5 + idx)
+        act6.modify_bytes(tmp_param, 4, 6 + idx)
         action_list.extend(tmp_param_actions)
         data_table.extend([0, 0, 0, 0])
         idx += 4
