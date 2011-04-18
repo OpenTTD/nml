@@ -104,6 +104,22 @@ Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_car
 more control over this use callback 0x2F.</td></tr>
 </table>
 
+<h3><a name="industrytiles-callbacks">Callbacks</a></h3>
+<table class="t">
+<tr><th>Callback</th><th>Values<th>Meaning</th></tr>
+<tr><td>INDTILE_CB_ANIM_STARTSTOP</td><td>animation frame or CB_RESULT_XXX<td>Called by a trigger. It decides upon the next animation frame.
+Special values: XXX=[STOP_ANIMATION | NEXT_FRAME | DO_NOTHING]</td></tr>
+<tr><td>INDTILE_CB_ANIM_NEXT_FRAME</td><td>animation frame or CB_RESULT_XXX<td>Called each animation frame. It decides upon the next animation frame.
+Special values: XXX=[STOP_ANIMATION | NEXT_FRAME]</td></tr>
+<tr><td>INDTILE_CB_ANIM_SPEED</td><td>length<td>Length of the animation frame as defined in the apendix. This is a very expensive callback and try to
+avoid it, if possible, by using identical animation frames.</td></tr>
+<tr><td>INDTILE_CB_CARGO_AMOUNT_ACCEPT</td><td>special<td>accepted cargo amounts in 1/8. Bits 0...3: 1st cargo, bits 4 ... 7: 2nd cargo, bits 8 ... 11: 3rd cargo</td></tr>
+<tr><td>INDTILE_CB_CARGO_TYPE_ACCEPT</td><td>special<td>accepted cargo types as entry in the CTT. Bits 0...4: 1st cargo, bits 5 ... 9: 2nd cargo, bits 10 ... 14: 3rd cargo</td></tr>
+<tr><td>INDTILE_CB_SLOPE_IS_SUITABLE</td><td><td>decide whether the location is suitable for the tile (for build checks of the industry)</td></tr>
+<tr><td>INDTILE_CB_FOUNDATIONS</td><td>CB_RESULT_XXX<td>with XXX=[FOUNDATIONS | NO_FOUNDATIONS]</td></tr>
+<tr><td>INDTILE_CB_AUTOSLOPE</td><td>CB_RESULT_XXX<td>with XXX=[AUTOSLOPE | NO_AUTOSLOPE]</td></tr>
+</table>
+
 <h3><a name="industrytiles-animation-control">Animation control callback triggers</a></h3>
 <table class="t">
 <tr><th>Trigger</th><th>Meaning</th></tr>

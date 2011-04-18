@@ -235,6 +235,7 @@ constant_numbers = {
 
     #ground sprite IDs
     'GROUNDSPRITE_CONCRETE'    : 1420,
+    'GROUNDSPRITE_CLEARED'     : 3924,
     'GROUNDSPRITE_NORMAL'      : 3981,
     'GROUNDSPRITE_WATER'       : 4061,
     'GROUNDSPRITE_SNOW'        : 4550,
@@ -319,7 +320,7 @@ constant_numbers = {
     'INDTILE_CB_CARGO_TYPE_ACCEPT'    : 0x2C,
     'INDTILE_CB_SLOPE_IS_SUITABLE'    : 0x2F,
     'INDTILE_CB_FOUNDATIONS'          : 0x30,
-    'INDTILE_CB_AUTOSLOPE'            : 0x3F,
+    'INDTILE_CB_AUTOSLOPE'            : 0x3C,
 
     #Triggers for the animation start/stop callback
     'INDTILE_TRIGGER_CONSTRUCTION_STATE'         : 0,
@@ -619,6 +620,17 @@ constant_numbers = {
     # Animation looping
     'ANIMATION_NON_LOOPING'                 : 0,
     'ANIMATION_LOOPING'                     : 1,
+	
+    # Animation callback results
+    'CB_RESULT_STOP_ANIMATION'              : 0xFF,  # callback 0x25, 0x26
+    'CB_RESULT_NEXT_FRAME'                  : 0xFE,  # callback 0x25, 0x26
+    'CB_RESULT_DO_NOTHING'                  : 0xFD,  # callback 0x25
+
+    'CB_RESULT_FOUNDATIONS'                 : 0x01,  # callback 0x30
+    'CB_RESULT_NO_FOUNDATIONS'              : 0x00,  # callback 0x30
+
+    'CB_RESULT_AUTOSLOPE'                   : 0x00,  # callback 0x3C
+    'CB_RESULT_NO_AUTOSLOPE'                : 0x01,  # callback 0x3C
 
     #Zoom levels
     'ZOOM_LEVEL_NORMAL'                     : 2,
