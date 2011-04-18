@@ -97,6 +97,8 @@ class SwitchBody(object):
     def __init__(self, ranges, default):
         self.ranges = ranges
         self.default = default
+        if isinstance(default, expression.Expression):
+            self.default = default.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
         for r in self.ranges:
