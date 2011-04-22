@@ -78,6 +78,7 @@ def parse_error_block(error):
     if isinstance(error.msg, expression.String):
         custom_msg = True
         msg_string = error.msg
+        grfstrings.validate_string(msg_string)
         langs.extend(grfstrings.get_translations(msg_string))
         for l in langs: assert l is not None
     else:
