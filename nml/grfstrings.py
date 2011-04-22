@@ -136,26 +136,26 @@ commands = {
 'COPYRIGHT':      {'unicode': r'\U00A9',    'ascii': r'\A9'},
 'TINYFONT':       {'unicode': r'\0E',       'ascii': r'\0E'},
 'BIGFONT':        {'unicode': r'\0F',       'ascii': r'\0F'},
-'DWORD_S':        {'unicode': r'\UE07B',    'ascii': r'\7B'},
-'PARAM':          {'unicode': r'\UE07B',    'ascii': r'\7B'},
-'WORD_S':         {'unicode': r'\UE07C',    'ascii': r'\7C'},
-'BYTE_S':         {'unicode': r'\UE07D',    'ascii': r'\7D'},
-'WORD_U':         {'unicode': r'\UE07E',    'ascii': r'\7E'},
-'CURRENCY':       {'unicode': r'\UE07F',    'ascii': r'\7F'},
-'STRING':         {'unicode': r'\UE080',    'ascii': r'\80', 'allow_case': True},
-'DATE_LONG':      {'unicode': r'\UE082',    'ascii': r'\82'},
-'DATE_TINY':      {'unicode': r'\UE083',    'ascii': r'\83'},
-'VELOCITY':       {'unicode': r'\UE084',    'ascii': r'\84'},
-'POP_WORD':       {'unicode': r'\UE085',    'ascii': r'\85'},
-'ROTATE':         {'unicode': r'\UE086',    'ascii': r'\86'},
-'VOLUME':         {'unicode': r'\UE087',    'ascii': r'\87'},
-'CURRENCY_QWORD': {'unicode': r'\UE09A\01', 'ascii': r'\9A\01'},
-'PUSH_WORD':      {'unicode': r'\UE09A\03', 'ascii': r'\9A\03'},
-'UNPRINT':        {'unicode': r'\UE09A\04', 'ascii': r'\9A\04'},
-'BYTE_HEX':       {'unicode': r'\UE09A\06', 'ascii': r'\9A\06'},
-'WORD_HEX':       {'unicode': r'\UE09A\07', 'ascii': r'\9A\07'},
-'DWORD_HEX':      {'unicode': r'\UE09A\08', 'ascii': r'\9A\08'},
-'QWORD_HEX':      {'unicode': r'\UE09A\0B', 'ascii': r'\9A\0B'},
+'DWORD_S':        {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True},
+'PARAM':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True},
+'WORD_S':         {'unicode': r'\UE07C',    'ascii': r'\7C', 'important': True},
+'BYTE_S':         {'unicode': r'\UE07D',    'ascii': r'\7D', 'important': True},
+'WORD_U':         {'unicode': r'\UE07E',    'ascii': r'\7E', 'important': True},
+'CURRENCY':       {'unicode': r'\UE07F',    'ascii': r'\7F', 'important': True},
+'STRING':         {'unicode': r'\UE080',    'ascii': r'\80', 'allow_case': True, 'important': True},
+'DATE_LONG':      {'unicode': r'\UE082',    'ascii': r'\82', 'important': True},
+'DATE_TINY':      {'unicode': r'\UE083',    'ascii': r'\83', 'important': True},
+'VELOCITY':       {'unicode': r'\UE084',    'ascii': r'\84', 'important': True},
+'POP_WORD':       {'unicode': r'\UE085',    'ascii': r'\85', 'important': True},
+'ROTATE':         {'unicode': r'\UE086',    'ascii': r'\86', 'important': True},
+'VOLUME':         {'unicode': r'\UE087',    'ascii': r'\87', 'important': True},
+'CURRENCY_QWORD': {'unicode': r'\UE09A\01', 'ascii': r'\9A\01', 'important': True},
+'PUSH_WORD':      {'unicode': r'\UE09A\03', 'ascii': r'\9A\03', 'important': True},
+'UNPRINT':        {'unicode': r'\UE09A\04', 'ascii': r'\9A\04', 'important': True},
+'BYTE_HEX':       {'unicode': r'\UE09A\06', 'ascii': r'\9A\06', 'important': True},
+'WORD_HEX':       {'unicode': r'\UE09A\07', 'ascii': r'\9A\07', 'important': True},
+'DWORD_HEX':      {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'important': True},
+'QWORD_HEX':      {'unicode': r'\UE09A\0B', 'ascii': r'\9A\0B', 'important': True},
 'BLUE':           {'unicode': r'\UE088',    'ascii': r'\88'},
 'SILVER':         {'unicode': r'\UE089',    'ascii': r'\89'},
 'GOLD':           {'unicode': r'\UE08A',    'ascii': r'\8A'},
@@ -294,6 +294,16 @@ class StringCommand(object):
                 if not is_ascii_string(arg): return 'unicode'
         return 'ascii'
 
+    def is_important_command(self):
+        if self.name in special_commands: return False
+        return 'important' in commands[self.name]
+
+    def __eq__(self, other):
+        return isinstance(other, StringCommand) and self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
+
 class NewGRFString(object):
     def __init__(self, string, lang, strip_choice_lists, pos):
         self.string = string
@@ -379,8 +389,9 @@ class NewGRFString(object):
         return ret
 
     def match_commands(self, other_string):
-        #TODO: check if the commands match the default language
-        return True
+        comps_self = [x for x in self.components if isinstance(x, StringCommand) and x.is_important_command()]
+        comps_other = [x for x in other_string.components if isinstance(x, StringCommand) and x.is_important_command()]
+        return comps_self == comps_other
 
 def isint(x, base = 10):
     try:
