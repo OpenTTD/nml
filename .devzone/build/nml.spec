@@ -41,6 +41,7 @@ rm -rf $HOME/.wine
 mkdir -p $HOME/.wine
 mv * $HOME/.wine
 cd ../..
+python -c "import nml.version_info; nml.version_info.get_and_write_version()"
 wine "C:\\Python27\\pythonw.exe" "C:\\Python27\\Scripts\\cxfreeze" nmlc
 cp $HOME/.wine/drive_c/windows/system32/python27.dll dist/
 mv dist nmlc-exe && mkdir dist
