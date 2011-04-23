@@ -866,16 +866,21 @@ def item_to_id(item, pos):
         raise generic.ScriptError("Referencing item '%s' with a non-constant id is not possible." % item.name, pos)
     return expression.ConstantNumeric(item.id.value, pos)
 
+def param_from_name(info, pos):
+    return expression.Parameter(expression.ConstantNumeric(info))
+
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 settings = {}
+named_parameters = {}
 
 const_list = [
     constant_numbers,
     (global_parameters, param_from_info),
     (misc_grf_bits, misc_grf_bit),
     (patch_variables, patch_variable),
+    (named_parameters, param_from_name),
     cargo_numbers,
     railtype_table,
     (item_names, item_to_id),

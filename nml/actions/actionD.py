@@ -72,11 +72,15 @@ class ParameterAssignment(object):
     def pre_process(self):
         self.value = self.value.reduce(global_constants.const_list)
 
-        self.param = self.param.reduce(global_constants.const_list)
+        self.param = self.param.reduce(global_constants.const_list, False)
         if isinstance(self.param, expression.SpecialParameter):
             if not self.param.can_assign():
                 raise generic.ScriptError("Trying to assign a value to the read-only variable '%s'" % self.param.name, self.param.pos)
             self.param, self.value = self.param.to_assignment(self.value)
+        if isinstance(self.param, expression.Identifier):
+            num = action6.free_parameters.pop_unique()
+            global_constants.named_parameters[self.param.value] = num
+            self.param = expression.Parameter(expression.ConstantNumeric(num), self.param.pos)
         if not isinstance(self.param, expression.Parameter):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
 
