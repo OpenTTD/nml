@@ -76,12 +76,10 @@ class ParameterAssignment(object):
         if isinstance(self.param, expression.SpecialParameter):
             if not self.param.can_assign():
                 raise generic.ScriptError("Trying to assign a value to the read-only variable '%s'" % self.param.name, self.param.pos)
-            self.param, self.value = self.param.to_assignment(self.value)
-        if isinstance(self.param, expression.Identifier):
+        elif isinstance(self.param, expression.Identifier):
             num = action6.free_parameters.pop_unique()
             global_constants.named_parameters[self.param.value] = num
-            self.param = expression.Parameter(expression.ConstantNumeric(num), self.param.pos)
-        if not isinstance(self.param, expression.Parameter):
+        elif not isinstance(self.param, expression.Parameter):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
 
     def debug_print(self, indentation):
@@ -258,6 +256,12 @@ def transform_bin_op(assignment):
 
 def parse_actionD(assignment):
     assignment.value.supported_by_actionD(True)
+
+    if isinstance(assignment.param, expression.SpecialParameter):
+        assignment.param, assignment.value = assignment.param.to_assignment(assignment.value)
+    elif isinstance(assignment.param, expression.Identifier):
+        assignment.param = expression.Parameter(expression.ConstantNumeric(global_constants.named_parameters[assignment.param.value]), assignment.param.pos)
+    assert isinstance(assignment.param, expression.Parameter)
 
     if isinstance(assignment.value, expression.SpecialParameter):
         assignment.value = assignment.value.to_reading()
