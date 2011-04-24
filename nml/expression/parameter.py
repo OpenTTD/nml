@@ -3,9 +3,11 @@ from base_expression import Type, Expression, ConstantNumeric
 from string_literal import StringLiteral
 
 class Parameter(Expression):
-    def __init__(self, num, pos = None):
+    def __init__(self, num, pos = None, by_user = False):
         Expression.__init__(self, pos)
         self.num = num
+        if by_user and isinstance(num, ConstantNumeric) and not (0 <= num.value <= 63):
+            generic.print_warning("Accessing parameters out of the range 0..63 is not supported and may lead to unexpected behaviour.", pos)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Parameter:'
