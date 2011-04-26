@@ -3,6 +3,27 @@ from nml.actions import action0properties
 
 
 class TileLayout(object):
+    """
+    'tile_layout' AST node. A TileLayout is a list of x,y-offset/tileID pairs.
+    The x and y offsets are from the northernmost tile of the industry/airport.
+    Additionally some extra properties can be stored in the TileLayout, like
+    the orientation of the airport.
+
+    @ivar name: The name of this layout by which it can be referenced later.
+    @type name: C{str}
+
+    @ivar tile_prop_list: List of offset/tileID and properties.
+    @type tile_prop_list: C{list} of L{LayoutTile} and L{LayoutProp}
+
+    @ivar pos: Position information of the 'town_names' block.
+    @type pos: L{Position}
+
+    @ivar tile_list: List of tile-offsets/tileIDs.
+    @type tile_list: C{list} of C{dict} with properties x, y and tile.
+
+    @ivar properties: table of all properties. Unknown property names are accepted and ignored.
+    @type properties: C{dict} with C{str} keys and L{ConstantNumeric} values
+    """
     def __init__(self, name, tile_list, pos):
         self.name = name.value
         self.tile_prop_list = tile_list
@@ -68,12 +89,33 @@ class TileLayout(object):
 
 
 class LayoutTile(object):
+    """
+    Single tile that is part of a L{TileLayout}.
+
+    @ivar x: X-offset from the northernmost tile of the industry/airport.
+    @type x: L{Expression}
+
+    @ivar y: Y-offset from the northernmost tile of the industry/airport.
+    @type y: L{Expression}
+
+    @ivar tiletype: TileID of the tile to draw on the given offset.
+    @type tiletype: L{Expression}
+    """
     def __init__(self, x, y, tiletype):
         self.x = x
         self.y = y
         self.tiletype = tiletype
 
 class LayoutProp(object):
+    """
+    Property of a L{TileLayout}.
+
+    @ivar name: Name of the property.
+    @type name: L{Identifier}
+
+    @iver value: Value of the property.
+    @type value: L{Expression}
+    """
     def __init__(self, name, value):
         self.name = name
         self.value = value
