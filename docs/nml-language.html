@@ -962,6 +962,17 @@ disable(FEAT_TRAINS, 54, 115);
 
 <h2><a name="block-othergrf">Testing for other NewGRFs</a></h2>
 See the <a href="nml-language.html#builtin-functions">builtin functions</a> for the functions grf_XXX.
+Additionally - when the presence of a NewGRF is established - their parameters can be of
+interest and queried. The general syntax is
+<pre class="exl">
+identifier = param[&lt;grfID&gt;, &lt;param#&gt;]
+</pre>
+For example
+<pre class="code">
+other_newgrfs_param0 = param["NML\01", 0];
+other_newgrf_no_high_cost = param["NML\01", 1] < 5;
+</pre>
+reads parameter 1 (the first one, counting starts at 0) from the NewGRF with the grfID "NML\01".
 
 <h2><a name="block-replacement">Sprite replacement</a></h2>
 <p>This section covers the three available methods to replace sprites.
