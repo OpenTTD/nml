@@ -422,6 +422,16 @@ before writing it to the output file.</p>
 
 
 <h2><a name="block-template">Template</a></h2>
+NML allows to define templates for use in <a href="#block-spriteset">spritesets</a>, which can be
+referred to when defining real sprites, avoiding repetitive declaratin of the same alignment (e.g.
+when coding different train wagons of the same size).
+<pre class="exl">
+template templatename([param [, param [, param...]]]) {
+	<a href="#real_sprites">list of realsprites</a>
+	...
+}
+</pre>
+For an example see <a href="#block-spritegroup-vehicles">below</a>.
 
 <h2><a name="block-spriteset">Spriteset</a></h2>
 A spriteset associates a name with a number piece of an existing image file and describes
@@ -462,41 +472,32 @@ A simple example for defining a train engine with a livery override. The passeng
 different sprites whether it is travelling empty or is filled with people.
 <pre class="code">
 // Define the sprites for the engine
+template tmpl_train_length78(x, y) {
+	[x,     y,  8,22,   -3,-10]
+	[x+ 16, y, 21,15,  -14, -7]
+	[x+ 48, y, 31,12,  -16, -8]
+	[x+ 96, y, 21,16,   -6, -7]
+	[x+118, y,  8,24,   -3,-10]
+	[x+144, y, 21,16,  -15, -6]
+	[x+196, y, 32,12,  -16, -8]
+	[x+224, y, 21,15,   -6, -7]
+}
+
 spriteset(turbotrain_engine_set, "src/gfx/turbotrain.png") {
-	[142,112,  8,22,   -3,-10]
-	[158,112, 21,15,  -14, -7]
-	[190,112, 31,12,  -16, -8]
-	[238,112, 21,16,   -6, -7]
-	[270,112,  8,24,   -3,-10]
-	[286,112, 21,16,  -15, -6]
-	[318,112, 32,12,  -16, -8]
-	[366,112, 21,15,   -6, -7]
+	tmpl_train_length78(142, 118)
 }
 // Define the sprites for the passenger wagon when used with this engine
 // Loading sprites with open doors
 spriteset(turbotrain_passenger_loading_set, "src/gfx/turbotrain.png") {
-	[142,139,  8,21,   -3,-10]
-	[158,139, 20,15,  -13, -7]
-	[190,139, 28,10,  -12, -6]
-	[238,139, 20,16,   -6, -7]
-	[270,139,  8,21,   -3,-10]
-	[286,139, 20,15,  -15, -6]
-	[318,139, 28,10,  -16, -6]
-	[366,139, 20,16,   -6, -7]
+	tmpl_train_length78(142, 139)
 }
 // Passenger wagon is empty. No people shown
 spriteset(turbotrain_passenger_traveling_empty_set, "src/gfx/turbotrain.png") {
-	[142,159,  8,21,   -3,-10]
-	[158,159, 20,15,  -13, -7]
-	[190,159, 28,10,  -12, -6]
-	[238,159, 20,16,   -6, -7]
-	[270,159,  8,21,   -3,-10]
-	[286,159, 20,15,  -15, -6]
-	[318,159, 28,10,  -16, -6]
-	[366,159, 20,16,   -6, -7]
+	tmpl_train_length78(142, 159)
 }
 // Passenger wagon is full. Show people through the window
 spriteset(turbotrain_passenger_traveling_full_set, "src/gfx/turbotrain.png") {
+// has slightly different dimensions, don't use template
 	[142,159,  8,21,   -3,-10]
 	[158,159, 20,15,  -13, -7]
 	[190,159, 28,10,  -12, -6]
