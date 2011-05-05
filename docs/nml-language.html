@@ -697,25 +697,25 @@ expression this may also be an array of expressions. In that case all of the
 array elements are evaluated in order and the last one is used to make a decision.</li>
 </ul>
 <table class="t">
-<tr><th>Feature<th>SELF<th>PARENT
-<tr><td>FEAT_TRAINS<td>Engine / wagon / articulated part itself<td>Front engine
-<tr><td>FEAT_ROADVEHS<td>Road vehicle part<td>First road vehicle part
-<tr><td>FEAT_SHIPS<td>Ship<td>Ship
-<tr><td>FEAT_AIRCRAFT<td>Aircraft (a)<td>Aircraft
-<tr><td>FEAT_STATIONS<td>Station tile<td>Town
-<tr><td>FEAT_CANALS<td>Canal tile<td>N/A
-<tr><td>FEAT_BRIDGES<td>Bridge<td>Town
-<tr><td>FEAT_HOUSES<td>House tile<td>Town
-<tr><td>FEAT_GLOBALVARS<td>N/A<td>N/A
-<tr><td>FEAT_INDUSTRYTILES<td>Industry tile<td>Industry to which the tile belongs
-<tr><td>FEAT_INDUSTRIES<td>Industry<td>Town
-<tr><td>FEAT_CARGOS<td>Cargo type<td>N/A
-<tr><td>FEAT_SOUNDEFFECTS<td>N/A<td>N/A
-<tr><td>FEAT_AIRPORTS<td>Airport<td>N/A
-<tr><td>FEAT_SIGNALS<td>N/A<td>N/A
-<tr><td>FEAT_OBJECTS<td>Object tile<td>Town
-<tr><td>FEAT_RAILTYPES<td>Rail tile<td>N/A
-<tr><td>FEAT_AIRPORTTILES<td>Airport tile<td>Airport
+<tr><th>Feature<th>SELF<th>PARENT<th>permanent<br>storage
+<tr><td>FEAT_TRAINS<td>Engine / wagon / articulated part itself<td>Front engine<td>no
+<tr><td>FEAT_ROADVEHS<td>Road vehicle part<td>First road vehicle part<td>no
+<tr><td>FEAT_SHIPS<td>Ship<td>Ship<td>no
+<tr><td>FEAT_AIRCRAFT<td>Aircraft (a)<td>Aircraft<td>no
+<tr><td>FEAT_STATIONS<td>Station tile<td>Town<td>no
+<tr><td>FEAT_CANALS<td>Canal tile<td>N/A<td>no
+<tr><td>FEAT_BRIDGES<td>Bridge<td>Town<td>no
+<tr><td>FEAT_HOUSES<td>House tile<td>Town<td>no
+<tr><td>FEAT_GLOBALVARS<td>N/A<td>N/A<td>no
+<tr><td>FEAT_INDUSTRYTILES<td>Industry tile<td>Industry to which the tile belongs<td>no
+<tr><td>FEAT_INDUSTRIES<td>Industry<td>Town<td>yes
+<tr><td>FEAT_CARGOS<td>Cargo type<td>N/A<td>no
+<tr><td>FEAT_SOUNDEFFECTS<td>N/A<td>N/A<td>no
+<tr><td>FEAT_AIRPORTS<td>Airport<td>N/A<td>yes
+<tr><td>FEAT_SIGNALS<td>N/A<td>N/A<td>no
+<tr><td>FEAT_OBJECTS<td>Object tile<td>Town<td>no
+<tr><td>FEAT_RAILTYPES<td>Rail tile<td>N/A<td>no
+<tr><td>FEAT_AIRPORTTILES<td>Airport tile<td>Airport<td>no
 </table>
 <p>(a) Except for mail capacity callbacks, where it refers to the mail compartment.
 To refer to the aircraft itself, use PARENT scope there.</p>
@@ -741,11 +741,21 @@ meaning, it is merely meant to demonstrate all the various options available.</p
 switch (FEAT_TRAINS, PARENT, some_vehicle_switch, (position_in_consist + param[1]) % 4) {
 	0..2: return string(STRING_FOO_BAR); //return a text message
 	3: return; //return the computed value
-	5...300: return 42; //42 is always a good answer
+	5..300: return 42; //42 is always a good answer
 	400: other_switch; //chain to some other switch block
 	CB_FAILED; //return a failure result
 }
 </pre>
+</p><p>
+You can also use temporary variables and with some features also pemanent variables to store
+and retrieve some values by means of <code>STORE_TEMP(value, register)</code>,
+<code>LOAD_TEMP(register)</code> and <code>STORE_PERM(value, register)</code> and
+<code>LOAD_PERM(register)</code> respectively. Using temporary storage is useful when you
+want to use the result of an expensive calculation in various decisions (switches) within the
+chain (like for example the number of a certain wagon type within a train). Permanent storage
+might be useful to control the long-term behaviour of an object. Note that it is only available
+for industries and airports.
+
 <h2><a name="block-randomswitch">Random switch</a></h2>
 <p>While a <a href="#block-switch">switch-block</a> allows making a predictable
 decision, a random_switch allows a randomised choice between several options.</p>

@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d7 
+0 * 4 \d8 
 
 1 * 46 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -15,31 +15,41 @@
 00 
 00 
 2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+// Name: coal_mine_subtype_switch
+3 * 38 02 0A FE 89 
+1A 20 \dx00000004 
+\2psto 1A 20 \dx00000000 
+\2r 02 20 \dx000000FF 
+\2r \b1 
+\wx8000 \dx00000000 \dx0000000A 	// 0 .. 10: return string(STR_COALMINE_MONTH_0_10);
+\wx8001 // default: return string(STR_COALMINE_MONTH_11);
+
 // Name: coal_mine_switch@return
-3 * 13 02 0A FE 89 
+4 * 13 02 0A FD 89 
 1C 00 \dxFFFFFFFF 
 \b0 
 \wx0000 // Return computed value
 
 // Name: coal_mine_switch
-4 * 54 02 0A FE 89 
+5 * 64 02 0A FD 89 
 1A 20 \dx00000004 
 \2sto 1A 20 \dx00000100 
 \2& 1A 20 \dx00000000 
 \2| 0C 00 \dx0000FFFF 
-\b2 
-\wx8000 \dx0000003A \dx0000003A 	// 58 .. 58: return string(STR_COALMINE_EXTRA_TEXT);
-\wx00FE \dx0000FFFF \dx0000FFFF 	// 65535 .. 65535: coal_mine_switch@return;
+\b3 
+\wx8002 \dx0000003A \dx0000003A 	// 58 .. 58: return string(STR_COALMINE_EXTRA_TEXT);
+\wx00FE \dx00000037 \dx00000037 	// 55 .. 55: coal_mine_subtype_switch;
+\wx00FD \dx0000FFFF \dx0000FFFF 	// 65535 .. 65535: coal_mine_switch@return;
 \wx0000 // default: CB_FAILED;
 
-5 * 13 00 0A \b4 01 00 
+6 * 13 00 0A \b4 01 00 
 08 00 
 09 00 
 21 00 
 22 01 
 
-6 * 7 03 0A 01 00 \b0 
-\wx00FE 
+7 * 7 03 0A 01 00 \b0 
+\wx00FD 
 
-7 * 35 04 08 FF 01 \wxD000 "\98Extra info for coal mine: \7B" 00 
+8 * 52 04 08 FF 03 \wxD000 "\98cloal" 00 "\98diamonds" 00 "\98Extra info for coal mine: \7B" 00 
 
