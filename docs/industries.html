@@ -170,21 +170,48 @@ to define either an old industry (using the global ID) or a new industry from yo
 
 <h3><a name="industry-callback-flags">Industry callback flags</a></h3>
 <table class="t">
-<tr><th>flag</th><th>meaning</th></tr>
-<tr><td>IND_CBF_AVAILABILITY</td><td></td></tr>
-<tr><td>IND_CBF_PROD_CB_CARGO_ARRIVE</td><td></td></tr>
-<tr><td>IND_CBF_PROD_CB_256_TICKS</td><td></td></tr>
-<tr><td>IND_CBF_LOCATION_CHECK</td><td></td></tr>
-<tr><td>IND_CBF_RANDOM_PROD_CHANGE</td><td></td></tr>
-<tr><td>IND_CBF_MONTHLY_PROD_CHANGE</td><td></td></tr>
-<tr><td>IND_CBF_CARGO_SUBTYPE_DISPLAY</td><td></td></tr>
-<tr><td>IND_CBF_EXTRA_TEXT_FUND</td><td></td></tr>
-<tr><td>IND_CBF_EXTRA_TEXT_INDUSTRY</td><td></td></tr>
-<tr><td>IND_CBF_CONTROL_SPECIAL</td><td></td></tr>
-<tr><td>IND_CBF_STOP_ACCEPT_CARGO</td><td></td></tr>
-<tr><td>IND_CBF_COLOUR</td><td></td></tr>
-<tr><td>IND_CBF_CARGO_INPUT</td><td></td></tr>
-<tr><td>IND_CBF_CARGO_OUTPUT</td><td></td></tr>
+<tr><th>flag</th><th>return values</th><th>meaning</tr>
+<tr><td>IND_CBF_AVAILABILITY</td><td>CB_RESULT_IND_ALLOW<br>CB_RESULT_IND_DISALLOW</td><td>decide upon availability of the industry type.<br>
+extra_callback_info_2 allows to get information on how the industry is being built:<br>
+0: during map generation<br>1: random generation ingame<br>2: user trying to fund or prospect the industry</td></tr>
+<tr><td>IND_CBF_PROD_CB_CARGO_ARRIVE</td><td>n/a (use produce block)</td><td>handle production when cargo is delivered. See produce block below</td></tr>
+<tr><td>IND_CBF_PROD_CB_256_TICKS</td><td>n/a (use produce block)</td><td>handle production every 256 ticks. See produce block below</td></tr>
+<tr><td>IND_CBF_LOCATION_CHECK</td><td>string<br>
+CB_RESULT_IND_ALLOW_LOCATION<br>
+CB_RESULT_IND_DISALLOW_UNSUITABLE<br>
+CB_RESULT_IND_DISALLOW_ONLY_RAINFOREST<br>
+CB_RESULT_IND_DISALLOW_ONLY_DESERT</td><td>handle check for permissible build locations<br>
+extra_callback_info_2 allows to get information on how the industry is being built:<br>
+0: during map generation<br>1: random generation ingame<br>2: user trying to fund the industry<br>
+3: user trying to prospect the industry</td></tr>
+<tr><td>IND_CBF_RANDOM_PROD_CHANGE</td><td>see monthly production changes below</td><td>handle random production changes</td></tr>
+<tr><td>IND_CBF_MONTHLY_PROD_CHANGE</td><td>CB_RESULT_IND_PROD_NO_CHANGE<br>
+CB_RESULT_IND_PROD_HALF<br>
+CB_RESULT_IND_PROD_DOUBLE<br>
+CB_RESULT_IND_PROD_CLOSE<br>
+CB_RESULT_IND_PROD_RANDOM<br>
+CB_RESULT_IND_PROD_DIVIDE_BY_4<br>
+CB_RESULT_IND_PROD_DIVIDE_BY_8<br>
+CB_RESULT_IND_PROD_DIVIDE_BY_16<br>
+CB_RESULT_IND_PROD_DIVIDE_BY_32<br>
+CB_RESULT_IND_PROD_MULTIPLY_BY_4<br>
+CB_RESULT_IND_PROD_MULTIPLY_BY_8<br>
+CB_RESULT_IND_PROD_MULTIPLY_BY_16<br>
+CB_RESULT_IND_PROD_MULTIPLY_BY_32<br>
+CB_RESULT_IND_PROD_DECREMENT_BY_1<br>
+CB_RESULT_IND_PROD_INCREMENT_BY_1<br>
+CB_RESULT_IND_PROD_SET_BY_0x100<br>
+</td><td>handle monthly production changes</td></tr>
+<tr><td>IND_CBF_CARGO_SUBTYPE_DISPLAY</td><td>string</td><td>decide on displayed cargo subtypes</td></tr>
+<tr><td>IND_CBF_EXTRA_TEXT_FUND</td><td>string</td><td>decide on extra text displayed in industry funding window</td></tr>
+<tr><td>IND_CBF_EXTRA_TEXT_INDUSTRY</td><td>string</td><td>decide on extra text in the industry window</td></tr>
+<tr><td>IND_CBF_CONTROL_SPECIAL</td><td>CB_RESULT_IND_DO_NOT_USE_SPECIAL<br>CB_RESULT_IND_USE_SPECIAL</td><td>decide whether the special defined in spec_flags shall be used or not</td></tr>
+<tr><td>IND_CBF_STOP_ACCEPT_CARGO</td><td></td><td>decide on cargo acceptance</td></tr>
+<tr><td>IND_CBF_COLOUR</td><td>0...15</td><td>decide on industry colour. See also <a href="refs.html#refs-palettes">the palettes</a>. DARK_BLUE (#775) corresponds to the colour 0.</td></tr>
+<tr><td>IND_CBF_CARGO_INPUT</td><td>cargo label</td><td>decide on accepted cargo types. extra_callback_info_1 gives the input cargo number.
+Return 0xFF for any other value than 0, 1 or 2 for extra_callback_info_1.</td></tr>
+<tr><td>IND_CBF_CARGO_OUTPUT</td><td>cargo label</td><td>decide on output cargo types. extra_callback_info_1 gives the output cargo number.
+Return 0xFF for any other value than 0 or 1 for extra_callback_info_1.</td></tr>
 </table>
 
 <h3><a name="industry-special-flags">Industry special flags</a></h3>
