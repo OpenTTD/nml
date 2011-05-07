@@ -823,6 +823,21 @@ order of the colours is the same as for <code>PALETTE_CC_XX</code>:</p>
 <tr><td>PALETTE_CC_FIRST+15<td>PALETTE_CC_FIRST+15</tr>
 </table>
 
+<h2><a name="refs-slopes">List of tile slopes</a></h2>
+<p>Tiles in TTD can have various slopes. The slope is a 5-bit wide mask:<br>
+<table class="t">
+<tr><th>bit<th>meaning</tr>
+<tr><td>0<td>west corner is above the lowest corner.
+<tr><td>1<td>south corner is above the lowest corner.<br>
+<tr><td>2<td>east corner is above the lowest corner.<br>
+<tr><td>3<td>north corner is above the lowest corner.<br>
+<tr><td>4<td>this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).
+</table>
+</p><p>
+The resulting, possible values are 0 ... 14, 23, 27, 29 and 30. Their meaning is
+illustrated in this image:
+<img src="tileh.png" alt="tile slopes">
+</p>
 <h2><a name="refs-directions">List direction constants</a></h2>
 <ul>
 <li>DIRECTION_NORTH
