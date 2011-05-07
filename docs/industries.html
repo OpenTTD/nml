@@ -170,12 +170,15 @@ to define either an old industry (using the global ID) or a new industry from yo
 
 <h3><a name="industry-callback-flags">Industry callback flags</a></h3>
 <table class="t">
-<tr><th>flag</th><th>return values</th><th>meaning</tr>
+<tr><th>callback and callback flag<br>
+IND_CB_XXX and IND_CBF_XXX</th><th>return values</th><th>meaning</tr>
 <tr><td>IND_CBF_AVAILABILITY</td><td>CB_RESULT_IND_ALLOW<br>CB_RESULT_IND_DISALLOW</td><td>decide upon availability of the industry type.<br>
 extra_callback_info_2 allows to get information on how the industry is being built:<br>
 0: during map generation<br>1: random generation ingame<br>2: user trying to fund or prospect the industry</td></tr>
-<tr><td>IND_CBF_PROD_CB_CARGO_ARRIVE</td><td>n/a (use produce block)</td><td>handle production when cargo is delivered. See produce block below</td></tr>
-<tr><td>IND_CBF_PROD_CB_256_TICKS</td><td>n/a (use produce block)</td><td>handle production every 256 ticks. See produce block below</td></tr>
+<tr><td>IND_CBF_PROD_CB_CARGO_ARRIVE<br>(no callback, use <a href="nml-language.html#block-produce">produce block</a>)</td><td>n/a (use produce block)</td>
+        <td>handle production when cargo is delivered. See produce block</td></tr>
+<tr><td>IND_CBF_PROD_CB_256_TICKS<br>(no callback, use <a href="nml-language.html#block-produce">produce block</a>)</td><td>n/a (use produce block)</td>
+        <td>handle production every 256 ticks. See produce block</td></tr>
 <tr><td>IND_CBF_LOCATION_CHECK</td><td>string<br>
 CB_RESULT_IND_ALLOW_LOCATION<br>
 CB_RESULT_IND_DISALLOW_UNSUITABLE<br>

@@ -756,6 +756,64 @@ chain (like for example the number of a certain wagon type within a train). Perm
 might be useful to control the long-term behaviour of an object. Note that it is only available
 for industries and airports.
 
+<h2><a name="block-produce">Produce</a></h2>
+The <code>produce</code> block is only available for industries and describes how the industry
+consumes incoming and creates outgoing cargo. The syntax is
+<pre class="exl">produce (&lt;ID&gt;, &lt;consume_1&gt;, &lt;consume_2&gt;, &lt;consume_3&gt;, &lt;produce_1&gt;, &lt;produce_2&gt; [, run_again]);</pre>
+where 
+<ul>
+<li><code>ID</code> is a unique name of the block
+<li><code>consume_1</code>, <code>consume_2</code>, <code>consume_3</code> are expressions which
+give the amount of the respective input cargo consumed during this call of the produce block. The
+given amounts are subtracted from the stockpile of cargo waiting to be processed.
+<li><code>produce_1</code>, <code>produce_2</code> are expressions which give the amount of the 
+produced (outgoing) cargos in the produce block.
+<li><code>run_again</code> is a boolean expression which evaluates to either 0 or 1. It indicates
+whether the produce block shall be called again. Thus you can tune the produce block to process
+the minimal amount of cargo and call it as often as needed to consume the required amount of
+input cargo and produce the appropriate amount of output cargos.
+</ul>
+The produce block should be the default result of the switch-chain for an industry,
+equivalent to a spriteblock for vehicles or spritelayout for industry tiles. An example on how
+it can be used without actually processing cargo but counting the time an industry exists unserviced:
+<pre class="exl">
+/* Every month, the counter is increased. The counter is reset to zero whenever the power plant
+ * receives cargo. When the counter reaches 61, the industry will close when the random production
+ * change callback is called. */
+
+/* When we receive cargo, the counter is reset. */
+produce(power_plant_cargo_arrive_produce, 0, 0, 0, 0, STORE_PERM(0, 0x00));
+
+/* Every month the counter is increased. */
+switch (FEAT_INDUSTRIES, SELF, power_plant_monthly_prod_change_switch, STORE_PERM(LOAD_PERM(0x00) + 1, 0x00)) {
+	return CB_RESULT_IND_PROD_NO_CHANGE;
+}
+
+/* Only check industry closure if the counter is greater than 60. */
+switch (FEAT_INDUSTRIES, SELF, power_plant_random_prod_change_switch, LOAD_PERM(0x00)) {
+	0..60: return CB_RESULT_IND_PROD_NO_CHANGE;
+	return CB_RESULT_IND_PROD_CLOSE;
+}
+
+switch (FEAT_INDUSTRIES, SELF, power_plant_callback_switch, current_callback) {
+	IND_CB_MONTHLY_PROD_CHANGE: power_plant_monthly_prod_change_switch;
+	IND_CB_RANDOM_PROD_CHANGE:  power_plant_random_prod_change_switch;
+	power_plant_cargo_arrive_produce;
+}
+
+item(FEAT_INDUSTRIES, industry_power_plant, INDUSTRYTYPE_POWER_PLANT) {
+	properties {
+		callback_flags:             bitmask(IND_CBF_PROD_CB_CARGO_ARRIVE,
+		                                    IND_CBF_MONTHLY_PROD_CHANGE,
+		                                    IND_CBF_RANDOM_PROD_CHANGE);
+	}
+	graphics {
+		power_plant_callback_switch;
+	}
+}
+
+</pre>
+
 <h2><a name="block-randomswitch">Random switch</a></h2>
 <p>While a <a href="#block-switch">switch-block</a> allows making a predictable
 decision, a random_switch allows a randomised choice between several options.</p>
