@@ -1,6 +1,6 @@
 import os
 from nml import generic, palette, output_base, lz77, grfstrings
-from nml.actions.real_sprite import palmap_d2w
+from nml.actions.real_sprite import palmap_w2d
 
 try:
     import Image
@@ -271,7 +271,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         compression &= ~0x40
         data = list(sprite.getdata())
         if orig_pal == "WIN" and self.palette == "DOS":
-            data = [palmap_d2w[x] for x in data]
+            data = [palmap_w2d[x] for x in data]
         if compression == 9:
             self.wsprite_encodetile(sprite, data, xoffset, yoffset, compression)
         elif compression == 1 or compression == 3:
