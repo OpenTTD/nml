@@ -188,6 +188,20 @@ def industry_layout_count(name, args, pos, info):
     var.extra_params.append( (0x101, expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xFF)).reduce()) )
     return var
 
+def industry_town_count(name, args, pos, info):
+    if len(args) < 1 or len(args) > 2:
+        raise generic.ScriptError("'%s'() requires between 1 and 2 argument(s), encountered %d" % (name, len(args)), pos)
+    if not isinstance(args[0], expression.ConstantNumeric):
+        raise generic.ScriptError("First argument of '%s' must be a compile-time constant." % name, args[0].pos)
+    generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
+
+    grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
+
+    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), args[0], pos)
+    var.extra_params.append( (0x100, grfid) )
+    var.extra_params.append( (0x101, expression.ConstantNumeric(0x0100).reduce()) )
+    return var
+
 varact2vars60x_industries = {
     'nearby_tile_industry_tile_id' : { 'var': 0x60, 'start':  0, 'size': 16, 'tile': 'u' },
     'nearby_tile_random_bits'      : { 'var': 0x61, 'start':  0, 'size':  8, 'tile': 'u' },
@@ -204,6 +218,7 @@ varact2vars60x_industries = {
     'industry_distance'            : { 'var': 0x67, 'start':  0, 'size': 16, 'function': industry_count },
     'industry_layout_count'        : { 'var': 0x68, 'start': 16, 'size':  8, 'function': industry_layout_count },
     'industry_layout_distance'     : { 'var': 0x68, 'start':  0, 'size': 16, 'function': industry_layout_count },
+    'industry_town_count'          : { 'var': 0x68, 'start': 16, 'size':  8, 'function': industry_town_count },
 }
 
 varact2vars_objects = {
