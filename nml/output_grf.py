@@ -1,5 +1,6 @@
 import os
 from nml import generic, palette, output_base, lz77, grfstrings
+from nml.actions.real_sprite import palmap_d2w
 
 try:
     import Image
@@ -101,7 +102,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         im = Image.open(sprite_info.file.value)
         if im.mode != "P":
             raise generic.ImageError("image does not have a palette", sprite_info.file.value)
-        palette.validate_palette(im, sprite_info.file.value)
+        im_pal = palette.validate_palette(im, sprite_info.file.value)
         x = sprite_info.xpos.value
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
@@ -117,7 +118,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             pixels = sprite.size[0] * sprite.size[1]
             pos = generic.PixelPosition(sprite_info.file.value, x, y)
             generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), pos)
-        self.wsprite(sprite, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.compression.value)
+        self.wsprite(sprite, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.compression.value, im_pal)
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
@@ -161,8 +162,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         self._byte_count += size - streamlength
         self.end_sprite()
 
-    def wsprite_encodetile(self, sprite, xoffset, yoffset, compression):
-        data = list(sprite.getdata())
+    def wsprite_encodetile(self, sprite, data, xoffset, yoffset, compression):
         size_x, size_y = sprite.size
         if size_x > 255: raise generic.ScriptError("sprites wider than 255px are not supported")
         data_output = []
@@ -255,7 +255,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite = sprite.crop((0, 0, x + 1, size_y))
         return (sprite, xoffset, yoffset)
 
-    def wsprite(self, sprite, xoffset, yoffset, compression):
+    def wsprite(self, sprite, xoffset, yoffset, compression, orig_pal):
         if self.crop_sprites and (compression & 0x40 == 0):
             all_blue = True
             for p in sprite.getdata():
@@ -269,10 +269,13 @@ class OutputGRF(output_base.BinaryOutputBase):
             else:
                 sprite, xoffset, yoffset = self.crop_sprite(sprite, xoffset, yoffset)
         compression &= ~0x40
+        data = list(sprite.getdata())
+        if orig_pal == "WIN" and self.palette == "DOS":
+            data = [palmap_d2w[x] for x in data]
         if compression == 9:
-            self.wsprite_encodetile(sprite, xoffset, yoffset, compression)
+            self.wsprite_encodetile(sprite, data, xoffset, yoffset, compression)
         elif compression == 1 or compression == 3:
-            self.wsprite_encoderegular(sprite, list(sprite.getdata()), xoffset, yoffset, compression)
+            self.wsprite_encoderegular(sprite, data, xoffset, yoffset, compression)
         else:
             raise generic.ScriptError("Invalid sprite compression")
 

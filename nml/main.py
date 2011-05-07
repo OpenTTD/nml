@@ -180,12 +180,18 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
         if im.mode != "P":
             raise generic.ImageError("image does not have a palette", f)
         pal = palette.validate_palette(im, f)
-        if used_palette != "ANY" and used_palette != pal:
-            if last_file is None:
-                raise generic.ImageError("Image has '%s' palette, but you forced the '%s' palette" % (pal, used_palette), f)
-            raise generic.ImageError("Image has '%s' palette, but \"%s\" has the '%s' palette" % (pal, last_file, used_palette), f)
+
+        if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DOS" and pal == "WIN"):
+            raise generic.ImageError("Image has '%s' palette, but you forced the '%s' palette" % (pal, used_palette), f)
+
+        if used_palette == "ANY":
+            used_palette = pal
+        elif pal != used_palette:
+            if used_palette in ("WIN", "DOS") and pal in ("WIN", "DOS"):
+                used_palette = "DOS"
+            else:
+                raise generic.ImageError("Image has '%s' palette, but \"%s\" has the '%s' palette" % (pal, last_file, used_palette), f)
         last_file = f
-        used_palette = pal
 
     palette_bytes = {"WIN": "W", "DOS": "D", "ANY": "A"}
     if used_palette in palette_bytes:
