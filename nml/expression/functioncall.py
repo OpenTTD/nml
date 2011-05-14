@@ -213,6 +213,8 @@ def builtin_load(name, args, pos):
     """
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have one parameter", pos)
+    if isinstance(args[0], ConstantNumeric) and not 0 <= args[0].value <= 0xFF:
+        raise generic.ScriptError(name + "() can only load registers 0 .. 0xFF", args[0].pos)
     var_num = 0x7D if name == "LOAD_TEMP" else 0x7C
     return Variable(ConstantNumeric(var_num), param=args[0], pos=pos)
 
