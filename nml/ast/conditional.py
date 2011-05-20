@@ -28,7 +28,7 @@ class ConditionalList(object):
         ret = ''
         for idx, cond in enumerate(self.conditionals):
             if idx > 0:
-                str += ' else '
+                ret += ' else '
             ret += str(cond)
         ret += '\n'
         return ret

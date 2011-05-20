@@ -61,7 +61,7 @@ class TileLayout(object):
     def __str__(self):
         ret = 'tilelayout %s {\n' % self.name
         for tile in self.tile_list:
-            ret += '\t%s, %s: %s;\n' % (tile.x, tile.y, tile.tiletype)
+            ret += '\t%s, %s: %s;\n' % (tile['x'], tile['y'], tile['tile'])
         ret += '}\n'
         return ret
 
