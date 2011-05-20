@@ -330,6 +330,8 @@ class NewGRFString(object):
                     raise generic.ScriptError("Undefined command \"%s\"" % command_name, pos)
                 #
                 command = StringCommand(command_name)
+                if end >= len(string):
+                    raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
                 if string[end] == '.':
                     if 'allow_case' not in commands[command_name]:
                         raise generic.ScriptError("Command \"%s\" can't have a case" % command_name, pos)
@@ -340,8 +342,6 @@ class NewGRFString(object):
                     if lang.cases is None or case not in lang.cases:
                         raise generic.ScriptError("Invalid case-name \"%s\"" % case, pos)
                     command.case = lang.cases[case]
-                if end >= len(string):
-                    raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
                 if string[end] != '}':
                     command.argument_is_assigment = string[end] == '='
                     arg_start = end + 1
