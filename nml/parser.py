@@ -63,9 +63,9 @@ class NMLParser(object):
         t[0] = t[1]
 
     def p_skipable_script(self, t):
-        '''skipable_script : skipable_block
+        '''skipable_script :
                            | skipable_script skipable_block'''
-        if len(t) == 2: t[0] = [t[1]]
+        if len(t) == 1: t[0] = []
         else: t[0] = t[1] + [t[2]]
 
     def p_skipable_block(self, t):
