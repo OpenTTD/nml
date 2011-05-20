@@ -270,6 +270,18 @@ varact2vars_airporttiles = {
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
+varact2vars60x_airporttiles = {
+    'nearby_tile_slope'            : {'var': 0x60, 'start':  0, 'size':  5, 'tile': 's'},
+    'nearby_tile_is_same_industry' : {'var': 0x60, 'start':  8, 'size':  1, 'tile': 's'},
+    'nearby_tile_is_water'         : {'var': 0x60, 'start':  9, 'size':  1, 'tile': 's'},
+    'nearby_tile_terrain_type'     : {'var': 0x60, 'start': 10, 'size':  3, 'tile': 's'},
+    'nearby_tile_height'           : {'var': 0x60, 'start': 16, 'size':  8, 'tile': 's'},
+    'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size':  4, 'tile': 's'},
+    'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'tile': 's'},
+    'nearby_tile_airporttile_id'   : {'var': 0x62, 'start':  0, 'size': 16, 'tile': 's'},
+}
+
+
 varact2vars[0x00] = varact2vars_trains
 varact2vars60x[0x00] = varact2vars60x_vehicles
 varact2vars[0x01] = varact2vars_roadvehs
@@ -286,3 +298,4 @@ varact2vars[0x0F] = varact2vars_objects
 varact2vars60x[0x0F] = varact2vars60x_objects
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
+varact2vars60x[0x11] = varact2vars60x_airporttiles
