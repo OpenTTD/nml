@@ -156,6 +156,7 @@ commands = {
 'WORD_HEX':       {'unicode': r'\UE09A\07', 'ascii': r'\9A\07', 'important': True},
 'DWORD_HEX':      {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'important': True},
 'QWORD_HEX':      {'unicode': r'\UE09A\0B', 'ascii': r'\9A\0B', 'important': True},
+'WORD_S_TONNES':  {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'important': True},
 'BLUE':           {'unicode': r'\UE088',    'ascii': r'\88'},
 'SILVER':         {'unicode': r'\UE089',    'ascii': r'\89'},
 'GOLD':           {'unicode': r'\UE08A',    'ascii': r'\8A'},
