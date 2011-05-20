@@ -16,11 +16,11 @@
 00 
 2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 // Name: coal_mine_subtype_switch
-3 * 38 02 0A FE 89 
+3 * 37 02 0A FE 89 
 1A 20 \dx00000004 
 \2psto 1A 20 \dx00000000 
-\2r 02 20 \dx000000FF 
-\2r \b1 
+\2r 02 00 \dx000000FF 
+\b1 
 \wx8000 \dx00000000 \dx0000000A 	// 0 .. 10: return string(STR_COALMINE_MONTH_0_10);
 \wx8001 // default: return string(STR_COALMINE_MONTH_11);
 
