@@ -157,7 +157,10 @@ varact2vars_industries = {
     'company_colour1' : {'var': 0x45, 'start': 24, 'size': 4},
     'company_colour2' : {'var': 0x45, 'start': 28, 'size': 4},
     'build_date' : {'var': 0x46, 'start': 0, 'size': 32},
+    'produced_last_month_1' : {'var': 0x9E, 'start': 0, 'size': 16},
+    'produced_last_month_2' : {'var': 0xA0, 'start': 0, 'size': 16},
     'founder' : {'var': 0xA7, 'start': 0, 'size': 8},
+    'colour' : {'var': 0xA8, 'start': 0, 'size': 8},
     'build_type' : {'var': 0xB3, 'start': 0, 'size': 2},
 }
 
