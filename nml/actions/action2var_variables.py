@@ -275,7 +275,7 @@ varact2vars_airporttiles = {
 
 varact2vars60x_airporttiles = {
     'nearby_tile_slope'            : {'var': 0x60, 'start':  0, 'size':  5, 'tile': 's'},
-    'nearby_tile_is_same_industry' : {'var': 0x60, 'start':  8, 'size':  1, 'tile': 's'},
+    'nearby_tile_is_same_airport'  : {'var': 0x60, 'start':  8, 'size':  1, 'tile': 's'},
     'nearby_tile_is_water'         : {'var': 0x60, 'start':  9, 'size':  1, 'tile': 's'},
     'nearby_tile_terrain_type'     : {'var': 0x60, 'start': 10, 'size':  3, 'tile': 's'},
     'nearby_tile_height'           : {'var': 0x60, 'start': 16, 'size':  8, 'tile': 's'},
