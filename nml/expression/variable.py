@@ -27,7 +27,8 @@ class Variable(Expression):
                 extra_param.debug_print(indentation + 4)
 
     def __str__(self):
-        ret = 'var[%s, %s, %s' % (str(self.num), str(self.shift), str(self.mask))
+        num = "0x%02X" % self.num.value if isinstance(self.num, ConstantNumeric) else str(self.num)
+        ret = 'var[%s, %s, %s' % (num, str(self.shift), str(self.mask))
         if self.param is not None:
             ret += ', %s' % str(self.param)
         ret += ']'
