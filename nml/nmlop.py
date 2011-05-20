@@ -76,7 +76,7 @@ SUB = Operator(
 DIV = Operator(
     act2_supports = True, act2_str = r'\2/', act2_num = 6,
     actd_supports = True, actd_str = r'\D/', actd_num = 10,
-    token = '=',
+    token = '/',
     compiletime_func = operator.div,
     validate_func = validate_func_div_mod,
 )
