@@ -9,14 +9,77 @@
 
 <h1><a name="airports">Airports and airport tiles</a></h1>
 
+<h2><a name="airports-properties">Airport properties</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>name<td>string<td>Name of the airport
+<tr><td>override<td><td>the id of airport to replace / override
+<tr><td>layouts<td>list of layouts<td>
+<tr><td>years_available<td>[start year, last year]<td>list of the availablility years: first and last year it can be built 
+<tr><td>ttd_airport-type<td>0 ... 3<td>substitute TTDPatch airport type
+<tr><td>catchment_area<td><td>catchment area of the airport in tiles around its perimeter
+<tr><td>noise_level<td><td>noise generation of this airport
+</table>
+
+<h2><a name="airporttiles-properties">Airport tile properties</a></h2>
+
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>override<td><td>the id of airport tile to override
+<tr><td>substitute<td><td>the id of airport tile to replace
+<tr><td>callback_flags<td>bitmask<td>
+<tr><td>animation_info<td><td>
+<tr><td>animation_speed<td><td>see <a href="refs.html#refs-animation-speed-values">speed settings</a>
+<tr><td>animation_triggers<td><td>
+</table>
+
 <h2><a name="airports-vars">Airport variables</a></h2>
+
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>override<td><td>the id of airport tile to override
+<tr><td>substitute<td><td>the id of a default airport tile used as fallback
+<tr><td>callback_flags<td>bitmask<td>
+<tr><td>animation_info<td><td>
+<tr><td>animation_speed<td><td>see <a href="refs.html#refs-animation-speed-values">speed settings</a>
+<tr><td>animation_triggers<td><td>
+</table>
+
 
 <h2><a name="airporttiles-vars">Airport tile variables</a></h2>
 
-<h2><a name="airports-property">Airport properties</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>terrain_type<td><td>
+<tr><td>town_radius_group<td><td>
+<tr><td>relative_pos<td>bitmask<td>
+<tr><td>animation_frame<td><td>
+</table>
 
-<h2><a name="airporttiles-property">Airport tile properties</a></h2>
+Variables that require a signed x,y offset. The offset is relative to the current tile. Offset 0,0 means the current tile.
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>nearby_tile_slope</td><td>Which corners are raised on the given tile.</td><td>
+Bit 0: west corner is above the lowest corner.<br>
+Bit 1: south corner is above the lowest corner.<br>
+Bit 2: east corner is above the lowest corner.<br>
+Bit 3: north corner is above the lowest corner.<br>
+Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).<br>
+See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
+</td></tr>
+<tr><td>nearby_tile_is_same_industry</td><td>1 if the tile is part of the same airport, 0 otherwise</td><td></td></tr>
+<tr><td>nearby_tile_is_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
+<tr><td>nearby_tile_terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
+<tr><td>nearby_tile_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
+<tr><td>nearby_tile_class</td><td><a href="refs.html#refs-tile-classes">Tile class</a></td><td></td></tr>
+<tr><td>nearby_tile_animation_frame</td><td>0..255</td><td>Animation frame of the given tile</td></tr>
+<tr><td>nearby_tile_airporttile_id</td><td>0x00aa, 0xFFbb, 0xFFFE or 0xFFFF</td><td>
+0x00aa: The tile is an airport tile that is part of this GRF, the tile id is aa.<br>
+0xFFbb: The tile is an original airport tile with id bb.<br>
+0xFFFE: The tile is an airport tile defined in another GRF.<br>
+0xFFFF: The tile is not an airport tile or it belongs to another GRF.
+</td></tr>
+</table>
 
 </body>
 </html>
-
