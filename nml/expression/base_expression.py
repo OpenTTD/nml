@@ -136,7 +136,7 @@ class ConstantNumeric(Expression):
 class ConstantFloat(Expression):
     def __init__(self, value, pos):
         Expression.__init__(self, pos)
-        self.value = value
+        self.value = float(value)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Float:', self.value
