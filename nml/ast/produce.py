@@ -81,6 +81,9 @@ class Produce(produce_base_class):
     def collect_references(self):
         return []
 
+    def __str__(self):
+        return 'produce(%s);\n' % ', '.join(str(x) for x in self.param_list)
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Produce, name =', str(self.name)
         print (indentation+2)*' ' + ('Using numeric values' if self.version == 0 else 'Using temp. registers')

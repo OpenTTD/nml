@@ -72,5 +72,5 @@ class Conditional(object):
         ret += ' {\n'
         for b in self.block:
             ret += '\t' + str(b).replace('\n', '\n\t')[0:-1]
-        ret += '}'
+        ret += '}\n'
         return ret

@@ -58,6 +58,13 @@ class TileLayout(object):
     def get_action_list(self):
         return []
 
+    def __str__(self):
+        ret = 'tilelayout %s {\n' % self.name
+        for tile in self.tile_list:
+            ret += '\t%s, %s: %s;\n' % (tile.x, tile.y, tile.tiletype)
+        ret += '}\n'
+        return ret
+
     def get_size(self):
         size = 2
         for tile in self.tile_list:

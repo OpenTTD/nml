@@ -20,4 +20,4 @@ class SkipAll(object):
         print indentation*' ' + 'Skip all'
 
     def __str__(self):
-        print "exit;"
+        return "exit;\n"

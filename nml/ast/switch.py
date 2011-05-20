@@ -116,7 +116,7 @@ class SwitchBody(object):
             else:
                 ret += '\t%s;\n' % str(self.default)
         else:
-            ret += '\treturn %s;' % str(self.default)
+            ret += '\treturn %s;\n' % str(self.default)
         return ret
 
 class RandomSwitch(switch_base_class):
