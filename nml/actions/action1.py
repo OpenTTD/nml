@@ -51,7 +51,8 @@ def make_set_lists(first_set):
         if len(unhandled_sets) == 0: break
         new_groups = set()
         for s in unhandled_sets:
-            new_groups.update(s.referencing_nodes())
+            if s.prepare_output():
+                new_groups.update(s.referencing_nodes())
         handled_sets.update(unhandled_sets)
         new_groups.difference_update(all_groups) #remove all elements already seen
         for g in new_groups:
