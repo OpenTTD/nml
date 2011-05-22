@@ -29,22 +29,18 @@ class Action1(base_action.BaseAction):
         file.newline()
         file.end_sprite()
 
-def parse_sprite_set(first_set):
+def make_set_lists(first_set):
     """
-    Parse a sprite set into an action1
-    Depending on the context, multiple action1s, action2s and real sprites will be generated.
-    This is because all sprite sets that go into one sprite group need to be 'compiled' in one go.
-
-    @param first_set: Sprite set to parse
+    Make lists of the sprite sets and groups to parse
+    @param first_set: First sprite set to parse
     @type first_set: L{SpriteSet}
 
-    @return: A list of generated actions
-    @rtype: C{list} of L{BaseAction}
+    @return: A tuple of two lists of respectively the sprite sets and sprite groups to parse
+    @rtype: C{tuple} of (C{list} of L{SpriteSet}, C{list} of L{SpriteGroup} or L{SpriteLayout})
     """
     all_groups = set() #list of all groups
     all_sets = set([first_set]) #list of all sets
     handled_sets = set() #list of all sets that have already been handled
-    action_list = []
 
     if first_set.feature.value not in action2.features_sprite_set:
         raise generic.ScriptError("Sprite sets are not supported for this feature: " + generic.to_hex(first_set.feature.value, 2), first_set.feature.pos)
@@ -66,17 +62,32 @@ def parse_sprite_set(first_set):
     set_list = sorted(all_sets, key=lambda val: val.name.value)
     group_list = sorted(all_groups, key=lambda val: val.name.value)
 
-    #sprite sets should be 'flattened' for tile layouts
-    flatten = first_set.feature.value in action2.features_sprite_layout and first_set.feature.value != 0x07
+    return (set_list, group_list)
 
+def create_action1(set_list, flatten):
+    """
+    Parse a list of sprite sets into a list of real sprites
+
+    @param set_list: List of sprite sets to parse
+    @type set_list: C{list} of L{SpriteSet}
+
+    @param flatten: If true, make 1 action1 'set' per sprite, instead of per spriteset
+    @type flatten: C{bool}
+
+    @return: A list of sprites (action1 + real sprites)
+    @rtype: C{list} of L{BaseAction}
+    """
+    action_list = []
     real_sprite_list = []
     total_count = 0 #total number of sprites so far
     for i, item in enumerate(set_list):
         sprites = real_sprite.parse_sprite_list(item.sprite_list, item.pcx, block_name = item.name)
+
         for spritenum, sprite in enumerate(sprites):
             if sprite.label is not None:
                 assert item.labels[sprite.label.value] is None
                 item.labels[sprite.label.value] = spritenum
+
         real_sprite_list.extend(sprites)
         count = len(sprites)
         assert item.action1_num is None and item.action1_count is None
@@ -102,8 +113,29 @@ def parse_sprite_set(first_set):
                             raise generic.ScriptError("All sprite sets referred to by a sprite group should have the same number of sprites. Expected %d, got %d." % (num, s.action1_count), g.pos)
             num_sets, num_ent = len(set_list), first_count
 
-        action_list.append(Action1(first_set.feature, num_sets, num_ent))
+        action_list.append(Action1(set_list[0].feature, num_sets, num_ent))
         action_list.extend(real_sprite_list)
+
+    return action_list
+
+def parse_sprite_set(first_set):
+    """
+    Parse a sprite set into an action1
+    Depending on the context, multiple action1s, action2s and real sprites will be generated.
+    This is because all sprite sets that go into one sprite group need to be 'compiled' in one go.
+
+    @param first_set: Sprite set to parse
+    @type first_set: L{SpriteSet}
+
+    @return: A list of generated actions
+    @rtype: C{list} of L{BaseAction}
+    """
+    set_list, group_list = make_set_lists(first_set)
+
+    #sprite sets should be 'flattened' for tile layouts
+    flatten = first_set.feature.value in action2.features_sprite_layout and first_set.feature.value != 0x07
+
+    action_list = create_action1(set_list, flatten)
 
     #add the sprite groups
     for g in group_list:
