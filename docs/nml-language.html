@@ -1115,7 +1115,7 @@ be replaced. It should be an identifier from the first column of the following t
 	<tr><td>AQUEDUCTS</td><td>8</td></tr>
 	<tr><td>AUTORAIL</td><td>55</td></tr>
 	<tr><td>FLAGS</td><td>36 (b)</td></tr>
-	<tr><td>OTTD_GUI</td><td>154 (b)</td></tr>
+	<tr><td>OTTD_GUI</td><td>160 (b)</td></tr>
 	<tr><td>AIRPORT_PREVIEW</td><td>9 (b)</td></tr>
 </table>
 
@@ -1163,7 +1163,7 @@ shadow colour is used, sprite compression flag 'TILE' must NOT be set.</p>
 
 <h2><a name="block-alt_sprites">32bpp sprites</a></h2>
 <p> A <code>alt_sprites</code> block allows you to specify alternative 32bpp
-sprites that are drop-in replacements for some real spriets in your grf. The
+sprites that are drop-in replacements for some real sprites in your grf. The
 syntax is as follows:</p>
 
 <pre class="exl">alt_sprites(block_name, zoom_level[, filename]) {
@@ -1173,7 +1173,7 @@ syntax is as follows:</p>
 <p>block_name is the name of the replace/replace_new/fontglyph/spriteset-block
 for which you want to provide 32bpp sprites. zoom_level can be one of
 <code>ZOOM_LEVEL_NORMAL, ZOOM_LEVEL_Z0, ZOOM_LEVEL_Z1 or ZOOM_LEVEL_Z2</code>.
-Please note that <code>ZOOM_LEVEL_NORMAL</code> and <ZOOM_LEVEL_Z2</code> are
+Please note that <code>ZOOM_LEVEL_NORMAL</code> and <code>ZOOM_LEVEL_Z2</code> are
 exactly the same. Specifying a filename is optional, it's only useful
 if you have multiple sprites in the same file. If every sprite is in a separate
 file you'll have to specify the filename for each realsprite anyway, so you
