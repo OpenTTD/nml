@@ -1043,6 +1043,18 @@ other_newgrf_no_high_cost = param["NML\01", 1] < 5;
 </pre>
 reads parameter 1 (the first one, counting starts at 0) from the NewGRF with the grfID "NML\01".
 
+<h2><a name="block-override-grf">Overriding vehicles from other NewGRFs</a></h2>
+<p>If one wants to modify vehicles defined in another NewGRF it has to be stated explicitly by the
+codeengine_override</code> command that this is desired. If stated, all vehicleIDs within the orverriding
+NewGRFs will try to override the vehicle with the same vehicleID within the overridden NewGRF. This can be used
+to modify single properties of these only.</p>
+<p>The syntax is as follows:
+<pre class="exl">
+engine_overrid (targetID [, overrideID])
+</pre>
+The targetID must be the grfID of the NewGRF whose vehicles are supposed to be changed via the engine override.
+The parameter for the overrideID is optional and assumed to be the NewGRF defining this command.
+</p>
 <h2><a name="block-replacement">Sprite replacement</a></h2>
 <p>This section covers the three available methods to replace sprites.
 Which one to use depends on the type of sprites you want to replace. The following
