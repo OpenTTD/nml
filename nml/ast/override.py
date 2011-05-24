@@ -29,11 +29,11 @@ class EngineOverride:
             source = self.args[0]
         self.source_grfid = source.reduce(global_constants.const_list)
         if isinstance(self.source_grfid, expression.StringLiteral):
-            self.source_grfid = expression.parse_string_to_dword(self.source_grfid)
+            self.source_grfid = expression.ConstantNumeric(expression.parse_string_to_dword(self.source_grfid))
 
         self.grfid = self.args[-1].reduce(global_constants.const_list)
         if isinstance(self.grfid, expression.StringLiteral):
-            self.grfid = expression.parse_string_to_dword(self.grfid)
+            self.grfid = expression.ConstantNumeric(expression.parse_string_to_dword(self.grfid))
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Engine override'
