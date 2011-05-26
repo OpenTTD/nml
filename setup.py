@@ -2,7 +2,8 @@
 
 
 import sys, os, string, subprocess
-from distutils.core import setup
+from setuptools import setup
+
 
 version = sys.version_info
 if version[0] < 2 or (version[0] == 2 and version[1] < 5):
@@ -31,5 +32,8 @@ setup(name='nml',
                      ],
       packages=['nml', 'nml.actions', 'nml.ast', 'nml.expression'],
       url='http://dev.openttdcoop.org/projects/nml',
-      scripts=['nmlc'],
+      entry_points="""
+      [console_scripts]
+      nmlc = nml.main:run
+      """
       )
