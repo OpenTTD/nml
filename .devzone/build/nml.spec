@@ -26,6 +26,8 @@ BuildRequires:  python-ply python-imaging
 BuildRequires:  mercurial
 #We need wine for windows nmlc.exe
 BuildRequires:  wine p7zip
+#We use setuptools for the packaging
+BuildRequires:  python-setuptools
 
 %description
 A tool to compile nml files to grf or nfo files,, making newgrf coding easier.
