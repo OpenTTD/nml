@@ -460,6 +460,10 @@ constant_numbers = {
     'APT_CB_DECIDE_ANIM_SPEED'  : 0x154,
     'APT_CB_FOUNDATIONS'        : 0x150,
 
+    #Airport callbacks
+    'AIRPORT_CB_ADDITIONAL_TEXT' : 0x155,
+    'AIRPORT_CB_LAYOUT_NAME'     : 0x156,
+
     #railtype flags
     'RAILTYPE_FLAG_CATENARY'          : 0,
     'RAILTYPE_FLAG_NO_LEVEL_CROSSING' : 1, # for OpenTTD > r20049
