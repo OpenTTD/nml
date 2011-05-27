@@ -46,7 +46,8 @@ class TileLayout(object):
                 if isinstance(tile, expression.Identifier) and tile.value == 'clear':
                     tile = expression.ConstantNumeric(0xFF)
                 self.tile_list.append({'x': x, 'y': y, 'tile': tile})
-        assert self.name not in action0properties.tilelayout_names
+        if self.name in action0properties.tilelayout_names:
+            raise generic.ScriptError("A tile layout with name '%s' has already been defined." % self.name, self.pos)
         action0properties.tilelayout_names[self.name] = self
 
     def debug_print(self, indentation):
