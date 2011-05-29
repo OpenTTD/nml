@@ -26,7 +26,8 @@ BuildRequires:  python-ply python-imaging
 BuildRequires:  mercurial
 #We need wine for windows nmlc.exe
 BuildRequires:  wine p7zip
-#We use setuptools for the packaging
+#We use setuptools for the packaging, but it's also needed at runtime
+Requires:       python-setuptools
 BuildRequires:  python-setuptools
 
 %description
