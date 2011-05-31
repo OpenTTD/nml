@@ -247,11 +247,11 @@ constant_numbers = {
     #house callback flags
     'HOUSE_CBF_BUILD'               : 0,
     'HOUSE_CBF_ANIM_NEXT_FRAME'     : 1,
-    'HOUSE_CBF_ANIM_STARTSTOP'      : 2,
+    'HOUSE_CBF_ANIM_CONROL'         : 2,
     'HOUSE_CBF_CONSTRUCTION_ANIM'   : 3,
     'HOUSE_CBF_COLOUR'              : 4,
     'HOUSE_CBF_CARGO_AMOUNT_ACCEPT' : 5,
-    'HOUSE_CBF_ANIM_FRAME_LENGTH'   : 6,
+    'HOUSE_CBF_ANIM_SPEED'          : 6,
     'HOUSE_CBF_DESTRUCTION'         : 7,
     'HOUSE_CBF_CARGO_TYPE_ACCEPT'   : 8,
     'HOUSE_CBF_CARGO_PRODUCTION'    : 9,
@@ -262,11 +262,11 @@ constant_numbers = {
     #corresponding callbacks
     'HOUSE_CB_BUILD'                : 0x17,
     'HOUSE_CB_ANIM_NEXT_FRAME'      : 0x1A,
-    'HOUSE_CB_ANIM_STARTSTOP'       : 0x1B,
+    'HOUSE_CB_ANIM_CONTROL'         : 0x1B,
     'HOUSE_CB_CONSTRUCTION_ANIM'    : 0x1C,
     'HOUSE_CB_COLOUR'               : 0x1E,
     'HOUSE_CB_CARGO_AMOUNT_ACCEPT'  : 0x1F,
-    'HOUSE_CB_ANIM_FRAME_LENGTH'    : 0x20,
+    'HOUSE_CB_ANIM_SPEED'           : 0x20,
     'HOUSE_CB_DESTRUCTION'          : 0x21,
     'HOUSE_CB_CARGO_TYPE_ACCEPT'    : 0x2A,
     'HOUSE_CB_CARGO_PRODUCTION'     : 0x2E,
@@ -313,7 +313,7 @@ constant_numbers = {
     'INDTILE_CBF_AUTOSLOPE'           : 6,
 
     #corresponding callbacks
-    'INDTILE_CB_ANIM_STARTSTOP'       : 0x25,
+    'INDTILE_CB_ANIM_CONTROL'         : 0x25,
     'INDTILE_CB_ANIM_NEXT_FRAME'      : 0x26,
     'INDTILE_CB_ANIM_SPEED'           : 0x27,
     'INDTILE_CB_CARGO_AMOUNT_ACCEPT'  : 0x2B,
@@ -433,31 +433,32 @@ constant_numbers = {
 
     #object callback flags
     'OBJ_CBF_SLOPE_CHECK'      : 0,
-    'OBJ_CBF_DECIDE_ANIM'      : 1,
-    'OBJ_CBF_DECIDE_ANIM_SPEED': 2,
+    'OBJ_CBF_ANIM_NEXT_FRAME'  : 1,
+    'OBJ_CBF_ANIM_SPEED'       : 2,
     'OBJ_CBF_DECIDE_COLOUR'    : 3,
     'OBJ_CBF_ADDITIONAL_TEXT'  : 4,
     'OBJ_CBF_AUTOSLOPE'        : 5,
 
     #corresponding callbacks
     'OBJ_CB_SLOPE_CHECK'            : 0x157,
-    'OBJ_CB_DECIDE_ANIM'            : 0x158,
-    'OBJ_CB_DECIDE_ANIM_SPEED'      : 0x159,
-    'OBJ_CB_DECIDE_ANIM_LENGTH'     : 0x15A,
+    'OBJ_CB_ANIM_NEXT_FRAME'        : 0x158,
+    'OBJ_CB_ANIM_CONTROL'           : 0x159,
+    'OBJ_CB_ANIM_SPEED'             : 0x15A,
     'OBJ_CB_DECIDE_COLOUR'          : 0x15B,
     'OBJ_CB_ADDITIONAL_TEXT'        : 0x15C,
     'OBJ_CB_AUTOSLOPE'              : 0x15D,
 
     #airport tile callback flags
-    'APT_CBF_DECIDE_ANIM'       : 0,
-    'APT_CBF_DECIDE_ANIM_SPEED' : 1,
+    'APT_CBF_ANIM_NEXT_FRAME'   : 0,
+    'APT_CBF_ANIM_SPEED'        : 1,
     'APT_CBF_SLOPE_CHECK'       : 4,
     'APT_CBF_FOUNDATIONS'       : 5,
     'APT_CBF_AUTOSLOPE'         : 6,
 
     #corresponding callbacks
-    'APT_CB_DECIDE_ANIM'        : 0x153,
-    'APT_CB_DECIDE_ANIM_SPEED'  : 0x154,
+    'APT_CB_ANIM_CONTROL'       : 0x152,
+    'APT_CB_ANIM_NEXT_FRAME'    : 0x153,
+    'APT_CB_ANIM_SPEED'         : 0x154,
     'APT_CB_FOUNDATIONS'        : 0x150,
 
     #Airport callbacks
