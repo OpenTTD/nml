@@ -1,4 +1,4 @@
-from nml import expression, generic, nmlop
+from nml import expression, generic, global_constants, nmlop
 from nml.ast import assignment
 from nml.actions import action0
 
@@ -20,7 +20,7 @@ class BaseCost:
         new_costs = []
 
         for cost in self.costs:
-            cost.value = cost.value.reduce()
+            cost.value = cost.value.reduce(global_constants.const_list)
             if isinstance(cost.value, expression.ConstantNumeric):
                 generic.check_range(cost.value.value, -8, 16, 'Base cost value', cost.value.pos)
             cost.value = expression.BinOp(nmlop.ADD, cost.value, expression.ConstantNumeric(8), cost.value.pos).reduce()
