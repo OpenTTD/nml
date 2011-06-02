@@ -244,6 +244,7 @@ ASSIGN = Operator(
 
 SHIFTU_LEFT = Operator(
     actd_supports = True, actd_str = r'\Du<<', actd_num = 5,
+    token = '<<',
 )
 
 VACT2_CMP = Operator(
