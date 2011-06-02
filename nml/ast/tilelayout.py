@@ -53,8 +53,8 @@ class TileLayout(object):
     def debug_print(self, indentation):
         print indentation*' ' + 'TileLayout'
         for tile in self.tile_list:
-            print (indentation+2)*' ' + 'At %d,%d:' % (tile['x'], tile['y'])
-            tile['tile'].debug_print(indentation + 4)
+            print (indentation+2)*' ' + 'At %d,%d:' % (tile.x, tile.y)
+            tile.tiletype.debug_print(indentation + 4)
 
     def get_action_list(self):
         return []
@@ -62,7 +62,7 @@ class TileLayout(object):
     def __str__(self):
         ret = 'tilelayout %s {\n' % self.name
         for tile in self.tile_list:
-            ret += '\t%s, %s: %s;\n' % (tile['x'], tile['y'], tile['tile'])
+            ret += '\t%s, %s: %s;\n' % (tile.x, tile.y, tile.tiletype)
         ret += '}\n'
         return ret
 
@@ -70,25 +70,25 @@ class TileLayout(object):
         size = 2
         for tile in self.tile_list:
             size += 3
-            if not isinstance(tile['tile'], expression.ConstantNumeric):
+            if not isinstance(tile.tiletype, expression.ConstantNumeric):
                 size += 2
         return size
 
     def write(self, file):
         for tile in self.tile_list:
-            file.print_bytex(tile['x'])
-            file.print_bytex(tile['y'])
-            if isinstance(tile['tile'], expression.ConstantNumeric):
-                file.print_bytex(tile['tile'].value)
+            file.print_bytex(tile.x)
+            file.print_bytex(tile.y)
+            if isinstance(tile.tiletype, expression.ConstantNumeric):
+                file.print_bytex(tile.tiletype.value)
             else:
-                if not isinstance(tile['tile'], expression.Identifier):
-                    raise generic.ScriptError("Invalid expression type for layout tile", tile['tile'].pos)
-                if tile['tile'].value not in global_constants.item_names:
-                    raise generic.ScriptError("Unknown tile name", tile['tile'].pos)
+                if not isinstance(tile.tiletype, expression.Identifier):
+                    raise generic.ScriptError("Invalid expression type for layout tile", tile.tiletype.pos)
+                if tile.tiletype.value not in global_constants.item_names:
+                    raise generic.ScriptError("Unknown tile name", tile.tiletype.pos)
                 file.print_bytex(0xFE)
-                tile_id = global_constants.item_names[tile['tile'].value].id
+                tile_id = global_constants.item_names[tile.tiletype.value].id
                 if not isinstance(tile_id, expression.ConstantNumeric):
-                    raise generic.ScriptError("Tile '%s' cannot be used in a tilelayout, as its ID is not a constant." % tile['tile'].value, tile['tile'].pos)
+                    raise generic.ScriptError("Tile '%s' cannot be used in a tilelayout, as its ID is not a constant." % tile.tiletype.value, tile.tiletype.pos)
                 file.print_wordx(tile_id.value)
             file.newline()
         file.print_bytex(0)
