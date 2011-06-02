@@ -723,6 +723,11 @@ constant_numbers = {
     # Cargo callbacks
     'CARGO_CB_PROFIT'                       : 0x01,
     'CARGO_CB_STATION_RATING'               : 0x02,
+
+    #CMP and UCMP results
+    'CMP_LESS'                              : 0,
+    'CMP_EQUAL'                             : 1,
+    'CMP_GREATER'                           : 2,
 }
 
 def signextend(param, info):

@@ -218,6 +218,16 @@ def builtin_load(name, args, pos):
     var_num = 0x7D if name == "LOAD_TEMP" else 0x7C
     return Variable(ConstantNumeric(var_num), param=args[0], pos=pos)
 
+def builtin_ucmp(name, args, pos):
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+    return BinOp(nmlop.VACT2_UCMP, args[0], args[1], pos)
+
+def builtin_cmp(name, args, pos):
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+    return BinOp(nmlop.VACT2_CMP, args[0], args[1], pos)
+
 def builtin_hasbit(name, args, pos):
     """
     hasbit(value, bit_num) builtin function.
@@ -416,4 +426,6 @@ function_table = {
     'cos' : builtin_trigonometric,
     'sin' : builtin_trigonometric,
     'tan' : builtin_trigonometric,
+    'UCMP' : builtin_ucmp,
+    'CMP' : builtin_cmp,
 }

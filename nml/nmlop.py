@@ -250,6 +250,10 @@ VACT2_CMP = Operator(
     act2_supports = True, act2_str = r'\2cmp', act2_num = 18,
 )
 
+VACT2_UCMP = Operator(
+    act2_supports = True, act2_str = r'\2ucmp', act2_num = 19,
+)
+
 MINU = Operator(
     act2_supports = True, act2_str = r'\2u<', act2_num = 4,
 )
@@ -270,6 +274,8 @@ STO_TMP.to_string = lambda expr1, expr2: 'STORE_TEMP(%s, %s)' % (expr1, expr2)
 STO_PERM.to_string = lambda expr1, expr2: 'STORE_PERM(%s, %s)' % (expr1, expr2)
 HASBIT.to_string = lambda expr1, expr2: 'hasbit(%s, %s)' % (expr1, expr2)
 NOTHASBIT.to_string = lambda expr1, expr2: '!hasbit(%s, %s)' % (expr1, expr2)
+VACT2_CMP.to_string = lambda expr1, expr2: 'CMP(%s, %s)' % (expr1, expr2)
+VACT2_UCMP.to_string = lambda expr1, expr2: 'UCMP(%s, %s)' % (expr1, expr2)
 
 
 
