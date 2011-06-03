@@ -19,7 +19,7 @@ class TileLayout(object):
     @type pos: L{Position}
 
     @ivar tile_list: List of tile-offsets/tileIDs.
-    @type tile_list: C{list} of C{dict} with properties x, y and tile.
+    @type tile_list: C{list} of C{LayoutTile} with constant x and y values.
 
     @ivar properties: table of all properties. Unknown property names are accepted and ignored.
     @type properties: C{dict} with C{str} keys and L{ConstantNumeric} values
@@ -40,12 +40,12 @@ class TileLayout(object):
                 self.properties[name] = tileprop.value.reduce_constant(global_constants.const_list)
             else:
                 assert isinstance(tileprop, LayoutTile)
-                x = tileprop.x.reduce_constant().value
-                y = tileprop.y.reduce_constant().value
+                x = tileprop.x.reduce_constant()
+                y = tileprop.y.reduce_constant()
                 tile = tileprop.tiletype.reduce(unknown_id_fatal = False)
                 if isinstance(tile, expression.Identifier) and tile.value == 'clear':
                     tile = expression.ConstantNumeric(0xFF)
-                self.tile_list.append({'x': x, 'y': y, 'tile': tile})
+                self.tile_list.append(LayoutTile(x, y, tile))
         if self.name in action0properties.tilelayout_names:
             raise generic.ScriptError("A tile layout with name '%s' has already been defined." % self.name, self.pos)
         action0properties.tilelayout_names[self.name] = self
@@ -76,8 +76,8 @@ class TileLayout(object):
 
     def write(self, file):
         for tile in self.tile_list:
-            file.print_bytex(tile.x)
-            file.print_bytex(tile.y)
+            file.print_bytex(tile.x.value)
+            file.print_bytex(tile.y.value)
             if isinstance(tile.tiletype, expression.ConstantNumeric):
                 file.print_bytex(tile.tiletype.value)
             else:
