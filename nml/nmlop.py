@@ -29,6 +29,11 @@ def unsigned_rshift(a, b):
         a += 0x100000000
     return generic.truncate_int32(a >> b)
 
+def unsigned_rrotate(a, b):
+    if a < 0:
+        a += 0x100000000
+    return generic.truncate_int32((a >> b) | (a << (32 - b)))
+
 def validate_func_int(expr1, expr2, pos):
     if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
         raise generic.ScriptError("Binary operator requires both operands to be integers.", pos)
@@ -261,6 +266,8 @@ MINU = Operator(
 
 ROT_RIGHT = Operator(
     act2_supports = True, act2_str = r'\2ror', act2_num = 17,
+    compiletime_func = unsigned_rrotate,
+    validate_func = validate_func_int,
 )
 
 DIVU = Operator(
@@ -277,6 +284,7 @@ HASBIT.to_string = lambda expr1, expr2: 'hasbit(%s, %s)' % (expr1, expr2)
 NOTHASBIT.to_string = lambda expr1, expr2: '!hasbit(%s, %s)' % (expr1, expr2)
 VACT2_CMP.to_string = lambda expr1, expr2: 'CMP(%s, %s)' % (expr1, expr2)
 VACT2_UCMP.to_string = lambda expr1, expr2: 'UCMP(%s, %s)' % (expr1, expr2)
+ROT_RIGHT.to_string = lambda expr1, expr2: 'rotate(%s, %s)' % (expr1, expr2)
 
 
 

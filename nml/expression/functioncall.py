@@ -228,6 +228,11 @@ def builtin_cmp(name, args, pos):
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return BinOp(nmlop.VACT2_CMP, args[0], args[1], pos)
 
+def builtin_rotate(name, args, pos):
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+    return BinOp(nmlop.ROT_RIGHT, args[0], args[1], pos)
+
 def builtin_hasbit(name, args, pos):
     """
     hasbit(value, bit_num) builtin function.
@@ -428,4 +433,5 @@ function_table = {
     'tan' : builtin_trigonometric,
     'UCMP' : builtin_ucmp,
     'CMP' : builtin_cmp,
+    'rotate' : builtin_rotate,
 }
