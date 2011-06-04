@@ -36,6 +36,9 @@ A tool to compile nml files to grf or nfo files,, making newgrf coding easier.
 %prep
 %setup -qn %{name}
 
+# update to the tag, if not revision
+[ "$(echo %{version} | cut -b-1)" != "r" ] && hg up %{version}
+
 # create windows executable
 cd wine-archive
 tar xf *

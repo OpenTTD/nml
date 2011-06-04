@@ -1,6 +1,7 @@
+^build/
+
 syntax: glob
 *.pyc
-build/
 regression/output/
 regression/output2/
 regression/nml_output/
