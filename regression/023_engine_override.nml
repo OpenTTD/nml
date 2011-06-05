@@ -1,0 +1,11 @@
+grf {
+	grfid: "test";
+	name: string(STR_REGRESSION_NAME);
+	desc: string(STR_REGRESSION_DESC);
+	version: 0;
+	min_compatible_version: 0;
+}
+
+engine_override("ABCD", "test");
+
+engine_override(0x12345678);
