@@ -1051,11 +1051,12 @@ to modify single properties of these only. This function is intended for NewGRFs
 NewGRFs, e.g. the ECS extension for the DBSetXL.</p>
 <p>The syntax is as follows:
 <pre class="exl">
-engine_override(targetID [, sourceID]);
+engine_override(targetID);
+engine_override(sourceID, targetID);
 </pre>
 The targetID must be the grfID of the NewGRF whose vehicles are supposed to be changed via the engine override.
-The sourceID is the grfID of the NewGRF defining the overriding vehicles. This parameter is optional, if not set
-the grfID of the NewGRF containing this statement is used.
+The sourceID is the grfID of the NewGRF defining the overriding vehicles. If not set explicitly, the grfID of
+the NewGRF containing this statement is used.
 </p>
 <h2><a name="block-replacement">Sprite replacement</a></h2>
 <p>This section covers the three available methods to replace sprites.

@@ -16,7 +16,7 @@
 00 
 2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 3 * 14 00 08 \b1 01 00 
-11 \dx41424344 \dx74657374 
+11 \dx74657374 \dx41424344 
 
 4 * 14 00 08 \b1 01 00 
 11 \dx74657374 \dx78563412 

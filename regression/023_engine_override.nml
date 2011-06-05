@@ -6,6 +6,8 @@ grf {
 	min_compatible_version: 0;
 }
 
-engine_override("ABCD", "test");
+// let this grf override some grf with GRFID "ABCD"
+engine_override("test", "ABCD");
 
+// also override some other grf, this time not setting our own grfid explicitly
 engine_override(0x12345678);
