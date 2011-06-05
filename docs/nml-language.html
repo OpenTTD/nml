@@ -1045,15 +1045,17 @@ reads parameter 1 (the first one, counting starts at 0) from the NewGRF with the
 
 <h2><a name="block-override-grf">Overriding vehicles from other NewGRFs</a></h2>
 <p>If one wants to modify vehicles defined in another NewGRF it has to be stated explicitly by the
-codeengine_override</code> command that this is desired. If stated, all vehicleIDs within the orverriding
-NewGRFs will try to override the vehicle with the same vehicleID within the overridden NewGRF. This can be used
-to modify single properties of these only.</p>
+<code>engine_override</code> command that this is desired. If stated, all vehicles defined within the overriding
+NewGRF will try to override the vehicle with the same ID within the overridden NewGRF. This can be used
+to modify single properties of these only. This function is intended for NewGRFs that modify parts of other
+NewGRFs, e.g. the ECS extension for the DBSetXL.</p>
 <p>The syntax is as follows:
 <pre class="exl">
-engine_overrid (targetID [, overrideID])
+engine_override(targetID [, sourceID]);
 </pre>
 The targetID must be the grfID of the NewGRF whose vehicles are supposed to be changed via the engine override.
-The parameter for the overrideID is optional and assumed to be the NewGRF defining this command.
+The sourceID is the grfID of the NewGRF defining the overriding vehicles. This parameter is optional, if not set
+the grfID of the NewGRF containing this statement is used.
 </p>
 <h2><a name="block-replacement">Sprite replacement</a></h2>
 <p>This section covers the three available methods to replace sprites.
