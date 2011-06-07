@@ -128,13 +128,13 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     if output_debug > 0:
         general.print_script(result, 0)
 
-    for outputfile in outputfiles: outputfile.open()
-
     for outputfile in outputfiles:
         if isinstance(outputfile, output_nml.OutputNML):
+            outputfile.open()
             for b in result:
                 outputfile.write(str(b))
                 outputfile.newline()
+            outputfile.close()
 
     for block in result:
         block.pre_process()
@@ -212,12 +212,13 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
             if action.sprite_num is not None:
                 if action.sprite_num.value != num:
                     raise generic.ScriptError("Sprite number %d given in base_sprites-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))
+
     for outputfile in outputfiles:
         if isinstance(outputfile, output_base.BinaryOutputBase):
+            outputfile.open()
             for action in actions:
                 action.write(outputfile)
-
-    for outputfile in outputfiles: outputfile.close()
+            outputfile.close()
 
     for block in alt_sprites.alt_sprites_list:
         block.process(sprites_dir, block_names)
