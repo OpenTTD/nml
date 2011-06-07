@@ -57,7 +57,7 @@ class BaseCost:
     def __str__(self):
         ret = "basecost {\n"
         for cost in self.costs:
-            ret += "\t%s: %s - 8;\n" % (str(cost.name), str(cost.value))
+            ret += "\t%s: %s;\n" % (str(cost.name), str(cost.value))
         ret += "}\n"
         return ret
 

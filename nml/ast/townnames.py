@@ -94,8 +94,7 @@ class TownNames(object):
         ret = 'town_names'
         if self.name is not None:
             ret += '(%s)' % str(self.name)
-        style_name = 'styles: %s;\n' % str(self.style_name) if self.style_name is not None else ''
-        ret += '{\n%s%s\n}\n' % (style_name, ''.join([str(part) for part in self.parts]))
+        ret += '{\n%s}\n' % ''.join(str(x) for x in self.param_list)
         return ret
 
     def get_action_list(self):
@@ -288,6 +287,9 @@ class TownNamesParam(object):
         self.key = key
         self.value = value
         self.pos = pos
+
+    def __str__(self):
+        return '%s: %s;\n' % (self.key, self.value)
 
 
 class TownNamesEntryDefinition(object):

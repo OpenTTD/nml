@@ -2,11 +2,11 @@ from nml.actions import actionE
 
 class DeactivateBlock(object):
     def __init__(self, grfid_list, pos):
-        self.grfid_list = [grfid.reduce() for grfid in grfid_list]
+        self.grfid_list = grfid_list
         self.pos = pos
 
     def pre_process(self):
-        pass
+        self.grfid_list = [grfid.reduce() for grfid in self.grfid_list]
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Deactivate other newgrfs:'

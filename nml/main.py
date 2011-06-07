@@ -125,9 +125,6 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     nml_parser = parser.NMLParser()
     result = nml_parser.parse(script)
 
-    for block in result:
-        block.pre_process()
-
     if output_debug > 0:
         general.print_script(result, 0)
 
@@ -138,6 +135,9 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
             for b in result:
                 outputfile.write(str(b))
                 outputfile.newline()
+
+    for block in result:
+        block.pre_process()
 
     actions = []
     for block in result:

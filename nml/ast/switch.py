@@ -25,6 +25,8 @@ class Switch(switch_base_class):
     def pre_process(self):
         self.expr = action2var.reduce_varaction2_expr(self)
 
+        self.body.pre_process()
+
         if any(map(lambda x: x is None, [r.result for r in self.body.ranges] + [self.body.default])):
             if len(self.body.ranges) == 0:
                 # We already have no ranges, so can just add a bogus default result
@@ -97,8 +99,12 @@ class SwitchBody(object):
     def __init__(self, ranges, default):
         self.ranges = ranges
         self.default = default
-        if isinstance(default, expression.Expression):
-            self.default = default.reduce(global_constants.const_list)
+
+    def pre_process(self):
+        if isinstance(self.default, expression.Expression):
+            self.default = self.default.reduce(global_constants.const_list)
+        for r in self.ranges:
+            r.pre_process()
 
     def debug_print(self, indentation):
         for r in self.ranges:
@@ -110,11 +116,10 @@ class SwitchBody(object):
         ret = ''
         for r in self.ranges:
             ret += '\t%s\n' % str(r)
-        if isinstance(self.default, action2.SpriteGroupRef):
-            if self.default.name.value.endswith('@return'):
-                ret += '\treturn;\n'
-            else:
-                ret += '\t%s;\n' % str(self.default)
+        if self.default is None:
+            ret += '\treturn;\n'
+        elif isinstance(self.default, action2.SpriteGroupRef):
+            ret += '\t%s;\n' % str(self.default)
         else:
             ret += '\treturn %s;\n' % str(self.default)
         return ret

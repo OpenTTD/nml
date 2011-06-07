@@ -7,18 +7,16 @@ class FontGlyphBlock(object):
             raise generic.ScriptError("font_glpyh-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
         self.font_size = param_list[0]
         self.base_char = param_list[1]
-        if len(param_list) >= 3:
-            self.pcx = param_list[2].reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("font_glpyh-block parameter 3 'file' must be a string literal", self.pcx.pos)
-        else:
-            self.pcx = None
+        self.pcx = param_list[2] if len(param_list) >= 3 else None
         self.sprite_list = sprite_list
         self.pos = pos
         self.name = None
 
     def pre_process(self):
-        pass
+        if self.pcx:
+            self.pcx.reduce()
+            if not isinstance(self.pcx, expression.StringLiteral):
+                raise generic.ScriptError("font_glpyh-block parameter 3 'file' must be a string literal", self.pcx.pos)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Load font glyphs, starting at', self.base_char

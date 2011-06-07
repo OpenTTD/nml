@@ -33,16 +33,15 @@ class AltSpritesBlock(object):
             raise generic.ScriptError("alternative_sprites-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
         self.name = param_list[0]
         self.zoom_level = param_list[1]
-        if len(param_list) >= 3:
-            self.pcx = param_list[2].reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("alternative_sprites-block parameter 3 'file' must be a string literal", self.pcx.pos)
-        else:
-            self.pcx = None
+        self.pcx = param_list[2] if len(param_list) >= 3 else None
         self.sprite_list = sprite_list
         self.pos = pos
 
     def pre_process(self):
+        if self.pcx:
+            self.pcx.reduce()
+            if not isinstance(self.pcx, expression.StringLiteral):
+                raise generic.ScriptError("alternative_sprites-block parameter 3 'file' must be a string literal", self.pcx.pos)
         alt_sprites_list.append(self)
 
     def debug_print(self, indentation):

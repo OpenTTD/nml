@@ -2,23 +2,18 @@ from nml import expression, generic, grfstrings
 from nml.actions import base_action, action6, actionD
 
 class ActionB(base_action.BaseAction):
-    def __init__(self, severity, lang, msg, data, param1, param2):
+    def __init__(self, severity, lang, msg, data, extra_params):
         self.severity = severity
         self.lang = lang
         self.msg = msg
         self.data = data
-        self.param1 = param1
-        self.param2 = param2
+        self.extra_params = extra_params
 
     def write(self, file):
         size = 4
         if not isinstance(self.msg, int): size += grfstrings.get_string_size(self.msg)
         if self.data is not None:
-            size += grfstrings.get_string_size(self.data)
-            if self.param1 is not None:
-                size += 1
-                if self.param2 is not None:
-                    size += 1
+            size += grfstrings.get_string_size(self.data) + len(self.extra_params)
 
         file.start_sprite(size)
         file.print_bytex(0x0B)
@@ -31,10 +26,8 @@ class ActionB(base_action.BaseAction):
             file.print_string(self.msg)
         if self.data is not None:
             file.print_string(self.data)
-            if self.param1 is not None:
-                self.param1.write(file, 1)
-                if self.param2 is not None:
-                    self.param2.write(file, 1)
+            for param in self.extra_params:
+                param.write(file, 1)
         file.newline()
         file.end_sprite()
 
@@ -96,16 +89,12 @@ def parse_error_block(error):
 
     params = []
     for expr in error.params:
-        if expr is None:
-            params.append(None)
-        elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
+        if isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
             params.append(expr.num)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
             action_list.extend(tmp_param_actions)
             params.append(expression.ConstantNumeric(tmp_param))
-
-    assert len(params) == 2
 
     langs = list(set(langs))
     langs.sort()
@@ -119,7 +108,7 @@ def parse_error_block(error):
         else:
             data = grfstrings.get_translation(error.data, lang)
         if len(act6.modifications) > 0: action_list.append(act6)
-        action_list.append(ActionB(severity, lang, msg, data, params[0], params[1]))
+        action_list.append(ActionB(severity, lang, msg, data, params))
 
     action6.free_parameters.restore()
     return action_list

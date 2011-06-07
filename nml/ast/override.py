@@ -44,5 +44,5 @@ class EngineOverride:
         return action0.get_engine_override_action(self)
 
     def __str__(self):
-        return "engine_override(%s, %s);\n" % (str(self.source_grfid), str(self.grfid))
+        return "engine_override(%s);\n" % ', '.join(str(x) for x in self.args)
 

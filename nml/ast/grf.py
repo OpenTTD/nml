@@ -57,10 +57,11 @@ class GRF(object):
             elif assignment.name.value == "version": self.version = assignment.value
             elif assignment.name.value == "min_compatible_version": self.min_compatible_version = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
+
+    def pre_process(self):
         if None in (self.name, self.desc, self.grfid, self.version, self.min_compatible_version):
             raise generic.ScriptError("A GRF-block requires the 'name', 'desc', 'grfid', 'version' and 'min_compatible_version' properties to be set.", self.pos)
 
-    def pre_process(self):
         self.grfid = self.grfid.reduce()
         global_constants.constant_numbers['GRFID'] = expression.parse_string_to_dword(self.grfid)
         self.name = self.name.reduce()
@@ -146,18 +147,14 @@ class ParameterSetting(object):
 
     def __str__(self):
         ret = "\t\t%s {\n" % str(self.name)
-        ret += "\t\t\ttype: %s;\n" % self.type
-        if self.name_string is not None: ret += "\t\t\tname: %s;\n" % str(self.name_string)
-        if self.desc_string is not None: ret += "\t\t\tdesc: %s;\n" % str(self.desc_string)
-        if self.min_val is not None: ret += "\t\t\tmin_value: %s;\n" % str(self.min_val)
-        if self.max_val is not None: ret += "\t\t\tmax_value: %s;\n" % str(self.max_val)
-        if self.def_val is not None: ret += "\t\t\tdef_value: %s;\n" % str(self.def_val)
-        if self.bit_num is not None: ret += "\t\t\tbit: %s;\n" % str(self.bit_num)
-        if len(self.val_names) > 0:
-            ret += "\t\t\tnames: {\n"
-            for pair in self.val_names:
-                ret += "\t\t\t\t%d: %s;\n" % (pair[0], str(pair[1]))
-            ret += "\t\t\t};\n"
+        for val in self.value_list:
+            if val.name.value == 'names':
+                ret += "\t\t\tnames: {\n"
+                for name in val.value.values:
+                    ret += "\t\t\t\t%s: %s;\n" % (name.num, name.desc)
+                ret += "\t\t\t};\n"
+            else:
+                ret += "\t\t\t%s: %s;\n" % (val.name, val.value)
         ret += "\t\t}\n"
         return ret
 
@@ -221,7 +218,10 @@ class ParameterDescription(object):
         self.pos = pos
 
     def __str__(self):
-        ret = "\tparam %d {\n" % self.num.value
+        ret = "\tparam"
+        if self.num:
+            ret += " " + str(self.num)
+        ret += " {\n"
         for setting in self.setting_list:
             ret += str(setting)
         ret += "\t}\n"

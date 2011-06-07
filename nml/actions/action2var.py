@@ -166,15 +166,18 @@ class Modification(object):
 
 class SwitchRange(object):
     def __init__(self, min, max, result, unit = None, comment = None):
-        self.min = min.reduce(global_constants.const_list)
-        self.max = max.reduce(global_constants.const_list)
-        # Result may be None here, not pre-processed yet
-        if isinstance(result, action2.SpriteGroupRef) or result is None:
-            self.result = result
-        else:
-            self.result = result.reduce(global_constants.const_list)
+        self.min = min
+        self.max = max
+        self.result = result
         self.unit = unit
         self.comment = comment
+
+    def pre_process(self):
+        self.min = self.min.reduce(global_constants.const_list)
+        self.max = self.max.reduce(global_constants.const_list)
+        # Result may be None here, not pre-processed yet
+        if isinstance(self.result, expression.Expression):
+            self.result = self.result.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Min:'
@@ -188,11 +191,10 @@ class SwitchRange(object):
         ret = str(self.min)
         if not isinstance(self.min, expression.ConstantNumeric) or not isinstance(self.max, expression.ConstantNumeric) or self.max.value != self.min.value:
             ret += '..' + str(self.max)
-        if isinstance(self.result, action2.SpriteGroupRef):
-            if self.result.name.value.endswith('@return'):
-                ret += ': return;'
-            else:
-                ret += ': %s;' % str(self.result)
+        if self.result is None:
+            ret += ': return;'
+        elif isinstance(self.result, action2.SpriteGroupRef):
+            ret += ': %s;' % str(self.result)
         else:
             ret += ': return %s;' % str(self.result)
         return ret

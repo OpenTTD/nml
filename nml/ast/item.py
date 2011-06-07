@@ -44,13 +44,17 @@ class Item(object):
         if len(params) > 3:
             raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
-        if len(params) == 3:
-            self.id = params[2].reduce(global_constants.const_list)
-        else:
-            self.id = None
+        self.id = params[2] if len(params) == 3 else None
 
-        if len(params) >= 2:
-            self.name = params[1]
+        self.name = params[1] if len(params) >= 2 else None
+
+        self.body = body
+        validate_item_block(body)
+
+    def pre_process(self):
+        if self.id:
+            self.id = self.id.reduce(global_constants.const_list)
+        if self.name:
             if not isinstance(self.name, expression.Identifier):
                 raise generic.ScriptError("Item parameter 2 'name' should be an identifier", self.pos)
             if self.name.value in global_constants.item_names:
@@ -60,18 +64,12 @@ class Item(object):
                 if self.id is not None and (not isinstance(self.id, expression.ConstantNumeric) or existing_id.value != self.id.value):
                     raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, existing_id.value, self.id.value), self.pos)
                 self.id = existing_id
-        else:
-            self.name = None
 
         if self.id is None:
             self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
         if self.name is not None:
             global_constants.item_names[self.name.value] = self
-
-        self.body = body
-        validate_item_block(body)
-
-    def pre_process(self):
+            
         global item_feature, item_id
         item_id = self.id
         item_feature = self.feature.value
@@ -94,7 +92,9 @@ class Item(object):
     def __str__(self):
         ret = 'item(%d' % self.feature.value
         if self.name is not None:
-            ret += ', %s, %s' % (str(self.name), str(self.id))
+            ret += ', %s' % str(self.name)
+        if self.id is not None:
+            ret += ', %s' % str(self.id)
         ret += ') {\n'
         for b in self.body:
             ret += '\t' + str(b).replace('\n', '\n\t')[0:-1]
