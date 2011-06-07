@@ -113,11 +113,8 @@ def print_warning(msg, pos = None):
     """
     Output a warning message to the user.
     """
-    if pos is None:
-        text = msg
-    else:
-        text = str(pos) + ": " + msg
+    if pos:
+        print >> sys.stderr, str(pos) + ":",
 
-    sys.stderr.write(text)
-    sys.stderr.write("\n")
+    print >> sys.stderr, msg
 

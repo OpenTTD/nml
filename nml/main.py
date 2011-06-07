@@ -47,16 +47,7 @@ def parse_cli(argv):
     opt_parser.add_option("-p", "--palette", dest="forced_palette", metavar="<palette>", choices = ["DOS", "WIN", "ANY"],
                         help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DOS', 'WIN', 'ANY'")
 
-    try:
-        opts, args = opt_parser.parse_args(argv)
-    except optparse.OptionError, err:
-        print "Error while parsing arguments: ", err
-        opt_parser.print_help()
-        sys.exit(2)
-    except TypeError, err:
-        print "Error while parsing arguments: ", err
-        opt_parser.print_help()
-        sys.exit(2)
+    opts, args = opt_parser.parse_args(argv)
 
     opts.outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.outputs)
 
@@ -66,9 +57,7 @@ def parse_cli(argv):
             sys.exit(2)
         input_filename = None # Output filenames, but no input -> use stdin.
     elif len(args) > 1:
-        print "Error: only a single nml file can be read per run"
-        opt_parser.print_help()
-        sys.exit(2)
+        opt_parser.error("Error: only a single nml file can be read per run")
     else:
         input_filename = args[0]
         if not os.access(input_filename, os.R_OK):
@@ -239,7 +228,7 @@ def run():
         raise
 
     except KeyboardInterrupt, ex:
-        print 'Application forcibly terminated by user.'
+        print >> sys.stderr, 'Application forcibly terminated by user.'
 
         if developmode: raise # Reraise exception in developmode
 
