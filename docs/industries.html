@@ -47,18 +47,21 @@ results are filtered to industries that have the given layout number.<br/>
 <td>See industry_count / industry_distance for description of industry_type, grfid and return value. The
 results are filtered to industries that have the same town than the current industry.<br/>
 <i>Warning: using this variable trashes the contents of temporary storage registers 0x100 and 0x101.</i></td></tr>
+<tr><td>town_manhattan_dist</td><td>x, y</td><td>Parameters indicate a signed offset relative to the northern tile.
+Returns the Manhattan distance (dx + dy) from the selected tile to the closest town</td></tr>
+<tr><td>town_euclidean_dist</td><td>x, y</td><td>Parameters indicate a signed offset relative to the northern tile.
+Returns the squared Eucleidean distance (dx^2 + dy^2) from the selected tile to the closest town.</td></tr>
+<tr><td>town_zone</td><td>x, y</td><td>Parameters indicate a signed offset relative to the northern tile.
+Returns the <a href="refs.html#refs-town-zones">town zone</a> that the selected tile is in.</td></tr>
+<tr><td>nearby_tile_random_bits</td><td>x, y</td><td>Parameters indicate an unsigned offset relative to the northern tile.
+Returns the random bits of the selected industry tile, or 0 if it is not an industry tile that's part of this industry.</td></tr>
 </table>
 
-<h2><a name="industrytiles-vars">Industry tile variables</a></h2>
-<table class="t">
-<tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>construction_state</td><td>0..3</td><td>Current construction state of the industry tile.</td></tr>
-<tr><td>terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
-<tr><td>town_zone</td><td><a href="refs.html#refs-town-zones">town zone</a></td><td>The town zone of the current tile.</td></tr>
-<tr><td>relative_pos</td><td></td><td></td></tr>
-<tr><td>animation_frame</td><td>0..255</td><td>Current animation frame.</td></tr>
-</table><br>
-Variables that require a signed x,y offset. The offset is relative to the current tile. Offset 0,0 means the current tile.
+<h3><a name="industries-vars-common">Common variables</a></h3>
+<p>The following variables are available to both industries and industry tiles.
+All of them require an x, y offset. For industries, this offset is unsigned and
+relative to the northernmost tile. For industry tiles, it is signed and relative
+to the current tile.</p>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
 <tr><td>nearby_tile_slope</td><td>Which corners are raised on the given tile.</td><td>
@@ -69,7 +72,6 @@ Bit 3: north corner is above the lowest corner.<br>
 Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).<br>
 See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
 </td></tr>
-<tr><td>nearby_tile_is_same_industry</td><td>1 if the tile is part of the same industry, 0 otherwise</td><td></td></tr>
 <tr><td>nearby_tile_is_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
 <tr><td>nearby_tile_terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
 <tr><td>nearby_tile_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
@@ -81,6 +83,23 @@ See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
 0xFFFE: The tile is an industry tile defined in another GRF.<br>
 0xFFFF: The tile is not an industry tile or it belongs to another GRF.
 </td></tr>
+</table>
+
+<h2><a name="industrytiles-vars">Industry tile variables</a></h2>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>construction_state</td><td>0..3</td><td>Current construction state of the industry tile.</td></tr>
+<tr><td>terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
+<tr><td>town_zone</td><td><a href="refs.html#refs-town-zones">town zone</a></td><td>The town zone of the current tile.</td></tr>
+<tr><td>relative_pos</td><td></td><td></td></tr>
+<tr><td>animation_frame</td><td>0..255</td><td>Current animation frame.</td></tr>
+</table><br>
+<p>Industry tiles have access to the <a href="#industries-vars-common">common variables</a>
+described above. Additionally, they have access to the following:</p>
+<table class="t">
+<tr><th>name</th><th>arguments</th><th>comment</th></tr>
+<tr><td>nearby_tile_is_same_industry</td><td>x, y</td><td>Parameters indicate a signed tile offset relative to the current tile.
+Returns 1 if the tile is part of the same industry, 0 otherwise</td></tr>
 </table>
 
 <h2><a name="industrytiles-property">Industry tile properties</a></h2>
