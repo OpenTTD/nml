@@ -131,7 +131,9 @@ varact2vars_industrytiles = {
     'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
     'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
     'town_zone': {'var': 0x42, 'start': 0, 'size': 3},
-    'relative_pos': {'var': 0x43, 'start': 0, 'size': 24},
+    'relative_x': {'var': 0x43, 'start': 0, 'size': 8},
+    'relative_y': {'var': 0x43, 'start': 8, 'size': 8},
+    'relative_pos': {'var': 0x43, 'start': 0, 'size': 16},
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
@@ -225,7 +227,9 @@ varact2vars60x_industries = {
 }
 
 varact2vars_objects = {
-    'relative_pos'           : { 'var' : 0x40, 'start':  0, 'size': 24 },
+    'relative_x'             : {'var': 0x40, 'start': 0, 'size': 8},
+    'relative_y'             : {'var': 0x40, 'start': 8, 'size': 8},
+    'relative_pos'           : {'var': 0x40, 'start': 0, 'size': 16},
 
     'terrain_type'           : { 'var' : 0x41, 'start':  0, 'size':  3 },
     'tile_slope'             : { 'var' : 0x41, 'start':  8, 'size':  5 },
@@ -269,7 +273,9 @@ varact2vars_railtype = {
 varact2vars_airporttiles = {
     'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
     'town_radius_group': {'var': 0x42, 'start': 0, 'size': 3},
-    'relative_pos': {'var': 0x43, 'start': 0, 'size': 24},
+    'relative_x': {'var': 0x43, 'start': 0, 'size': 8},
+    'relative_y': {'var': 0x43, 'start': 8, 'size': 8},
+    'relative_pos': {'var': 0x43, 'start': 0, 'size': 16},
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 

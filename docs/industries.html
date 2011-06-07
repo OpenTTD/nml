@@ -91,7 +91,9 @@ See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
 <tr><td>construction_state</td><td>0..3</td><td>Current construction state of the industry tile.</td></tr>
 <tr><td>terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
 <tr><td>town_zone</td><td><a href="refs.html#refs-town-zones">town zone</a></td><td>The town zone of the current tile.</td></tr>
-<tr><td>relative_pos</td><td></td><td></td></tr>
+<tr><td>relative_x</td><td>0..255</td><td>X-coordinate (top right -> bottom left) of the tile relative to the northernmost tile.</td></tr>
+<tr><td>relative_y</td><td>0..255</td><td>Y-coordinate (top left -> bottom right) of the tile relative to the northernmost tile.</td></tr>
+<tr><td>relative_pos</td><td>0xYYXX</td><td>A combination of relative_x and relative_y in the format 0xYYXX. Useful if you want to check for a single position.</td></tr>
 <tr><td>animation_frame</td><td>0..255</td><td>Current animation frame.</td></tr>
 </table><br>
 <p>Industry tiles have access to the <a href="#industries-vars-common">common variables</a>

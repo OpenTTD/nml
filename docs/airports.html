@@ -52,7 +52,9 @@
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
 <tr><td>terrain_type<td><td>
 <tr><td>town_radius_group<td><td>
-<tr><td>relative_pos<td><td>
+<tr><td>relative_x<td>0..255<td>X-coordinate (top right -> bottom left) of the tile relative to the northernmost tile.
+<tr><td>relative_y<td>0..255<td>Y-coordinate (top left -> bottom right) of the tile relative to the northernmost tile.
+<tr><td>relative_pos<td>0xYYXX<td>A combination of relative_x and relative_y in the format 0xYYXX. Useful if you want to check for a single position.
 <tr><td>animation_frame<td><td>
 </table>
 
