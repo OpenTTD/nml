@@ -1,6 +1,6 @@
 from nml import expression, generic, global_constants, nmlop
 from nml.actions import action2, action2var, action2random, action2var_variables
-from nml.ast import general
+from nml.ast import general, switch_range
 
 var_ranges = {
     'SELF' : 0x89,
@@ -51,7 +51,7 @@ class Switch(switch_base_class):
                     self.body.default = action2.SpriteGroupRef(return_name, [], self.pos)
         elif len(self.body.ranges) == 0:
             # Avoid triggering the 'return computed value' special case
-            self.body.ranges.append(action2var.SwitchRange(expression.ConstantNumeric(0, self.pos), expression.ConstantNumeric(0, self.pos), self.body.default))
+            self.body.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0, self.pos), expression.ConstantNumeric(0, self.pos), self.body.default))
 
         # Now pre-process ourselves
         switch_base_class.pre_process(self)
