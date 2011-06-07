@@ -152,7 +152,7 @@ varact2vars_industries = {
     'waiting_cargo_3' : {'var': 0x42, 'start': 0, 'size': 16},
     'water_distance' : {'var': 0x43, 'start': 0, 'size': 32},
     'layout_num' : {'var': 0x44, 'start': 0, 'size': 8},
-    'company_num' : {'var': 0x45, 'start': 0, 'size': 8},
+    # bits 0 .. 16 are either useless or already covered by var A7
     'company_type' : {'var': 0x45, 'start': 16, 'size': 2},
     'company_colour1' : {'var': 0x45, 'start': 24, 'size': 4},
     'company_colour2' : {'var': 0x45, 'start': 28, 'size': 4},
