@@ -449,31 +449,18 @@ def parse_var(info, pos):
         return info['function'](res, info)
     return res
 
+
 def parse_60x_var(name, args, pos, info):
     if 'function' in info:
-        return info['function'](name, args, pos, info)
-    if 'tile' in info:
-        narg = 2
-        if info['tile'] == 's': minmax = (-8, 7)
-        elif info['tile'] == 'u': minmax = (0, 15)
-        else: assert False
+        # Special function to extract parameters if there is more than one
+        param, extra_params = info['function'](name, args, pos, info)
     else:
-        narg = 1
-        minmax = (0, 255)
+        # Default function to extract parameters
+        param, extra_params = action2var_variables.default_60xvar(name, args, pos, info)
 
-    if len(args) != narg:
-        raise generic.ScriptError("'%s'() requires %d argument(s), encountered %d" % (name, narg, len(args)), pos)
-    for arg in args:
-        if not isinstance(arg, expression.ConstantNumeric):
-            raise generic.ScriptError("Arguments of '%s' must be compile-time constants." % name, arg.pos)
-        generic.check_range(arg.value, minmax[0], minmax[1], "Argument of '%s'" % name, arg.pos)
-
-    if 'tile' in info:
-        param = expression.ConstantNumeric(args[0].value & 0xF)
-        param.value |= (args[1].value & 0xF) << 4
-    else:
-        param = args[0]
-    return expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
+    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
+    var.extra_params.extend(extra_params)
+    return var
 
 def parse_minmax(value, unit, action_list, act6, offset):
     """

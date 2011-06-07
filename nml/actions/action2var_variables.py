@@ -5,6 +5,35 @@ varact2vars60x = 0x12 * [{}]
 # feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11
 varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x08, None, 0x08, 0x08, None, 0x0A, 0x08, None, None, None, None, 0x08, None, None]
 
+def default_60xvar(name, args, pos, info):
+    """
+    Function to convert arguments into a variable parameter.
+    This function handles the default case of one argument.
+
+    @param name: Name of the variable
+    @type name: C{str}
+
+    @param args: List of passed arguments
+    @type args: C{list} of L{Expression}
+
+    @param pos: Position information
+    @type pos: L{Position}
+
+    @param info: Information of the variable, as found in the dictionary
+    @type info: C{dict}
+
+    @return: A tuple of two values:
+                - Parameter to use for the 60+x variable
+                - List of possible extra parameters that need to be passed via registers
+    @rtype: C{tuple} of (L{Expression}, C{list} C{tuple} of (C{int}, L{Expression}))
+    """
+    if len(args) != 1:
+        raise generic.ScriptError("'%s'() requires one argument, encountered %d" % (name, len(args)), pos)
+    if not isinstance(args[0], expression.ConstantNumeric):
+        raise generic.ScriptError("Argument of '%s' must be a compile-time constant." % name, args[0].pos)
+    generic.check_range(args[0].value, 0, 255, "Argument of '%s'" % name, args[0].pos)
+    return (args[0], [])
+
 def signextend(var, info):
     #r = (x ^ m) - m; with m being (1 << (num_bits -1))
     m = expression.ConstantNumeric(1 << (info['size'] - 1))
@@ -137,15 +166,33 @@ varact2vars_industrytiles = {
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
 }
 
+def tile_offset(name, args, pos, info, min, max):
+    if len(args) != 2:
+        raise generic.ScriptError("'%s'() requires 2 arguments, encountered %d" % (name, len(args)), pos)
+    for arg in args:
+        if not isinstance(arg, expression.ConstantNumeric):
+            raise generic.ScriptError("Argument of '%s' must be a compile-time constant." % name, arg.pos)
+        generic.check_range(arg.value, min, max, "Argument of '%s'" % name, arg.pos)    
+
+    x = args[0].value & 0xF
+    y = args[1].value & 0xF
+    return ( expression.ConstantNumeric((y << 4) + x, args[0].pos), [] )
+
+def signed_tile_offset(name, args, pos, info):
+    return tile_offset(name, args, pos, info, -8, 7)
+
+def unsigned_tile_offset(name, args, pos, info):
+    return tile_offset(name, args, pos, info, 0, 15)
+
 varact2vars60x_industrytiles = {
-    'nearby_tile_slope'            : {'var': 0x60, 'start':  0, 'size':  5, 'tile': 's'},
-    'nearby_tile_is_same_industry' : {'var': 0x60, 'start':  8, 'size':  1, 'tile': 's'},
-    'nearby_tile_is_water'         : {'var': 0x60, 'start':  9, 'size':  1, 'tile': 's'},
-    'nearby_tile_terrain_type'     : {'var': 0x60, 'start': 10, 'size':  3, 'tile': 's'},
-    'nearby_tile_height'           : {'var': 0x60, 'start': 16, 'size':  8, 'tile': 's'},
-    'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size':  4, 'tile': 's'},
-    'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'tile': 's'},
-    'nearby_tile_industrytile_id'  : {'var': 0x62, 'start':  0, 'size': 16, 'tile': 's'},
+    'nearby_tile_slope'            : {'var': 0x60, 'start':  0, 'size':  5, 'function': signed_tile_offset},
+    'nearby_tile_is_same_industry' : {'var': 0x60, 'start':  8, 'size':  1, 'function': signed_tile_offset},
+    'nearby_tile_is_water'         : {'var': 0x60, 'start':  9, 'size':  1, 'function': signed_tile_offset},
+    'nearby_tile_terrain_type'     : {'var': 0x60, 'start': 10, 'size':  3, 'function': signed_tile_offset},
+    'nearby_tile_height'           : {'var': 0x60, 'start': 16, 'size':  8, 'function': signed_tile_offset},
+    'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size':  4, 'function': signed_tile_offset},
+    'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'function': signed_tile_offset},
+    'nearby_tile_industrytile_id'  : {'var': 0x62, 'start':  0, 'size': 16, 'function': signed_tile_offset},
 }
 
 varact2vars_industries = {
@@ -174,10 +221,10 @@ def industry_count(name, args, pos, info):
     generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
+    extra_params = [(0x100, grfid)]
 
-    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), args[0], pos)
-    var.extra_params.append( (0x100, grfid) )
-    return var
+    return (args[0], extra_params)
+
 
 def industry_layout_count(name, args, pos, info):
     if len(args) < 2 or len(args) > 3:
@@ -188,10 +235,10 @@ def industry_layout_count(name, args, pos, info):
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 2 else args[2]
 
-    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), args[0], pos)
-    var.extra_params.append( (0x100, grfid) )
-    var.extra_params.append( (0x101, expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xFF)).reduce()) )
-    return var
+    extra_params = []
+    extra_params.append( (0x100, grfid) )
+    extra_params.append( (0x101, expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xFF)).reduce()) )
+    return (args[0], extra_params)
 
 def industry_town_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
@@ -202,23 +249,23 @@ def industry_town_count(name, args, pos, info):
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
 
-    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), args[0], pos)
-    var.extra_params.append( (0x100, grfid) )
-    var.extra_params.append( (0x101, expression.ConstantNumeric(0x0100).reduce()) )
-    return var
+    extra_params = []
+    extra_params.append( (0x100, grfid) )
+    extra_params.append( (0x101, expression.ConstantNumeric(0x0100).reduce()) )
+    return (args[0], extra_params)
 
 varact2vars60x_industries = {
-    'nearby_tile_industry_tile_id' : { 'var': 0x60, 'start':  0, 'size': 16, 'tile': 'u' },
-    'nearby_tile_random_bits'      : { 'var': 0x61, 'start':  0, 'size':  8, 'tile': 'u' },
-    'nearby_tile_slope'            : { 'var': 0x62, 'start':  0, 'size':  5, 'tile': 'u' },
-    'nearby_tile_is_water'         : { 'var': 0x62, 'start':  9, 'size':  1, 'tile': 'u' },
-    'nearby_tile_terrain_type'     : { 'var': 0x62, 'start': 10, 'size':  3, 'tile': 'u' },
-    'nearby_tile_height'           : { 'var': 0x62, 'start': 16, 'size':  8, 'tile': 'u' },
-    'nearby_tile_class'            : { 'var': 0x62, 'start': 24, 'size':  4, 'tile': 'u' },
-    'nearby_tile_animation_frame'  : { 'var': 0x63, 'start':  0, 'size':  8, 'tile': 'u' },
-    'town_manhattan_dist'          : { 'var': 0x65, 'start':  0, 'size': 16, 'tile': 's' },
-    'town_zone'                    : { 'var': 0x65, 'start': 16, 'size':  8, 'tile': 's' },
-    'town_euclidean_dist'          : { 'var': 0x66, 'start':  0, 'size': 32, 'tile': 's' },
+    'nearby_tile_industry_tile_id' : { 'var': 0x60, 'start':  0, 'size': 16, 'function': unsigned_tile_offset },
+    'nearby_tile_random_bits'      : { 'var': 0x61, 'start':  0, 'size':  8, 'function': unsigned_tile_offset },
+    'nearby_tile_slope'            : { 'var': 0x62, 'start':  0, 'size':  5, 'function': unsigned_tile_offset },
+    'nearby_tile_is_water'         : { 'var': 0x62, 'start':  9, 'size':  1, 'function': unsigned_tile_offset },
+    'nearby_tile_terrain_type'     : { 'var': 0x62, 'start': 10, 'size':  3, 'function': unsigned_tile_offset },
+    'nearby_tile_height'           : { 'var': 0x62, 'start': 16, 'size':  8, 'function': unsigned_tile_offset },
+    'nearby_tile_class'            : { 'var': 0x62, 'start': 24, 'size':  4, 'function': unsigned_tile_offset },
+    'nearby_tile_animation_frame'  : { 'var': 0x63, 'start':  0, 'size':  8, 'function': unsigned_tile_offset },
+    'town_manhattan_dist'          : { 'var': 0x65, 'start':  0, 'size': 16, 'function': signed_tile_offset },
+    'town_zone'                    : { 'var': 0x65, 'start': 16, 'size':  8, 'function': signed_tile_offset },
+    'town_euclidean_dist'          : { 'var': 0x66, 'start':  0, 'size': 32, 'function': signed_tile_offset },
     'industry_count'               : { 'var': 0x67, 'start': 16, 'size':  8, 'function': industry_count },
     'industry_distance'            : { 'var': 0x67, 'start':  0, 'size': 16, 'function': industry_count },
     'industry_layout_count'        : { 'var': 0x68, 'start': 16, 'size':  8, 'function': industry_layout_count },
@@ -248,16 +295,16 @@ varact2vars_objects = {
 }
 
 varact2vars60x_objects = {
-    'nearby_tile_random_bits'      : { 'var' : 0x61, 'start':  0, 'size':  8, 'tile': 's' },
+    'nearby_tile_random_bits'      : { 'var' : 0x61, 'start':  0, 'size':  8, 'function': signed_tile_offset },
 
-    'nearby_tile_slope'            : { 'var' : 0x62, 'start':  0, 'size':  5, 'tile': 's' },
-    'nearby_tile_is_same_object'   : { 'var' : 0x62, 'start':  8, 'size':  1, 'tile': 's' },
-    'nearby_tile_is_water'         : { 'var' : 0x62, 'start':  9, 'size':  1, 'tile': 's' },
-    'nearby_tile_terrain_type'     : { 'var' : 0x62, 'start': 10, 'size':  3, 'tile': 's' },
-    'nearby_tile_height'           : { 'var' : 0x62, 'start': 16, 'size':  8, 'tile': 's' },
-    'nearby_tile_class'            : { 'var' : 0x62, 'start': 24, 'size':  4, 'tile': 's' },
+    'nearby_tile_slope'            : { 'var' : 0x62, 'start':  0, 'size':  5, 'function': signed_tile_offset },
+    'nearby_tile_is_same_object'   : { 'var' : 0x62, 'start':  8, 'size':  1, 'function': signed_tile_offset },
+    'nearby_tile_is_water'         : { 'var' : 0x62, 'start':  9, 'size':  1, 'function': signed_tile_offset },
+    'nearby_tile_terrain_type'     : { 'var' : 0x62, 'start': 10, 'size':  3, 'function': signed_tile_offset },
+    'nearby_tile_height'           : { 'var' : 0x62, 'start': 16, 'size':  8, 'function': signed_tile_offset },
+    'nearby_tile_class'            : { 'var' : 0x62, 'start': 24, 'size':  4, 'function': signed_tile_offset },
 
-    'nearby_tile_animation_frame'  : { 'var' : 0x63, 'start':  0, 'size':  8, 'tile': 's' },
+    'nearby_tile_animation_frame'  : { 'var' : 0x63, 'start':  0, 'size':  8, 'function': signed_tile_offset },
 
     'object_type_count'            : { 'var' : 0x64, 'start': 16, 'size':  8, 'function': industry_count },
     'object_type_nearest'          : { 'var' : 0x64, 'start':  0, 'size': 16, 'function': industry_count },
@@ -280,14 +327,14 @@ varact2vars_airporttiles = {
 }
 
 varact2vars60x_airporttiles = {
-    'nearby_tile_slope'            : {'var': 0x60, 'start':  0, 'size':  5, 'tile': 's'},
-    'nearby_tile_is_same_airport'  : {'var': 0x60, 'start':  8, 'size':  1, 'tile': 's'},
-    'nearby_tile_is_water'         : {'var': 0x60, 'start':  9, 'size':  1, 'tile': 's'},
-    'nearby_tile_terrain_type'     : {'var': 0x60, 'start': 10, 'size':  3, 'tile': 's'},
-    'nearby_tile_height'           : {'var': 0x60, 'start': 16, 'size':  8, 'tile': 's'},
-    'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size':  4, 'tile': 's'},
-    'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'tile': 's'},
-    'nearby_tile_airporttile_id'   : {'var': 0x62, 'start':  0, 'size': 16, 'tile': 's'},
+    'nearby_tile_slope'            : {'var': 0x60, 'start':  0, 'size':  5, 'function': signed_tile_offset},
+    'nearby_tile_is_same_airport'  : {'var': 0x60, 'start':  8, 'size':  1, 'function': signed_tile_offset},
+    'nearby_tile_is_water'         : {'var': 0x60, 'start':  9, 'size':  1, 'function': signed_tile_offset},
+    'nearby_tile_terrain_type'     : {'var': 0x60, 'start': 10, 'size':  3, 'function': signed_tile_offset},
+    'nearby_tile_height'           : {'var': 0x60, 'start': 16, 'size':  8, 'function': signed_tile_offset},
+    'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size':  4, 'function': signed_tile_offset},
+    'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'function': signed_tile_offset},
+    'nearby_tile_airporttile_id'   : {'var': 0x62, 'start':  0, 'size': 16, 'function': signed_tile_offset},
 }
 
 
