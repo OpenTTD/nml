@@ -458,9 +458,20 @@ def parse_60x_var(name, args, pos, info):
         # Default function to extract parameters
         param, extra_params = action2var_variables.default_60xvar(name, args, pos, info)
 
-    var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
-    var.extra_params.extend(extra_params)
-    return var
+    if isinstance(param, expression.ConstantNumeric):
+        var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), \
+                expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
+
+        var.extra_params.extend(extra_params)
+        return var
+    else:
+        # Make use of var 7B to pass non-constant parameters
+        var = expression.Variable(expression.ConstantNumeric(0x7B), expression.ConstantNumeric(info['start']), \
+                expression.ConstantNumeric((1 << info['size']) - 1), expression.ConstantNumeric(info['var']), pos)
+
+        var.extra_params.extend(extra_params)
+        # Set the param in the accumulator beforehand
+        return expression.BinOp(nmlop.VAL2, param, var, pos)
 
 def parse_minmax(value, unit, action_list, act6, offset):
     """

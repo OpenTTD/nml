@@ -29,9 +29,8 @@ def default_60xvar(name, args, pos, info):
     """
     if len(args) != 1:
         raise generic.ScriptError("'%s'() requires one argument, encountered %d" % (name, len(args)), pos)
-    if not isinstance(args[0], expression.ConstantNumeric):
-        raise generic.ScriptError("Argument of '%s' must be a compile-time constant." % name, args[0].pos)
-    generic.check_range(args[0].value, 0, 255, "Argument of '%s'" % name, args[0].pos)
+    if isinstance(args[0], expression.ConstantNumeric):
+        generic.check_range(args[0].value, 0, 255, "Argument of '%s'" % name, args[0].pos)
     return (args[0], [])
 
 def signextend(var, info):
@@ -170,13 +169,16 @@ def tile_offset(name, args, pos, info, min, max):
     if len(args) != 2:
         raise generic.ScriptError("'%s'() requires 2 arguments, encountered %d" % (name, len(args)), pos)
     for arg in args:
-        if not isinstance(arg, expression.ConstantNumeric):
-            raise generic.ScriptError("Argument of '%s' must be a compile-time constant." % name, arg.pos)
-        generic.check_range(arg.value, min, max, "Argument of '%s'" % name, arg.pos)    
+        if isinstance(arg, expression.ConstantNumeric):
+            generic.check_range(arg.value, min, max, "Argument of '%s'" % name, arg.pos)    
 
-    x = args[0].value & 0xF
-    y = args[1].value & 0xF
-    return ( expression.ConstantNumeric((y << 4) + x, args[0].pos), [] )
+    x = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xF), args[0].pos)
+    y = expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xF), args[1].pos)
+    # Shift y left by four
+    y = expression.BinOp(nmlop.SHIFT_LEFT, y, expression.ConstantNumeric(4), y.pos)
+    param = expression.BinOp(nmlop.ADD, x, y, x.pos)
+    #Make sure to reduce the result
+    return ( param.reduce(), [] )
 
 def signed_tile_offset(name, args, pos, info):
     return tile_offset(name, args, pos, info, -8, 7)
@@ -216,9 +218,8 @@ varact2vars_industries = {
 def industry_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
         raise generic.ScriptError("'%s'() requires between 1 and 2 argument(s), encountered %d" % (name, len(args)), pos)
-    if not isinstance(args[0], expression.ConstantNumeric):
-        raise generic.ScriptError("First argument of '%s' must be a compile-time constant." % name, args[0].pos)
-    generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
+    if isinstance(args[0], expression.ConstantNumeric):
+        generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
     extra_params = [(0x100, grfid)]
@@ -229,9 +230,8 @@ def industry_count(name, args, pos, info):
 def industry_layout_count(name, args, pos, info):
     if len(args) < 2 or len(args) > 3:
         raise generic.ScriptError("'%s'() requires between 2 and 3 argument(s), encountered %d" % (name, len(args)), pos)
-    if not isinstance(args[0], expression.ConstantNumeric):
-        raise generic.ScriptError("First argument of '%s' must be a compile-time constant." % name, args[0].pos)
-    generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
+    if isinstance(args[0], expression.ConstantNumeric):
+        generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 2 else args[2]
 
@@ -243,9 +243,8 @@ def industry_layout_count(name, args, pos, info):
 def industry_town_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
         raise generic.ScriptError("'%s'() requires between 1 and 2 argument(s), encountered %d" % (name, len(args)), pos)
-    if not isinstance(args[0], expression.ConstantNumeric):
-        raise generic.ScriptError("First argument of '%s' must be a compile-time constant." % name, args[0].pos)
-    generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
+    if isinstance(args[0], expression.ConstantNumeric):
+        generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
 
