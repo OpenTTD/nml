@@ -22,6 +22,9 @@ class Switch(switch_base_class):
         self.pos = pos
         self.return_switch = None
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         self.expr = action2var.reduce_varaction2_expr(self)
 
@@ -179,6 +182,9 @@ class RandomSwitch(switch_base_class):
 
         self.pos = pos
         self.switch = None
+
+    def register_names(self):
+        pass
 
     def pre_process(self):
         # Make sure, all [in]dependencies refer to existing random switch blocks

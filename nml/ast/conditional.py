@@ -12,6 +12,10 @@ class ConditionalList(object):
     def __init__(self, conditionals):
         self.conditionals = conditionals
 
+    def register_names(self):
+        for cond in self.conditionals:
+            cond.register_names(self)
+
     def pre_process(self):
         for cond in self.conditionals:
             cond.pre_process()
@@ -51,6 +55,10 @@ class Conditional(object):
         self.expr = expr
         self.block = block
         self.pos = pos
+
+    def register_names(self):
+        for b in self.block:
+            b.register_names(self)
 
     def pre_process(self):
         if self.expr is not None:

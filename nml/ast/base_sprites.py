@@ -29,6 +29,9 @@ class BaseSprite(object):
         self.sprite_num = None
         self.name = None
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         num_params = len(self.param_list)
         if not (0 <= num_params <= 2):

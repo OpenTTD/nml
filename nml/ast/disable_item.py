@@ -37,6 +37,9 @@ class DisableItem(object):
 
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Disable items, feature=' + str(self.feature.value)
         if self.first_id is not None:

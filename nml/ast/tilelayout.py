@@ -31,6 +31,9 @@ class TileLayout(object):
         self.tile_list = []
         self.properties = {}
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         for tileprop in self.tile_prop_list:
             if isinstance(tileprop, LayoutProp):

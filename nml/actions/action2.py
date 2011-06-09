@@ -235,6 +235,9 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             self.feature = feature
             self.name = name
 
+        def register_names(self):
+            pass
+
         def pre_process(self):
             """
             Pre-process this node.

@@ -69,6 +69,9 @@ class ParameterAssignment(object):
         self.param = param
         self.value = value
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         self.value = self.value.reduce(global_constants.const_list)
 

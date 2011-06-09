@@ -10,6 +10,9 @@ class SkipAll(object):
     def __init__(self, pos):
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         pass
 

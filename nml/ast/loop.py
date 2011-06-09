@@ -7,6 +7,10 @@ class Loop(object):
         self.block = block
         self.pos = pos
 
+    def register_names(self):
+        for b in self.block:
+            b.register_names(self)
+
     def pre_process(self):
         for b in self.block:
             b.pre_process()

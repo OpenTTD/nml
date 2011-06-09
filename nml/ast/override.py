@@ -19,6 +19,9 @@ class EngineOverride:
         self.args = args
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         if len(self.args) not in (1, 2):
             raise generic.ScriptError("engine_override expects 1 or 2 parameters", self.pos)

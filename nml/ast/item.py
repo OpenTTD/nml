@@ -51,7 +51,7 @@ class Item(object):
         self.body = body
         validate_item_block(body)
 
-    def pre_process(self):
+    def register_names(self):
         if self.id:
             self.id = self.id.reduce(global_constants.const_list)
         if self.name:
@@ -69,7 +69,8 @@ class Item(object):
             self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
         if self.name is not None:
             global_constants.item_names[self.name.value] = self
-            
+
+    def pre_process(self):
         global item_feature, item_id
         item_id = self.id
         item_feature = self.feature.value

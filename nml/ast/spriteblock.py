@@ -8,6 +8,9 @@ class TemplateDeclaration(object):
         self.sprite_list = sprite_list
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         #check that all templates that are referred to exist at this point
         #This prevents circular dependencies
@@ -63,6 +66,9 @@ class SpriteSet(spriteset_base_class):
         self.action1_num = None #set number in action1
         self.action1_count = None #how many actual sprites there are in this spriteset
         self.labels = {} #mapping of real sprite labels to offsets
+
+    def register_names(self):
+        pass
 
     def pre_process(self):
         spriteset_base_class.pre_process(self)

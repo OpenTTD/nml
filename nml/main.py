@@ -126,6 +126,9 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
             outputfile.close()
 
     for block in result:
+        block.register_names()
+
+    for block in result:
         block.pre_process()
 
     actions = []

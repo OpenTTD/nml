@@ -12,6 +12,9 @@ class FontGlyphBlock(object):
         self.pos = pos
         self.name = None
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         if self.pcx:
             self.pcx.reduce()

@@ -12,6 +12,9 @@ class CargoTable(object):
             expression.parse_string_to_dword(self.cargo_list[i])
             global_constants.cargo_numbers[self.cargo_list[i].value] = i
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         pass
 

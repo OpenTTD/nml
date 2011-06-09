@@ -36,6 +36,9 @@ class Error(object):
         self.data     = param_list[2] if len(param_list) >= 3 else None
         self.params = param_list[3:]
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         self.severity = self.severity.reduce([actionB.error_severity])
         self.msg      = self.msg.reduce([actionB.default_error_msg])

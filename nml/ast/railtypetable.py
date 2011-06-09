@@ -13,6 +13,9 @@ class RailtypeTable(object):
             expression.parse_string_to_dword(self.railtype_list[i])
             global_constants.railtype_table[self.railtype_list[i].value] = i
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         pass
 

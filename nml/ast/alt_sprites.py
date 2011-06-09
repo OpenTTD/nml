@@ -37,6 +37,9 @@ class AltSpritesBlock(object):
         self.sprite_list = sprite_list
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         if self.pcx:
             self.pcx.reduce()

@@ -20,6 +20,9 @@ class Action11(base_action.BaseAction):
         file.print_word(len(self.sounds))
         file.end_sprite()
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         pass
 

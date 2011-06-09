@@ -22,6 +22,9 @@ class Snowline(object):
         self.date_heights = height_data
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         pass
 

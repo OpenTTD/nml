@@ -16,6 +16,9 @@ class BaseCost:
         self.costs = costs
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         new_costs = []
 

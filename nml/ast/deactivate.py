@@ -5,6 +5,9 @@ class DeactivateBlock(object):
         self.grfid_list = grfid_list
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         self.grfid_list = [grfid.reduce() for grfid in self.grfid_list]
 
