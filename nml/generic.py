@@ -2,9 +2,8 @@
 import sys
 
 def to_hex(value, width = 0):
-    ret = hex(value)[2:].upper()
-    if ret[-1] == 'L': ret = ret[0:-1]
-    return ret.zfill(width)
+    assert value >= 0
+    return '%0*X' % (width, value)
 
 def truncate_int32(value):
     #source: http://www.tiac.net/~sw/2010/02/PureSalsa20/index.html
