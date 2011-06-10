@@ -1,7 +1,7 @@
 from nml import expression, nmlop, free_number_list
 from nml.actions import base_action, action6, actionD, action10
 
-free_labels = free_number_list.FreeNumberList(range(0xFF, 0x0F, -1))
+free_labels = free_number_list.FreeNumberList(list(range(0xFF, 0x0F, -1)))
 
 class SkipAction(base_action.BaseAction):
     def __init__(self, action_type, var, varsize, condtype, value, label):

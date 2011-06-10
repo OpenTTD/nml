@@ -366,7 +366,7 @@ def builtin_industry_type(name, args, pos):
 
     # Industry ID uses 6 bits (0 .. 5), so bit 6 is never used
     id = args[1].reduce_constant(global_constants.const_list).value
-    if id not in range(0, 64):
+    if not 0 <= id <= 63:
         raise generic.ScriptError("Second argument 'id' of industry_type() must be in range 0..63", pos)
 
     return ConstantNumeric(type << 7 | id)

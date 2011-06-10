@@ -1,7 +1,7 @@
 from nml import free_number_list
 from nml.actions import base_action
 
-free_parameters = free_number_list.FreeNumberList(range(0x7F, 0x3F, -1))
+free_parameters = free_number_list.FreeNumberList(list(range(0x7F, 0x3F, -1)))
 
 class Action6(base_action.BaseAction):
     def __init__(self):

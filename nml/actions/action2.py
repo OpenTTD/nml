@@ -1,7 +1,7 @@
 from nml import generic
 from nml.actions import base_action
 
-free_action2_ids = range(1, 255)
+free_action2_ids = list(range(1, 255))
 
 class Action2(base_action.BaseAction):
     """
@@ -35,7 +35,7 @@ class Action2(base_action.BaseAction):
         #0x00 - 0x7F: available to user
         #0x80 - 0x85: used for production CB
         #0x86 - 0x100: available as temp. registers
-        self.tmp_locations = range(0x86, 0x100)
+        self.tmp_locations = list(range(0x86, 0x100))
 
     def prepare_output(self):
         free_references(self)

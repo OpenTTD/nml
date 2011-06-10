@@ -58,8 +58,8 @@ string_ranges = {
     0xC4: {'random_id': False}, # Station class names
     0xC5: {'random_id': False}, # Station names
     0xC9: {'random_id': False}, # House name
-    0xD0: {'random_id': True, 'ids': range(0x3FF, -1, -1)}, # Misc. text ids, used for callbacks and such
-    0xDC: {'random_id': True, 'ids': range(0xFF, -1, -1)}, # Misc. persistent text ids, used to set properties
+    0xD0: {'random_id': True, 'ids': list(range(0x3FF, -1, -1))}, # Misc. text ids, used for callbacks and such
+    0xDC: {'random_id': True, 'ids': list(range(0xFF, -1, -1))}, # Misc. persistent text ids, used to set properties
 }
 
 # Mapping of string identifiers to D0xx/DCxx text ids
