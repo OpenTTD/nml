@@ -14,7 +14,7 @@ class ConditionalList(object):
 
     def register_names(self):
         for cond in self.conditionals:
-            cond.register_names(self)
+            cond.register_names()
 
     def pre_process(self):
         for cond in self.conditionals:
