@@ -1,5 +1,5 @@
 from nml import generic
-from base_expression import Expression
+from .base_expression import Expression
 
 class PatchVariable(Expression):
     """

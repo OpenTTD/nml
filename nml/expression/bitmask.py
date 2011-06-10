@@ -1,6 +1,6 @@
 from nml import generic, nmlop
-from base_expression import Type, Expression, ConstantNumeric
-from binop import BinOp
+from .base_expression import Type, Expression, ConstantNumeric
+from .binop import BinOp
 
 class BitMask(Expression):
     def __init__(self, values, pos):

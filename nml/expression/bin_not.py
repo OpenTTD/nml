@@ -1,7 +1,7 @@
 from nml import generic, nmlop
-from base_expression import Type, Expression, ConstantNumeric
-from binop import BinOp
-from boolean import Boolean
+from .base_expression import Type, Expression, ConstantNumeric
+from .binop import BinOp
+from .boolean import Boolean
 
 class BinNot(Expression):
     def __init__(self, expr, pos = None):

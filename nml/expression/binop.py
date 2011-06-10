@@ -1,7 +1,7 @@
 from nml import generic, nmlop
-from base_expression import Type, Expression, ConstantNumeric, ConstantFloat
-from string_literal import StringLiteral
-from variable import Variable
+from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
+from .string_literal import StringLiteral
+from .variable import Variable
 
 class BinOp(Expression):
     def __init__(self, op, expr1, expr2, pos = None):

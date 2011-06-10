@@ -1,5 +1,5 @@
 import operator
-from expression.base_expression import Type, ConstantNumeric, ConstantFloat
+from .expression.base_expression import Type, ConstantNumeric, ConstantFloat
 from nml import generic
 
 class Operator(object):

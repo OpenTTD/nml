@@ -1,5 +1,5 @@
 from nml import generic
-from base_expression import Type, Expression, ConstantNumeric
+from .base_expression import Type, Expression, ConstantNumeric
 
 class TernaryOp(Expression):
     def __init__(self, guard, expr1, expr2, pos):

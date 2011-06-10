@@ -1,5 +1,5 @@
 from nml import generic
-from base_expression import Type, Expression
+from .base_expression import Type, Expression
 
 class Boolean(Expression):
     def __init__(self, expr, pos = None):

@@ -1,6 +1,6 @@
 from nml import generic, grfstrings
-from base_expression import Type, Expression, ConstantNumeric
-from string_literal import StringLiteral
+from .base_expression import Type, Expression, ConstantNumeric
+from .string_literal import StringLiteral
 
 class Parameter(Expression):
     def __init__(self, num, pos = None, by_user = False):

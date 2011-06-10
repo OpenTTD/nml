@@ -1,5 +1,5 @@
 from nml import generic
-from base_expression import Type, Expression, ConstantNumeric
+from .base_expression import Type, Expression, ConstantNumeric
 
 class Variable(Expression):
     def __init__(self, num, shift = None, mask = None, param = None, pos = None):

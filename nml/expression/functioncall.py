@@ -1,12 +1,12 @@
 import datetime, calendar, math
 from nml import generic, nmlop
-from base_expression import Type, Expression, ConstantNumeric, ConstantFloat
-from binop import BinOp
-from bitmask import BitMask
-from parameter import parse_string_to_dword
-from string_literal import StringLiteral
-from ternaryop import TernaryOp
-from variable import Variable
+from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
+from .binop import BinOp
+from .bitmask import BitMask
+from .parameter import parse_string_to_dword
+from .string_literal import StringLiteral
+from .ternaryop import TernaryOp
+from .variable import Variable
 
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):
