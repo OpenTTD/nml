@@ -43,7 +43,7 @@ def make_set_lists(first_set):
     handled_sets = set() #list of all sets that have already been handled
 
     if first_set.feature.value not in action2.features_sprite_set:
-        raise generic.ScriptError("Sprite sets are not supported for this feature: " + generic.to_hex(first_set.feature.value, 2), first_set.feature.pos)
+        raise generic.ScriptError("Sprite sets are not supported for feature '%02X'." % first_set.feature.value, first_set.feature.pos)
 
     #compile a list of all groups and sets that will be handled in one go
     while 1:

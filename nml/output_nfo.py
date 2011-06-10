@@ -26,23 +26,23 @@ class OutputNFO(output_base.BinaryOutputBase):
         if pretty_print is not None:
             self.file.write(pretty_print + " ")
             return
-        self.file.write(generic.to_hex(value, 2) + " ")
+        self.file.write("%02X " % value)
 
     def print_word(self, value):
         value = self.prepare_word(value)
-        self.file.write("\\w" + str(value) + " ")
+        self.file.write("\\w%d " % value)
 
     def print_wordx(self, value):
         value = self.prepare_word(value)
-        self.file.write("\\wx" + generic.to_hex(value, 4) + " ")
+        self.file.write("\\wx%04X " % value)
 
     def print_dword(self, value):
         value = self.prepare_dword(value)
-        self.file.write("\\d" + str(value) + " ")
+        self.file.write("\\d%d " % value)
 
     def print_dwordx(self, value):
         value = self.prepare_dword(value)
-        self.file.write("\\dx" + generic.to_hex(value, 8) + " ")
+        self.file.write("\\dx%08X " % value)
 
     def print_string(self, value, final_zero = True, force_ascii = False):
         assert self._in_sprite

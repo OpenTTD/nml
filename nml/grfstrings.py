@@ -261,29 +261,29 @@ class StringCommand(object):
         assert self.name in special_commands
         if self.name == 'P':
             if self.offset is None: self.offset = 0
-            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80 + self.offset, 2)
+            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + self.offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(idx + 1, 2)
+                    ret += CHOICE_LIST_ITEM[str_type] + '\\%02X' % (idx + 1)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G':
             if self.offset is None: self.offset = 0
-            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\' + generic.to_hex(0x80 + self.offset, 2)
+            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + self.offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(idx + 1, 2)
+                    ret += CHOICE_LIST_ITEM[str_type] + '\\%02X' % (idx + 1)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G=':
             ret = SET_STRING_GENDER[str_type]
-            ret += '\\' + generic.to_hex(lang.genders[self.arguments[0]], 2)
+            ret += '\\%02X' % lang.genders[self.arguments[0]]
             return ret
 
     def get_type(self):
@@ -450,7 +450,7 @@ class Language:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
             for case_name, case_string in self.strings[string_id].cases.iteritems():
                 case_id = self.cases[case_name]
-                parsed_string += CHOICE_LIST_ITEM[str_type] + '\\' + generic.to_hex(case_id, 2) + case_string.parse_string(str_type, self)
+                parsed_string += CHOICE_LIST_ITEM[str_type] + ('\\%02X' % case_id) + case_string.parse_string(str_type, self)
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
         parsed_string += self.strings[string_id].parse_string(str_type, self)
         if len(self.strings[string_id].cases) > 0:

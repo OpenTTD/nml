@@ -208,7 +208,7 @@ def get_layout_action2s(spritegroup):
 
     feature = spritegroup.feature.value
     if feature not in action2.features_sprite_layout:
-        raise generic.ScriptError("Sprite layouts are not supported for this feature: 0x" + generic.to_hex(feature, 2))
+        raise generic.ScriptError("Sprite layouts are not supported for feature '%02X'." % feature)
 
     for layout_sprite in spritegroup.layout_sprite_list:
         if layout_sprite.type.value not in layout_sprite_types:

@@ -36,7 +36,7 @@ def get_real_action2s(spritegroup):
 
     feature = spritegroup.feature.value
     if feature not in action2.features_sprite_group:
-        raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for this feature: 0x" + generic.to_hex(feature, 2), spritegroup.pos)
+        raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for feature '%02X'." % feature, spritegroup.pos)
 
     if len(spritegroup.spriteview_list) == 0:
         raise generic.ScriptError("Sprite groups require at least one sprite set.", spritegroup.pos)
@@ -46,7 +46,7 @@ def get_real_action2s(spritegroup):
         #of course stations want to be different, their default view is the second type instead of the first
         if view.name.value == 'default' and feature is 0x04: type = 1
         if feature not in feature_list:
-            raise generic.ScriptError("Sprite view type '" + view.name.value + "' is not supported for this feature: 0x" + generic.to_hex(feature, 2), view.pos)
+            raise generic.ScriptError("Sprite view type '%s' is not supported for feature '%02X'." % (view.name.value, feature), view.pos)
 
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)

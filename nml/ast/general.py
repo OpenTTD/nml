@@ -37,5 +37,5 @@ def parse_feature(expr):
     """
     expr = expr.reduce_constant([feature_ids])
     if expr.value not in feature_ids.values():
-        raise generic.ScriptError("Invalid feature '%s' encountered." % generic.to_hex(expr.value, 2), expr.pos)
+        raise generic.ScriptError("Invalid feature '%02X' encountered." % expr.value, expr.pos)
     return expr

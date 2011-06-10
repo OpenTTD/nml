@@ -281,10 +281,10 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
                 for node in self._referencing_nodes:
                     if node.feature.value != self.feature.value:
                         if self._has_explicit_feature():
-                            msg = "Cannot refer to block '%s' with feature %s, expected feature is %s" 
+                            msg = "Cannot refer to block '%s' with feature '%02X', expected feature is '%02X'"
                         else:
-                            msg = "Block '%s' cannot be used for feature %s (already used for feature %s)"
-                        raise generic.ScriptError(msg % (self.name.value, generic.to_hex(self.feature.value, 2), generic.to_hex(node.feature.value, 2)), node.pos)
+                            msg = "Block '%s' cannot be used for feature '%02X' (already used for feature '%02X')"
+                        raise generic.ScriptError(msg % (self.name.value, self.feature.value, node.feature.value), node.pos)
 
                 if len(self._referencing_nodes) == 0:
                     # if we can be 'not used', there ought to be a way to refer to this block
