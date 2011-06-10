@@ -93,7 +93,7 @@ def main(argv):
         elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output, opts.start_sprite_num))
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         else:
-            print "Unknown output format %s" % outext
+            generic.print_warning("Unknown output format %s" % outext)
             sys.exit(2)
 
     ret = nml(input, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette)
@@ -109,7 +109,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
 
     script = inputfile.read()
     if script.strip() == "":
-        print "Empty input file"
+        generic.print_warning("Empty input file")
         return 4
     nml_parser = parser.NMLParser()
     result = nml_parser.parse(script)
@@ -160,7 +160,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
             sprite_files.add(action.sprite.file.value)
 
     if not Image and len(sprite_files) > 0:
-        print "PIL (python-imaging) wasn't found, no support for using graphics"
+        generic.print_warning("PIL (python-imaging) wasn't found, no support for using graphics")
         sys.exit(3)
 
     used_palette = forced_palette
@@ -222,7 +222,7 @@ def run():
         main(sys.argv[1:])
 
     except generic.ScriptError, ex:
-        print >> sys.stderr, "nmlc: %s" % str(ex)
+        generic.print_warning("nmlc: %s" % str(ex))
 
         if developmode: raise # Reraise exception in developmode
         sys.exit(1)
@@ -231,7 +231,7 @@ def run():
         raise
 
     except KeyboardInterrupt, ex:
-        print >> sys.stderr, 'Application forcibly terminated by user.'
+        generic.print_warning('Application forcibly terminated by user.')
 
         if developmode: raise # Reraise exception in developmode
 
@@ -269,7 +269,7 @@ def run():
               "Command:    %(cli)s\n" \
               "Location:   %(loc)s\n" % ex_data
 
-        print >> sys.stderr, msg
+        generic.print_warning(msg)
         sys.exit(1)
 
     sys.exit(0)
