@@ -98,6 +98,9 @@ class ReplaceNewSprite(object):
         self.pos = pos
         self.name = None
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         num_params = len(self.param_list)
         if not (1 <= num_params <= 3):

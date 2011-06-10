@@ -58,7 +58,7 @@ class Conditional(object):
 
     def register_names(self):
         for b in self.block:
-            b.register_names(self)
+            b.register_names()
 
     def pre_process(self):
         if self.expr is not None:

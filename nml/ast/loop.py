@@ -9,7 +9,7 @@ class Loop(object):
 
     def register_names(self):
         for b in self.block:
-            b.register_names(self)
+            b.register_names()
 
     def pre_process(self):
         for b in self.block:

@@ -137,6 +137,9 @@ class PropertyBlock(object):
         self.prop_list = prop_list
         self.pos = pos
 
+    def register_names(self):
+        pass
+
     def pre_process(self):
         for prop in self.prop_list:
             prop.pre_process()
