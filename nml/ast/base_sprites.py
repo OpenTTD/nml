@@ -36,8 +36,8 @@ class BaseSprite(object):
         num_params = len(self.param_list)
         if not (0 <= num_params <= 2):
             raise generic.ScriptError("base_sprites-block requires 0 to 2 parameters, encountered %d" % num_params, self.pos)
-	if num_params >= 2:
-	    self.sprite_num = self.param_list[0].reduce_constant()
+        if num_params >= 2:
+            self.sprite_num = self.param_list[0].reduce_constant()
         if num_params >= 1:
             self.pcx = self.param_list[-1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
