@@ -82,7 +82,7 @@ DIV = Operator(
     act2_supports = True, act2_str = r'\2/', act2_num = 6,
     actd_supports = True, actd_str = r'\D/', actd_num = 10,
     token = '/',
-    compiletime_func = operator.div,
+    compiletime_func = lambda a, b: a // b if isinstance(a, int) and isinstance(b, int) else a / b,
     validate_func = validate_func_div_mod,
 )
 
