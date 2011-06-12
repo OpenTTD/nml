@@ -1,9 +1,9 @@
 grf {
-	grfid: "test";
-	name: string(STR_REGRESSION_NAME);
-	desc: string(STR_REGRESSION_DESC);
-	version: 0;
-	min_compatible_version: 0;
+    grfid: "test";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
 }
 
 template company_recolour(offset) {
@@ -30,22 +30,22 @@ replace(param[3]) {
 
 // Foster Express tram
 spriteset(foster_express_set, "opengfx_generic_trams1.pcx") {
-	[ 48,56,  8,18,   -3,-10]
-	[ 64,56, 20,19,  -14, -5]
-	[ 96,56, 28,15,  -14, -8]
-	[144,56, 20,19,   -6, -7]
-	[176,56,  8,18,   -3,-10]
-	[192,56, 20,19,  -14, -9]
-	[224,56, 28,15,  -14, -8]
-	[272,56, 20,19,   -6, -7]
+    [ 48,56,  8,18,   -3,-10]
+    [ 64,56, 20,19,  -14, -5]
+    [ 96,56, 28,15,  -14, -8]
+    [144,56, 20,19,   -6, -7]
+    [176,56,  8,18,   -3,-10]
+    [192,56, 20,19,  -14, -9]
+    [224,56, 28,15,  -14, -8]
+    [272,56, 20,19,   -6, -7]
 }
 spritegroup foster_express_group {
-	loading: foster_express_set;
-	loaded: foster_express_set;
+    loading: foster_express_set;
+    loaded: foster_express_set;
 }
 
 item(FEAT_ROADVEHS, foster_express_tram) {
-	graphics {
-		foster_express_group;
-	}
+    graphics {
+        foster_express_group;
+    }
 }

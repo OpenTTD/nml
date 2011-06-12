@@ -1,9 +1,9 @@
 grf {
-	grfid: "NML\13";
-	name: string(STR_REGRESSION_NAME);
-	desc: string(STR_REGRESSION_DESC);
-	version: 0;
-	min_compatible_version: 0;
+    grfid: "NML\13";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
 }
 
 /* 

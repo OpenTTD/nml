@@ -1,40 +1,40 @@
 grf {
-	grfid: "NML\15";
-	name: string(STR_REGRESSION_NAME);
-	desc: string(STR_REGRESSION_DESC);
-	version: 0;
-	min_compatible_version: 0;
+    grfid: "NML\15";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
 }
 
 spritelayout obj_basic_tile {
-	ground {
-		ttdsprite : 1420;
-	}
-	building {
-		ttdsprite     : 2632;
-		recolour_mode : RECOLOUR_REMAP;
-		palette       : 0x307;
-		xextent       : 16;
-		yextent       : 16;
-		zextent       : 30;
-	}
+    ground {
+        ttdsprite : 1420;
+    }
+    building {
+        ttdsprite     : 2632;
+        recolour_mode : RECOLOUR_REMAP;
+        palette       : 0x307;
+        xextent       : 16;
+        yextent       : 16;
+        zextent       : 30;
+    }
 }
 
 item (FEAT_OBJECTS, obj_basic) {
-	property {
-		class                  : "MISC";
-		classname              : string(STR_OBJ_MISC_CLASS);
-		name                   : string(STR_OBJ_BASIC);
-		climates_available     : ALL_CLIMATES & ~bitmask(CLIMATE_TOYLAND);
-		size                   : [ 1, 1 ];
-		introduction_date      : date(1900, 1, 1);
-		end_of_life_date       : date(1930, 1, 1);
-		build_cost_multiplier  : 1;
-		remove_cost_multiplier : 1;
-		object_flags           : bitmask(OBJ_FLAG_ALLOW_BRIDGE);
-		height                 : 4;
-	}
-	graphics {
-		obj_basic_tile;
-	}
+    property {
+        class                  : "MISC";
+        classname              : string(STR_OBJ_MISC_CLASS);
+        name                   : string(STR_OBJ_BASIC);
+        climates_available     : ALL_CLIMATES & ~bitmask(CLIMATE_TOYLAND);
+        size                   : [ 1, 1 ];
+        introduction_date      : date(1900, 1, 1);
+        end_of_life_date       : date(1930, 1, 1);
+        build_cost_multiplier  : 1;
+        remove_cost_multiplier : 1;
+        object_flags           : bitmask(OBJ_FLAG_ALLOW_BRIDGE);
+        height                 : 4;
+    }
+    graphics {
+        obj_basic_tile;
+    }
 }

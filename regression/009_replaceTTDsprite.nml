@@ -1,20 +1,20 @@
 grf {
-	grfid: "test";
-	name: string(STR_REGRESSION_NAME);
-	desc: string(STR_REGRESSION_DESC);
-	version: 0;
-	min_compatible_version: 0;
+    grfid: "test";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
 }
 
 template no_param() {
-	[48, 56, 8, 18, -3, -10]
+    [48, 56, 8, 18, -3, -10]
 }
 
 template many_param(a, b, c, d, e, f, g, h) {
-	[a, b, c, d, e+f, f*h]
+    [a, b, c, d, e+f, f*h]
 }
 
 replace (3092, "opengfx_generic_trams1.pcx") { // replace the first two bus sprites
-	no_param()
-	many_param(48, 56, 8, 18, -5, 2, -5, 2)
+    no_param()
+    many_param(48, 56, 8, 18, -5, 2, -5, 2)
 }

@@ -1,36 +1,36 @@
 grf {
-	grfid: "test";
-	name: string(STR_REGRESSION_NAME);
-	desc: string(STR_REGRESSION_DESC);
-	version: 0;
-	min_compatible_version: 0;
+    grfid: "test";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
 }
 
 /* store a value of 4 into the permanent register 0x00, but evaluate current_month
  * use the array notation
  */
 switch(FEAT_INDUSTRIES, SELF, coal_mine_subtype_switch, [STORE_PERM(4, 0x00), current_month]) {
-	0..10: return string(STR_COALMINE_MONTH_0_10);
-	return string(STR_COALMINE_MONTH_11);
+    0..10: return string(STR_COALMINE_MONTH_0_10);
+    return string(STR_COALMINE_MONTH_11);
 }
 
 /* store a value of 4 in the temporary register 0x100, but evaluate current_callback
  * use the 'chained' notation via |
  */
 switch(FEAT_INDUSTRIES, SELF, coal_mine_switch, (STORE_TEMP(4, 0x100) & 0) | current_callback) {
-	IND_CB_EXTRA_TEXT_INDUSTRY: return string(STR_COALMINE_EXTRA_TEXT);
-	IND_CB_CARGO_SUBTYPE_DISPLAY: coal_mine_subtype_switch;
-	/* current_callback will never be 0xFFFF, but this way we can test "return;" easily. */
-	0xFFFF: return;
-	CB_FAILED;
+    IND_CB_EXTRA_TEXT_INDUSTRY: return string(STR_COALMINE_EXTRA_TEXT);
+    IND_CB_CARGO_SUBTYPE_DISPLAY: coal_mine_subtype_switch;
+    /* current_callback will never be 0xFFFF, but this way we can test "return;" easily. */
+    0xFFFF: return;
+    CB_FAILED;
 }
 item(FEAT_INDUSTRIES, coal_mine) {
-	property {
-		substitute: INDUSTRYTYPE_COAL_MINE;
-		override: INDUSTRYTYPE_COAL_MINE;
-		callback_flags: bitmask(IND_CBF_EXTRA_TEXT_INDUSTRY);
-	}
-	graphics {
-		coal_mine_switch;
-	}
+    property {
+        substitute: INDUSTRYTYPE_COAL_MINE;
+        override: INDUSTRYTYPE_COAL_MINE;
+        callback_flags: bitmask(IND_CBF_EXTRA_TEXT_INDUSTRY);
+    }
+    graphics {
+        coal_mine_switch;
+    }
 }

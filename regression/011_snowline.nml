@@ -1,15 +1,15 @@
 grf {
-	grfid: "sn\00\00";
-	name: string(STR_REGRESSION_NAME);
-	desc: string(STR_REGRESSION_DESC);
-	version: 0;
-	min_compatible_version: 0;
+    grfid: "sn\00\00";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
 }
 
 snowline (linear) {
-	day_of_year(2,  1):  2;
-	day_of_year(11, 1):  4;
-	177: 29;
-	day_of_year(10, 1): 29;
+    day_of_year(2,  1):  2;
+    day_of_year(11, 1):  4;
+    177: 29;
+    day_of_year(10, 1): 29;
 }
 
