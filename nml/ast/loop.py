@@ -3,6 +3,18 @@ from nml.ast import general
 from nml import global_constants
 
 class Loop(object):
+    """
+    AST node for a while-loop.
+
+    @ivar expr: The conditional to check whether the loop continues.
+    @type expr: L{Expression}
+
+    @ivar block: List of AST-blocks that are to be conditionally executed.
+    @type block: C{list} of AST-blocks.
+
+    @ivar pos: Position information of the engine_override block.
+    @type pos: L{Position}
+    """
     def __init__(self, expr, block, pos):
         self.expr = expr
         self.block = block
