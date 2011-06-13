@@ -3,6 +3,10 @@ from nml.ast import conditional, loop, general
 from nml.actions import action0, action2, action3
 
 def validate_item_block(block_list):
+    """
+    Make sure all AST-nodes in the given list of blocks and in all
+    sub-blocks are valid to appear inside an item-block.
+    """
     for block in block_list:
         if isinstance(block, PropertyBlock): continue
         if isinstance(block, GraphicsBlock): continue
@@ -30,7 +34,7 @@ class Item(object):
     @type id: C{int}
 
     @ivar body: List of blocks that constitute the body of this item block
-    @type body: 
+    @type body: C{list} of AST-blocks.
 
     @ivar pos: Position information
     @type pos: L{Position}
@@ -113,6 +117,22 @@ class Unit(object):
         return self.name
 
 class Property(object):
+    """
+    AST-node representing a single property. These are only valid
+    insde a PropertyBlock.
+
+    @ivar name: The name (or number) of this property.
+    @type name: L{Identifier} or L{ConstantNumeric}.
+
+    @ivar value: The value that will be assigned to this property.
+    @type value: L{Expression}.
+
+    @ivar unit: The unit of the value.
+    @type unit: L{Unit}
+
+    @ivar pos: Position information.
+    @type pos: L{Position}
+    """
     def __init__(self, name, value, unit, pos):
         self.pos = pos
         self.name = name
@@ -133,6 +153,16 @@ class Property(object):
         return '\t%s: %s%s;' % (self.name, self.value, unit)
 
 class PropertyBlock(object):
+    """
+    Block that contains a list of property/value pairs to be assigned
+    to the current item.
+
+    @ivar prop_list: List of properties.
+    @type prop_list: C{list} of L{Property}
+
+    @ivar pos: Position information.
+    @type pos: L{Position}
+    """
     def __init__(self, prop_list, pos):
         self.prop_list = prop_list
         self.pos = pos

@@ -12,7 +12,7 @@ class Loop(object):
     @ivar block: List of AST-blocks that are to be conditionally executed.
     @type block: C{list} of AST-blocks.
 
-    @ivar pos: Position information of the engine_override block.
+    @ivar pos: Position information.
     @type pos: L{Position}
     """
     def __init__(self, expr, block, pos):
