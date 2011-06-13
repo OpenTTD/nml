@@ -1,5 +1,6 @@
 from nml.actions import action7
 from nml.ast import general
+from nml import global_constants
 
 class Loop(object):
     def __init__(self, expr, block, pos):
@@ -12,6 +13,7 @@ class Loop(object):
             b.register_names()
 
     def pre_process(self):
+        self.expr = self.expr.reduce(global_constants.const_list)
         for b in self.block:
             b.pre_process()
 
