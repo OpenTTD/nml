@@ -159,9 +159,27 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
     return actions
 
 def parse_conditional_block(cond_list):
-    action6.free_parameters.save()
+    blocks = []
+    for idx, cond in enumerate(cond_list.conditionals):
+        if isinstance(cond.expr, expression.ConstantNumeric):
+            if cond.expr.value == 0:
+                continue
+            else:
+                blocks.append({'expr': None, 'statements': cond.block})
+                break
+        blocks.append({'expr': cond.expr, 'statements': cond.block})
+    if blocks:
+        blocks[-1]['last_block'] = True
 
-    if len(cond_list.conditionals) > 1:
+    if len(blocks) == 1 and blocks[0]['expr'] is None:
+        action_list = []
+        for stmt in blocks[0]['statements']:
+            action_list.extend(stmt.get_action_list())
+        return action_list
+
+    action6.free_parameters.save()
+    
+    if len(blocks) > 1:
         # the skip all parameter is used to skip all blocks after one
         # of the conditionals was true. We can't always skip directly
         # to the end of the blocks since action7/action9 can't always
@@ -170,15 +188,11 @@ def parse_conditional_block(cond_list):
     else:
         action_list = []
 
-    blocks = []
-    for idx, cond in enumerate(cond_list.conditionals):
-        blocks.append({'expr': cond.expr, 'statements': cond.block, 'last_block': idx + 1 == len(cond_list.conditionals)})
-
     # use parse_conditional here, we also need to know if all generated
     # actions (like action6) can be skipped safely
     for block in blocks:
         block['param_dst'], block['cond_actions'], block['cond_type'], block['cond_value'], block['cond_value_size'] = parse_conditional(block['expr'])
-        if not block['last_block']:
+        if not 'last_block' in block:
             block['action_list'] = [actionD.ActionD(expression.ConstantNumeric(param_skip_all), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0), expression.ConstantNumeric(0))]
         else:
             block['action_list'] = []
