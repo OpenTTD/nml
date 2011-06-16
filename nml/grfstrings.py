@@ -606,7 +606,8 @@ def read_lang_files(lang_dir, default_lang_file):
     @type  default_lang_file: C{str}
     """
     if not os.path.exists(lang_dir + os.sep + default_lang_file):
-        raise generic.ScriptError("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + default_lang_file))
+        generic.print_warning("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + default_lang_file))
+        return
     parse_file(lang_dir + os.sep + default_lang_file, True)
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
         if filename.endswith(default_lang_file): continue
