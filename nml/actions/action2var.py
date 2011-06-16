@@ -174,7 +174,8 @@ def pow2(expr):
     return expr
 
 class Varaction2Parser(object):
-    def __init__(self):
+    def __init__(self, feature):
+        self.feature = feature # Depends on feature and var_range
         self.extra_actions = []
         self.mods = []
         self.var_list = []
@@ -275,6 +276,9 @@ class Varaction2Parser(object):
         max = 0xF if expr.info['perm'] else 0x10F
         if isinstance(expr.register, expression.ConstantNumeric) and expr.register.value > max:
             raise generic.ScriptError("Register number must be in range 0..%d, encountered %d." % (max, expr.register.value), expr.pos)
+        if expr.info['perm'] and self.feature not in (0x08, 0x0A, 0x0D):
+            raise generic.ScriptError("Persistent storage is not supported for feature '%02X'" % self.feature, expr.pos)
+
         if expr.info['store']:
             op = nmlop.STO_PERM if expr.info['perm'] else nmlop.STO_TMP
             return expression.BinOp(op, expr.value, expr.register, expr.pos)
@@ -584,9 +588,14 @@ def parse_result(value, action_list, act6, offset, varaction2, switch_block):
         result = expression.ConstantNumeric(0)
     return (result, comment)
 
-def reduce_varaction2_expr(switch_block):
+def get_feature(switch_block):
     feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
-    if feature is None: raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
+    if feature is None:
+        raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
+    return feature
+
+def reduce_varaction2_expr(switch_block):
+    feature = get_feature(switch_block)
 
     # 'normal' and 60+x variables to use
     vars_normal = action2var_variables.varact2vars[feature]
@@ -607,13 +616,14 @@ def reduce_varaction2_expr(switch_block):
 def parse_varaction2(switch_block):
     action6.free_parameters.save()
     act6 = action6.Action6()
+
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range)
 
     expr = reduce_varaction2_expr(switch_block)
 
     offset = 4 #first var
 
-    parser = Varaction2Parser()
+    parser = Varaction2Parser(get_feature(switch_block))
     parser.parse_expr(expr)
     action_list = parser.extra_actions
     for mod in parser.mods:
