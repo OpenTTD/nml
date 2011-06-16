@@ -755,7 +755,8 @@ want to use the result of an expensive calculation in various decisions (switche
 chain (like for example the number of a certain wagon type within a train). Permanent storage
 might be useful to control the long-term behaviour of an object. Note that it is only available
 for industries, airports and towns. For towns, you can optionally specify a grfid to load registers
-belonging to a different grf.
+belonging to a different grf. Note that accessing (both reading and writing) permanent town
+registers thrashes the contents of temporary register 0x100.
 
 <h2><a name="block-produce">Produce</a></h2>
 The <code>produce</code> block is only available for industries and describes how the industry
@@ -1329,10 +1330,12 @@ the number of days since year 0. If the year is a variable, the month and day sh
 since January 1st. Both values must be compile-time constants.
 <tr><td>bitmask(<i>bitpos1</i>, ...)<td>Compose an integer by switching the bits at the given positions on.
 <tr><td>STORE_TEMP(<i>value</i>, <i>address</i>)<td>Store value in temporary storage
-<tr><td>STORE_PERM(<i>value</i>, <i>address</i>)<td>Store value in permanent storage (industries, airports, towns only)
+<tr><td>STORE_PERM(<i>value</i>, <i>address</i>)<td>Store value in permanent storage (industries, airports, towns only).
+Note that accessing permanent town registers thrashes the contents of temporary register 0x100.
 <tr><td>LOAD_TEMP(<i>address</i>)<td>Get value from temporary storage
-<tr><td>LOAD_PERM(<i>address [, grfid]</i>)<td>Get value from permanent storage (industries, airports, towns only)
-For towns only, specifying a grfid (optional) allows reading the storage of other grfs.
+<tr><td>LOAD_PERM(<i>address [, grfid]</i>)<td>Get value from permanent storage (industries, airports, towns only).
+For towns only, specifying a grfid (optional) allows reading the storage of other grfs. Note that accessing permanent
+town registers thrashes the contents of temporary register 0x100.
 <tr><td>hasbit(<i>value</i>, <i>bit_num</i>)<td>Test whether a bit in a value is on
 <tr><td>version_openttd(<i>major</i>, <i>minor</i>, <i>revision</i>[, <i>build</i>])<td>Return
 the constant representing an OpenTTD version
