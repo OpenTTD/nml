@@ -281,10 +281,19 @@ class Varaction2Parser(object):
 
         if expr.info['store']:
             op = nmlop.STO_PERM if expr.info['perm'] else nmlop.STO_TMP
-            return expression.BinOp(op, expr.value, expr.register, expr.pos)
+            ret = expression.BinOp(op, expr.value, expr.register, expr.pos)
         else:
             var_num = 0x7C if expr.info['perm'] else 0x7D
-            return expression.Variable(expression.ConstantNumeric(var_num), param=expr.register, pos=expr.pos)
+            ret = expression.Variable(expression.ConstantNumeric(var_num), param=expr.register, pos=expr.pos)
+
+        if expr.info['perm'] and self.feature == 0x08:
+            # store grfid in register 0x100 for town persistent storage
+            grfid = expression.ConstantNumeric(0xFFFFFFFF) if expr.grfid is None else expr.grfid
+            store_op = expression.BinOp(nmlop.STO_TMP, grfid, expression.ConstantNumeric(0x100), expr.pos)
+            ret = expression.BinOp(nmlop.VAL2, store_op, ret, expr.pos)
+        elif expr.grfid is not None:
+            raise generic.ScriptError("Specifying a grfid is only possible for town persistent storage.", expr.pos)
+        return ret
 
     def parse_expr_to_constant(self, expr, offset):
         if isinstance(expr, expression.ConstantNumeric): return expr
