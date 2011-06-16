@@ -4,6 +4,7 @@ from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
 from .binop import BinOp
 from .bitmask import BitMask
 from .parameter import parse_string_to_dword
+from .storage_op import StorageOp
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
 from .variable import Variable
@@ -189,34 +190,11 @@ def builtin_day_of_year(name, args, pos):
 
     return ConstantNumeric(datetime.date(1, month.value, day.value).toordinal(), pos)
 
-
-def builtin_store(name, args, pos):
+def builtin_storage(name, args, pos):
     """
-    STORE_TEMP(value, register) builtin function.
-    STORE_PERM(value, register) builtin function.
-    Store C{value} in temporary/permanent storage in location C{register}.
-
-    @return C{value}
+    Accesses to temporary / persistent storage
     """
-    if len(args) != 2:
-        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
-    op = nmlop.STO_TMP if name == 'STORE_TEMP' else nmlop.STO_PERM
-    return BinOp(op, args[0], args[1], pos)
-
-def builtin_load(name, args, pos):
-    """
-    LOAD_TEMP(register) builtin function.
-    LOAD_PERM(register) builtin function.
-    Load a value from location C{register} from temporary/permanent storage.
-
-    @return The value loaded from the storage.
-    """
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have one parameter", pos)
-    if isinstance(args[0], ConstantNumeric) and not 0 <= args[0].value <= 0xFF:
-        raise generic.ScriptError(name + "() can only load registers 0 .. 0xFF", args[0].pos)
-    var_num = 0x7D if name == "LOAD_TEMP" else 0x7C
-    return Variable(ConstantNumeric(var_num), param=args[0], pos=pos)
+    return StorageOp(name, args, pos)
 
 def builtin_ucmp(name, args, pos):
     if len(args) != 2:
@@ -406,10 +384,10 @@ function_table = {
     'date' : builtin_date,
     'day_of_year' : builtin_day_of_year,
     'bitmask' : lambda name, args, pos: BitMask(args, pos),
-    'STORE_TEMP' : builtin_store,
-    'STORE_PERM' : builtin_store,
-    'LOAD_TEMP' : builtin_load,
-    'LOAD_PERM' : builtin_load,
+    'STORE_TEMP' : builtin_storage,
+    'STORE_PERM' : builtin_storage,
+    'LOAD_TEMP' : builtin_storage,
+    'LOAD_PERM' : builtin_storage,
     'hasbit' : builtin_hasbit,
     'version_openttd' : builtin_version_openttd,
     'cargotype_available' : builtin_cargotype_available,

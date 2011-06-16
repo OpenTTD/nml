@@ -270,6 +270,18 @@ class Varaction2Parser(object):
         return expression.BinOp(nmlop.ADD, expr1, expr2)
 
 
+    def preprocess_storageop(self, expr):
+        assert isinstance(expr, expression.StorageOp)
+        max = 0xF if expr.info['perm'] else 0x10F
+        if isinstance(expr.register, expression.ConstantNumeric) and expr.register.value > max:
+            raise generic.ScriptError("Register number must be in range 0..%d, encountered %d." % (max, expr.register.value), expr.pos)
+        if expr.info['store']:
+            op = nmlop.STO_PERM if expr.info['perm'] else nmlop.STO_TMP
+            return expression.BinOp(op, expr.value, expr.register, expr.pos)
+        else:
+            var_num = 0x7C if expr.info['perm'] else 0x7D
+            return expression.Variable(expression.ConstantNumeric(var_num), param=expr.register, pos=expr.pos)
+
     def parse_expr_to_constant(self, expr, offset):
         if isinstance(expr, expression.ConstantNumeric): return expr
 
@@ -415,6 +427,9 @@ class Varaction2Parser(object):
 
         elif isinstance(expr, expression.TernaryOp) and not expr.supported_by_actionD(False):
             expr = self.preprocess_ternaryop(expr)
+
+        elif isinstance(expr, expression.StorageOp):
+            expr = self.preprocess_storageop(expr)
 
         #Try to parse the expression to a list of variables+operators
         if isinstance(expr, expression.ConstantNumeric):
