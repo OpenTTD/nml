@@ -64,7 +64,6 @@ class SpriteSet(spriteset_base_class):
         self.sprite_list = sprite_list
         self.pos = pos
         self.action1_num = None #set number in action1
-        self.action1_count = None #how many actual sprites there are in this spriteset
         self.labels = {} #mapping of real sprite labels to offsets
 
     def pre_process(self):
@@ -87,8 +86,6 @@ class SpriteSet(spriteset_base_class):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
-        if self.action1_num is None and self.prepare_output():
-            return action1.parse_sprite_set(self)
         return []
 
     def __str__(self):

@@ -1,5 +1,5 @@
 from nml import generic
-from nml.actions import action2
+from nml.actions import action2, action1
 
 class Action2Real(action2.Action2):
     def __init__(self, feature, name, loaded_list, loading_list):
@@ -33,6 +33,7 @@ def get_real_action2s(spritegroup):
     global real_action2_alias
     loaded_list = []
     loading_list = []
+    actions = []
 
     feature = spritegroup.feature.value
     if feature not in action2.features_sprite_group:
@@ -40,6 +41,13 @@ def get_real_action2s(spritegroup):
 
     if len(spritegroup.spriteview_list) == 0:
         raise generic.ScriptError("Sprite groups require at least one sprite set.", spritegroup.pos)
+
+    # First make sure that all referenced real sprites are put in a single action1
+    all_spritesets = []
+    for view in spritegroup.spriteview_list:
+        all_spritesets.extend(action2.resolve_spritegroup(set_ref.name) for set_ref in view.spriteset_list)
+    actions.extend(action1.add_to_action1(all_spritesets, feature))
+
     for view in spritegroup.spriteview_list:
         if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value, view.pos)
         type, feature_list = real_action2_alias[view.name.value]
@@ -50,9 +58,10 @@ def get_real_action2s(spritegroup):
 
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)
-            if type == 0: loaded_list.append(spriteset.action1_num)
-            else:  loading_list.append(spriteset.action1_num)
+            action1_index = action1.get_action1_index(spriteset)
+            if type == 0: loaded_list.append(action1_index)
+            else: loading_list.append(action1_index)
 
-    action = Action2Real(feature, spritegroup.name.value, loaded_list, loading_list)
-    spritegroup.set_action2(action)
-    return [action]
+    actions.append(Action2Real(feature, spritegroup.name.value, loaded_list, loading_list))
+    spritegroup.set_action2(actions[-1])
+    return actions

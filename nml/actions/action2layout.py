@@ -1,5 +1,5 @@
 from nml import generic, expression, nmlop
-from nml.actions import action2, action6, actionD
+from nml.actions import action2, action6, actionD, action1
 
 class Action2Layout(action2.Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
@@ -139,11 +139,11 @@ class Action2LayoutSprite(object):
         elif len(value.param_list) == 1:
             id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
             offset = value.param_list[0].reduce_constant(id_dicts).value
-            generic.check_range(offset, 0, spriteset.action1_count - 1, "offset within spriteset", value.pos)
+            generic.check_range(offset, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", value.pos)
         else:
             raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(value.param_list)), value.pos)
 
-        num = spriteset.action1_num + offset
+        num = action1.get_action1_index(spriteset) + offset
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
         if self.is_set('ttdsprite'):
             raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
@@ -205,11 +205,19 @@ class Action2LayoutSprite(object):
 def get_layout_action2s(spritegroup):
     ground_sprite = None
     building_sprites = []
+    actions = []
 
     feature = spritegroup.feature.value
     if feature not in action2.features_sprite_layout:
         raise generic.ScriptError("Sprite layouts are not supported for feature '%02X'." % feature)
 
+    all_spritesets = []
+    for layout_sprite in spritegroup.layout_sprite_list:
+        for param in layout_sprite.param_list:
+            if param.name.value == 'sprite':
+                all_spritesets.append(action2.resolve_spritegroup(param.value.name))
+    actions.extend(action1.add_to_action1(all_spritesets, feature))
+    
     for layout_sprite in spritegroup.layout_sprite_list:
         if layout_sprite.type.value not in layout_sprite_types:
             raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % layout_sprite.type.value, layout_sprite.type.pos)
@@ -232,7 +240,6 @@ def get_layout_action2s(spritegroup):
         ground_sprite.set_param(expression.Identifier('ttdsprite'), expression.ConstantNumeric(0))
 
     action6.free_parameters.save()
-    actions = []
     act6 = action6.Action6()
 
     offset = 4

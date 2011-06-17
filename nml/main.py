@@ -1,6 +1,6 @@
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, palette
-from nml.actions import action2var, action8, sprite_count, real_sprite, action4, action0
+from nml.actions import action2var, action8, sprite_count, real_sprite, action4, action0, action1
 from nml.ast import general, grf, alt_sprites
 
 try:
@@ -131,9 +131,16 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     for block in result:
         block.pre_process()
 
-    actions = []
+    tmp_actions = []
     for block in result:
-        actions.extend(block.get_action_list())
+        tmp_actions.extend(block.get_action_list())
+
+    actions = []
+    for action in tmp_actions:
+        if isinstance(action, action1.SpritesetCollection):
+            actions.extend(action.get_action_list())
+        else:
+            actions.append(action)
 
     action8_index = -1
     for i in range(len(actions) - 1, -1, -1):
