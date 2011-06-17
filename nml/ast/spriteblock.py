@@ -45,7 +45,7 @@ class TemplateDeclaration(object):
         ret += "}\n"
         return ret
 
-spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False, True)
+spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False, True, cls_is_relocatable = True)
 
 class SpriteSet(spriteset_base_class):
     def __init__(self, param_list, sprite_list, pos):
@@ -66,9 +66,6 @@ class SpriteSet(spriteset_base_class):
         self.action1_num = None #set number in action1
         self.action1_count = None #how many actual sprites there are in this spriteset
         self.labels = {} #mapping of real sprite labels to offsets
-
-    def register_names(self):
-        pass
 
     def pre_process(self):
         spriteset_base_class.pre_process(self)

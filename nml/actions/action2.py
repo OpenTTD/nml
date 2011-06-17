@@ -145,7 +145,7 @@ class SpriteGroupRefType:
     SPRITEGROUP = 2 # References to sprite groups
     ALL = 3 # References to both sprite sets and groups
 
-def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by_type, cls_has_explicit_feature, cls_allow_parameters = False):
+def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by_type, cls_has_explicit_feature, cls_allow_parameters = False, cls_is_relocatable = False):
     """
     Metaclass factory which makes base classes for all nodes 'Action 2 graph'
     This graph is made up of all blocks that are eventually compiled to Action2,
@@ -167,6 +167,10 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
     @param cls_allow_parameters: Whether parameters can be passed when referencing to an instance of this class.
                                     If true, the derived class is expected to have a C{param_list} variable
     @type cls_allow_parameters: C{bool}
+
+    @param cls_is_relocatable: Whether instances of this class can be freely moved around or whether they need
+                               to to be converted to nfo code at the same location as they are in the nml code.
+    @type cls_is_relocatable: C{bool}
 
     @return: The constructed class
     @rtype: C{type}
@@ -236,14 +240,15 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             self.name = name
 
         def register_names(self):
-            pass
+            if cls_is_relocatable and self._referred_by_type() != SpriteGroupRefType.NONE:
+                register_spritegroup(self)
 
         def pre_process(self):
             """
             Pre-process this node.
             During this stage, the reference graph is built.
             """
-            if self._referred_by_type() != SpriteGroupRefType.NONE:
+            if not cls_is_relocatable and self._referred_by_type() != SpriteGroupRefType.NONE:
                 register_spritegroup(self)
             if self._referring_to_type() != SpriteGroupRefType.NONE:
                 refs = self.collect_references()
