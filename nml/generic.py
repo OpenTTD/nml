@@ -2,10 +2,39 @@
 import sys
 
 def truncate_int32(value):
+    """
+    Truncate the given value so it can be stored in exactly 4 bytes. The sign
+    will be kept. Too high or too low values will be cut off, not clamped to
+    the valid range.
+
+    @param value: The value to truncate.
+    @type value: C{int}
+
+    @return: The truncated value.
+    @rtype: C{int}.
+    """
     #source: http://www.tiac.net/~sw/2010/02/PureSalsa20/index.html
     return int( (value & 0x7fffFFFF) | -(value & 0x80000000) )
 
 def check_range(value, min_value, max_value, name, pos):
+    """
+    Check if a value is within a certain range and raise an error if it's not.
+
+    @param value: The value to check.
+    @type value: C{int}
+
+    @param min_value: Minimum valid value.
+    @type min_value; C{int}
+
+    @param max_value: Maximum valid value.
+    @type max_value: C{int}
+
+    @param name: Name of the variable that is being tested.
+    @type name: C{basestring}
+
+    @param pos: Position information from the variable being tested.
+    @type pos: L{Position}
+    """
     if not min_value <= value <= max_value:
         raise RangeError(value, min_value, max_value, name, pos)
 
