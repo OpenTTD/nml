@@ -26,7 +26,7 @@ class Switch(switch_base_class):
         pass
 
     def pre_process(self):
-        self.expr = action2var.reduce_varaction2_expr(self.expr, self.feature.value)
+        self.expr = action2var.reduce_varaction2_expr(self.expr, action2var.get_feature(self))
 
         self.body.pre_process()
 
