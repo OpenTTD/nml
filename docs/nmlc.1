@@ -1,0 +1,54 @@
+.Dd June 18, 2011
+.Dt NMLC 1
+.Sh NAME
+.Nm NMLC
+.Nd A compiler from NML code to NFO and/or GRF files.
+.Sh SYNOPSIS
+.Nm nmlc
+.Op options
+.Op file
+.Sh OPTIONS
+.Bl -tag
+.It Fl c
+Crop extraneous transparent blue from real sprites.
+.It Fl u
+Save real sprites uncompressed to GRF files. This saves a lot of time
+during encoding but it's not recommended when creating a file for
+distribution since it makes the output file substantially bigger.
+.It Fl -grf Ns = Ns Ar file
+Write output in GRF format to <file>.
+.It Fl -nfo Ns = Ns Ar file
+Write output in NFO format to <file>.
+.It Fl -nml Ns = Ns Ar file
+Write output in NML format to <file>.
+.It Fl -output Ns = Ns Ar file | Fl o Ar file
+Write output to <file>. The output type is detected from the extension
+of the filename. It must be one of nfo, nml or grf.
+.It Fl -debug | Fl d
+Print a dump of the AST to stdout.
+.It Fl -help | Fl h
+Print usage information.
+.It Fl -stack | Fl s
+Dump stack when an error occurs
+.It Fl -custom-tags Ns = Ns Ar file | Fl t Ar file
+Load custom tags from <file> [default: custom_tags.txt]
+.It Fl -lang-dir Ns = Ns Ar dir | Fl l Ar dir
+Load language files from directory <dir> [default: lang]
+.It Fl -default-lang Ns = Ns Ar file
+The default language is stored in <file> [default: english.lng]
+.It Fl -sprites-dir Ns = Ns Ar dir | Fl a Ar dir
+Store 32bpp sprites in directory <dir> [default: sprites]
+.It Fl -start-sprite Ns = Ns Ar file
+Set the first sprite number to write (do not use except when you output
+nfo that you want to include in other files).
+.It Fl -palette Ns = Ns Ar palette | Fl p Ar palette
+Force nml to use the palette <pal> [default: ANY]. Valid values
+are 'DOS', 'WIN', 'ANY'.
+.Sh SEE ALSO
+The language reference at
+.Pa http://hg.openttdcoop.org/nml/raw-file/tip/docs/index.html
+.Sh AUTHOR
+NML was written by Albert Hofkamp, Jasper Reichardt, Ingo von Borstel,
+José Soler and Thijs Marinussen.
+.Pp
+This manual page was written by Thijs Marinussen.
