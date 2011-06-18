@@ -10,21 +10,27 @@ class Action2Layout(action2.Action2):
         self.sprite_list = sprite_list
 
     def write(self, file):
-        size = 5 + self.ground_sprite.get_registers_size()
+        advanced = any(x.is_advanced_sprite() for x in self.sprite_list + [self.ground_sprite])
+        size = 5
+        if advanced: size += self.ground_sprite.get_registers_size()
         for sprite in self.sprite_list:
             if sprite.type == Action2LayoutSpriteType.CHILD:
                 size += 7
             else:
                 size += 10
-            size += sprite.get_registers_size()
+            if advanced: size += sprite.get_registers_size()
         if len(self.sprite_list) == 0:
             size += 9
 
         action2.Action2.write_sprite_start(self, file, size)
-        file.print_byte(len(self.sprite_list))
+        if advanced:
+            file.print_byte(0x40 | len(self.sprite_list))
+        else:
+            file.print_byte(len(self.sprite_list))
         file.print_dwordx(self.ground_sprite.get_sprite_number())
-        self.ground_sprite.write_flags(file)
-        self.ground_sprite.write_registers(file)
+        if advanced:
+            self.ground_sprite.write_flags(file)
+            self.ground_sprite.write_registers(file)
         file.newline()
         if len(self.sprite_list) == 0:
             file.print_dwordx(0) #sprite number 0 == no sprite
@@ -33,7 +39,7 @@ class Action2Layout(action2.Action2):
         else:
             for sprite in self.sprite_list:
                 file.print_dwordx(sprite.get_sprite_number())
-                sprite.write_flags(file)
+                if advanced: sprite.write_flags(file)
                 file.print_byte(sprite.get_param('xoffset'))
                 file.print_byte(sprite.get_param('yoffset'))
                 if sprite.type == Action2LayoutSpriteType.CHILD:
@@ -44,7 +50,7 @@ class Action2Layout(action2.Action2):
                     file.print_byte(sprite.get_param('xextent'))
                     file.print_byte(sprite.get_param('yextent'))
                     file.print_byte(sprite.get_param('zextent'))
-                sprite.write_registers(file)
+                if advanced: sprite.write_registers(file)
                 file.newline()
         file.end_sprite()
 
@@ -83,18 +89,21 @@ class Action2LayoutSprite(object):
             self.params[i]['is_set'] = False
         self.temp_registers = []
 
+    def is_advanced_sprite(self):
+        return self.is_set('hide_sprite')
+
     def get_registers_size(self):
         size = 0
         if self.is_set('hide_sprite'):
             size += 1
-        if size > 0: size += 2
+        size += 2
         return size
 
     def write_flags(self, file):
         flags = 0
         if self.is_set('hide_sprite'):
             flags |= 0x0001
-        if flags: file.print_wordx(flags)
+        file.print_wordx(flags)
 
     def write_registers(self, file):
         if self.is_set('hide_sprite'):
@@ -230,7 +239,7 @@ class Action2LayoutSprite(object):
     def _validate_hide_sprite(self, name, value):
         store_tmp = action2var.VarAction2StoreTempVar()
         load_tmp = action2var.VarAction2LoadTempVar(store_tmp)
-        self.temp_registers.append((store_tmp, value))
+        self.temp_registers.append((store_tmp, expression.Not(value)))
         return load_tmp
 
 def get_layout_action2s(spritegroup):
