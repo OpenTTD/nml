@@ -64,12 +64,14 @@ class SpritesetCollection(object):
         @return: True iff the given spritesets can be added to this collection.
         @rtype: C{bool}
         """
+        assert len(spritesets) < 0x100
         if feature != self.feature:
             return False
         for spriteset in spritesets:
             if len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) != self.num_sprites_per_spriteset:
                 return False
-        return True
+        num_new_sets = len([x for x in spritesets if (x not in self.spritesets)])
+        return len(self.spritesets) + num_new_sets < 0x100
 
     def add(self, spritesets):
         """
