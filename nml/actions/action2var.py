@@ -603,9 +603,7 @@ def get_feature(switch_block):
         raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
     return feature
 
-def reduce_varaction2_expr(switch_block):
-    feature = get_feature(switch_block)
-
+def reduce_varaction2_expr(expr, feature):
     # 'normal' and 60+x variables to use
     vars_normal = action2var_variables.varact2vars[feature]
     vars_60x = action2var_variables.varact2vars60x[feature]
@@ -617,7 +615,7 @@ def reduce_varaction2_expr(switch_block):
 
     # make sure, that variables take precedence about global constants / parameters
     # this way, use the current climate instead of the climate at load time.
-    return switch_block.expr.reduce([(action2var_variables.varact2_globalvars, parse_var), \
+    return expr.reduce([(action2var_variables.varact2_globalvars, parse_var), \
         (vars_normal, parse_var), \
         (vars_60x, func60x)] + \
         global_constants.const_list)
@@ -628,7 +626,7 @@ def parse_varaction2(switch_block):
 
     varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range)
 
-    expr = reduce_varaction2_expr(switch_block)
+    expr = reduce_varaction2_expr(switch_block.expr, get_feature(switch_block))
 
     offset = 4 #first var
 

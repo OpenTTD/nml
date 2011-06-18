@@ -467,7 +467,7 @@ class SpriteGroupRef(object):
         if self.name.value == 'CB_FAILED': return 0 # 0 serves as a failed CB result because it is never used
         try:
             spritegroup = resolve_spritegroup(self.name)
-        except ScriptError:
+        except generic.ScriptError:
             assert False, "Illegal action2 reference '%s' encountered." % self.name.value
 
         return spritegroup.get_action2().id

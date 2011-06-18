@@ -1,5 +1,6 @@
 from nml import generic, expression, nmlop
-from nml.actions import action2, action6, actionD, action1
+from nml.actions import action2, action6, actionD, action1, action2var
+from nml.ast import switch_range
 
 class Action2Layout(action2.Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
@@ -9,18 +10,21 @@ class Action2Layout(action2.Action2):
         self.sprite_list = sprite_list
 
     def write(self, file):
-        size = 5
+        size = 5 + self.ground_sprite.get_registers_size()
         for sprite in self.sprite_list:
             if sprite.type == Action2LayoutSpriteType.CHILD:
                 size += 7
             else:
                 size += 10
+            size += sprite.get_registers_size()
         if len(self.sprite_list) == 0:
             size += 9
 
         action2.Action2.write_sprite_start(self, file, size)
         file.print_byte(len(self.sprite_list))
         file.print_dwordx(self.ground_sprite.get_sprite_number())
+        self.ground_sprite.write_flags(file)
+        self.ground_sprite.write_registers(file)
         file.newline()
         if len(self.sprite_list) == 0:
             file.print_dwordx(0) #sprite number 0 == no sprite
@@ -29,6 +33,7 @@ class Action2Layout(action2.Action2):
         else:
             for sprite in self.sprite_list:
                 file.print_dwordx(sprite.get_sprite_number())
+                sprite.write_flags(file)
                 file.print_byte(sprite.get_param('xoffset'))
                 file.print_byte(sprite.get_param('yoffset'))
                 if sprite.type == Action2LayoutSpriteType.CHILD:
@@ -39,6 +44,7 @@ class Action2Layout(action2.Action2):
                     file.print_byte(sprite.get_param('xextent'))
                     file.print_byte(sprite.get_param('yextent'))
                     file.print_byte(sprite.get_param('zextent'))
+                sprite.write_registers(file)
                 file.newline()
         file.end_sprite()
 
@@ -70,10 +76,29 @@ class Action2LayoutSprite(object):
             'zoffset'       : {'value': 0,  'validator': self._validate_bounding_box},
             'xextent'       : {'value': 16, 'validator': self._validate_bounding_box},
             'yextent'       : {'value': 16, 'validator': self._validate_bounding_box},
-            'zextent'       : {'value': 16, 'validator': self._validate_bounding_box}
+            'zextent'       : {'value': 16, 'validator': self._validate_bounding_box},
+            'hide_sprite'   : {'value': None, 'validator': self._validate_hide_sprite},
         }
         for i in self.params:
             self.params[i]['is_set'] = False
+        self.temp_registers = []
+
+    def get_registers_size(self):
+        size = 0
+        if self.is_set('hide_sprite'):
+            size += 1
+        if size > 0: size += 2
+        return size
+
+    def write_flags(self, file):
+        flags = 0
+        if self.is_set('hide_sprite'):
+            flags |= 0x0001
+        if flags: file.print_wordx(flags)
+
+    def write_registers(self, file):
+        if self.is_set('hide_sprite'):
+            file.print_bytex(self.get_param('hide_sprite').tmp_var.mask.value)
 
     def get_sprite_number(self):
         # Layout of sprite number
@@ -202,6 +227,12 @@ class Action2LayoutSprite(object):
                 generic.check_range(val, 0, 255, name, value.pos)
         return val
 
+    def _validate_hide_sprite(self, name, value):
+        store_tmp = action2var.VarAction2StoreTempVar()
+        load_tmp = action2var.VarAction2LoadTempVar(store_tmp)
+        self.temp_registers.append((store_tmp, value))
+        return load_tmp
+
 def get_layout_action2s(spritegroup):
     ground_sprite = None
     building_sprites = []
@@ -217,13 +248,15 @@ def get_layout_action2s(spritegroup):
             if param.name.value == 'sprite':
                 all_spritesets.append(action2.resolve_spritegroup(param.value.name))
     actions.extend(action1.add_to_action1(all_spritesets, feature))
-    
+
+    temp_registers = []
     for layout_sprite in spritegroup.layout_sprite_list:
         if layout_sprite.type.value not in layout_sprite_types:
             raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % layout_sprite.type.value, layout_sprite.type.pos)
         sprite = Action2LayoutSprite(layout_sprite_types[layout_sprite.type.value], layout_sprite.pos)
         for param in layout_sprite.param_list:
             sprite.set_param(param.name, param.value)
+        temp_registers.extend(sprite.temp_registers)
         if sprite.type == Action2LayoutSpriteType.GROUND:
             if ground_sprite is not None:
                 raise generic.ScriptError("Sprite layout can have no more than one ground sprite", spritegroup.pos)
@@ -242,6 +275,38 @@ def get_layout_action2s(spritegroup):
     action6.free_parameters.save()
     act6 = action6.Action6()
 
+    extra_varact2_actions = None
+    if temp_registers:
+        varact2parser = action2var.Varaction2Parser(feature)
+        for reg_expr_pair in temp_registers:
+            reg, expr = reg_expr_pair
+            varact2parser.parse(action2var.reduce_varaction2_expr(expr, feature))
+            varact2parser.var_list.append(nmlop.STO_TMP)
+            varact2parser.var_list.append(reg)
+            varact2parser.var_list.append(nmlop.VAL2)
+            varact2parser.var_list_size += reg.get_size() + 2
+        #Remove the last VAL2 operator
+        varact2parser.var_list.pop()
+        varact2parser.var_list_size -= 1
+        
+        extra_varact2_actions = varact2parser.extra_actions
+        extra_act6 = action6.Action6()
+        for mod in varact2parser.mods:
+            extra_act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
+        if len(extra_act6.modifications) > 0: extra_varact2_actions.append(extra_act6)
+
+        orig_name = spritegroup.name.value
+        spritegroup.name = expression.Identifier('%s@orig' % orig_name)
+        action2.register_spritegroup(spritegroup)
+        varaction2 = action2var.Action2Var(feature, '%s@registers' % orig_name, 0x89)
+        varaction2.var_list = varact2parser.var_list
+        ref = action2.SpriteGroupRef(spritegroup.name, [], None)
+        varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, comment=''))
+        varaction2.default_result = ref
+        varaction2.default_comment = ''
+        
+        extra_varact2_actions.append(varaction2)
+
     offset = 4
     if ground_sprite.is_set('ttdsprite') and not isinstance(ground_sprite.get_param('ttdsprite'), expression.ConstantNumeric):
         orig_sprite = expression.ConstantNumeric(ground_sprite.get_sprite_number() & 0xFFFF)
@@ -255,6 +320,7 @@ def get_layout_action2s(spritegroup):
         actions.extend(extra_actions)
         act6.modify_bytes(param, 2, offset)
     offset += 2
+    offset += ground_sprite.get_registers_size()
 
     for sprite in building_sprites:
         if sprite.is_set('ttdsprite') and not isinstance(sprite.get_param('ttdsprite'), expression.ConstantNumeric):
@@ -268,6 +334,7 @@ def get_layout_action2s(spritegroup):
             param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, sprite.get_param('palette'), orig_palette).reduce())
             actions.extend(extra_actions)
             act6.modify_bytes(param, 2, offset)
+        offset += sprite.get_registers_size()
         offset += 5 if sprite.type == Action2LayoutSpriteType.CHILD else 8
 
     if len(act6.modifications) > 0:
@@ -275,7 +342,13 @@ def get_layout_action2s(spritegroup):
 
     layout_action = Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)
     actions.append(layout_action)
-    spritegroup.set_action2(layout_action)
+    if extra_varact2_actions:
+        actions.extend(extra_varact2_actions)
+        spritegroup.set_action2(extra_varact2_actions[-1])
+        extra_varact2_actions[-1].references.append(action2.Action2Reference(layout_action, False))
+        layout_action.num_refs += 1
+    else:
+        spritegroup.set_action2(layout_action)
 
     action6.free_parameters.restore()
     return actions

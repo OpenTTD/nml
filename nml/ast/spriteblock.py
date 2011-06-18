@@ -213,8 +213,10 @@ class LayoutSprite(object):
 class LayoutParam(object):
     def __init__(self, name, value, pos):
         self.name = name
+        self.value = value
         try:
-            self.value = value.reduce(global_constants.const_list)
+            if self.name.value not in ('hide_sprite',):
+                self.value = self.value.reduce(global_constants.const_list)
         except generic.ScriptError, ex:
             if isinstance(value, expression.Identifier):
                 self.value = action2.SpriteGroupRef(value, [], value.pos)
