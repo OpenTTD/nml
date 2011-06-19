@@ -20,18 +20,18 @@ BuildRequires:  python-devel
 %endif
 Provides:       nmlc
 Requires:       python-ply python-imaging
-#We need for regression test the required packages also on building:
+# We need for regression test the required packages also on building:
 BuildRequires:  python-ply python-imaging
-#We need Mercurial for auto version detection:
+# We need Mercurial for auto version detection:
 BuildRequires:  mercurial
-#We need wine for windows nmlc.exe
+# We need wine for windows nmlc.exe
 BuildRequires:  wine p7zip
-#We use setuptools for the packaging, but it's also needed at runtime
+# We use setuptools for the packaging, but it's also needed at runtime, why ever?
 Requires:       python-setuptools
 BuildRequires:  python-setuptools
 
 %description
-A tool to compile nml files to grf or nfo files,, making newgrf coding easier.
+A tool to compile nml files to grf or nfo files, making newgrf coding easier.
 
 %prep
 %setup -qn %{name}
@@ -56,22 +56,24 @@ cd nmlc-exe
 cd ..
 
 %{__python} setup.py sdist
-#Add ".src" to the source archive file name:
+# Add ".src" to the source archive file name:
 rename .tar.gz .src.tar.gz dist/*
 
 %build
 %{__python} setup.py build
 
 %install
-%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT --prefix=%{_prefix} --record=INSTALLED_FILES
+%{__python} setup.py install --skip-build --root=%{buildroot} --prefix=%{_prefix} --record=INSTALLED_FILES
 
 %check
 cd regression
-make 1>%{name}-%{version}-build.test.log 2>&1
+PYTHONPATH=%{buildroot}%{python_sitelib} make _V= NMLC=%{buildroot}%{_bindir}/nmlc 1>%{name}-%{version}-build.test.log 2>&1
 
 %files -f INSTALLED_FILES 
 %defattr(-,root,root,-)
 %dir %{python_sitelib}/nml
 %dir %{python_sitelib}/nml/actions
+%dir %{python_sitelib}/nml/ast
+%dir %{python_sitelib}/nml/expression
 
 %changelog
