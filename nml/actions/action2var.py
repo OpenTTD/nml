@@ -545,7 +545,7 @@ def parse_minmax(value, unit, action_list, act6, offset):
         check_range = False
     return (result, check_range)
 
-def parse_result(value, action_list, act6, offset, varaction2, switch_block):
+def parse_result(value, action_list, act6, offset, varaction2):
     """
     Parse a result (another switch or CB result) in a switch block.
 
@@ -563,9 +563,6 @@ def parse_result(value, action_list, act6, offset, varaction2, switch_block):
 
     @param varaction2: Reference to the resulting varaction2
     @type varaction2: L{Action2Var}
-
-    @param switch_block: Reference to the switch block that is being compiled
-    @type switch_block: L{Switch}
 
     @return: A tuple of two values:
                 - The value to use as return value
@@ -642,7 +639,7 @@ def parse_varaction2(switch_block):
     for r in switch_block.body.ranges:
         comment = str(r.min) + " .. " + str(r.max) + ": "
 
-        range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2, switch_block)
+        range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2)
         comment += range_comment
         offset += 2 # size of result
 
@@ -672,7 +669,7 @@ def parse_varaction2(switch_block):
         if not range_overlap:
             varaction2.ranges.append(switch_range.SwitchRange(range_min, range_max, range_result, comment=comment))
 
-    default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, switch_block)
+    default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2)
     varaction2.default_result = default
     varaction2.default_comment = 'Return computed value' if len(switch_block.body.ranges) == 0 else 'default: ' + default_comment
 
