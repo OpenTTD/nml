@@ -582,7 +582,8 @@ def parse_result(value, action_list, act6, offset, varaction2, repeat_result = 1
         result = value
     elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
         comment = "return %s;" % str(value)
-        act6.modify_bytes(value.num.value, 4, offset)
+        for i in range(repeat_result):
+            act6.modify_bytes(value.num.value, 2, offset + 2*i)
         result = expression.ConstantNumeric(0)
     elif isinstance(value, expression.String):
         comment = "return %s;" % str(value)
