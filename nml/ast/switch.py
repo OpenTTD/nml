@@ -1,5 +1,5 @@
 from nml import expression, generic, global_constants, nmlop
-from nml.actions import action2, action2var, action2random, action2var_variables
+from nml.actions import action2, action2var, action2random, action2var_variables, action6
 from nml.ast import general, switch_range
 
 var_ranges = {
@@ -369,12 +369,10 @@ def parse_randomswitch_choices(random_switch):
 
     for choice in random_switch.choices:
         total_prob += choice.probability.value
-        if isinstance(choice.result, expression.ConstantNumeric):
-            choice.comment = "return %d;" % choice.result.value
-        elif isinstance(choice.result, action2.SpriteGroupRef):
+        if isinstance(choice.result, action2.SpriteGroupRef):
             choice.comment = choice.result.name.value + ';'
         else:
-            raise generic.ScriptError("Invalid return value in random_switch.", choice.result.pos)
+            choice.comment = "return %s;" % str(choice.result)
     assert total_prob > 0 # RandomChoice enforces that individual probabilities are > 0
 
     # How many random choices are needed ?
@@ -504,12 +502,22 @@ def parse_randomswitch(random_switch):
         i += 1
 
     random_action2 = action2random.Action2Random(random_switch.feature.value, random_switch.name.value, type_byte, count, random_switch.triggers.value, randbit, nrand, random_switch.choices)
-    random_switch.set_action2(random_action2)
 
-    # Correctly add action2 references, do that now because we need to reference the random action2
+    action6.free_parameters.save()
+    act6 = action6.Action6()
+    action_list = []
+    offset = 8
+    for choice in random_switch.choices:
+        choice.result, comment = action2var.parse_result(choice.result, action_list, act6, offset, random_action2, choice.resulting_prob)
+        offset += choice.resulting_prob * 2
+
     for choice in random_switch.choices:
         choice.comment = "(%d/%d) -> (%d/%d): " % (choice.probability.value, total_prob, choice.resulting_prob, nrand) + choice.comment
-        if isinstance(choice.result, action2.SpriteGroupRef) and choice.result.name.value != 'CB_FAILED':
-            action2.add_ref(choice.result, random_action2)
 
-    return [random_action2]
+    if len(act6.modifications) > 0: action_list.append(act6)
+
+    action_list.append(random_action2)
+    random_switch.set_action2(random_action2)
+
+    action6.free_parameters.restore()
+    return action_list

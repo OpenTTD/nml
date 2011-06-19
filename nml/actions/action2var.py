@@ -545,7 +545,7 @@ def parse_minmax(value, unit, action_list, act6, offset):
         check_range = False
     return (result, check_range)
 
-def parse_result(value, action_list, act6, offset, varaction2):
+def parse_result(value, action_list, act6, offset, varaction2, repeat_result = 1):
     """
     Parse a result (another switch or CB result) in a switch block.
 
@@ -563,6 +563,9 @@ def parse_result(value, action_list, act6, offset, varaction2):
 
     @param varaction2: Reference to the resulting varaction2
     @type varaction2: L{Action2Var}
+
+    @param repeat_result: Repeat any action6 modifying of the next sprite this many times.
+    @type repeat_result: C{int}
 
     @return: A tuple of two values:
                 - The value to use as return value
@@ -590,7 +593,8 @@ def parse_result(value, action_list, act6, offset, varaction2):
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
         comment = "return param[%d];" % tmp_param
         action_list.extend(tmp_param_actions)
-        act6.modify_bytes(tmp_param, 2, offset)
+        for i in range(repeat_result):
+            act6.modify_bytes(tmp_param, 2, offset + 2*i)
         result = expression.ConstantNumeric(0)
     return (result, comment)
 
