@@ -248,12 +248,12 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             Pre-process this node.
             During this stage, the reference graph is built.
             """
-            if not cls_is_relocatable and self._referred_by_type() != SpriteGroupRefType.NONE:
-                register_spritegroup(self)
             if self._referring_to_type() != SpriteGroupRefType.NONE:
                 refs = self.collect_references()
                 for ref in refs:
                     self._add_reference(ref)
+            if not cls_is_relocatable and self._referred_by_type() != SpriteGroupRefType.NONE:
+                register_spritegroup(self)
 
         def prepare_output(self):
             """
