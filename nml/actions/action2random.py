@@ -62,10 +62,12 @@ class RandomChoice(object):
                 raise generic.ScriptError("Value for probability should be higher than 0, encountered %d" % self.probability.value, self.probability.pos)
             if result is None:
                 raise generic.ScriptError("Returning the computed value is not possible in a random_switch, as there is no computed value.", self.probability.pos)
-        if isinstance(result, action2.SpriteGroupRef):
-            self.result = result
-        else:
-            self.result = result.reduce(global_constants.const_list)
+        self.result = result
+        if not isinstance(result, action2.SpriteGroupRef):
+            try:
+                self.result = result.reduce(global_constants.const_list)
+            except generic.ScriptError:
+                pass
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Probability:'

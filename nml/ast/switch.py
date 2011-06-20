@@ -44,6 +44,8 @@ class Switch(switch_base_class):
             if range.result is not None and not isinstance(range.result, (action2.SpriteGroupRef, expression.String)) and not range.result.supported_by_actionD(False):
                 range.result = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), range.result)
                 num_extra_acts += 1
+        if self.body.default is not None and not isinstance(self.body.default, (action2.SpriteGroupRef, expression.String)) and not self.body.default.supported_by_actionD(False):
+            self.body.default = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), self.body.default)
 
         if any(map(lambda x: x is None, [r.result for r in self.body.ranges] + [self.body.default])):
             if len(self.body.ranges) == 0:
@@ -192,9 +194,19 @@ class RandomSwitch(switch_base_class):
 
         self.pos = pos
         self.switch = None
+        self.return_switches = []
 
     def register_names(self):
         pass
+
+    def add_extra_ret_switch(self, name, expr):
+        return_name = expression.Identifier(name, self.pos)
+        return_var_range = expression.Identifier('SELF', self.pos)
+        # Set result to None, it will be parsed correctly during preprocessing
+        return_body = SwitchBody([], None)
+        self.return_switches.append(Switch(self.feature, return_var_range, return_name, expr, return_body, self.pos))
+        self.return_switches[-1].pre_process()
+        return action2.SpriteGroupRef(return_name, [], self.pos)
 
     def pre_process(self):
         # Make sure, all [in]dependencies refer to existing random switch blocks
@@ -218,6 +230,12 @@ class RandomSwitch(switch_base_class):
             self.switch = Switch(va2_feature, va2_range, va2_name, expr, va2_body, self.pos)
 
             self.type_count = expression.ConstantNumeric(0, self.pos) # 0 means 'read from register'
+
+        num_extra_acts = 0
+        for choice in self.choices:
+            if choice.result is not None and not isinstance(choice.result, (action2.SpriteGroupRef, expression.String)) and not choice.result.supported_by_actionD(False):
+                choice.result = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), choice.result)
+                num_extra_acts += 1
 
         # Init ourself first
         self.initialize(self.name, self.feature)
@@ -255,6 +273,8 @@ class RandomSwitch(switch_base_class):
     def get_action_list(self):
         action_list = []
         if self.prepare_output():
+            for ret_switch in self.return_switches:
+                action_list.extend(ret_switch.get_action_list())
             action_list += parse_randomswitch(self)
             if self.switch is not None: action_list += self.switch.get_action_list()
         return action_list
