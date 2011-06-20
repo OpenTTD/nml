@@ -30,9 +30,7 @@ class FunctionCall(Expression):
         return ret
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        param_list = []
-        for param in self.params:
-            param_list.append(param.reduce(id_dicts, unknown_id_fatal))
+        param_list = [param.reduce(id_dicts) for param in self.params]
         if self.name.value in function_table:
             func = function_table[self.name.value]
             val = func(self.name.value, param_list, self.pos)
