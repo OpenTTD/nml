@@ -24,9 +24,7 @@ class Action2Real(action2.Action2):
 real_action2_alias = {
     'loaded': (0, [0x00, 0x01, 0x02, 0x03]),  #vehicles
     'loading': (1, [0x00, 0x01, 0x02, 0x03]), #vehicles
-    'little': (0, [0x04]), #stations (not yet supported)
-    'lots': (1, [0x04]),   #stations
-    'default': (0, [0x04, 0x05, 0x0B, 0x0D, 0x10]), #vehicles, stations, canals, cargos, railtypes, airports
+    'default': (0, [0x05, 0x0B, 0x0D, 0x10]), #canals, cargos, railtypes, airports
 }
 
 def get_real_action2s(spritegroup):
@@ -51,8 +49,6 @@ def get_real_action2s(spritegroup):
     for view in spritegroup.spriteview_list:
         if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value, view.pos)
         type, feature_list = real_action2_alias[view.name.value]
-        #of course stations want to be different, their default view is the second type instead of the first
-        if view.name.value == 'default' and feature is 0x04: type = 1
         if feature not in feature_list:
             raise generic.ScriptError("Sprite view type '%s' is not supported for feature '%02X'." % (view.name.value, feature), view.pos)
 
