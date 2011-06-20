@@ -215,7 +215,7 @@ class LayoutParam(object):
         self.name = name
         self.value = value
         try:
-            if self.name.value not in ('hide_sprite',):
+            if self.name.value not in ('hide_sprite', 'xoffset', 'yoffset', 'zoffset'):
                 self.value = self.value.reduce(global_constants.const_list)
         except generic.ScriptError, ex:
             if isinstance(value, expression.Identifier):

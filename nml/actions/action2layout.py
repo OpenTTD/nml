@@ -40,16 +40,16 @@ class Action2Layout(action2.Action2):
             for sprite in self.sprite_list:
                 sprite.write_sprite_number(file)
                 if advanced: sprite.write_flags(file)
-                file.print_byte(sprite.get_param('xoffset'))
-                file.print_byte(sprite.get_param('yoffset'))
+                file.print_byte(sprite.get_param('xoffset').value)
+                file.print_byte(sprite.get_param('yoffset').value)
                 if sprite.type == Action2LayoutSpriteType.CHILD:
                     file.print_bytex(0x80)
                 else:
                     #normal building sprite
-                    file.print_byte(sprite.get_param('zoffset'))
-                    file.print_byte(sprite.get_param('xextent'))
-                    file.print_byte(sprite.get_param('yextent'))
-                    file.print_byte(sprite.get_param('zextent'))
+                    file.print_byte(sprite.get_param('zoffset').value)
+                    file.print_byte(sprite.get_param('xextent').value)
+                    file.print_byte(sprite.get_param('yextent').value)
+                    file.print_byte(sprite.get_param('zextent').value)
                 if advanced: sprite.write_registers(file)
                 file.newline()
         file.end_sprite()
@@ -76,41 +76,56 @@ class Action2LayoutSprite(object):
             'recolour_mode' : {'value': 0,  'validator': self._validate_recolour_mode},
             'palette'       : {'value': expression.ConstantNumeric(0), 'validator': self._validate_palette},
             'always_draw'   : {'value': 0,  'validator': self._validate_always_draw},
-            'xoffset'       : {'value': 0,  'validator': self._validate_bounding_box},
-            'yoffset'       : {'value': 0,  'validator': self._validate_bounding_box},
-            'zoffset'       : {'value': 0,  'validator': self._validate_bounding_box},
-            'xextent'       : {'value': 16, 'validator': self._validate_bounding_box},
-            'yextent'       : {'value': 16, 'validator': self._validate_bounding_box},
-            'zextent'       : {'value': 16, 'validator': self._validate_bounding_box},
-            'hide_sprite'   : {'value': None, 'validator': self._validate_hide_sprite},
+            'xoffset'       : {'value': expression.ConstantNumeric(0),  'validator': self._validate_bounding_box},
+            'yoffset'       : {'value': expression.ConstantNumeric(0),  'validator': self._validate_bounding_box},
+            'zoffset'       : {'value': expression.ConstantNumeric(0),  'validator': self._validate_bounding_box},
+            'xextent'       : {'value': expression.ConstantNumeric(16), 'validator': self._validate_bounding_box},
+            'yextent'       : {'value': expression.ConstantNumeric(16), 'validator': self._validate_bounding_box},
+            'zextent'       : {'value': expression.ConstantNumeric(16), 'validator': self._validate_bounding_box},
+            'hide_sprite'   : {'value': None, 'validator': self._validate_hide_sprite}, # Value not used
         }
         for i in self.params:
             self.params[i]['is_set'] = False
-        self.temp_registers = []
+            self.params[i]['register'] = None
         self.sprite_from_action1 = False
         self.palette_from_action1 = False
 
     def is_advanced_sprite(self):
-        return self.is_set('hide_sprite') or self.palette_from_action1
+        if self.palette_from_action1: return True
+        return len(self.get_all_registers()) != 0
 
     def get_registers_size(self):
-        size = 0
-        if self.is_set('hide_sprite'):
-            size += 1
+        # Number of registers to write
+        size = len(self.get_all_registers())
+        # Add 2 for the flags
         size += 2
         return size
 
     def write_flags(self, file):
         flags = 0
-        if self.is_set('hide_sprite'):
-            flags |= 0x0001
+        if self.get_register('hide_sprite') is not None:
+            flags |= 1 << 0
         if self.palette_from_action1:
             flags |= 1 << 3
+        assert (self.get_register('xoffset') is not None) == (self.get_register('yoffset') is not None)
+        if self.get_register('xoffset') is not None:
+            flags |= 1 << 4
+        if self.get_register('zoffset') is not None:
+            flags |= 1 << 5
         file.print_wordx(flags)
+
+    def write_register(self, file, name):
+        file.print_bytex(self.get_register(name)[0].tmp_var.mask.value)
 
     def write_registers(self, file):
         if self.is_set('hide_sprite'):
-            file.print_bytex(self.get_param('hide_sprite').tmp_var.mask.value)
+            self.write_register(file, 'hide_sprite')
+        assert (self.get_register('xoffset') is not None) == (self.get_register('yoffset') is not None)
+        if self.get_register('xoffset') is not None:
+            self.write_register(file, 'xoffset')
+            self.write_register(file, 'yoffset')
+        if self.get_register('zoffset') is not None:
+            self.write_register(file, 'zoffset')
 
     def write_sprite_number(self, file):
         num = self.get_sprite_number()
@@ -170,6 +185,18 @@ class Action2LayoutSprite(object):
     def is_set(self, name):
         assert name in self.params
         return self.params[name]['is_set']
+
+    def get_register(self, name):
+        assert name in self.params
+        return self.params[name]['register']
+
+    def get_all_registers(self):
+        return [self.get_register(name) for name in self.params if self.get_register(name) is not None]
+
+    def create_register(self, name, value):
+        store_tmp = action2var.VarAction2StoreTempVar()
+        load_tmp = action2var.VarAction2LoadTempVar(store_tmp)
+        self.params[name]['register'] = (load_tmp, store_tmp, value)
 
     def set_param(self, name, value):
         assert isinstance(name, expression.Identifier)
@@ -253,29 +280,37 @@ class Action2LayoutSprite(object):
         return value.value
 
     def _validate_bounding_box(self, name, value):
-        if not isinstance(value, expression.ConstantNumeric):
-            raise generic.ScriptError("Expected a compile-time constant number.", value.pos)
-        val = value.value
-
         if self.type == Action2LayoutSpriteType.GROUND:
             raise generic.ScriptError(name + " can not be set for ground sprites", value.pos)
         elif self.type == Action2LayoutSpriteType.CHILD:
             if name not in ('xoffset', 'yoffset'):
                 raise generic.ScriptError(name + " can not be set for child sprites", value.pos)
-            generic.check_range(val, 0, 255, name, value.pos)
+            if isinstance(value, expression.ConstantNumeric):
+                generic.check_range(value.value, 0, 255, name, value.pos)
+                return value
         else:
             assert self.type == Action2LayoutSpriteType.BUILDING
             if name in ('xoffset', 'yoffset', 'zoffset'):
-                generic.check_range(val, -128, 127, name, value.pos)
+                if isinstance(value, expression.ConstantNumeric):
+                    generic.check_range(value.value, -128, 127, name, value.pos)
+                    return value
             else:
-                generic.check_range(val, 0, 255, name, value.pos)
-        return val
+                assert name in ('xextent', 'yextent', 'zextent')
+                if not isinstance(value, expression.ConstantNumeric):
+                    raise generic.ScriptError("Value of '%s' must be a compile-time constant number." % name, value.pos)
+                generic.check_range(value.value, 0, 255, name, value.pos)
+                return value
+        # Value must be written to a register
+        self.create_register(name, value)
+        if name == 'xoffset' and self.get_register('yoffset') is None:
+            self.create_register('yoffset', expression.ConstantNumeric(0))
+        if name == 'yoffset' and self.get_register('xoffset') is None:
+            self.create_register('xoffset', expression.ConstantNumeric(0))
+        return expression.ConstantNumeric(0)
 
     def _validate_hide_sprite(self, name, value):
-        store_tmp = action2var.VarAction2StoreTempVar()
-        load_tmp = action2var.VarAction2LoadTempVar(store_tmp)
-        self.temp_registers.append((store_tmp, expression.Not(value)))
-        return load_tmp
+        self.create_register(name, expression.Not(value))
+        return None
 
 def get_layout_action2s(spritegroup):
     ground_sprite = None
@@ -300,7 +335,7 @@ def get_layout_action2s(spritegroup):
         sprite = Action2LayoutSprite(layout_sprite_types[layout_sprite.type.value], layout_sprite.pos)
         for param in layout_sprite.param_list:
             sprite.set_param(param.name, param.value)
-        temp_registers.extend(sprite.temp_registers)
+        temp_registers.extend(sprite.get_all_registers())
         if sprite.type == Action2LayoutSpriteType.GROUND:
             if ground_sprite is not None:
                 raise generic.ScriptError("Sprite layout can have no more than one ground sprite", spritegroup.pos)
@@ -322,8 +357,8 @@ def get_layout_action2s(spritegroup):
     extra_varact2_actions = None
     if temp_registers:
         varact2parser = action2var.Varaction2Parser(feature)
-        for reg_expr_pair in temp_registers:
-            reg, expr = reg_expr_pair
+        for register_info in temp_registers:
+            reg, expr = register_info[1], register_info[2]
             varact2parser.parse(action2var.reduce_varaction2_expr(expr, feature))
             varact2parser.var_list.append(nmlop.STO_TMP)
             varact2parser.var_list.append(reg)
