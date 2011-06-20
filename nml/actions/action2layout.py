@@ -1,5 +1,5 @@
-from nml import generic, expression, nmlop
-from nml.actions import action2, action6, actionD, action1, action2var
+from nml import generic, global_constants, expression, nmlop
+from nml.actions import action2, action6, actionD, action1, action2var, real_sprite
 from nml.ast import switch_range
 
 class Action2Layout(action2.Action2):
@@ -27,7 +27,7 @@ class Action2Layout(action2.Action2):
             file.print_byte(0x40 | len(self.sprite_list))
         else:
             file.print_byte(len(self.sprite_list))
-        file.print_dwordx(self.ground_sprite.get_sprite_number())
+        self.ground_sprite.write_sprite_number(file)
         if advanced:
             self.ground_sprite.write_flags(file)
             self.ground_sprite.write_registers(file)
@@ -38,7 +38,7 @@ class Action2Layout(action2.Action2):
                 file.print_byte(0) #empty bounding box. Note that number of zeros is 5, not 6
         else:
             for sprite in self.sprite_list:
-                file.print_dwordx(sprite.get_sprite_number())
+                sprite.write_sprite_number(file)
                 if advanced: sprite.write_flags(file)
                 file.print_byte(sprite.get_param('xoffset'))
                 file.print_byte(sprite.get_param('yoffset'))
@@ -72,8 +72,7 @@ class Action2LayoutSprite(object):
         self.type = type
         self.pos = pos
         self.params = {
-            'sprite'        : {'value': 0,  'validator': self._validate_sprite},
-            'ttdsprite'     : {'value': expression.ConstantNumeric(0), 'validator': self._validate_ttdsprite},
+            'sprite'        : {'value': None, 'validator': self._validate_sprite},
             'recolour_mode' : {'value': 0,  'validator': self._validate_recolour_mode},
             'palette'       : {'value': expression.ConstantNumeric(0), 'validator': self._validate_palette},
             'always_draw'   : {'value': 0,  'validator': self._validate_always_draw},
@@ -88,6 +87,7 @@ class Action2LayoutSprite(object):
         for i in self.params:
             self.params[i]['is_set'] = False
         self.temp_registers = []
+        self.sprite_from_action1 = False
 
     def is_advanced_sprite(self):
         return self.is_set('hide_sprite')
@@ -109,6 +109,13 @@ class Action2LayoutSprite(object):
         if self.is_set('hide_sprite'):
             file.print_bytex(self.get_param('hide_sprite').tmp_var.mask.value)
 
+    def write_sprite_number(self, file):
+        num = self.get_sprite_number()
+        if isinstance(num, expression.ConstantNumeric):
+            num.write(file, 4)
+        else:
+            file.print_dwordx(0)
+
     def get_sprite_number(self):
         # Layout of sprite number
         # bit  0 - 13: Sprite number
@@ -116,9 +123,8 @@ class Action2LayoutSprite(object):
         # bit 16 - 29: Palette sprite number
         # bit 30: Always draw sprite, even in transparent mode
         # bit 31: This is a custom sprite (from action1), not a TTD sprite
-        assert not (self.is_set('sprite') and self.is_set('ttdsprite'))
-        if not (self.is_set('sprite') or self.is_set('ttdsprite')):
-            raise generic.ScriptError("Either 'sprite' or 'ttdsprite' must be set for this layout sprite", self.pos)
+        if not self.is_set('sprite'):
+            raise generic.ScriptError("'sprite' must be set for this layout sprite", self.pos)
 
         # Make sure that recolouring is set correctly
         if self.get_param('recolour_mode') == 0 and self.is_set('palette'):
@@ -126,21 +132,33 @@ class Action2LayoutSprite(object):
         elif self.get_param('recolour_mode') != 0 and not self.is_set('palette'):
             raise generic.ScriptError("'palette' must be set when 'recolour_mode' is not set to RECOLOUR_NONE.")
 
-        sprite_num = 0
-        if self.is_set('ttdsprite'):
-            if isinstance(self.get_param('ttdsprite'), expression.ConstantNumeric):
-                sprite_num |= self.get_param('ttdsprite').value
-        else:
-            sprite_num |= self.get_param('sprite') | (1 << 31)
-        sprite_num |= self.get_param('recolour_mode') << 14
-
-        palette = self.get_param('palette')
-        if isinstance(palette, expression.ConstantNumeric):
-           sprite_num |= palette.value << 16
-
+        # add the constant terms first
+        sprite_num = self.get_param('recolour_mode') << 14
         if self.get_param('always_draw'):
             sprite_num |= 1 << 30
-        return sprite_num
+        if self.sprite_from_action1:
+            sprite_num |= 1 << 31
+
+        add_sprite = False
+        sprite = self.get_param('sprite')
+        if isinstance(sprite, expression.ConstantNumeric):
+            sprite_num |= sprite.value
+        else:
+            add_sprite = True
+
+        add_palette = False
+        palette = self.get_param('palette')
+        if isinstance(palette, expression.ConstantNumeric):
+            sprite_num |= palette.value << 16
+        else:
+            add_palette = True
+
+        expr = expression.ConstantNumeric(sprite_num, sprite.pos)
+        if add_sprite:
+            expr = expression.BinOp(nmlop.ADD, sprite, expr, sprite.pos)
+        if add_palette:
+            expr = expression.BinOp(nmlop.ADD, palette, expr, sprite.pos)
+        return expr.reduce()
 
     def get_param(self, name):
         assert name in self.params
@@ -154,6 +172,9 @@ class Action2LayoutSprite(object):
         assert isinstance(name, expression.Identifier)
         assert isinstance(value, expression.Expression) or isinstance(value, action2.SpriteGroupRef)
         name = name.value
+        if name == 'ttdsprite':
+            name = 'sprite'
+            generic.print_warning("Using 'ttdsprite' in sprite layouts is deprecated, use 'sprite' instead", value.pos)
 
         if not name in self.params:
             raise generic.ScriptError("Unknown sprite parameter '%s'" % name, value.pos)
@@ -164,32 +185,28 @@ class Action2LayoutSprite(object):
         self.params[name]['is_set'] = True
 
     def _validate_sprite(self, name, value):
-        if not isinstance(value, action2.SpriteGroupRef):
-            raise generic.ScriptError("Value of 'sprite' should be a spriteset identifier, possibly with offset", value.pos)
-        spriteset = action2.resolve_spritegroup(value.name)
+        if isinstance(value, action2.SpriteGroupRef):
+            spriteset = action2.resolve_spritegroup(value.name)
 
-        if len(value.param_list) == 0:
-            offset = 0
-        elif len(value.param_list) == 1:
-            id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
-            offset = value.param_list[0].reduce_constant(id_dicts).value
-            generic.check_range(offset, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", value.pos)
+            if len(value.param_list) == 0:
+                offset = 0
+            elif len(value.param_list) == 1:
+                id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
+                offset = value.param_list[0].reduce_constant(global_constants.const_list + id_dicts).value
+                generic.check_range(offset, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", value.pos)
+            else:
+                raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(value.param_list)), value.pos)
+
+            num = action1.get_action1_index(spriteset) + offset
+            generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
+            self.sprite_from_action1 = True
+            return expression.ConstantNumeric(num)
+
         else:
-            raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(value.param_list)), value.pos)
-
-        num = action1.get_action1_index(spriteset) + offset
-        generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
-        if self.is_set('ttdsprite'):
-            raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
-        return num
-
-    def _validate_ttdsprite(self, name, value):
-        if isinstance(value, expression.ConstantNumeric):
-            generic.check_range(value.value, 0, (1 << 14) - 1, "ttdsprite", value.pos)
-
-        if self.is_set('sprite'):
-            raise generic.ScriptError("Only one 'sprite'/'ttdsprite' definition allowed per ground/building/childsprite", value.pos)
-        return value
+            if isinstance(value, expression.ConstantNumeric):
+                generic.check_range(value.value, 0, (1 << 14) - 1, "sprite", value.pos)
+            self.sprite_from_action1 = False
+            return value
 
     def _validate_recolour_mode(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
@@ -254,7 +271,7 @@ def get_layout_action2s(spritegroup):
     all_spritesets = []
     for layout_sprite in spritegroup.layout_sprite_list:
         for param in layout_sprite.param_list:
-            if param.name.value == 'sprite':
+            if param.name.value == 'sprite' and isinstance(param.value, action2.SpriteGroupRef):
                 all_spritesets.append(action2.resolve_spritegroup(param.value.name))
     actions.extend(action1.add_to_action1(all_spritesets, feature))
 
@@ -279,7 +296,7 @@ def get_layout_action2s(spritegroup):
             raise generic.ScriptError("Sprite layout requires at least one sprite", spritegroup.pos)
         #set to 0 for no ground sprite
         ground_sprite = Action2LayoutSprite(Action2LayoutSpriteType.GROUND)
-        ground_sprite.set_param(expression.Identifier('ttdsprite'), expression.ConstantNumeric(0))
+        ground_sprite.set_param(expression.Identifier('sprite'), expression.ConstantNumeric(0))
 
     action6.free_parameters.save()
     act6 = action6.Action6()
@@ -317,34 +334,22 @@ def get_layout_action2s(spritegroup):
         extra_varact2_actions.append(varaction2)
 
     offset = 4
-    if ground_sprite.is_set('ttdsprite') and not isinstance(ground_sprite.get_param('ttdsprite'), expression.ConstantNumeric):
-        orig_sprite = expression.ConstantNumeric(ground_sprite.get_sprite_number() & 0xFFFF)
-        param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, ground_sprite.get_param('ttdsprite'), orig_sprite).reduce())
+    sprite_num = ground_sprite.get_sprite_number()
+    if not isinstance(sprite_num, expression.ConstantNumeric):
+        param, extra_actions = actionD.get_tmp_parameter(sprite_num)
         actions.extend(extra_actions)
-        act6.modify_bytes(param, 2, offset)
-    offset += 2
-    if not isinstance(ground_sprite.get_param('palette'), expression.ConstantNumeric):
-        orig_palette = expression.ConstantNumeric(ground_sprite.get_sprite_number() >> 16)
-        param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, ground_sprite.get_param('palette'), orig_palette).reduce())
-        actions.extend(extra_actions)
-        act6.modify_bytes(param, 2, offset)
-    offset += 2
+        act6.modify_bytes(param, 4, offset)
+    offset += 4
     offset += ground_sprite.get_registers_size()
 
     for sprite in building_sprites:
-        if sprite.is_set('ttdsprite') and not isinstance(sprite.get_param('ttdsprite'), expression.ConstantNumeric):
-            orig_sprite = expression.ConstantNumeric(sprite.get_sprite_number() & 0xFFFF)
-            param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, sprite.get_param('ttdsprite'), orig_sprite).reduce())
+        sprite_num = sprite.get_sprite_number()
+        if not isinstance(sprite_num, expression.ConstantNumeric):
+            param, extra_actions = actionD.get_tmp_parameter(sprite_num)
             actions.extend(extra_actions)
-            act6.modify_bytes(param, 2, offset)
-        offset += 2
-        if not isinstance(sprite.get_param('palette'), expression.ConstantNumeric):
-            orig_palette = expression.ConstantNumeric(sprite.get_sprite_number() >> 16)
-            param, extra_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.ADD, sprite.get_param('palette'), orig_palette).reduce())
-            actions.extend(extra_actions)
-            act6.modify_bytes(param, 2, offset)
+            act6.modify_bytes(param, 4, offset)
         offset += sprite.get_registers_size()
-        offset += 5 if sprite.type == Action2LayoutSpriteType.CHILD else 8
+        offset += 7 if sprite.type == Action2LayoutSpriteType.CHILD else 10
 
     if len(act6.modifications) > 0:
         actions.append(act6)

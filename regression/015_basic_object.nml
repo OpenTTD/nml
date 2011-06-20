@@ -8,10 +8,10 @@ grf {
 
 spritelayout obj_basic_tile {
     ground {
-        ttdsprite : 1420;
+        sprite : 1420;
     }
     building {
-        ttdsprite     : 2632;
+        sprite        : 2632;
         recolour_mode : RECOLOUR_REMAP;
         palette       : 0x307;
         xextent       : 16;
