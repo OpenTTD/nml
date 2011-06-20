@@ -1,4 +1,4 @@
-from nml import expression, global_constants
+from nml import expression, global_constants, generic
 from nml.actions import action2
 
 class SwitchRange(object):
@@ -14,7 +14,13 @@ class SwitchRange(object):
         self.max = self.max.reduce(global_constants.const_list)
         # Result may be None here, not pre-processed yet
         if isinstance(self.result, expression.Expression):
-            self.result = self.result.reduce(global_constants.const_list)
+            try:
+                self.result = self.result.reduce(global_constants.const_list)
+            except generic.ScriptError:
+                # We want to reduce the result here as much as possible however there
+                # are valid expressions that will still fail here. Ignore the error for
+                # now, if it was a real error it'll be raised again later.
+                pass
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Min:'

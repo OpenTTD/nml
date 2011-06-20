@@ -20,15 +20,30 @@ class Switch(switch_base_class):
         self.expr = expr
         self.body = body
         self.pos = pos
-        self.return_switch = None
+        self.return_switches = []
 
     def register_names(self):
         pass
+
+    def add_extra_ret_switch(self, name, expr):
+        return_name = expression.Identifier(name, self.pos)
+        return_var_range = expression.Identifier('SELF', self.pos)
+        # Set result to None, it will be parsed correctly during preprocessing
+        return_body = SwitchBody([], None)
+        self.return_switches.append(Switch(self.feature, return_var_range, return_name, expr, return_body, self.pos))
+        self.return_switches[-1].pre_process()
+        return action2.SpriteGroupRef(return_name, [], self.pos)
 
     def pre_process(self):
         self.expr = action2var.reduce_varaction2_expr(self.expr, action2var.get_feature(self))
 
         self.body.pre_process()
+
+        num_extra_acts = 0
+        for range in self.body.ranges:
+            if range.result is not None and not isinstance(range.result, (action2.SpriteGroupRef, expression.String)) and not range.result.supported_by_actionD(False):
+                range.result = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), range.result)
+                num_extra_acts += 1
 
         if any(map(lambda x: x is None, [r.result for r in self.body.ranges] + [self.body.default])):
             if len(self.body.ranges) == 0:
@@ -36,22 +51,16 @@ class Switch(switch_base_class):
                 assert self.body.default is None
                 self.body.default = action2.SpriteGroupRef(expression.Identifier('CB_FAILED', self.pos), [], self.pos)
             else:
-                # We need to chain to a second switch block that reads our computed value
-                return_name = expression.Identifier(self.name.value + '@return', self.pos)
-                # Load var 0x1C, which is the last computed value. Variable range (SELF/PARENT) doesn't matter.
-                return_var_range = expression.Identifier('SELF', self.pos)
+                # Load var 0x1C, which is the last computed value. 
                 return_expr = expression.Variable(expression.ConstantNumeric(0x1C, self.pos), pos=self.pos)
-                # Set result to None, it will be parsed correctly during preprocessing
-                return_body = SwitchBody([], None)
-                self.return_switch = Switch(self.feature, return_var_range, return_name, return_expr, return_body, self.pos)
-                self.return_switch.pre_process()
+                ref = self.add_extra_ret_switch('%s@return' % self.name.value, return_expr)
 
                 # Now replace any 'None' result with a reference to the result action
                 for range in self.body.ranges:
                     if range.result is None:
-                        range.result = action2.SpriteGroupRef(return_name, [], self.pos)
+                        range.result = ref
                 if self.body.default is None:
-                    self.body.default = action2.SpriteGroupRef(return_name, [], self.pos)
+                    self.body.default = ref
         elif len(self.body.ranges) == 0:
             # Avoid triggering the 'return computed value' special case
             self.body.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0, self.pos), expression.ConstantNumeric(0, self.pos), self.body.default))
@@ -68,9 +77,9 @@ class Switch(switch_base_class):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
-        if self.return_switch is not None:
+        for ret_swich in self.return_switches:
             print (2+indentation)*' ' + 'Extra switch to return computed value:'
-            self.return_switch.debug_print(indentation + 4)
+            ret_switch.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
@@ -79,8 +88,9 @@ class Switch(switch_base_class):
     def get_action_list(self):
         action_list = []
         if self.prepare_output():
-            if self.return_switch is not None: action_list += self.return_switch.get_action_list()
-            action_list += action2var.parse_varaction2(self)
+            for ret_switch in self.return_switches:
+                action_list.extend(ret_switch.get_action_list())
+            action_list.extend(action2var.parse_varaction2(self))
         return action_list
 
     def __str__(self):
