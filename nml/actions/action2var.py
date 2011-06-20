@@ -591,7 +591,7 @@ def parse_result(value, action_list, act6, offset, varaction2, repeat_result = 1
         action_list.extend(actions)
         result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
     else:
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.OR, value, expression.ConstantNumeric(0x8000)))
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.OR, value, expression.ConstantNumeric(0x8000)).reduce())
         comment = "return param[%d];" % tmp_param
         action_list.extend(tmp_param_actions)
         for i in range(repeat_result):
