@@ -88,9 +88,10 @@ class Action2LayoutSprite(object):
             self.params[i]['is_set'] = False
         self.temp_registers = []
         self.sprite_from_action1 = False
+        self.palette_from_action1 = False
 
     def is_advanced_sprite(self):
-        return self.is_set('hide_sprite')
+        return self.is_set('hide_sprite') or self.palette_from_action1
 
     def get_registers_size(self):
         size = 0
@@ -103,6 +104,8 @@ class Action2LayoutSprite(object):
         flags = 0
         if self.is_set('hide_sprite'):
             flags |= 0x0001
+        if self.palette_from_action1:
+            flags |= 1 << 3
         file.print_wordx(flags)
 
     def write_registers(self, file):
@@ -184,24 +187,36 @@ class Action2LayoutSprite(object):
         self.params[name]['value'] = self.params[name]['validator'](name, value)
         self.params[name]['is_set'] = True
 
+    def resolve_spritegroup_ref(self, sg_ref):
+        """
+        Resolve a reference to a (sprite/palette) sprite group
+
+        @param sg_ref: Reference to a sprite group
+        @type sg_ref: L{SpriteGroupRef}
+
+        @return: Sprite number (index of action1 set) to use
+        @rtype: L{Expression}
+        """
+        spriteset = action2.resolve_spritegroup(sg_ref.name)
+
+        # TODO fix this to use ASL bit1/2
+        if len(sg_ref.param_list) == 0:
+            offset = 0
+        elif len(sg_ref.param_list) == 1:
+            id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
+            offset = sg_ref.param_list[0].reduce_constant(global_constants.const_list + id_dicts).value
+            generic.check_range(offset, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", sg_ref.pos)
+        else:
+            raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(sg_ref.param_list)), sg_ref.pos)
+
+        num = action1.get_action1_index(spriteset) + offset
+        generic.check_range(num, 0, (1 << 14) - 1, "sprite", sg_ref.pos)
+        return expression.ConstantNumeric(num)
+
     def _validate_sprite(self, name, value):
         if isinstance(value, action2.SpriteGroupRef):
-            spriteset = action2.resolve_spritegroup(value.name)
-
-            if len(value.param_list) == 0:
-                offset = 0
-            elif len(value.param_list) == 1:
-                id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
-                offset = value.param_list[0].reduce_constant(global_constants.const_list + id_dicts).value
-                generic.check_range(offset, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", value.pos)
-            else:
-                raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(value.param_list)), value.pos)
-
-            num = action1.get_action1_index(spriteset) + offset
-            generic.check_range(num, 0, (1 << 14) - 1, "sprite", value.pos)
             self.sprite_from_action1 = True
-            return expression.ConstantNumeric(num)
-
+            return self.resolve_spritegroup_ref(value)
         else:
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, (1 << 14) - 1, "sprite", value.pos)
@@ -217,10 +232,14 @@ class Action2LayoutSprite(object):
         return value.value
 
     def _validate_palette(self, name, value):
-        if isinstance(value, expression.ConstantNumeric):
-            generic.check_range(value.value, 0, (1 << 14) - 1, "palette", value.pos)
-        value.supported_by_actionD(True)
-        return value
+        if isinstance(value, action2.SpriteGroupRef):
+            self.palette_from_action1 = True
+            return self.resolve_spritegroup_ref(value)
+        else:
+            if isinstance(value, expression.ConstantNumeric):
+                generic.check_range(value.value, 0, (1 << 14) - 1, "palette", value.pos)
+            self.palette_from_action1 = False
+            return value
 
     def _validate_always_draw(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
@@ -231,7 +250,6 @@ class Action2LayoutSprite(object):
 
         if value.value not in (0, 1):
             raise generic.ScriptError("Value of 'always_draw' should be 0 or 1", value.pos)
-        #bit has no effect for ground sprites but should be left empty, so ignore it
         return value.value
 
     def _validate_bounding_box(self, name, value):
@@ -271,7 +289,7 @@ def get_layout_action2s(spritegroup):
     all_spritesets = []
     for layout_sprite in spritegroup.layout_sprite_list:
         for param in layout_sprite.param_list:
-            if param.name.value == 'sprite' and isinstance(param.value, action2.SpriteGroupRef):
+            if param.name.value in ('sprite', 'palette') and isinstance(param.value, action2.SpriteGroupRef):
                 all_spritesets.append(action2.resolve_spritegroup(param.value.name))
     actions.extend(action1.add_to_action1(all_spritesets, feature))
 
