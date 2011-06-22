@@ -223,7 +223,8 @@ class LiveryOverride(object):
 graphics_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.NONE, True)
 
 class GraphicsBlock(graphics_base_class):
-    def __init__(self, graphics_list, default_graphics):
+    def __init__(self, graphics_list, default_graphics, pos):
+        self.pos = pos
         self.graphics_list = graphics_list
         self.default_graphics = default_graphics
 
@@ -244,8 +245,9 @@ class GraphicsBlock(graphics_base_class):
         print indentation*' ' + 'Graphics block:'
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
-        print (indentation+2)*' ' + 'Default graphics:'
-        self.default_graphics.debug_print(indentation + 4)
+        if self.default_graphics is not None:
+            print (indentation+2)*' ' + 'Default graphics:'
+            self.default_graphics.debug_print(indentation + 4)
 
     def get_action_list(self):
         global item_feature, item_id

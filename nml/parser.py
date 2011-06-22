@@ -341,23 +341,23 @@ class NMLParser(object):
 
     def p_graphics_block(self, t):
         'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
-        t[0] = t[3]
-        t[0].pos = t.lineno(1)
+        t[0] = item.GraphicsBlock(t[3][0], t[3][1], t.lineno(1))
 
     def p_liveryoverride_block(self, t):
         'liveryoverride_block : LIVERYOVERRIDE LPAREN expression RPAREN LBRACE graphics_list RBRACE'
-        t[0] = item.LiveryOverride(t[3], t[6], t.lineno(1))
+        t[0] = item.LiveryOverride(t[3], item.GraphicsBlock(t[6][0], t[6][1], t.lineno(1)), t.lineno(1))
 
     def p_graphics_list(self, t):
         '''graphics_list : graphics_assignment_list
                          | graphics_assignment_list spritegroup_ref SEMICOLON
                          | spritegroup_ref SEMICOLON'''
+        # Save graphics block as a tuple, we need to add position info later
         if len(t) == 2:
-            t[0] = item.GraphicsBlock(t[1], None)
+            t[0] = (t[1], None)
         elif len(t) == 4:
-            t[0] = item.GraphicsBlock(t[1], t[2])
+            t[0] = (t[1], t[2])
         else:
-            t[0] = item.GraphicsBlock([], t[1])
+            t[0] = ([], t[1])
 
     def p_graphics_assignment(self, t):
         'graphics_assignment : expression COLON spritegroup_ref SEMICOLON'
