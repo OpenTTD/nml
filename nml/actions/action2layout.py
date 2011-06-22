@@ -342,7 +342,7 @@ def get_layout_action2s(spritegroup):
         for param in layout_sprite.param_list:
             if param.name.value in ('sprite', 'palette') and isinstance(param.value, action2.SpriteGroupRef):
                 all_spritesets.append(action2.resolve_spritegroup(param.value.name))
-    actions.extend(action1.add_to_action1(all_spritesets, feature))
+    actions.extend(action1.add_to_action1(all_spritesets, feature, spritegroup.pos))
 
     temp_registers = []
     for layout_sprite in spritegroup.layout_sprite_list:

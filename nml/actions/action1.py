@@ -124,7 +124,7 @@ collection will be created.
 """
 last_spriteset_collection = None
 
-def add_to_action1(spritesets, feature):
+def add_to_action1(spritesets, feature, pos):
     """
     Add a list of spritesets to a spriteset collection. This will try to reuse
     one collection as long as possible and create a new one when needed.
@@ -140,6 +140,11 @@ def add_to_action1(spritesets, feature):
     """
     if not spritesets:
         return []
+
+    setsize = len(real_sprite.parse_sprite_list(spritesets[0].sprite_list, spritesets[0].pcx))
+    for spriteset in spritesets:
+        if setsize != len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)):
+            raise generic.ScriptError("Using spritesets with different sizes in a single SpriteLayout", pos)
 
     global last_spriteset_collection
     actions = []
