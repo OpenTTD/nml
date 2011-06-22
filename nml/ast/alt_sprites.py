@@ -35,8 +35,6 @@ class AltSpritesBlock(base_statement.BaseStatement):
         self.pcx = param_list[2] if len(param_list) >= 3 else None
         self.sprite_list = sprite_list
 
-    def register_names(self):
-        pass
 
     def pre_process(self):
         if self.pcx:

@@ -33,9 +33,6 @@ class DisableItem(base_statement.BaseStatement):
         else:
             self.last_id = None
 
-    def register_names(self):
-        pass
-
     def debug_print(self, indentation):
         print indentation*' ' + 'Disable items, feature=' + str(self.feature.value)
         if self.first_id is not None:
@@ -50,9 +47,6 @@ class DisableItem(base_statement.BaseStatement):
         if self.first_id is not None: ret += ', ' + str(self.first_id)
         if self.last_id is not None: ret += ', ' + str(self.last_id)
         return 'disable_item(%s);\n' % ret
-
-    def pre_process(self):
-        pass
 
     def get_action_list(self):
         return action0.get_disable_actions(self)

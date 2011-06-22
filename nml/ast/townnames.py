@@ -37,9 +37,6 @@ class TownNames(base_statement.BaseStatement):
         self.actFs = []
         self.parts = []
 
-    def register_names(self):
-        pass
-
     def debug_print(self, indentation):
         if isinstance(self.name, basestring):
             name_text = "name = " + repr(self.name)

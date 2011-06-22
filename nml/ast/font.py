@@ -13,9 +13,6 @@ class FontGlyphBlock(base_statement.BaseStatement):
         self.sprite_list = sprite_list
         self.name = None
 
-    def register_names(self):
-        pass
-
     def pre_process(self):
         if self.pcx:
             self.pcx.reduce()

@@ -28,9 +28,6 @@ class ReplaceSprite(base_statement.BaseStatement):
         self.sprite_list = sprite_list
         self.name = None
 
-    def register_names(self):
-        pass
-
     def pre_process(self):
         num_params = len(self.param_list)
         if not (1 <= num_params <= 2):
@@ -91,9 +88,6 @@ class ReplaceNewSprite(object):
         self.param_list = param_list
         self.sprite_list = sprite_list
         self.name = None
-
-    def register_names(self):
-        pass
 
     def pre_process(self):
         num_params = len(self.param_list)

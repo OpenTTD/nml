@@ -22,12 +22,6 @@ class Action11(base_action.BaseAction, base_statement.BaseStatement):
         file.print_word(len(self.sounds))
         file.end_sprite()
 
-    def register_names(self):
-        pass
-
-    def pre_process(self):
-        pass
-
     def get_action_list(self):
         return [self] + self.sounds
 

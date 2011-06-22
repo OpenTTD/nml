@@ -20,12 +20,6 @@ class Snowline(base_statement.BaseStatement):
         self.type = line_type.value
         self.date_heights = height_data
 
-    def register_names(self):
-        pass
-
-    def pre_process(self):
-        pass
-
     def debug_print(self, indentation):
         print indentation*' ' + 'Snowline (type=%s)' % self.type
         for dh in self.date_heights:

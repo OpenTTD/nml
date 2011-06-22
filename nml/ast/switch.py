@@ -22,9 +22,6 @@ class Switch(switch_base_class):
         self.body = body
         self.return_switches = []
 
-    def register_names(self):
-        pass
-
     def add_extra_ret_switch(self, name, expr):
         return_name = expression.Identifier(name, self.pos)
         return_var_range = expression.Identifier('SELF', self.pos)
@@ -195,9 +192,6 @@ class RandomSwitch(switch_base_class):
 
         self.switch = None
         self.return_switches = []
-
-    def register_names(self):
-        pass
 
     def add_extra_ret_switch(self, name, expr):
         return_name = expression.Identifier(name, self.pos)

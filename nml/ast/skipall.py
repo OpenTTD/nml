@@ -8,12 +8,6 @@ class SkipAll(base_statement.BaseStatement):
     def __init__(self, pos):
         base_statement.BaseStatement.__init__(self, "exit-statement", pos)
 
-    def register_names(self):
-        pass
-
-    def pre_process(self):
-        pass
-
     def get_action_list(self):
         return [action7.UnconditionalSkipAction(9, 0)]
 

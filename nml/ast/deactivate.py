@@ -6,9 +6,6 @@ class DeactivateBlock(base_statement.BaseStatement):
         base_statement.BaseStatement.__init__(self, "deactivate()", pos)
         self.grfid_list = grfid_list
 
-    def register_names(self):
-        pass
-
     def pre_process(self):
         self.grfid_list = [grfid.reduce() for grfid in self.grfid_list]
 

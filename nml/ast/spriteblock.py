@@ -9,9 +9,6 @@ class TemplateDeclaration(base_statement.BaseStatement):
         self.param_list = param_list
         self.sprite_list = sprite_list
 
-    def register_names(self):
-        pass
-
     def pre_process(self):
         #check that all templates that are referred to exist at this point
         #This prevents circular dependencies

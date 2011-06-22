@@ -13,9 +13,6 @@ class BaseCost(base_statement.BaseStatement):
         base_statement.BaseStatement.__init__(self, "basecost-block", pos)
         self.costs = costs
 
-    def register_names(self):
-        pass
-
     def pre_process(self):
         new_costs = []
 

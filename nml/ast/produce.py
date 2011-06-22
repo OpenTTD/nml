@@ -30,9 +30,6 @@ class Produce(produce_base_class):
         self.param_list = param_list
         self.switch = None
 
-    def register_names(self):
-        pass
-
     def pre_process(self):
         if not (6 <= len(self.param_list) <= 7):
             raise generic.ScriptError("produce-block requires 6 or 7 parameters, encountered " + str(len(self.param_list)), self.pos)

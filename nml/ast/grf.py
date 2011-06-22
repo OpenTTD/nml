@@ -56,9 +56,6 @@ class GRF(base_statement.BaseStatement):
             elif assignment.name.value == "min_compatible_version": self.min_compatible_version = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
 
-    def register_names(self):
-        pass
-
     def pre_process(self):
         if None in (self.name, self.desc, self.grfid, self.version, self.min_compatible_version):
             raise generic.ScriptError("A GRF-block requires the 'name', 'desc', 'grfid', 'version' and 'min_compatible_version' properties to be set.", self.pos)

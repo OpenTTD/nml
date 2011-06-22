@@ -14,12 +14,6 @@ class RailtypeTable(base_statement.BaseStatement):
             expression.parse_string_to_dword(self.railtype_list[i])
             global_constants.railtype_table[self.railtype_list[i].value] = i
 
-    def register_names(self):
-        pass
-
-    def pre_process(self):
-        pass
-
     def debug_print(self, indentation):
         print indentation*' ' + 'Railtype table'
         for railtype in self.railtype_list:
