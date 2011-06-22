@@ -38,7 +38,7 @@ class GRF(base_statement.BaseStatement):
     @type params: C{list} of L{ParameterDescription}
     """
     def __init__(self, alist, pos):
-        base_statement.BaseStatement.__init__(self, "grf-block", pos)
+        base_statement.BaseStatement.__init__(self, "grf-block", pos, False, False)
         self.name = None
         self.desc = None
         self.grfid = None
