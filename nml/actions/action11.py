@@ -6,8 +6,9 @@ from nml import generic, expression
 from nml.actions import base_action
 
 class Action11(base_action.BaseAction):
-    def __init__(self, sounds):
+    def __init__(self, sounds, pos):
         self.sounds = sounds
+        self.pos = pos
         self.sounds[-1].last = True
 
     def prepare_output(self):

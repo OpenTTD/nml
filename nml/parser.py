@@ -615,7 +615,7 @@ class NMLParser(object):
     #
     def p_sounds(self, t):
         '''sounds : SOUNDS LBRACE sound_list RBRACE'''
-        t[0] = action11.Action11(t[3])
+        t[0] = action11.Action11(t[3], t.lineno(1))
 
     def p_sound_list(self, t):
         '''sound_list : sound
