@@ -1,10 +1,6 @@
 from nml import generic
 from nml.ast import base_statement
 
-def print_script(script, indent):
-    for r in script:
-        r.debug_print(indent)
-
 feature_ids = {
     'FEAT_TRAINS': 0x00,
     'FEAT_ROADVEHS': 0x01,
