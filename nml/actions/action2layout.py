@@ -120,7 +120,7 @@ class Action2LayoutSprite(object):
 
     def write_register(self, file, name):
         register = self.get_register(name)[0]
-        file.print_bytex(register.parameter.value)
+        file.print_bytex(register.parameter)
 
     def write_registers(self, file):
         if self.is_set('hide_sprite'):
@@ -205,7 +205,7 @@ class Action2LayoutSprite(object):
     def create_register(self, name, value):
         if isinstance(value, expression.StorageOp) and value.name == "LOAD_TEMP" and isinstance(value.register, expression.ConstantNumeric):
             store_tmp = None
-            load_tmp = action2var.VarAction2Var(0x7F, expression.ConstantNumeric(0), expression.ConstantNumeric(0xFFFFFFFF), value.register)
+            load_tmp = action2var.VarAction2Var(0x7F, 0, 0xFFFFFFFF, value.register.value)
         else:
             store_tmp = action2var.VarAction2StoreTempVar()
             load_tmp = action2var.VarAction2LoadTempVar(store_tmp)

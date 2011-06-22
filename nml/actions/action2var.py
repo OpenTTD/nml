@@ -38,7 +38,7 @@ class Action2Var(action2.Action2):
     def prepare_output(self):
         action2.Action2.prepare_output(self)
         for i in range(0, len(self.var_list) - 1, 2):
-            self.var_list[i].shift.value |= 0x20
+            self.var_list[i].shift |= 0x20
 
         for r in self.ranges:
             if isinstance(r.result, action2.SpriteGroupRef):
@@ -81,6 +81,34 @@ class Action2Var(action2.Action2):
         file.end_sprite()
 
 class VarAction2Var(object):
+    """
+    Represents a variable for use in a (advanced) variational action2.
+
+    @ivar var_num: Number of the variable to use.
+    @type var_num: C{int}
+
+    @ivar shift: The number of bits to shift the value of the given variable to the right.
+    @type shift: C{int}
+
+    @ivar mask: Bitmask to use on the value after shifting it.
+    @type mask: C{int}
+
+    @ivar parameter: Parameter to be used as argument for the variable.
+    @type parameter: C{int} or C{None}
+    @precondition: (0x60 <= var_num <= 0x7F) == (parameter is not None)
+
+    @ivar add: If not C{None}, add this value to the result.
+    @type add: C{int} or C{None}
+
+    @ivar div: If not C{None}, divide the result by this.
+    @type add: C{int} or C{None}
+
+    @ivar mod: If not C{None}, compute (result module mod).
+    @type add: C{int} or C{None}
+
+    @ivar comment: Textual description of this variable.
+    @type comment: C{basestr}
+    """
     def __init__(self, var_num, shift, mask, parameter = None):
         self.var_num = var_num
         self.shift = shift
@@ -93,19 +121,20 @@ class VarAction2Var(object):
 
     def write(self, file, size):
         file.print_bytex(self.var_num)
-        if self.parameter is not None: self.parameter.write(file, 1)
+        if self.parameter is not None:
+            file.print_bytex(self.parameter)
         if self.mod is not None:
-            self.shift.value |= 0x80
+            self.shift |= 0x80
         elif self.add is not None or self.div is not None:
-            self.shift.value |= 0x40
-        self.shift.write(file, 1)
-        self.mask.write(file, size)
+            self.shift |= 0x40
+        file.print_bytex(self.shift)
+        file.print_varx(self.mask, size)
         if self.add is not None:
-            self.add.write(file, size)
+            file.print_varx(self.add, size)
             if self.div is not None:
-                self.div.write(file, size)
+                file.print_varx(self.div, size)
             elif self.mod is not None:
-                self.mod.write(file, size)
+                file.print_varx(self.mod, size)
             else:
                 #no div or add, just divide by 1
                 file.print_varx(1, size)
@@ -123,14 +152,14 @@ class VarAction2Var(object):
 
 class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
-        VarAction2Var.__init__(self, 0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
+        VarAction2Var.__init__(self, 0x1A, 0, 0)
         #mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
         self.load_vars = []
 
     def set_register(self, register):
-        self.mask = expression.ConstantNumeric(register)
+        self.mask = register
         for load_var in self.load_vars:
-            load_var.parameter = self.mask
+            load_var.parameter = register
 
     def get_size(self):
         return 6
@@ -142,13 +171,13 @@ def get_mask(size):
 
 class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
     def __init__(self, tmp_var):
-        VarAction2Var.__init__(self, 0x7D, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
+        VarAction2Var.__init__(self, 0x7D, 0, 0)
         expression.Expression.__init__(self, None)
         assert isinstance(tmp_var, VarAction2StoreTempVar)
         tmp_var.load_vars.append(self)
 
     def write(self, file, size):
-        self.mask = expression.ConstantNumeric(get_mask(size))
+        self.mask = get_mask(size)
         VarAction2Var.write(self, file, size)
 
     def get_size(self):
@@ -264,7 +293,7 @@ class Varaction2Parser(object):
         self.var_list.append(nmlop.STO_TMP)
         self.var_list.append(guard_var)
         self.var_list.append(nmlop.XOR)
-        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(1))
+        var = VarAction2Var(0x1A, 0, 1)
         self.var_list.append(var)
         self.var_list.append(nmlop.STO_TMP)
         self.var_list.append(inverted_guard_var)
@@ -301,12 +330,12 @@ class Varaction2Parser(object):
         return ret
 
     def parse_expr_to_constant(self, expr, offset):
-        if isinstance(expr, expression.ConstantNumeric): return expr
+        if isinstance(expr, expression.ConstantNumeric): return expr.value
 
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
         self.extra_actions.extend(tmp_param_actions)
         self.mods.append(Modification(tmp_param, 4, self.var_list_size + offset))
-        return expression.ConstantNumeric(0)
+        return 0
 
     def parse_variable(self, expr):
         if not isinstance(expr.num, expression.ConstantNumeric):
@@ -331,7 +360,7 @@ class Varaction2Parser(object):
             for extra_param in expr.extra_params:
                 self.parse(extra_param[1])
                 self.var_list.append(nmlop.STO_TMP)
-                var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(extra_param[0]))
+                var = VarAction2Var(0x1A, 0, extra_param[0])
                 self.var_list.append(var)
                 self.var_list.append(nmlop.VAL2)
                 self.var_list_size += var.get_size() + 2
@@ -342,10 +371,15 @@ class Varaction2Parser(object):
                 self.var_list.append(backup_op)
                 self.var_list_size += value_loadback.get_size() + 1
 
-        offset = 2 if expr.param is None else 3
+        if expr.param is None:
+            offset = 2
+            param = None
+        else:
+            offset = 3
+            param = expr.param.value
         mask = self.parse_expr_to_constant(expr.mask, offset)
 
-        var = VarAction2Var(expr.num.value, expr.shift, mask, expr.param)
+        var = VarAction2Var(expr.num.value, expr.shift.value, mask, param)
 
         if expr.add is not None:
             var.add = self.parse_expr_to_constant(expr.add, offset + 4)
@@ -390,14 +424,14 @@ class Varaction2Parser(object):
 
 
     def parse_constant(self, expr):
-        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expr)
+        var = VarAction2Var(0x1A, 0, expr.value)
         self.var_list.append(var)
         self.var_list_size += var.get_size()
 
 
     def parse_param(self, expr):
         self.mods.append(Modification(expr.num.value, 4, self.var_list_size + 2))
-        var = VarAction2Var(0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
+        var = VarAction2Var(0x1A, 0, 0)
         var.comment = str(expr)
         self.var_list.append(var)
         self.var_list_size += var.get_size()
