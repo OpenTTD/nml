@@ -2,24 +2,6 @@ from nml import expression, generic, global_constants, unit
 from nml.ast import base_statement, conditional, loop, general
 from nml.actions import action0, action2, action3
 
-def validate_item_block(block_list):
-    """
-    Make sure all AST-nodes in the given list of blocks and in all
-    sub-blocks are valid to appear inside an item-block.
-    """
-    for block in block_list:
-        if isinstance(block, PropertyBlock): continue
-        if isinstance(block, GraphicsBlock): continue
-        if isinstance(block, LiveryOverride): continue
-        if isinstance(block, conditional.ConditionalList):
-            for block in block.conditionals:
-                validate_item_block(block.block)
-            continue
-        if isinstance(block, loop.Loop):
-            validate_item_block(block.body)
-            continue
-        raise generic.ScriptError("Invalid block type inside 'Item'-block", block.pos)
-
 item_feature = None
 item_id = None
 
