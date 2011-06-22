@@ -1,6 +1,8 @@
 from nml import generic
 from .base_expression import Expression, ConstantNumeric
 
+ignore_all_invalid_ids = False
+
 class Identifier(Expression):
     def __init__(self, value, pos = None):
         Expression.__init__(self, pos)
@@ -21,7 +23,7 @@ class Identifier(Expression):
                     return func(id_d[self.value], self.pos)
                 else:
                     return func(id_d[self.value], self.pos).reduce(id_dicts)
-        if unknown_id_fatal: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
+        if unknown_id_fatal and not ignore_all_invalid_ids: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
         return self
 
     def supported_by_actionD(self, raise_error):

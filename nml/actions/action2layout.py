@@ -105,6 +105,10 @@ class Action2LayoutSprite(object):
         flags = 0
         if self.get_register('hide_sprite') is not None:
             flags |= 1 << 0
+        if self.get_register('sprite') is not None:
+            flags |= 1 << 1
+        if self.get_register('palette') is not None:
+            flags |= 1 << 2
         if self.palette_from_action1:
             flags |= 1 << 3
         assert (self.get_register('xoffset') is not None) == (self.get_register('yoffset') is not None)
@@ -120,6 +124,10 @@ class Action2LayoutSprite(object):
     def write_registers(self, file):
         if self.is_set('hide_sprite'):
             self.write_register(file, 'hide_sprite')
+        if self.get_register('sprite') is not None:
+            self.write_register(file, 'sprite')
+        if self.get_register('palette') is not None:
+            self.write_register(file, 'palette')
         assert (self.get_register('xoffset') is not None) == (self.get_register('yoffset') is not None)
         if self.get_register('xoffset') is not None:
             self.write_register(file, 'xoffset')
@@ -226,24 +234,29 @@ class Action2LayoutSprite(object):
         """
         spriteset = action2.resolve_spritegroup(sg_ref.name)
 
-        # TODO fix this to use ASL bit1/2
         if len(sg_ref.param_list) == 0:
-            offset = 0
+            offset = None
         elif len(sg_ref.param_list) == 1:
             id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
-            offset = sg_ref.param_list[0].reduce_constant(global_constants.const_list + id_dicts).value
-            generic.check_range(offset, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", sg_ref.pos)
+            expression.identifier.ignore_all_invalid_ids = True
+            offset = sg_ref.param_list[0].reduce(global_constants.const_list + id_dicts)
+            expression.identifier.ignore_all_invalid_ids = False
+            if isinstance(offset, expression.ConstantNumeric):
+                generic.check_range(offset.value, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", sg_ref.pos)
         else:
             raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(sg_ref.param_list)), sg_ref.pos)
 
-        num = action1.get_action1_index(spriteset) + offset
+        num = action1.get_action1_index(spriteset)
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", sg_ref.pos)
-        return expression.ConstantNumeric(num)
+        return expression.ConstantNumeric(num), offset
 
     def _validate_sprite(self, name, value):
         if isinstance(value, action2.SpriteGroupRef):
             self.sprite_from_action1 = True
-            return self.resolve_spritegroup_ref(value)
+            val, offset = self.resolve_spritegroup_ref(value)
+            if offset is not None:
+                self.create_register(name, offset)
+            return val
         else:
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, (1 << 14) - 1, "sprite", value.pos)
@@ -261,7 +274,10 @@ class Action2LayoutSprite(object):
     def _validate_palette(self, name, value):
         if isinstance(value, action2.SpriteGroupRef):
             self.palette_from_action1 = True
-            return self.resolve_spritegroup_ref(value)
+            val, offset = self.resolve_spritegroup_ref(value)
+            if offset is not None:
+                self.create_register(name, offset)
+            return val
         else:
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, (1 << 14) - 1, "palette", value.pos)
