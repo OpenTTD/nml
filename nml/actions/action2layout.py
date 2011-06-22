@@ -119,7 +119,11 @@ class Action2LayoutSprite(object):
         file.print_wordx(flags)
 
     def write_register(self, file, name):
-        file.print_bytex(self.get_register(name)[0].tmp_var.mask.value)
+        register = self.get_register(name)[0]
+        if isinstance(register, action2var.VarAction2LoadTempVar):
+            file.print_bytex(register.tmp_var.mask.value)
+        else:
+            file.print_bytex(register.parameter.value)
 
     def write_registers(self, file):
         if self.is_set('hide_sprite'):
@@ -202,8 +206,12 @@ class Action2LayoutSprite(object):
         return [self.get_register(name) for name in self.params if self.get_register(name) is not None]
 
     def create_register(self, name, value):
-        store_tmp = action2var.VarAction2StoreTempVar()
-        load_tmp = action2var.VarAction2LoadTempVar(store_tmp)
+        if isinstance(value, expression.StorageOp) and value.name == "LOAD_TEMP" and isinstance(value.register, expression.ConstantNumeric):
+            store_tmp = None
+            load_tmp = action2var.VarAction2Var(0x7F, expression.ConstantNumeric(0), expression.ConstantNumeric(0xFFFFFFFF), value.register)
+        else:
+            store_tmp = action2var.VarAction2StoreTempVar()
+            load_tmp = action2var.VarAction2LoadTempVar(store_tmp)
         self.params[name]['register'] = (load_tmp, store_tmp, value)
 
     def set_param(self, name, value):
@@ -375,32 +383,36 @@ def get_layout_action2s(spritegroup):
         varact2parser = action2var.Varaction2Parser(feature)
         for register_info in temp_registers:
             reg, expr = register_info[1], register_info[2]
+            if reg is None: continue
             varact2parser.parse(action2var.reduce_varaction2_expr(expr, feature))
             varact2parser.var_list.append(nmlop.STO_TMP)
             varact2parser.var_list.append(reg)
             varact2parser.var_list.append(nmlop.VAL2)
             varact2parser.var_list_size += reg.get_size() + 2
-        #Remove the last VAL2 operator
-        varact2parser.var_list.pop()
-        varact2parser.var_list_size -= 1
-        
-        extra_varact2_actions = varact2parser.extra_actions
-        extra_act6 = action6.Action6()
-        for mod in varact2parser.mods:
-            extra_act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
-        if len(extra_act6.modifications) > 0: extra_varact2_actions.append(extra_act6)
 
-        orig_name = spritegroup.name.value
-        spritegroup.name = expression.Identifier('%s@orig' % orig_name)
-        action2.register_spritegroup(spritegroup)
-        varaction2 = action2var.Action2Var(feature, '%s@registers' % orig_name, 0x89)
-        varaction2.var_list = varact2parser.var_list
-        ref = action2.SpriteGroupRef(spritegroup.name, [], None)
-        varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, comment=''))
-        varaction2.default_result = ref
-        varaction2.default_comment = ''
-        
-        extra_varact2_actions.append(varaction2)
+        # Only continue if we actually needed any new registers
+        if varact2parser.var_list:
+            #Remove the last VAL2 operator
+            varact2parser.var_list.pop()
+            varact2parser.var_list_size -= 1
+
+            extra_varact2_actions = varact2parser.extra_actions
+            extra_act6 = action6.Action6()
+            for mod in varact2parser.mods:
+                extra_act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
+            if len(extra_act6.modifications) > 0: extra_varact2_actions.append(extra_act6)
+
+            orig_name = spritegroup.name.value
+            spritegroup.name = expression.Identifier('%s@orig' % orig_name)
+            action2.register_spritegroup(spritegroup)
+            varaction2 = action2var.Action2Var(feature, '%s@registers' % orig_name, 0x89)
+            varaction2.var_list = varact2parser.var_list
+            ref = action2.SpriteGroupRef(spritegroup.name, [], None)
+            varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, comment=''))
+            varaction2.default_result = ref
+            varaction2.default_comment = ''
+
+            extra_varact2_actions.append(varaction2)
 
     offset = 4
     sprite_num = ground_sprite.get_sprite_number()
