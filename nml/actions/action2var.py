@@ -33,7 +33,7 @@ class Action2Var(action2.Action2):
             if isinstance(var, VarAction2StoreTempVar):
                 location = self.tmp_locations[0]
                 self.remove_tmp_location(location, False)
-                var.mask = expression.ConstantNumeric(location)
+                var.set_register(location)
 
     def prepare_output(self):
         action2.Action2.prepare_output(self)
@@ -125,6 +125,12 @@ class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
         VarAction2Var.__init__(self, 0x1A, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
         #mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
+        self.load_vars = []
+
+    def set_register(self, register):
+        self.mask = expression.ConstantNumeric(register)
+        for load_var in self.load_vars:
+            load_var.parameter = self.mask
 
     def get_size(self):
         return 6
@@ -139,10 +145,9 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
         VarAction2Var.__init__(self, 0x7D, expression.ConstantNumeric(0), expression.ConstantNumeric(0))
         expression.Expression.__init__(self, None)
         assert isinstance(tmp_var, VarAction2StoreTempVar)
-        self.tmp_var = tmp_var
+        tmp_var.load_vars.append(self)
 
     def write(self, file, size):
-        self.parameter = self.tmp_var.mask
         self.mask = expression.ConstantNumeric(get_mask(size))
         VarAction2Var.write(self, file, size)
 

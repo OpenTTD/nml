@@ -120,10 +120,7 @@ class Action2LayoutSprite(object):
 
     def write_register(self, file, name):
         register = self.get_register(name)[0]
-        if isinstance(register, action2var.VarAction2LoadTempVar):
-            file.print_bytex(register.tmp_var.mask.value)
-        else:
-            file.print_bytex(register.parameter.value)
+        file.print_bytex(register.parameter.value)
 
     def write_registers(self, file):
         if self.is_set('hide_sprite'):
