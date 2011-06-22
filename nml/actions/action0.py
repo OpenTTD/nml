@@ -1,6 +1,6 @@
 from nml.actions.action0properties import Action0Property, properties
 from nml import generic, expression, nmlop
-from nml.actions import base_action, action4, action6, actionD, actionE
+from nml.actions import base_action, action4, action6, actionD, actionE, action7
 
 # Features that use an extended byte as ID (vehicles, sounds)
 action0_extended_byte_id = [0, 1, 2, 3, 0x0C]
@@ -176,10 +176,35 @@ def get_cargolist_action(cargo_list):
     return [action0]
 
 def get_railtypelist_action(railtype_list):
+    action6.free_parameters.save()
+    act6 = action6.Action6()
+    
+    action_list = []
     action0 = Action0(0x08, 0)
-    action0.prop_list.append(IDListProp(0x12, railtype_list))
+    id_table = []
+    offset = 2
+    for railtype in railtype_list:
+        offset += 4
+        if isinstance(railtype, expression.StringLiteral):
+            id_table.append(railtype)
+            continue
+        param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(railtype[-1])))
+        action_list.extend(extra_actions)
+        parameter = expression.Parameter(expression.ConstantNumeric(param))
+        for idx in range(len(railtype)-2, -1, -1):
+            val = expression.ConstantNumeric(expression.parse_string_to_dword(railtype[idx]))
+            action_list.append(action7.SkipAction(0x09, 0x00, 4, (0x0D, None), val.value, 1))
+            action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0xFF), val))
+        act6.modify_bytes(param, 4, offset)
+        id_table.append(expression.StringLiteral(r"\00\00\00\00", None))
+    action0.prop_list.append(IDListProp(0x12, id_table))
     action0.num_ids = len(railtype_list)
-    return [action0]
+
+    if len(act6.modifications) > 0: action_list.append(act6)
+
+    action_list.append(action0)
+    action6.free_parameters.restore()
+    return action_list
 
 class ByteListProp(object):
     def __init__(self, prop_num, data):

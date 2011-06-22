@@ -650,11 +650,6 @@ class NMLParser(object):
                       | CARGOTABLE LBRACE cargotable_list COMMA RBRACE'''
         t[0] = cargotable.CargoTable(t[3], t.lineno(1))
 
-    def p_railtypetable(self, t):
-        '''railtype : RAILTYPETABLE LBRACE cargotable_list RBRACE
-                    | RAILTYPETABLE LBRACE cargotable_list COMMA RBRACE'''
-        t[0] = railtypetable.RailtypeTable(t[3], t.lineno(1))
-
     def p_cargotable_list(self, t):
         '''cargotable_list : ID
                            | STRING_LITERAL
@@ -662,6 +657,24 @@ class NMLParser(object):
                            | cargotable_list COMMA STRING_LITERAL'''
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[3]]
+
+    def p_railtypetable(self, t):
+        '''railtype : RAILTYPETABLE LBRACE railtypetable_list RBRACE
+                    | RAILTYPETABLE LBRACE railtypetable_list COMMA RBRACE'''
+        t[0] = railtypetable.RailtypeTable(t[3], t.lineno(1))
+
+    def p_railtypetable_list(self, t):
+        '''railtypetable_list : railtypetable_item
+                              | railtypetable_list COMMA railtypetable_item'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[3]]
+
+    def p_railtypetable_item(self, t):
+        '''railtypetable_item : ID
+                              | STRING_LITERAL
+                              | ID COLON LBRACKET expression_list RBRACKET'''
+        if len(t) == 2: t[0] = t[1]
+        else: t[0] = assignment.Assignment(t[1], t[4], t[1].pos)
 
     def p_basecost(self, t):
         'basecost : BASECOST LBRACE generic_assignment_list RBRACE'

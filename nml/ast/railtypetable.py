@@ -1,4 +1,5 @@
 from nml import generic, global_constants, expression
+from nml.ast import assignment
 from nml.actions import action0
 from nml.ast import base_statement
 
@@ -8,16 +9,33 @@ class RailtypeTable(base_statement.BaseStatement):
         self.railtype_list = railtype_list
         generic.OnlyOnce.enforce(self, "rail type table")
         global_constants.railtype_table.clear()
-        for i, railtype in enumerate(railtype_list):
-            if isinstance(railtype, expression.Identifier):
-                 self.railtype_list[i] = expression.StringLiteral(railtype.value, railtype.pos)
-            expression.parse_string_to_dword(self.railtype_list[i])
-            global_constants.railtype_table[self.railtype_list[i].value] = i
+
+    def register_names(self):
+        for i, railtype in enumerate(self.railtype_list):
+            if isinstance(railtype, assignment.Assignment):
+                name = railtype.name
+                val_list = []
+                for rt in railtype.value:
+                    if isinstance(rt, expression.Identifier):
+                        val_list.append(expression.StringLiteral(rt.value, rt.pos))
+                    else:
+                        val_list.append(rt)
+                    expression.parse_string_to_dword(val_list[-1])
+                self.railtype_list[i] = val_list if len(val_list) > 1 else val_list[0]
+            else:
+                name = railtype
+                if isinstance(railtype, expression.Identifier):
+                    self.railtype_list[i] = expression.StringLiteral(railtype.value, railtype.pos)
+                expression.parse_string_to_dword(self.railtype_list[i])
+            global_constants.railtype_table[name.value] = i
+
+    def pre_process(self):
+        pass
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Railtype table'
         for railtype in self.railtype_list:
-            print (indentation+2)*' ' + 'Railtype:', railtype.value
+            print (indentation+2)*' ' + 'Railtype: %s' % str(railtype.value)
 
     def get_action_list(self):
         return action0.get_railtypelist_action(self.railtype_list)
