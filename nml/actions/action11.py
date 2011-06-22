@@ -4,11 +4,12 @@ Action 11 support classes (sounds).
 import os
 from nml import generic, expression
 from nml.actions import base_action
+from nml.ast import base_statement
 
-class Action11(base_action.BaseAction):
+class Action11(base_action.BaseAction, base_statement.BaseStatement):
     def __init__(self, sounds, pos):
+        base_statement.BaseStatement.__init__(self, "sounds-block", pos, False, False)
         self.sounds = sounds
-        self.pos = pos
         self.sounds[-1].last = True
 
     def prepare_output(self):

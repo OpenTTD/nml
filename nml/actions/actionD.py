@@ -1,5 +1,6 @@
 from nml import generic, global_constants, expression, nmlop
 from nml.actions import base_action, action6
+from nml.ast import base_statement
 import nml
 
 class ActionD(base_action.BaseAction):
@@ -54,7 +55,7 @@ class ActionD(base_action.BaseAction):
     def skip_action7(self):
         return False
 
-class ParameterAssignment(object):
+class ParameterAssignment(base_statement.BaseStatement):
     """
     AST-node for a parameter assignment.
     NML equivalent: param[$num] = $expr;
@@ -66,6 +67,7 @@ class ParameterAssignment(object):
     @type value: L{Expression}
     """
     def __init__(self, param, value):
+        base_statement.BaseStatement.__init__(self, "parameter assignment", param.pos)
         self.param = param
         self.value = value
 

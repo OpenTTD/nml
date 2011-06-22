@@ -1,5 +1,6 @@
 from nml import generic
 from nml.actions import base_action
+from nml.ast import base_statement
 
 free_action2_ids = list(range(1, 255))
 
@@ -178,13 +179,14 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
     #without either references or an explicit feature, we have nothing to base our feature on
     assert cls_referred_by_type != SpriteGroupRefType.NONE or cls_has_explicit_feature
 
-    class ASTSpriteGroup(object):
+    class ASTSpriteGroup(base_statement.BaseStatement):
         """
         Abstract base class for all AST nodes that represent a sprite group
         This handles all the relations between the various nodes
 
         Child classes should do the following:
             - Implement their own __init__ method
+            - Call BaseStatement.__init__
             - Call initialize, pre_process and perpare_output (in that order)
             - Implement collect_references
             - Call set_action2 after generating the corresponding action2 (if applicable)

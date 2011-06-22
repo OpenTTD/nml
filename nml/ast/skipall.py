@@ -1,14 +1,12 @@
 from nml.actions import action7
+from nml.ast import base_statement
 
-class SkipAll(object):
+class SkipAll(base_statement.BaseStatement):
     """
     Skip everything after this statement.
-
-    @ivar pos: Position information
-    @type pos: L{Position}
     """
     def __init__(self, pos):
-        self.pos = pos
+        base_statement.BaseStatement.__init__(self, "exit-statement", pos)
 
     def register_names(self):
         pass

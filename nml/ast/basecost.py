@@ -1,20 +1,17 @@
 from nml import expression, generic, global_constants, nmlop
-from nml.ast import assignment
+from nml.ast import assignment, base_statement
 from nml.actions import action0
 
-class BaseCost:
+class BaseCost(base_statement.BaseStatement):
     """
     AST Node for a base costs table.
 
     @ivar costs: List of base cost values to set.
     @type costs: C{list} of L{Assignment}
-
-    @ivar pos: Position information of the basecost block.
-    @type pos: L{Position}
     """
     def __init__(self, costs, pos):
+        base_statement.BaseStatement.__init__(self, "basecost-block", pos)
         self.costs = costs
-        self.pos = pos
 
     def register_names(self):
         pass

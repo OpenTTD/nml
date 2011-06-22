@@ -1,7 +1,8 @@
 from nml import generic, expression
 from nml.actions import actionB
+from nml.ast import base_statement
 
-class Error(object):
+class Error(base_statement.BaseStatement):
     """
     An error has occured while parsing the GRF. This can be anything ranging from
     an imcompatible GRF file that was found or a game setting that is set to the
@@ -23,12 +24,9 @@ class Error(object):
     @ivar data: Optional extra message that is inserted in place of the second
                 {STRING}-code of msg.
     @type data: C{None} or L{String} or L{StringLiteral}
-
-    @ivar pos: Position information of this error block.
-    @type pos: L{Position}
     """
     def __init__(self, param_list, pos):
-        self.pos = pos
+        base_statement.BaseStatement.__init__(self, "error()", pos)
         if not 2 <= len(param_list) <= 5:
             raise generic.ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)), self.pos)
         self.severity = param_list[0]

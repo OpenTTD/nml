@@ -1,8 +1,8 @@
 from nml import generic, expression, global_constants
-from nml.ast import assignment
+from nml.ast import assignment, base_statement
 from nml.actions import action0
 
-class EngineOverride:
+class EngineOverride(base_statement.BaseStatement):
     """
     AST Node for an engine override.
 
@@ -11,13 +11,10 @@ class EngineOverride:
 
     @ivar source_grfid: GRFid of the grf that overrides the engines.
     @type source_grfid: L{Expression} or C{None}
-
-    @ivar pos: Position information of the engine_override block.
-    @type pos: L{Position}
     """
     def __init__(self, args, pos):
+        base_statement.BaseStatement.__init__(self, "engine_override()", pos)
         self.args = args
-        self.pos = pos
 
     def register_names(self):
         pass

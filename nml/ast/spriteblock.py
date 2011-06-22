@@ -1,12 +1,13 @@
 from nml import expression, generic, global_constants
 from nml.actions import action1, action2, action2layout, action2real, real_sprite
+from nml.ast import base_statement
 
-class TemplateDeclaration(object):
+class TemplateDeclaration(base_statement.BaseStatement):
     def __init__(self, name, param_list, sprite_list, pos):
+        base_statement.BaseStatement.__init__(self, "template declaration", pos, False, False)
         self.name = name
         self.param_list = param_list
         self.sprite_list = sprite_list
-        self.pos = pos
 
     def register_names(self):
         pass
@@ -61,6 +62,7 @@ spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefTyp
 
 class SpriteSet(spriteset_base_class):
     def __init__(self, param_list, sprite_list, pos):
+        base_statement.BaseStatement.__init__(self, "spriteset", pos, False, False)
         if not (1 <= len(param_list) <= 2):
             raise generic.ScriptError("Spriteset requires 1 or 2 parameters, encountered " + str(len(param_list)), pos)
         name = param_list[0]
@@ -74,7 +76,6 @@ class SpriteSet(spriteset_base_class):
         else:
             self.pcx = None
         self.sprite_list = sprite_list
-        self.pos = pos
         self.action1_num = None #set number in action1
         self.labels = {} #mapping of real sprite labels to offsets
 
@@ -114,9 +115,9 @@ spritegroup_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefT
 
 class SpriteGroup(spritegroup_base_class):
     def __init__(self, name, spriteview_list, pos = None):
+        base_statement.BaseStatement.__init__(self, "spritegroup", pos, False, False)
         self.initialize(name)
         self.spriteview_list = spriteview_list
-        self.pos = pos
         self.parsed = False
 
     # pre_process is defined by the base class
@@ -166,12 +167,12 @@ spritelayout_base_class = action2.make_sprite_group_class(action2.SpriteGroupRef
 
 class SpriteLayout(spritelayout_base_class):
     def __init__(self, name, param_list, layout_sprite_list, pos = None):
+        base_statement.BaseStatement.__init__(self, "spritelayout", pos, False, False)
         self.initialize(name)
         self.param_list = param_list
         if len(param_list) != 0:
             generic.print_warning("spritelayout parameters are not (yet) supported, ignoring.", pos)
         self.layout_sprite_list = layout_sprite_list
-        self.pos = pos
         self.parsed = False
 
     # pre_process is defined by the base class

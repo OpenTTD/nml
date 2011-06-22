@@ -160,14 +160,14 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
 
 def parse_conditional_block(cond_list):
     blocks = []
-    for idx, cond in enumerate(cond_list.conditionals):
+    for idx, cond in enumerate(cond_list.statements):
         if isinstance(cond.expr, expression.ConstantNumeric):
             if cond.expr.value == 0:
                 continue
             else:
-                blocks.append({'expr': None, 'statements': cond.block})
+                blocks.append({'expr': None, 'statements': cond.statements})
                 break
-        blocks.append({'expr': cond.expr, 'statements': cond.block})
+        blocks.append({'expr': cond.expr, 'statements': cond.statements})
     if blocks:
         blocks[-1]['last_block'] = True
 
@@ -226,7 +226,7 @@ def parse_loop_block(loop):
 
     cond_param, cond_actions, cond_type, cond_value, cond_value_size = parse_conditional(loop.expr)
     block_actions = []
-    for stmt in loop.block:
+    for stmt in loop.statements:
         block_actions.extend(stmt.get_action_list())
 
     action_list.extend(cond_actions)

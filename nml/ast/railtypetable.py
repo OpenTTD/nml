@@ -1,10 +1,11 @@
 from nml import generic, global_constants, expression
 from nml.actions import action0
+from nml.ast import base_statement
 
-class RailtypeTable(object):
+class RailtypeTable(base_statement.BaseStatement):
     def __init__(self, railtype_list, pos):
+        base_statement.BaseStatement.__init__(self, "rail type table", pos, False, False)
         self.railtype_list = railtype_list
-        self.pos = pos
         generic.OnlyOnce.enforce(self, "rail type table")
         global_constants.railtype_table.clear()
         for i, railtype in enumerate(railtype_list):

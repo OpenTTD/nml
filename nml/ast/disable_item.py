@@ -1,8 +1,8 @@
 from nml import expression, generic, global_constants
 from nml.actions import action0
-from nml.ast import general
+from nml.ast import base_statement, general
 
-class DisableItem(object):
+class DisableItem(base_statement.BaseStatement):
     """
     Class representing a 'disable_item' statement in the AST.
 
@@ -14,11 +14,9 @@ class DisableItem(object):
 
     @ivar last_id: Last item ID to disable
     @type last_id: L{ConstantNumeric}, or C{None} if not set
-
-    @ivar pos: Position information
-    @type pos: L{Position}
     """
     def __init__(self, param_list, pos):
+        base_statement.BaseStatement.__init__(self, "disable_item()", pos)
         if not (1 <= len(param_list) <= 3):
             raise generic.ScriptError("disable_item() requires between 1 and 3 parameters, encountered %d." % len(param_list), pos)
         self.feature = general.parse_feature(param_list[0])
@@ -34,8 +32,6 @@ class DisableItem(object):
                 raise generic.ScriptError("Last id to disable may not be lower than the first id.", pos)
         else:
             self.last_id = None
-
-        self.pos = pos
 
     def register_names(self):
         pass

@@ -1,8 +1,8 @@
 from nml import expression, generic, global_constants
 from nml.actions import actionA, action5
+from nml.ast import base_statement
 
-
-class ReplaceSprite(object):
+class ReplaceSprite(base_statement.BaseStatement):
     """
     AST node for a 'replace' block.
     NML syntax: replace(start_id[, default_file]) { ..real sprites.. }
@@ -12,9 +12,6 @@ class ReplaceSprite(object):
 
     @ivar sprite_list: List of real sprites to use
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
-
-    @ivar pos: Position information of the 'replace' block.
-    @type pos: L{Position}
 
     @ivar start_id: First sprite to replace. Extracted from C{param_list} during pre-processing.
     @type start_id: C{Expression}
@@ -26,9 +23,9 @@ class ReplaceSprite(object):
     @type name: C{None] if not given, else C{str}
     """
     def __init__(self, param_list, sprite_list, pos):
+        base_statement.BaseStatement.__init__(self, "replace-block", pos)
         self.param_list = param_list
         self.sprite_list = sprite_list
-        self.pos = pos
         self.name = None
 
     def register_names(self):
@@ -77,9 +74,6 @@ class ReplaceNewSprite(object):
     @ivar sprite_list: List of real sprites to use
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
 
-    @ivar pos: Position information of the 'replacenew' block.
-    @type pos: L{Position}
-
     @ivar type: Type of sprites to replace. Extracted from C{param_list} during pre-processing.
     @type type: L{Identifier}
 
@@ -93,9 +87,9 @@ class ReplaceNewSprite(object):
     @type name: C{None] if not given, else C{str}
     """
     def __init__(self, param_list, sprite_list, pos):
+        base_statement.BaseStatement.__init__(self, "replacenew-block", pos)
         self.param_list = param_list
         self.sprite_list = sprite_list
-        self.pos = pos
         self.name = None
 
     def register_names(self):

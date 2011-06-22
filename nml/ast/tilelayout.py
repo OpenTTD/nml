@@ -1,8 +1,8 @@
 from nml import generic, expression, global_constants
 from nml.actions import action0properties
+from nml.ast import base_statement
 
-
-class TileLayout(object):
+class TileLayout(base_statement.BaseStatement):
     """
     'tile_layout' AST node. A TileLayout is a list of x,y-offset/tileID pairs.
     The x and y offsets are from the northernmost tile of the industry/airport.
@@ -15,9 +15,6 @@ class TileLayout(object):
     @ivar tile_prop_list: List of offset/tileID and properties.
     @type tile_prop_list: C{list} of L{LayoutTile} and L{LayoutProp}
 
-    @ivar pos: Position information of the 'town_names' block.
-    @type pos: L{Position}
-
     @ivar tile_list: List of tile-offsets/tileIDs.
     @type tile_list: C{list} of C{LayoutTile} with constant x and y values.
 
@@ -25,9 +22,9 @@ class TileLayout(object):
     @type properties: C{dict} with C{str} keys and L{ConstantNumeric} values
     """
     def __init__(self, name, tile_list, pos):
+        base_statement.BaseStatement.__init__(self, "tile layout", pos, False, False)
         self.name = name.value
         self.tile_prop_list = tile_list
-        self.pos = pos
         self.tile_list = []
         self.properties = {}
 

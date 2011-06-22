@@ -1,5 +1,5 @@
 from nml import expression, generic, global_constants, unit
-from nml.ast import conditional, loop, general
+from nml.ast import base_statement, conditional, loop, general
 from nml.actions import action0, action2, action3
 
 def validate_item_block(block_list):
@@ -23,24 +23,20 @@ def validate_item_block(block_list):
 item_feature = None
 item_id = None
 
-class Item(object):
+class Item(base_statement.BaseStatementList):
     """
     AST-node representing an item block
+    @ivar feature: Feature of the item
+    @type feature: L{ConstantNumeric}
 
     @ivar name: Name of the item
     @type name: L{Identifier} or C{None} if N/A.
 
     @ivar id: Numeric ID of the item
     @type id: C{int}
-
-    @ivar body: List of blocks that constitute the body of this item block
-    @type body: C{list} of AST-blocks.
-
-    @ivar pos: Position information
-    @type pos: L{Position}
     """
     def __init__(self, params, body, pos):
-        self.pos = pos
+        base_statement.BaseStatementList.__init__(self, "item-block", pos, base_statement.BaseStatementList.LIST_TYPE_ITEM, body)
         if len(params) >= 1:
             self.feature = general.parse_feature(params[0])
         else:
@@ -49,11 +45,7 @@ class Item(object):
             raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
         self.id = params[2] if len(params) == 3 else None
-
         self.name = params[1] if len(params) >= 2 else None
-
-        self.body = body
-        validate_item_block(body)
 
     def register_names(self):
         if self.id:
@@ -73,26 +65,23 @@ class Item(object):
             self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
         if self.name is not None:
             global_constants.item_names[self.name.value] = self
+        base_statement.BaseStatementList.register_names(self)
 
     def pre_process(self):
         global item_feature, item_id
         item_id = self.id
         item_feature = self.feature.value
-        for b in self.body:
-            b.pre_process()
+        base_statement.BaseStatementList.pre_process(self)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Item, feature', hex(self.feature.value)
-        for b in self.body: b.debug_print(indentation + 2)
+        base_statement.BaseStatementList.debug_print(self, indentation + 2)
 
     def get_action_list(self):
         global item_feature, item_id
         item_id = self.id
         item_feature = self.feature.value
-        action_list = []
-        for b in self.body:
-            action_list.extend(b.get_action_list())
-        return action_list
+        return base_statement.BaseStatementList.get_action_list(self)
 
     def __str__(self):
         ret = 'item(%d' % self.feature.value
@@ -101,8 +90,7 @@ class Item(object):
         if self.id is not None:
             ret += ', %s' % str(self.id)
         ret += ') {\n'
-        for b in self.body:
-            ret += '\t' + str(b).replace('\n', '\n\t')[0:-1]
+        ret += base_statement.BaseStatementList.__str__(self)
         ret += '}\n'
         return ret
 
@@ -152,20 +140,17 @@ class Property(object):
         unit = '' if self.unit is None else ' ' + str(self.unit)
         return '\t%s: %s%s;' % (self.name, self.value, unit)
 
-class PropertyBlock(object):
+class PropertyBlock(base_statement.BaseStatement):
     """
     Block that contains a list of property/value pairs to be assigned
     to the current item.
 
     @ivar prop_list: List of properties.
     @type prop_list: C{list} of L{Property}
-
-    @ivar pos: Position information.
-    @type pos: L{Position}
     """
     def __init__(self, prop_list, pos):
+        base_statement.BaseStatement.__init__(self, "property-block", pos, in_item = True, out_item = False)
         self.prop_list = prop_list
-        self.pos = pos
 
     def register_names(self):
         pass
@@ -190,11 +175,11 @@ class PropertyBlock(object):
         ret += '}\n'
         return ret
 
-class LiveryOverride(object):
+class LiveryOverride(base_statement.BaseStatement):
     def __init__(self, wagon_id, graphics_block, pos):
+        base_statement.BaseStatement.__init__(self, "livery override", pos, in_item = True, out_item = False)
         self.graphics_block = graphics_block
         self.wagon_id = wagon_id
-        self.pos = pos
 
     def pre_process(self):
         self.graphics_block.pre_process()
@@ -224,7 +209,7 @@ graphics_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType
 
 class GraphicsBlock(graphics_base_class):
     def __init__(self, graphics_list, default_graphics, pos):
-        self.pos = pos
+        base_statement.BaseStatement.__init__(self, "graphics-block", pos, in_item = True, out_item = False)
         self.graphics_list = graphics_list
         self.default_graphics = default_graphics
 

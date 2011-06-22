@@ -1,8 +1,8 @@
 from nml import expression, generic
 from nml.actions import real_sprite
+from nml.ast import base_statement
 
-
-class BaseSprite(object):
+class BaseSprite(base_statement.BaseStatement):
     """
     AST node for a 'base_sprite' block.
     NML syntax: base_sprite [block_name]([default_file]) { ..real sprites.. }
@@ -13,9 +13,6 @@ class BaseSprite(object):
     @ivar sprite_list: List of real sprites to use
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
 
-    @ivar pos: Position information of the 'replace' block.
-    @type pos: L{Position}
-
     @ivar pcx: Default image file to use for sprites. Extracted from C{param_list} during pre-processing.
     @type pcx: C{None} if not specified, else L{StringLiteral}
 
@@ -23,9 +20,9 @@ class BaseSprite(object):
     @type name: C{None] if not given, else C{str}
     """
     def __init__(self, param_list, sprite_list, pos):
+        base_statement.BaseStatement.__init__(self, "base_sprites-block", pos)
         self.param_list = param_list
         self.sprite_list = sprite_list
-        self.pos = pos
         self.sprite_num = None
         self.name = None
 

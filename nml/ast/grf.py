@@ -1,5 +1,6 @@
 from nml import expression, generic, grfstrings, global_constants
 from nml.actions import action8, action14
+from nml.ast import base_statement
 
 palette_node = None
 
@@ -13,13 +14,10 @@ def set_palette_used(pal):
     if palette_node:
         palette_node.pal = pal
 
-class GRF(object):
+class GRF(base_statement.BaseStatement):
     """
     AST Node for a grf block, that supplies (static) information about the GRF
     This is equivalent to actions 8 and 14
-
-    @ivar pos: Position information
-    @type pos: L{Position}
 
     @ivar name: Name of the GRF (short)
     @type name: L{Expression}, should be L{String} else user error
@@ -40,7 +38,7 @@ class GRF(object):
     @type params: C{list} of L{ParameterDescription}
     """
     def __init__(self, alist, pos):
-        self.pos = pos
+        base_statement.BaseStatement.__init__(self, "grf-block", pos)
         self.name = None
         self.desc = None
         self.grfid = None

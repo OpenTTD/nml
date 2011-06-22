@@ -1,9 +1,10 @@
 from nml.actions import actionE
+from nml.ast import base_statement
 
-class DeactivateBlock(object):
+class DeactivateBlock(base_statement.BaseStatement):
     def __init__(self, grfid_list, pos):
+        base_statement.BaseStatement.__init__(self, "deactivate()", pos)
         self.grfid_list = grfid_list
-        self.pos = pos
 
     def register_names(self):
         pass

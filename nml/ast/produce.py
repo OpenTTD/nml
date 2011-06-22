@@ -1,6 +1,6 @@
 from nml import expression, generic, global_constants, nmlop
 from nml.actions import action2, action2production
-from nml.ast import switch
+from nml.ast import base_statement, switch
 
 produce_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, True)
 
@@ -26,8 +26,8 @@ class Produce(produce_base_class):
     @type version: C{int}
     """
     def __init__(self, param_list, pos):
+        base_statement.BaseStatement.__init__(self, "produce-block", pos, False, False)
         self.param_list = param_list
-        self.pos = pos
         self.switch = None
 
     def register_names(self):

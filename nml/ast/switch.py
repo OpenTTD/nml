@@ -1,6 +1,6 @@
 from nml import expression, generic, global_constants, nmlop
 from nml.actions import action2, action2var, action2random, action2var_variables, action6
-from nml.ast import general, switch_range
+from nml.ast import base_statement, general, switch_range
 
 var_ranges = {
     'SELF' : 0x89,
@@ -12,6 +12,7 @@ switch_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.S
 
 class Switch(switch_base_class):
     def __init__(self, feature, var_range, name, expr, body, pos):
+        base_statement.BaseStatement.__init__(self, "switch-block", pos, False, False)
         self.initialize(name, general.parse_feature(feature))
         if var_range.value in var_ranges:
             self.var_range = var_ranges[var_range.value]
@@ -19,7 +20,6 @@ class Switch(switch_base_class):
             raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % var_range.value, var_range.pos)
         self.expr = expr
         self.body = body
-        self.pos = pos
         self.return_switches = []
 
     def register_names(self):
@@ -141,6 +141,7 @@ class SwitchBody(object):
 
 class RandomSwitch(switch_base_class):
     def __init__(self, param_list, choices, pos):
+        base_statement.BaseStatement.__init__(self, "random_switch-block", pos, False, False)
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         #feature
@@ -192,7 +193,6 @@ class RandomSwitch(switch_base_class):
                     assert False, "NOT REACHED"
             self.choices.append(choice)
 
-        self.pos = pos
         self.switch = None
         self.return_switches = []
 

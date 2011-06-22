@@ -1,10 +1,11 @@
 import heapq
 from nml import expression, generic, grfstrings
 from nml.actions import actionF
+from nml.ast import base_statement
 
 townname_serial = 1
 
-class TownNames(object):
+class TownNames(base_statement.BaseStatement):
     """
     'town_names' ast node.
 
@@ -23,16 +24,13 @@ class TownNames(object):
     @ivar parts: Parts of the names.
     @type parts: C{list} of L{TownNamesPart}
 
-    @ivar pos: Position information of the 'town_names' block.
-    @type pos: L{Position}
-
     @ivar param_list: Stored parameter list.
     @type param_list: C{list} of (L{TownNamesPart} or L{TownNamesParam})
     """
     def __init__(self, name, param_list, pos):
+        base_statement.BaseStatement.__init__(self, "town_names-block", pos, False, False)
         self.name = name
         self.param_list = param_list
-        self.pos = pos
 
         self.id_number = None
         self.style_name = None

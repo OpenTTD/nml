@@ -1,5 +1,6 @@
 from nml import expression, generic, global_constants
 from nml.actions import real_sprite
+from nml.ast import base_statement
 import os, Image
 
 """
@@ -7,7 +8,7 @@ List with all AltSpritesBlocks encountered in the nml file.
 """
 alt_sprites_list = []
 
-class AltSpritesBlock(object):
+class AltSpritesBlock(base_statement.BaseStatement):
     """
     AST Node for alternative graphics. These are normally 32bpp graphics, possible
     for a higher zoom-level than the default sprites.
@@ -24,18 +25,15 @@ class AltSpritesBlock(object):
 
     @ivar sprite_list: List of real sprites or templates expanding to real sprites.
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
-
-    @ivar pos: Position information of this alt_sprites block.
-    @type pos: L{Position}
     """
     def __init__(self, param_list, sprite_list, pos):
+        base_statement.BaseStatement.__init__(self, "alt_sprites-block", pos)
         if not (2 <= len(param_list) <= 3):
             raise generic.ScriptError("alternative_sprites-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
         self.name = param_list[0]
         self.zoom_level = param_list[1]
         self.pcx = param_list[2] if len(param_list) >= 3 else None
         self.sprite_list = sprite_list
-        self.pos = pos
 
     def register_names(self):
         pass

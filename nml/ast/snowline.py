@@ -1,8 +1,9 @@
 import datetime
 from nml import generic, expression, nmlop
 from nml.actions import action0
+from nml.ast import base_statement
 
-class Snowline(object):
+class Snowline(base_statement.BaseStatement):
     """
     Snowline curve throughout the year.
 
@@ -11,16 +12,13 @@ class Snowline(object):
 
     @ivar date_heights: Height of the snow line at given days in the year.
     @type date_heights: C{list} of L{Assignment}
-
-    @ivar pos: Position of the data in the original file.
-    @type pos: L{Position}
     """
     def __init__(self, line_type, height_data, pos):
+        base_statement.BaseStatement.__init__(self, "snowline-block", pos)
         if line_type.value not in ('equal', 'linear'):
             raise generic.ScriptError('Unknown type of snow line (only "equal" and "linear" are supported)', line_type.pos)
         self.type = line_type.value
         self.date_heights = height_data
-        self.pos = pos
 
     def register_names(self):
         pass

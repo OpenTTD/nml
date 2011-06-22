@@ -1,10 +1,11 @@
 from nml import generic, global_constants, expression
 from nml.actions import action0
+from nml.ast import base_statement
 
-class CargoTable(object):
+class CargoTable(base_statement.BaseStatement):
     def __init__(self, cargo_list, pos):
+        base_statement.BaseStatement.__init__(self, "cargo table", pos, False, False)
         self.cargo_list = cargo_list
-        self.pos = pos
         generic.OnlyOnce.enforce(self, "cargo table")
         for i, cargo in enumerate(cargo_list):
             if isinstance(cargo, expression.Identifier):
