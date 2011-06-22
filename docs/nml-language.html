@@ -949,15 +949,24 @@ instead. This return value is not used anywhere.</p>
 
 <h2><a name="block-railtypetable">Railtypetable</a></h2>
 <pre class="exl">railtypetable {
-	ID [, ID]*
+	ITEM [, ITEM]*
 }</pre>
-<p>The railtypetable is a list of 4-byte long IDs or literal strings. For example:</p>
+<p>Each <code>ITEM</code> can be either a 4-byte long Identifier or string or it can have this
+format:</p>
+<pre class="exl">
+ID : [ ID[, ID..] ]
+</pre>The first ID is the name (doesn't have to be 4-bytes long), the other iDs are a list of
+labels that are assigned to the given name if they are available.
 <pre class="code">railtypetable {
-	RAIL, ELRL, "3RDR"
+	RAIL,
+	ELRL,
+	"3RDR",
+	RT_SHINY_RAIL: [SHNY, RAIL]
 }</pre>
 The label 3RDR is written as a string because an identifier can't start with a numeric value. To
-reference it later you can write <code>railtype("3RDR")</code>.
-
+reference it later you can write <code>railtype("3RDR")</code>. If another grf defines a railtype
+with label SHNY than RT_SHINY_RAIL will refer to that track type. If the railtype SHNY is not
+available than trains using RT_SHINY_RAIL as track type will fallback to RAIL.
 <h2><a name="block-if">If/else</a></h2>
 <pre class="exl">
 if (expression) {
