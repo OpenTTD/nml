@@ -45,54 +45,44 @@ class NMLParser(object):
         t[0] = general.MainScript(t[1])
 
     def p_script(self, t):
-        '''script : main_block
+        '''script :
                   | script main_block'''
-        if len(t) == 2: t[0] = [t[1]]
+        if len(t) == 1: t[0] = []
         else: t[0] = t[1] + [t[2]]
 
     def p_main_block(self, t):
-        '''main_block : skipable_block
-                      | switch
+        '''main_block : switch
                       | random_switch
                       | produce
                       | spriteset
                       | spritegroup
+                      | spritelayout
                       | template_declaration
+                      | tilelayout
                       | town_names
                       | sounds
                       | cargotable
                       | railtype
-                      | spritelayout
-                      | tilelayout'''
-        t[0] = t[1]
-
-    def p_skipable_script(self, t):
-        '''skipable_script :
-                           | skipable_script skipable_block'''
-        if len(t) == 1: t[0] = []
-        else: t[0] = t[1] + [t[2]]
-
-    def p_skipable_block(self, t):
-        '''skipable_block : grf_block
-                          | param_assignment
-                          | skip_all
-                          | conditional
-                          | loop
-                          | item
-                          | error_block
-                          | disable_item
-                          | deactivate
-                          | replace
-                          | replace_new
-                          | base_sprites
-                          | font_glyph
-                          | alt_sprites
-                          | property_block
-                          | graphics_block
-                          | liveryoverride_block
-                          | snowline
-                          | engine_override
-                          | basecost'''
+                      | grf_block
+                      | param_assignment
+                      | skip_all
+                      | conditional
+                      | loop
+                      | item
+                      | property_block
+                      | graphics_block
+                      | liveryoverride_block
+                      | error_block
+                      | disable_item
+                      | deactivate
+                      | replace
+                      | replace_new
+                      | base_sprites
+                      | font_glyph
+                      | alt_sprites
+                      | snowline
+                      | engine_override
+                      | basecost'''
         t[0] = t[1]
 
     def p_constant_num(self, t):
@@ -321,7 +311,7 @@ class NMLParser(object):
     # Item blocks
     #
     def p_item(self, t):
-        'item : ITEM LPAREN expression_list RPAREN LBRACE skipable_script RBRACE'
+        'item : ITEM LPAREN expression_list RPAREN LBRACE script RBRACE'
         t[0] = item.Item(t[3], t[6], t.lineno(1))
 
     def p_property_block(self, t):
@@ -385,17 +375,17 @@ class NMLParser(object):
         t[0] = conditional.ConditionalList(parts)
 
     def p_else_block(self, t):
-        'else_block : ELSE LBRACE skipable_script RBRACE'
+        'else_block : ELSE LBRACE script RBRACE'
         t[0] = conditional.Conditional(None, t[3], t.lineno(1))
 
     def p_if_else_parts(self, t):
-        '''if_else_parts : IF LPAREN expression RPAREN LBRACE skipable_script RBRACE
-                         | if_else_parts ELSE IF LPAREN expression RPAREN LBRACE skipable_script RBRACE'''
+        '''if_else_parts : IF LPAREN expression RPAREN LBRACE script RBRACE
+                         | if_else_parts ELSE IF LPAREN expression RPAREN LBRACE script RBRACE'''
         if len(t) == 8: t[0] = [conditional.Conditional(t[3], t[6], t.lineno(1))]
         else: t[0] = t[1] + [conditional.Conditional(t[5], t[8], t.lineno(2))]
 
     def p_loop(self, t):
-        'loop : WHILE LPAREN expression RPAREN LBRACE skipable_script RBRACE'
+        'loop : WHILE LPAREN expression RPAREN LBRACE script RBRACE'
         t[0] = loop.Loop(t[3], t[6], t.lineno(1))
 
     #
