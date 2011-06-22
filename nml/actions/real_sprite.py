@@ -96,6 +96,12 @@ class RealSprite(object):
         for param in self.param_list:
             param.debug_print(indentation + 2)
 
+    def get_labels(self):
+        labels = {}
+        if self.label is not None:
+            labels[self.label.value] = 0
+        return labels, 1
+
     def check_sprite_size(self):
         generic.check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", self.xpos.pos)
         generic.check_range(self.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", self.ypos.pos)
@@ -215,6 +221,16 @@ class TemplateUsage(object):
         print (indentation+2)*' ' + 'Parameters:'
         for param in self.param_list:
             param.debug_print(indentation + 4)
+
+    def get_labels(self):
+        if self.name.value not in sprite_template_map:
+            raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
+        labels, offset = sprite_template_map[self.name.value].get_labels()
+        if self.label is not None:
+            if self.label.value in labels:
+                raise generic.ScriptError("Duplicate label encountered; '%s' already exists." % self.label.value, self.pos)
+            labels[self.label.value] = 0
+        return labels, offset
 
     def expand(self, default_file, parameters):
         if self.name.value not in sprite_template_map:

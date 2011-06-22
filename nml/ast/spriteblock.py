@@ -26,6 +26,18 @@ class TemplateDeclaration(object):
         else:
             raise generic.ScriptError("Template named '%s' is already defined, first definition at %s" % (self.name.value, real_sprite.sprite_template_map[self.name.value].pos), self.pos)
 
+    def get_labels(self):
+        labels = {}
+        offset = 0
+        for sprite in self.sprite_list:
+            sprite_labels, num_sprites = sprite.get_labels()
+            for lbl, lbl_offset in sprite_labels.iteritems():
+                if lbl in labels:
+                    raise generic.ScriptError("Duplicate label encountered; '%s' already exists." % lbl, self.pos)
+                labels[lbl] = lbl_offset + offset
+            offset += num_sprites
+        return labels, offset
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Template declaration:', self.name.value
         print (indentation+2)*' ' + 'Parameters:'
@@ -68,12 +80,14 @@ class SpriteSet(spriteset_base_class):
 
     def pre_process(self):
         spriteset_base_class.pre_process(self)
+        offset = 0
         for sprite in self.sprite_list:
-            if sprite.label is not None:
-                val = sprite.label.value
-                if val in self.labels:
-                    raise generic.ScriptError("Duplicate label encountered; '%s' already exists." % val, sprite.label.pos)
-                self.labels[val] = None
+            sprite_labels, num_sprites = sprite.get_labels()
+            for lbl, lbl_offset in sprite_labels.iteritems():
+                if lbl in self.labels:
+                    raise generic.ScriptError("Duplicate label encountered; '%s' already exists." % lbl, self.pos)
+                self.labels[lbl] = lbl_offset + offset
+            offset += num_sprites
 
     def collect_references(self):
         return []
