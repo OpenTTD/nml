@@ -113,6 +113,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
         return 4
     nml_parser = parser.NMLParser()
     result = nml_parser.parse(script)
+    result.validate([])
 
     if output_debug > 0:
         result.debug_print(0)
