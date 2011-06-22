@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, switch_range, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites, override
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, switch_range, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites, override
 from nml.actions import action2, action2random, actionD, action11, real_sprite
 import ply.yacc as yacc
 
@@ -40,6 +40,10 @@ class NMLParser(object):
     #
     # Main script blocks
     #
+    def p_main_script(self, t):
+        'main_script : script'
+        t[0] = general.MainScript(t[1])
+
     def p_script(self, t):
         '''script : main_block
                   | script main_block'''

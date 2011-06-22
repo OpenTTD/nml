@@ -115,25 +115,17 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     result = nml_parser.parse(script)
 
     if output_debug > 0:
-        general.print_script(result, 0)
+        result.debug_print(0)
 
     for outputfile in outputfiles:
         if isinstance(outputfile, output_nml.OutputNML):
             outputfile.open()
-            for b in result:
-                outputfile.write(str(b))
-                outputfile.newline()
+            outputfile.write(str(result))
             outputfile.close()
 
-    for block in result:
-        block.register_names()
-
-    for block in result:
-        block.pre_process()
-
-    tmp_actions = []
-    for block in result:
-        tmp_actions.extend(block.get_action_list())
+    result.register_names()
+    result.pre_process()
+    tmp_actions = result.get_action_list()
 
     actions = []
     for action in tmp_actions:

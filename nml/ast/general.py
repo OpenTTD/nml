@@ -1,4 +1,5 @@
 from nml import generic
+from nml.ast import base_statement
 
 def print_script(script, indent):
     for r in script:
@@ -39,3 +40,15 @@ def parse_feature(expr):
     if expr.value not in feature_ids.values():
         raise generic.ScriptError("Invalid feature '%02X' encountered." % expr.value, expr.pos)
     return expr
+
+class MainScript(base_statement.BaseStatementList):
+    def __init__(self, statements):
+        assert len(statements) > 0
+        base_statement.BaseStatementList.__init__(self, "main script", statements[0].pos,
+                base_statement.BaseStatementList.LIST_TYPE_NONE, statements, False, False, False, False)
+
+    def __str__(self):
+        res = "" 
+        for stmt in self.statements:
+            res += str(stmt) + '\n'
+        return res
