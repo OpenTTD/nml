@@ -75,8 +75,8 @@ class Switch(switch_base_class):
         return all_refs
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Switch, Feature =',self.feature.value,', name =', self.name.value
-        for ret_swich in self.return_switches:
+        print indentation*' ' + 'Switch, Feature = %d, name = %s', (self.feature.value, self.name.value)
+        for ret_switch in self.return_switches:
             print (2+indentation)*' ' + 'Extra switch to return computed value:'
             ret_switch.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Expression:'

@@ -1,4 +1,3 @@
-from nml import generic
 from .base_expression import Type, Expression
 
 class StringLiteral(Expression):

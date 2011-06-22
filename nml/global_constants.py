@@ -174,8 +174,8 @@ constant_numbers = {
     'SOUND_TRUCK_START_2'                  : 0x1A,
     'SOUND_APPLAUSE'                       : 0x1B,
     'SOUND_OOOOH'                          : 0x1C,
-    'SOUND_SPLAT'                          : 0x1D,
-    'SOUND_SPLAT_2'                        : 0x1E,
+    'SOUND_SPLAT_2'                        : 0x1D,
+    'SOUND_SPLAT_3'                        : 0x1E,
     'SOUND_JACKHAMMER'                     : 0x1F,
     'SOUND_CAR_HORN'                       : 0x20,
     'SOUND_CAR_HORN_2'                     : 0x21,
@@ -191,7 +191,7 @@ constant_numbers = {
     'SOUND_COMEDY_HIT'                     : 0x2B,
     'SOUND_MACHINERY'                      : 0x2C,
     'SOUND_RIP_2'                          : 0x2D,
-    'SOUND_EXTRACT_AND_POP'                : 0x2E,
+    'SOUND_EXTRACT_AND_POP_2'              : 0x2E,
     'SOUND_POP'                            : 0x2F,
     'SOUND_CARTOON_SOUND'                  : 0x30,
     'SOUND_EXTRACT'                        : 0x31,
@@ -905,7 +905,7 @@ def item_to_id(item, pos):
     return expression.ConstantNumeric(item.id.value, pos)
 
 def param_from_name(info, pos):
-    return expression.Parameter(expression.ConstantNumeric(info))
+    return expression.Parameter(expression.ConstantNumeric(info), pos)
 
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}

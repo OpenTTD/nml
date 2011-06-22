@@ -1,5 +1,5 @@
 from nml import generic, expression, global_constants
-from nml.ast import assignment, base_statement
+from nml.ast import base_statement
 from nml.actions import action0
 
 class EngineOverride(base_statement.BaseStatement):

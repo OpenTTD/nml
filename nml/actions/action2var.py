@@ -540,15 +540,15 @@ def parse_60x_var(name, args, pos, info):
         # Set the param in the accumulator beforehand
         return expression.BinOp(nmlop.VAL2, param, var, pos)
 
-def parse_minmax(value, unit, action_list, act6, offset):
+def parse_minmax(value, unit_str, action_list, act6, offset):
     """
     Parse a min or max value in a switch block.
 
     @param value: Value to parse
     @type value: L{Expression}
 
-    @param unit: Unit to use
-    @type unit: C{str} or C{None}
+    @param unit_str: Unit to use
+    @type unit_str: C{str} or C{None}
 
     @param action_list: List to append any extra actions to
     @type action_list: C{list} of L{BaseAction}
@@ -565,11 +565,11 @@ def parse_minmax(value, unit, action_list, act6, offset):
     @rtype: C{tuple} of (L{ConstantNumeric} or L{SpriteGroupRef}), C{bool}
     """
     check_range = True
-    if unit is not None:
+    if unit_str is not None:
         if not isinstance(value, expression.ConstantNumeric):
             raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", value.pos)
-        assert unit in unit.units
-        result = expression.ConstantNumeric(int(value.value / unit.units[unit]['convert']))
+        assert unit_str in unit.units
+        result = expression.ConstantNumeric(int(value.value / unit.units[unit_str]['convert']))
     elif isinstance(value, expression.ConstantNumeric):
         result = value
     elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
@@ -614,7 +614,7 @@ def parse_result(value, action_list, act6, offset, varaction2, repeat_result = 1
     if isinstance(value, action2.SpriteGroupRef):
         comment = value.name.value + ';'
         if value.name.value != 'CB_FAILED':
-            act2 = action2.add_ref(value, varaction2)
+            action2.add_ref(value, varaction2)
         result = value
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value

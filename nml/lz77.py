@@ -4,7 +4,7 @@ class LZ77(object):
         self.position = 0
         self.stream = data
 
-    def Encode(self):
+    def encode(self):
         output = ""
         literal_bytes = ""
         while self.position < len(self.stream):

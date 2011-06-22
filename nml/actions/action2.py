@@ -41,7 +41,6 @@ class Action2(base_action.BaseAction):
     def prepare_output(self):
         free_references(self)
 
-        global free_action2_ids
         if self.num_refs == 0:
             self.id = free_action2_ids[0]
         else:

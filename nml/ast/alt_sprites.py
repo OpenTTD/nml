@@ -114,13 +114,13 @@ def write_32bpp_sprite(sprite_info, filename):
     sprite.info["y_offs"] = str(sprite_info.yrel.value)
     pngsave(sprite, filename)
 
-#
-# wrapper around PIL 1.1.6 Image.save to preserve PNG metadata
-#
-# public domain, Nick Galbreath
-# http://blog.modp.com/2007/08/python-pil-and-png-metadata-take-2.html
-#
 def pngsave(im, file):
+    """
+    Wrapper around PIL 1.1.6 Image.save to preserve PNG metadata.
+
+    public domain, Nick Galbreath
+    http://blog.modp.com/2007/08/python-pil-and-png-metadata-take-2.html
+    """
     # these can be automatically added to Image.info dict
     # they are not user-added metadata
     reserved = ('interlace', 'gamma', 'dpi', 'transparency', 'aspect')
@@ -130,7 +130,7 @@ def pngsave(im, file):
     meta = PngImagePlugin.PngInfo()
 
     # copy metadata into new object
-    for k,v in im.info.iteritems():
+    for k, v in im.info.iteritems():
         if k in reserved: continue
         meta.add_text(k, v, 0)
 

@@ -79,9 +79,6 @@ class OutputGRF(output_base.BinaryOutputBase):
                 i += 1
         if final_zero: self.print_byte(0)
 
-    def print_decimal(self, value, size):
-        self.print_varx(value, size)
-
     def newline(self, msg = "", prefix = "\t"):
         pass
 
@@ -141,15 +138,15 @@ class OutputGRF(output_base.BinaryOutputBase):
             output += chr(l)
             while l > 0:
                 output += data[i]
-                i+=1
-                l-=1
+                i += 1
+                l -= 1
         return output
 
     def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
         data_str = ''.join(chr(c) for c in data)
         if self.compress_grf:
             lz = lz77.LZ77(data_str)
-            stream = lz.Encode()
+            stream = lz.encode()
         else:
             stream = self.fakecompress(data_str)
         streamlength = len(stream)

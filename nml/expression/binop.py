@@ -1,5 +1,5 @@
 from nml import generic, nmlop
-from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
+from .base_expression import Expression, ConstantNumeric, ConstantFloat
 from .string_literal import StringLiteral
 from .variable import Variable
 

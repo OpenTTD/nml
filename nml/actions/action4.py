@@ -123,7 +123,6 @@ def get_string_action4s(feature, string_range, string, id = None):
                 - Resulting action list to be appended
     @rtype: C{tuple} of (C{int}, C{list} of L{BaseAction})
     """
-    global string_ranges
     grfstrings.validate_string(string)
     write_action4s = True
     action6.free_parameters.save()

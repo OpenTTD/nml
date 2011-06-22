@@ -61,7 +61,7 @@ class OutputNFO(output_base.BinaryOutputBase):
             # it here by one to correct it.
             self._byte_count -= 1
 
-    def print_decimal(self, value, size = None):
+    def print_decimal(self, value):
         assert self._in_sprite
         self.file.write(str(value) + " ")
 
@@ -75,7 +75,7 @@ class OutputNFO(output_base.BinaryOutputBase):
 
     def start_sprite(self, size, is_real_sprite = False):
         output_base.BinaryOutputBase.start_sprite(self, size)
-        self.print_decimal(self.sprite_num, 2)
+        self.print_decimal(self.sprite_num)
         self.sprite_num += 1
         if not is_real_sprite:
             self.file.write("* ")

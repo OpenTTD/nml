@@ -1,4 +1,4 @@
-from .base_expression import Expression, ConstantNumeric
+from .base_expression import Expression
 
 class Array(Expression):
     def __init__(self, values, pos):

@@ -36,7 +36,6 @@ class Action0(base_action.BaseAction):
 first_free_id = [116, 88, 11, 41] + 0x0E * [0]
 
 def get_free_id(feature):
-    global first_free_id
     first_free_id[feature] += 1
     return first_free_id[feature] - 1
 
@@ -190,7 +189,6 @@ def get_railtypelist_action(railtype_list):
             continue
         param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(railtype[-1])))
         action_list.extend(extra_actions)
-        parameter = expression.Parameter(expression.ConstantNumeric(param))
         for idx in range(len(railtype)-2, -1, -1):
             val = expression.ConstantNumeric(expression.parse_string_to_dword(railtype[idx]))
             action_list.append(action7.SkipAction(0x09, 0x00, 4, (0x0D, None), val.value, 1))

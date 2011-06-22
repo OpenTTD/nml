@@ -7,7 +7,6 @@ from .parameter import parse_string_to_dword
 from .storage_op import StorageOp
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
-from .variable import Variable
 
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):

@@ -28,7 +28,6 @@ real_action2_alias = {
 }
 
 def get_real_action2s(spritegroup):
-    global real_action2_alias
     loaded_list = []
     loading_list = []
     actions = []

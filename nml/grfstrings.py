@@ -1,5 +1,5 @@
 from __future__ import with_statement
-import os, codecs, re, glob
+import os, codecs, glob
 from nml import generic
 
 def utf8_get_size(char):
@@ -44,7 +44,6 @@ def is_ascii_string(string):
                 i += 2
             elif string[i+1] == 'U':
                 return False
-                i += 6
             else:
                 i += 3
     return True
@@ -192,7 +191,6 @@ def read_extra_commands(custom_tags_file):
     @param custom_tags_file: Filename of the custom tags file.
     @type  custom_tags_file: C{str}
     """
-    global commands
     if not os.access(custom_tags_file, os.R_OK):
         #Failed to open custom_tags.txt, ignore this
         return
@@ -396,7 +394,7 @@ class NewGRFString(object):
 
 def isint(x, base = 10):
     try:
-        a = int(x, base)
+        int(x, base)
         return True
     except ValueError:
         return False

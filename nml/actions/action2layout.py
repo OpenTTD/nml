@@ -381,7 +381,7 @@ def get_layout_action2s(spritegroup):
         for register_info in temp_registers:
             reg, expr = register_info[1], register_info[2]
             if reg is None: continue
-            varact2parser.parse(action2var.reduce_varaction2_expr(expr, feature))
+            varact2parser.parse_expr(action2var.reduce_varaction2_expr(expr, feature))
             varact2parser.var_list.append(nmlop.STO_TMP)
             varact2parser.var_list.append(reg)
             varact2parser.var_list.append(nmlop.VAL2)
@@ -396,7 +396,7 @@ def get_layout_action2s(spritegroup):
             extra_varact2_actions = varact2parser.extra_actions
             extra_act6 = action6.Action6()
             for mod in varact2parser.mods:
-                extra_act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
+                extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
             if len(extra_act6.modifications) > 0: extra_varact2_actions.append(extra_act6)
 
             orig_name = spritegroup.name.value

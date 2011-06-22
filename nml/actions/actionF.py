@@ -23,7 +23,7 @@ numbered_numbers = set() #: Safe numbers introduced by the user (without name).
 
 def get_free_id():
     """Allocate a number from the free_numbers."""
-    global first_free_id, free_numbers
+    global first_free_id
     while first_free_id not in free_numbers:
         first_free_id = first_free_id + 1
         if first_free_id >= 0x80:

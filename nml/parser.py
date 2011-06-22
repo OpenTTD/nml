@@ -429,7 +429,7 @@ class NMLParser(object):
         if len(t) == 1: t[0] = []
         else: t[0] = t[1] + [action2random.RandomChoice(t[2], t[4])]
 
-    def p_produce(self,t):
+    def p_produce(self, t):
         'produce : PRODUCE LPAREN expression_list RPAREN SEMICOLON'
         t[0] = produce.Produce(t[3], t.lineno(1))
 

@@ -1,5 +1,5 @@
 from nml import expression, generic, global_constants, unit
-from nml.ast import base_statement, conditional, loop, general
+from nml.ast import base_statement, general
 from nml.actions import action0, action2, action3
 
 item_feature = None
@@ -144,7 +144,6 @@ class PropertyBlock(base_statement.BaseStatement):
             prop.debug_print(indentation + 2)
 
     def get_action_list(self):
-        global item_feature, item_id
         return action0.parse_property_block(self.prop_list, item_feature, item_id)
 
     def __str__(self):
@@ -172,7 +171,6 @@ class LiveryOverride(base_statement.BaseStatement):
         print (indentation+2)*' ' + 'Default graphics:', self.graphics_block.default_graphics
 
     def get_action_list(self):
-        global item_feature
         wagon_id = self.wagon_id.reduce_constant([(global_constants.item_names, global_constants.item_to_id)])
         return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
 
@@ -193,7 +191,6 @@ class GraphicsBlock(graphics_base_class):
         self.default_graphics = default_graphics
 
     def pre_process(self):
-        global item_feature
         # initialize base class and pre_process it as well (in that order)
         self.initialize(None, expression.ConstantNumeric(item_feature))
         graphics_base_class.pre_process(self)
@@ -214,7 +211,6 @@ class GraphicsBlock(graphics_base_class):
             self.default_graphics.debug_print(indentation + 4)
 
     def get_action_list(self):
-        global item_feature, item_id
         if self.prepare_output():
             return action3.parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
         return []

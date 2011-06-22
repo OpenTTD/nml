@@ -1,5 +1,6 @@
 from nml import generic
 from .base_expression import Expression, ConstantNumeric
+from .string_literal import StringLiteral
 
 ignore_all_invalid_ids = False
 

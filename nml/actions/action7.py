@@ -72,7 +72,7 @@ def parse_conditional(expr):
                 bit_num = expr.expr2.value
             else:
                 if isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric):
-                   param = expr.expr2.num.value
+                    param = expr.expr2.num.value
                 else:
                     param, tmp_action_list = actionD.get_tmp_parameter(expr.expr2)
                     actions.extend(tmp_action_list)
@@ -160,7 +160,7 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
 
 def parse_conditional_block(cond_list):
     blocks = []
-    for idx, cond in enumerate(cond_list.statements):
+    for cond in cond_list.statements:
         if isinstance(cond.expr, expression.ConstantNumeric):
             if cond.expr.value == 0:
                 continue

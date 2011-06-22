@@ -60,7 +60,7 @@ class ReplaceSprite(base_statement.BaseStatement):
         ret += "}\n"
         return ret
 
-class ReplaceNewSprite(object):
+class ReplaceNewSprite(base_statement.BaseStatement):
     """
     AST node for a 'replacenew' block.
     NML syntax: replacenew(type[, default_file[, offset]]) { ..real sprites.. }
