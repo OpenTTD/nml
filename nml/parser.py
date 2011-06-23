@@ -84,23 +84,16 @@ class NMLParser(object):
                       | basecost'''
         t[0] = t[1]
 
-    def p_constant_num(self, t):
-        'constant_num : NUMBER'
-        t[0] = expression.ConstantNumeric(t[1], t.lineno(1))
-
-    def p_constant_float(self, t):
-        'constant_float : FLOAT'
-        t[0] = expression.ConstantFloat(t[1], t.lineno(1))
-
     #
     # Expressions
     #
     def p_expression(self, t):
-        '''expression : constant_num
-                      | constant_float
+        '''expression : NUMBER
+                      | FLOAT
                       | param
                       | variable
                       | ID
+                      | STRING_LITERAL
                       | string'''
         t[0] = t[1]
 
@@ -192,9 +185,6 @@ class NMLParser(object):
         'expression : LBRACKET expression_list RBRACKET'
         t[0] = expression.Array(t[2], t.lineno(1))
 
-    def p_expression_string_literal(self, t):
-        'expression : STRING_LITERAL'
-        t[0] = t[1]
 
     #
     # Commonly used non-terminals that are not expressions
@@ -326,8 +316,8 @@ class NMLParser(object):
     def p_property_assignment(self, t):
         '''property_assignment : ID COLON expression SEMICOLON
                                | ID COLON expression UNIT SEMICOLON
-                               | constant_num COLON expression SEMICOLON
-                               | constant_num COLON expression UNIT SEMICOLON'''
+                               | NUMBER COLON expression SEMICOLON
+                               | NUMBER COLON expression UNIT SEMICOLON'''
         name = t[1]
         unit = None if len(t) == 5 else item.Unit(t[4])
         t[0] = item.Property(name, t[3], unit, t.lineno(1))
@@ -459,7 +449,7 @@ class NMLParser(object):
     def p_recolour_assignment_3(self, t):
         'recolour_assignment : expression RANGE expression COLON expression SEMICOLON'
         t[0] = assignment.Assignment(assignment.Range(t[1], t[3]), assignment.Range(t[5], None), t[1].pos)
-            
+
     def p_recolour_sprite(self, t):
         'real_sprite : RECOLOUR_SPRITE LBRACE recolour_assignment_list RBRACE'
         t[0] = real_sprite.RecolourSprite(t[3])
@@ -523,7 +513,6 @@ class NMLParser(object):
     def p_spriteset(self, t):
         'spriteset : SPRITESET LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
         t[0] = spriteblock.SpriteSet(t[3], t[6], t.lineno(1))
-
 
     def p_spritegroup_normal(self, t):
         'spritegroup : SPRITEGROUP ID LBRACE spriteview_list RBRACE'

@@ -124,7 +124,7 @@ class NMLLexer(object):
 
     def t_FLOAT(self, t):
         r'\d+\.\d+'
-        t.value = float(t.value)
+        t.value = expression.ConstantFloat(float(t.value), t.lineno)
         return t
 
     def t_NUMBER(self, t):
@@ -133,7 +133,7 @@ class NMLLexer(object):
         if len(t.value) >= 2 and t.value[0:2] == "0x":
             t.value = t.value[2:]
             base = 16
-        t.value = int(t.value, base)
+        t.value = expression.ConstantNumeric(int(t.value, base), t.lineno)
         return t
 
     def t_UNIT(self, t):
