@@ -184,7 +184,10 @@ class SpriteLayout(spritelayout_base_class):
     def pre_process(self):
         for layout_sprite in self.layout_sprite_list:
             for param in layout_sprite.param_list:
-                param.value = param.value.reduce(global_constants.const_list)
+                try:
+                    param.value = param.value.reduce(global_constants.const_list)
+                except generic.ScriptError:
+                    pass
         spritelayout_base_class.pre_process(self)
 
     def collect_references(self):
