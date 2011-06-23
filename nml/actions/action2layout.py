@@ -263,10 +263,12 @@ class Action2LayoutSprite(object):
                 self.create_register(name, offset)
             return val
         else:
+            self.sprite_from_action1 = False
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, (1 << 14) - 1, "sprite", value.pos)
-            self.sprite_from_action1 = False
-            return value
+                return value
+            self.create_register(name, value)
+            return expression.ConstantNumeric(0)
 
     def _validate_recolour_mode(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
