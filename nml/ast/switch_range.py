@@ -13,7 +13,7 @@ class SwitchRange(object):
         self.min = self.min.reduce(global_constants.const_list)
         self.max = self.max.reduce(global_constants.const_list)
         # Result may be None here, not pre-processed yet
-        if isinstance(self.result, expression.Expression):
+        if self.result is not None:
             try:
                 self.result = self.result.reduce(global_constants.const_list)
             except generic.ScriptError:
@@ -36,7 +36,7 @@ class SwitchRange(object):
             ret += '..' + str(self.max)
         if self.result is None:
             ret += ': return;'
-        elif isinstance(self.result, action2.SpriteGroupRef):
+        elif isinstance(self.result, expression.SpriteGroupRef):
             ret += ': %s;' % str(self.result)
         else:
             ret += ': return %s;' % str(self.result)

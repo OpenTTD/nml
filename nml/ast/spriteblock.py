@@ -8,7 +8,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
         self.name = name
         self.param_list = param_list
         self.sprite_list = sprite_list
-
+    
     def pre_process(self):
         #check that all templates that are referred to exist at this point
         #This prevents circular dependencies
@@ -118,6 +118,10 @@ class SpriteGroup(spritegroup_base_class):
         self.parsed = False
 
     # pre_process is defined by the base class
+    def pre_process(self):
+        for spriteview in self.spriteview_list:
+            spriteview.pre_process()
+        spritegroup_base_class.pre_process(self)
 
     def collect_references(self):
         all_sets = []
@@ -151,6 +155,11 @@ class SpriteView(object):
         self.spriteset_list = spriteset_list
         self.pos = pos
 
+    def pre_process(self):
+        self.spriteset_list = [x.reduce(global_constants.const_list) for x in self.spriteset_list]
+        if any(map(lambda x: not isinstance(x, expression.SpriteGroupRef), self.spriteset_list)):
+            raise generic.ScriptError("All items in a spritegroup must be spritegroup references", self.pos)
+
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite view:', self.name.value
         print (indentation+2)*' ' + 'Sprite sets:'
@@ -172,7 +181,11 @@ class SpriteLayout(spritelayout_base_class):
         self.layout_sprite_list = layout_sprite_list
         self.parsed = False
 
-    # pre_process is defined by the base class
+    def pre_process(self):
+        for layout_sprite in self.layout_sprite_list:
+            for param in layout_sprite.param_list:
+                param.value = param.value.reduce(global_constants.const_list)
+        spritelayout_base_class.pre_process(self)
 
     def collect_references(self):
         all_sets = []
@@ -201,8 +214,8 @@ class SpriteLayout(spritelayout_base_class):
         return []
 
 class LayoutSprite(object):
-    def __init__(self, type, param_list, pos):
-        self.type = type
+    def __init__(self, ls_type, param_list, pos):
+        self.type = ls_type
         self.param_list = param_list
         self.pos = pos
 
@@ -210,7 +223,11 @@ class LayoutSprite(object):
     def collect_spritesets(self):
         used_sets = []
         for layout_param in self.param_list:
-            if isinstance(layout_param.value, action2.SpriteGroupRef):
+            try:
+                layout_param.value = layout_param.value.reduce(global_constants.const_list)
+            except generic.ScriptError:
+                pass
+            if isinstance(layout_param.value, expression.SpriteGroupRef):
                 used_sets.append(layout_param.value)
         return used_sets
 
@@ -226,16 +243,6 @@ class LayoutParam(object):
     def __init__(self, name, value, pos):
         self.name = name
         self.value = value
-        try:
-            if self.name.value not in ('hide_sprite', 'xoffset', 'yoffset', 'zoffset'):
-                self.value = self.value.reduce(global_constants.const_list)
-        except generic.ScriptError, ex:
-            if isinstance(value, expression.Identifier):
-                self.value = action2.SpriteGroupRef(value, [], value.pos)
-            elif isinstance(value, expression.FunctionCall):
-                self.value = action2.SpriteGroupRef(value.name, value.params, value.pos)
-            else:
-                raise
         self.pos = pos
 
     def debug_print(self, indentation):

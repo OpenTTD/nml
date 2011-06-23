@@ -191,6 +191,13 @@ class GraphicsBlock(graphics_base_class):
         self.default_graphics = default_graphics
 
     def pre_process(self):
+        for graphics_def in self.graphics_list:
+            graphics_def.pre_process()
+        if self.default_graphics is not None:
+            self.default_graphics = self.default_graphics.reduce(global_constants.const_list)
+            if not isinstance(self.default_graphics, expression.SpriteGroupRef):
+                raise generic.ScriptError("All items in a graphics-block must be spritegroup references", self.pos)
+
         # initialize base class and pre_process it as well (in that order)
         self.initialize(None, expression.ConstantNumeric(item_feature))
         graphics_base_class.pre_process(self)
@@ -227,6 +234,11 @@ class GraphicsDefinition(object):
     def __init__(self, cargo_id, spritegroup_ref):
         self.cargo_id = cargo_id
         self.spritegroup_ref = spritegroup_ref
+
+    def pre_process(self):
+        self.spritegroup_ref = self.spritegroup_ref.reduce(global_constants.const_list)
+        if not isinstance(self.spritegroup_ref, expression.SpriteGroupRef):
+            raise generic.ScriptError("All items in a graphics-block must be spritegroup references", self.pos)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Graphics:'

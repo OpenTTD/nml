@@ -12,6 +12,7 @@ from .identifier import Identifier
 from .patch_variable import PatchVariable
 from .parameter import Parameter, OtherGRFParameter, parse_string_to_dword
 from .special_parameter import SpecialParameter
+from .spritegroup_ref import SpriteGroupRef
 from .storage_op import StorageOp
 from .string import String
 from .string_literal import StringLiteral

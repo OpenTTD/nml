@@ -213,7 +213,7 @@ class Action2LayoutSprite(object):
 
     def set_param(self, name, value):
         assert isinstance(name, expression.Identifier)
-        assert isinstance(value, expression.Expression) or isinstance(value, action2.SpriteGroupRef)
+        assert isinstance(value, expression.Expression) or isinstance(value, expression.SpriteGroupRef)
         name = name.value
         if name == 'ttdsprite':
             name = 'sprite'
@@ -256,7 +256,7 @@ class Action2LayoutSprite(object):
         return expression.ConstantNumeric(num), offset
 
     def _validate_sprite(self, name, value):
-        if isinstance(value, action2.SpriteGroupRef):
+        if isinstance(value, expression.SpriteGroupRef):
             self.sprite_from_action1 = True
             val, offset = self.resolve_spritegroup_ref(value)
             if offset is not None:
@@ -277,7 +277,7 @@ class Action2LayoutSprite(object):
         return value.value
 
     def _validate_palette(self, name, value):
-        if isinstance(value, action2.SpriteGroupRef):
+        if isinstance(value, expression.SpriteGroupRef):
             self.palette_from_action1 = True
             val, offset = self.resolve_spritegroup_ref(value)
             if offset is not None:
@@ -345,7 +345,7 @@ def get_layout_action2s(spritegroup):
     all_spritesets = []
     for layout_sprite in spritegroup.layout_sprite_list:
         for param in layout_sprite.param_list:
-            if param.name.value in ('sprite', 'palette') and isinstance(param.value, action2.SpriteGroupRef):
+            if param.name.value in ('sprite', 'palette') and isinstance(param.value, expression.SpriteGroupRef):
                 all_spritesets.append(action2.resolve_spritegroup(param.value.name))
     actions.extend(action1.add_to_action1(all_spritesets, feature, spritegroup.pos))
 
@@ -404,7 +404,7 @@ def get_layout_action2s(spritegroup):
             action2.register_spritegroup(spritegroup)
             varaction2 = action2var.Action2Var(feature, '%s@registers' % orig_name, 0x89)
             varaction2.var_list = varact2parser.var_list
-            ref = action2.SpriteGroupRef(spritegroup.name, [], None)
+            ref = expression.SpriteGroupRef(spritegroup.name, [], None)
             varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, comment=''))
             varaction2.default_result = ref
             varaction2.default_comment = ''

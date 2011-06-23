@@ -70,7 +70,7 @@ class Produce(produce_base_class):
                 # Rename ourself
                 name.value += '@prod'
 
-                va2_body = switch.SwitchBody([], action2.SpriteGroupRef(expression.Identifier(name.value, self.pos), [], self.pos))
+                va2_body = switch.SwitchBody([], expression.SpriteGroupRef(expression.Identifier(name.value, self.pos), [], self.pos))
                 self.switch = switch.Switch(va2_feature, va2_range, va2_name, va2_expr, va2_body, self.pos)
 
         # initialize base class and pre_process it as well (in that order), do the same for switch if applicable

@@ -29,7 +29,7 @@ class Switch(switch_base_class):
         return_body = SwitchBody([], None)
         self.return_switches.append(Switch(self.feature, return_var_range, return_name, expr, return_body, self.pos))
         self.return_switches[-1].pre_process()
-        return action2.SpriteGroupRef(return_name, [], self.pos)
+        return expression.SpriteGroupRef(return_name, [], self.pos)
 
     def pre_process(self):
         self.expr = action2var.reduce_varaction2_expr(self.expr, action2var.get_feature(self))
@@ -38,17 +38,17 @@ class Switch(switch_base_class):
 
         num_extra_acts = 0
         for range in self.body.ranges:
-            if range.result is not None and not isinstance(range.result, (action2.SpriteGroupRef, expression.String)) and not range.result.supported_by_actionD(False):
+            if range.result is not None and not isinstance(range.result, (expression.SpriteGroupRef, expression.String)) and not range.result.supported_by_actionD(False):
                 range.result = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), range.result)
                 num_extra_acts += 1
-        if self.body.default is not None and not isinstance(self.body.default, (action2.SpriteGroupRef, expression.String)) and not self.body.default.supported_by_actionD(False):
+        if self.body.default is not None and not isinstance(self.body.default, (expression.SpriteGroupRef, expression.String)) and not self.body.default.supported_by_actionD(False):
             self.body.default = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), self.body.default)
 
         if any(map(lambda x: x is None, [r.result for r in self.body.ranges] + [self.body.default])):
             if len(self.body.ranges) == 0:
                 # We already have no ranges, so can just add a bogus default result
                 assert self.body.default is None
-                self.body.default = action2.SpriteGroupRef(expression.Identifier('CB_FAILED', self.pos), [], self.pos)
+                self.body.default = expression.SpriteGroupRef(expression.Identifier('CB_FAILED', self.pos), [], self.pos)
             else:
                 # Load var 0x1C, which is the last computed value. 
                 return_expr = expression.Variable(expression.ConstantNumeric(0x1C, self.pos), pos=self.pos)
@@ -70,7 +70,7 @@ class Switch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
-            if isinstance(result, action2.SpriteGroupRef) and result.name.value != 'CB_FAILED':
+            if isinstance(result, expression.SpriteGroupRef) and result.name.value != 'CB_FAILED':
                 all_refs.append(result)
         return all_refs
 
@@ -113,7 +113,7 @@ class SwitchBody(object):
         self.default = default
 
     def pre_process(self):
-        if isinstance(self.default, expression.Expression):
+        if self.default is not None:
             self.default = self.default.reduce(global_constants.const_list)
         for r in self.ranges:
             r.pre_process()
@@ -130,7 +130,7 @@ class SwitchBody(object):
             ret += '\t%s\n' % str(r)
         if self.default is None:
             ret += '\treturn;\n'
-        elif isinstance(self.default, action2.SpriteGroupRef):
+        elif isinstance(self.default, expression.SpriteGroupRef):
             ret += '\t%s;\n' % str(self.default)
         else:
             ret += '\treturn %s;\n' % str(self.default)
@@ -171,24 +171,9 @@ class RandomSwitch(switch_base_class):
             raise generic.ScriptError("random_switch parameter 4 'triggers' out of range 0..255, encountered " + str(self.triggers.value), self.triggers.pos)
 
         #body
-        self.choices = []
+        self.choices = choices
         self.dependent = []
         self.independent = []
-        for choice in choices:
-            if isinstance(choice.probability, expression.Identifier):
-                if choice.probability.value == 'independent':
-                    if (not isinstance(choice.result, action2.SpriteGroupRef)) or len(choice.result.param_list) > 0:
-                        raise generic.ScriptError("Value for 'independent' should be an identifier", choice.result.pos)
-                    self.independent.append(choice.result)
-                    continue
-                elif choice.probability.value == 'dependent':
-                    if (not isinstance(choice.result, action2.SpriteGroupRef)) or len(choice.result.param_list) > 0:
-                        raise generic.ScriptError("Value for 'dependent' should be an identifier", choice.result.pos)
-                    self.dependent.append(choice.result)
-                    continue
-                else:
-                    assert False, "NOT REACHED"
-            self.choices.append(choice)
 
         self.switch = None
         self.return_switches = []
@@ -200,9 +185,32 @@ class RandomSwitch(switch_base_class):
         return_body = SwitchBody([], None)
         self.return_switches.append(Switch(self.feature, return_var_range, return_name, expr, return_body, self.pos))
         self.return_switches[-1].pre_process()
-        return action2.SpriteGroupRef(return_name, [], self.pos)
+        return expression.SpriteGroupRef(return_name, [], self.pos)
 
     def pre_process(self):
+        num_extra_acts = 0
+        for choice in self.choices:
+            if choice.result is not None:
+                choice.result = choice.result.reduce(global_constants.const_list)
+                if not isinstance(choice.result, expression.SpriteGroupRef) and not choice.result.supported_by_actionD(False):
+                    choice.result = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), choice.result)
+                    num_extra_acts += 1
+
+        for choice in self.choices:
+            if isinstance(choice.probability, expression.Identifier):
+                if choice.probability.value == 'independent':
+                    if (not isinstance(choice.result, expression.SpriteGroupRef)) or len(choice.result.param_list) > 0:
+                        raise generic.ScriptError("Value for 'independent' should be an identifier", choice.result.pos)
+                    self.independent.append(choice.result)
+                    continue
+                elif choice.probability.value == 'dependent':
+                    if (not isinstance(choice.result, expression.SpriteGroupRef)) or len(choice.result.param_list) > 0:
+                        raise generic.ScriptError("Value for 'dependent' should be an identifier", choice.result.pos)
+                    self.dependent.append(choice.result)
+                    continue
+                else:
+                    assert False, "NOT REACHED"
+                    
         # Make sure, all [in]dependencies refer to existing random switch blocks
         for dep in self.dependent + self.independent:
             spritegroup = action2.resolve_spritegroup(dep.name)
@@ -219,17 +227,11 @@ class RandomSwitch(switch_base_class):
             # Rename ourself
             self.name.value += '@random'
 
-            va2_body = SwitchBody([], action2.SpriteGroupRef(expression.Identifier(self.name.value, self.pos), [], self.pos))
+            va2_body = SwitchBody([], expression.SpriteGroupRef(expression.Identifier(self.name.value, self.pos), [], self.pos))
             expr = expression.BinOp(nmlop.STO_TMP, self.type_count, expression.ConstantNumeric(100))
             self.switch = Switch(va2_feature, va2_range, va2_name, expr, va2_body, self.pos)
 
             self.type_count = expression.ConstantNumeric(0, self.pos) # 0 means 'read from register'
-
-        num_extra_acts = 0
-        for choice in self.choices:
-            if choice.result is not None and not isinstance(choice.result, (action2.SpriteGroupRef, expression.String)) and not choice.result.supported_by_actionD(False):
-                choice.result = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), choice.result)
-                num_extra_acts += 1
 
         # Init ourself first
         self.initialize(self.name, self.feature)
@@ -239,7 +241,7 @@ class RandomSwitch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for choice in self.choices:
-            if isinstance(choice.result, action2.SpriteGroupRef) and choice.result.name.value != 'CB_FAILED':
+            if isinstance(choice.result, expression.SpriteGroupRef) and choice.result.name.value != 'CB_FAILED':
                 all_refs.append(choice.result)
         return all_refs
 
@@ -393,7 +395,7 @@ def parse_randomswitch_choices(random_switch):
 
     for choice in random_switch.choices:
         total_prob += choice.probability.value
-        if isinstance(choice.result, action2.SpriteGroupRef):
+        if isinstance(choice.result, expression.SpriteGroupRef):
             choice.comment = choice.result.name.value + ';'
         else:
             choice.comment = "return %s;" % str(choice.result)

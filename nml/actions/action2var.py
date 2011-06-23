@@ -41,11 +41,11 @@ class Action2Var(action2.Action2):
             self.var_list[i].shift |= 0x20
 
         for r in self.ranges:
-            if isinstance(r.result, action2.SpriteGroupRef):
+            if isinstance(r.result, expression.SpriteGroupRef):
                 r.result = r.result.get_action2_id()
             else:
                 r.result = r.result.value | 0x8000
-        if isinstance(self.default_result, action2.SpriteGroupRef):
+        if isinstance(self.default_result, expression.SpriteGroupRef):
             self.default_result = self.default_result.get_action2_id()
         else:
             self.default_result = self.default_result.value | 0x8000
@@ -611,7 +611,7 @@ def parse_result(value, action_list, act6, offset, varaction2, repeat_result = 1
                 - Comment to add to this value
     @rtype: C{tuple} of (L{ConstantNumeric} or L{SpriteGroupRef}), C{str}
     """
-    if isinstance(value, action2.SpriteGroupRef):
+    if isinstance(value, expression.SpriteGroupRef):
         comment = value.name.value + ';'
         if value.name.value != 'CB_FAILED':
             action2.add_ref(value, varaction2)

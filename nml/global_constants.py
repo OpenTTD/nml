@@ -907,11 +907,15 @@ def item_to_id(item, pos):
 def param_from_name(info, pos):
     return expression.Parameter(expression.ConstantNumeric(info), pos)
 
+def create_spritegroup_ref(info, pos):
+    return expression.SpriteGroupRef(expression.Identifier(info), [], pos)
+
 cargo_numbers = {}
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 settings = {}
 named_parameters = {}
+spritegroups = {'CB_FAILED': 'CB_FAILED'}
 
 const_list = [
     constant_numbers,
@@ -924,5 +928,6 @@ const_list = [
     (item_names, item_to_id),
     (settings, setting_from_info),
     (config_flags, config_flag),
-    (unified_maglev_var, unified_maglev)
+    (unified_maglev_var, unified_maglev),
+    (spritegroups, create_spritegroup_ref),
 ]

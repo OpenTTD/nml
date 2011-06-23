@@ -1,6 +1,7 @@
 from nml import generic
 from nml.actions import base_action
 from nml.ast import base_statement
+import nml
 
 free_action2_ids = list(range(1, 255))
 
@@ -414,6 +415,7 @@ def register_spritegroup(spritegroup):
     if name in spritegroup_list:
         raise generic.ScriptError("Block with name '%s' has already been defined" % name, spritegroup.pos)
     spritegroup_list[name] = spritegroup
+    nml.global_constants.spritegroups[name] = name
 
 def resolve_spritegroup(name):
     """
@@ -429,46 +431,3 @@ def resolve_spritegroup(name):
         raise generic.ScriptError("Unknown identifier encountered: '%s'" % name.value, name.pos)
     return spritegroup_list[name.value]
 
-
-class SpriteGroupRef(object):
-    """
-    Container for a reference to a sprite group / layout
-
-    @ivar name: Name of the referenced item
-    @type name: L{Identifier}
-
-    @ivar param_list: List of parameters to be passed
-    @type param_list: C{list} of L{Expression}
-
-    @ivar pos: Position of this reference
-    @type pos: L{Position}
-    """
-    def __init__(self, name, param_list, pos):
-        self.name = name
-        self.param_list = param_list
-        self.pos = pos
-
-    def debug_print(self, indentation):
-        print indentation*' ' +'Reference to: ' + str(self.name)
-        if len(self.param_list) != 0:
-            print 'Parameters:'
-            for p in self.param_list:
-                p.debug_print(indentation + 2)
-
-    def __str__(self):
-        return str(self.name)
-
-    def get_action2_id(self):
-        """
-        Get the action2 set-ID that this reference maps to
-
-        @return: The set ID
-        @rtype: C{int}
-        """
-        if self.name.value == 'CB_FAILED': return 0 # 0 serves as a failed CB result because it is never used
-        try:
-            spritegroup = resolve_spritegroup(self.name)
-        except generic.ScriptError:
-            assert False, "Illegal action2 reference '%s' encountered." % self.name.value
-
-        return spritegroup.get_action2().id

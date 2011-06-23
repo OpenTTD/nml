@@ -278,24 +278,6 @@ class NMLParser(object):
                                    | generic_assignment_list generic_assignment'''
         t[0] = [] if len(t) == 1 else t[1] + [t[2]]
 
-    def p_spritegroup_ref(self, t):
-        '''spritegroup_ref : ID
-                           | ID LPAREN expression_list RPAREN'''
-        params = [] if len(t) == 2 else t[3]
-        t[0] = action2.SpriteGroupRef(t[1], params, t.lineno(1))
-
-    def p_non_empty_spritegroup_ref_list(self, t):
-        '''non_empty_spritegroup_ref_list : spritegroup_ref
-                                          | non_empty_spritegroup_ref_list COMMA spritegroup_ref'''
-        if len(t) == 2: t[0] = [t[1]]
-        else: t[0] = t[1] + [t[3]]
-
-    def p_spritegroup_ref_list(self, t):
-        '''spritegroup_ref_list :
-                                | non_empty_spritegroup_ref_list
-                                | non_empty_spritegroup_ref_list COMMA'''
-        t[0] = [] if len(t) == 1 else t[1]
-
     #
     # Item blocks
     #
@@ -332,8 +314,8 @@ class NMLParser(object):
 
     def p_graphics_list(self, t):
         '''graphics_list : graphics_assignment_list
-                         | graphics_assignment_list spritegroup_ref SEMICOLON
-                         | spritegroup_ref SEMICOLON'''
+                         | graphics_assignment_list expression SEMICOLON
+                         | expression SEMICOLON'''
         # Save graphics block as a tuple, we need to add position info later
         if len(t) == 2:
             t[0] = (t[1], None)
@@ -343,7 +325,7 @@ class NMLParser(object):
             t[0] = ([], t[1])
 
     def p_graphics_assignment(self, t):
-        'graphics_assignment : expression COLON spritegroup_ref SEMICOLON'
+        'graphics_assignment : expression COLON expression SEMICOLON'
         t[0] = item.GraphicsDefinition(t[1], t[3])
 
     def p_graphics_assignment_list(self, t):
@@ -403,7 +385,7 @@ class NMLParser(object):
     def p_switch_value(self, t):
         '''switch_value : RETURN expression SEMICOLON
                         | RETURN SEMICOLON
-                        | spritegroup_ref SEMICOLON'''
+                        | expression SEMICOLON'''
         if len(t) == 4: t[0] = t[2]
         elif t[1] == 'return': t[0] = None
         else: t[0] = t[1]
@@ -529,8 +511,8 @@ class NMLParser(object):
         else: t[0] = t[1] + [t[2]]
 
     def p_spriteview(self, t):
-        '''spriteview : ID COLON LBRACKET spritegroup_ref_list RBRACKET SEMICOLON
-                      | ID COLON spritegroup_ref SEMICOLON'''
+        '''spriteview : ID COLON LBRACKET expression_list RBRACKET SEMICOLON
+                      | ID COLON expression SEMICOLON'''
         if len(t) == 7: t[0] = spriteblock.SpriteView(t[1], t[4], t.lineno(1))
         else: t[0] = spriteblock.SpriteView(t[1], [t[3]], t.lineno(1))
 

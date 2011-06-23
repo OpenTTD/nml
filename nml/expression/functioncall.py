@@ -39,6 +39,9 @@ class FunctionCall(Expression):
             #try user-defined functions
             func_ptr = self.name.reduce(id_dicts, False, True)
             if func_ptr != self.name: # we found something!
+                if func_ptr.type() == Type.SPRITEGROUP_REF:
+                    func_ptr.param_list = param_list
+                    return func_ptr
                 if func_ptr.type() != Type.FUNCTION_PTR:
                     raise generic.ScriptError("'%s' is defined, but it is not a function." % self.name.value, self.pos)
                 return func_ptr.call(param_list)

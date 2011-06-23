@@ -14,7 +14,7 @@ class Action2Random(action2.Action2):
     def prepare_output(self):
         action2.Action2.prepare_output(self)
         for choice in self.choices:
-            if isinstance(choice.result, action2.SpriteGroupRef):
+            if isinstance(choice.result, expression.SpriteGroupRef):
                 choice.result = choice.result.get_action2_id()
             else:
                 choice.result = choice.result.value | 0x8000
@@ -63,7 +63,7 @@ class RandomChoice(object):
             if result is None:
                 raise generic.ScriptError("Returning the computed value is not possible in a random_switch, as there is no computed value.", self.probability.pos)
         self.result = result
-        if not isinstance(result, action2.SpriteGroupRef):
+        if not isinstance(result, expression.SpriteGroupRef):
             try:
                 self.result = result.reduce(global_constants.const_list)
             except generic.ScriptError:
@@ -77,7 +77,7 @@ class RandomChoice(object):
 
     def __str__(self):
         ret = str(self.probability)
-        if isinstance(self.result, action2.SpriteGroupRef):
+        if isinstance(self.result, expression.SpriteGroupRef):
             ret += ': %s;' % str(self.result)
         else:
             ret += ': return %s;' % str(self.result)

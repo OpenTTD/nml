@@ -8,6 +8,7 @@ class Type(object):
     FLOAT = 1
     STRING_LITERAL = 2
     FUNCTION_PTR = 3
+    SPRITEGROUP_REF = 4
 
 class Expression(object):
     """
