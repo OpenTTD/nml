@@ -30,24 +30,23 @@ class FunctionCall(Expression):
         return ret
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        param_list = [param.reduce(id_dicts) for param in self.params]
         if self.name.value in function_table:
             func = function_table[self.name.value]
-            val = func(self.name.value, param_list, self.pos)
+            val = func(self.name.value, self.params, self.pos)
             return val.reduce(id_dicts)
         else:
             #try user-defined functions
             func_ptr = self.name.reduce(id_dicts, False, True)
             if func_ptr != self.name: # we found something!
                 if func_ptr.type() == Type.SPRITEGROUP_REF:
-                    func_ptr.param_list = param_list
+                    func_ptr.param_list = self.params
                     return func_ptr
                 if func_ptr.type() != Type.FUNCTION_PTR:
                     raise generic.ScriptError("'%s' is defined, but it is not a function." % self.name.value, self.pos)
-                return func_ptr.call(param_list)
+                return func_ptr.call(self.params)
             if unknown_id_fatal:
                 raise generic.ScriptError("'%s' is not defined as a function." % self.name.value, self.pos)
-            return FunctionCall(self.name, param_list, self.pos)
+            return FunctionCall(self.name, self.params, self.pos)
 
 
 class SpecialCheck(Expression):
