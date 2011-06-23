@@ -5,7 +5,12 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 3 11 \w2 
-1 ** beef.wav
-2 * 8 FE 00 \dx87654321 \wx0003 
+// param[0] = 73
+0 * 9 0D 00 \D= FF 00 \dx00000049 
 
+// param[1] = 74
+1 * 9 0D 01 \D= FF 00 \dx0000004A 
+
+2 * 3 11 \w2 
+3 ** beef.wav
+4 * 8 FE 00 \dx87654321 \wx0003 

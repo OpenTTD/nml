@@ -1,4 +1,5 @@
 import datetime, calendar, math
+from nml.actions import action11
 from nml import generic, nmlop
 from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
 from .binop import BinOp
@@ -373,6 +374,23 @@ def builtin_abs(name, args, pos):
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     guard = BinOp(nmlop.CMP_LT, args[0], ConstantNumeric(0), args[0].pos)
     return TernaryOp(guard, BinOp(nmlop.SUB, ConstantNumeric(0), args[0], args[0].pos), args[0], args[0].pos).reduce()
+
+def builtin_sound_file(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    if not isinstance(args[0], StringLiteral):
+        raise generic.ScriptError("Parameter for " + name + "() must be a string literal", pos)
+    return ConstantNumeric(action11.add_sound(args[0].value), pos)
+
+def builtin_sound_import(name, args, pos):
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have 2 parameter", pos)
+    if isinstance(args[0], ConstantNumeric):
+        grfid = args[0].value
+    else:
+        grfid = parse_string_to_dword(args[0])
+    sound_num = args[1].reduce_constant().value
+    return ConstantNumeric(action11.add_sound((grfid, sound_num)), pos)
 #}
 
 function_table = {
@@ -409,4 +427,6 @@ function_table = {
     'UCMP' : builtin_ucmp,
     'CMP' : builtin_cmp,
     'rotate' : builtin_rotate,
+    'sound' : builtin_sound_file,
+    'import_sound': builtin_sound_import,
 }

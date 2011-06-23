@@ -1,4 +1,2 @@
-sounds {
-        load_soundfile("beef.wav");
-        import_sound(0x87654321, 3);
-}
+param[0] = sound("beef.wav");
+param[1] = import_sound(0x87654321, 3);

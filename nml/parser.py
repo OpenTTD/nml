@@ -1,6 +1,6 @@
 from nml import generic, expression, tokens, nmlop
 from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, switch_range, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites, override
-from nml.actions import action2, action2random, actionD, action11, real_sprite
+from nml.actions import action2, action2random, actionD, real_sprite
 import ply.yacc as yacc
 
 class NMLParser(object):
@@ -60,7 +60,6 @@ class NMLParser(object):
                       | template_declaration
                       | tilelayout
                       | town_names
-                      | sounds
                       | cargotable
                       | railtype
                       | grf_block
@@ -603,25 +602,6 @@ class NMLParser(object):
                            | ID LPAREN STRING_LITERAL COMMA expression RPAREN'''
         if t[1] == 'town_names': t[0] = townnames.TownNamesEntryDefinition(t[3], t[5], t.lineno(1))
         else: t[0] = townnames.TownNamesEntryText(t[1], t[3], t[5], t.lineno(1))
-
-    #
-    # Sounds
-    #
-    def p_sounds(self, t):
-        '''sounds : SOUNDS LBRACE sound_list RBRACE'''
-        t[0] = action11.Action11(t[3], t.lineno(1))
-
-    def p_sound_list(self, t):
-        '''sound_list : sound
-                      | sound_list sound'''
-        if len(t) == 2: t[0] = [t[1]]
-        else: t[0] = t[1] + [t[2]]
-
-    def p_sound(self, t):
-        '''sound : LOAD_SOUNDFILE LPAREN STRING_LITERAL RPAREN SEMICOLON
-                 | IMPORT_SOUND LPAREN expression COMMA expression RPAREN SEMICOLON'''
-        if len(t) == 6: t[0] = action11.LoadBinaryFile(t[3], t.lineno(1))
-        else: t[0] = action11.ImportSound(t[3], t[5], t.lineno(1))
 
     #
     # Snow line

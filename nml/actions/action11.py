@@ -2,71 +2,43 @@
 Action 11 support classes (sounds).
 """
 import os
-from nml import generic, expression
+from operator import itemgetter
+from nml import generic
 from nml.actions import base_action
-from nml.ast import base_statement
 
-class Action11(base_action.BaseAction, base_statement.BaseStatement):
-    def __init__(self, sounds, pos):
-        base_statement.BaseStatement.__init__(self, "sounds-block", pos, False, False)
-        self.sounds = sounds
-        self.sounds[-1].last = True
-
-    def prepare_output(self):
-        assert len(self.sounds) > 0
-        for sound in self.sounds: sound.prepare_output()
+class Action11(base_action.BaseAction):
+    def __init__(self, num_sounds):
+        self.num_sounds = num_sounds
 
     def write(self, file):
         file.start_sprite(3)
         file.print_bytex(0x11)
-        file.print_word(len(self.sounds))
+        file.print_word(self.num_sounds)
         file.end_sprite()
 
-    def get_action_list(self):
-        return [self] + self.sounds
 
-    def __str__(self):
-        return 'sounds {\n\t%s\n}' % '\n\t'.join([str(x) for x in self.sounds])
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Sounds:'
-        for sound in self.sounds: sound.debug_print(indentation + 2)
-
-
-class LoadBinaryFile(object):
+class LoadBinaryFile(base_action.BaseAction):
     '''
     <sprite-number> * <length> FF <name-len> <name> 00 <data>
     '''
-    def __init__(self, fname, pos):
+    def __init__(self, fname):
         self.fname = fname
         self.last = False
-        self.pos = pos
 
     def prepare_output(self):
-        if not os.access(self.fname.value, os.R_OK):
-            raise generic.ScriptError('File "%s" does not exist.' % self.fname.value, self.pos)
-        size = os.path.getsize(self.fname.value)
+        if not os.access(self.fname, os.R_OK):
+            raise generic.ScriptError("File does not exist.", self.fname)
+        size = os.path.getsize(self.fname)
         if size == 0:
-            raise generic.ScriptError("Expected a sound file with non-zero length.", self.pos)
+            raise generic.ScriptError("Expected a sound file with non-zero length.", self.fname)
         if size > 0x10000:
-            raise generic.ScriptError("Sound file too big (max 64KB).", self.pos)
-
-    def debug_print(self, indentation):
-        name = os.path.split(self.fname.value)[1]
-        if os.path.isfile(self.fname.value):
-            size = str(os.path.getsize(self.fname.value))
-        else:
-            size = '???'
-        print indentation*' ' + 'load binary file %r (filename %r), %s bytes' % (self.fname.value, name, size)
-
-    def __str__(self):
-        return 'load_soundfile(%s);' % self.fname
+            raise generic.ScriptError("Sound file too big (max 64KB).", self.fname)
 
     def write(self, file):
-        file.print_named_filedata(self.fname.value)
+        file.print_named_filedata(self.fname)
         if self.last: file.newline()
 
-class ImportSound(object):
+class ImportSound(base_action.BaseAction):
     """
     Import a sound from another grf::
 
@@ -78,30 +50,10 @@ class ImportSound(object):
     @ivar number: Sound number to load.
     @type number: C{int}
     """
-    def __init__(self, grfid, number, pos):
-        grfid = grfid.reduce_constant()
-        if not isinstance(grfid, expression.ConstantNumeric):
-            raise generic.ScriptError("grf id of the imported sound is not a number.", grfid.pos)
-        self.grfid = grfid.value
-        self.pos = pos
-
-        number = number.reduce_constant()
-        if not isinstance(number, expression.ConstantNumeric):
-            raise generic.ScriptError("sound number of the imported sound is not a number.", number.pos)
-        self.number = number.value
+    def __init__(self, grfid, number):
+        self.grfid = grfid
+        self.number = number
         self.last = False
-
-    def prepare_output(self):
-        pass
-
-    def debug_print(self, indentation):
-        value = self.grfid
-        if -0x80000000 < value < 0: value += 0x100000000
-        print indentation*' ' + 'import sound %d from NewGRF %s' % (self.number, hex(value))
-
-    def __str__(self):
-        grfid = self.grfid if self.grfid >= 0 else 0x100000000 + self.grfid
-        return 'import_sound(0x%X, %d);' % (grfid, self.number)
 
     def write(self, file):
         file.start_sprite(8)
@@ -111,3 +63,28 @@ class ImportSound(object):
         file.print_wordx(self.number)
         file.end_sprite()
         if self.last: file.newline()
+
+registered_sounds = {}
+
+def add_sound(args):
+    if args not in registered_sounds:
+        registered_sounds[args] = len(registered_sounds)
+    return registered_sounds[args] + 73
+
+def get_sound_actions():
+    """
+    Get a list of actions that actually includes all sounds in the output file.
+    """
+    if not registered_sounds:
+        return []
+
+    action_list = []
+    action_list.append(Action11(len(registered_sounds)))
+
+    for sound in map(itemgetter(0), sorted(registered_sounds.iteritems(), key=itemgetter(1))):
+        if isinstance(sound, tuple):
+            action_list.append(ImportSound(*sound))
+        else:
+            action_list.append(LoadBinaryFile(sound))
+
+    return action_list

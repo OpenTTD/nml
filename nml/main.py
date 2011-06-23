@@ -1,6 +1,6 @@
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, palette
-from nml.actions import action2var, action8, sprite_count, real_sprite, action4, action0, action1
+from nml.actions import action2var, action8, sprite_count, real_sprite, action4, action0, action1, action11
 from nml.ast import general, grf, alt_sprites
 
 try:
@@ -134,6 +134,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
             actions.extend(action.get_action_list())
         else:
             actions.append(action)
+    actions.extend(action11.get_sound_actions())
 
     action8_index = -1
     for i in range(len(actions) - 1, -1, -1):
