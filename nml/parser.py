@@ -224,12 +224,12 @@ class NMLParser(object):
         else: t[0] = t[1] + [t[2]]
 
     def p_setting_value(self, t):
-        'setting_value : ID COLON expression SEMICOLON'
-        t[0] = grf.SettingValue(t[1], t[3])
+        'setting_value : assignment'
+        t[0] =  t[1]
 
     def p_names_setting_value(self, t):
         'setting_value : ID COLON LBRACE name_string_list RBRACE SEMICOLON'
-        t[0] = grf.SettingValue(t[1], t[4])
+        t[0] =  assignment.Assignment(t[1], t[4], t[1].pos)
 
     def p_name_string_list(self, t):
         '''name_string_list : name_string_item
@@ -527,14 +527,10 @@ class NMLParser(object):
         t[0] = spriteblock.LayoutSprite(t[1], t[3], t.lineno(1))
 
     def p_layout_param_list(self, t):
-        '''layout_param_list : layout_param
-                             | layout_param_list layout_param'''
+        '''layout_param_list : assignment
+                             | layout_param_list assignment'''
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[2]]
-
-    def p_layout_param(self, t):
-        'layout_param : ID COLON expression SEMICOLON'
-        t[0] = spriteblock.LayoutParam(t[1], t[3], t.lineno(1))
 
     #
     # Town names
@@ -658,5 +654,5 @@ class NMLParser(object):
         t[0] = tilelayout.LayoutTile(t[1], t[3], t[5])
 
     def p_tilelayout_item_prop(self, t):
-        'tilelayout_item : ID COLON expression SEMICOLON'
-        t[0] = tilelayout.LayoutProp(t[1], t[3])
+        'tilelayout_item : assignment'
+        t[0] = t[1]

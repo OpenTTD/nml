@@ -238,16 +238,3 @@ class LayoutSprite(object):
 
     def __str__(self):
         return '\t%s {\n\t\t%s\n\t}' % (self.type, '\n\t\t'.join([str(layout_param) for layout_param in self.param_list]))
-
-class LayoutParam(object):
-    def __init__(self, name, value, pos):
-        self.name = name
-        self.value = value
-        self.pos = pos
-
-    def debug_print(self, indentation):
-        print indentation*' ' + 'Layout parameter:', self.name.value
-        self.value.debug_print(indentation + 2)
-
-    def __str__(self):
-        return '%s: %s;' % (str(self.name), str(self.value))

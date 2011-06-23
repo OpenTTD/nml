@@ -1,6 +1,6 @@
 from nml import generic, expression, global_constants
 from nml.actions import action0properties
-from nml.ast import base_statement
+from nml.ast import base_statement, assignment
 
 class TileLayout(base_statement.BaseStatement):
     """
@@ -13,7 +13,7 @@ class TileLayout(base_statement.BaseStatement):
     @type name: C{str}
 
     @ivar tile_prop_list: List of offset/tileID and properties.
-    @type tile_prop_list: C{list} of L{LayoutTile} and L{LayoutProp}
+    @type tile_prop_list: C{list} of L{LayoutTile} and L{Assignment}
 
     @ivar tile_list: List of tile-offsets/tileIDs.
     @type tile_list: C{list} of C{LayoutTile} with constant x and y values.
@@ -30,7 +30,7 @@ class TileLayout(base_statement.BaseStatement):
 
     def pre_process(self):
         for tileprop in self.tile_prop_list:
-            if isinstance(tileprop, LayoutProp):
+            if isinstance(tileprop, assignment.Assignment):
                 name = tileprop.name.value
                 if name in self.properties:
                     raise generic.ScriptError("Duplicate property %s in tile layout" % name, tileprop.name.pos)
@@ -110,18 +110,3 @@ class LayoutTile(object):
         self.x = x
         self.y = y
         self.tiletype = tiletype
-
-class LayoutProp(object):
-    """
-    Property of a L{TileLayout}.
-
-    @ivar name: Name of the property.
-    @type name: L{Identifier}
-
-    @iver value: Value of the property.
-    @type value: L{Expression}
-    """
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-

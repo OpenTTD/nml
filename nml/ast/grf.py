@@ -111,11 +111,6 @@ class GRF(base_statement.BaseStatement):
         ret += '}\n'
         return ret
 
-class SettingValue(object):
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
 class NameValue(object):
     def __init__(self, num, desc, pos = None):
         self.num = num
