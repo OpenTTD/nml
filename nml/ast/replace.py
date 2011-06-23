@@ -22,11 +22,11 @@ class ReplaceSprite(base_statement.BaseStatement):
     @ivar name: Name of this block.
     @type name: C{None] if not given, else C{str}
     """
-    def __init__(self, param_list, sprite_list, pos):
+    def __init__(self, param_list, sprite_list, name, pos):
         base_statement.BaseStatement.__init__(self, "replace-block", pos)
         self.param_list = param_list
         self.sprite_list = sprite_list
-        self.name = None
+        self.name = name
 
     def pre_process(self):
         num_params = len(self.param_list)
@@ -83,11 +83,11 @@ class ReplaceNewSprite(base_statement.BaseStatement):
     @ivar name: Name of this block.
     @type name: C{None] if not given, else C{str}
     """
-    def __init__(self, param_list, sprite_list, pos):
+    def __init__(self, param_list, sprite_list, name, pos):
         base_statement.BaseStatement.__init__(self, "replacenew-block", pos)
         self.param_list = param_list
         self.sprite_list = sprite_list
-        self.name = None
+        self.name = name
 
     def pre_process(self):
         num_params = len(self.param_list)

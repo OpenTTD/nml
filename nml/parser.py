@@ -477,30 +477,26 @@ class NMLParser(object):
     def p_replace(self, t):
         '''replace : REPLACESPRITE LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE
                    | REPLACESPRITE ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
-        offset = 1 if len(t) == 9 else 0
-        t[0] = replace.ReplaceSprite(t[3 + offset], t[6 + offset], t.lineno(1))
-        if len(t) == 9: t[0].name = t[2].value
+        if len(t) == 9: t[0] = replace.ReplaceSprite(t[4], t[7], t[2], t.lineno(1))
+        else: t[0] = replace.ReplaceSprite(t[3], t[6], None, t.lineno(1))
 
     def p_replace_new(self, t):
         '''replace_new : REPLACENEWSPRITE LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE
                        | REPLACENEWSPRITE ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
-        offset = 1 if len(t) == 9 else 0
-        t[0] = replace.ReplaceNewSprite(t[3 + offset], t[6 + offset], t.lineno(0))
-        if len(t) == 9: t[0].name = t[2].value
+        if len(t) == 9: t[0] = replace.ReplaceNewSprite(t[4], t[7], t[2], t.lineno(1))
+        else: t[0] = replace.ReplaceNewSprite(t[3], t[6], None, t.lineno(1))
 
     def p_base_sprites(self, t):
         '''base_sprites : BASE_SPRITES LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE
                         | BASE_SPRITES ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
-        offset = 1 if len(t) == 9 else 0
-        t[0] = base_sprites.BaseSprite(t[3 + offset], t[6 + offset], t.lineno(1))
-        if len(t) == 9: t[0].name = t[2].value
+        if len(t) == 9: t[0] = base_sprites.BaseSprite(t[4], t[7], t[2], t.lineno(1))
+        else: t[0] = base_sprites.BaseSprite(t[3], t[6], None, t.lineno(1))
 
     def p_font_glyph(self, t):
         '''font_glyph : FONTGLYPH LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE
                       | FONTGLYPH ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
-        offset = 1 if len(t) == 9 else 0
-        t[0] = font.FontGlyphBlock(t[3 + offset], t[6 + offset], t.lineno(1))
-        if len(t) == 9: t[0].name = t[2].value
+        if len(t) == 9: t[0] = font.FontGlyphBlock(t[4], t[7], t[2], t.lineno(1))
+        else: t[0] = font.FontGlyphBlock(t[3], t[6], None, t.lineno(1))
 
     def p_alt_sprites(self, t):
         'alt_sprites : ALT_SPRITES LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'
