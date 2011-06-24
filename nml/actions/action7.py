@@ -99,6 +99,7 @@ def parse_conditional(expr):
     return (param, actions, (2, r'\7='), 0, 4)
 
 def cond_skip_actions(action_list, param, condtype, value, value_size):
+    if len(action_list) == 0: return []
     if len(free_labels.states) == 0:
         # We only save a single state (at toplevel nml-blocks) because
         # we don't know at the start of the block how many labels we need.
@@ -108,52 +109,50 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
         free_labels.save()
     actions = []
     start, length = 0, 0
-    allow7, allow9 = True, True
-    for i, action in enumerate(action_list):
-        if length == 0 and not action.skip_needed():
-            actions.append(action)
-            start += 1
-            continue
-        if allow7 and action.skip_action7():
-            allow9 = allow9 and action.skip_action9()
-            length += 1
-            continue
-        if allow9 and action.skip_action9():
-            # If action7 was ok, we wouldn't be in this block.
-            # Set allow7 to False in here so in case both
-            # action7 and action9 don't work at least one
-            # of allow7/allow9 is True. This is possible because
-            # all previous actions could be skipped at least one.
-            allow7 = False
-            length += 1
-            continue
-        # neither action7 nor action9 can be used. add all
-        # previous actions to the list and start a new block
-        action_type = 7 if allow7 else 9
-        if length < 0x10:
-            target = length
-            label = None
+    # Whether to allow not-skipping, using action7 or using action9
+    skip_opts = (True, True, True)
+    # Add a sentinel value to the list to avoid code duplication
+    for action in action_list + [None]:
+        assert any(skip_opts)
+        if action is not None:
+            # Options allowed by the next action
+            act_opts = (not action.skip_needed(), action.skip_action7(), action.skip_action9())
         else:
-            target = free_labels.pop()
-            label = action10.Action10(target)
-        actions.append(SkipAction(action_type, param, value_size, condtype, value, target))
-        actions.extend(action_list[start:start+length])
-        if label is not None: actions.append(label)
-        start = i
-        length = 1
-        allow7, allow9 = action.skip_action7(), action.skip_action9()
+            # There are no further actions, so be sure to finish the current block
+            act_opts = (False, False, False)
+        # Options still allowed, when including this action in the previous block
+        new_opts = tuple(all(tpl) for tpl in zip(skip_opts, act_opts))
+        # End this block in two cases:
+        # - There are no options to skip this action and the preceding block in one go
+        # - The existing block (with length > 0) needed no skipping, but this action does
+        if any(new_opts) and not (length > 0 and skip_opts[0] and not new_opts[0]):
+            # Append this action to the existing block
+            length += 1
+            skip_opts = new_opts
+            continue
 
-    if length > 0:
-        action_type = 7 if allow7 else 9
-        if length < 0x10:
-            target = length
-            label = None
+        # We need to create a new block
+        if skip_opts[0]:
+            # We can just choose to not skip the preceeding actions without harm
+            actions.extend(action_list[start:start+length])
         else:
-            target = free_labels.pop()
-            label = action10.Action10(target)
-        actions.append(SkipAction(action_type, param, value_size, condtype, value, target))
-        actions.extend(action_list[start:start+length])
-        if label is not None: actions.append(label)
+            action_type = 7 if skip_opts[1] else 9
+            if length < 0x10:
+                # Lengths under 0x10 are handled without labels, to avoid excessive label usage
+                target = length
+                label = None
+            else:
+                target = free_labels.pop()
+                label = action10.Action10(target)
+            actions.append(SkipAction(action_type, param, value_size, condtype, value, target))
+            actions.extend(action_list[start:start+length])
+            if label is not None: actions.append(label)
+
+        start = start + length
+        length = 1
+        skip_opts = act_opts
+    assert start == len(action_list)
+
     if len(free_labels.states) == 1:
         free_labels.restore()
     return actions
