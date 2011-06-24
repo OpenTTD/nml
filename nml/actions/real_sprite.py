@@ -124,7 +124,10 @@ class RealSprite(object):
         self.check_sprite_size()
 
     def __str__(self):
-        ret = "["
+        ret = ""
+        if self.label is not None:
+            ret += str(self.label) + ": "
+        ret += "["
         ret += ", ".join([str(param) for param in self.param_list])
         ret += "]"
         return ret
