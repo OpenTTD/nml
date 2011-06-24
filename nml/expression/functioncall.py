@@ -8,6 +8,7 @@ from .parameter import parse_string_to_dword
 from .storage_op import StorageOp
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
+import identifier
 
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):
@@ -137,7 +138,10 @@ def builtin_date(name, args, pos):
     """
     if len(args) != 3:
         raise generic.ScriptError("date() requires exactly 3 arguments", pos)
-    year = args[0].reduce()
+    from nml import global_constants
+    identifier.ignore_all_invalid_ids = True
+    year = args[0].reduce(global_constants.const_list)
+    identifier.ignore_all_invalid_ids = False
     try:
         month = args[1].reduce_constant().value
         day = args[2].reduce_constant().value
