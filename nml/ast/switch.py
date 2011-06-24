@@ -196,6 +196,7 @@ class RandomSwitch(switch_base_class):
                     choice.result = self.add_extra_ret_switch('%s@ret%d' % (self.name.value, num_extra_acts), choice.result)
                     num_extra_acts += 1
 
+        new_choices = []
         for choice in self.choices:
             if isinstance(choice.probability, expression.Identifier):
                 if choice.probability.value == 'independent':
@@ -210,6 +211,9 @@ class RandomSwitch(switch_base_class):
                     continue
                 else:
                     assert False, "NOT REACHED"
+            else:
+                new_choices.append(choice)
+        self.choices = new_choices
                     
         # Make sure, all [in]dependencies refer to existing random switch blocks
         for dep in self.dependent + self.independent:
