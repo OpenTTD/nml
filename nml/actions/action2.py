@@ -61,6 +61,9 @@ class Action2(base_action.BaseAction):
     def skip_action9(self):
         return False
 
+    def skip_needed(self):
+        return False
+
     def remove_tmp_location(self, location, force_recursive):
         """
         Recursively remove a location from the list of available temporary
