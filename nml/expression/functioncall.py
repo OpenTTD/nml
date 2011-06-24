@@ -36,7 +36,7 @@ class FunctionCall(Expression):
             return val.reduce(id_dicts)
         else:
             #try user-defined functions
-            func_ptr = self.name.reduce(id_dicts, False, True)
+            func_ptr = self.name.reduce(id_dicts, unknown_id_fatal = False, search_func_ptr = True)
             if func_ptr != self.name: # we found something!
                 if func_ptr.type() == Type.SPRITEGROUP_REF:
                     func_ptr.param_list = self.params

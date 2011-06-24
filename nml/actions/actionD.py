@@ -74,7 +74,7 @@ class ParameterAssignment(base_statement.BaseStatement):
     def pre_process(self):
         self.value = self.value.reduce(global_constants.const_list)
 
-        self.param = self.param.reduce(global_constants.const_list, False)
+        self.param = self.param.reduce(global_constants.const_list, unknown_id_fatal = False)
         if isinstance(self.param, expression.SpecialParameter):
             if not self.param.can_assign():
                 raise generic.ScriptError("Trying to assign a value to the read-only variable '%s'" % self.param.name, self.param.pos)
