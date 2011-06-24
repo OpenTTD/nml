@@ -1,0 +1,33 @@
+spritelayout layout1 {
+    building {
+        sprite: 0xA68 + animation_frame;
+    }
+}
+
+item(FEAT_AIRPORTTILES, tile1) {
+    graphics {
+        layout1;
+    }
+}
+
+spriteset(set2) {
+	[]
+	b: []
+	[]
+}
+
+spritelayout layout2 {
+    building {
+        sprite: set2(animation_frame);
+    }
+    building {
+        sprite: set2(b);
+	hide_sprite: nearby_tile_is_water(0, 0);
+    }
+}
+
+item(FEAT_AIRPORTTILES, tile2) {
+    graphics {
+        layout2;
+    }
+}
