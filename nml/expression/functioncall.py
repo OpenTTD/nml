@@ -352,7 +352,9 @@ def builtin_industry_type(name, args, pos):
 def builtin_trigonometric(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    if not isinstance(args[0], (ConstantNumeric, ConstantFloat)):
+    val = args[0].reduce()
+    if not isinstance(val, (ConstantNumeric, ConstantFloat)):
+        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
         raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
     trigonometric_func_table = {
         'acos': math.acos,
@@ -362,14 +364,15 @@ def builtin_trigonometric(name, args, pos):
         'sin': math.sin,
         'tan': math.tan,
     }
-    return ConstantFloat(trigonometric_func_table[name](args[0].value), args[0].pos)
+    return ConstantFloat(trigonometric_func_table[name](val.value), val.pos)
 
 def builtin_int(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    if not isinstance(args[0], (ConstantNumeric, ConstantFloat)):
+    val = args[0].reduce()
+    if not isinstance(val, (ConstantNumeric, ConstantFloat)):
         raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
-    return ConstantNumeric(int(args[0].value), args[0].pos)
+    return ConstantNumeric(int(val.value), val.pos)
 
 def builtin_abs(name, args, pos):
     if len(args) != 1:
