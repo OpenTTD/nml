@@ -200,15 +200,6 @@ class RecolourSpriteAction(RealSpriteAction):
         if self.last: file.newline()
         file.end_sprite()
 
-    def skip_action7(self):
-        return True
-
-    def skip_action9(self):
-        return True
-
-    def skip_needed(self):
-        return True
-
 class TemplateUsage(object):
     def __init__(self, name, param_list, label, pos):
         self.name = name
