@@ -57,11 +57,7 @@ class TileLayout(base_statement.BaseStatement):
         return []
 
     def __str__(self):
-        ret = 'tilelayout %s {\n' % self.name
-        for tile in self.tile_list:
-            ret += '\t%s, %s: %s;\n' % (tile.x, tile.y, tile.tiletype)
-        ret += '}\n'
-        return ret
+        return 'tilelayout %s {\n\t%s\n}\n' % (self.name, '\n\t'.join(str(x) for x in self.tile_prop_list))
 
     def get_size(self):
         size = 2
@@ -110,3 +106,6 @@ class LayoutTile(object):
         self.x = x
         self.y = y
         self.tiletype = tiletype
+
+    def __str__(self):
+        return '%s, %s: %s;' % (self.x, self.y, self.tiletype)
