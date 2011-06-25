@@ -1,5 +1,5 @@
 from nml import generic
-from nml.expression import ConstantNumeric, Array, StringLiteral, Identifier, SpriteGroupRef
+from nml.expression import ConstantNumeric, Array, StringLiteral, Identifier
 
 tilelayout_names = {}
 
@@ -438,13 +438,13 @@ class IndustryLayoutProp(object):
         return size
 
 def industry_layouts(value):
-    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, SpriteGroupRef), value.values)):
+    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, Identifier), value.values)):
         raise generic.ScriptError("layouts must be an array of layout names", value.pos)
     layouts = []
-    for ref in value.values:
-        if ref.name.value not in tilelayout_names:
-            raise generic.ScriptError("Unknown layout name '%s'" % ref.name.value, ref.pos)
-        layouts.append(tilelayout_names[ref.name.value])
+    for name in value.values:
+        if name.value not in tilelayout_names:
+            raise generic.ScriptError("Unknown layout name '%s'" % name.value, name.pos)
+        layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
 def industry_prod_multiplier(value):
@@ -602,13 +602,13 @@ class AirportLayoutProp(object):
         return size
 
 def airport_layouts(value):
-    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, SpriteGroupRef), value.values)):
+    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, Identifier), value.values)):
         raise generic.ScriptError("layouts must be an array of layout names", value.pos)
     layouts = []
-    for ref in value.values:
-        if ref.name.value not in tilelayout_names:
-            raise generic.ScriptError("Unknown layout name '%s'" % ref.name.value, ref.pos)
-        layout = tilelayout_names[ref.name.value]
+    for name in value.values:
+        if name.value not in tilelayout_names:
+            raise generic.ScriptError("Unknown layout name '%s'" % name.value, name.pos)
+        layout = tilelayout_names[name.value]
         if 'rotation' not in layout.properties:
             raise generic.ScriptError("Airport layouts must have the 'rotation' property", layout.pos)
         if layout.properties['rotation'].value not in (0, 2, 4, 6):
