@@ -290,18 +290,26 @@ def builtin_grf_status(name, args, pos):
 
 def builtin_visual_effect_and_powered(name, args, pos):
     """
-    visual_effect_and_powered(effect, offset, powered) builtin function. Use this to set
-    the train property visual_effect_and_powered and for the callback VEH_CB_VISUAL_EFFECT_AND_POWERED
+    Builtin function, used in two forms:
+    visual_effect_and_powered(effect, offset, powered)
+    visual_effect(effect, offset)
+    Use this to set the vehicle property visual_effect[_and_powered]
+    and for the callback VEH_CB_VISUAL_EFFECT[_AND_POWERED]
+    
     """
-    if len(args) != 3:
-        raise generic.ScriptError(name + "() must have 3 parameters", pos)
+    arg_len = 2 if name == 'visual_effect' else 3
+    if len(args) != arg_len:
+        raise generic.ScriptError(name + "() must have %d parameters" % arg_len, pos)
     from nml import global_constants
     effect = args[0].reduce_constant(global_constants.const_list).value
     offset = BinOp(nmlop.ADD, args[1], ConstantNumeric(8), args[1].pos).reduce_constant().value
-    generic.check_range(offset, 0, 0x0F, "offset in function visual_effect_and_powered", pos)
-    powered = args[2].reduce_constant(global_constants.const_list).value
-    if powered != 0 and powered != 0x80:
-        raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
+    generic.check_range(offset, 0, 0x0F, "offset in function " + name, pos)
+    if arg_len == 3:
+        powered = args[2].reduce_constant(global_constants.const_list).value
+        if powered != 0 and powered != 0x80:
+            raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
+    else:
+        powered = 0
     return ConstantNumeric(effect | offset | powered)
 
 def builtin_str2number(name, args, pos):
@@ -420,6 +428,7 @@ function_table = {
     'grf_current_status' : builtin_grf_status,
     'grf_future_status' : builtin_grf_status,
     'grf_order_behind' : builtin_grf_status,
+    'visual_effect' : builtin_visual_effect_and_powered,
     'visual_effect_and_powered' : builtin_visual_effect_and_powered,
     'str2number' : builtin_str2number,
     'cargotype' : builtin_cargotype,

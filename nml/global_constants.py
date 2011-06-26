@@ -47,7 +47,8 @@ constant_numbers = {
     'RUNNING_COST_NONE'     : 0x0000,
 
     #vehicle cb flags
-    'VEH_CBF_VISUAL_EFFECT_AND_POWERED' : 0,
+    'VEH_CBF_VISUAL_EFFECT_AND_POWERED' : 0, # trains
+    'VEH_CBF_VISUAL_EFFECT'             : 0, # rvs/ships
     'VEH_CBF_WAGON_LENGTH'              : 1,
     'VEH_CBF_LOAD_AMOUNT'               : 2,
     'VEH_CBF_REFITTED_CAPACITY'         : 3,
@@ -57,7 +58,8 @@ constant_numbers = {
     'VEH_CBF_SOUND_EFFECT'              : 7,
 
     #corresponding callbacks
-    'VEH_CB_VISUAL_EFFECT_AND_POWERED'  : 0x10,
+    'VEH_CB_VISUAL_EFFECT_AND_POWERED'  : 0x10, # trains
+    'VEH_CB_VISUAL_EFFECT'              : 0x10, # rvs/ships
     'VEH_CB_WAGON_LENGTH'               : 0x11,
     'VEH_CB_LOAD_AMOUNT'                : 0x12,
     'VEH_CB_REFITTED_CAPACITY'          : 0x15,

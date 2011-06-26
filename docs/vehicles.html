@@ -92,7 +92,8 @@ the given ID.</td></tr>
 <h3><a name="vehicles-callbacks-vars">Callbacks for vehicles</a></h3>
 <table class="t">
 <tr><th>name<th>use
-<tr><td>VEH_CB_VISUAL_EFFECT_AND_POWERED <td>decide upon whether a wagon has power
+<tr><td>VEH_CB_VISUAL_EFFECT_AND_POWERED <td>decide the visual effect to use and whether a wagon has power (trains)
+<tr><td>VEH_CB_VISUAL_EFFECT             <td>decide the visual effect to use (road vehicles / ships)
 <tr><td>VEH_CB_WAGON_LENGTH              <td>decide upon the length of the wagon
 <tr><td>VEH_CB_LOAD_AMOUNT               <td>decide upon the loading speed (amount loaded per tick)
 <tr><td>VEH_CB_REFITTED_CAPACITY         <td>decide upon the capacity after refit
@@ -237,7 +238,7 @@ to RAIL and make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRI
 <tr><td> air_drag_coefficient</td><td>   0 ... 1</td><td>=0<td></td></tr>
 <tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>yes<td>XXX=[8_8 | 7_8 | ... | 1_8]
 <tr><td> visual_effect_and_powered<td> visual_effect_and_powered(VISUAL_EFFECT_XXX, offset, ENABLE_WAGON_POWER or DISABLE_WAGON_POWER)<td>yes<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
-type of the visual effect you want for this wagon. Default means "take from engine_class property". Offset is the position of the effect. 0 is default, negative values
+type of the visual effect you want for this vehicle. Default means "take from engine_class property". Offset is the position of the effect. 0 is default, negative values
 mean more to the front and positive values are backwards. Minimum offset is -8, maximum is 7.
 <tr><td> extra_weight_per_wagon<td> 0 ... 255 t (mass units)<td>=0<td>Adds extra weight for powered wagons, see extra_power_per_wagon
 <tr><td> <a name="bitmask_vehicle_info">bitmask_vehicle_info</a><td> 8-bit bitmask<td>yes<td>Used for obtaining <a href="#bitmask_consist_info">bitmask_consist_info</a>
@@ -252,7 +253,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><td> misc_flags</td><td>                   bitmask(ROADVEH_FLAG_XXX, ...)</td><td>partly; tram flag must the same<td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
 Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> refit_cost<td> 0 ... 255 <td>yes<td> in 25% units of the purchase price cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>yes<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>yes<td>Used to enable certain callbacks. XXX = [VISUAL_EFFECT, LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>set to RUNNING_COST_NONE<td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
@@ -262,6 +263,9 @@ Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td>=0<td></td></tr>
 <tr><td> cargo_capacity</td><td>               0 ... 255</td><td>yes<td></td></tr>
 <tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>no<td>See available <a href="refs.html#refs-sounds">sound effects</a>.</td></tr>
+<tr><td> visual_effect<td> visual_effect(VISUAL_EFFECT_XXX, offset)<td>yes<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
+type of the visual effect you want for this vehicle. Default means no effect. Offset is the position of the effect. 0 is default, negative values
+mean more to the front and positive values are backwards. Minimum offset is -8, maximum is 7.
 
 </table>
 <h2><a name="ships-property">Ship properties</a></h2>
@@ -272,7 +276,7 @@ Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
 <tr><td> misc_flags<td> bitmask(SHIP_FLAG_2CC)<td> Bitmask with (currently) only one possible flag, set to 0 to disable
 <tr><td> refit_cost<td> 0 ... 255 <td> in 1/32 of the default refit cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>Used to enable certain callbacks. XXX = [VISUAL_EFFECT, LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true. Note: if you do not set this property to 1, then refittable_cargo_classes /
@@ -281,6 +285,9 @@ non_refittable_cargo_classes have no effect.
 <tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="refs.html#refs-sounds">sound effects</a>.
 <tr><td> ocean_speed_fraction<td>0 ... 1<td> fraction of base speed on ocean tiles (currently works in TTDPatch only)
 <tr><td> canal_speed_fraction<td>0 ... 1<td> fraction of base speed on canal tiles (currently works in TTDPatch only)
+<tr><td> visual_effect<td> visual_effect(VISUAL_EFFECT_XXX, offset)<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
+type of the visual effect you want for this ship. Default means no effect. Offset is the position of the effect. 0 is default, negative values
+mean more to the front and positive values are backwards. Minimum offset is -8, maximum is 7.
 
 </table>
 <h2><a name="planes-property">Plane properties</a></h2>
