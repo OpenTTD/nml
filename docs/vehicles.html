@@ -124,39 +124,52 @@ which can take different values depending upon the vehicle type:</p>
 </table>
 <p>Where for the properties available for all vehicle types XXX can either be TRAINS, ROADVEHS, SHIPS or AIRCRAFT.
 Note also that the return values don't yet support units, you'll need to enter the properties untranslated (e.g. road vehicle
-weights are in quantities of 0.25 tons). Example:</p>
+weights are in quantities of 0.25 tons).</p><p>The following code is an example for the use of callbacks and most notably also
+the creation of articulated vehicles which can only be created by means of the VEH_CB_ARTICULATED_PARTS:</p>
 <pre class="code">
-switch (FEAT_TRAINS, SELF, tank_wagon_cb_property_weight_switch, cargo_type_in_veh) {
-    // wagons transporting food need some extra stuff and are heavier
-    WATR: return 25;
-    MILK: return 25;
-    CB_FAILED; // use value set in the property block for other cargos
+/* Here would have to be definition of sprite sets and groups */
+
+/* callback for articulated vehicles: 4 wagons with special sprites for first and last */
+switch(FEAT_TRAINS, SELF, rail_engine_articulated_parts, extra_callback_info1) {
+    1..2: return rail_wagon; // middle parts use rail wagons
+	3: return rail_engine;   // last part is this rail engine again
+    CB_FAILED;               // no more than 4 vehicles
 }
 
-switch (FEAT_TRAINS, SELF, tank_wagon_cb_property_switch, extra_callback_info1) {
-    PROP_TRAINS_WEIGHT          : tank_wagon_cb_property_weight_switch;
-    PROP_TRAINS_CARGO_CAPACITY  : tank_wagon_cb_capacity_switch;
-    CB_FAILED; // we don't set other properties
+/* Set the (empty) weight of the vehicle depending on the cargo it carries */
+switch (FEAT_TRAINS, SELF, rail_wagon_cb_property_weight_switch, cargo_type_in_veh) {
+    PASS: return 30; // Passenger wagons are heavier
+    TOUR: return 30; // Tourists are also passengers
+    CB_FAILED;       // use value set in the property block for other cargos
 }
 
-switch (FEAT_TRAINS, SELF, tank_wagon_switch, current_callback) {
-    VEH_CB_REFITTED_CAPACITY:  tank_wagon_cb_capacity_switch; // switch not shown here
-    VEH_CB_VEHICLE_PROPERTIES: tank_wagon_cb_property_switch;
-    tank_wagon_graphics_switch; // go to graphics branch, if no callback asked for; not shown here
+/* Set (conditionally) different properties of the train */
+switch (FEAT_TRAINS, SELF, rail_engine_cb_property_switch, extra_callback_info1) {
+    PROP_TRAINS_WEIGHT          : rail_engine_cb_property_weight_switch;
+    PROP_TRAINS_CARGO_CAPACITY  : rail_engine_cb_capacity_switch; // not shown here
+    CB_FAILED;                                                    // we don't set other properties
 }
 
-item(FEAT_TRAINS, tank_wagon) {
+/* Check for each (active) callback */
+switch (FEAT_TRAINS, SELF, rail_engine_switch, current_callback) {
+    VEH_CB_REFITTED_CAPACITY:  rail_engine_cb_capacity_switch; // switch not shown here
+    VEH_CB_VEHICLE_PROPERTIES: rail_engine_cb_property_switch;
+    VEH_CB_ARTICULATED_PARTS: rail_engine_articulated_parts;
+    rail_engine_graphics_switch; // go to graphics branch, if no callback asked for; not shown here
+}
+
+/* Define this rail engine */
+item(FEAT_TRAINS, rail_engine) {
     property {
-        callback_flags:                 VEH_CBF_REFITTED_CAPACITY; // activate callback
-        cargo_capacity:                 30;
+        callback_flags:                 bitmask(VEH_CBF_ARTICULATED_PARTS, VEH_CBF_REFITTED_CAPACITY); // activate callbacks
+        cargo_capacity:                 20;
         weight:                         24 ton;
     }
     graphics {
-        tank_wagon_switch;
+        rail_engine_switch;
     }
 }
 </pre>
-
 
 <h2><a name="vehicles-property">Properties common to all vehicle types</a></h2>
 <table class="t">
