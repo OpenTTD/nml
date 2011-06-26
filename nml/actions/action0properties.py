@@ -282,7 +282,7 @@ properties[0x02] = {
     'sound_effect'                 : {'size': 1, 'num': 0x10},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'append_function': append_cargo_type(0x02)},
     'callback_flags'               : {'size': 1, 'num': 0x12},
-    'refit_cost'                   : {'size': 1, 'num': 0x15},
+    'refit_cost'                   : {'size': 1, 'num': 0x13},
     'ocean_speed_fraction'         : {'size': 1, 'num': 0x14},
     'canal_speed_fraction'         : {'size': 1, 'num': 0x15},
     'retire_early'                 : {'size': 1, 'num': 0x16},
