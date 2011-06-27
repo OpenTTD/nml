@@ -111,15 +111,6 @@ class GRF(base_statement.BaseStatement):
         ret += '}\n'
         return ret
 
-class NameValue(object):
-    def __init__(self, num, desc, pos = None):
-        self.num = num
-        self.desc = desc
-        self.pos = pos
-        
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        return self
-
 class ParameterSetting(object):
     def __init__(self, name, value_list):
         self.name = name
@@ -144,7 +135,7 @@ class ParameterSetting(object):
             if val.name.value == 'names':
                 ret += "\t\t\tnames: {\n"
                 for name in val.value.values:
-                    ret += "\t\t\t\t%s: %s;\n" % (name.num, name.desc)
+                    ret += "\t\t\t\t%s: %s;\n" % (name.name, name.value)
                 ret += "\t\t\t};\n"
             else:
                 ret += "\t\t\t%s: %s;\n" % (val.name, val.value)
@@ -166,8 +157,8 @@ class ParameterSetting(object):
         self.properties_set.add(name)
         if name == 'names':
             for name_value in value.values:
-                num = name_value.num.reduce_constant().value
-                desc = name_value.desc
+                num = name_value.name.reduce_constant().value
+                desc = name_value.value
                 if not isinstance(desc, expression.String):
                     raise generic.ScriptError("setting name description must be a string", desc.pos)
                 self.val_names.append((num, desc))

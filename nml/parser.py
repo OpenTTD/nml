@@ -239,7 +239,7 @@ class NMLParser(object):
 
     def p_name_string_item(self, t):
         'name_string_item : expression COLON string SEMICOLON'
-        t[0] = grf.NameValue(t[1], t[3], t[1].pos)
+        t[0] = assignment.Assignment(t[1], t[3], t[1].pos)
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
