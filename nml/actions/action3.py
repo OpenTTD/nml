@@ -130,13 +130,18 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
     for graphics in graphics_list:
         cargo_id = graphics.cargo_id
         if isinstance(cargo_id, expression.Identifier):
+            cb_name = cargo_id.value
+            # Temporary for backwads compatibility
+            if cb_name in cargo_conversion_table:
+                generic.print_warning("Pseudo-cargo type '%s' is deprecated, please use '%s' instead." % (cb_name, cargo_conversion_table[cb_name]), cargo_id.pos)
+                cb_name = cargo_conversion_table[cb_name]
             cb_table = action3_callbacks.callbacks[feature]
-            if cargo_id.value in cb_table:
-                if cargo_id.value in seen_callbacks:
-                    raise generic.ScriptError("Callback '%s' is defined multiple times." % cargo_id.value, cargo_id.pos)
-                seen_callbacks.add(cargo_id.value)
+            if cb_name in cb_table:
+                if cb_name in seen_callbacks:
+                    raise generic.ScriptError("Callback '%s' is defined multiple times." % cb_name, cargo_id.pos)
+                seen_callbacks.add(cb_name)
 
-                info_list = cb_table[cargo_id.value]
+                info_list = cb_table[cb_name]
                 if not isinstance(info_list, list):
                     info_list = [info_list]
 
@@ -144,14 +149,16 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
                     if 'cargo' in info:
                         # Not a callback, but an alias for a certain cargo type
                         if info['cargo'] in cargo_gfx:
-                            raise generic.ScriptError("Graphics for '%s' are defined multiple times." % cargo_id.value, cargo_id.pos)
+                            raise generic.ScriptError("Graphics for '%s' are defined multiple times." % cb_name, cargo_id.pos)
                         cargo_gfx[info['cargo']] = graphics.spritegroup_ref
                     else:
                         callbacks.append( (info, graphics.spritegroup_ref) )
                 continue
 
-        # Not a callback, so it must be a 'normal' cargo
-        cargo_id = cargo_id.reduce_constant(get_cargo_id_list(feature))
+        # Not a callback, so it must be a 'normal' cargo (vehicles/stations only)
+        cargo_id = cargo_id.reduce_constant(global_constants.const_list)
+        # Raise the error only now, to let the 'unknown identifier' take precedence
+        if feature >= 5: raise generic.ScriptError("Associating graphics with a specific cargo is possible only for vehicles and stations.", cargo_id.pos)
         if cargo_id.value in cargo_gfx:
              raise generic.ScriptError("Graphics for cargo %d are defined multiple times." % cargo_id.value, cargo_id.pos)
         cargo_gfx[cargo_id.value] = graphics.spritegroup_ref
@@ -236,28 +243,18 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
 
     return prepend_action_list + action_list
 
-railtype_sprites = {
-    'GUI'             : 0x00,
-    'TRACKOVERLAY'    : 0x01,
-    'UNDERLAY'        : 0x02,
-    'TUNNELS'         : 0x03,
-    'CATENARY_WIRE'   : 0x04,
-    'CATENARY_PYLONS' : 0x05,
-    'BRIDGE_SURFACES' : 0x06,
-    'LEVEL_CROSSINGS' : 0x07,
-    'DEPOTS'          : 0x08,
-    'FENCES'          : 0x09,
+# Temporary conversion table
+cargo_conversion_table = {
+    'GUI'             : 'gui',
+    'TRACKOVERLAY'    : 'track_overlay',
+    'UNDERLAY'        : 'underlay',
+    'TUNNELS'         : 'tunnel',
+    'CATENARY_WIRE'   : 'caternary_wire',
+    'CATENARY_PYLONS' : 'caternary_pylons',
+    'BRIDGE_SURFACES' : 'bridge_surfaces',
+    'LEVEL_CROSSINGS' : 'level_crossings',
+    'DEPOTS'          : 'depots',
+    'FENCES'          : 'fences',
+    'PURCHASE_LIST'   : 'purchase'
 }
 
-purchase_list_sprites = {
-    'PURCHASE_LIST'   : 0xFF,
-}
-
-def get_cargo_id_list(feature):
-    if feature >= 0 and feature <= 4:
-        return [global_constants.cargo_numbers, purchase_list_sprites]
-    if feature == 0x10:
-        return [railtype_sprites]
-    if feature == 0x0F:
-        return [purchase_list_sprites]
-    return []

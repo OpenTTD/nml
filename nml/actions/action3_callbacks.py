@@ -10,6 +10,7 @@ callbacks = 0x12 * [{}]
 
 # Callbacks common to all vehicle types
 general_vehicle_cbs = {
+    'purchase' : {'cargo': 0xFF},
     'random_trigger' : {'num': 0x01}, # Almost undocumented, but really neccesary!
     'loading_speed' : {'num': 0x12, 'flag_bit': 2},
     'cargo_subtype' : {'num': 0x19, 'flag_bit': 5},
@@ -92,3 +93,24 @@ callbacks[0x03] = {
     'purchase_mail_capacity' : {'num': 0x36, 'var10': 0x11, 'purchase': 2},
 }
 callbacks[0x03].update(general_vehicle_cbs)
+
+# Features 0x05 - 0x0E not (yet) implemented
+
+# Objects (incomplete)
+callbacks[0x0F] = {
+    'purchase' : {'cargo': 0xFF},
+}
+
+# Railtypes
+callbacks[0x10] = {
+    'gui'             : {'cargo': 0x00},
+    'track_overlay'   : {'cargo': 0x01},
+    'underlay'        : {'cargo': 0x02},
+    'tunnels'         : {'cargo': 0x03},
+    'catenary_wire'   : {'cargo': 0x04},
+    'catenary_pylons' : {'cargo': 0x05},
+    'bridge_surfaces' : {'cargo': 0x06},
+    'level_crossings' : {'cargo': 0x07},
+    'depots'          : {'cargo': 0x08},
+    'fences'          : {'cargo': 0x09},
+}
