@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-// Name: layout1@orig
+// Name: layout1
 0 * 23 02 11 FE \b65 \dx00000000 \wx0000 
 \dx00000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
 
@@ -26,7 +26,7 @@
 5 * 1 00 
 6 * 1 00 
 
-// Name: layout2@orig
+// Name: layout2
 7 * 37 02 11 FE \b66 \dx00000000 \wx0000 
 \dx80000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
 \dx80000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b16 88 87 

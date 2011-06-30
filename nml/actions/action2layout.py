@@ -377,42 +377,6 @@ def get_layout_action2s(spritegroup):
     action6.free_parameters.save()
     act6 = action6.Action6()
 
-    extra_varact2_actions = None
-    if temp_registers:
-        varact2parser = action2var.Varaction2Parser(feature)
-        for register_info in temp_registers:
-            reg, expr = register_info[1], register_info[2]
-            if reg is None: continue
-            varact2parser.parse_expr(action2var.reduce_varaction2_expr(expr, feature))
-            varact2parser.var_list.append(nmlop.STO_TMP)
-            varact2parser.var_list.append(reg)
-            varact2parser.var_list.append(nmlop.VAL2)
-            varact2parser.var_list_size += reg.get_size() + 2
-
-        # Only continue if we actually needed any new registers
-        if varact2parser.var_list:
-            #Remove the last VAL2 operator
-            varact2parser.var_list.pop()
-            varact2parser.var_list_size -= 1
-
-            extra_varact2_actions = varact2parser.extra_actions
-            extra_act6 = action6.Action6()
-            for mod in varact2parser.mods:
-                extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
-            if len(extra_act6.modifications) > 0: extra_varact2_actions.append(extra_act6)
-
-            orig_name = spritegroup.name.value
-            spritegroup.name = expression.Identifier('%s@orig' % orig_name)
-            action2.register_spritegroup(spritegroup)
-            varaction2 = action2var.Action2Var(feature, '%s@registers' % orig_name, 0x89)
-            varaction2.var_list = varact2parser.var_list
-            ref = expression.SpriteGroupRef(spritegroup.name, [], None)
-            varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, comment=''))
-            varaction2.default_result = ref
-            varaction2.default_comment = ''
-
-            extra_varact2_actions.append(varaction2)
-
     offset = 4
     sprite_num = ground_sprite.get_sprite_number()
     if not isinstance(sprite_num, expression.ConstantNumeric):
@@ -436,11 +400,40 @@ def get_layout_action2s(spritegroup):
 
     layout_action = Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)
     actions.append(layout_action)
-    if extra_varact2_actions:
-        actions.extend(extra_varact2_actions)
-        spritegroup.set_action2(extra_varact2_actions[-1])
-        extra_varact2_actions[-1].references.append(action2.Action2Reference(layout_action, False))
-        layout_action.num_refs += 1
+
+    if temp_registers:
+        varact2parser = action2var.Varaction2Parser(feature)
+        for register_info in temp_registers:
+            reg, expr = register_info[1], register_info[2]
+            if reg is None: continue
+            varact2parser.parse_expr(action2var.reduce_varaction2_expr(expr, feature))
+            varact2parser.var_list.append(nmlop.STO_TMP)
+            varact2parser.var_list.append(reg)
+            varact2parser.var_list.append(nmlop.VAL2)
+            varact2parser.var_list_size += reg.get_size() + 2
+
+    # Only continue if we actually needed any new registers
+    if temp_registers and varact2parser.var_list:
+        #Remove the last VAL2 operator
+        varact2parser.var_list.pop()
+        varact2parser.var_list_size -= 1
+
+        actions.extend(varact2parser.extra_actions)
+        extra_act6 = action6.Action6()
+        for mod in varact2parser.mods:
+            extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
+        if len(extra_act6.modifications) > 0: actions.append(extra_act6)
+
+        varaction2 = action2var.Action2Var(feature, '%s@registers' % spritegroup.name.value, 0x89)
+        varaction2.var_list = varact2parser.var_list
+        ref = expression.SpriteGroupRef(spritegroup.name, [], None, layout_action)
+        varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, comment=''))
+        varaction2.default_result = ref
+        varaction2.default_comment = ''
+
+        action2.add_ref(ref, varaction2)
+        spritegroup.set_action2(varaction2)
+        actions.append(varaction2)
     else:
         spritegroup.set_action2(layout_action)
 

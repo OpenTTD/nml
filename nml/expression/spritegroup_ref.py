@@ -14,11 +14,16 @@ class SpriteGroupRef(Expression):
 
     @ivar pos: Position of this reference
     @type pos: L{Position}
+
+    @ivar act2: Action2 that is the target of this reference
+                    To be used for action2s that have no direct equivalent in the AST
+    @type act2: L{Action2}
     """
-    def __init__(self, name, param_list, pos):
+    def __init__(self, name, param_list, pos, act2 = None):
         self.name = name
         self.param_list = param_list
         self.pos = pos
+        self.act2 = act2
 
     def debug_print(self, indentation):
         print indentation*' ' +'Reference to: ' + str(self.name)
@@ -39,6 +44,7 @@ class SpriteGroupRef(Expression):
         @return: The set ID
         @rtype: C{int}
         """
+        if self.act2 is not None: return self.act2.id
         if self.name.value == 'CB_FAILED': return 0 # 0 serves as a failed CB result because it is never used
         try:
             spritegroup = action2.resolve_spritegroup(self.name)

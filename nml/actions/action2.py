@@ -117,7 +117,7 @@ def add_ref(ref, source_action, reference_as_proc = False):
     """
 
     # Add reference to list of references of the source action
-    act2 = resolve_spritegroup(ref.name).get_action2()
+    act2 = ref.act2 if ref.act2 is not None else resolve_spritegroup(ref.name).get_action2()
     source_action.references.append(Action2Reference(act2, reference_as_proc))
     act2.num_refs += 1
 
