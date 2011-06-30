@@ -613,8 +613,7 @@ def parse_result(value, action_list, act6, offset, varaction2, repeat_result = 1
     """
     if isinstance(value, expression.SpriteGroupRef):
         comment = value.name.value + ';'
-        if value.name.value != 'CB_FAILED':
-            action2.add_ref(value, varaction2)
+        action2.add_ref(value, varaction2)
         result = value
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value
