@@ -10,6 +10,7 @@ callbacks = 0x12 * [{}]
 
 # Callbacks common to all vehicle types
 general_vehicle_cbs = {
+    'default' : {'cargo': None},
     'purchase' : {'cargo': 0xFF},
     'random_trigger' : {'num': 0x01}, # Almost undocumented, but really neccesary!
     'loading_speed' : {'num': 0x12, 'flag_bit': 2},
@@ -94,15 +95,55 @@ callbacks[0x03] = {
 }
 callbacks[0x03].update(general_vehicle_cbs)
 
-# Features 0x05 - 0x0E not (yet) implemented
+# Stations (0x04) are not yet implemented
+
+# Canals (missing callbacks)
+callbacks[0x05] = {
+    'default' : {'cargo': None},
+}
+
+# Bridges (0x06) have no action3
+
+# Houses (incomplete)
+callbacks[0x07] = {
+    'default' : {'cargo': None},
+}
+
+# General variables (0x08) have no action3
+
+# Industry tiles (incomplete)
+callbacks[0x09] = {
+    'default' : {'cargo': None},
+}
+
+# Industries (incomplete)
+callbacks[0x0A] = {
+    'default' : {'cargo': None},
+}
+
+# Cargos (incomplete)
+callbacks[0x0B] = {
+    'default' : {'cargo': None},
+}
+
+# Sound effects (0x0C) have no item-specific action3
+
+# Airports (incomplete)
+callbacks[0x0D] = {
+    'default' : {'cargo': None},
+}
+
+# New signals (0x0E) have no item-specific action3
 
 # Objects (incomplete)
 callbacks[0x0F] = {
+    'default' : {'cargo': None},
     'purchase' : {'cargo': 0xFF},
 }
 
 # Railtypes
 callbacks[0x10] = {
+    # No default here, it makse no sense
     'gui'             : {'cargo': 0x00},
     'track_overlay'   : {'cargo': 0x01},
     'underlay'        : {'cargo': 0x02},
@@ -113,4 +154,9 @@ callbacks[0x10] = {
     'level_crossings' : {'cargo': 0x07},
     'depots'          : {'cargo': 0x08},
     'fences'          : {'cargo': 0x09},
+}
+
+# Airport tiles (incomplete)
+callbacks[0x11] = {
+    'default' : {'cargo': None},
 }

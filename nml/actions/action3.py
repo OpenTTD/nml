@@ -164,6 +164,8 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         cargo_gfx[cargo_id.value] = graphics.spritegroup_ref
 
     if default_graphics is not None:
+        if 'default' not in action3_callbacks.callbacks[feature]:
+            raise generic.ScriptError("Default graphics may not be defined for this feature (0x%02X)." % feature, default_graphics.pos)
         if None in cargo_gfx:
             raise generic.ScriptError("Default graphics are defined twice.", default_graphics.pos)
         cargo_gfx[None] = default_graphics
