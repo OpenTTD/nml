@@ -39,6 +39,44 @@ def get_free_id(feature):
     first_free_id[feature] += 1
     return first_free_id[feature] - 1
 
+def create_action0(feature, id, act6, action_list):
+    """
+    Create an action0 with variable id
+
+    @param feature: Feature of the action0
+    @type feature: C{int}
+
+    @param id: ID of the corresponding item
+    @type id: L{Expression}
+
+    @param act6: Action6 to add any modifications to
+    @type act6: L{Action6}
+
+    @param action_list: Action list to append any extra actions to
+    @type action_list: C{list} of L{BaseAction}
+
+    @return: A tuple of (resulting action0, offset to use for action6)
+    @rtype: C{tuple} of (L{Action0}, C{int})
+    """
+    if feature in action0_extended_byte_id:
+        offset = 5
+        size = 2
+    else:
+        offset = 4
+        size = 1
+
+    id_val = 0
+    if isinstance(id, expression.ConstantNumeric):
+        id_val = id.value
+    elif isinstance(id, expression.Parameter) and isinstance(id.num, expression.ConstantNumeric):
+        act6.modify_bytes(id.num.value, size, offset)
+    else:
+        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
+        act6.modify_bytes(tmp_param, size, offset)
+        action_list.extend(tmp_param_actions)
+
+    action0 = Action0(feature, id_val)
+    return (action0, offset + size)
 
 def parse_property(feature, name, value, id, unit):
     global properties
@@ -117,23 +155,8 @@ def parse_property_block(prop_list, feature, id):
     action_list_append = []
     act6 = action6.Action6()
 
-    # ID may be an extended or normal byte, depending on feature
-    if feature in action0_extended_byte_id:
-        offset = 5
-        size = 2
-    else:
-        offset = 4
-        size = 1
+    action0, offset = create_action0(feature, id, act6, action_list)
 
-    if isinstance(id, expression.ConstantNumeric):
-        action0 = Action0(feature, id.value)
-    else:
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
-        act6.modify_bytes(tmp_param, size, offset)
-        action_list.extend(tmp_param_actions)
-        action0 = Action0(feature, 0)
-
-    offset += size
     for prop in prop_list:
         properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id, prop.unit)
         action_list.extend(extra_actions)
@@ -288,16 +311,8 @@ def get_basecost_action(basecost):
         cost = basecost.costs[i]
         act6 = action6.Action6()
 
-        index = 0xFF #placeholder, overwritten by either the real value or action6
-        if isinstance(cost.name, expression.ConstantNumeric):
-            index = cost.name.value
-        elif isinstance(cost.name, expression.Parameter) and isinstance(cost.name.num, expression.ConstantNumeric):
-            act6.modify_bytes(cost.name.num.value, 1, 4)
-        else:
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(cost.name)
-            act6.modify_bytes(tmp_param, 1, 4)
-            action_list.extend(tmp_param_actions)
-        act0 = Action0(0x08, index)
+        act0, offset = create_action0(0x08, cost.name, act6, action_list)
+        first_id = cost.name.value if isinstance(cost.name, expression.ConstantNumeric) else None
 
         num_ids = 1 #Number of values that will be written in one go
         values = []
@@ -313,14 +328,14 @@ def get_basecost_action(basecost):
                 else:
                     tmp_param, tmp_param_actions = actionD.get_tmp_parameter(cost.value)
                     tmp_param_map[cost.value] = tmp_param
-                act6.modify_bytes(tmp_param, 1, 5 + num_ids)
+                act6.modify_bytes(tmp_param, 1, offset + num_ids)
                 action_list.extend(tmp_param_actions)
                 values.append(expression.ConstantNumeric(0))
 
             #check if we can append the next to this one (it has to be consecutively numbered)
-            if (i + 1) < len(basecost.costs):
+            if first_id is not None and (i + 1) < len(basecost.costs):
                 nextcost = basecost.costs[i+1]
-                if isinstance(nextcost.name, expression.ConstantNumeric) and nextcost.name.value == index + num_ids:
+                if isinstance(nextcost.name, expression.ConstantNumeric) and nextcost.name.value == first_id + num_ids:
                     num_ids += 1
                     i += 1
                     #Yes We Can, continue the loop to append this value to the list and try further
