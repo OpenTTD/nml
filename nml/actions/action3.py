@@ -1,5 +1,6 @@
 from nml import generic, expression, global_constants
-from nml.actions import base_action, action2, action6, actionD
+from nml.actions import base_action, action0, action2, action2var, action3_callbacks, action6, actionD
+from nml.ast import switch_range
 
 class Action3(base_action.BaseAction):
     """
@@ -12,7 +13,7 @@ class Action3(base_action.BaseAction):
     @type id: C{int}
 
     @ivar cid_mappings: List of mappings that map cargo IDs to Action2s.
-    @type cid_mappings: C{list} of C{tuple}: (L{ConstantNumeric}, L{SpriteGroupRef})
+    @type cid_mappings: C{list} of C{tuple}: (C{int}, L{SpriteGroupRef} before prepare_output, C{int} afterwards)
 
     @ivar def_cid: Default Action2 to use if no cargo ID matches.
     @type def_cid: C{None} or L{SpriteGroupRef} before prepare_output, C{int} afterwards
@@ -43,7 +44,7 @@ class Action3(base_action.BaseAction):
         file.print_byte(len(self.cid_mappings))
         file.newline()
         for cargo, cid in self.cid_mappings:
-            cargo.write(file, 1)
+            file.print_bytex(cargo)
             file.print_wordx(cid)
             file.newline()
         file.print_wordx(self.def_cid)
@@ -53,8 +54,59 @@ class Action3(base_action.BaseAction):
     def skip_action9(self):
         return False
 
+# Make sure all action2s created here get a unique name
+action2_id = 0
+
+def create_intermediate_varaction2(feature, var_num, and_mask, mapping, default):
+    """
+    Create a varaction2 that maps callback numbers to various sprite groups
+
+    @param feature: Feature of the varaction2
+    @type feature: C{int}
+
+    @param var_num: Number of the variable to evaluate
+    @type var_num: C{int}
+
+    @param and_mask: And-mask to use for the variable
+    @type and_mask: C{int}
+
+    @param mapping: Mapping of various values to sprite groups
+    @type mapping: C{dict} that maps C{int} to L{SpriteGroupRef}
+
+    @param default: Default sprite group if no value matches
+    @type default: L{SpriteGroupRef}
+
+    @return: A tuple containing the action list and a reference to the created action2
+    @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
+    """
+    global action2_id
+    varact2parser = action2var.Varaction2Parser(feature)
+    varact2parser.parse_expr(expression.Variable(expression.ConstantNumeric(var_num), mask = expression.ConstantNumeric(and_mask)))
+
+    action_list = varact2parser.extra_actions
+    extra_act6 = action6.Action6()
+    for mod in varact2parser.mods:
+        extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
+    if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
+
+    name = expression.Identifier("@action3_%d" % action2_id)
+    action2_id += 1
+    varaction2 = action2var.Action2Var(feature, name.value, 0x89)
+    varaction2.var_list = varact2parser.var_list
+    for value in sorted(mapping):
+        varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(value), expression.ConstantNumeric(value), mapping[value], comment=mapping[value].name.value))
+        action2.add_ref(mapping[value], varaction2)
+    varaction2.default_result = default
+    action2.add_ref(default, varaction2)
+    varaction2.default_comment = default.name.value
+
+    return_ref = expression.SpriteGroupRef(name, [], None, varaction2)
+    action_list.append(varaction2)
+    return (action_list, return_ref)
+
 def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
     action6.free_parameters.save()
+    prepend_action_list = []
     action_list = []
     act6 = action6.Action6()
 
@@ -71,23 +123,118 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
 
     act3.is_livery_override = is_livery_override
 
-    if default_graphics is not None:
-        action2.add_ref(default_graphics, act3)
-        act3.def_cid = default_graphics
-
-    if len(graphics_list) != 0 and feature not in [0, 1, 2, 3, 4, 0x0F, 0x10]:
-        raise generic.ScriptError("Matching cargoids in graphics blocks is only allowed for vehicles, stations, railtypes and objects", graphics_list[0].spritegroup_ref.pos)
+    cargo_gfx = {}
+    seen_callbacks = set()
+    callbacks = []
 
     for graphics in graphics_list:
-        action2.add_ref(graphics.spritegroup_ref, act3)
-        cargo_id = graphics.cargo_id.reduce_constant(get_cargo_id_list(feature))
-        act3.cid_mappings.append( (cargo_id, graphics.spritegroup_ref) )
+        cargo_id = graphics.cargo_id
+        if isinstance(cargo_id, expression.Identifier):
+            cb_table = action3_callbacks.callbacks[feature]
+            if cargo_id.value in cb_table:
+                if cargo_id.value in seen_callbacks:
+                    raise generic.ScriptError("Callback '%s' is defined multiple times." % cargo_id.value, cargo_id.pos)
+                seen_callbacks.add(cargo_id.value)
+
+                info_list = cb_table[cargo_id.value]
+                if not isinstance(info_list, list):
+                    info_list = [info_list]
+
+                for info in info_list:
+                    if 'cargo' in info:
+                        # Not a callback, but an alias for a certain cargo type
+                        if info['cargo'] in cargo_gfx:
+                            raise generic.ScriptError("Graphics for '%s' are defined multiple times." % cargo_id.value, cargo_id.pos)
+                        cargo_gfx[info['cargo']] = graphics.spritegroup_ref
+                    else:
+                        callbacks.append( (info, graphics.spritegroup_ref) )
+                continue
+
+        # Not a callback, so it must be a 'normal' cargo
+        cargo_id = cargo_id.reduce_constant(get_cargo_id_list(feature))
+        if cargo_id.value in cargo_gfx:
+             raise generic.ScriptError("Graphics for cargo %d are defined multiple times." % cargo_id.value, cargo_id.pos)
+        cargo_gfx[cargo_id.value] = graphics.spritegroup_ref
+
+    if default_graphics is not None:
+        if None in cargo_gfx:
+            raise generic.ScriptError("Default graphics are defined twice.", default_graphics.pos)
+        cargo_gfx[None] = default_graphics
+
+    if len(callbacks) != 0:
+        cb_flags = 0
+        # Determine the default value
+        if None in cargo_gfx:
+            default_val = cargo_gfx[None]
+        else:
+            default_val = expression.SpriteGroupRef(expression.Identifier('CB_FAILED', None), [], None)
+
+        cb_mapping = {}
+        cb_buy_mapping = {}
+        # Special case for vehicle cb 36, maps var10 values to spritegroups
+        cb36_mapping = {}
+        cb36_buy_mapping = {}
+
+        for cb_info, gfx in callbacks:
+            if 'flag_bit' in cb_info:
+                # Set a bit in the CB flags property
+                cb_flags |= 1 << cb_info['flag_bit']
+
+            # See action3_callbacks for info on possible values
+            purchase = cb_info['purchase'] if 'purchase' in cb_info else 0
+            if isinstance(purchase, str):
+                # Not in purchase list, if separate purchase CB is set
+                purchase = 0 if purchase in seen_callbacks else 1
+            # Explicit purchase CBs will need a purchase cargo, even if not needed for graphics
+            if purchase == 2 and 0xFF not in cargo_gfx:
+                cargo_gfx[0xFF] = default_val
+
+            assert 'num' in cb_info # Cargos have been handled earlier
+            num = cb_info['num']
+            if num == 0x36:
+                if purchase != 2: cb36_mapping[cb_info['var10']] = gfx
+                if purchase != 0: cb36_buy_mapping[cb_info['var10']] = gfx
+            else:
+                if purchase != 2: cb_mapping[num] = gfx
+                if purchase != 0: cb_buy_mapping[num] = gfx
+
+        if cb_flags != 0:
+            prepend_action_list.extend(action0.get_callback_flags_actions(feature, id, cb_flags))
+
+        # Handle CB 36
+        if len(cb36_mapping) != 0:
+            actions, cb36_ref = create_intermediate_varaction2(feature, 0x10, 0xFF, cb36_mapping, default_val)
+            prepend_action_list.extend(actions)
+            cb_mapping[0x36] = cb36_ref
+        if len(cb36_buy_mapping) != 0:
+            actions, cb36_ref = create_intermediate_varaction2(feature, 0x10, 0xFF, cb36_buy_mapping, default_val)
+            prepend_action_list.extend(actions)
+            cb_buy_mapping[0x36] = cb36_ref
+
+        for cargo in sorted(cargo_gfx):
+            mapping = cb_buy_mapping if cargo == 0xFF else cb_mapping
+            if len(mapping) == 0:
+                # No callbacks here, so move along
+                continue
+            mapping = mapping.copy()
+            mapping[0] = cargo_gfx[cargo]
+            actions, cb_ref = create_intermediate_varaction2(feature, 0x0C, 0xFFFF, mapping, default_val)
+            prepend_action_list.extend(actions)
+            cargo_gfx[cargo] = cb_ref
+
+    # Make sure to sort to make the order well-defined
+    for cargo_id in sorted(cargo_gfx):
+        action2.add_ref(cargo_gfx[cargo_id], act3)
+        if cargo_id is None:
+            act3.def_cid = cargo_gfx[None]
+        else:
+            act3.cid_mappings.append( (cargo_id, cargo_gfx[cargo_id]) )
 
     if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(act3)
     action6.free_parameters.restore()
 
-    return action_list
+    return prepend_action_list + action_list
 
 railtype_sprites = {
     'GUI'             : 0x00,

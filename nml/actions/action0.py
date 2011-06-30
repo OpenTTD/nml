@@ -456,3 +456,29 @@ def get_engine_override_action(override):
     act0.num_ids = 1
     act0.prop_list.append(EngineOverrideProp(source, target))
     return [act0]
+
+def get_callback_flags_actions(feature, id, flags):
+    """
+    Get a list of actions to set the callback flags of a certain item
+
+    @param feature: Feature of the item
+    @type feature: C{int}
+
+    @param id: ID of the item
+    @type id: L{Expression}
+
+    @param flags: Value of the 'callback_flags' property
+    @type flags: C{int}
+
+    @return: A list of actions
+    @rtype: C{list} of L{BaseAction}
+    """
+    action_list = []
+    act6 = action6.Action6()
+    act0, offset = create_action0(feature, id, act6, action_list)
+    act0.num_ids = 1
+    assert 'callback_flags' in properties[feature]
+    propinfo = properties[feature]['callback_flags']
+    act0.prop_list.append(Action0Property(propinfo['num'], expression.ConstantNumeric(flags), propinfo['size']))
+    if len(act6.modifications) > 0: action_list.append(act6)
+    return action_list
