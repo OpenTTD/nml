@@ -250,7 +250,7 @@ cargo_conversion_table = {
     'GUI'             : 'gui',
     'TRACKOVERLAY'    : 'track_overlay',
     'UNDERLAY'        : 'underlay',
-    'TUNNELS'         : 'tunnel',
+    'TUNNELS'         : 'tunnels',
     'CATENARY_WIRE'   : 'caternary_wire',
     'CATENARY_PYLONS' : 'caternary_pylons',
     'BRIDGE_SURFACES' : 'bridge_surfaces',
