@@ -111,14 +111,36 @@ callbacks[0x07] = {
 
 # General variables (0x08) have no action3
 
-# Industry tiles (incomplete)
+# Industry tiles
 callbacks[0x09] = {
-    'default' : {'cargo': None},
+    'anim_control'        : {'num': 0x25},
+    'anim_next_frame'     : {'num': 0x26, 'flag_bit': 0},
+    'anim_speed'          : {'num': 0x27, 'flag_bit': 1},
+    'cargo_amount_accept' : {'num': 0x2B, 'flag_bit': 2},
+    'cargo_type_accept'   : {'num': 0x2C, 'flag_bit': 3},
+    'slope_is_suitable'   : {'num': 0x2F, 'flag_bit': 4},
+    'foundations'         : {'num': 0x30, 'flag_bit': 5},
+    'autoslope'           : {'num': 0x3B, 'flag_bit': 6},
+    'default'             : {'cargo': None},
 }
 
-# Industries (incomplete)
+# Industries
 callbacks[0x0A] = {
-    'default' : {'cargo': None},
+    'availability'          : {'num': 0x22,  'flag_bit': 0},
+    'produce_cargo_arrival' : {'num': 0x00,  'flag_bit': 1, 'var18': 0},
+    'produce_256_ticks'     : {'num': 0x00,  'flag_bit': 2, 'var18': 1},
+    'location_check'        : {'num': 0x28,  'flag_bit': 3},
+    'random_prod_change'    : {'num': 0x29,  'flag_bit': 4},
+    'monthly_prod_change'   : {'num': 0x35,  'flag_bit': 5},
+    'cargo_subtype_display' : {'num': 0x37,  'flag_bit': 6},
+    'extra_text_fund'       : {'num': 0x38,  'flag_bit': 7},
+    'extra_text_industry'   : {'num': 0x3A,  'flag_bit': 8},
+    'control_special'       : {'num': 0x3B,  'flag_bit': 9},
+    'stop_accept_cargo'     : {'num': 0x3D,  'flag_bit': 10},
+    'colour'                : {'num': 0x14A, 'flag_bit': 11},
+    'cargo_input'           : {'num': 0x14B, 'flag_bit': 12},
+    'cargo_output'          : {'num': 0x14C, 'flag_bit': 13},
+    'default'               : {'cargo': None},
 }
 
 # Cargos (incomplete)

@@ -183,6 +183,8 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         # Special case for vehicle cb 36, maps var10 values to spritegroups
         cb36_mapping = {}
         cb36_buy_mapping = {}
+        # Sspecial case for industry production CB, maps var18 values to spritegroups
+        prod_cb_mapping = {}
 
         for cb_info, gfx in callbacks:
             if 'flag_bit' in cb_info:
@@ -203,6 +205,10 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
             if num == 0x36:
                 if purchase != 2: cb36_mapping[cb_info['var10']] = gfx
                 if purchase != 0: cb36_buy_mapping[cb_info['var10']] = gfx
+            elif feature == 0x0A and num == 0x00:
+                # Industry production CB
+                assert purchase == 0
+                prod_cb_mapping[cb_info['var18']] = gfx
             else:
                 if purchase != 2: cb_mapping[num] = gfx
                 if purchase != 0: cb_buy_mapping[num] = gfx
@@ -219,14 +225,25 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
             actions, cb36_ref = create_intermediate_varaction2(feature, 0x10, 0xFF, cb36_buy_mapping, default_val)
             prepend_action_list.extend(actions)
             cb_buy_mapping[0x36] = cb36_ref
+        if len(prod_cb_mapping) != 0:
+            # If only one of the production CBs is enabled, just write it as CB 0
+            # The other one won't be called anyway, as it requires a CB flag bit
+            if len(prod_cb_mapping) == 1:
+                cb_mapping[0x00] = prod_cb_mapping.values().pop()
+            else:
+                actions, cb_ref = create_intermediate_varaction2(feature, 0x18, 0xFF, prod_cb_mapping, default_val)
+                prepend_action_list.extend(actions)
+                cb_mapping[0x00] = cb_ref
 
         for cargo in sorted(cargo_gfx):
             mapping = cb_buy_mapping if cargo == 0xFF else cb_mapping
             if len(mapping) == 0:
                 # No callbacks here, so move along
                 continue
-            mapping = mapping.copy()
-            mapping[0] = cargo_gfx[cargo]
+            if feature <= 0x04:
+                # For vehicles and stations, there are cargo-specific gfx
+                mapping = mapping.copy()
+                mapping[0x00] = cargo_gfx[cargo]
             actions, cb_ref = create_intermediate_varaction2(feature, 0x0C, 0xFFFF, mapping, default_val)
             prepend_action_list.extend(actions)
             cargo_gfx[cargo] = cb_ref
