@@ -79,6 +79,31 @@ def create_action0(feature, id, act6, action_list):
     return (action0, offset + size)
 
 def parse_property(feature, name, value, id, unit):
+    """
+    Parse a single property
+
+    @param feature: Feature of the associated item
+    @type feature: C{int}
+
+    @param name: Name (or number) of the property
+    @type name: L{Identifier} or L{ConstantNumeric}
+
+    @param value: Value of the property
+    @type value: L{Expression}
+
+    @param id: ID of the associated item
+    @type id: L{Expression}
+
+    @param unit: Unit of the property value (e.g. km/h)
+    @type unit: L{Unit} or C{None}
+
+    @return: A tuple containing the following:
+                - List of properties to add to the action 0
+                - List of actions to prepend
+                - List of modifications to apply via action 6
+                - List of actions to append
+    @rtype: C{tuple} of (C{list} of L{Action0Property}, C{list} of L{BaseAction}, C{list} of 3-C{tuple}, C{list} of L{BaseAction})
+    """
     global properties
     prop = None
     action_list = []
@@ -478,8 +503,13 @@ def get_callback_flags_actions(feature, id, flags):
     act0, offset = create_action0(feature, id, act6, action_list)
     act0.num_ids = 1
     assert 'callback_flags' in properties[feature]
-    propinfo = properties[feature]['callback_flags']
-    act0.prop_list.append(Action0Property(propinfo['num'], expression.ConstantNumeric(flags), propinfo['size']))
+
+    props, extra_actions, mods, extra_append_actions = parse_property(feature, expression.Identifier('callback_flags'), expression.ConstantNumeric(flags), id, None)
+    act0.prop_list.extend(props)
+    action_list.extend(extra_actions)
+    for mod in mods:
+        act6.modify_bytes(mod[0], mod[1], mod[2] + offset)
     if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(act0)
+    action_list.extend(extra_append_actions)
     return action_list
