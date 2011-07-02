@@ -133,10 +133,13 @@ def parse_property(feature, name, value, id, unit):
             if not 'unit_type' in prop or unit.type != prop['unit_type']:
                 raise generic.ScriptError("Invalid unit for property: " + str(name), name.pos)
             mul = mul / unit.convert
-        if mul != 1 or isinstance(value, expression.ConstantFloat): #always round floats
+        if mul != 1:
             if not isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
                 raise generic.ScriptError("Unit conversion specified for property, but no constant value found", value.pos)
             value = expression.ConstantNumeric(int(value.value * mul + 0.5), value.pos)
+
+    if isinstance(value, expression.ConstantFloat): # Always round floats
+        value = expression.ConstantNumeric(int(value.value + 0.5), value.pos)
 
     if 'custom_function' in prop:
         props = prop['custom_function'](value)
