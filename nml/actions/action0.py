@@ -481,4 +481,5 @@ def get_callback_flags_actions(feature, id, flags):
     propinfo = properties[feature]['callback_flags']
     act0.prop_list.append(Action0Property(propinfo['num'], expression.ConstantNumeric(flags), propinfo['size']))
     if len(act6.modifications) > 0: action_list.append(act6)
+    action_list.append(act0)
     return action_list
