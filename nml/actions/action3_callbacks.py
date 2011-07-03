@@ -106,6 +106,7 @@ callbacks[0x05] = {
 
 # Houses
 callbacks[0x07] = {
+    'random_trigger'      : {'num': 0x01},
     'construction_check'  : {'num':  0x17, 'flag_bit':  0},
     'anim_next_frame'     : {'num':  0x1A, 'flag_bit':  1},
     'anim_control'        : {'num':  0x1B, 'flag_bit':  2},
@@ -128,6 +129,7 @@ callbacks[0x07] = {
 
 # Industry tiles
 callbacks[0x09] = {
+    'random_trigger'      : {'num': 0x01},
     'anim_control'        : {'num': 0x25},
     'anim_next_frame'     : {'num': 0x26, 'flag_bit': 0},
     'anim_speed'          : {'num': 0x27, 'flag_bit': 1},
