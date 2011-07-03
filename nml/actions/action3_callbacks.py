@@ -158,9 +158,11 @@ callbacks[0x0A] = {
     'default'               : {'cargo': None},
 }
 
-# Cargos (incomplete)
+# Cargos
 callbacks[0x0B] = {
-    'default' : {'cargo': None},
+    'profit'         : {'num':  0x39, 'flag_bit': 0},
+    'station_rating' : {'num': 0x145, 'flag_bit': 1},
+    'default'        : {'cargo': None},
 }
 
 # Sound effects (0x0C) have no item-specific action3
