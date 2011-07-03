@@ -37,19 +37,21 @@ distance) is used.</td></tr>
 Variables that require some parameters.
 <table class="t">
 <tr><th>name</th>                        <th>arguments</th>           <th>value range</th> <th>comment</th></tr>
+<tr><td>nearby_tile_object_type</td>     <td>x, y offset (-8..7)</td> <td></td> <td>ID of the object on a nearby tile, if defined by the same grf.
+OBJECT_TYPE_OTHER_GRF if the object is defined by a different grf (or none at all). OBJECT_TYPE_NO_OBJECT if the tile does not contain an object.</td></tr>
 <tr><td>nearby_tile_random_bits</td>     <td>x, y offset (-8..7)</td> <td></td> <td>Random bits of the given tile</td></tr>
 <tr><td>nearby_tile_slope</td>           <td>x, y offset (-8..7)</td> <td></td> <td>See tile_slope</td></tr>
-<tr><td>nearby_tile_is_same_object</td>  <td>x, y offset (-8..7)</td> <td>0..1</td> <td>Is the given tile part of the same object?</td></tr>
-<tr><td>nearby_tile_is_water</td>        <td>x, y offset (-8..7)</td> <td>0..1</td> <td>Is the given tile a water tile?</td></tr>
+<tr><td>nearby_tile_is_same_object</td>  <td>x, y offset (-8..7)</td> <td>0 .. 1</td> <td>Is the given tile part of the same object?</td></tr>
+<tr><td>nearby_tile_is_water</td>        <td>x, y offset (-8..7)</td> <td>0 .. 1</td> <td>Is the given tile a water tile?</td></tr>
 <tr><td>nearby_tile_terrain_type</td>    <td>x, y offset (-8..7)</td> <td></td> <td>See terrain_type</td></tr>
-<tr><td>nearby_tile_height</td>          <td>x, y offset (-8..7)</td> <td></td> <td>The minimum height of the given tile</td></tr>
+<tr><td>nearby_tile_height</td>          <td>x, y offset (-8..7)</td> <td>0 .. 120</td> <td>The minimum height of the given tile. 8 units correspond to one height level</td></tr>
 <tr><td>nearby_tile_class</td>           <td>x, y offset (-8..7)</td> <td><a href="refs.html#refs-tile-classes">Tile class</a></td> <td></td></tr>
 <tr><td>nearby_tile_animation_frame</td> <td>x, y offset (-8..7)</td> <td></td> <td>See animation_frame</td></tr>
 <tr><td>object_type_count</td>           <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Number of objects with the given
 object id currently on the map. Grfid is the grfid of the newgrf you want to check the object count of (default is current grf).</td></tr>
 <tr><td>object_type_nearest</td>         <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Manhattan distance to the closest object
 of the given type. Grfid is the grfid of the newgrf you want to check the minimum object distance of (default is current grf). If the given
-object type is not yet build this will return 0xFFFF</td></tr>
+object type is not yet built, this will return 0xFFFF</td></tr>
 </table>
 
 

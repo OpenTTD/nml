@@ -450,6 +450,10 @@ constant_numbers = {
     'OBJ_CB_ADDITIONAL_TEXT'        : 0x15C,
     'OBJ_CB_AUTOSLOPE'              : 0x15D,
 
+    # Special values for object var 0x60
+    'OBJECT_TYPE_OTHER_GRF'     : 0xFFFE,
+    'OBJECT_TYPE_NO_OBJECT'     : 0xFFFF,
+
     #airport tile callback flags
     'APT_CBF_ANIM_NEXT_FRAME'   : 0,
     'APT_CBF_ANIM_SPEED'        : 1,

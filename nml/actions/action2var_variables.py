@@ -298,6 +298,8 @@ varact2vars_objects = {
 }
 
 varact2vars60x_objects = {
+    'nearby_tile_object_type'      : { 'var' : 0x60, 'start':  0, 'size': 16, 'function': signed_tile_offset },
+
     'nearby_tile_random_bits'      : { 'var' : 0x61, 'start':  0, 'size':  8, 'function': signed_tile_offset },
 
     'nearby_tile_slope'            : { 'var' : 0x62, 'start':  0, 'size':  5, 'function': signed_tile_offset },
