@@ -104,9 +104,24 @@ callbacks[0x05] = {
 
 # Bridges (0x06) have no action3
 
-# Houses (incomplete)
+# Houses
 callbacks[0x07] = {
-    'default' : {'cargo': None},
+    'construction_check'  : {'num':  0x17, 'flag_bit':  0},
+    'anim_next_frame'     : {'num':  0x1A, 'flag_bit':  1},
+    'anim_control'        : {'num':  0x1B, 'flag_bit':  2},
+    'construction_anim'   : {'num':  0x1C, 'flag_bit':  3},
+    'colour'              : {'num':  0x1E, 'flag_bit':  4},
+    'cargo_amount_accept' : {'num':  0x1F, 'flag_bit':  5},
+    'anim_speed'          : {'num':  0x20, 'flag_bit':  6},
+    'destruction'         : {'num':  0x21, 'flag_bit':  7},
+    'cargo_type_accept'   : {'num':  0x2A, 'flag_bit':  8},
+    'cargo_production'    : {'num':  0x2E, 'flag_bit':  9},
+    'protection'          : {'num': 0x143, 'flag_bit': 10},
+    'accepted_cargo'      : {'num': 0x148},
+    'building_name'       : {'num': 0x14D},
+    'foundations'         : {'num': 0x14E, 'flag_bit': 11},
+    'autoslope'           : {'num': 0x14F, 'flag_bit': 12},
+    'default'             : {'cargo': None},
 }
 
 # General variables (0x08) have no action3
