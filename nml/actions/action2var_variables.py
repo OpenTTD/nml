@@ -272,6 +272,10 @@ varact2vars60x_industries = {
     'industry_town_count'          : { 'var': 0x68, 'start': 16, 'size':  8, 'function': industry_town_count },
 }
 
+varact2vars_airports = {
+    'layout' : {'var': 0x40, 'start': 0, 'sise': 32},
+}
+
 varact2vars_objects = {
     'relative_x'             : {'var': 0x40, 'start': 0, 'size': 8},
     'relative_y'             : {'var': 0x40, 'start': 8, 'size': 8},
@@ -349,6 +353,7 @@ varact2vars[0x09] = varact2vars_industrytiles
 varact2vars60x[0x09] = varact2vars60x_industrytiles
 varact2vars[0x0A] = varact2vars_industries
 varact2vars60x[0x0A] = varact2vars60x_industries
+varact2vars[0x0D] = varact2vars_airports
 varact2vars[0x0F] = varact2vars_objects
 varact2vars60x[0x0F] = varact2vars60x_objects
 varact2vars[0x10] = varact2vars_railtype
