@@ -165,9 +165,11 @@ callbacks[0x0B] = {
 
 # Sound effects (0x0C) have no item-specific action3
 
-# Airports (incomplete)
+# Airports
 callbacks[0x0D] = {
-    'default' : {'cargo': None},
+    'additional_text' : {'num': 0x155},
+    'layout_name'     : {'num': 0x156},
+    'default'         : {'cargo': None},
 }
 
 # New signals (0x0E) have no item-specific action3
@@ -187,7 +189,7 @@ callbacks[0x0F] = {
 
 # Railtypes
 callbacks[0x10] = {
-    # No default here, it makse no sense
+    # No default here, it makes no sense
     'gui'             : {'cargo': 0x00},
     'track_overlay'   : {'cargo': 0x01},
     'underlay'        : {'cargo': 0x02},
@@ -200,7 +202,11 @@ callbacks[0x10] = {
     'fences'          : {'cargo': 0x09},
 }
 
-# Airport tiles (incomplete)
+# Airport tiles
 callbacks[0x11] = {
-    'default' : {'cargo': None},
+    'foundations'     : {'num': 0x150, 'flag_bit': 5},
+    'anim_control'    : {'num': 0x152},
+    'anim_next_frame' : {'num': 0x153, 'flag_bit': 0},
+    'anim_speed'      : {'num': 0x154, 'flag_bit': 1},
+    'default'         : {'cargo': None},
 }
