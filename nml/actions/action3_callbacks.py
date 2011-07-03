@@ -157,10 +157,17 @@ callbacks[0x0D] = {
 
 # New signals (0x0E) have no item-specific action3
 
-# Objects (incomplete)
+# Objects
 callbacks[0x0F] = {
-    'default' : {'cargo': None},
-    'purchase' : {'cargo': 0xFF},
+    'slope_check'     : {'num': 0x157, 'flag_bit': 0, 'purchase': 2},
+    'anim_next_frame' : {'num': 0x158, 'flag_bit': 1},
+    'anim_control'    : {'num': 0x159},
+    'anim_speed'      : {'num': 0x15A, 'flag_bit': 2},
+    'colour'          : {'num': 0x15B, 'flag_bit': 3},
+    'additional_text' : {'num': 0x15C, 'flag_bit': 4, 'purchase': 2},
+    'autoslope'       : {'num': 0x15D, 'flag_bit': 5},
+    'default'         : {'cargo': None},
+    'purchase'        : {'cargo': 0xFF},
 }
 
 # Railtypes
