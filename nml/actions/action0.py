@@ -1,5 +1,5 @@
 from nml.actions.action0properties import Action0Property, properties
-from nml import generic, expression, nmlop
+from nml import generic, expression, nmlop, grfstrings
 from nml.actions import base_action, action4, action6, actionD, actionE, action7
 
 # Features that use an extended byte as ID (vehicles, sounds)
@@ -400,7 +400,7 @@ class LanguageTranslationTable(object):
     def get_size(self):
         size = 2
         for mapping in self.mappings:
-            size += 2 + len(mapping[1])
+            size += 1 + grfstrings.get_string_size(mapping[1])
         return size
 
 def get_language_translation_tables(lang):
