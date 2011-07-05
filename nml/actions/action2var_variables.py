@@ -52,6 +52,7 @@ varact2_globalvars = {
     'animation_counter' : {'var': 0x0A, 'start': 0, 'size': 16},
     'current_callback' : {'var': 0x0C, 'start': 0, 'size': 16},
     'extra_callback_info1' : {'var': 0x10, 'start': 0, 'size': 32},
+    'game_mode' : {'var': 0x12, 'start': 0, 'size': 8},
     'extra_callback_info2' : {'var': 0x18, 'start': 0, 'size': 32},
     'display_options' : {'var': 0x1B, 'start': 0, 'size': 6},
     'last_computed_result' : {'var': 0x1C, 'start': 0, 'size': 32},
