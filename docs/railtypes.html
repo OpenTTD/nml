@@ -82,16 +82,16 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <p>Rail types define a number of fixed graphic blocks:</p>
 <table class="t">
 <tr><th>block name</th><th>number of sprites</th><th>meaning</th></tr>
-<tr><td>GUI</td><td>         16</td><td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu</td></tr>
-<tr><td>TRACKOVERLAY*</td><td>10</td><td>6 flat and 4 slope sprites. Track without landscape</td></tr>
-<tr><td>UNDERLAY*</td><td>    16</td><td>6 flat and 4 slope, one crossing WITH track, 5 junction pieces without track. Tracks with foundations but without landscape</td></tr>
-<tr><td>TUNNELS*</td><td>     4</td><td>4 track sprites, one for each tunnel entrance. Only track with foundations, no landscape</td></tr>
-<tr><td>CATENERY_WIRE</td><td>28</td><td></td></tr>
-<tr><td>CATENERY_PYLONS</td><td>8</td><td></td></tr>
-<tr><td>BRIDGE_SURFACES</td><td>6</td><td></td></tr>
-<tr><td>LEVEL_CROSSINGS*</td><td>10</td><td>For each direction: one track sprite and 4 sprites for road lights etc</td></tr>
-<tr><td>DEPOTS*</td><td>6</td><td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.</td></tr>
-<tr><td>FENCES</td><td>8</td><td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301</td></tr>
+<tr><td>gui</td><td>         16</td><td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu</td></tr>
+<tr><td>track_overlay*</td><td>10</td><td>6 flat and 4 slope sprites. Track without landscape</td></tr>
+<tr><td>underlay*</td><td>    16</td><td>6 flat and 4 slope, one crossing WITH track, 5 junction pieces without track. Tracks with foundations but without landscape</td></tr>
+<tr><td>tunnels*</td><td>     4</td><td>4 track sprites, one for each tunnel entrance. Only track with foundations, no landscape</td></tr>
+<tr><td>catenary_wire</td><td>28</td><td></td></tr>
+<tr><td>catenary_pylons</td><td>8</td><td></td></tr>
+<tr><td>bridge_surfaces</td><td>6</td><td></td></tr>
+<tr><td>level_crossings*</td><td>10</td><td>For each direction: one track sprite and 4 sprites for road lights etc</td></tr>
+<tr><td>depots*</td><td>6</td><td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.</td></tr>
+<tr><td>fences</td><td>8</td><td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301</td></tr>
 </table>
 
 <p>The entries marked by * are required. A typical implementation for railtypes can look like
@@ -114,13 +114,13 @@ item(FEAT_RAILTYPES, elrail, 0x01) {
         acceleration_model:         ACC_MODEL_RAIL;                   // This is still rail, though
     }
     graphics {
-        TRACKOVERLAY:    ground_switch_overlay;     // defines the sprites drawn as overlay for junctions and highlight
-        UNDERLAY:        ground_switch_underlay;    // defines the usual tracks and the underlay for junctions
-        LEVEL_CROSSINGS: level_crossing_switch;     // defines level crossings including traffic lights and blocking bars
-        TUNNELS:         tunnel_switch;             // defines the tracks drawn on a funnel tile
-        DEPOTS:          depot_switch_electric;     // defines the depot sprites
-        BRIDGE_SURFACES: bridge_terrain_switch;     // defines the overlay drawn over bridges
-        FENCES:          fences_group;              // defines the look of fences
+        track_overlay:   ground_switch_overlay;     // defines the sprites drawn as overlay for junctions and highlight
+        underlay:        ground_switch_underlay;    // defines the usual tracks and the underlay for junctions
+        level_crossings: level_crossing_switch;     // defines level crossings including traffic lights and blocking bars
+        tunnels:         tunnel_switch;             // defines the tracks drawn on a funnel tile
+        depots:          depot_switch_electric;     // defines the depot sprites
+        brdige_surfaces: bridge_terrain_switch;     // defines the overlay drawn over bridges
+        fences:          fences_group;              // defines the look of fences
         // we don't define catenery wire and pylons, thus we use the default which comes with the base graphics.
     }
 }
