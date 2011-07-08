@@ -25,7 +25,7 @@ BuildRequires:  python-ply python-imaging
 # We need Mercurial for auto version detection:
 BuildRequires:  mercurial
 # We need wine for windows nmlc.exe
-BuildRequires:  wine p7zip
+BuildRequires:  nml-dot-wine p7zip
 # We use setuptools for the packaging, but it's also needed at runtime, why ever?
 Requires:       python-setuptools
 BuildRequires:  python-setuptools
@@ -40,13 +40,7 @@ A tool to compile nml files to grf or nfo files, making newgrf coding easier.
 [ "$(echo %{version} | cut -b-1)" != "r" ] && hg up %{version}
 
 # create windows executable
-cd wine-archive
-tar xf *
-cd wine*
-rm -rf $HOME/.wine
-mkdir -p $HOME/.wine
-mv * $HOME/.wine
-cd ../..
+install-nml-dot-wine
 python -c "import nml.version_info; nml.version_info.get_and_write_version()"
 wine "C:\\Python27\\pythonw.exe" "C:\\Python27\\Scripts\\cxfreeze" nmlc
 cp $HOME/.wine/drive_c/windows/system32/python27.dll dist/
