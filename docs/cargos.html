@@ -62,8 +62,10 @@ For example, <code>bitmask(CC_EXPRESS, CC_REFRIGERATED)</code> is used for food.
 <tr><td>CC_OVERSIZED<td> vehicles, ...
 <tr><td>CC_SPECIAL<td> Special cargo, used for refit tricks. (e.g. regearing in NARS)
 <tr><td>NO_CARGO_CLASS<td>Special value that you can used to instead of 0.
-<tr><td>ALL_NORMAL_CARGO_CLASSES<td> All cargo classes except CC_SPECIAL. This is the same as <code>bitmask(CC_PASSENGERS, CC_MAIL, ..., CC_OVERSIZED)</code>.
-<tr><td>ALL_CARGO_CLASSES<td> All cargo classes. Same as <code>ALL_NORMAL_CARGO_CLASSES | bitmask(CC_SPECIAL)</code>
+<tr><td>ALL_NORMAL_CARGO_CLASSES<td>Bitmask of all cargo classes except CC_SPECIAL. This is the same as <code>bitmask(CC_PASSENGERS, CC_MAIL, ..., CC_OVERSIZED)</code>.
+Note: This is already a bitmask, don't use the <code>bitmask(..)</code> function with this.
+<tr><td>ALL_CARGO_CLASSES<td>Bitmask of all cargo classes. Same as <code>ALL_NORMAL_CARGO_CLASSES | bitmask(CC_SPECIAL)</code>
+Note: This is already a bitmask, don't use the <code>bitmask(..)</code> function with this.
 </table>
 
 <h3><a name="town-growth-cargo">Cargo effects on town growth</a></h3>
