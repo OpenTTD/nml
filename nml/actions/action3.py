@@ -146,13 +146,15 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
                     info_list = [info_list]
 
                 for info in info_list:
-                    if 'cargo' in info:
+                    if info['type'] == 'cargo':
                         # Not a callback, but an alias for a certain cargo type
-                        if info['cargo'] in cargo_gfx:
+                        if info['num'] in cargo_gfx:
                             raise generic.ScriptError("Graphics for '%s' are defined multiple times." % cb_name, cargo_id.pos)
-                        cargo_gfx[info['cargo']] = graphics.spritegroup_ref
-                    else:
+                        cargo_gfx[info['num']] = graphics.spritegroup_ref
+                    elif info['type'] == 'cb':
                         callbacks.append( (info, graphics.spritegroup_ref) )
+                    else:
+                        assert False
                 continue
 
         # Not a callback, so it must be a 'normal' cargo (vehicles/stations only)
@@ -200,7 +202,6 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
             if purchase == 2 and 0xFF not in cargo_gfx:
                 cargo_gfx[0xFF] = default_val
 
-            assert 'num' in cb_info # Cargos have been handled earlier
             num = cb_info['num']
             if num == 0x36:
                 if purchase != 2: cb36_mapping[cb_info['var10']] = gfx
