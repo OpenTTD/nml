@@ -104,12 +104,7 @@ def create_intermediate_varaction2(feature, var_num, and_mask, mapping, default)
     action_list.append(varaction2)
     return (action_list, return_ref)
 
-def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
-    action6.free_parameters.save()
-    prepend_action_list = []
-    action_list = []
-    act6 = action6.Action6()
-
+def create_action3(feature, id, action_list, act6, is_livery_override):
     if isinstance(id, expression.ConstantNumeric):
         act3 = Action3(feature, id.value)
     else:
@@ -122,10 +117,19 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         act3 = Action3(feature, 0)
 
     act3.is_livery_override = is_livery_override
+    return act3
+
+def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
+    action6.free_parameters.save()
+    prepend_action_list = []
+    action_list = []
+    act6 = action6.Action6()
+    act3 = create_action3(feature, id, action_list, act6, is_livery_override)
 
     cargo_gfx = {}
     seen_callbacks = set()
     callbacks = []
+    livery_override = None # Used for rotor graphics
 
     for graphics in graphics_list:
         cargo_id = graphics.cargo_id
@@ -153,6 +157,9 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
                         cargo_gfx[info['num']] = graphics.spritegroup_ref
                     elif info['type'] == 'cb':
                         callbacks.append( (info, graphics.spritegroup_ref) )
+                    elif info['type'] == 'override':
+                        assert livery_override is None
+                        livery_override = graphics.spritegroup_ref
                     else:
                         assert False
                 continue
@@ -257,8 +264,18 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         else:
             act3.cid_mappings.append( (cargo_id, cargo_gfx[cargo_id]) )
 
+    if livery_override is not None:
+        act6livery = action6.Action6()
+        # Add any extra actions before the main action3 (TTDP requirement)
+        act3livery = create_action3(feature, id, action_list, act6livery, True)
+        act3livery.def_cid = livery_override
+        action2.add_ref(livery_override, act3livery)
+
     if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(act3)
+    if livery_override is not None:
+        if len(act6livery.modifications) > 0: action_list.append(act6livery)
+        action_list.append(act3livery)
     action6.free_parameters.restore()
 
     return prepend_action_list + action_list
