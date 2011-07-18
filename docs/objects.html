@@ -76,8 +76,7 @@ in every class.</td></tr>
 <tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..253 frames</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href="refs.html#refs-animation-speed-values">animation speed table</a> for the meaning of the values.</td></tr>
 <tr><td>animation_triggers</td><td></td><td></td></tr>
-<tr><td>callback_flags</td><td>bitmask(OBJ_CBF_XXX, OBJ_CBF_YYY)</td><td>XXX = [SLOPE_CHECK | DECIDE_ANIM | DECIDE_ANIM_SPEED |
-DECIDE_COLOUR | ADDITIONAL_TEXT | AUTOSLOPE]</td></tr>
+<tr><td>callback_flags</td><td>bitmask(OBJ_CBF_XXX, OBJ_CBF_YYY)</td><td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-objects">old-style callbacks</a>.</td></tr>
 <tr><td>height</td><td>0..255</td><td>Height of the object / 8. For example if your object is 16 pixels height you should
 set height to 2. In OpenTTD this property is used to determine the height of the build object window; the height for the
 object preview is set to 32 + "value of property" * 8. The property is also used to determine how high a bridge must be
@@ -120,19 +119,6 @@ be set if you plan to make use of animations.</td></tr>
 also replaces the ground tile of the object completely. Does not work when object built on sloped water tiles.</td></tr>
 <tr><td>OBJ_FLAG_ALLOW_BRIDGE</td><td>Allow bridge over the object taking the building height into account.</td></tr>
 <tr><td>OBJ_FLAG_RANDOM_ANIMATION</td><td>Random bits in the "next animation frame" callback</td></tr>
-</table>
-
-<h3><a name="object-callbacks">List of object callbacks</a></h3>
-<table class="t">
-<tr><th>Name</th><th>Meaning</th></tr>
-<tr><td>OBJ_CB_SLOPE_CHECK</td><td>Check for the slope of a tile
-<tr><td>OBJ_CB_DECIDE_ANIM</td><td>Decide whether animation continues: 0xFF stops animation, 0xFE continues with next frame
-<tr><td>OBJ_CB_DECIDE_ANIM_SPEED</td><td>Decide the animation frame to jump to. Or alternatively: 0xFF to stop animation, 0xFE
-to start animation with current frame, 0xFD to keep the current animation frame and do nothing
-<tr><td>OBJ_CB_DECIDE_COLOUR</td><td>Return the colour, or for 2 company colours the two colours, to be used. In the case of 2CC the 2nd company colour
-goes into the high 4 bits of the return value
-<tr><td>OBJ_CB_ADDITIONAL_TEXT</td><td>Return an additional string which is shown in the purchase menu. It should not exceed in length three lines.
-<tr><td>OBJ_CB_AUTOSLOPE</td><td>Return a value different from 0 in order to disable autoslope behaviour.
 </table>
 
 </body>

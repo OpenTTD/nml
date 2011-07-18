@@ -33,7 +33,7 @@
 <tr><td>town_growth_effect</td>       <td>TOWNGROWTH_XXX</td><td>Effect for town growth, see <a href="#town-growth-cargo">Cargo effects on town growth</a></td></tr>
 <tr><td>town_growth_multiplier</td>   <td>float 0..255</td><td>Multiplier for town growth. To be used in conjuction with town_growth_effect, when that is not TOWNGROWTH_NONE.
 For example, a value of 4 makes your cargo have the same effect on town growth as 4 units of food/goods/etc.</td></tr>
-<tr><td>callback_flags</td>           <td>bitmask(<a href="#cargo-callbacks">cargo callbacks</a>)</td><td>Callback flags</td></tr>
+<tr><td>callback_flags</td>           <td>bitmask(flags)</td><td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-cargos">old-style callbacks</a>.</td></tr>
 </table>
 Cargo payment is computed from <code>price_factor</code>, amount of cargo transported,
 distance, and a time delivery factor. Unit of the delivery time is 185 ticks,
@@ -77,13 +77,6 @@ Note: This is already a bitmask, don't use the <code>bitmask(..)</code> function
 <tr><td>TOWNGROWTH_WATER</td>     <td>Affect towns as water does (second required cargo for towngrowth in the desert)</td></tr>
 <tr><td>TOWNGROWTH_FOOD</td>      <td>Affect towns as food/fizzy drinks do (first required cargo for towngrowth in desert/above snowline)</tr></td>
 <tr><td>TOWNGROWTH_NONE</td>      <td>Don't affect town growth (default)</td></tr>
-</table>
-
-<h3><a name="cargo-callbacks">Cargo callbacks</a></h3>
-<table class="t">
-<tr><th>value</th><th>description</th></tr>
-<tr><td>CARGO_CB_PROFIT</td>        <td>Custom profit calculation</td></tr>
-<tr><td>CARGO_CB_STATION_RATING</td><td>Custom station rating calculation</td></tr>
 </table>
 
 </body>

@@ -116,7 +116,7 @@ your cargo translation table, amount is the acceptance of the given cargo in 1/8
 Example: to make a tile accept both COAL and IORE you could use this: <code>accepted_cargos: [[COAL, 8], [IORE, 8]];</code><br>
 Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_cargos: [];</code></td></tr>
 <tr><td>land_shape_flags</td><td>bitmask(<a href="#land-shape-flags">Land shape flags</a>)</td><td></td></tr>
-<tr><td>callback_flags</td><td>bitmask(INDTILE_CBF_XXX, INDTILE_CBF_YYY)</td><td>XXX = ANIM_NEXT_FRAME | ANIM_SPEED | CARGO_AMOUNT_ACCEPT
+<tr><td>callback_flags</td><td>bitmask(INDTILE_CBF_XXX, INDTILE_CBF_YYY)</td><td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-industrytiles">old-style callbacks</a>.
 | CARGO_TYPE_ACCEPT | SLOPE_IS_SUITABLE | FOUNDATIONS | AUTOSLOPE</td></tr>
 <tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..253 frames</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href="refs.html#refs-animation-speed-values">animation speed table</a> for the meaning of the values.</td></tr>
@@ -134,22 +134,6 @@ Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_car
 <tr><td>LSF_ONLY_ON_FLAT_LAND</td><td>This tile can only be built on flat land</td></tr>
 <tr><td>LSF_ALLOW_ON_WATER</td><td>The land/water check is disabled for this tile so it can be built on water. If you need
 more control over this use callback 0x2F.</td></tr>
-</table>
-
-<h3><a name="industrytiles-callbacks">Callbacks</a></h3>
-<table class="t">
-<tr><th>Callback</th><th>Values<th>Meaning</th></tr>
-<tr><td>INDTILE_CB_ANIM_STARTSTOP</td><td>animation frame or CB_RESULT_XXX<td>Called by a trigger. It decides upon the next animation frame.
-Special values: XXX=[STOP_ANIMATION | NEXT_FRAME | DO_NOTHING]</td></tr>
-<tr><td>INDTILE_CB_ANIM_NEXT_FRAME</td><td>animation frame or CB_RESULT_XXX<td>Called each animation frame. It decides upon the next animation frame.
-Special values: XXX=[STOP_ANIMATION | NEXT_FRAME]</td></tr>
-<tr><td>INDTILE_CB_ANIM_SPEED</td><td>length<td>Length of the animation frame as defined in the apendix. This is a very expensive callback and try to
-avoid it, if possible, by using identical animation frames.</td></tr>
-<tr><td>INDTILE_CB_CARGO_AMOUNT_ACCEPT</td><td>special<td>accepted cargo amounts in 1/8. Bits 0...3: 1st cargo, bits 4 ... 7: 2nd cargo, bits 8 ... 11: 3rd cargo</td></tr>
-<tr><td>INDTILE_CB_CARGO_TYPE_ACCEPT</td><td>special<td>accepted cargo types as entry in the CTT. Bits 0...4: 1st cargo, bits 5 ... 9: 2nd cargo, bits 10 ... 14: 3rd cargo</td></tr>
-<tr><td>INDTILE_CB_SLOPE_IS_SUITABLE</td><td><td>decide whether the location is suitable for the tile (for build checks of the industry)</td></tr>
-<tr><td>INDTILE_CB_FOUNDATIONS</td><td>CB_RESULT_XXX<td>with XXX=[FOUNDATIONS | NO_FOUNDATIONS]</td></tr>
-<tr><td>INDTILE_CB_AUTOSLOPE</td><td>CB_RESULT_XXX<td>with XXX=[AUTOSLOPE | NO_AUTOSLOPE]</td></tr>
 </table>
 
 <h3><a name="industrytiles-animation-control">Animation control callback triggers</a></h3>
@@ -195,58 +179,9 @@ to define either an old industry (using the global ID) or a new industry from yo
 <tr><td>input_multiplier_3</td><td>array of up to 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the third accepted cargo.</td></tr>
 <tr><td>name</td><td>string</td><td>Name of the industry</td></tr>
 <tr><td>prospect_chance</td><td>Fraction between 0 and 1</td><td>Chance of successful prospecting.</td></tr>
-<tr><td>callback_flags</td><td>bitmask(flags)</td><td>for flag values see <a href="#industry-callback-flags">Industry callback flags</a></td></tr>
+<tr><td>callback_flags</td><td>bitmask(flags)</td><td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-industries">old-style callbacks</a>.
 <tr><td>remove_cost_multiplier</td><td>int</td><td>Cost multiplier for removing the industry (currently only possible with magic bulldozer).</td></tr>
 <tr><td>nearby_station_name</td><td>string</td><td>Default additional name for a nearby station</td></tr>
-</table>
-
-<h3><a name="industry-callback-flags">Industry callback flags</a></h3>
-<table class="t">
-<tr><th>callback and callback flag<br>
-IND_CB_XXX and IND_CBF_XXX</th><th>return values</th><th>meaning</tr>
-<tr><td>IND_CBF_AVAILABILITY</td><td>CB_RESULT_IND_ALLOW<br>CB_RESULT_IND_DISALLOW</td><td>decide upon availability of the industry type.<br>
-extra_callback_info_2 allows to get information on how the industry is being built:<br>
-0: during map generation<br>1: random generation ingame<br>2: user trying to fund or prospect the industry</td></tr>
-<tr><td>IND_CBF_PROD_CB_CARGO_ARRIVE<br>(no callback, use <a href="nml-language.html#block-produce">produce block</a>)</td><td>n/a (use produce block)</td>
-        <td>handle production when cargo is delivered. See produce block</td></tr>
-<tr><td>IND_CBF_PROD_CB_256_TICKS<br>(no callback, use <a href="nml-language.html#block-produce">produce block</a>)</td><td>n/a (use produce block)</td>
-        <td>handle production every 256 ticks. See produce block</td></tr>
-<tr><td>IND_CBF_LOCATION_CHECK</td><td>string<br>
-CB_RESULT_IND_ALLOW_LOCATION<br>
-CB_RESULT_IND_DISALLOW_UNSUITABLE<br>
-CB_RESULT_IND_DISALLOW_ONLY_RAINFOREST<br>
-CB_RESULT_IND_DISALLOW_ONLY_DESERT</td><td>handle check for permissible build locations<br>
-extra_callback_info_2 allows to get information on how the industry is being built:<br>
-0: during map generation<br>1: random generation ingame<br>2: user trying to fund the industry<br>
-3: user trying to prospect the industry</td></tr>
-<tr><td>IND_CBF_RANDOM_PROD_CHANGE</td><td>see monthly production changes below</td><td>handle random production changes</td></tr>
-<tr><td>IND_CBF_MONTHLY_PROD_CHANGE</td><td>CB_RESULT_IND_PROD_NO_CHANGE<br>
-CB_RESULT_IND_PROD_HALF<br>
-CB_RESULT_IND_PROD_DOUBLE<br>
-CB_RESULT_IND_PROD_CLOSE<br>
-CB_RESULT_IND_PROD_RANDOM<br>
-CB_RESULT_IND_PROD_DIVIDE_BY_4<br>
-CB_RESULT_IND_PROD_DIVIDE_BY_8<br>
-CB_RESULT_IND_PROD_DIVIDE_BY_16<br>
-CB_RESULT_IND_PROD_DIVIDE_BY_32<br>
-CB_RESULT_IND_PROD_MULTIPLY_BY_4<br>
-CB_RESULT_IND_PROD_MULTIPLY_BY_8<br>
-CB_RESULT_IND_PROD_MULTIPLY_BY_16<br>
-CB_RESULT_IND_PROD_MULTIPLY_BY_32<br>
-CB_RESULT_IND_PROD_DECREMENT_BY_1<br>
-CB_RESULT_IND_PROD_INCREMENT_BY_1<br>
-CB_RESULT_IND_PROD_SET_BY_0x100<br>
-</td><td>handle monthly production changes</td></tr>
-<tr><td>IND_CBF_CARGO_SUBTYPE_DISPLAY</td><td>string</td><td>decide on displayed cargo subtypes</td></tr>
-<tr><td>IND_CBF_EXTRA_TEXT_FUND</td><td>string</td><td>decide on extra text displayed in industry funding window</td></tr>
-<tr><td>IND_CBF_EXTRA_TEXT_INDUSTRY</td><td>string</td><td>decide on extra text in the industry window</td></tr>
-<tr><td>IND_CBF_CONTROL_SPECIAL</td><td>CB_RESULT_IND_DO_NOT_USE_SPECIAL<br>CB_RESULT_IND_USE_SPECIAL</td><td>decide whether the special defined in spec_flags shall be used or not</td></tr>
-<tr><td>IND_CBF_STOP_ACCEPT_CARGO</td><td></td><td>decide on cargo acceptance</td></tr>
-<tr><td>IND_CBF_COLOUR</td><td>0...15</td><td>decide on industry colour. See also <a href="refs.html#refs-palettes">the palettes</a>. DARK_BLUE (#775) corresponds to the colour 0.</td></tr>
-<tr><td>IND_CBF_CARGO_INPUT</td><td>cargo label</td><td>decide on accepted cargo types. extra_callback_info_1 gives the input cargo number.
-Return 0xFF for any other value than 0, 1 or 2 for extra_callback_info_1.</td></tr>
-<tr><td>IND_CBF_CARGO_OUTPUT</td><td>cargo label</td><td>decide on output cargo types. extra_callback_info_1 gives the output cargo number.
-Return 0xFF for any other value than 0 or 1 for extra_callback_info_1.</td></tr>
 </table>
 
 <h3><a name="industry-special-flags">Industry special flags</a></h3>

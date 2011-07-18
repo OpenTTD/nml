@@ -40,7 +40,7 @@ Examples:
 <li>Available in all town zones in the arctic climate both above and below the snowline: <code>[ALL_TOWNZONES, bitmask(CLIMATE_ARCTIC, ABOVE_SNOWLINE)]</code></li>
 <li>Available everywhere except on the town edge: <code>[ALL_TOWNZONES &amp; ~bitmask(TOWNZONE_EDGE), ALL_CLIMATES | bitmask(ABOVE_SNOWLINE)</code></li>
 </ul>
-<tr><td>callback_flags<td><td>bitmask(HOUSE_CBF_XX) with XX = [BUILD, ANIM_NEXT_FRAME, ANIM_STARTSTOP, CONSTRUCTION_ANIM, COLOUR, CARGO_AMOUNT_ACCEPT, ANIM_FRAME_LENGTH, DESTRUCTION, CARGO_TYPE_ACCEPT, CARGO_PRODUCTION, PROTECTION, FOUNDATION, AUTOSLOPE]
+<tr><td>callback_flags<td>bitmask(HOUSE_CBF_XX)<td>Do not set this, unless you use <a href="old-callbacks.html">old-style callbacks</a>.
 <tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
 <tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..128 frames</td></tr>
