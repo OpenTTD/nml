@@ -9,15 +9,6 @@
 
 <h1><a name="railtypes">Rail types</a></h1>
 
-<h2><a name="railtypes-vars">Railtype variables</a></h2>
-<table class="t">
-<tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
-<tr><td>enhanced_tunnels</td><td>0</td><td>should custom tunnel entrances be modified other values than 0 might be returned</td></tr>
-<tr><td>level_crossing_status</td><td>LEVEL_CROSSING_CLOSED, LEVEL_CROSSING_OPEN</td><td></td></tr>
-<tr><td>build_date <td>0 .. 5000000 <td>for depots only: build date of the depot in days since 0
-</table>
-
 <h2><a name="railtypes-property">Railtype properties</a></h2>
 <table class="t">
 <tr><th>property</th><th>value range</th><th>comment</th></tr>
@@ -78,10 +69,20 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <tr><td>12+</td><td>115</td></tr>
 </table>
 
-<h3>Graphics blocks for railtypes</h3>
-<p>Rail types define a number of fixed graphic blocks:</p>
+<h2><a name="railtypes-vars">Railtype variables</a></h2>
 <table class="t">
-<tr><th>block name</th><th>number of sprites</th><th>meaning</th></tr>
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
+<tr><td>enhanced_tunnels</td><td>0</td><td>should custom tunnel entrances be modified other values than 0 might be returned</td></tr>
+<tr><td>level_crossing_status</td><td>LEVEL_CROSSING_CLOSED, LEVEL_CROSSING_OPEN</td><td></td></tr>
+<tr><td>build_date <td>0 .. 5000000 <td>for depots only: build date of the depot in days since 0
+</table>
+
+<h2><a name="railtypes-callbacks">Railtype callbacks</a></h2>
+<p>For rail types a number of callbacks are used to define rail type graphics.
+Each should refer to a sprite group containing the relevant sprite.</p>
+<table class="t">
+<tr><th>callbacks</th><th>number of sprites</th><th>meaning</th></tr>
 <tr><td>gui</td><td>         16</td><td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu</td></tr>
 <tr><td>track_overlay*</td><td>10</td><td>6 flat and 4 slope sprites. Track without landscape</td></tr>
 <tr><td>underlay*</td><td>    16</td><td>6 flat and 4 slope, one crossing WITH track, 5 junction pieces without track. Tracks with foundations but without landscape</td></tr>
@@ -94,7 +95,10 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <tr><td>fences</td><td>8</td><td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301</td></tr>
 </table>
 
-<p>The entries marked by * are required. A typical implementation for railtypes can look like
+<p>The entries marked by * are required.</p>
+
+<h3><a name="railtypes-example">Example</a></h3>
+<p>A typical implementation for railtypes can look like:
 <pre class="code">
 item(FEAT_RAILTYPES, elrail, 0x01) {
     property {
@@ -128,6 +132,7 @@ item(FEAT_RAILTYPES, elrail, 0x01) {
 The switches and graphics blocks are defined in the usual way as described in sections
 <a href="nml-language.html#block-switch">switches</a>, <a href="nml-language.html#block-randomswitch">random switches</a> and <a href="nml-language.html#block-item-graphics">graphics block</a> sections.
 </p>
+
 
 </body>
 </html>

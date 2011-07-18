@@ -9,87 +9,6 @@
 
 <h1><a name="vehicles">Vehicles</a></h1>
 
-<h2><a name="vehicles-vars">Vehicle variables</a></h2>
-Please note that while those variables are available for all vehicles types, some of them only make sense
-for one or more vehicle types. For example checking current_railtype for a non-rail vehicle doesn't make
-sense at all.
-<h3><a name="vehicles-normal-vars">Variables without parameter</a></h3>
-<table class="t">
-<tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>position_in_consist <td>0 ... 255<td>The position of the current vehicle-part from the start of the vehicle. The engine will
-get value 0, the first wagon (or second engine) gets value 1, etc.
-<tr><td>position_in_consist_from_end <td>0 ... 255 <td>Same as position_in_consist but counted from the end. The last wagon will
-get value 0.
-<tr><td>num_vehs_in_consist <td>1 ... 256 <td>The total number of vehicles-parts in this vehicle. For aircraft this will include
-the shadow and the rotor.
-<tr><td>position_in_vehid_chain <td>0 ... 255 <td>See position_in_consist, but not of the complete vehicle but only all consecutive
-parts with the same id.
-<tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>See position_in_consist_from_end, but not of the complete vehicle but only all consecutive
-parts with the same id.
-<tr><td>num_vehs_in_vehid_chain <td>1 ... 256 <td>See num_vehs_in_consist, but not of the complete vehicle but only all consecutive
-parts with the same id.
-<tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td><a href="cargos.html#cargos-property">cargo classes</a>
-<tr><td>most_common_refit <td><a href="cargos.html#cargos-property">cargo class</a><td>cargo class most often refit to
-<tr><td><a name="bitmask_consist_info">bitmask_consist_info</a><td>Bitmask 8 bit<td>OR of all
-<a href="#bitmask_vehicle_info">bitmask_vehicle_info</a> of all vehicles (engines, wagons) in
-the consist. Only available for rail vehicles.
-<tr><td>company_num <td>0 ... 14 <td>company number of the vehicle owner. TTDPatch only supports up to 8 companies (0 ... 7)
-<tr><td>company_type <td>PLAYERTYPE_XX <td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI
-(human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company). OpenTTD only
-uses PLAYERTYPE_HUMAN and PLAYERTYPE_AI. If you cheat yourself to be part of an AI company OpenTTD
-will still report PLAYERTYPE_AI for the company with yourself and the AI and it'll report
-PLAYERTYPE_HUMAN for the now uncontrolled company.
-<tr><td>company_colour1 <td>0 ... 15 <td>index into company colour
-<tr><td>company_colour2 <td>0 ... 15 <td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
-<tr><td>aircraft_height <td>0 ... 255 <td>Height difference between the aircraft and its shadow. 8 Units are equivalent to one height level on the map.
-<tr><td>airport_type <td>AIRPORTTYPE_XX <td>AIRPORTTYPE_SMALL, AIRPORTTYPE_LARGE, AIRPORTTYPE_HELIPORT or AIRPORTTYPE_OILRIG
-<tr><td>curv_info_prev_cur <td>-2 ... 2 <td>Curvature to the right is positive. 1 unit is 45 degrees.
-<tr><td>curv_info_cur_next <td>-2 ... 2 <td>Curvature to the right is positive. 1 unit is 45 degrees.
-<tr><td>curv_info_prev_next <td>-4 ... 4 <td>Curvature to the right is positive. 1 unit is 45 degrees.
-<tr><td>motion_counter <td>0 ... 15 <td>Is increased every time the vehicle moves a single step on the map. Useful for animations.
-<tr><td>cargo_type_in_veh <td>entry in cargo translation table <td>
-<tr><td>cargo_unit_weight <td>weight per unit in 1/16t <td>
-<tr><td>cargo_classes <td><a href="cargos.html#cargos-property">cargo class</a><td>class of the currently transported cargo
-<tr><td>vehicle_is_available <td> [0 | 1]<td>Value is 1 if the vehicle is available on the open market
-<tr><td>vehicle_is_testing <td> [0 | 1]<td>Value is 1 if the vehicle is currently being tested
-<tr><td>vehicle_is_offered <td> [0 | 1]<td>Value is 1 if the vehicle is currently being offered for exclusive preview
-<tr><td>build_year <td>0 ... 5000000 <td>0-based year when the vehicle was built
-<tr><td>direction <td>DIRECTION_XX <td>XX = NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST or NORTHWEST. e.g. DIRECTION_NORTH.
-<tr><td>cargo_capacity <td>0 ... 65535 <td>Cargo capacity (number of units) of the vehicle
-<tr><td>cargo_count <td>0 ... 65535 <td>Number of cargo units of cargo in the vehicle
-<tr><td>vehicle_type_id <td> <td>ID of the vehicle
-<tr><td>refit_cycle <td>0 ... 255 <td>How many times the vehicle has been refitted to the same cargo type
-<tr><td>vehicle_is_powered <td> [0 | 1]<td> vehicle provides power and is on the correct track type
-<tr><td>vehicle_is_not_powered <td> [0 | 1]<td> vehicle is either on a wrong track type or it doesn't provide power at all
-<tr><td>vehicle_is_potentially_powered <td> [0 | 1]<td> vehicle provides power, if it is on a suitable track type
-<tr><td>vehicle_is_reversed <td> [0 | 1]<td>Value is 1 if the vehicle has reversed an odd number of times
-<tr><td>built_during_preview <td> [0 | 1]<td>Value is 1 if the vehicle was built during the exclusive preview stage
-<tr><td>current_railtype <td> Entry from railtype translation table or 0xFF<td>Don't use this variable unless you've defined
-a railtype translation table. If the train is running on a railtype that is not listed in your railtype translation table
-this variable will contain 0xFF. Available since OpenTTD r20164.
-<tr><td>waiting_triggers <td> <td>Random triggers waiting to be matched. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
-<tr><td>random_bits <td>0 ... 255 <td>Random data that can be used to randomize certain descisions. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
-<tr><td>grfid <td>0 ... 0xFFFFFFFF <td>GRFID that defined the <a href="nml-language.html#block-item-graphics">graphics</a>-block for this vehicle.
-<tr><td>vehicle_is_hidden <td> [0 | 1]<td>Value is 1 if the vehicle is hidden in a depot or tunnel.
-<tr><td>vehicle_is_stopped <td> [0 | 1]<td>Value is 1 if the vehicle is stopped, or if it is braking for a stop (trains only).
-<tr><td>vehicle_is_crashed <td> [0 | 1]<td>Value is 1 if the vehicle has crashed.
-<tr><td>vehicle_is_broken <td> [0 | 1]<td>Value is 1 if the vehicle is broken down.
-<tr><td>date_of_last_service <td>date(year, month, day)<td>Not valid before 1920 and after 2090.
-<tr><td>breakdowns_since_last_service <td>0 ... 255 <td>Number of breakdowns since the last service
-<tr><td>reliability <td>0 ... 100 <td>Reliability (percentage)
-<tr><td>age_in_days <td>0 ... 65535 <td>Vehicle age in days.
-<tr><td>max_age_in_days <td>0 ... 65535 <td>Maximum vehicle age in days.
-<tr><td>current_speed <td>(speed units)<td>The current speed of the vehicle in m/s
-<tr><td>max_speed <td>(speed units)<td>The maximum speed of the vehicle in m/s
-<tr><td>vehicle_is_in_depot <td> [0 | 1]<td>Value is 1 if the vehicle is inside a depot
-</table>
-<h3><a name="vehicles-parameter-vars">Variables that require an argument</a></h3>
-<table class="t">
-<tr><th>name</th><th>Argument</th><th>value range</th><th>comment</th></tr>
-<tr><td>count_veh_id</td><td>The vehicle ID to look for.</td><td>0..255</td><td>The number of vehicles in the current consist that have
-the given ID.</td></tr>
-</table>
-
 <h2><a name="vehicles-property">Properties common to all vehicle types</a></h2>
 <table class="t">
 <tr><th> property</th><th>value range</th><th>available for<br>articulated<br>vehicle</th><th>comment</th></tr>
@@ -227,6 +146,89 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="refs.html#refs-sounds">sound effects</a>.
 </table>
 
+
+<h2><a name="vehicles-vars">Vehicle variables</a></h2>
+Please note that while those variables are available for all vehicles types, some of them only make sense
+for one or more vehicle types. For example checking current_railtype for a non-rail vehicle doesn't make
+sense at all.
+<h3><a name="vehicles-normal-vars">Variables without parameter</a></h3>
+<table class="t">
+<tr><th>name</th><th>value range</th><th>comment</th></tr>
+<tr><td>position_in_consist <td>0 ... 255<td>The position of the current vehicle-part from the start of the vehicle. The engine will
+get value 0, the first wagon (or second engine) gets value 1, etc.
+<tr><td>position_in_consist_from_end <td>0 ... 255 <td>Same as position_in_consist but counted from the end. The last wagon will
+get value 0.
+<tr><td>num_vehs_in_consist <td>1 ... 256 <td>The total number of vehicles-parts in this vehicle. For aircraft this will include
+the shadow and the rotor.
+<tr><td>position_in_vehid_chain <td>0 ... 255 <td>See position_in_consist, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>position_in_vehid_chain_from_end <td>0 ... 255 <td>See position_in_consist_from_end, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>num_vehs_in_vehid_chain <td>1 ... 256 <td>See num_vehs_in_consist, but not of the complete vehicle but only all consecutive
+parts with the same id.
+<tr><td>cargo_classes_in_consist <td>Bitmask of CC_XXX <td><a href="cargos.html#cargos-property">cargo classes</a>
+<tr><td>most_common_refit <td><a href="cargos.html#cargos-property">cargo class</a><td>cargo class most often refit to
+<tr><td><a name="bitmask_consist_info">bitmask_consist_info</a><td>Bitmask 8 bit<td>OR of all
+<a href="#bitmask_vehicle_info">bitmask_vehicle_info</a> of all vehicles (engines, wagons) in
+the consist. Only available for rail vehicles.
+<tr><td>company_num <td>0 ... 14 <td>company number of the vehicle owner. TTDPatch only supports up to 8 companies (0 ... 7)
+<tr><td>company_type <td>PLAYERTYPE_XX <td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI
+(human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company). OpenTTD only
+uses PLAYERTYPE_HUMAN and PLAYERTYPE_AI. If you cheat yourself to be part of an AI company OpenTTD
+will still report PLAYERTYPE_AI for the company with yourself and the AI and it'll report
+PLAYERTYPE_HUMAN for the now uncontrolled company.
+<tr><td>company_colour1 <td>0 ... 15 <td>index into company colour
+<tr><td>company_colour2 <td>0 ... 15 <td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
+<tr><td>aircraft_height <td>0 ... 255 <td>Height difference between the aircraft and its shadow. 8 Units are equivalent to one height level on the map.
+<tr><td>airport_type <td>AIRPORTTYPE_XX <td>AIRPORTTYPE_SMALL, AIRPORTTYPE_LARGE, AIRPORTTYPE_HELIPORT or AIRPORTTYPE_OILRIG
+<tr><td>curv_info_prev_cur <td>-2 ... 2 <td>Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>curv_info_cur_next <td>-2 ... 2 <td>Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>curv_info_prev_next <td>-4 ... 4 <td>Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>motion_counter <td>0 ... 15 <td>Is increased every time the vehicle moves a single step on the map. Useful for animations.
+<tr><td>cargo_type_in_veh <td>entry in cargo translation table <td>
+<tr><td>cargo_unit_weight <td>weight per unit in 1/16t <td>
+<tr><td>cargo_classes <td><a href="cargos.html#cargos-property">cargo class</a><td>class of the currently transported cargo
+<tr><td>vehicle_is_available <td> [0 | 1]<td>Value is 1 if the vehicle is available on the open market
+<tr><td>vehicle_is_testing <td> [0 | 1]<td>Value is 1 if the vehicle is currently being tested
+<tr><td>vehicle_is_offered <td> [0 | 1]<td>Value is 1 if the vehicle is currently being offered for exclusive preview
+<tr><td>build_year <td>0 ... 5000000 <td>0-based year when the vehicle was built
+<tr><td>direction <td>DIRECTION_XX <td>XX = NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST or NORTHWEST. e.g. DIRECTION_NORTH.
+<tr><td>cargo_capacity <td>0 ... 65535 <td>Cargo capacity (number of units) of the vehicle
+<tr><td>cargo_count <td>0 ... 65535 <td>Number of cargo units of cargo in the vehicle
+<tr><td>vehicle_type_id <td> <td>ID of the vehicle
+<tr><td>refit_cycle <td>0 ... 255 <td>How many times the vehicle has been refitted to the same cargo type
+<tr><td>vehicle_is_powered <td> [0 | 1]<td> vehicle provides power and is on the correct track type
+<tr><td>vehicle_is_not_powered <td> [0 | 1]<td> vehicle is either on a wrong track type or it doesn't provide power at all
+<tr><td>vehicle_is_potentially_powered <td> [0 | 1]<td> vehicle provides power, if it is on a suitable track type
+<tr><td>vehicle_is_reversed <td> [0 | 1]<td>Value is 1 if the vehicle has reversed an odd number of times
+<tr><td>built_during_preview <td> [0 | 1]<td>Value is 1 if the vehicle was built during the exclusive preview stage
+<tr><td>current_railtype <td> Entry from railtype translation table or 0xFF<td>Don't use this variable unless you've defined
+a railtype translation table. If the train is running on a railtype that is not listed in your railtype translation table
+this variable will contain 0xFF. Available since OpenTTD r20164.
+<tr><td>waiting_triggers <td> <td>Random triggers waiting to be matched. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
+<tr><td>random_bits <td>0 ... 255 <td>Random data that can be used to randomize certain descisions. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
+<tr><td>grfid <td>0 ... 0xFFFFFFFF <td>GRFID that defined the <a href="nml-language.html#block-item-graphics">graphics</a>-block for this vehicle.
+<tr><td>vehicle_is_hidden <td> [0 | 1]<td>Value is 1 if the vehicle is hidden in a depot or tunnel.
+<tr><td>vehicle_is_stopped <td> [0 | 1]<td>Value is 1 if the vehicle is stopped, or if it is braking for a stop (trains only).
+<tr><td>vehicle_is_crashed <td> [0 | 1]<td>Value is 1 if the vehicle has crashed.
+<tr><td>vehicle_is_broken <td> [0 | 1]<td>Value is 1 if the vehicle is broken down.
+<tr><td>date_of_last_service <td>date(year, month, day)<td>Not valid before 1920 and after 2090.
+<tr><td>breakdowns_since_last_service <td>0 ... 255 <td>Number of breakdowns since the last service
+<tr><td>reliability <td>0 ... 100 <td>Reliability (percentage)
+<tr><td>age_in_days <td>0 ... 65535 <td>Vehicle age in days.
+<tr><td>max_age_in_days <td>0 ... 65535 <td>Maximum vehicle age in days.
+<tr><td>current_speed <td>(speed units)<td>The current speed of the vehicle in m/s
+<tr><td>max_speed <td>(speed units)<td>The maximum speed of the vehicle in m/s
+<tr><td>vehicle_is_in_depot <td> [0 | 1]<td>Value is 1 if the vehicle is inside a depot
+</table>
+<h3><a name="vehicles-parameter-vars">Variables that require an argument</a></h3>
+<table class="t">
+<tr><th>name</th><th>Argument</th><th>value range</th><th>comment</th></tr>
+<tr><td>count_veh_id</td><td>The vehicle ID to look for.</td><td>0..255</td><td>The number of vehicles in the current consist that have
+the given ID.</td></tr>
+</table>
+
+<h2><a name="vehicles-callbacks">Vehicle callbacks</a></h2>
 
 </body>
 </html>
