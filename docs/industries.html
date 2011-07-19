@@ -239,9 +239,7 @@ first two (plant fields / cut trees). Return 1 to execute the action or 0 to not
 do so. The relevant flag is given in <code>extra_callback_info2</code>.
 The default (if the flag is enabled, of course) is to plant fields with
 1/8th chance every 256 ticks, and to cut trees every 512 ticks.
-In the case of fields, random bits are supplied in <code>extra_callback_info1</code>.
-For tree-cutting there are no random bits, but the <code>counter</code>
-variable may be useful for your descision.
+Random bits are supplied in <code>extra_callback_info1</code>.
 <tr><td>stop_accept_cargo<td>0 or 1<td>With this callback, you can temporarily
 refuse accepting a certain cargo, for example because the stockpile is full.
 Return 1 to accept or 0 to refuse. Make sure to synchronize this callback with
