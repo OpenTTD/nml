@@ -81,6 +81,90 @@ Note: This is already a bitmask, don't use the <code>bitmask(..)</code> function
 <p>Cargos have no variables (yet).</p>
 
 <h2><a name="cargos-callbacks">Cargo callbacks</a></h2>
+<table class="t">
+<tr><th>callback<th>return value<th>comment
+<tr><td>default<td>Sprite group<td>Graphics for the cargo icon (only if property <code>sprite</code> is set to NEW_CARGO_SPRITE)
+<tr><td>station_rating<td>-16384 .. 16383<td>See detailed explanation below
+<tr><td>profit<td>-16384 .. 16383<td>Called whenever cargo is delivered.
+<code>extra_callback_info2</code> contains <code>0xttaadddd</code> with
+<code>tt</code> being the time spent en-route (1 unit = 2.5 days),
+<code>aa</code> the amount of cargo delivered and
+<code>dddd</code> the manhattan distance it was transported. The returned
+value is multiplied by the amount and the <code>price_factor</code> and then
+divided by 8192 to determine the income the player receives. Returning negative
+values is possible, it makes players pay for the delivery.
+</table>
+
+<h3><a name="cargos-callbacks-rating">Station rating callback</a></h3>
+<p>The station rating callback is quite complicated and deserves some
+detailed explanation. The default station rating calculation works as
+follows:</p>
+<p>Internally, station rating is byte with values 0 .. 255, representing
+respectively 0% and 100%. Every 2.5 days, the transportation 'performance'
+is calculated using some factors outlined below. The station rating is then
+set to this performance value, with the caveat that the rating change cannot
+exceed 2 points. Therefore, rating changes are always slow, this callback cannot
+change this. The initial rating is 175 points (69%). The following factors
+are parts of the performance, their effects are summed.</p>
+
+<h4>Time since the cargo was last picked up</h4>
+<table class="t">
+<tr><th>Time units (days)<th>Score (%, rounded)
+<tr><td>&gt;21 (&gt;52.5 days)<td>0 (0%)
+<tr><td>13 .. 21 (32.5 days .. 52.5 days)<td>25 (10%)
+<tr><td>7 .. 12 (17.5 days .. 32.5 days)<td>50 (20%)
+<tr><td>4 .. 6 (10 days .. 17.5 days)<td>95 (37%)
+<tr><td>0..3 (0 days..10 days)<td>130 (51%)
+</table>
+<p>The time unit used equals 185 engine ticks, or 2.5 TTD days. For ships,
+the time units are divided by 4 before calculating this component, so ships
+have four times more time before the ratings start dropping.</p>
+
+<h4>Amount of cargo waiting</h4>
+<table class="t">
+<tr><th>Amount of cargo<th>Score (%, rounded)
+<tr><td>&gt;1500<td>-90 (-35%)
+<tr><td>1001..1500<td>-35 (-14%)
+<tr><td>601..1000<td>0 (0%)
+<tr><td>301..600<td>10 (4%)
+<tr><td>101..300<td>30 (12%)
+<tr><td>0..100<td>40 (16%)
+</table>
+
+<h4>Max. speed of the last vehicle picking up the cargo</h4>
+<p>This calculation is somewhat complicated. The maximum speed of the vehicle
+is expressed in "speed units". For trains and road vehicles, the speed unit is
+1 km/h; for ships, it's 0.5 km/h; for aircraft, it's 8 mph. If the max. speed
+is above 255 speed units, 255 is used instead. If the vehicle is slower than
+85 units, no points are awarded; otherwise, you get (speed_units-85)/4 points.
+Therefore, the maximum you can get is 42 points, or 16%.</p>
+
+<h4>Age of the last carrier picking up the cargo</h4>
+<table class="t">
+<tr><th>Age of vehicle (years)<th>Score (%, rounded)
+<tr><td>2<td>10 (4%)
+<tr><td>1<td>20 (8%)
+<tr><td>0<td>33 (13%)
+</table>
+<p>In TTDPatch this changes when the 'newagerating' switch is enabled</p>
+
+<h4>Bonus for AI companies (TTDPatch only)</h4>
+<table class="t">
+<tr><th>AI intelligence setting<th>Score (%, rounded)
+<tr><td>Low<td>0 (0%)
+<tr><td>Medium<td>31 (12%)
+<tr><td>High<td>63 (25%)
+</table>
+
+<h4>Bonus for statue in nearest town</h4>
+
+<p>If your company has erected a statue in the nearest town, you get 26 points (10%) bonus to all cargo ratings.
+</p>
+<h4>Effect of callback</h4>
+<p>The return value of the callback replaces the first three components
+(time since pickup, amount of cargo, max speed) of the calculation.
+The bonus for statues, TTDPatch AIs and new vehicles is always in effect,
+you cannot (yet) change this.</p>
 
 </body>
 </html>

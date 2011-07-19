@@ -30,7 +30,8 @@
 <tr><td>callback_flags<td>bitmask<td>Do not set this, unless you use <a href="old-callbacks.html">old-style callbacks</a>.
 <tr><td>animation_info<td><td>
 <tr><td>animation_speed<td><td>see <a href="refs.html#refs-animation-speed-values">speed settings</a>
-<tr><td>animation_triggers<td><td>
+<tr><td>animation_triggers<td>bitmask(ANIM_TRIGGER_APT_XXX, ... )<td>Bitmask of
+triggers that will trigger animation, see the <a href="#airporttiles-callbacks-animtriggers">table</a> below.
 </table>
 
 <h2><a name="airports-vars">Airport variables</a></h2>
@@ -79,8 +80,53 @@ See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
 </table>
 
 <h2><a name="airports-callbacks">Airport callbacks</a></h2>
+<table class="t">
+<tr><th>callback<th>return value<th>comment
+<tr><td>default<td>Sprite group<td>Preview graphics to use in the build menu
+<tr><td>additional_text<td>String<td>Additional text to show in the buy menu
+<tr><td>layout_name<td>String<td>Name of the airport layout in the variable <code>layout</code>
+</table>
+
+<p>Note that, although the airport isn't built yet, the <code>layout</code>
+variable is always available and set to the layout the user has selected in
+the GUI.</p>
 
 <h2><a name="airporttiles-callbacks">Airport tile callbacks</a></h2>
+<table class="t">
+<tr><th>callback<th>return value<th>comment
+<tr><td>default<td>Sprite group<td>Normal graphics for an object placed on the map
+<tr><td>anim_next_frame<td>Next animation frame or CB_RESULT_XXX<td>Called for
+every animation frame, returns the next frame to display. Alternatively,
+return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
+or stop animation, respectively. <code>extra_callback_info1</code> contains
+random bits.
+<tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called whenever
+an object animation trigger happens. Return the animation frame to show, or
+CB_RESULT_XXX with XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
+to respectively start the animation in its current frame, stop the animation or
+do nothing. <code>extra_callback_info1</code> contains random bits.
+<code>extra_callback_info2</code> contains the reason to trigger the animation,
+see the <a href="#airporttiles-callbacks-animtriggers">table</a> below. Note
+that you need to enable the wanted triggers in the <code>animation_triggers</code>
+property.
+<tr><td>anim_speed<td>0 .. 16<td>Decide the time an animation frame should last.
+Return value is interpreted as (num_ticks = 2^anim_speed), which each tick lasting
+30 ms. Avoid using this callback if possible, since it has to be called each tick
+for every animated tile. This can be used to create animation frames that last
+between 30 ms and 33 minutes.
+<tr><td>foundations<td>CB_RESULT[_NO]_FOUNDATIONS<td> Return CB_RESULT_FOUNDATIONS
+to draw standard foundations (default) or CB_RESULT_NO_FOUNDATIONS to not draw them.
+</table>
 
+<h3><a name="airporttiles-callbacks-animtriggers">Animation triggers</a></h3>
+<table class="t">
+<tr><th>Animation trigger<th>Description
+<tr><td>ANIM_TRIGGER_APT_BUILT<td>Airport is built (all tiles at the same time)
+<tr><td>ANIM_TRIGGER_APT_TILELOOP<td>Airport tile is processed in the tileloop
+(at different times for different tiles)
+<tr><td>ANIM_TRIGGER_APT_NEW_CARGO<td>New cargo arrives at the airport (all tiles at the same time)
+<tr><td>ANIM_TRIGGER_APT_CARGO_TAKEN<td>All cargo of a cargo type is removed from the airport (all tiles at the same time)
+<tr><td>ANIM_TRIGGER_APT_250_TICKS<td>Every 250 ticks (all tiles at the same time)
+</table>
 </body>
 </html>

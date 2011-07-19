@@ -121,6 +121,65 @@ object type is not yet built, this will return 0xFFFF</td></tr>
 </table>
 
 <h2><a name="objects-callbacks">Object callbacks</a></h2>
+<table class="t">
+<tr><th>callback<th>return value<th>comment
+<tr><td>default<td>Sprite group<td>Normal graphics for an object placed on the map
+<tr><td>purchase*<td>Sprite group<td>Graphics shown in the build menu
+<tr><td>anim_next_frame<td>Next animation frame or CB_RESULT_XXX<td>Called for
+every animation frame, returns the next frame to display. Alternatively,
+return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
+or stop animation, respectively. <code>extra_callback_info1</code> contains
+random bits if the object flag OBJ_FLAG_RANDOM_ANIMATION is set.
+<tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called whenever
+an object animation trigger happens. Return the animation frame to show, or
+CB_RESULT_XXX with XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
+to respectively start the animation in its current frame, stop the animation or
+do nothing. <code>extra_callback_info1</code> contains random bits if the object
+flag OBJ_FLAG_RANDOM_ANIMATION is set. <code>extra_callback_info2</code> contains
+the reason to trigger the animation, see the <a href="#objects-callbacks-animtriggers">table</a> below.
+<tr><td>anim_speed<td>0 .. 16<td>Decide the time an animation frame should last.
+Return value is interpreted as (num_ticks = 2^anim_speed), which each tick lasting
+30 ms. Avoid using this callback if possible, since it has to be called each tick
+for every animated tile. This can be used to create animation frames that last
+between 30 ms and 33 minutes.
+<tr><td>colour<td>colour2*16 + colour1<td>Called once, just after
+construction. Variable <code>extra_callback_info1</code> contains the colour
+scheme of the constructing company in the same format as the return value, or
+random colours if not available (scenario editor). If OBJ_FLAG_2CC is not set,
+colour2 is zero. This callback can be used to alter the colour scheme of an object.
+<tr><td>autoslope<td>CB_RESULT[_NO]_AUTOSLOPE<td>Return CB_RESULT_AUTOSLOPE to
+allow autoslope (altering the ground below a tile) or CB_RESULT_NO_AUTOSLOPE to
+disallow it.
+<tr><td>slope_check*<td>0 or 1<td>Return 0 to allow construction or 1 to disallow.
+Parameters: <code>extra_callback_info1</code> contains the slope in bits 0..3 (see below), all
+other bits are reserved and should be and-masked out. <code>extra_callback_info2</code>
+contains the location of the tile within the object as 16*y + x.
+Note: NFO allows more specific error messages, NML does not yet support this.
+<tr><td>additional_text*<td>String<td>Additional text to show in the purchase menu
+</table>
+<p>* These callbacks are called when the object is not yet built, so object-
+specific variables cannot be accessed. Trying to do so will result in
+undefined behaviour.</p>
+
+<h3><a name="objects-callbacks-animtriggers">Animation triggers</a></h3>
+<table class="t">
+<tr><th>Animation trigger<th>Description
+<tr><td>ANIM_TRIGGER_OBJ_BUILT<td>Object is built (all tiles at the same time)
+<tr><td>ANIM_TRIGGER_OBJ_TILELOOP<td>Object tile is processed in the tileloop
+(at different times for different tiles)
+<tr><td>ANIM_TRIGGER_OBJ_256_TICKS<td>Every 256 ticks (all tiles at the same time)
+</table>
+
+<h3><a name="objects-callbacks-slope">Format of slope data</a></h3>
+<p>Slope is a bitmask of raised corners, like <code>bitmask(CORNER_N, CORNER_W)</code>
+A value of 0 (no bits set) indicates flat land. The following bits may be set:</p>
+<table class="t">
+<tr><th>Name<th>Meaning
+<tr><td>CORNER_W<td>West (left) corner of the tile is raised.
+<tr><td>CORNER_S<td>South (bottom) corner of the tile is raised.
+<tr><td>CORNER_E<td>East (right) corner of the tile is raised.
+<tr><td>CORNER_N<td>North (top) corner of the tile is raised.
+</table>
 
 </body>
 </html>

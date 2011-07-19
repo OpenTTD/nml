@@ -580,6 +580,11 @@ constant_numbers = {
     'DIRECTION_WEST'                      : 6,
     'DIRECTION_NORTHWEST'                 : 7,
 
+    'CORNER_W'                            : 0,
+    'CORNER_S'                            : 1,
+    'CORNER_E'                            : 2,
+    'CORNER_N'                            : 3,
+
     #loading stages
     'LOADINGSTAGE_INITIALIZE'             : 0x0000,
     'LOADINGSTAGE_RESERVE'                : 0x0101,
@@ -656,13 +661,25 @@ constant_numbers = {
     'LSF_ONLY_ON_FLAT_LAND'                 : 4,
     'LSF_ALLOW_ON_WATER'                    : 5,
 
+    # Animation triggers
+    'ANIM_TRIGGER_OBJ_BUILT'                : 0,
+    'ANIM_TRIGGER_OBJ_TILELOOP'             : 1,
+    'ANIM_TRIGGER_OBJ_256_TICKS'            : 2,
+
+    'ANIM_TRIGGER_APT_BUILT'                : 0,
+    'ANIM_TRIGGER_APT_TILELOOP'             : 1,
+    'ANIM_TRIGGER_APT_NEW_CARGO'            : 2,
+    'ANIM_TRIGGER_APT_CARGO_TAKEN'          : 3,
+    'ANIM_TRIGGER_APT_250_TICKS'            : 4,
+
     # Animation looping
     'ANIMATION_NON_LOOPING'                 : 0,
     'ANIMATION_LOOPING'                     : 1,
-	
+
     # Animation callback results
     'CB_RESULT_STOP_ANIMATION'              : 0xFF,  # callback 0x25, 0x26
-    'CB_RESULT_NEXT_FRAME'                  : 0xFE,  # callback 0x25, 0x26
+    'CB_RESULT_START_ANIMATION'             : 0xFE,  # callback 0x25
+    'CB_RESULT_NEXT_FRAME'                  : 0xFE,  # callback 0x26
     'CB_RESULT_DO_NOTHING'                  : 0xFD,  # callback 0x25
 
     'CB_RESULT_FOUNDATIONS'                 : 0x01,  # callback 0x30
