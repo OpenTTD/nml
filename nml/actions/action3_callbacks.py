@@ -107,23 +107,23 @@ callbacks[0x05] = {
 
 # Houses
 callbacks[0x07] = {
-    'random_trigger'      : {'type': 'cb', 'num': 0x01},
-    'construction_check'  : {'type': 'cb', 'num':  0x17, 'flag_bit':  0},
-    'anim_next_frame'     : {'type': 'cb', 'num':  0x1A, 'flag_bit':  1},
-    'anim_control'        : {'type': 'cb', 'num':  0x1B, 'flag_bit':  2},
-    'construction_anim'   : {'type': 'cb', 'num':  0x1C, 'flag_bit':  3},
-    'colour'              : {'type': 'cb', 'num':  0x1E, 'flag_bit':  4},
-    'cargo_amount_accept' : {'type': 'cb', 'num':  0x1F, 'flag_bit':  5},
-    'anim_speed'          : {'type': 'cb', 'num':  0x20, 'flag_bit':  6},
-    'destruction'         : {'type': 'cb', 'num':  0x21, 'flag_bit':  7},
-    'cargo_type_accept'   : {'type': 'cb', 'num':  0x2A, 'flag_bit':  8},
-    'cargo_production'    : {'type': 'cb', 'num':  0x2E, 'flag_bit':  9},
-    'protection'          : {'type': 'cb', 'num': 0x143, 'flag_bit': 10},
-    'accepted_cargo'      : {'type': 'cb', 'num': 0x148},
-    'building_name'       : {'type': 'cb', 'num': 0x14D},
-    'foundations'         : {'type': 'cb', 'num': 0x14E, 'flag_bit': 11},
-    'autoslope'           : {'type': 'cb', 'num': 0x14F, 'flag_bit': 12},
-    'default'             : {'type': 'cargo', 'num': None},
+    'random_trigger'         : {'type': 'cb', 'num': 0x01},
+    'construction_check'     : {'type': 'cb', 'num':  0x17, 'flag_bit':  0},
+    'anim_next_frame'        : {'type': 'cb', 'num':  0x1A, 'flag_bit':  1},
+    'anim_control'           : {'type': 'cb', 'num':  0x1B, 'flag_bit':  2},
+    'construction_anim'      : {'type': 'cb', 'num':  0x1C, 'flag_bit':  3},
+    'colour'                 : {'type': 'cb', 'num':  0x1E, 'flag_bit':  4},
+    'cargo_amount_accept'    : {'type': 'cb', 'num':  0x1F, 'flag_bit':  5},
+    'anim_speed'             : {'type': 'cb', 'num':  0x20, 'flag_bit':  6},
+    'destruction'            : {'type': 'cb', 'num':  0x21, 'flag_bit':  7},
+    'cargo_type_accept'      : {'type': 'cb', 'num':  0x2A, 'flag_bit':  8},
+    'cargo_production'       : {'type': 'cb', 'num':  0x2E, 'flag_bit':  9},
+    'protection'             : {'type': 'cb', 'num': 0x143, 'flag_bit': 10},
+    'watched_cargo_accepted' : {'type': 'cb', 'num': 0x148},
+    'name'                   : {'type': 'cb', 'num': 0x14D},
+    'foundations'            : {'type': 'cb', 'num': 0x14E, 'flag_bit': 11},
+    'autoslope'              : {'type': 'cb', 'num': 0x14F, 'flag_bit': 12},
+    'default'                : {'type': 'cargo', 'num': None},
 }
 
 # General variables (0x08) have no action3
@@ -134,9 +134,9 @@ callbacks[0x09] = {
     'anim_control'        : {'type': 'cb', 'num': 0x25},
     'anim_next_frame'     : {'type': 'cb', 'num': 0x26, 'flag_bit': 0},
     'anim_speed'          : {'type': 'cb', 'num': 0x27, 'flag_bit': 1},
-    'cargo_amount_accept' : {'type': 'cb', 'num': 0x2B, 'flag_bit': 2},
-    'cargo_type_accept'   : {'type': 'cb', 'num': 0x2C, 'flag_bit': 3},
-    'slope_is_suitable'   : {'type': 'cb', 'num': 0x2F, 'flag_bit': 4},
+    'cargo_amount_accept' : {'type': 'cb', 'num': 0x2B, 'flag_bit': 2}, # Should work like the industry CB, i.e. call multiple times
+    'cargo_type_accept'   : {'type': 'cb', 'num': 0x2C, 'flag_bit': 3}, # Should work like the industry CB, i.e. call multiple times
+    'slope_check'         : {'type': 'cb', 'num': 0x2F, 'flag_bit': 4},
     'foundations'         : {'type': 'cb', 'num': 0x30, 'flag_bit': 5},
     'autoslope'           : {'type': 'cb', 'num': 0x3B, 'flag_bit': 6},
     'default'             : {'type': 'cargo', 'num': None},
@@ -147,13 +147,13 @@ callbacks[0x0A] = {
     'availability'          : {'type': 'cb', 'num': 0x22,  'flag_bit': 0},
     'produce_cargo_arrival' : {'type': 'cb', 'num': 0x00,  'flag_bit': 1, 'var18': 0},
     'produce_256_ticks'     : {'type': 'cb', 'num': 0x00,  'flag_bit': 2, 'var18': 1},
-    'location_check'        : {'type': 'cb', 'num': 0x28,  'flag_bit': 3},
+    'location_check'        : {'type': 'cb', 'num': 0x28,  'flag_bit': 3}, # We need a way to access all those special variables
     'random_prod_change'    : {'type': 'cb', 'num': 0x29,  'flag_bit': 4},
     'monthly_prod_change'   : {'type': 'cb', 'num': 0x35,  'flag_bit': 5},
     'cargo_subtype_display' : {'type': 'cb', 'num': 0x37,  'flag_bit': 6},
     'extra_text_fund'       : {'type': 'cb', 'num': 0x38,  'flag_bit': 7},
     'extra_text_industry'   : {'type': 'cb', 'num': 0x3A,  'flag_bit': 8},
-    'control_special'       : {'type': 'cb', 'num': 0x3B,  'flag_bit': 9},
+    'control_special'       : {'type': 'cb', 'num': 0x3B,  'flag_bit': 9}, # Patch OpenTTD to provide random bits in all cases?
     'stop_accept_cargo'     : {'type': 'cb', 'num': 0x3D,  'flag_bit': 10},
     'colour'                : {'type': 'cb', 'num': 0x14A, 'flag_bit': 11},
     'cargo_input'           : {'type': 'cb', 'num': 0x14B, 'flag_bit': 12},
@@ -181,7 +181,7 @@ callbacks[0x0D] = {
 
 # Objects
 callbacks[0x0F] = {
-    'slope_check'     : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2},
+    'slope_check'     : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2}, # The 'toggle bit 10'-magic needs to be a abstracted away
     'anim_next_frame' : {'type': 'cb', 'num': 0x158, 'flag_bit': 1},
     'anim_control'    : {'type': 'cb', 'num': 0x159},
     'anim_speed'      : {'type': 'cb', 'num': 0x15A, 'flag_bit': 2},

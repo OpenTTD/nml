@@ -86,7 +86,9 @@ Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_car
 | CARGO_TYPE_ACCEPT | SLOPE_IS_SUITABLE | FOUNDATIONS | AUTOSLOPE</td></tr>
 <tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..253 frames</td></tr>
 <tr><td>animation_speed</td><td>0..16</td><td>Speed of animation, see <a href="refs.html#refs-animation-speed-values">animation speed table</a> for the meaning of the values.</td></tr>
-<tr><td>animation_triggers</td><td>bitmask(<a href="#industrytiles-animation-control">Animation control callback triggers</a>)</td><td>Triggers which control whether the animatin is started or stopped</td></tr>
+<tr><td>animation_triggers</td><td>bitmask(ANIM_TRIGGER_INDTILE_XXX, ... )</td><td>Bitmask of
+triggers that will trigger the <code>anim_control</code> callback,
+see the <a href="#industrytiles-callbacks-animtriggers">table</a> below.</td></tr>
 <tr><td>special_flags</td><td>0..1</td><td>Set to 1 if INDTILE_CB_ANIM_NEXT_FRAME needs random bits</td></tr>
 </table>
 
@@ -101,17 +103,6 @@ Example: for a tile that doesn't any cargos at all you'd use: <code>accepted_car
 <tr><td>LSF_ALLOW_ON_WATER</td><td>The land/water check is disabled for this tile so it can be built on water. If you need
 more control over this use callback 0x2F.</td></tr>
 </table>
-
-<h3><a name="industrytiles-animation-control">Animation control callback triggers</a></h3>
-<table class="t">
-<tr><th>Trigger</th><th>Meaning</th></tr>
-<tr><td>INDTILE_TRIGGER_CONSTRUCTION_STATE</td><td>the construction state changes </td></tr>
-<tr><td>INDTILE_TRIGGER_TILE_LOOP</td><td>the tile is processed in the periodic processing loop </td></tr>
-<tr><td>INDTILE_TRIGGER_INDUSTRY_LOOP</td><td>the industry of the tile is processed in the periodic processing loop (synchronized animation) </td></tr>
-<tr><td>INDTILE_TRIGGER_INDUSTRY_RECEIVED_CARGO</td><td>the industry of the tile receives input cargo from a station </td></tr>
-<tr><td>INDTILE_TRIGGER_INDUSTRY_DISTRIBUTES_CARGO</td><td>the industry distributes its output cargo to one of the stations nearby</td></tr>
-</table>
-
 
 <h2><a name="industries-vars-common">Common variables</a></h2>
 <p>The following variables are available to both industries and industry tiles.
@@ -144,9 +135,9 @@ See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
 <h2><a name="industries-vars">Industry variables</a></h2>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>waiting_cargo_1</td><td>0..65535</td><td>If IND_CBF_PROD_CB_CARGO_ARRIVE or IND_CBF_PROD_CB_256_TICKS are set in the callback_flags property, this variable will contain the amount of the first cargo type awaiting to be processed.</td></tr>
-<tr><td>waiting_cargo_2</td><td>0..65535</td><td>If IND_CBF_PROD_CB_CARGO_ARRIVE or IND_CBF_PROD_CB_256_TICKS are set in the callback_flags property, this variable will contain the amount of the second cargo type awaiting to be processed.</td></tr>
-<tr><td>waiting_cargo_3</td><td>0..65535</td><td>If IND_CBF_PROD_CB_CARGO_ARRIVE or IND_CBF_PROD_CB_256_TICKS are set in the callback_flags property, this variable will contain the amount of the third cargo type awaiting to be processed.</td></tr>
+<tr><td>waiting_cargo_1</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the first cargo type awaiting to be processed.</td></tr>
+<tr><td>waiting_cargo_2</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the second cargo type awaiting to be processed.</td></tr>
+<tr><td>waiting_cargo_3</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the third cargo type awaiting to be processed.</td></tr>
 <tr><td>produced_last_month_1</td><td>0..65535</td><td>The amount of 'output cargo type 1' that was produced last month.</td></tr>
 <tr><td>produced_last_month_2</td><td>0..65535</td><td>The amount of 'output cargo type 2' that was produced last month.</td></tr>
 <tr><td>water_distance</td><td>Distance to the tile</td><td>If the industry is built on water, this variable gives the distance of the closest dry land tile, otherwise it gives the distance of the closest water tile.</td></tr>
@@ -158,6 +149,7 @@ See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
 <tr><td>colour</td><td>0..15</td><td>Random colour for this industry.</td></tr>
 <tr><td>build_date</td><td>0..1826212865</td><td>Date of the industry foundation in days since year 0.</td></tr>
 <tr><td>build_type</td><td>BUILDTYPE_XX</td><td>BUILDTYPE_UNKNOWN (if created in an old version or with newindustries disabled), BUILDTYPE_GAMEPLAY (if founded or created by the in-game random industry generator), BUILDTYPE_GENERATION (if created during random map generation) or BUILDTYPE_EDITOR (if created with the scenario editor).</td></tr>
+<tr><td>counter</td><td>0..65535</td><td>Decremented every tick, used to time primary industry production in TTD.</td></tr>
 </table><br>
 Variables that require some parameters.
 <table class="t">
@@ -210,7 +202,177 @@ Returns 1 if the tile is part of the same industry, 0 otherwise</td></tr>
 
 <h2><a name="industries-callbacks">Industry callbacks</a></h2>
 
+<table class="t">
+<tr><th>callback<th>return value<th>comment
+<tr><td>default<td>varies<td>Any unhandled callbacks. Generally this doesn't
+need to be used, except for old-style callbacks.
+<tr><td>produce_cargo_arrival<td>Produce-block<td>Called to produce cargo when it arrives.
+<tr><td>produce_256_ticks<td>Produce-block<td>Called to produce cargo every 256 ticks.
+<tr><td>availability<td>CB_RESULT_IND_ALLOW or CB_RESULT_IND_DISALLOW<td>Called when
+the game needs to know if the industry type is available. It is limited to the type as
+a whole, so you can't access industry-specific variables. <code>extra_callback_info2</code>
+contains the <a href="#industries-callbacks-creation-types">creation type</a>.
+<tr><td>location_check<td>See the <a href="#industries-callbacks-location-check-results">table</a> below.
+<td>Called to check if a location is suitable. <code>extra_callback_info2</code>
+contains the <a href="#industries-callbacks-creation-types">creation type</a>.
+Since the industry isn't built yet, industry variables aren't available.
+<tr><td>monthly_prod_change<td>See <a href="#industries-callbacks-production-changes">below</a>
+<td>Called each month to (possibly) change the industry production.
+<code>extra_callback_info2</code> contains random bits.
+<tr><td>random_prod_change<td>See <a href="#industries-callbacks-production-changes">below</a>
+<td>Works exactly the same as <code>monthly_prod_change</code>,
+except that it's only called when TTD selects this industry for a random production change.
+<tr><td>cargo_subtype_display<td>String or 0xFF<td>This callback allows displaying
+some text after a cargo name. Returning 0xFF displays nothing.
+The lowest byte of <code>extra_callback_info2</code> contains 0 .. 2 to get texts
+for the first .. third accepted cargo type, and 3 .. 4 for the first ... second
+produced cargo type. The second byte contains 0 when getting a string for the buy
+menu (no industry variables available!), 1 when for the industry window and 2 for the
+industry directory window.
+<tr><td>extra_text_industry<td>String<td>Show extra text in the industry
+window.
+<tr><td>extra_text_fund<td>String<td>Show extra text in the fund window.
+Since the industry isn't built, no industry variables are available.
+<tr><td>control_special<td>0 or 1<td>Called to control various
+effects from the <code>spec_flags</code> property. Currently only works for the
+first two (plant fields / cut trees). Return 1 to execute the action or 0 to not
+do so. The relevant flag is given in <code>extra_callback_info2</code>.
+The default (if the flag is enabled, of course) is to plant fields with
+1/8th chance every 256 ticks, and to cut trees every 512 ticks.
+In the case of fields, random bits are supplied in <code>extra_callback_info1</code>.
+For tree-cutting there are no random bits, but the <code>counter</code>
+variable may be useful for your descision.
+<tr><td>stop_accept_cargo<td>0 or 1<td>With this callback, you can temporarily
+refuse accepting a certain cargo, for example because the stockpile is full.
+Return 1 to accept or 0 to refuse. Make sure to synchronize this callback with
+the <code>cargo_amount_accept</code> callback for industry tiles.
+<code>extra_callback_info2</code> contains the cargo type to accept or not.
+<tr><td>colour<td>0 .. 15<td>Called after constructing the industry. The
+<code>colour</code> variable is set to a random value at this point, you can
+use this callback to change this.
+<tr><td>cargo_input<td>Cargo type, or 0xFF<td>Decide the input cargo types.
+Called repeatedly until 0xFF is returned, although currently not more
+than three times. Do not rely on this limitation, though.
+<code>extra_callback_info1</code> starts at 0 and is incremented for every
+iteration. Return a cargo type (from the table) or 0xFF to stop.
+<tr><td>cargo_output<td>Cargo type, or 0xFF<td>Same as <code>cargo_input</code>
+above, except that it is applied to the output cargo types and currently not
+called more than twice.
+</table>
+
+<h3><a name="industries-callbacks-location-check-results">Location check results</a></h3>
+<table class="t">
+<tr><th>return value<th>meaning
+<tr><td>String<td>Industry can't be built, show the string as error message.
+<tr><td>CB_RESULT_IND_ALLOW_LOCATION<td>Industry can be built.
+<tr><td>CB_RESULT_IND_DISALLOW_UNSUITABLE<td>Industry can't be built, display the default "site unsuitable" error message.
+<tr><td>CB_RESULT_IND_DISALLOW_ONLY_RAINFOREST<td>Industry can't be built, display the "...can only be built in rainforest areas" error message.
+<tr><td>CB_RESULT_IND_DISALLOW_ONLY_DESERT<td>Industry can't be built, display the "...can only be built in desert areas" error message.
+<tr><td>CB_RESULT_IND_DISALLOW_ONLY_ABOVE_SNOWLINE<td>Industry can't be built, display the "...can only be built above the snow-line" error message.
+<tr><td>CB_RESULT_IND_DISALLOW_ONLY_BELOW_SNOWLINE<td>Industry can't be built, display the "...can only be built below the snow-line" error message.
+<tr><td>CB_RESULT_IND_DISALLOW_NOT_ON_OPEN_SEA<td>Industry can't be built, display the "...can't build on open sea" error message.
+<tr><td>CB_RESULT_IND_DISALLOW_NOT_ON_CANAL<td>Industry can't be built, display the "...can't build on canal" error message
+<tr><td>CB_RESULT_IND_DISALLOW_NOT_ON_RIVER<td>Industry can't be built, display the "...can't build on river" error message. 
+</table>
+
+<h3><a name="industries-callbacks-production-changes">Production change callback results</a></h3>
+<table class="t">
+<tr><th>value<th>meaning
+<tr><td>CB_RESULT_IND_PROD_NO_CHANGE<td>Do not change industry production
+<tr><td>CB_RESULT_IND_PROD_HALF<td>Half industry production. If production
+goes below a quarter of default, the industry closes.
+<tr><td>CB_RESULT_IND_PROD_DOUBLE<td>Double production if it's not 8x default yet.
+<tr><td>CB_RESULT_IND_PROD_CLOSE<td>Announce closoure and remove the industry next month.
+<tr><td>CB_RESULT_IND_PROD_RANDOM<td>Do a random production change, as if the industry
+is a primary one.
+<tr><td>CB_RESULT_IND_PROD_DIVIDE_BY_4<td>Divide production by 4
+<tr><td>CB_RESULT_IND_PROD_DIVIDE_BY_8<td>Divide production by 8
+<tr><td>CB_RESULT_IND_PROD_DIVIDE_BY_16<td>Divide production by 16
+<tr><td>CB_RESULT_IND_PROD_DIVIDE_BY_32<td>Divide production by 32
+<tr><td>CB_RESULT_IND_PROD_MULTIPLY_BY_4<td>Multiply production by 4
+<tr><td>CB_RESULT_IND_PROD_MULTIPLY_BY_8<td>Multiply production by 8
+<tr><td>CB_RESULT_IND_PROD_MULTIPLY_BY_16<td>Multiply production by 16
+<tr><td>CB_RESULT_IND_PROD_MULTIPLY_BY_32<td>Multiply production by 32
+<tr><td>CB_RESULT_IND_PROD_DECREMENT_BY_1<td>Decrement production by 1
+<tr><td>CB_RESULT_IND_PROD_INCREMENT_BY_1<td>Increment production by 1
+<tr><td>CB_RESULT_IND_PROD_SET_BY_0x100<td>Set the production level to the
+value in bits 16 .. 23 of register 0x100.
+</table>
+<p>Setting bit 7 of the result disables the associated news message.<br>
+Setting bit 8 replaces the news message with a custom message, read from
+register 0x100 bits 0 .. 15.</p>
+
+<h3><a name="industries-callbacks-creation-types">Industry creation types</a></h3>
+<table class="t">
+<tr><th>value<th>meaning
+<tr><td>IND_CREATION_GENERATION<td>Industry is created during map generation
+<tr><td>IND_CREATION_RANDOM<td>Industry is randomly generated during gameplay
+<tr><td>IND_CREATION_FUND<td>Industry is funded by the player
+<tr><td>IND_CREATION_PROSPECT<td>Industry is prospected by the player
+</table>
+
 <h2><a name="industrytiles-callbacks">Industry tile callbacks</a></h2>
+<table class="t">
+<tr><th>callback<th>return value<th>comment
+<tr><td>default<td>Sprite layout<td>Graphics for the industry tile
+<tr><td>random_trigger<td>N/A<td>See <a href="nml-language.html#block-randomswitch">
+random switch</a> for more information.
+<tr><td>anim_next_frame<td>Next animation frame or CB_RESULT_XXX<td>Called for
+every animation frame, returns the next frame to display. Alternatively,
+return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
+or stop animation, respectively. <code>extra_callback_info1</code> contains
+random bits, if enabled in the <code>special_flags</code> property.
+<tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called whenever
+an animation trigger happens. Return the animation frame to show, or
+CB_RESULT_XXX with XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
+to respectively start the animation in its current frame, stop the animation or
+do nothing. <code>extra_callback_info1</code> contains random bits, if enabled
+in the <code>special_flags</code> property.
+<code>extra_callback_info2</code> contains the reason to trigger the animation,
+see the <a href="#industrytiles-callbacks-animtriggers">table</a> below. Note
+that you need to enable the wanted triggers in the <code>animation_triggers</code>
+property.
+<tr><td>anim_speed<td>0 .. 16<td>Decide the time an animation frame should last.
+Return value is interpreted as (num_ticks = 2^anim_speed), which each tick lasting
+30 ms. Avoid using this callback if possible, since it has to be called each tick
+for every animated tile. This can be used to create animation frames that last
+between 30 ms and 33 minutes.
+<tr><td>cargo_type_accept<td>type1 + (type2 &lt;&lt; 5) + (type3 &lt;&lt; 10)<td>
+Decide the cargo types that this tile accepts. If this callback is not
+implemented or fails, the values from <code>accepted_cargos</code> are used instead.
+Bits 0..4: First cargo type. Bits 5..9: Second cargo type. Bits 10..14: Third cargo type.
+<tr><td>cargo_amount_accept<td>amt1 + (amt2 &lt;&lt; 4) + (amt3 &lt;&lt; 8)<td>
+Acceptance for each cargo amount in 1/8th. If this callback is not
+implemented or fails, the values from <code>accepted_cargos</code> are used instead.
+Cargo types are from the <code>cargo_type_accept</code> callback, or the
+<code>accepted_cargos</code> property if that callback failed.
+Bits 0..3: Acceptance of first cargo type. Bits 4..7: Acceptance of second cargo
+type. Bits 8..11: Acceptance of third cargo type.
+<tr><td>slope_check<td>Same as for the <a href="#industries-callbacks-location-check-results">location_check</a> industry callback
+<td>Called before constructing the industry, so nothing exists on the map yet.
+Since the industry isn't built yet, so you can't access industry variables.
+From the tile variables, relative x/y/position, town zone are available,
+as well as the class, height, slope, terrain type and water status of nearby
+tiles. <code>extra_callback_info2</code> contains the industry layout number
+in the lowest (first) byte and the <a href="#industries-callbacks-creation-types">
+creation type</a> in the second byte.
+<tr><td>foundations<td>CB_RESULT[_NO]_FOUNDATIONS<td> Return CB_RESULT_FOUNDATIONS
+to draw standard foundations (default) or CB_RESULT_NO_FOUNDATIONS to not draw them.
+<tr><td>autoslope<td>CB_RESULT[_NO]_AUTOSLOPE<td>Return CB_RESULT_AUTOSLOPE to
+allow autoslope (altering the ground below a tile) or CB_RESULT_NO_AUTOSLOPE to
+disallow it.
+</table>
+
+<h3><a name="industrytiles-callbacks-animtriggers">Animation triggers</a></h3>
+<table class="t">
+<tr><th>Trigger</th><th>Meaning</th></tr>
+<tr><td>ANIM_TRIGGER_INDTILE_CONSTRUCTION_STATE</td><td>the construction state changes </td></tr>
+<tr><td>ANIM_TRIGGER_INDTILE_TILE_LOOP</td><td>the tile is processed in the periodic processing loop </td></tr>
+<tr><td>ANIM_TRIGGER_INDTILE_INDUSTRY_LOOP</td><td>the industry of the tile is processed in the periodic processing loop (synchronized for all tiles) </td></tr>
+<tr><td>ANIM_TRIGGER_INDTILE_RECEIVED_CARGO</td><td>the industry of the tile receives input cargo from a station (synchronized for all tiles) </td></tr>
+<tr><td>ANIM_TRIGGER_INDTILE_DISTRIBUTES_CARGO</td><td>the industry distributes its output cargo to one of the stations nearby (synchronized for all tiles) </td></tr>
+</table>
+
 
 </body>
 </html>

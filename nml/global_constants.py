@@ -324,13 +324,6 @@ constant_numbers = {
     'INDTILE_CB_FOUNDATIONS'          : 0x30,
     'INDTILE_CB_AUTOSLOPE'            : 0x3C,
 
-    #Triggers for the animation start/stop callback
-    'INDTILE_TRIGGER_CONSTRUCTION_STATE'         : 0,
-    'INDTILE_TRIGGER_TILE_LOOP'                  : 1,
-    'INDTILE_TRIGGER_INDUSTRY_LOOP'              : 2,
-    'INDTILE_TRIGGER_INDUSTRY_RECEIVED_CARGO'    : 3,
-    'INDTILE_TRIGGER_INDUSTRY_DISTRIBUTES_CARGO' : 4,
-
     #industry callback flags
     'IND_CBF_AVAILABILITY'          : 0,
     'IND_CBF_PROD_CB_CARGO_ARRIVE'  : 1,
@@ -384,10 +377,15 @@ constant_numbers = {
     'CB_RESULT_IND_ALLOW'               : 0x00,
     'CB_RESULT_IND_DISALLOW'            : 0x01,
     
-    'CB_RESULT_IND_ALLOW_LOCATION'           : 0x400,
-    'CB_RESULT_IND_DISALLOW_UNSUITABLE'      : 0x401,
-    'CB_RESULT_IND_DISALLOW_ONLY_RAINFOREST' : 0x402,
-    'CB_RESULT_IND_DISALLOW_ONLY_DESERT'     : 0x403,
+    'CB_RESULT_IND_ALLOW_LOCATION'               : 0x400,
+    'CB_RESULT_IND_DISALLOW_UNSUITABLE'          : 0x401,
+    'CB_RESULT_IND_DISALLOW_ONLY_RAINFOREST'     : 0x402,
+    'CB_RESULT_IND_DISALLOW_ONLY_DESERT'         : 0x403,
+    'CB_RESULT_IND_DISALLOW_ONLY_ABOVE_SNOWLINE' : 0x404,
+    'CB_RESULT_IND_DISALLOW_ONLY_BELOW_SNOWLINE' : 0x405,
+    'CB_RESULT_IND_DISALLOW_NOT_ON_OPEN_SEA'     : 0x406,
+    'CB_RESULT_IND_DISALLOW_NOT_ON_CANAL'        : 0x407,
+    'CB_RESULT_IND_DISALLOW_NOT_ON_RIVER'        : 0x408,
 
     #industry special flags
     'IND_FLAG_PLANT_FIELDS_PERIODICALLY'               : 0,
@@ -564,6 +562,12 @@ constant_numbers = {
     'BUILDTYPE_GENERATION'               : 2,
     'BUILDTYPE_EDITOR'                   : 3,
 
+    # Creation types (several industry[tile] callbacks
+    'IND_CREATION_GENERATION'            : 0,
+    'IND_CREATION_RANDOM'                : 1,
+    'IND_CREATION_FUND'                  : 2,
+    'IND_CREATION_PROSPECT'              : 3,
+
     #airport types (vehicle var 0x44)
     'AIRPORTTYPE_SMALL'                  : 0,
     'AIRPORTTYPE_LARGE'                  : 1,
@@ -662,6 +666,12 @@ constant_numbers = {
     'LSF_ALLOW_ON_WATER'                    : 5,
 
     # Animation triggers
+    'ANIM_TRIGGER_INDTILE_CONSTRUCTION_STATE' : 0,
+    'ANIM_TRIGGER_INDTILE_TILE_LOOP'          : 1,
+    'ANIM_TRIGGER_INDTILE_INDUSTRY_LOOP'      : 2,
+    'ANIM_TRIGGER_INDTILE_RECEIVED_CARGO'     : 3,
+    'ANIM_TRIGGER_INDTILE_DISTRIBUTES_CARGO'  : 4,
+
     'ANIM_TRIGGER_OBJ_BUILT'                : 0,
     'ANIM_TRIGGER_OBJ_TILELOOP'             : 1,
     'ANIM_TRIGGER_OBJ_256_TICKS'            : 2,

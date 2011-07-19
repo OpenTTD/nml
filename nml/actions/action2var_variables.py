@@ -212,6 +212,7 @@ varact2vars_industries = {
     'produced_last_month_1' : {'var': 0x9E, 'start': 0, 'size': 16},
     'produced_last_month_2' : {'var': 0xA0, 'start': 0, 'size': 16},
     'founder' : {'var': 0xA7, 'start': 0, 'size': 8},
+    'counter' : {'var': 0xAA, 'start': 0, 'size': 16},
     'colour' : {'var': 0xA8, 'start': 0, 'size': 8},
     'build_type' : {'var': 0xB3, 'start': 0, 'size': 2},
 }

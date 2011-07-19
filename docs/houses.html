@@ -47,8 +47,65 @@ Examples:
 </table>
 
 <h2><a name="houses-vars">House variables</a></h2>
+<p>House variables are not yet implemented in NML</p>
 
 <h2><a name="houses-callbacks">House callbacks</a></h2>
+<table class="t">
+<tr><th>callback<th>return value<th>comment
+<tr><td>default<td>Sprite layout<td>Graphics for the house tile
+<tr><td>random_trigger<td>N/A<td>See <a href="nml-language.html#block-randomswitch">
+random switch</a> for more information.
+<tr><td>anim_next_frame<td>Next animation frame or CB_RESULT_XXX<td>Called for
+every animation frame, returns the next frame to display. Alternatively,
+return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
+or stop animation, respectively. <code>extra_callback_info1</code> contains
+random bits, if enabled in the <code>special_flags</code> property.
+<tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called every
+256 ticks. Return the animation frame to show, or CB_RESULT_XXX with
+XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
+to respectively start the animation in its current frame, stop the animation or
+do nothing. <code>extra_callback_info1</code> contains random bits, if enabled
+in the <code>building_flags</code> property.
+<tr><td>construction_anim<td>Same as <code>anim_control</code><td>Works the same
+as the <code>anim_control</code> callback, except that it's called when the
+construction state changes.
+<tr><td>watched_cargo_accepted<td>Same as <code>anim_control</code><td>Works the same
+as the <code>anim_control</code> callback, except that it's called when one of the
+watched cargo types is accepted.
+<tr><td>anim_speed<td>0 .. 16<td>Decide the time an animation frame should last.
+Return value is interpreted as (num_ticks = 2^anim_speed), which each tick lasting
+30 ms. Avoid using this callback if possible, since it has to be called each tick
+for every animated tile. This can be used to create animation frames that last
+between 30 ms and 33 minutes.
+<tr><td>cargo_type_accept<td>type1 + (type2 &lt;&lt; 5) + (type3 &lt;&lt; 10)<td>
+Decide the cargo types that this tile accepts. If this callback is not
+implemented or fails, the values from <code>accepted_cargo</code> are used instead.
+Bits 0..4: First cargo type. Bits 5..9: Second cargo type. Bits 10..14: Third cargo type.
+<tr><td>cargo_amount_accept<td>amt1 + (amt2 &lt;&lt; 4) + (amt3 &lt;&lt; 8)<td>
+Acceptance for each cargo amount in 1/8th. If this callback is not
+implemented or fails, the values from the acceptance properties are used instead.
+Cargo types are from the <code>cargo_type_accept</code> callback, or the
+<code>accepted_cargo</code> property if that callback failed.
+Bits 0..3: Acceptance of first cargo type. Bits 4..7: Acceptance of second cargo
+type. Bits 8..11: Acceptance of third cargo type.
+<tr><td>cargo_production<td>(cargo_type * 256) + amount<td>Called every 256 ticks.
+Called multiple times until 0x20FF is returned. The high byte of the result
+contains a cargo type, the low byte contains the amount of that cargo to produce.
+<code>extra_callback_info1</code> contains the number of iterations so far,
+<code>extra_callback_info2</code> contains random bits.
+<tr><td>foundations<td>CB_RESULT[_NO]_FOUNDATIONS<td> Return CB_RESULT_FOUNDATIONS
+to draw standard foundations (default) or CB_RESULT_NO_FOUNDATIONS to not draw them.
+<tr><td>autoslope<td>CB_RESULT[_NO]_AUTOSLOPE<td>Return CB_RESULT_AUTOSLOPE to
+allow autoslope (altering the ground below a tile) or CB_RESULT_NO_AUTOSLOPE to
+disallow it.
+<tr><td>name<td>String<td>Name of the building (when using tile query tool)
+<tr><td>colour<td>Palette number<td>Used to recolour the building
+<tr><td>construction_check<td>0 or 1<td>Return 1 to allow building the house or
+0 to disallow.
+<tr><td>destruction<td>0 or 1<td>Called periodically. Return 0 to keep the building
+or 1 to destroy it.
+<tr><td>protection<td>0 or 1<td>Return 0 to allow destruction, or 1 to disallow
+</table>
 
 </body>
 </html>

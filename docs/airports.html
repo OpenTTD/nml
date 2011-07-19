@@ -31,7 +31,8 @@
 <tr><td>animation_info<td><td>
 <tr><td>animation_speed<td><td>see <a href="refs.html#refs-animation-speed-values">speed settings</a>
 <tr><td>animation_triggers<td>bitmask(ANIM_TRIGGER_APT_XXX, ... )<td>Bitmask of
-triggers that will trigger animation, see the <a href="#airporttiles-callbacks-animtriggers">table</a> below.
+triggers that will trigger the <code>anim_control</code> callback,
+see the <a href="#airporttiles-callbacks-animtriggers">table</a> below.
 </table>
 
 <h2><a name="airports-vars">Airport variables</a></h2>
@@ -94,14 +95,14 @@ the GUI.</p>
 <h2><a name="airporttiles-callbacks">Airport tile callbacks</a></h2>
 <table class="t">
 <tr><th>callback<th>return value<th>comment
-<tr><td>default<td>Sprite group<td>Normal graphics for an object placed on the map
+<tr><td>default<td>Sprite layout<td>Graphics for an airport tile
 <tr><td>anim_next_frame<td>Next animation frame or CB_RESULT_XXX<td>Called for
 every animation frame, returns the next frame to display. Alternatively,
 return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
 or stop animation, respectively. <code>extra_callback_info1</code> contains
 random bits.
 <tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called whenever
-an object animation trigger happens. Return the animation frame to show, or
+an animation trigger happens. Return the animation frame to show, or
 CB_RESULT_XXX with XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
 to respectively start the animation in its current frame, stop the animation or
 do nothing. <code>extra_callback_info1</code> contains random bits.
