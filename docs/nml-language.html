@@ -346,6 +346,22 @@ the value to the unit that is written to the output file. You can only use
 a unit if the expression is constant. <a href="#units">List of valid units</a></p>
 
 <h3><a name="block-item-graphics">Graphics</a></h3>
+<p>A graphics block must be placed in an item-block. It allows to define
+the graphics for a particular item, as well as various callbacks. Callbacks
+are used to define various things at run time, based on information (variables)
+of the item itself. This provides a much greater degree of flexibility than
+setting properties. An example (using fictional callback names):</p>
+<pre class="exl">
+    graphics {
+        callback_a: switch_a;
+        callback_b: switch_b;
+        default: some_spritegroup;
+    }
+</pre>
+<p>The callbacks that are available differ per feature, refer to the
+feature-specific pages for more information. The 'default'-callback
+is usually used to resolve the graphics. Note that all callbacks have
+to be defined in a <strong>single</strong> graphics-block.</p>
 
 <h3><a name="block-item-livery_override">Livery override</a></h3>
 <div class="img_right">
@@ -355,6 +371,8 @@ Same cars, different engine, different car sprites
 </div>
 <p>A livery override block offers the option to change the look and
 behaviour of a wagon depending on the engine it is attached to.
+It is basically the same as a graphics-block, except that it only
+applies to a particular combination of an engine and a wagon.
 E.g. passenger wagons could adapt their livery to match the engine,
 to make the consist look like a multiple-unit train. The spritegroup
 needs to be defined before it can be used in a livery override. A livery
@@ -364,7 +382,7 @@ livery_override (vehicleID) {
 	spritegroup_name
 }
 </pre>
-For an example see the <a href="#block-spritegroup">spritegroup</a>
+<p>For an example see the <a href="#block-spritegroup">spritegroup</a></p>
 
 
 <h2><a name="real_sprites">Realsprites</a></h2>
@@ -464,7 +482,7 @@ spritegroup spritegroup_name {
 </pre>
 Vehicles take two different spritesets, <code>loading</code> shows the vehicle while
 it is loading within the station and <code>loaded</code> shows the vehicle while it is travelling.
-Each of those can be an array of up to 4 individual spritesets and must at least be one. They're
+Each of those can be an array of spritesets and must at least be one. They're
 used to show different graphics depending on how much the vehicle is loaded with increasing load
 from left to right. If only one spriteset is given it will always be used.
 
@@ -797,20 +815,11 @@ switch (FEAT_INDUSTRIES, SELF, power_plant_random_prod_change_switch, LOAD_PERM(
 	return CB_RESULT_IND_PROD_CLOSE;
 }
 
-switch (FEAT_INDUSTRIES, SELF, power_plant_callback_switch, current_callback) {
-	IND_CB_MONTHLY_PROD_CHANGE: power_plant_monthly_prod_change_switch;
-	IND_CB_RANDOM_PROD_CHANGE:  power_plant_random_prod_change_switch;
-	power_plant_cargo_arrive_produce;
-}
-
 item(FEAT_INDUSTRIES, industry_power_plant, INDUSTRYTYPE_POWER_PLANT) {
-	properties {
-		callback_flags:             bitmask(IND_CBF_PROD_CB_CARGO_ARRIVE,
-		                                    IND_CBF_MONTHLY_PROD_CHANGE,
-		                                    IND_CBF_RANDOM_PROD_CHANGE);
-	}
 	graphics {
-		power_plant_callback_switch;
+		produce_cargo_arrival: power_plant_cargo_arrive_produce;
+		monthly_prod_change: power_plant_monthly_prod_change_switch;
+		random_prod_change: power_plant_random_prod_change_switch;
 	}
 }
 
@@ -923,7 +932,7 @@ by the sum of all probabilities. If this sum is not equal to a power of two (2,
 4, 8, 16, ...), then rounding is done and the probabilities may be inexact. For
 information about <code>&lt;return_value&gt;</code>, see the
 <a href="#block-switch">switch-block</a>.</p>
-<p>Note that re-randomizing is done only during a special callback, CB_RANDOM_TRIGGER.
+<p>Note that re-randomizing is done only during a special callback, <code>random_trigger</code>.
 This callback is called whenever a trigger event occurs. As a consequence, it's
 <em>absolutely necessary</em> for the random_switch block to be in executed during
 this callback, or trigger-based re-randomizing won't take place. Also, the callback
