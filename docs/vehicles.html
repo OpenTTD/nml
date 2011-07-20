@@ -230,6 +230,93 @@ the given ID.</td></tr>
 
 <h2><a name="vehicles-callbacks">Vehicle callbacks</a></h2>
 
+<table class="t">
+<tr><th>Name<th>Available for<th>In purchase menu?<th>value range<th>comment
+<tr><td>default<td>All<td>Yes, unless <code>purchase</code> is set separately<td>Sprite group<td>'Normal' vehicle graphics
+<tr><td>purchase<td>All<td>Yes, only<td>Sprite group<td>Graphics to show in the buy menu (only the horizontal view is needed)
+<tr><td>rotor<td>Aircraft (helicopters)<td>No<td>Sprite group<td>Graphics for the helicopter rotor (4 sprites; 1 stopped and 3 moving)
+<tr><td>random_trigger<td>All<td>No<td>N/A<td>See <a href="nml-language.html#block-randomswitch">random switch</a> for more information.
+<tr><td>cargo_subtype<td>All<td>No<td>String, or 0xFF<td>
+With this callback, you can display extra text after the cargo in the vehicle
+information window. This callback is called with succesively increased values
+of the <code>refit_cycle</code> variable, until the callback returns 0xFF.
+All returned strings are then displayed as refit options.
+<tr><td>additional_text<td>All<td>Yes, only<td>String<td>Additional text to show in the purchase list.
+<tr><td>colour_mapping<td>All<td>Yes, unless <code>purchase_colour_mapping</code> is set separately<td>Recolour sprite number<td>
+With this callback, you can use a different recolour sprite instead of the
+standard 1cc / 2cc company colour remappings. See <a href="refs.html#refs-palettes">
+here</a> for a list of default palettes. See the builtin function
+<code>reserve_sprites()</code> for info on how to allocate your own sprite.
+For performance, the result is cached and only updated if the <code>
+every_32_days</code> callback requires so. Add CB_RESULT_COLOUR_MAPPING_ADD_CC
+to the result to add the company colour to the sprites, this requires 16 (1cc)
+or 256 (2cc) sprites in total.
+<tr><td>start_stop<td>All<td>No<td>String or 0xFF<td>Called when starting or
+stopping a vehicle. Mainly useful to prevent vehicles from leaving the depot
+unless a certain condition is met. Return 0xFF to allow or a string (containing
+an error message) to disallow starting/stopping.
+<tr><td>every_32_days<td>All<td>No<td>bitmask(CB_RESULT_32_DAYS_XXX, ...)<td>Called every 32 days. Set
+CB_RESULT_32_DAYS_TRIGGER in the bitmask to trigger TRIGGER_VEHICLE_32_CALLBACK. Set
+CB_RESULT_32_DAYS_COLOUR_MAPPING in the bitmask to update the colour mapping by
+re-running the <code>colour_mapping</code> callback.
+<tr><td>sound_effect<td>All<td>No<td>SOUND_XXX, sound("sound.wav"), import_sound(grfid, number) or CB_RESULT_NO_SOUND
+<td>Called to play various vehicle sounds. <code>extra_callback_info1</code>
+contains the sound event, see the <a href="#vehicles-callbacks-sound-events">table</a>
+below. Return SOUND_XXX (see <a href="refs.html#refs-sounds">here</a>) to return
+a default sound. <code>sound("soundfile")</code> imports a sound from a .wav file.
+<code>import_sound(grfid, number)</code> imports a sound from another grf.
+A failed (or not implemented) callback will cause the default sound to be
+played. Return CB_RESULT_NO_SOUND to play no sound at all.
+<tr><td>articulated_part<td>Trains, Road Vehicles<td>Yes (no separate callback)<td>Vehicle ID, or 0xFF<td>
+With this callback, you can add articulated parts (e.g. tenders) to your
+vehicle. Called repeatedly, until 0xFF is returned. After each call, the
+returned vehicleID is added to your vehicle. <code>extra_callback_info1</code>
+contains 1 during the first call, 2 during the second, etc. Note that callback
+may be called from the purchase list, using vehicle variables is not possible.
+Add 128 to the returned vehicle ID to display the vehicle backwards. This has
+the unfortunate side-effect of requiring the vehicle ID of the articulated part
+to be in the range 0 .. 127, currently there's no way around this limitation.
+<tr><td>can_attach_wagon<td>Trains<td>No<td>String or CB_RESULT_ATTACH_XXX<td>
+Called when a wagon is being attached, to allow or disallow attaching.
+Return a string to disallow with the string as error message. Return
+CB_RESULT_ATTACH_DISALLOW to disallow with standard message ("incompatible
+railtypes"), CB_RESULT_ATTACH_ALLOW to allow or CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES
+to allow if the railtypes match (default).
+</table>
+<p>The following callbacks all have an equivalent property.
+The property description applies here also, except where otherwise noted.</p>
+<table class="t">
+<tr><th>Name<th>Available for<th>In purchase menu?<th>comment
+<tr><td>loading_speed<td>All<td>No<td>
+<tr><td>speed<td>All<td>Yes, unless <code>purchase_speed</code> is set separately<td>Units are not (yet) available
+<tr><td>cost_factor<td>All<td>Yes, only<td>
+<tr><td>running_cost_factor<td>All<td>Yes, unless <code>purchase_running_cost_factor</code> is set separately<td>
+<tr><td>cargo_capacity<td>All except aircraft<td>Yes, unless <code>purchase_cargo_capacity</code> is set separately<td>
+<tr><td>passenger_capacity<td>Aircraft<td>Yes, unless <code>purchase_passenger_capacity</code> is set separately<td>
+<tr><td>mail_capacity<td>Aircraft<td>Yes, unless <code>purchase_mail_capacity</code> is set separately<td>
+<tr><td>visual_effect_and_powered<td>Trains<td>No<td>
+<tr><td>visual_effect<td>Road Vehicles, Ships<td>No<td>
+<tr><td>power<td>Trains, Road Vehicles<td>Yes, unless <code>purchase_power</code> is set separately<td>Units are not (yet) available
+<tr><td>weight<td>Trains, Road Vehicles<td>Yes, unless <code>purchase_weight</code> is set separately<td>Units are not (yet) available
+<tr><td>shorten_vehicle<td>Trains, Road vehicles<td>No<td>
+<tr><td>tractive_effort_coefficient<td>Trains, Road Vehicles<td>Yes, unless <code>purchase_tractive_effort_coefficient</code> is set separately<td>Value range is 0 .. 255 instead of 0 .. 1.
+<tr><td>bitmask_vehicle_info<td>Trains<td>No<td>
+</table>
+
+<h3><a name="vehicles-callbacks-sound-events">Sound events</a></h3>
+<table class="t">
+<tr><th>Event<th>Description
+<tr><td>SOUND_EVENT_START<td>Vehicle leaves station or depot, plane takes off
+<tr><td>SOUND_EVENT_TUNNEL<td>Vehicle enters tunnel
+<tr><td>SOUND_EVENT_BREAKDOWN<td>Vehicle breaks down (not for planes)
+<tr><td>SOUND_EVENT_RUNNING<td>Once per engine tick, but no more than once per vehicle motion
+<tr><td>SOUND_EVENT_TOUCHDOWN<td>Aircraft touches down
+<tr><td>SOUND_EVENT_VISUAL_EFFECT<td>Visual effect is generated (steam plume, diesel smoke, electric spark)
+<tr><td>SOUND_EVENT_RUNNING_16<td>Every 16 engine ticks if in motion
+<tr><td>SOUND_EVENT_STOPPED<td>Every 16 engine ticks if stopped
+<tr><td>SOUND_EVENT_LOAD_UNLOAD<td>Consist loads or unloads cargo
+</table>
+
 </body>
 </html>
 

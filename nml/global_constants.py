@@ -145,6 +145,28 @@ constant_numbers = {
     'AI_FLAG_PASSENGER' : 0x01,
     'AI_FLAG_CARGO'     : 0x00,
 
+    # Callback results
+    'CB_RESULT_ATTACH_DISALLOW'            : 0xFD,
+    'CB_RESULT_ATTACH_ALLOW'               : 0xFE,
+    'CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES'  : 0xFF,
+
+    'CB_RESULT_32_DAYS_TRIGGER'            : 0,
+    'CB_RESULT_32_DAYS_COLOUR_MAPPING'     : 1,
+
+    'CB_RESULT_COLOUR_MAPPING_ADD_CC'      : 0x4000,
+
+    'CB_RESULT_NO_SOUND'                   : 0x7EFF, # Never a valid sound id
+
+    # 1-based, not 0-based
+    'SOUND_EVENT_START'                    : 1,
+    'SOUND_EVENT_TUNNEL'                   : 2,
+    'SOUND_EVENT_BREAKDOWN'                : 3,
+    'SOUND_EVENT_RUNNING'                  : 4,
+    'SOUND_EVENT_TOUCHDOWN'                : 5,
+    'SOUND_EVENT_VISUAL_EFFECT'            : 6,
+    'SOUND_EVENT_RUNNING_16'               : 7,
+    'SOUND_EVENT_STOPPED'                  : 8,
+    'SOUND_EVENT_LOAD_UNLOAD'              : 9,
 
     #sound effects
     'SOUND_SPLAT'                          : 0x00,
