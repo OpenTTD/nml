@@ -95,7 +95,11 @@ switch (FEAT_TRAINS, SELF, bulk_wagon_cb_capacity_switch, cargo_type_in_veh) {
     CB_FAILED; // return capacity set in properties (30)
 }
 
-switch (FEAT_TRAINS, SELF, bulk_wagon_cb_property_weight_switch, cargo_type_in_veh) {
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_purchase_capacity_switch, 0) {
+    return 30;
+}
+
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_weight_switch, cargo_type_in_veh) {
     COAL: return 18;
     FRUT: return 18;
     FRVG: return 18;
@@ -103,17 +107,9 @@ switch (FEAT_TRAINS, SELF, bulk_wagon_cb_property_weight_switch, cargo_type_in_v
     CB_FAILED; // return weight set in properties (25t)
 }
 
-switch (FEAT_TRAINS, SELF, bulk_wagon_cb_property_switch, extra_callback_info1) {
-    0x16: bulk_wagon_cb_property_weight_switch;
-    CB_FAILED;
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_purchase_weight_switch, 0) {
+    return 25;
 }
-
-switch (FEAT_TRAINS, SELF, bulk_wagon_cb_switch, current_callback) {
-    VEH_CB_REFITTED_CAPACITY: bulk_wagon_cb_capacity_switch;
-    VEH_CB_VEHICLE_PROPERTIES: bulk_wagon_cb_property_switch;
-    bulk_wagon_graphics_switch;
-}
-
 
 item(FEAT_TRAINS, bulk_wagon) {
     property {
@@ -143,6 +139,10 @@ item(FEAT_TRAINS, bulk_wagon) {
         bitmask_vehicle_info: 0;
     }
     graphics {
-        bulk_wagon_cb_switch;
+        weight: bulk_wagon_cb_weight_switch;
+        purchase_weight: bulk_wagon_cb_purchase_weight_switch;
+        cargo_capacity: bulk_wagon_cb_capacity_switch;
+        purchase_cargo_capacity: bulk_wagon_cb_purchase_capacity_switch;
+        default: bulk_wagon_graphics_switch;
     }
 }

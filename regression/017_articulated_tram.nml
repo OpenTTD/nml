@@ -33,10 +33,6 @@ switch(FEAT_ROADVEHS, SELF, foster_express_articulated_parts, extra_callback_inf
     CB_FAILED;
 }
 
-switch(FEAT_ROADVEHS, SELF, foster_express_callbacks, current_callback) {
-    VEH_CB_ARTICULATED_PARTS: foster_express_articulated_parts;
-    foster_express_group;
-}
 
 item(FEAT_ROADVEHS, foster_express_tram, 88) {
     property {
@@ -64,6 +60,7 @@ item(FEAT_ROADVEHS, foster_express_tram, 88) {
         callback_flags:               bitmask(VEH_CBF_ARTICULATED_PARTS);
     }
     graphics {
-        foster_express_callbacks;
+        articulated_part: foster_express_articulated_parts;
+        foster_express_group;
     }
 }

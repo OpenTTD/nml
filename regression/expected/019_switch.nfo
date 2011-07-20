@@ -16,7 +16,7 @@
 00 
 2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 // Name: coal_mine_subtype_switch
-3 * 37 02 0A FE 89 
+3 * 37 02 0A 01 89 
 1A 20 \dx00000004 
 \2psto 1A 20 \dx00000000 
 \2r 02 00 \dx000000FF 
@@ -24,32 +24,25 @@
 \wx8000 \dx00000000 \dx0000000A 	// 0 .. 10: return string(STR_COALMINE_MONTH_0_10);
 \wx8001 // default: return string(STR_COALMINE_MONTH_11);
 
-// Name: coal_mine_switch@return
-4 * 13 02 0A FD 89 
-1C 00 \dxFFFFFFFF 
-\b0 
-\wx0000 // Return computed value
+// Name: coal_mine_text_switch
+4 * 23 02 0A 01 89 
+1A 00 \dx00000000 
+\b1 
+\wx8002 \dx00000000 \dx00000000 	// 0 .. 0: return string(STR_COALMINE_EXTRA_TEXT);
+\wx8002 // default: return string(STR_COALMINE_EXTRA_TEXT);
 
-// Name: coal_mine_switch
-5 * 64 02 0A FD 89 
-1A 20 \dx00000004 
-\2sto 1A 20 \dx00000100 
-\2& 1A 20 \dx00000000 
-\2| 0C 00 \dx0000FFFF 
-\b3 
-\wx8002 \dx0000003A \dx0000003A 	// 58 .. 58: return string(STR_COALMINE_EXTRA_TEXT);
-\wx00FE \dx00000037 \dx00000037 	// 55 .. 55: coal_mine_subtype_switch;
-\wx00FD \dx0000FFFF \dx0000FFFF 	// 65535 .. 65535: coal_mine_switch@return;
-\wx0000 // default: CB_FAILED;
-
-6 * 13 00 0A \b4 01 00 
+5 * 13 00 0A \b4 01 00 
 08 00 
 09 00 
 21 00 
 22 01 
 
+6 * 9 00 0A \b2 01 00 
+21 40 
+22 01 
+
 7 * 7 03 0A 01 00 \b0 
-\wx00FD 
+\wx0000 
 
 8 * 51 04 08 FF 03 \wxD000 "\98coal" 00 "\98diamonds" 00 "\98Extra info for coal mine: \7B" 00 
 
