@@ -121,6 +121,8 @@ See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
 </td></tr>
 <tr><td>nearby_tile_is_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
 <tr><td>nearby_tile_terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>
+<tr><td>nearby_tile_water_class</td><td>WATER_CLASS_XXX</td> <td>XXX = [NONE | SEA | CANAL | RIVER]
+Note that tiles for which <code>nearby_tile_is_water</code> is 0 may still have a water class, e.g. industry tiles with water beneath them.</td></tr>
 <tr><td>nearby_tile_height</td><td>0..120</td><td>The height of the lowest corner of the given tile.</td></tr>
 <tr><td>nearby_tile_class</td><td><a href="refs.html#refs-tile-classes">Tile class</a></td><td></td></tr>
 <tr><td>nearby_tile_animation_frame</td><td>0..255</td><td>Animation frame of the given tile</td></tr>
