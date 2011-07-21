@@ -506,6 +506,12 @@ constant_numbers = {
     'TILETYPE_RAIN_FOREST'      : 0x02,
     'TILETYPE_SNOW'             : 0x04,
 
+    # Water classes
+    'WATER_CLASS_NONE'          : 0,
+    'WATER_CLASS_SEA'           : 1,
+    'WATER_CLASS_CANAL'         : 2,
+    'WATER_CLASS_RIVER'         : 3,
+
     #level crossing status as returned by railtypes varaction2 0x42
     'LEVEL_CROSSING_CLOSED'     : 1,
     'LEVEL_CROSSING_OPEN'       : 0,
