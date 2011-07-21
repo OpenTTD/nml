@@ -59,13 +59,15 @@ random switch</a> for more information.
 every animation frame, returns the next frame to display. Alternatively,
 return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
 or stop animation, respectively. <code>extra_callback_info1</code> contains
-random bits, if enabled in the <code>special_flags</code> property.
+random bits, if enabled in the <code>special_flags</code> property.  Returning a
+sound effect in the high byte will cause that sound effect to be played.
 <tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called every
 256 ticks. Return the animation frame to show, or CB_RESULT_XXX with
 XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
 to respectively start the animation in its current frame, stop the animation or
 do nothing. <code>extra_callback_info1</code> contains random bits, if enabled
-in the <code>building_flags</code> property.
+in the <code>building_flags</code> property.  Returning a sound effect in the
+high byte will cause that sound effect to be played.
 <tr><td>construction_anim<td>Same as <code>anim_control</code><td>Works the same
 as the <code>anim_control</code> callback, except that it's called when the
 construction state changes.

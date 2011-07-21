@@ -1266,29 +1266,6 @@ sub-blocks. If that fails, you will get an error.</p>
 to be constant, the following is perfectly valid:</p>
 <pre class="code">param[param[2] + 1] = param[3] * param[4];</pre>
 
-<h2><a name="block-sounds">Sound support</a></h2>
-<p>Sounds are supported by means of the <code>sounds</code> block.
-An example of a sounds block that defines two new sounds is:</p>
-<pre class="code">sounds {
-	load_soundfile("whistle.wav");
-	import_sound(0x87654321, 3);
-}</pre>
-<p>The block starts with the keyword <code>sounds</code>, followed by one
-or more sound definitions. A sound definition either loads a sound file (like
-the <code>load_soundfile("whistle.wav");</code> which includes the
-<i>whistle.wav</i> file), or it refers to a sound from another NewGRF file
-(like the <code>import_sound(0x87654321, 3);</code> which imports the fourth
-sound (index 3) from the NewGRF file with ID <code>0x87654321</code>). Importing sounds
-does not make copies of the data, thus saving memory space.</p>
-<p>You can have at most one <code>sounds</code> block in a NewGRF file. When
-using a sound from a sound block, the first sound gets number <code>73</code>,
-the second sound gets number <code>74</code>, and so on. Note that this is
-different from the numbering that you use when importing a sound from
-another NewGRF, as counting starts at <code>0</code> in that case.</p>
-<p>All loaded sound files must be
-8-bit mono sound files in WAV format, PCM encoding. There are two allowed
-frequencies: 11025 Hz and 22050 Hz. Due to some limitations of the NewGRF format,
-the file size cannot exceed 64KB.</p>
 <h2><a name="block-basecost">Setting base costs</a></h2>
 <p>A number of base costs define how much everything costs in (O)TTD(P).
 Each cost in-game is determined by a fixed factor multiplied by a base cost.
@@ -1393,6 +1370,13 @@ param1 is less than param2, CMP_EQUAL if they are equal and CMP_GREATER if param
 <tr><td>UCMP(<i>param1, param2</i>)<td>Compares param1 and param2 (considering them as unsigned values). Returns CMP_LESS if
 param1 is less than param2, CMP_EQUAL if they are equal and CMP_GREATER if param1 is greater than param2.
 <tr><td>rotate(<i>value, amount</i>)<td>Rotates <i>value</i> to the right <i>amount</i> steps. This is always a 32 bits rotation.
+<tr><td>sound(<i>soundfile</i>)<td>Import sound from .wav-file <i>soundfile</i> into the grf file and return its numeric ID.
+Including a file multiple times will not cause it to be duplicated. Loaded sound files must be 8-bit mono sound files in WAV format,
+PCM encoding. There are two allowed frequencies: 11025 Hz and 22050 Hz. Due to some limitations of the NewGRF format,
+the file size cannot exceed 64KB.
+<tr><td>import_sound(<i>grfid, id</i>)<td>Import sound from a different grf file. <i>grfid</i> refers to the grf-file to import the sound from.
+<i>id</i> is the zero-based internal ID of the sound within the other grf-file.
+
 </table>
 
 </body>

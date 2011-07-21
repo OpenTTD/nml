@@ -129,14 +129,17 @@ object type is not yet built, this will return 0xFFFF</td></tr>
 every animation frame, returns the next frame to display. Alternatively,
 return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
 or stop animation, respectively. <code>extra_callback_info1</code> contains
-random bits if the object flag OBJ_FLAG_RANDOM_ANIMATION is set.
+random bits if the object flag OBJ_FLAG_RANDOM_ANIMATION is set. Returning a
+sound effect in the high byte will cause that sound effect to be played.
 <tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called whenever
 an object animation trigger happens. Return the animation frame to show, or
 CB_RESULT_XXX with XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
 to respectively start the animation in its current frame, stop the animation or
 do nothing. <code>extra_callback_info1</code> contains random bits if the object
 flag OBJ_FLAG_RANDOM_ANIMATION is set. <code>extra_callback_info2</code> contains
-the reason to trigger the animation, see the <a href="#objects-callbacks-animtriggers">table</a> below.
+the reason to trigger the animation, see the <a href="#objects-callbacks-animtriggers">
+table</a> below. Returning a sound effect in the high byte will cause that sound
+effect to be played.
 <tr><td>anim_speed<td>0 .. 16<td>Decide the time an animation frame should last.
 Return value is interpreted as (num_ticks = 2^anim_speed), which each tick lasting
 30 ms. Avoid using this callback if possible, since it has to be called each tick

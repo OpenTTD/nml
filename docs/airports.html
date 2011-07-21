@@ -100,12 +100,14 @@ the GUI.</p>
 every animation frame, returns the next frame to display. Alternatively,
 return CB_RESULT_NEXT_FRAME or CB_RESULT_STOP_ANIMATION to show the next frame
 or stop animation, respectively. <code>extra_callback_info1</code> contains
-random bits.
+random bits.  Returning a sound effect in the high byte will cause that sound
+effect to be played.
 <tr><td>anim_control<td>Next animation frame or CB_RESULT_XXX<td>Called whenever
 an animation trigger happens. Return the animation frame to show, or
 CB_RESULT_XXX with XXX = [CB_RESULT_START_ANIMATION | STOP_ANIMATION | DO_NOTHING]
 to respectively start the animation in its current frame, stop the animation or
-do nothing. <code>extra_callback_info1</code> contains random bits.
+do nothing. <code>extra_callback_info1</code> contains random bits.  Returning a
+sound effect in the high byte will cause that sound effect to be played.
 <code>extra_callback_info2</code> contains the reason to trigger the animation,
 see the <a href="#airporttiles-callbacks-animtriggers">table</a> below. Note
 that you need to enable the wanted triggers in the <code>animation_triggers</code>
