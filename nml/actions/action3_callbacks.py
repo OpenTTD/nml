@@ -153,7 +153,7 @@ callbacks[0x0A] = {
     'cargo_subtype_display' : {'type': 'cb', 'num': 0x37,  'flag_bit': 6},
     'extra_text_fund'       : {'type': 'cb', 'num': 0x38,  'flag_bit': 7},
     'extra_text_industry'   : {'type': 'cb', 'num': 0x3A,  'flag_bit': 8},
-    'control_special'       : {'type': 'cb', 'num': 0x3B,  'flag_bit': 9}, # Patch OpenTTD to provide random bits in all cases?
+    'control_special'       : {'type': 'cb', 'num': 0x3B,  'flag_bit': 9},
     'stop_accept_cargo'     : {'type': 'cb', 'num': 0x3D,  'flag_bit': 10},
     'colour'                : {'type': 'cb', 'num': 0x14A, 'flag_bit': 11},
     'cargo_input'           : {'type': 'cb', 'num': 0x14B, 'flag_bit': 12},
