@@ -316,8 +316,8 @@ varact2vars60x_objects = {
 
     'nearby_tile_animation_frame'  : { 'var' : 0x63, 'start':  0, 'size':  8, 'function': signed_tile_offset },
 
-    'object_type_count'            : { 'var' : 0x64, 'start': 16, 'size':  8, 'function': industry_count },
-    'object_type_nearest'          : { 'var' : 0x64, 'start':  0, 'size': 16, 'function': industry_count },
+    'object_count'                 : { 'var' : 0x64, 'start': 16, 'size':  8, 'function': industry_count },
+    'object_distance'              : { 'var' : 0x64, 'start':  0, 'size': 16, 'function': industry_count },
 }
 
 varact2vars_railtype = {
