@@ -92,10 +92,8 @@ class StorageOp(Expression):
 
         if self.grfid is not None:
             grfid = self.grfid.reduce(id_dicts)
-            if isinstance(grfid, StringLiteral):
-                grfid = ConstantNumeric(parse_string_to_dword(grfid), grfid.pos)
-            if grfid.type() != Type.INTEGER:
-                raise generic.ScriptError("GRFID must be an integer or string literal.", grfid.pos)
+            # Test validity
+            parse_string_to_dword(grfid)
             args.append(grfid)
 
         return StorageOp(self.name, args, self.pos)

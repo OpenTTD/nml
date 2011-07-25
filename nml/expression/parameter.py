@@ -55,10 +55,9 @@ class OtherGRFParameter(Expression):
         return 'param[%s, %s]' % (str(self.grfid), str(self.num))
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        grfid = self.grfid.reduce()
-        if isinstance(grfid, StringLiteral):
-            grfid = ConstantNumeric(parse_string_to_dword(grfid))
-        grfid.reduce_constant()
+        grfid = self.grfid.reduce(id_dicts)
+        #Test validity
+        parse_string_to_dword(grfid)
         num = self.num.reduce(id_dicts)
         if num.type() != Type.INTEGER:
             raise generic.ScriptError("Parameter number must be an integer.", num.pos)
