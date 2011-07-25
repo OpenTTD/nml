@@ -208,6 +208,8 @@ this variable will contain 0xFF. Available since OpenTTD r20164.
 <tr><td>waiting_triggers <td> <td>Random triggers waiting to be matched. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
 <tr><td>random_bits <td>0 ... 255 <td>Random data that can be used to randomize certain descisions. (see <a href="nml-language.html#block-randomswitch">Random switch</a>)
 <tr><td>grfid <td>0 ... 0xFFFFFFFF <td>GRFID that defined the <a href="nml-language.html#block-item-graphics">graphics</a>-block for this vehicle.
+To compare this with other grfids, use the <a href="nml-language.html#builtin-functions">builtin function</a>
+<code>str2number()</code> to convert the other GRFID to a number as well.
 <tr><td>vehicle_is_hidden <td> [0 | 1]<td>Value is 1 if the vehicle is hidden in a depot or tunnel.
 <tr><td>vehicle_is_stopped <td> [0 | 1]<td>Value is 1 if the vehicle is stopped, or if it is braking for a stop (trains only).
 <tr><td>vehicle_is_crashed <td> [0 | 1]<td>Value is 1 if the vehicle has crashed.
@@ -245,7 +247,7 @@ All returned strings are then displayed as refit options.
 <tr><td>colour_mapping<td>All<td>Yes, unless <code>purchase_colour_mapping</code> is set separately<td>Recolour sprite number<td>
 With this callback, you can use a different recolour sprite instead of the
 standard 1cc / 2cc company colour remappings. See <a href="refs.html#refs-palettes">
-here</a> for a list of default palettes. See the builtin function
+here</a> for a list of default palettes. See the <a href="nml-language.html#builtin-functions">builtin function</a>
 <code>reserve_sprites()</code> for info on how to allocate your own sprite.
 For performance, the result is cached and only updated if the <code>
 every_32_days</code> callback requires so. Add CB_RESULT_COLOUR_MAPPING_ADD_CC

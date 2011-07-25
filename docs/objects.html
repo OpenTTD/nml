@@ -116,9 +116,13 @@ Note that tiles for which <code>nearby_tile_is_water</code> is 0 may still have 
 <tr><td>nearby_tile_class</td>           <td>x, y offset (-8..7)</td> <td><a href="refs.html#refs-tile-classes">Tile class</a></td> <td></td></tr>
 <tr><td>nearby_tile_animation_frame</td> <td>x, y offset (-8..7)</td> <td></td> <td>See animation_frame</td></tr>
 <tr><td>object_type_count</td>           <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Number of objects with the given
-object id currently on the map. Grfid is the grfid of the newgrf you want to check the object count of (default is current grf).</td></tr>
+object id currently on the map. Grfid is the grfid of the newgrf you want to check the object count of (default is current grf).
+Use the <a href="nml-language.html#builtin-functions">builtin function</a> <code>str2number()</code>
+to convert a grfid to its numeric representation.</td></tr>
 <tr><td>object_type_nearest</td>         <td>object id [, grfid]</td> <td>0..0xFFFF</td> <td>Manhattan distance to the closest object
-of the given type. Grfid is the grfid of the newgrf you want to check the minimum object distance of (default is current grf). If the given
+of the given type. Grfid is the grfid of the newgrf you want to check the minimum object distance of (default is current grf).
+Use the <a href="nml-language.html#builtin-functions">builtin function</a> <code>str2number()</code>
+to convert a grfid to its numeric representation. If the given
 object type is not yet built, this will return 0xFFFF</td></tr>
 </table>
 

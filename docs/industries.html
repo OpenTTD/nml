@@ -30,7 +30,8 @@ changes that occur by default (when not using the callback). Examples are respec
 <tr><td>prod_multiplier</td><td>array of up to 2 ints (0..255)</td><td>Amount of each output cargo to produce every 256 ticks (8 or 9 times a month)</td></tr>
 <tr><td>min_cargo_distr</td><td>0..255</td><td>Minimal amount of cargo before transporting to stations.</td></tr>
 <tr><td>random_sound_effects</td><td>array of ints</td><td>Sound effect numbers that are played some times.</td></tr>
-<tr><td>conflicting_ind_types</td><td>array of up to 3x industry_type(IND_TYPE_OLD | IND_TYPE_NEW, id)</td><td>Three industry types that should not be nearby. Use the builtin-function industry_type(..)
+<tr><td>conflicting_ind_types</td><td>array of up to 3x industry_type(IND_TYPE_OLD | IND_TYPE_NEW, id)</td><td>Three industry types that should not be nearby.
+Use the <a href="nml-language.html#builtin-functions">builtin function</a> <code>industry_type(..)</code>
 to define either an old industry (using the global ID) or a new industry from your grf (using the grf-local ID).</td></tr>
 <tr><td>prob_random</td><td>0..10</td><td>Probability of occurring while generating initial industries.</td></tr>
 <tr><td>prob_in_game</td><td>0..10</td><td>Probability of occurring while creating industries during the game.</td></tr>
@@ -159,7 +160,9 @@ Variables that require some parameters.
 <tr><td>industry_count</td><td>industry_type, grfid&nbsp;=&nbsp;-1</td><td>The value of this variable is the number
 of industries of a given type that are currently on the map. industry_type is either the ID of an
 industry. GRFid is the grf in which the industry was defined. The default value is -1, which means
-current newgrf. A grfid of 0 lets you check the number of default industries of a given type.<br/>
+current newgrf. A grfid of 0 lets you check the number of default industries of a given type.
+Use the <a href="nml-language.html#builtin-functions">builtin function</a> <code>str2number()</code>
+to convert a grfid to its numeric representation.<br/>
 <i>Warning: using this variable trashes the contents of temporary storage register 0x100</i></td></tr>
 <tr><td>industry_distance</td><td>industry_type, grfid&nbsp;=&nbsp;-1</td><td>The value of this variable is the
 manhattan distance the closest instance of the given industry or 0xFFFF if not applicable. See
