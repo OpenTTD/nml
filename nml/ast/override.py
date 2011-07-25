@@ -7,10 +7,10 @@ class EngineOverride(base_statement.BaseStatement):
     AST Node for an engine override.
 
     @ivar grfid: GRFid of the grf to override the engines from.
-    @type grfid: L{Expression}
+    @type grfid: C{int{
 
     @ivar source_grfid: GRFid of the grf that overrides the engines.
-    @type source_grfid: L{Expression} or C{None}
+    @type source_grfid: C{int}
     """
     def __init__(self, args, pos):
         base_statement.BaseStatement.__init__(self, "engine_override()", pos)
@@ -21,16 +21,15 @@ class EngineOverride(base_statement.BaseStatement):
             raise generic.ScriptError("engine_override expects 1 or 2 parameters", self.pos)
 
         if len(self.args) == 1:
-            source = expression.Identifier('GRFID')
+            try:
+                self.source_grfid = expression.Identifier('GRFID').reduce(global_constants.const_list).value
+                assert isinstance(self.source_grfid, int)
+            except generic.ScriptError:
+                raise generic.ScriptError("GRFID of this grf is required, but no grf-block is defined.", self.pos)
         else:
-            source = self.args[0]
-        self.source_grfid = source.reduce(global_constants.const_list)
-        if isinstance(self.source_grfid, expression.StringLiteral):
-            self.source_grfid = expression.ConstantNumeric(expression.parse_string_to_dword(self.source_grfid))
+            self.source_grfid = expression.parse_string_to_dword(self.args[0].reduce(global_constants.const_list))
 
-        self.grfid = self.args[-1].reduce(global_constants.const_list)
-        if isinstance(self.grfid, expression.StringLiteral):
-            self.grfid = expression.ConstantNumeric(expression.parse_string_to_dword(self.grfid))
+        self.grfid = expression.parse_string_to_dword(self.args[-1].reduce(global_constants.const_list))
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Engine override'

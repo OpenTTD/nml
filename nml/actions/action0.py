@@ -465,8 +465,8 @@ def get_disable_actions(disable):
 
 class EngineOverrideProp(object):
     def __init__(self, source, target):
-        self.source = actionE.bswap32(source.value)
-        self.target = actionE.bswap32(target.value)
+        self.source = source
+        self.target = target
 
     def write(self, file):
         file.print_bytex(0x11)
@@ -478,11 +478,9 @@ class EngineOverrideProp(object):
         return 9
 
 def get_engine_override_action(override):
-    source = override.source_grfid.reduce_constant()
-    target = override.grfid.reduce_constant()
     act0 = Action0(0x08, 0)
     act0.num_ids = 1
-    act0.prop_list.append(EngineOverrideProp(source, target))
+    act0.prop_list.append(EngineOverrideProp(override.source_grfid, override.grfid))
     return [act0]
 
 def get_callback_flags_actions(feature, id, flags):

@@ -1,2 +1,2 @@
 param[0] = sound("beef.wav");
-param[1] = import_sound(0x87654321, 3);
+param[1] = import_sound("\12\34\56\78", 3);

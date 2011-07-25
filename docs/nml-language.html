@@ -1048,6 +1048,13 @@ disable(FEAT_TRAINS, 54, 115);
 </pre>
 
 <h2><a name="block-deactivate">Deactivate other NewGRFs</a></h2>
+<pre class="exl">
+deactivate(&lt;grfID&gt;[[, &lt;grfID2&gt;], ...]);
+</pre>
+<p>With this statement, you can deactivate other NewGRFs. As parameters, you
+can supply any number of grfids (4-byte strings) to deactivate. Note that using
+this feature to block incompatible grfs is highly discouraged. Instead, disable
+your own grf with an error message via the <code>error()</code> statement.</p>
 
 <h2><a name="block-othergrf">Testing for other NewGRFs</a></h2>
 See the <a href="nml-language.html#builtin-functions">builtin functions</a> for the functions grf_XXX.
@@ -1076,7 +1083,7 @@ engine_override(sourceID, targetID);
 </pre>
 The targetID must be the grfID of the NewGRF whose vehicles are supposed to be changed via the engine override.
 The sourceID is the grfID of the NewGRF defining the overriding vehicles. If not set explicitly, the grfID of
-the NewGRF containing this statement is used.
+the NewGRF containing this statement is used. Both grfIDs are 4-byte strings.
 </p>
 <h2><a name="block-replacement">Sprite replacement</a></h2>
 <p>This section covers the three available methods to replace sprites.

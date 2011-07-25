@@ -10,4 +10,4 @@ grf {
 engine_override("test", "ABCD");
 
 // also override some other grf, this time not setting our own grfid explicitly
-engine_override(0x12345678);
+engine_override("\12\34\56\78");

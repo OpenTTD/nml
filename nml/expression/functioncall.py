@@ -402,11 +402,7 @@ def builtin_sound_file(name, args, pos):
 def builtin_sound_import(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have 2 parameter", pos)
-    grfid = args[0].reduce()
-    if isinstance(grfid, ConstantNumeric):
-        grfid = grfid.value
-    else:
-        grfid = parse_string_to_dword(grfid)
+    grfid = parse_string_to_dword(args[0].reduce())
     sound_num = args[1].reduce_constant().value
     return ConstantNumeric(action11.add_sound((grfid, sound_num)), pos)
 #}

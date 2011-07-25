@@ -1,5 +1,6 @@
 from nml.actions import actionE
 from nml.ast import base_statement
+from nml import expression
 
 class DeactivateBlock(base_statement.BaseStatement):
     def __init__(self, grfid_list, pos):
@@ -7,7 +8,8 @@ class DeactivateBlock(base_statement.BaseStatement):
         self.grfid_list = grfid_list
 
     def pre_process(self):
-        self.grfid_list = [grfid.reduce() for grfid in self.grfid_list]
+        # Parse (string-)expressions to integers
+        self.grfid_list = [expression.parse_string_to_dword(grfid.reduce()) for grfid in self.grfid_list]
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Deactivate other newgrfs:'
