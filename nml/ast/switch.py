@@ -283,6 +283,53 @@ class RandomSwitch(switch_base_class):
         ret += '}\n'
         return ret
 
+class RandomChoice(object):
+    """
+    Class to hold one of the possible choices in a random_switch
+
+    @ivar probability: Relative chance for this choice to be chosen
+    @type probability: L{Expression}
+
+    @ivar result: Result of this choice, either another action2 or a return value
+    @type result: L{SpriteGroupRef} or L{Expression}
+
+    @ivar resulting_prob: Resulting probability for this choice, may be altered during action generation
+    @type resulting_prob: C{int}
+
+    @ivar comment: Comment string to be appended to this choice
+    @type comment: C{str}
+    """
+    def __init__ (self, probability, result):
+        if isinstance(probability, expression.Identifier) and probability.value in ('dependent', 'independent'):
+            self.probability = probability
+        else:
+            self.probability = probability.reduce_constant(global_constants.const_list)
+            self.resulting_prob = self.probability.value
+            if self.probability.value <= 0:
+                raise generic.ScriptError("Value for probability should be higher than 0, encountered %d" % self.probability.value, self.probability.pos)
+            if result is None:
+                raise generic.ScriptError("Returning the computed value is not possible in a random_switch, as there is no computed value.", self.probability.pos)
+        self.result = result
+        if not isinstance(result, expression.SpriteGroupRef):
+            try:
+                self.result = result.reduce(global_constants.const_list)
+            except generic.ScriptError:
+                pass
+
+    def debug_print(self, indentation):
+        print indentation*' ' + 'Probability:'
+        self.probability.debug_print(indentation + 2)
+        print indentation*' ' + 'Result:'
+        self.result.debug_print(indentation + 2)
+
+    def __str__(self):
+        ret = str(self.probability)
+        if isinstance(self.result, expression.SpriteGroupRef):
+            ret += ': %s;' % str(self.result)
+        else:
+            ret += ': return %s;' % str(self.result)
+        return ret
+
 num_random_bits = {
     0x00 : [8],
     0x01 : [8],
