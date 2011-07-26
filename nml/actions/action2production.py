@@ -1,5 +1,5 @@
-from nml.actions import action2, action6, actionD
-from nml import expression
+from nml.actions import action2, action2var, action6, actionD
+from nml import expression, nmlop
 
 class Action2Production(action2.Action2):
     """
@@ -53,22 +53,62 @@ def get_production_actions(produce):
     action6.free_parameters.save()
 
     result_list = []
-    for i, param in enumerate(produce.param_list):
-        if isinstance(param, expression.ConstantNumeric):
-            result_list.append(param.value)
-        else:
-            if isinstance(param, expression.Parameter) and isinstance(param.num, expression.ConstantNumeric):
-                param_num = param.num.value
+    varact2parser = action2var.Varaction2Parser(0x0A)
+    if all(map(lambda x: x.supported_by_actionD(False), produce.param_list)):
+        version = 0
+        for i, param in enumerate(produce.param_list):
+            if isinstance(param, expression.ConstantNumeric):
+                result_list.append(param.value)
             else:
-                param_num, tmp_param_actions = actionD.get_tmp_parameter(param)
-                action_list.extend(tmp_param_actions)
-            act6.modify_bytes(param_num, 2 if i < 5 else 1, 1 + 2 * i)
-            result_list.append(0)
+                if isinstance(param, expression.Parameter) and isinstance(param.num, expression.ConstantNumeric):
+                    param_num = param.num.value
+                else:
+                    param_num, tmp_param_actions = actionD.get_tmp_parameter(param)
+                    action_list.extend(tmp_param_actions)
+                act6.modify_bytes(param_num, 2 if i < 5 else 1, 1 + 2 * i)
+                result_list.append(0)
+    else:
+        version = 1
+        for i, param in enumerate(produce.param_list):
+            if isinstance(param, expression.StorageOp) and param.name == 'LOAD_TEMP' and \
+                    isinstance(param.register, expression.ConstantNumeric):
+                # We can load a register directly
+                result_list.append(param.register.value)
+            else:
+                expr = expression.BinOp(nmlop.STO_TMP, param, expression.ConstantNumeric(0x80 + i))
+                if len(varact2parser.var_list) != 0:
+                    varact2parser.var_list.append(nmlop.VAL2)
+                    varact2parser.var_list_size += 1
+                varact2parser.parse_expr(action2var.reduce_varaction2_expr(expr, 0x0A))
+                result_list.append(0x80 + i)
+
 
     if len(act6.modifications) > 0: action_list.append(act6)
-    action6.free_parameters.restore()
-    prod_action = Action2Production(produce.name.value, produce.version, result_list[0:3], result_list[3:5], result_list[5])
+    prod_action = Action2Production(produce.name.value, version, result_list[0:3], result_list[3:5], result_list[5])
     action_list.append(prod_action)
-    produce.set_action2(prod_action)
+
+    if len(varact2parser.var_list) == 0:
+        produce.set_action2(prod_action)
+    else:
+        # Create intermediate varaction2
+        varaction2 = action2var.Action2Var(0x0A, '%s@registers' % produce.name.value, 0x89)
+        varaction2.var_list = varact2parser.var_list
+        action_list.extend(varact2parser.extra_actions)
+        extra_act6 = action6.Action6()
+        for mod in varact2parser.mods:
+            extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
+        if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
+        ref = expression.SpriteGroupRef(produce.name, [], None, prod_action)
+        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
+        varaction2.default_result = ref
+        varaction2.default_comment = ''
+
+        # Add two references (default + range)
+        action2.add_ref(ref, varaction2)
+        action2.add_ref(ref, varaction2)
+        produce.set_action2(varaction2)
+        action_list.append(varaction2)
+
+    action6.free_parameters.restore()
 
     return action_list
