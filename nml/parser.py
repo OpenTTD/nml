@@ -325,7 +325,7 @@ class NMLParser(object):
             t[0] = ([], t[1])
 
     def p_graphics_assignment(self, t):
-        'graphics_assignment : expression COLON expression SEMICOLON'
+        'graphics_assignment : expression COLON switch_value'
         t[0] = item.GraphicsDefinition(t[1], t[3])
 
     def p_graphics_assignment_list(self, t):

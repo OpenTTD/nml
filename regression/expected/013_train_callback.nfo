@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d56 
+0 * 4 \d54 
 
 1 * 46 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -124,15 +124,8 @@
 \wx8019 \dx00000020 \dx00000020 	// 32 .. 32: return 25;
 \wx0000 // default: CB_FAILED;
 
-// Name: bulk_wagon_cb_purchase_capacity_switch
-46 * 23 02 00 FD 89 
-1A 00 \dx00000000 
-\b1 
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid the special nvar == 0 case
-\wx801E // default: return 30;
-
 // Name: bulk_wagon_cb_weight_switch
-47 * 53 02 00 FE 89 
+46 * 53 02 00 FD 89 
 47 00 \dx000000FF 
 \b4 
 \wx8012 \dx00000013 \dx00000013 	// 19 .. 19: return 18;
@@ -141,14 +134,7 @@
 \wx8012 \dx0000001A \dx0000001A 	// 26 .. 26: return 18;
 \wx0000 // default: CB_FAILED;
 
-// Name: bulk_wagon_cb_purchase_weight_switch
-48 * 23 02 00 FA 89 
-1A 00 \dx00000000 
-\b1 
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid the special nvar == 0 case
-\wx8019 // default: return 25;
-
-49 * 72 00 00 \b26 01 FF \wx0074 
+47 * 72 00 00 \b26 01 FF \wx0074 
 06 0F 
 28 \wx0010 
 15 FF 
@@ -176,45 +162,45 @@
 24 00 
 25 00 
 
-50 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
+48 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
 
-51 * 9 00 00 \b1 01 FF \wx0074 
+49 * 9 00 00 \b1 01 FF \wx0074 
 1E 08 
 
 // Name: @action3_0
-52 * 33 02 00 FE 89 
+50 * 33 02 00 FD 89 
 10 00 \dx000000FF 
 \b2 
-\wx00FC \dx00000014 \dx00000014 	// bulk_wagon_cb_capacity_switch
-\wx00FE \dx00000016 \dx00000016 	// bulk_wagon_cb_weight_switch
-\wx00FB // bulk_wagon_graphics_switch
+\wx00FC \dx00000014 \dx00000014 	// bulk_wagon_cb_capacity_switch;
+\wx00FD \dx00000016 \dx00000016 	// bulk_wagon_cb_weight_switch;
+\wx00FB // bulk_wagon_graphics_switch;
 
 // Name: @action3_1
-53 * 33 02 00 FA 89 
+51 * 33 02 00 FE 89 
 10 00 \dx000000FF 
 \b2 
-\wx00FD \dx00000014 \dx00000014 	// bulk_wagon_cb_purchase_capacity_switch
-\wx00FA \dx00000016 \dx00000016 	// bulk_wagon_cb_purchase_weight_switch
-\wx00FB // bulk_wagon_graphics_switch
+\wx801E \dx00000014 \dx00000014 	// return 30;
+\wx8019 \dx00000016 \dx00000016 	// return 25;
+\wx00FB // bulk_wagon_graphics_switch;
 
 // Name: @action3_2
-54 * 43 02 00 FE 89 
+52 * 43 02 00 FD 89 
 0C 00 \dx0000FFFF 
 \b3 
-\wx00FB \dx00000000 \dx00000000 	// bulk_wagon_graphics_switch
-\wx00FC \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch
-\wx00FE \dx00000036 \dx00000036 	// @action3_0
-\wx00FB // bulk_wagon_graphics_switch
+\wx00FB \dx00000000 \dx00000000 	// bulk_wagon_graphics_switch;
+\wx00FC \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch;
+\wx00FD \dx00000036 \dx00000036 	// @action3_0;
+\wx00FB // bulk_wagon_graphics_switch;
 
 // Name: @action3_3
-55 * 33 02 00 FB 89 
+53 * 33 02 00 FB 89 
 0C 00 \dx0000FFFF 
 \b2 
-\wx00FB \dx00000000 \dx00000000 	// bulk_wagon_graphics_switch
-\wx00FA \dx00000036 \dx00000036 	// @action3_1
-\wx00FB // bulk_wagon_graphics_switch
+\wx00FB \dx00000000 \dx00000000 	// bulk_wagon_graphics_switch;
+\wx00FE \dx00000036 \dx00000036 	// @action3_1;
+\wx00FB // bulk_wagon_graphics_switch;
 
-56 * 12 03 00 01 FF \wx0074 \b1 
-FF \wx00FB 
-\wx00FE 
+54 * 12 03 00 01 FF \wx0074 \b1 
+FF \wx00FB 	// @action3_3;
+\wx00FD 	// @action3_2;
 

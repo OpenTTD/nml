@@ -22,7 +22,7 @@
 0E 01 
 
 4 * 7 03 11 01 00 \b0 
-\wx00FE 
+\wx00FE 	// small_airport_tile_layout;
 
 5 * 34 00 0D \b2 01 00 
 08 00 

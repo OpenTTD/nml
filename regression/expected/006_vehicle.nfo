@@ -73,5 +73,5 @@ FF
 19 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
 
 20 * 9 03 01 01 FF \wx0059 \b0 
-\wx00FE 
+\wx00FE 	// foster_express_group;
 

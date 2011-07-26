@@ -93,5 +93,5 @@ F0 F1 F2 F3 F4 F5 00 00 00 00 00 00 00 00 00 FF
 \w0 
 
 19 * 9 03 01 01 FF \wx0058 \b0 
-\wx00FE 
+\wx00FE 	// foster_express_group;
 

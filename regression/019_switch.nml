@@ -14,19 +14,16 @@ switch(FEAT_INDUSTRIES, SELF, coal_mine_subtype_switch, [STORE_PERM(4, 0x00), cu
     return string(STR_COALMINE_MONTH_11);
 }
 
-switch(FEAT_INDUSTRIES, SELF, coal_mine_text_switch, 0) {
-    return string(STR_COALMINE_EXTRA_TEXT);
-}
 
 item(FEAT_INDUSTRIES, coal_mine) {
     property {
         substitute: INDUSTRYTYPE_COAL_MINE;
         override: INDUSTRYTYPE_COAL_MINE;
-        callback_flags: bitmask(IND_CBF_EXTRA_TEXT_INDUSTRY);
     }
     graphics {
-        extra_text_industry: coal_mine_text_switch;
+        extra_text_industry: return string(STR_COALMINE_EXTRA_TEXT);
         cargo_subtype_display: coal_mine_subtype_switch;
+        control_special: return extra_callback_info1 & 1; // random with 50% chance
         // no default
     }
 }

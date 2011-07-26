@@ -354,13 +354,15 @@ setting properties. An example (using fictional callback names):</p>
 <pre class="exl">
     graphics {
         callback_a: switch_a;
-        callback_b: switch_b;
+        callback_b: return 42 + some_var;
         default: some_spritegroup;
     }
 </pre>
 <p>The callbacks that are available differ per feature, refer to the
 feature-specific pages for more information. The 'default'-callback
-is usually used to resolve the graphics. Note that all callbacks have
+is usually used to resolve the graphics. For each callback a return
+value may be specified, in the same way as for <a href="#block-switch">
+switch-blocks</a>. Note that all callbacks have
 to be defined in a <strong>single</strong> graphics-block.</p>
 
 <h3><a name="block-item-livery_override">Livery override</a></h3>

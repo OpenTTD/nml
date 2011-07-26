@@ -1,6 +1,6 @@
 from nml import expression, generic, global_constants, unit
 from nml.ast import base_statement, general
-from nml.actions import action0, action2, action3
+from nml.actions import action0, action2, action2var, action3
 
 item_feature = None
 item_id = None
@@ -192,11 +192,9 @@ class GraphicsBlock(graphics_base_class):
 
     def pre_process(self):
         for graphics_def in self.graphics_list:
-            graphics_def.pre_process()
+            graphics_def.reduce_expressions(item_feature)
         if self.default_graphics is not None:
-            self.default_graphics = self.default_graphics.reduce(global_constants.const_list)
-            if not isinstance(self.default_graphics, expression.SpriteGroupRef):
-                raise generic.ScriptError("All items in a graphics-block must be spritegroup references", self.pos)
+            self.default_graphics = action2var.reduce_varaction2_expr(self.default_graphics, item_feature)
 
         # initialize base class and pre_process it as well (in that order)
         self.initialize(None, expression.ConstantNumeric(item_feature))
@@ -204,9 +202,9 @@ class GraphicsBlock(graphics_base_class):
 
     def collect_references(self):
         all_refs = []
-        for sg_ref in [g.spritegroup_ref for g in self.graphics_list] + [self.default_graphics]:
-            if sg_ref is not None: # Default may be None
-                all_refs.append(sg_ref)
+        for result in [g.result for g in self.graphics_list] + [self.default_graphics]:
+            if isinstance(result, expression.SpriteGroupRef): # Default may be None
+                all_refs.append(result)
         return all_refs
 
     def debug_print(self, indentation):
@@ -231,21 +229,31 @@ class GraphicsBlock(graphics_base_class):
         return ret
 
 class GraphicsDefinition(object):
-    def __init__(self, cargo_id, spritegroup_ref):
+    def __init__(self, cargo_id, result, unit = None):
         self.cargo_id = cargo_id
-        self.spritegroup_ref = spritegroup_ref
+        self.result = result
+        self.unit = unit
 
-    def pre_process(self):
-        self.spritegroup_ref = self.spritegroup_ref.reduce(global_constants.const_list)
-        if not isinstance(self.spritegroup_ref, expression.SpriteGroupRef):
-            raise generic.ScriptError("All items in a graphics-block must be spritegroup references", self.pos)
+    def reduce_expressions(self, var_feature):
+        # Do not reduce cargo-id (yet)
+        if self.result is None:
+            raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.cargo_id.pos)
+        self.result = action2var.reduce_varaction2_expr(self.result, var_feature)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Graphics:'
-        print (indentation+2)*' ' + 'Cargo:'
-        self.cargo_id.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Linked to sprite group:'
-        self.spritegroup_ref.debug_print(indentation + 4)
+        print indentation*' ' + 'Cargo ID:'
+        self.cargo_id.debug_print(indentation + 2)
+        print indentation*' ' + 'Result:'
+        if self.result is not None:
+            self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        return "%s: %s;" % (str(self.cargo_id), str(self.spritegroup_ref))
+        ret = str(self.cargo_id)
+        if self.result is None:
+            ret += ': return;'
+        elif isinstance(self.result, expression.SpriteGroupRef):
+            ret += ': %s;' % str(self.result)
+        else:
+            ret += ': return %s;' % str(self.result)
+        return ret
+

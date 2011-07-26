@@ -64,10 +64,10 @@
 27 04 
 
 32 * 9 03 00 01 FF \wx0014 \b0 
-\wx00FE 
+\wx00FE 	// turbotrain_engine_group;
 
 33 * 9 03 00 81 FF \wx001B \b0 
-\wx00FC 
+\wx00FC 	// turbotrain_passenger_group;
 
 34 * 21 00 00 \b6 01 FF \wx001B 
 12 FD 
@@ -78,5 +78,5 @@
 15 FF 
 
 35 * 9 03 00 01 FF \wx001B \b0 
-\wx00FD 
+\wx00FD 	// normal_passenger_group;
 

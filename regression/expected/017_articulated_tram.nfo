@@ -75,10 +75,10 @@
 18 * 33 02 01 FE 89 
 0C 00 \dx0000FFFF 
 \b2 
-\wx00FE \dx00000000 \dx00000000 	// foster_express_group
-\wx00FD \dx00000016 \dx00000016 	// foster_express_articulated_parts
-\wx00FE // foster_express_group
+\wx00FE \dx00000000 \dx00000000 	// foster_express_group;
+\wx00FD \dx00000016 \dx00000016 	// foster_express_articulated_parts;
+\wx00FE // foster_express_group;
 
 19 * 9 03 01 01 FF \wx0058 \b0 
-\wx00FE 
+\wx00FE 	// @action3_0;
 

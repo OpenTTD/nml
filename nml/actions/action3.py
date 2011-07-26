@@ -12,7 +12,7 @@ class Action3(base_action.BaseAction):
     @type id: C{int}
 
     @ivar cid_mappings: List of mappings that map cargo IDs to Action2s.
-    @type cid_mappings: C{list} of C{tuple}: (C{int}, L{SpriteGroupRef} before prepare_output, C{int} afterwards)
+    @type cid_mappings: C{list} of C{tuple}: (C{int}, L{Expression} before prepare_output, C{int} afterwards, C{str})
 
     @ivar def_cid: Default Action2 to use if no cargo ID matches.
     @type def_cid: C{None} or L{SpriteGroupRef} before prepare_output, C{int} afterwards
@@ -24,13 +24,16 @@ class Action3(base_action.BaseAction):
         self.feature = feature
         self.id = id
         self.cid_mappings = []
-        self.def_cid = None
         self.references = []
 
     def prepare_output(self):
         action2.free_references(self)
-        self.cid_mappings = [(cargo, cid.get_action2_id()) for cargo, cid in self.cid_mappings]
-        self.def_cid = 0 if self.def_cid is None else self.def_cid.get_action2_id()
+        map_cid = lambda cid: cid.get_action2_id() if isinstance(cid, expression.SpriteGroupRef) else cid.value | 0x8000
+        self.cid_mappings = [(cargo, map_cid(cid), comment) for cargo, cid, comment in self.cid_mappings]
+        if self.def_cid is None:
+            self.def_cid = 0
+        else:
+            self.def_cid = map_cid(self.def_cid)
 
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
@@ -42,12 +45,12 @@ class Action3(base_action.BaseAction):
         file.print_varx(self.id, 3 if self.feature <= 3 else 1)
         file.print_byte(len(self.cid_mappings))
         file.newline()
-        for cargo, cid in self.cid_mappings:
+        for cargo, cid, comment in self.cid_mappings:
             file.print_bytex(cargo)
             file.print_wordx(cid)
-            file.newline()
+            file.newline(comment)
         file.print_wordx(self.def_cid)
-        file.newline()
+        file.newline(self.default_comment)
         file.end_sprite()
 
     def skip_action9(self):
@@ -86,20 +89,22 @@ def create_intermediate_varaction2(feature, var_num, and_mask, mapping, default)
     extra_act6 = action6.Action6()
     for mod in varact2parser.mods:
         extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
-    if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
 
     name = expression.Identifier("@action3_%d" % action2_id)
     action2_id += 1
     varaction2 = action2var.Action2Var(feature, name.value, 0x89)
     varaction2.var_list = varact2parser.var_list
+    offset = 5 + varact2parser.var_list_size
     for value in sorted(mapping):
-        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(value), expression.ConstantNumeric(value), mapping[value], mapping[value].name.value))
-        action2.add_ref(mapping[value], varaction2)
+        result, comment = action2var.parse_result(mapping[value], action_list, extra_act6, offset, varaction2, None, 0x89)
+        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(value), expression.ConstantNumeric(value), result, comment))
+        offset += 10
+    result, comment = action2var.parse_result(default, action_list, extra_act6, offset, varaction2, None, 0x89)
     varaction2.default_result = default
-    action2.add_ref(default, varaction2)
-    varaction2.default_comment = default.name.value
+    varaction2.default_comment = comment
 
     return_ref = expression.SpriteGroupRef(name, [], None, varaction2)
+    if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
     action_list.append(varaction2)
     return (action_list, return_ref)
 
@@ -153,12 +158,12 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
                         # Not a callback, but an alias for a certain cargo type
                         if info['num'] in cargo_gfx:
                             raise generic.ScriptError("Graphics for '%s' are defined multiple times." % cb_name, cargo_id.pos)
-                        cargo_gfx[info['num']] = graphics.spritegroup_ref
+                        cargo_gfx[info['num']] = graphics.result
                     elif info['type'] == 'cb':
-                        callbacks.append( (info, graphics.spritegroup_ref) )
+                        callbacks.append( (info, graphics.result) )
                     elif info['type'] == 'override':
                         assert livery_override is None
-                        livery_override = graphics.spritegroup_ref
+                        livery_override = graphics.result
                     else:
                         assert False
                 continue
@@ -169,7 +174,7 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         if feature >= 5: raise generic.ScriptError("Associating graphics with a specific cargo is possible only for vehicles and stations.", cargo_id.pos)
         if cargo_id.value in cargo_gfx:
              raise generic.ScriptError("Graphics for cargo %d are defined multiple times." % cargo_id.value, cargo_id.pos)
-        cargo_gfx[cargo_id.value] = graphics.spritegroup_ref
+        cargo_gfx[cargo_id.value] = graphics.result
 
     if default_graphics is not None:
         if 'default' not in action3_callbacks.callbacks[feature]:
@@ -181,10 +186,9 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
     if len(callbacks) != 0:
         cb_flags = 0
         # Determine the default value
-        if None in cargo_gfx:
-            default_val = cargo_gfx[None]
-        else:
-            default_val = expression.SpriteGroupRef(expression.Identifier('CB_FAILED', None), [], None)
+        if None not in cargo_gfx:
+            cargo_gfx[None] = expression.SpriteGroupRef(expression.Identifier('CB_FAILED', None), [], None)
+        default_val = cargo_gfx[None]
 
         cb_mapping = {}
         cb_buy_mapping = {}
@@ -233,14 +237,9 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
             prepend_action_list.extend(actions)
             cb_buy_mapping[0x36] = cb36_ref
         if len(prod_cb_mapping) != 0:
-            # If only one of the production CBs is enabled, just write it as CB 0
-            # The other one won't be called anyway, as it requires a CB flag bit
-            if len(prod_cb_mapping) == 1:
-                cb_mapping[0x00] = prod_cb_mapping.values().pop()
-            else:
-                actions, cb_ref = create_intermediate_varaction2(feature, 0x18, 0xFF, prod_cb_mapping, default_val)
-                prepend_action_list.extend(actions)
-                cb_mapping[0x00] = cb_ref
+            actions, cb_ref = create_intermediate_varaction2(feature, 0x18, 0xFF, prod_cb_mapping, default_val)
+            prepend_action_list.extend(actions)
+            cb_mapping[0x00] = cb_ref
 
         for cargo in sorted(cargo_gfx):
             mapping = cb_buy_mapping if cargo == 0xFF else cb_mapping
@@ -256,19 +255,28 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
             cargo_gfx[cargo] = cb_ref
 
     # Make sure to sort to make the order well-defined
+    offset = 7 if feature <= 3 else 5
     for cargo_id in sorted(cargo_gfx):
-        action2.add_ref(cargo_gfx[cargo_id], act3)
-        if cargo_id is None:
-            act3.def_cid = cargo_gfx[None]
-        else:
-            act3.cid_mappings.append( (cargo_id, cargo_gfx[cargo_id]) )
+        if cargo_id is None: continue
+        result, comment = action2var.parse_result(cargo_gfx[cargo_id], action_list, act6, offset + 1, act3, None, 0x89)
+        act3.cid_mappings.append( (cargo_id, result, comment) )
+        offset += 3
+    if None in cargo_gfx:
+        result, comment = action2var.parse_result(cargo_gfx[None], action_list, act6, offset, act3, None, 0x89)
+        act3.def_cid = result
+        act3.default_comment = comment
+    else:
+        act3.def_cid = None
+        act3.default_comment = ''
 
     if livery_override is not None:
         act6livery = action6.Action6()
         # Add any extra actions before the main action3 (TTDP requirement)
         act3livery = create_action3(feature, id, action_list, act6livery, True)
-        act3livery.def_cid = livery_override
-        action2.add_ref(livery_override, act3livery)
+        offset = 7 if feature <= 3 else 5
+        result, comment = action2var.parse_result(livery_override, action_list, act6livery, offset, act3livery, None, 0x89)
+        act3livery.def_cid = result
+        act3livery.default_comment = comment
 
     if len(act6.modifications) > 0: action_list.append(act6)
     action_list.append(act3)

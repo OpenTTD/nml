@@ -33,7 +33,7 @@
 16 04 
 
 5 * 7 03 0F 01 00 \b0 
-\wx00FE 
+\wx00FE 	// obj_basic_tile;
 
 6 * 33 04 08 FF 02 \wxD000 "Miscellaneous" 00 "Basic object" 00 
 
