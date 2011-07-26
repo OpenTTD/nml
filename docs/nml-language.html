@@ -747,7 +747,8 @@ the expression being tested the first applicable result will be returned.</p>
 <ul>
 <li><code>&lt;ID&gt;;</code> chains to the (random-)switch or spritegroup with the given ID.</li>
 <li><code>return (&lt;expression&gt;|&lt;string&gt;);</code> returns the given expression or
-string as a result of the callback.</li>
+string as a result of the callback. A returned expression may contain variables, parameter
+accesses and everything else that a normal switch-expression may contain.</li>
 <li><code>return;</code> returns the computed value directly as a callback result. Note that
 the maximum value for callback results is 32511 (0x7EFF).</li>
 <li><code>CB_FAILED;</code> stops processing and returns an explicit failure code.</li>
@@ -761,11 +762,12 @@ switch (FEAT_TRAINS, PARENT, some_vehicle_switch, (position_in_consist + param[1
 	3: return; //return the computed value
 	5..300: return 42; //42 is always a good answer
 	400: other_switch; //chain to some other switch block
-	CB_FAILED; //return a failure result
+	401: return num_vehs_in_consist + 1; //return a value with a variable access
+	CB_FAILED; //return a failure result as default
 }
 </pre>
-</p><p>
-You can also use temporary variables and with some features also pemanent variables to store
+</p>
+<p>You can also use temporary variables and with some features also pemanent variables to store
 and retrieve some values by means of <code>STORE_TEMP(value, register)</code>,
 <code>LOAD_TEMP(register)</code> and <code>STORE_PERM(value, register)</code> and
 <code>LOAD_PERM(register[, grfid])</code> respectively. Using temporary storage is useful when you
@@ -774,13 +776,13 @@ chain (like for example the number of a certain wagon type within a train). Perm
 might be useful to control the long-term behaviour of an object. Note that it is only available
 for industries, airports and towns. For towns, you can optionally specify a grfid to load registers
 belonging to a different grf. Note that accessing (both reading and writing) permanent town
-registers thrashes the contents of temporary register 0x100.
+registers thrashes the contents of temporary register 0x100.</p>
 
 <h2><a name="block-produce">Produce</a></h2>
-The <code>produce</code> block is only available for industries and describes how the industry
-consumes incoming and creates outgoing cargo. The syntax is
+<p>The <code>produce</code> block is only available for industries and describes how the industry
+consumes incoming and creates outgoing cargo. The syntax is:</p>
 <pre class="exl">produce (&lt;ID&gt;, &lt;consume_1&gt;, &lt;consume_2&gt;, &lt;consume_3&gt;, &lt;produce_1&gt;, &lt;produce_2&gt; [, run_again]);</pre>
-where 
+<p>where</p>
 <ul>
 <li><code>ID</code> is a unique name of the block
 <li><code>consume_1</code>, <code>consume_2</code>, <code>consume_3</code> are expressions which
@@ -789,12 +791,12 @@ given amounts are subtracted from the stockpile of cargo waiting to be processed
 <li><code>produce_1</code>, <code>produce_2</code> are expressions which give the amount of the 
 produced (outgoing) cargos in the produce block.
 <li><code>run_again</code> is a boolean expression which evaluates to either 0 or 1. It indicates
-whether the produce block shall be called again. Thus you can tune the produce block to process
-the minimal amount of cargo and call it as often as needed to consume the required amount of
-input cargo and produce the appropriate amount of output cargos.
+whether the produce block shall be called again. This is optional, with a default value of 0.
 </ul>
-The produce block should be the default result of the switch-chain for an industry,
-equivalent to a spriteblock for vehicles or spritelayout for industry tiles. An example on how
+<p> Note that variables can be used in the
+produce-block, so you can for example query the amount of waiting cargo directly and use that
+in your expression.</p>
+<p>The produce block should be the result of the production callback of an industry. An example on how
 it can be used without actually processing cargo but counting the time an industry exists unserviced:
 <pre class="exl">
 /* Every month, the counter is increased. The counter is reset to zero whenever the power plant
@@ -837,29 +839,30 @@ decision, a random_switch allows a randomised choice between several options.</p
 <code>&lt;type&gt;</code>, the second parameter, is used to define what random data
 is used. The supported combinations are listed in the following table. The amount
 of random data is given in the third column. The maximum number of possible
-combinations is equal to 2^x, with x being the number of random bits. The last
-column specifies the object of which the random data is used.</p>
+combinations is equal to 2^x, with x being the number of random bits. Not all
+combinations support re-randomizing via triggers, this is indicated in the fourth
+column. The last column specifies the object of which the random data is used.</p>
 
 <table class="t">
-<tr><th>Feature</th><th>Type</th><th># of random bits</th><th>Random data used</th></tr>
-<tr><td>Vehicles</td><td>SELF</td><td>8</td><td>Vehicle itself</td></tr>
-<tr><td>Vehicles</td><td>PARENT</td><td>8</td><td>Leading engine</td></tr>
-<tr><td>Vehicles</td><td>BACKWARD_SELF(x)</td><td>8</td><td>Count x vehicles backward (away from the engine), starting at the vehicle itself (a)</td></tr>
-<tr><td>Vehicles</td><td>FORWARD_SELF(x)</td><td>8</td><td>Count x vehicles forward (towards the engine), starting at the vehicle itself (a)</td></tr>
-<tr><td>Vehicles</td><td>BACKWARD_ENGINE(x)</td><td>8</td><td>Count x vehicles backward, starting at the leading engine (a)</td></tr>
-<tr><td>Vehicles</td><td>BACKWARD_SAMEID(x)</td><td>8</td><td>Count x vehicles backward, starting at the first vehicle in the chain with the same ID (a)</td></tr>
-<tr><td>Stations / airport tiles</td><td>SELF</td><td>16</td><td>Station</td></tr>
-<tr><td>Stations / airport tiles</td><td>TILE</td><td>4</td><td>Specific station tile</td></tr>
-<tr><td>Canals</td><td>SELF</td><td>8</td><td>Canal tile</td></tr>
-<tr><td>Houses</td><td>SELF</td><td>8</td><td>House tile (b)</td></tr>
-<tr><td>Industry tiles</td><td>SELF</td><td>8</td><td>Industry tile</td></tr>
-<tr><td>Industry tiles</td><td>PARENT</td><td>16</td><td>Industry as a whole</td></tr>
-<tr><td>Industries</td><td>SELF</td><td>16</td><td>Industry (same as above)</td></tr>
-<tr><td>Objects</td><td>SELF</td><td>8</td><td>Object tile (different per tile)</td></tr>
-<tr><td>Rail types</td><td>SELF</td><td>2</td><td>Rail tile (pseudo-random, based on location)</td></tr>
+<tr><th>Feature</th><th>Type</th><th># of random bits</th><th>Triggers possible?<th>Random data used</th></tr>
+<tr><td>Vehicles</td><td>SELF</td><td>8</td><td>Yes</td><td>Vehicle itself</td></tr>
+<tr><td>Vehicles</td><td>PARENT</td><td>8</td><td>No</td><td>Leading engine</td></tr>
+<tr><td>Vehicles</td><td>BACKWARD_SELF(x)</td><td>8</td><td>No</td><td>Count x vehicles backward (away from the engine), starting at the vehicle itself (a)</td></tr>
+<tr><td>Vehicles</td><td>FORWARD_SELF(x)</td><td>8</td><td>No</td><td>Count x vehicles forward (towards the engine), starting at the vehicle itself (a)</td></tr>
+<tr><td>Vehicles</td><td>BACKWARD_ENGINE(x)</td><td>8</td><td>No</td><td>Count x vehicles backward, starting at the leading engine (a)</td></tr>
+<tr><td>Vehicles</td><td>BACKWARD_SAMEID(x)</td><td>8</td><td>No</td><td>Count x vehicles backward, starting at the first vehicle in the chain with the same ID (a)</td></tr>
+<tr><td>Stations / airport tiles</td><td>SELF</td><td>16</td><td>Stations only</td><td>Station</td></tr>
+<tr><td>Stations / airport tiles</td><td>TILE</td><td>4</td><td>Stations only</td><td>Specific station tile</td></tr>
+<tr><td>Canals</td><td>SELF</td><td>8</td><td>No</td><td>Canal tile</td></tr>
+<tr><td>Houses</td><td>SELF</td><td>8</td><td>Yes</td><td>House tile (b)</td></tr>
+<tr><td>Industry tiles</td><td>SELF</td><td>8</td><td>Yes</td><td>Industry tile</td></tr>
+<tr><td>Industry tiles</td><td>PARENT</td><td>16</td><td>Yes</td><td>Industry as a whole</td></tr>
+<tr><td>Industries</td><td>SELF</td><td>16</td><td>No</td><td>Industry (same as above)</td></tr>
+<tr><td>Objects</td><td>SELF</td><td>8</td><td>No</td><td>Object tile (different per tile)</td></tr>
+<tr><td>Rail types</td><td>SELF</td><td>2</td><td>No</td><td>Rail tile (pseudo-random, based on location)</td></tr>
 </table>
-<p>(a) x can be any expression. It may access parameters or registers,
-but variable accesses are not possible.</p>
+<p>(a) x can be any expression. It may access parameters, registers, or
+variables of the vehicle itself.</p>
 <p>(b) The random bits are initially the same for all tiles of a multi-tile house.</p>
 <p>The third parameter <code>&lt;ID&gt;</code> can be used to refer to this
 block from other (random-)switch-blocks. The last parameter
@@ -884,15 +887,18 @@ to the list of used triggers, e.g. use <code>bitmask(TRIGGER_ALL_NEEDED, TRIGGER
 
 <table class="t">
 <caption>Station triggers</caption>
-<tr><th>Trigger</th><th>Event</th></tr>
-<tr><td>TRIGGER_STATION_NEW_CARGO</td><td>New cargo waiting</td></tr>
-<tr><td>TRIGGER_STATION_NO_MORE_CARGO</td><td>No more cargo waiting</td></tr>
-<tr><td>TRIGGER_STATION_TRAIN_ARRIVES</td><td>Train arrives (starts loading/unloading)</td></tr>
-<tr><td>TRIGGER_STATION_TRAIN_LEAVES</td><td>Train leaves (done loading/unloading)</td></tr>
-<tr><td>TRIGGER_STATION_TRAIN_LOADS_UNLOADS</td><td>Train loads/unloads cargo</td></tr>
-<tr><td>TRIGGER_STATION_TRAIN_RESERVES</td><td>Train reserves platform using PBS</td></tr>
+<tr><th>Trigger</th><th>Event</th><th>Triggered on</th></tr>
+<tr><td>TRIGGER_STATION_NEW_CARGO</td><td>New cargo waiting</td><td>Entire station</td></tr>
+<tr><td>TRIGGER_STATION_NO_MORE_CARGO</td><td>No more cargo waiting</td><td>Entire station</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_ARRIVES</td><td>Train arrives (starts loading/unloading)</td><td>Platform the train is on</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_LEAVES</td><td>Train leaves (done loading/unloading)</td><td>Platform the train is on</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_LOADS_UNLOADS</td><td>Train loads/unloads cargo</td><td>Platform the train is on</td></tr>
+<tr><td>TRIGGER_STATION_TRAIN_RESERVES</td><td>Train reserves platform using PBS</td><td>Platform the train is on</td></tr>
 </table>
-<p>The last four triggers in the table only trigger on the platform on which they occur.</p>
+<p>The last four triggers in the table only trigger on the platform on which
+they occur. Note that triggers are only saved per-station, not per-tile, so
+using <code>TRIGGER_ALL_NEEDED</code> doesn't make a lot of sense for
+per-platform triggers</p>
 
 <table class="t">
 <caption>House triggers</caption>
@@ -912,6 +918,12 @@ new random data.</p>
 If the industry is a primary one, output cargo is generated at the same time.</td></tr>
 <tr><td>TRIGGER_INDUSTRYTILE_CARGO_DELIVERY</td><td>Cargo is delivered to the industry. If the industry is a processing one, output cargo is generated at the same time.</td></tr>
 </table>
+<p>Industry tiles can rerandomise both their own random bits as well as the
+random bits of the industry (via type <code>PARENT</code>). The triggers for
+rerandomisation are both remembered per tile and for the industry, so using
+<code>TRIGGER_ALL_NEEDED to works independently for types <code>SELF</code>
+and <code>PARENT</code>. Industries have random bits. However, they can only
+be rerandomised by their tiles.<p>
 
 <p><code>&lt;independent&gt;: &lt;other_random&gt;;</code> makes sure that this
 random_switch block and <code>&lt;other_random&gt;</code> use different
