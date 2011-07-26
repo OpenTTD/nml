@@ -1,5 +1,5 @@
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, switch_range, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites, override
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites, override
 from nml.actions import action2, action2random, actionD, real_sprite
 import ply.yacc as yacc
 
@@ -377,10 +377,10 @@ class NMLParser(object):
                          | switch_ranges expression RANGE expression COLON switch_value
                          | switch_ranges expression RANGE expression UNIT COLON switch_value'''
         if len(t) == 1: t[0] = []
-        elif len(t) == 5: t[0] = t[1] + [switch_range.SwitchRange(t[2], t[2], t[4])]
-        elif len(t) == 6: t[0] = t[1] + [switch_range.SwitchRange(t[2], t[2], t[5], t[3])]
-        elif len(t) == 7: t[0] = t[1] + [switch_range.SwitchRange(t[2], t[4], t[6])]
-        else: t[0] = t[1] + [switch_range.SwitchRange(t[2], t[4], t[7], t[5])]
+        elif len(t) == 5: t[0] = t[1] + [switch.SwitchRange(t[2], t[2], t[4])]
+        elif len(t) == 6: t[0] = t[1] + [switch.SwitchRange(t[2], t[2], t[5], t[3])]
+        elif len(t) == 7: t[0] = t[1] + [switch.SwitchRange(t[2], t[4], t[6])]
+        else: t[0] = t[1] + [switch.SwitchRange(t[2], t[4], t[7], t[5])]
 
     def p_switch_value(self, t):
         '''switch_value : RETURN expression SEMICOLON

@@ -1,6 +1,5 @@
 from nml import generic, expression, global_constants
 from nml.actions import base_action, action0, action2, action2var, action3_callbacks, action6, actionD
-from nml.ast import switch_range
 
 class Action3(base_action.BaseAction):
     """

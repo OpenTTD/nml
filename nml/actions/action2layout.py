@@ -1,6 +1,5 @@
 from nml import generic, global_constants, expression, nmlop
 from nml.actions import action2, action6, actionD, action1, action2var, real_sprite
-from nml.ast import switch_range
 
 class Action2Layout(action2.Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list):
