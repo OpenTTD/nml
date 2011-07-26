@@ -14,7 +14,7 @@ general_vehicle_cbs = {
     'purchase' : {'type': 'cargo', 'num': 0xFF},
     'random_trigger' : {'type': 'cb', 'num': 0x01}, # Almost undocumented, but really neccesary!
     'loading_speed' : {'type': 'cb', 'num': 0x12, 'flag_bit': 2},
-    'cargo_subtype' : {'type': 'cb', 'num': 0x19, 'flag_bit': 5},
+    'cargo_subtype_text' : {'type': 'cb', 'num': 0x19, 'flag_bit': 5},
     'additional_text' : {'type': 'cb', 'num': 0x23, 'purchase': 2},
     'colour_mapping' : {'type': 'cb', 'num': 0x2D, 'flag_bit':6, 'purchase': 'purchase_colour_mapping'},
     'purchase_colour_mapping' : {'type': 'cb', 'num': 0x2D, 'flag_bit':6, 'purchase': 2},

@@ -96,7 +96,7 @@ varact2vars_vehicles = {
     'cargo_capacity' : {'var': 0xBA, 'start': 0, 'size': 16},
     'cargo_count' : {'var': 0xBC, 'start': 0, 'size': 16},
     'vehicle_type_id' : {'var': 0xC6, 'start': 0, 'size': 16},
-    'refit_cycle' : {'var': 0xF2, 'start': 0, 'size': 8},
+    'cargo_subtype' : {'var': 0xF2, 'start': 0, 'size': 8},
     'vehicle_is_powered' : {'var': 0xFE, 'start': 5, 'size': 1},
     'vehicle_is_not_powered' : {'var': 0xFE, 'start': 6, 'size': 1},
     'vehicle_is_potentially_powered': {'var': 0x4A, 'start': 8, 'size': 1},

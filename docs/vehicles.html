@@ -196,7 +196,7 @@ PLAYERTYPE_HUMAN for the now uncontrolled company.
 <tr><td>cargo_capacity <td>0 ... 65535 <td>Cargo capacity (number of units) of the vehicle
 <tr><td>cargo_count <td>0 ... 65535 <td>Number of cargo units of cargo in the vehicle
 <tr><td>vehicle_type_id <td> <td>ID of the vehicle
-<tr><td>refit_cycle <td>0 ... 255 <td>How many times the vehicle has been refitted to the same cargo type
+<tr><td>cargo_subtype <td>0 ... 255 <td>Cargo subtype, used to provide more than one refit option for the same cargo type. See also the <code>cargo_subtype_text</code> callback.
 <tr><td>vehicle_is_powered <td> [0 | 1]<td> vehicle provides power and is on the correct track type
 <tr><td>vehicle_is_not_powered <td> [0 | 1]<td> vehicle is either on a wrong track type or it doesn't provide power at all
 <tr><td>vehicle_is_potentially_powered <td> [0 | 1]<td> vehicle provides power, if it is on a suitable track type
@@ -238,11 +238,14 @@ the given ID.</td></tr>
 <tr><td>purchase<td>All<td>Yes, only<td>Sprite group<td>Graphics to show in the buy menu (only the horizontal view is needed)
 <tr><td>rotor<td>Aircraft (helicopters)<td>No<td>Sprite group<td>Graphics for the helicopter rotor (4 sprites; 1 stopped and 3 moving)
 <tr><td>random_trigger<td>All<td>No<td>N/A<td>See <a href="nml-language.html#block-randomswitch">random switch</a> for more information.
-<tr><td>cargo_subtype<td>All<td>No<td>String, or 0xFF<td>
+<tr><td>cargo_subtype_text<td>All<td>No<td>String, or 0xFF<td>
 With this callback, you can display extra text after the cargo in the vehicle
-information window. This callback is called with succesively increased values
-of the <code>refit_cycle</code> variable, until the callback returns 0xFF.
-All returned strings are then displayed as refit options.
+information window. This callback is called during refitting, with succesively
+increased values of the <code>cargo_subtype</code> variable, until the callback
+returns 0xFF. All returned strings are then displayed as refit options. The
+chosen refit option is saved in the <code>cargo_subtype</code> variable, so
+it can be used later for other things. In HEQS for example, this mechanism is
+used to let the user choose between different capacities of the same vehicle.
 <tr><td>additional_text<td>All<td>Yes, only<td>String<td>Additional text to show in the purchase list.
 <tr><td>colour_mapping<td>All<td>Yes, unless <code>purchase_colour_mapping</code> is set separately<td>Recolour sprite number<td>
 With this callback, you can use a different recolour sprite instead of the
