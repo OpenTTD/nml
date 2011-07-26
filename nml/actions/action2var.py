@@ -592,7 +592,7 @@ def parse_minmax(value, unit_str, action_list, act6, offset):
 
 return_action_id = 0
 
-def create_return_action(expr, feature, name):
+def create_return_action(expr, feature, name, var_range):
     """
     Create a varaction2 to return the computed value
 
@@ -619,7 +619,7 @@ def create_return_action(expr, feature, name):
         extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
     if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
 
-    varaction2 = Action2Var(feature, name, 0x89)
+    varaction2 = Action2Var(feature, name, var_range)
     varaction2.var_list = varact2parser.var_list
     varaction2.default_result = expression.ConstantNumeric(0) # Bogus result, it's the nvar == 0 that matters
     varaction2.default_comment = 'Return computed value'
@@ -628,7 +628,7 @@ def create_return_action(expr, feature, name):
     action_list.append(varaction2)
     return (action_list, ref)
 
-def parse_result(value, action_list, act6, offset, varaction2, none_result, repeat_result = 1):
+def parse_result(value, action_list, act6, offset, varaction2, none_result, var_range, repeat_result = 1):
     """
     Parse a result (another switch or CB result) in a switch block.
 
@@ -690,7 +690,7 @@ def parse_result(value, action_list, act6, offset, varaction2, none_result, repe
         result = expression.ConstantNumeric(0)
     else:
         global return_action_id
-        extra_actions, result = create_return_action(value, varaction2.feature, varaction2.name + "@return%d" % return_action_id)
+        extra_actions, result = create_return_action(value, varaction2.feature, varaction2.name + "@return%d" % return_action_id, var_range)
         return_action_id += 1
         action2.add_ref(result, varaction2)
         action_list.extend(extra_actions)
@@ -748,14 +748,14 @@ def parse_varaction2(switch_block):
             none_result = expression.ConstantNumeric(0)
         else:
             extra_actions, none_result = create_return_action(expression.Variable(expression.ConstantNumeric(0x1C)),
-                    switch_block.feature.value, switch_block.name.value + "@return")
+                    switch_block.feature.value, switch_block.name.value + "@return", 0x89)
             action_list.extend(extra_actions)
 
     used_ranges = []
     for r in switch_block.body.ranges:
         comment = str(r.min) + " .. " + str(r.max) + ": "
 
-        range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2, none_result)
+        range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
         comment += range_comment
         offset += 2 # size of result
 
@@ -785,7 +785,7 @@ def parse_varaction2(switch_block):
         if not range_overlap:
             varaction2.ranges.append(Varaction2Range(range_min, range_max, range_result, comment))
 
-    default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, none_result)
+    default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
     varaction2.default_result = default
     varaction2.default_comment = 'Return computed value' if switch_block.body.default is None else 'default: ' + default_comment
 

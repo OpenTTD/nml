@@ -747,8 +747,9 @@ the expression being tested the first applicable result will be returned.</p>
 <ul>
 <li><code>&lt;ID&gt;;</code> chains to the (random-)switch or spritegroup with the given ID.</li>
 <li><code>return (&lt;expression&gt;|&lt;string&gt;);</code> returns the given expression or
-string as a result of the callback. A returned expression may contain variables, parameter
-accesses and everything else that a normal switch-expression may contain.</li>
+string as a result of the callback. A returned expression may contain variables (with the
+same scope as the switch block itself), parameter accesses and everything else that a
+normal switch-expression may contain.</li>
 <li><code>return;</code> returns the computed value directly as a callback result. Note that
 the maximum value for callback results is 32511 (0x7EFF).</li>
 <li><code>CB_FAILED;</code> stops processing and returns an explicit failure code.</li>
@@ -793,7 +794,7 @@ produced (outgoing) cargos in the produce block.
 <li><code>run_again</code> is a boolean expression which evaluates to either 0 or 1. It indicates
 whether the produce block shall be called again. This is optional, with a default value of 0.
 </ul>
-<p> Note that variables can be used in the
+<p> Note that industry variables can be used in the
 produce-block, so you can for example query the amount of waiting cargo directly and use that
 in your expression.</p>
 <p>The produce block should be the result of the production callback of an industry. An example on how
@@ -943,7 +944,9 @@ The relative probability that this option will be chosen is given by
 by the sum of all probabilities. If this sum is not equal to a power of two (2,
 4, 8, 16, ...), then rounding is done and the probabilities may be inexact. For
 information about <code>&lt;return_value&gt;</code>, see the
-<a href="#block-switch">switch-block</a>.</p>
+<a href="#block-switch">switch-block</a>. Note that accessed variables
+in the return value are always in the scope of the item itself (i.e.
+<code>SELF</code>)</p>
 <p>Note that re-randomizing is done only during a special callback, <code>random_trigger</code>.
 This callback is called whenever a trigger event occurs. As a consequence, it's
 <em>absolutely necessary</em> for the random_switch block to be in executed during
