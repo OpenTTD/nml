@@ -139,10 +139,6 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
         cargo_id = graphics.cargo_id
         if isinstance(cargo_id, expression.Identifier):
             cb_name = cargo_id.value
-            # Temporary for backwads compatibility
-            if cb_name in cargo_conversion_table:
-                generic.print_warning("Pseudo-cargo type '%s' is deprecated, please use '%s' instead." % (cb_name, cargo_conversion_table[cb_name]), cargo_id.pos)
-                cb_name = cargo_conversion_table[cb_name]
             cb_table = action3_callbacks.callbacks[feature]
             if cb_name in cb_table:
                 if cb_name in seen_callbacks:
@@ -286,19 +282,4 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
     action6.free_parameters.restore()
 
     return prepend_action_list + action_list
-
-# Temporary conversion table
-cargo_conversion_table = {
-    'GUI'             : 'gui',
-    'TRACKOVERLAY'    : 'track_overlay',
-    'UNDERLAY'        : 'underlay',
-    'TUNNELS'         : 'tunnels',
-    'CATENARY_WIRE'   : 'caternary_wire',
-    'CATENARY_PYLONS' : 'caternary_pylons',
-    'BRIDGE_SURFACES' : 'bridge_surfaces',
-    'LEVEL_CROSSINGS' : 'level_crossings',
-    'DEPOTS'          : 'depots',
-    'FENCES'          : 'fences',
-    'PURCHASE_LIST'   : 'purchase'
-}
 
