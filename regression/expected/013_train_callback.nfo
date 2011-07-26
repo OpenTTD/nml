@@ -128,7 +128,7 @@
 46 * 23 02 00 FD 89 
 1A 00 \dx00000000 
 \b1 
-\wx801E \dx00000000 \dx00000000 	// 0 .. 0: return 30;
+\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid the special nvar == 0 case
 \wx801E // default: return 30;
 
 // Name: bulk_wagon_cb_weight_switch
@@ -145,7 +145,7 @@
 48 * 23 02 00 FA 89 
 1A 00 \dx00000000 
 \b1 
-\wx8019 \dx00000000 \dx00000000 	// 0 .. 0: return 25;
+\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid the special nvar == 0 case
 \wx8019 // default: return 25;
 
 49 * 72 00 00 \b26 01 FF \wx0074 

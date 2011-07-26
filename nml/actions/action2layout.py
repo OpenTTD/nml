@@ -427,10 +427,12 @@ def get_layout_action2s(spritegroup):
         varaction2 = action2var.Action2Var(feature, '%s@registers' % spritegroup.name.value, 0x89)
         varaction2.var_list = varact2parser.var_list
         ref = expression.SpriteGroupRef(spritegroup.name, [], None, layout_action)
-        varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, comment=''))
+        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
         varaction2.default_result = ref
         varaction2.default_comment = ''
 
+        # Add two references (default + range)
+        action2.add_ref(ref, varaction2)
         action2.add_ref(ref, varaction2)
         spritegroup.set_action2(varaction2)
         actions.append(varaction2)

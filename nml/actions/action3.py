@@ -94,7 +94,7 @@ def create_intermediate_varaction2(feature, var_num, and_mask, mapping, default)
     varaction2 = action2var.Action2Var(feature, name.value, 0x89)
     varaction2.var_list = varact2parser.var_list
     for value in sorted(mapping):
-        varaction2.ranges.append(switch_range.SwitchRange(expression.ConstantNumeric(value), expression.ConstantNumeric(value), mapping[value], comment=mapping[value].name.value))
+        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(value), expression.ConstantNumeric(value), mapping[value], mapping[value].name.value))
         action2.add_ref(mapping[value], varaction2)
     varaction2.default_result = default
     action2.add_ref(default, varaction2)
