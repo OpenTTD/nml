@@ -141,29 +141,20 @@ features_sprite_layout = [0x04, 0x07, 0x09, 0x0F, 0x11]
 # All features that need sprite sets
 features_sprite_set = features_sprite_group + features_sprite_layout
 
-class SpriteGroupRefType:
-    """
-    'Enum'-class that stores the various types of references that are possible
-    """
-    NONE = 0 # No possible references
-    SPRITESET = 1 # References to sprite sets
-    SPRITEGROUP = 2 # References to sprite groups
-    ALL = 3 # References to both sprite sets and groups
-
-def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by_type, cls_has_explicit_feature, cls_allow_parameters = False, cls_is_relocatable = False):
+def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referenced, cls_has_explicit_feature, cls_allow_parameters = False, cls_is_relocatable = False):
     """
     Metaclass factory which makes base classes for all nodes 'Action 2 graph'
     This graph is made up of all blocks that are eventually compiled to Action2,
     which use the same name space.
 
-    @param cls_own_type: Type of instances of this class
-    @type cls_own_type: C{int} (values from L{SpriteGroupRefType})
+    @param cls_is_spriteset: Whether this class represents a spriteset
+    @type cls_is_spriteset: C{bool}
 
-    @param cls_referring_to_type: Types of items that instances of this class may refer to
-    @type cls_referring_to_type: C{int} (values from L{SpriteGroupRefType})
+    @param cls_uses_spriteset: True if this classes uses (refers to) spriteset, False if it uses sprite groups (or nothing)
+    @type cls_uses_spriteset: C{bool}
 
-    @param cls_referred_by_type: Types of items that may refer to an instance of this class
-    @type cls_referred_by_type: C{int} (values from L{SpriteGroupRefType})
+    @param cls_is_referenced: True iff this node can be referenced by other nodes
+    @type cls_is_referenced: C{bool}
 
     @param cls_has_explicit_feature: Whether the feature of an instance is explicitly set,
                                     or derived from nodes that link to it.
@@ -180,8 +171,9 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
     @return: The constructed class
     @rtype: C{type}
     """
+
     #without either references or an explicit feature, we have nothing to base our feature on
-    assert cls_referred_by_type != SpriteGroupRefType.NONE or cls_has_explicit_feature
+    assert cls_is_referenced or cls_has_explicit_feature
 
     class ASTSpriteGroup(base_statement.BaseStatement):
         """
@@ -228,16 +220,16 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             Calling it later (during pre-processing) is also possible, as long as it's called
             before any other actions are done.
 
-            @param name: Name of this node, as set by the user
-                            Should be be set (not None) iff cls_referred_by_type != SpriteGroupRefType.NONE
-            @type name: L{Identifier}
+            @param name: Name of this node, as set by the user (if applicable)
+                            Should be be set (not None) iff cls_is_referenced is True
+            @type name: L{Identifier} or C{None} if N/A
 
             @param feature: Feature of this node, if set by the user.
                                 Should be set (not None) iff cls_has_explicit_feature is True
-            @type feature: L{ConstantNumeric}
+            @type feature: L{ConstantNumeric} or C{None}
             """
             assert not (self._has_explicit_feature() and feature is None)
-            assert self._referred_by_type() == SpriteGroupRefType.NONE or name is not None
+            assert not (cls_is_referenced and name is None)
             self._referencing_nodes = set()
             self._referenced_nodes = set()
             self._prepared = False
@@ -246,7 +238,7 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             self.name = name
 
         def register_names(self):
-            if cls_is_relocatable and self._referred_by_type() != SpriteGroupRefType.NONE:
+            if cls_is_relocatable and cls_is_referenced:
                 register_spritegroup(self)
 
         def pre_process(self):
@@ -254,11 +246,10 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             Pre-process this node.
             During this stage, the reference graph is built.
             """
-            if self._referring_to_type() != SpriteGroupRefType.NONE:
-                refs = self.collect_references()
-                for ref in refs:
-                    self._add_reference(ref)
-            if not cls_is_relocatable and self._referred_by_type() != SpriteGroupRefType.NONE:
+            refs = self.collect_references()
+            for ref in refs:
+                self._add_reference(ref)
+            if (not cls_is_relocatable) and cls_is_referenced:
                 register_spritegroup(self)
 
         def prepare_output(self):
@@ -269,7 +260,7 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             @return: True iff parsing of this node is needed
             @rtype: C{bool}
             """
-            if self._referred_by_type() == SpriteGroupRefType.NONE: return True
+            if not cls_is_referenced: return True
             if not self._prepared:
                 self._prepared = True
                 # copy, since we're going to modify
@@ -333,7 +324,6 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             @return: A collection containing all links to other nodes.
             @rtype: C{iterable} of L{SpriteGroupRef}
             """
-            assert self._referring_to_type() != SpriteGroupRefType.NONE
             raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass %r' % type(self))
 
         def set_action2(self, action2):
@@ -343,7 +333,7 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             @param action2: Action2 to set
             @type action2: L{Action2}
             """
-            assert self._own_type() == SpriteGroupRefType.SPRITEGROUP
+            assert not self._is_spriteset()
             assert self._action2 is None
             self._action2 = action2
 
@@ -354,7 +344,7 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             @return: Action2 to get
             @rtype: L{Action2}
             """
-            assert self._own_type() == SpriteGroupRefType.SPRITEGROUP
+            assert not self._is_spriteset()
             assert self._action2 is not None
             return self._action2
 
@@ -367,9 +357,10 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             """
 
             target = resolve_spritegroup(target_ref.name)
-            if (target._own_type() & self._referring_to_type() == 0) or \
-                    (self._own_type() & target._referred_by_type() == 0):
-                raise generic.ScriptError("Encountered an incorrect type of reference: '%s'" % target_ref.name.value, target_ref.pos)
+            if target._is_spriteset() and not cls_uses_spriteset:
+                raise generic.ScriptError("Unexpected spriteset reference encountered: '%s'" % target_ref.name.value, target_ref.pos)
+            if cls_uses_spriteset and not target._is_spriteset():
+                raise generic.ScriptError("Expected a spriteset reference encountered: '%s'" % target_ref.name.value, target_ref.pos)
             if len(target_ref.param_list) != 0 and not target._allow_parameters():
                 raise generic.ScriptError("Passing parameters to '%s' is not possible." % target_ref.name.value, target_ref.pos)
             self._referenced_nodes.add(target)
@@ -387,15 +378,9 @@ def make_sprite_group_class(cls_own_type, cls_referring_to_type, cls_referred_by
             self._referenced_nodes.remove(target)
             target._referencing_nodes.remove(self)
 
-        #Make metaclass arguments available
-        def _own_type(self):
-            return cls_own_type
-
-        def _referring_to_type(self):
-            return cls_referring_to_type
-
-        def _referred_by_type(self):
-            return cls_referred_by_type
+        #Make metaclass arguments available outside of the class
+        def _is_spriteset(self):
+            return cls_is_spriteset
 
         def _has_explicit_feature(self):
             return cls_has_explicit_feature

@@ -2,7 +2,7 @@ from nml import expression, generic, global_constants, nmlop
 from nml.actions import action2, action2var, action2production
 from nml.ast import base_statement
 
-produce_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, True)
+produce_base_class = action2.make_sprite_group_class(False, False, True, True)
 
 class Produce(produce_base_class):
     """

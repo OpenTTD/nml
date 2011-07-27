@@ -55,7 +55,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
         ret += "}\n"
         return ret
 
-spriteset_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.NONE, action2.SpriteGroupRefType.SPRITEGROUP, False, True, cls_is_relocatable = True)
+spriteset_base_class = action2.make_sprite_group_class(True, False, True, False, True, cls_is_relocatable = True)
 
 class SpriteSet(spriteset_base_class):
     def __init__(self, param_list, sprite_list, pos):
@@ -108,7 +108,7 @@ class SpriteSet(spriteset_base_class):
         ret += "}\n"
         return ret
 
-spritegroup_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False)
+spritegroup_base_class = action2.make_sprite_group_class(False, True, True, False)
 
 class SpriteGroup(spritegroup_base_class):
     def __init__(self, name, spriteview_list, pos = None):
@@ -169,7 +169,7 @@ class SpriteView(object):
     def __str__(self):
         return "%s: [%s];" % (str(self.name), ", ".join([str(spriteset) for spriteset in self.spriteset_list]))
 
-spritelayout_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITESET, action2.SpriteGroupRefType.SPRITEGROUP, False, True)
+spritelayout_base_class = action2.make_sprite_group_class(False, True, True, False, True)
 
 class SpriteLayout(spritelayout_base_class):
     def __init__(self, name, param_list, layout_sprite_list, pos = None):
