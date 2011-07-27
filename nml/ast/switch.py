@@ -11,14 +11,20 @@ var_ranges = {
 switch_base_class = action2.make_sprite_group_class(action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, action2.SpriteGroupRefType.SPRITEGROUP, True)
 
 class Switch(switch_base_class):
-    def __init__(self, feature, var_range, name, expr, body, pos):
+    def __init__(self, param_list, body, pos):
         base_statement.BaseStatement.__init__(self, "switch-block", pos, False, False)
-        self.initialize(name, general.parse_feature(feature))
-        if var_range.value in var_ranges:
-            self.var_range = var_ranges[var_range.value]
+        if len(param_list) != 4:
+            raise generic.ScriptError("Switch-block requires 4 parameters, encountered " + str(len(param_list)), pos)
+        if not isinstance(param_list[1], expression.Identifier):
+            raise generic.ScriptError("Switch-block parameter 2 'variable range' must be an identifier.", param_list[1].pos)
+        if param_list[1].value in var_ranges:
+            self.var_range = var_ranges[param_list[1].value]
         else:
-            raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % var_range.value, var_range.pos)
-        self.expr = expr
+            raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % param_list[1].value, param_list[1].pos)
+        if not isinstance(param_list[2], expression.Identifier):
+            raise generic.ScriptError("Switch-block parameter 3 'name' must be an identifier.", param_list[2].pos)
+        self.initialize(param_list[2], general.parse_feature(param_list[0]))
+        self.expr = param_list[3]
         self.body = body
 
     def pre_process(self):

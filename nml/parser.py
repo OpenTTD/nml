@@ -363,8 +363,8 @@ class NMLParser(object):
     # (Random) Switch block
     #
     def p_switch(self, t):
-        'switch : SWITCH LPAREN expression COMMA ID COMMA ID COMMA expression RPAREN LBRACE switch_body RBRACE'
-        t[0] = switch.Switch(t[3], t[5], t[7], t[9], t[12], t.lineno(1))
+        'switch : SWITCH LPAREN expression_list RPAREN LBRACE switch_body RBRACE'
+        t[0] = switch.Switch(t[3], t[6], t.lineno(1))
 
     def p_switch_body(self, t):
         'switch_body : switch_ranges switch_value'
