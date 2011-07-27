@@ -39,10 +39,7 @@ def get_real_action2s(spritegroup, feature):
         raise generic.ScriptError("Sprite groups require at least one sprite set.", spritegroup.pos)
 
     # First make sure that all referenced real sprites are put in a single action1
-    all_spritesets = []
-    for view in spritegroup.spriteview_list:
-        all_spritesets.extend(action2.resolve_spritegroup(set_ref.name) for set_ref in view.spriteset_list)
-    actions.extend(action1.add_to_action1(all_spritesets, feature, spritegroup.pos))
+    actions.extend(action1.add_to_action1(spritegroup.used_sprite_sets, feature, spritegroup.pos))
 
     for view in spritegroup.spriteview_list:
         if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value, view.pos)

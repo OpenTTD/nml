@@ -199,11 +199,14 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
         @ivar _action2: Mapping of features to action2s
         @type _action2: C{dict} that maps C{int} to L{Action2}
 
-        @ivar feature_set: Set of features that use this noe
+        @ivar feature_set: Set of features that use this node
         @type feature_set: C{set} of C{int}
 
         @ivar name: Name of this node, as declared by the user
         @type name: L{Identifier}
+
+        @ivar used_sprite_sets: List of sprite sets used by this node
+        @type used_sprite_sets: C{list} of L{SpriteSet}
         """
         def __init__(self):
             """
@@ -236,6 +239,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             self._action2 = {}
             self.feature_set = set([feature]) if feature is not None else set()
             self.name = name
+            self.used_sprite_sets = []
 
         def register_names(self):
             if cls_is_relocatable and cls_is_referenced:
@@ -361,10 +365,12 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             if target._is_spriteset() and not cls_uses_spriteset:
                 raise generic.ScriptError("Unexpected spriteset reference encountered: '%s'" % target_ref.name.value, target_ref.pos)
             if cls_uses_spriteset and not target._is_spriteset():
-                raise generic.ScriptError("Expected a spriteset reference encountered: '%s'" % target_ref.name.value, target_ref.pos)
+                raise generic.ScriptError("Expected a spriteset reference: '%s'" % target_ref.name.value, target_ref.pos)
             if len(target_ref.param_list) != 0 and not target._allow_parameters():
                 raise generic.ScriptError("Passing parameters to '%s' is not possible." % target_ref.name.value, target_ref.pos)
             self._referenced_nodes.add(target)
+            if target._is_spriteset():
+                self.used_sprite_sets.append(target)
             target._referencing_nodes.add(self)
 
         def _remove_reference(self, target):
