@@ -15,7 +15,7 @@ class Action2Random(action2.Action2):
         action2.Action2.prepare_output(self)
         for choice in self.choices:
             if isinstance(choice.result, expression.SpriteGroupRef):
-                choice.result = choice.result.get_action2_id()
+                choice.result = choice.result.get_action2_id(self.feature)
             else:
                 choice.result = choice.result.value | 0x8000
 
@@ -91,7 +91,7 @@ def parse_randomswitch_type(random_switch):
     # Extract some stuff we'll often need
     type_str = random_switch.type.value
     type_pos = random_switch.type.pos
-    feature_val = random_switch.feature.value
+    feature_val = random_switch.feature_set.copy().pop()
 
     # Validate type name / param combination
     if type_str not in random_types[feature_val]:
@@ -218,6 +218,7 @@ def parse_randomswitch(random_switch):
     @return: List of actions
     @rtype: C{list} of L{BaseAction}
     """
+    feature = random_switch.feature_set.copy().pop()
     type_byte, count, count_expr, start_bit, bits_available = parse_randomswitch_type(random_switch)
 
     total_prob = sum([choice.probability.value for choice in random_switch.choices])
@@ -231,7 +232,7 @@ def parse_randomswitch(random_switch):
 
     randbit, nrand = parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nrand)
 
-    random_action2 = Action2Random(random_switch.feature.value, random_switch.name.value, type_byte, count, random_switch.triggers.value, randbit, nrand)
+    random_action2 = Action2Random(feature, random_switch.name.value, type_byte, count, random_switch.triggers.value, randbit, nrand)
     random_switch.random_act2 = random_action2
 
     action6.free_parameters.save()
@@ -266,11 +267,11 @@ def parse_randomswitch(random_switch):
 
     action_list.append(random_action2)
     if count_expr is None:
-        random_switch.set_action2(random_action2)
+        random_switch.set_action2(random_action2, feature)
     else:
         # Create intermediate varaction2
-        varaction2 = action2var.Action2Var(random_switch.feature.value, '%s@registers' % random_switch.name.value, 0x89)
-        varact2parser = action2var.Varaction2Parser(random_switch.feature.value)
+        varaction2 = action2var.Action2Var(feature, '%s@registers' % random_switch.name.value, 0x89)
+        varact2parser = action2var.Varaction2Parser(feature)
         varact2parser.parse_expr(count_expr)
         varaction2.var_list = varact2parser.var_list
         action_list.extend(varact2parser.extra_actions)
@@ -286,7 +287,7 @@ def parse_randomswitch(random_switch):
         # Add two references (default + range)
         action2.add_ref(ref, varaction2)
         action2.add_ref(ref, varaction2)
-        random_switch.set_action2(varaction2)
+        random_switch.set_action2(varaction2, feature)
         action_list.append(varaction2)
 
     action6.free_parameters.restore()

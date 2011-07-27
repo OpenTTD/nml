@@ -88,7 +88,7 @@ def get_production_actions(produce):
     action_list.append(prod_action)
 
     if len(varact2parser.var_list) == 0:
-        produce.set_action2(prod_action)
+        produce.set_action2(prod_action, 0x0A)
     else:
         # Create intermediate varaction2
         varaction2 = action2var.Action2Var(0x0A, '%s@registers' % produce.name.value, 0x89)
@@ -106,7 +106,7 @@ def get_production_actions(produce):
         # Add two references (default + range)
         action2.add_ref(ref, varaction2)
         action2.add_ref(ref, varaction2)
-        produce.set_action2(varaction2)
+        produce.set_action2(varaction2, 0x0A)
         action_list.append(varaction2)
 
     action6.free_parameters.restore()

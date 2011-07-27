@@ -22,7 +22,7 @@ class Produce(produce_base_class):
         name = param_list[0]
         if not isinstance(name, expression.Identifier):
             raise generic.ScriptError("produce parameter 1 'name' should be an identifier.", name.pos)
-        self.initialize(name, expression.ConstantNumeric(0x0A))
+        self.initialize(name, 0x0A)
         self.param_list = param_list[1:]
         if len(self.param_list) < 6:
             self.param_list.append(expression.ConstantNumeric(0))

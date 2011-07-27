@@ -31,3 +31,10 @@ item(FEAT_AIRPORTTILES, tile2) {
         layout2;
     }
 }
+
+item(FEAT_OBJECTS, tile2) {
+    graphics {
+        layout2;
+    }
+}
+

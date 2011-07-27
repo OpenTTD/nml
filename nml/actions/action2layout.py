@@ -334,12 +334,11 @@ class Action2LayoutSprite(object):
         self.create_register(name, expression.Not(value))
         return None
 
-def get_layout_action2s(spritegroup):
+def get_layout_action2s(spritegroup, feature):
     ground_sprite = None
     building_sprites = []
     actions = []
 
-    feature = spritegroup.feature.value
     if feature not in action2.features_sprite_layout:
         raise generic.ScriptError("Sprite layouts are not supported for feature '%02X'." % feature)
 
@@ -397,7 +396,7 @@ def get_layout_action2s(spritegroup):
     if len(act6.modifications) > 0:
         actions.append(act6)
 
-    layout_action = Action2Layout(feature, spritegroup.name.value, ground_sprite, building_sprites)
+    layout_action = Action2Layout(feature, spritegroup.name.value + (" - feature %02X" % feature), ground_sprite, building_sprites)
     actions.append(layout_action)
 
     if temp_registers:
@@ -423,7 +422,7 @@ def get_layout_action2s(spritegroup):
             extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
         if len(extra_act6.modifications) > 0: actions.append(extra_act6)
 
-        varaction2 = action2var.Action2Var(feature, '%s@registers' % spritegroup.name.value, 0x89)
+        varaction2 = action2var.Action2Var(feature, "%s@registers - feature %02X" % (spritegroup.name.value, feature), 0x89)
         varaction2.var_list = varact2parser.var_list
         ref = expression.SpriteGroupRef(spritegroup.name, [], None, layout_action)
         varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
@@ -433,10 +432,10 @@ def get_layout_action2s(spritegroup):
         # Add two references (default + range)
         action2.add_ref(ref, varaction2)
         action2.add_ref(ref, varaction2)
-        spritegroup.set_action2(varaction2)
+        spritegroup.set_action2(varaction2, feature)
         actions.append(varaction2)
     else:
-        spritegroup.set_action2(layout_action)
+        spritegroup.set_action2(layout_action, feature)
 
     action6.free_parameters.restore()
     return actions

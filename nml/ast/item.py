@@ -197,7 +197,7 @@ class GraphicsBlock(graphics_base_class):
             self.default_graphics = action2var.reduce_varaction2_expr(self.default_graphics, item_feature)
 
         # initialize base class and pre_process it as well (in that order)
-        self.initialize(None, expression.ConstantNumeric(item_feature))
+        self.initialize(None, item_feature)
         graphics_base_class.pre_process(self)
 
     def collect_references(self):

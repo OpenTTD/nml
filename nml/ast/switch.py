@@ -23,7 +23,7 @@ class Switch(switch_base_class):
             raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % param_list[1].value, param_list[1].pos)
         if not isinstance(param_list[2], expression.Identifier):
             raise generic.ScriptError("Switch-block parameter 3 'name' must be an identifier.", param_list[2].pos)
-        self.initialize(param_list[2], general.parse_feature(param_list[0]))
+        self.initialize(param_list[2], general.parse_feature(param_list[0]).value)
         self.expr = param_list[3]
         self.body = body
 
@@ -41,7 +41,7 @@ class Switch(switch_base_class):
         return all_refs
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Switch, Feature = %d, name = %s', (self.feature.value, self.name.value)
+        print indentation*' ' + 'Switch, Feature = %d, name = %s', (self.feature_set.copy().pop(), self.name.value)
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
@@ -54,7 +54,7 @@ class Switch(switch_base_class):
 
     def __str__(self):
         var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
-        return 'switch(%s, %s, %s, %s) {\n%s}\n' % (str(self.feature), var_range, str(self.name), str(self.expr), str(self.body))
+        return 'switch(%s, %s, %s, %s) {\n%s}\n' % (str(self.feature_set.copy().pop()), var_range, str(self.name), str(self.expr), str(self.body))
 
 
 class SwitchBody(object):
@@ -141,7 +141,7 @@ class RandomSwitch(switch_base_class):
         if not (3 <= len(param_list) <= 4):
             raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
         #feature
-        feature = general.parse_feature(param_list[0])
+        feature = general.parse_feature(param_list[0]).value
 
         #type
         self.type = param_list[1]
@@ -152,7 +152,7 @@ class RandomSwitch(switch_base_class):
             if len(self.type.params) == 0:
                 self.type_count = None
             elif len(self.type.params) == 1:
-                self.type_count = action2var.reduce_varaction2_expr(self.type.params[0], self.feature.value)
+                self.type_count = action2var.reduce_varaction2_expr(self.type.params[0], feature)
             else:
                 raise generic.ScriptError("Value for random_switch parameter 2 'type' can have only one parameter.", self.type.pos)
             self.type = self.type.name
@@ -188,7 +188,7 @@ class RandomSwitch(switch_base_class):
 
     def pre_process(self):
         for choice in self.choices:
-            choice.reduce_expressions(self.feature.value)
+            choice.reduce_expressions(self.feature_set.copy().pop())
 
         for dep_list in (self.dependent, self.independent):
             for i, dep in enumerate(dep_list[:]):
@@ -216,7 +216,7 @@ class RandomSwitch(switch_base_class):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Random'
-        print (2+indentation)*' ' + 'Feature:', self.feature.value
+        print (2+indentation)*' ' + 'Feature:', self.feature_set.copy().pop()
         print (2+indentation)*' ' + 'Type:'
         self.type.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Name:', self.name.value
@@ -238,7 +238,7 @@ class RandomSwitch(switch_base_class):
         return []
 
     def __str__(self):
-        ret = 'random_switch(%s, %s, %s, %s) {\n' % (str(self.feature), str(self.type), str(self.name), str(self.triggers))
+        ret = 'random_switch(%s, %s, %s, %s) {\n' % (str(self.feature_set.copy().pop()), str(self.type), str(self.name), str(self.triggers))
         for dep in self.dependent:
             ret += 'dependent: %s;\n' % str(dep)
         for indep in self.independent:

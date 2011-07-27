@@ -5,11 +5,11 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-// Name: layout1
+// Name: layout1 - feature 11
 0 * 23 02 11 FE \b65 \dx00000000 \wx0000 
 \dx00000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
 
-// Name: layout1@registers
+// Name: layout1@registers - feature 11
 1 * 38 02 11 FE 89 
 44 60 \dx000000FF \dx00000A68 \dx00000001 
 \2sto 1A 00 \dx00000086 
@@ -20,19 +20,43 @@
 2 * 7 03 11 01 00 \b0 
 \wx00FE 	// layout1;
 
-3 * 6 01 11 \b1 FF \wx0003 
+3 * 6 01 0F \b1 FF \wx0003 
 
 4 * 1 00 
 5 * 1 00 
 6 * 1 00 
 
-// Name: layout2
-7 * 37 02 11 FE \b66 \dx00000000 \wx0000 
+// Name: layout2 - feature 0F
+7 * 37 02 0F FE \b66 \dx00000000 \wx0000 
 \dx80000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
 \dx80000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b16 88 87 
 
-// Name: layout2@registers
-8 * 66 02 11 FE 89 
+// Name: layout2@registers - feature 0F
+8 * 66 02 0F FE 89 
+43 20 \dx000000FF 
+\2sto 1A 20 \dx00000086 
+\2r 1A 20 \dx00000001 
+\2sto 1A 20 \dx00000087 
+\2r 62 00 29 \dx00000001 
+\2^ 1A 20 \dx00000001 
+\2sto 1A 00 \dx00000088 
+\b1 
+\wx00FE \dx00000000 \dx00000000 
+\wx00FE // 
+
+9 * 6 01 11 \b1 FF \wx0003 
+
+10 * 1 00 
+11 * 1 00 
+12 * 1 00 
+
+// Name: layout2 - feature 11
+13 * 37 02 11 FD \b66 \dx00000000 \wx0000 
+\dx80000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
+\dx80000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b16 88 87 
+
+// Name: layout2@registers - feature 11
+14 * 66 02 11 FD 89 
 44 20 \dx000000FF 
 \2sto 1A 20 \dx00000086 
 \2r 1A 20 \dx00000001 
@@ -41,9 +65,12 @@
 \2^ 1A 20 \dx00000001 
 \2sto 1A 00 \dx00000088 
 \b1 
-\wx00FE \dx00000000 \dx00000000 
-\wx00FE // 
+\wx00FD \dx00000000 \dx00000000 
+\wx00FD // 
 
-9 * 7 03 11 01 01 \b0 
+15 * 7 03 11 01 01 \b0 
+\wx00FD 	// layout2;
+
+16 * 7 03 0F 01 01 \b0 
 \wx00FE 	// layout2;
 

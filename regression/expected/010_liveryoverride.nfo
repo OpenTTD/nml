@@ -44,17 +44,17 @@
 26 opengfx_trains_start.pcx 318 139 01 10 28 -16 -6 
 27 opengfx_trains_start.pcx 366 139 01 16 20 -6 -7 
 
-// Name: turbotrain_engine_group
+// Name: turbotrain_engine_group - feature 00
 28 * 9 02 00 FE \b1 \b1 
 \w0 
 \w0 
 
-// Name: normal_passenger_group
+// Name: normal_passenger_group - feature 00
 29 * 9 02 00 FD \b1 \b1 
 \w1 
 \w1 
 
-// Name: turbotrain_passenger_group
+// Name: turbotrain_passenger_group - feature 00
 30 * 9 02 00 FC \b1 \b1 
 \w2 
 \w2 

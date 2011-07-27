@@ -9,7 +9,7 @@
 
 1 opengfx_trains_start.pcx 142 112 01 22 8 -3 -10 
 
-// Name: small_airport_tiles_graphics
+// Name: small_airport_tiles_graphics - feature 11
 2 * 15 02 11 FE \b1 \dx00000F8D 
 \dxC0000000 \b0 \b0 80 
 

@@ -41,11 +41,11 @@ class Action2Var(action2.Action2):
 
         for r in self.ranges:
             if isinstance(r.result, expression.SpriteGroupRef):
-                r.result = r.result.get_action2_id()
+                r.result = r.result.get_action2_id(self.feature)
             else:
                 r.result = r.result.value | 0x8000
         if isinstance(self.default_result, expression.SpriteGroupRef):
-            self.default_result = self.default_result.get_action2_id()
+            self.default_result = self.default_result.get_action2_id(self.feature)
         else:
             self.default_result = self.default_result.value | 0x8000
 
@@ -698,9 +698,11 @@ def parse_result(value, action_list, act6, offset, varaction2, none_result, var_
     return (result, comment)
 
 def get_feature(switch_block):
-    feature = switch_block.feature.value if switch_block.var_range == 0x89 else action2var_variables.varact2parent_scope[switch_block.feature.value]
-    if feature is None:
-        raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(switch_block.feature), switch_block.pos)
+    feature = switch_block.feature_set.copy().pop()
+    if switch_block.var_range == 0x8A:
+        feature = action2var_variables.varact2parent_scope[feature]
+        if feature is None:
+            raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(feature), switch_block.pos)
     return feature
 
 def reduce_varaction2_expr(expr, feature):
@@ -727,7 +729,8 @@ def parse_varaction2(switch_block):
     action6.free_parameters.save()
     act6 = action6.Action6()
 
-    varaction2 = Action2Var(switch_block.feature.value, switch_block.name.value, switch_block.var_range)
+    feature = switch_block.feature_set.copy().pop()
+    varaction2 = Action2Var(feature, switch_block.name.value, switch_block.var_range)
 
     expr = reduce_varaction2_expr(switch_block.expr, get_feature(switch_block))
 
@@ -748,7 +751,7 @@ def parse_varaction2(switch_block):
             none_result = expression.ConstantNumeric(0)
         else:
             extra_actions, none_result = create_return_action(expression.Variable(expression.ConstantNumeric(0x1C)),
-                    switch_block.feature.value, switch_block.name.value + "@return", 0x89)
+                    feature, switch_block.name.value + "@return", 0x89)
             action_list.extend(extra_actions)
 
     used_ranges = []
@@ -797,7 +800,7 @@ def parse_varaction2(switch_block):
     if len(act6.modifications) > 0: action_list.append(act6)
 
     action_list.append(varaction2)
-    switch_block.set_action2(varaction2)
+    switch_block.set_action2(varaction2, feature)
 
     action6.free_parameters.restore()
     return action_list

@@ -118,7 +118,7 @@ def add_ref(ref, source_action, reference_as_proc = False):
 
     # Add reference to list of references of the source action
     if ref.name.value == 'CB_FAILED': return
-    act2 = ref.act2 if ref.act2 is not None else resolve_spritegroup(ref.name).get_action2()
+    act2 = ref.act2 if ref.act2 is not None else resolve_spritegroup(ref.name).get_action2(source_action.feature)
     source_action.references.append(Action2Reference(act2, reference_as_proc))
     act2.num_refs += 1
 
@@ -196,11 +196,11 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
         @ivar _prepared: True iff prepare_output has already been executed
         @type _prepared: C{bool}
 
-        @ivar _action2: Reference to the action2 that corresponds to this node, if applicable
-        @type _action2: L{Action2}, or C{None} if N/A
+        @ivar _action2: Mapping of features to action2s
+        @type _action2: C{dict} that maps C{int} to L{Action2}
 
-        @ivar feature: Feature of this node
-        @type feature: L{ConstantNumeric}
+        @ivar feature_set: Set of features that use this noe
+        @type feature_set: C{set} of C{int}
 
         @ivar name: Name of this node, as declared by the user
         @type name: L{Identifier}
@@ -226,15 +226,15 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
 
             @param feature: Feature of this node, if set by the user.
                                 Should be set (not None) iff cls_has_explicit_feature is True
-            @type feature: L{ConstantNumeric} or C{None}
+            @type feature: C{int} or C{None}
             """
             assert not (self._has_explicit_feature() and feature is None)
             assert not (cls_is_referenced and name is None)
             self._referencing_nodes = set()
             self._referenced_nodes = set()
             self._prepared = False
-            self._action2 = None
-            self.feature = feature
+            self._action2 = {}
+            self.feature_set = set([feature]) if feature is not None else set()
             self.name = name
 
         def register_names(self):
@@ -273,20 +273,15 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
                 # now determine the feature
                 if self._has_explicit_feature():
                     # by this time, feature should be set
-                    assert self.feature is not None
+                    assert len(self.feature_set) == 1
+                    for n in self._referencing_nodes:
+                        if n.feature_set != self.feature_set:
+                            raise generic.ScriptError("Cannot refer to block '%s' with feature '%02X', expected feature is '%02X'" % \
+                                    (self.name.value, self.feature_set.copy().pop(), n.feature_set.difference(self.feature_set).pop()), n.pos)
                 elif len(self._referencing_nodes) != 0:
                     for n in self._referencing_nodes:
-                        # get the feature of the first item in the set
-                        self.feature = n.feature
-                        break
-
-                for node in self._referencing_nodes:
-                    if node.feature.value != self.feature.value:
-                        if self._has_explicit_feature():
-                            msg = "Cannot refer to block '%s' with feature '%02X', expected feature is '%02X'"
-                        else:
-                            msg = "Block '%s' cannot be used for feature '%02X' (already used for feature '%02X')"
-                        raise generic.ScriptError(msg % (self.name.value, self.feature.value, node.feature.value), node.pos)
+                        # Add the features from all calling blocks to the set
+                        self.feature_set.update(n.feature_set)
 
                 if len(self._referencing_nodes) == 0:
                     # if we can be 'not used', there ought to be a way to refer to this block
@@ -326,27 +321,33 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             """
             raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass %r' % type(self))
 
-        def set_action2(self, action2):
+        def set_action2(self, action2, feature):
             """
             Set this node's resulting action2
+
+            @param feature: Feature of the Action2
+            @type feature: C{int}
 
             @param action2: Action2 to set
             @type action2: L{Action2}
             """
             assert not self._is_spriteset()
-            assert self._action2 is None
-            self._action2 = action2
+            assert feature not in self._action2
+            self._action2[feature] = action2
 
-        def get_action2(self):
+        def get_action2(self, feature):
             """
             Get this node's resulting action2
+
+            @param feature: Feature of the Action2
+            @type feature: C{int}
 
             @return: Action2 to get
             @rtype: L{Action2}
             """
             assert not self._is_spriteset()
-            assert self._action2 is not None
-            return self._action2
+            assert feature in self._action2
+            return self._action2[feature]
 
         def _add_reference(self, target_ref):
             """

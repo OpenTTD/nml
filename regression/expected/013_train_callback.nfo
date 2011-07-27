@@ -72,22 +72,22 @@
 36 temperate_railwagons.png 48 275 01 12 32 -16 -8 
 37 temperate_railwagons.png 96 275 01 17 22 -6 -9 
 
-// Name: bulk_wagon_coal_default_group
+// Name: bulk_wagon_coal_default_group - feature 00
 38 * 13 02 00 FE \b2 \b2 
 \w0 \w1 
 \w0 \w1 
 
-// Name: bulk_wagon_coal_arctic_group
+// Name: bulk_wagon_coal_arctic_group - feature 00
 39 * 13 02 00 FD \b2 \b2 
 \w2 \w3 
 \w2 \w3 
 
-// Name: bulk_wagon_coal2_group
+// Name: bulk_wagon_coal2_group - feature 00
 40 * 13 02 00 FC \b2 \b2 
 \w4 \w5 
 \w4 \w5 
 
-// Name: bulk_wagon_grain_group
+// Name: bulk_wagon_grain_group - feature 00
 41 * 13 02 00 FB \b2 \b2 
 \w6 \w7 
 \w6 \w7 

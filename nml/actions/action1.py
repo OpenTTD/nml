@@ -144,7 +144,7 @@ def add_to_action1(spritesets, feature, pos):
     setsize = len(real_sprite.parse_sprite_list(spritesets[0].sprite_list, spritesets[0].pcx))
     for spriteset in spritesets:
         if setsize != len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)):
-            raise generic.ScriptError("Using spritesets with different sizes in a single SpriteLayout", pos)
+            raise generic.ScriptError("Using spritesets with different sizes in a single sprite group / layout is not possible", pos)
 
     global last_spriteset_collection
     actions = []

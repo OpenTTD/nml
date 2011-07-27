@@ -37,9 +37,12 @@ class SpriteGroupRef(Expression):
             return '%s(%s)' % (self.name, ', '.join(str(x) for x in self.param_list))
         return str(self.name)
 
-    def get_action2_id(self):
+    def get_action2_id(self, feature):
         """
         Get the action2 set-ID that this reference maps to
+
+        @param feature: Feature of the action2
+        @type feature: C{int}
 
         @return: The set ID
         @rtype: C{int}
@@ -51,7 +54,7 @@ class SpriteGroupRef(Expression):
         except generic.ScriptError:
             assert False, "Illegal action2 reference '%s' encountered." % self.name.value
 
-        return spritegroup.get_action2().id
+        return spritegroup.get_action2(feature).id
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self

@@ -115,7 +115,6 @@ class SpriteGroup(spritegroup_base_class):
         base_statement.BaseStatement.__init__(self, "spritegroup", pos, False, False)
         self.initialize(name)
         self.spriteview_list = spriteview_list
-        self.parsed = False
 
     # pre_process is defined by the base class
     def pre_process(self):
@@ -135,12 +134,11 @@ class SpriteGroup(spritegroup_base_class):
             spriteview.debug_print(indentation + 2)
 
     def get_action_list(self):
-        if not self.parsed:
-            if not self.prepare_output():
-                return []
-            self.parsed = True
-            return action2real.get_real_action2s(self)
-        return []
+        action_list = []
+        if self.prepare_output():
+            for feature in sorted(self.feature_set):
+                action_list.extend(action2real.get_real_action2s(self, feature))
+        return action_list
 
     def __str__(self):
         ret = "spritegroup %s {\n" % (self.name)
@@ -179,7 +177,6 @@ class SpriteLayout(spritelayout_base_class):
         if len(param_list) != 0:
             generic.print_warning("spritelayout parameters are not (yet) supported, ignoring.", pos)
         self.layout_sprite_list = layout_sprite_list
-        self.parsed = False
 
     def pre_process(self):
         for layout_sprite in self.layout_sprite_list:
@@ -209,12 +206,11 @@ class SpriteLayout(spritelayout_base_class):
         return 'spritelayout %s {\n%s\n}\n' % (str(self.name), '\n'.join([str(x) for x in self.layout_sprite_list]))
 
     def get_action_list(self):
-        if not self.parsed:
-            if not self.prepare_output():
-                return []
-            self.parsed = True
-            return action2layout.get_layout_action2s(self)
-        return []
+        action_list = []
+        if self.prepare_output():
+            for feature in sorted(self.feature_set):
+                action_list.extend(action2layout.get_layout_action2s(self, feature))
+        return action_list
 
 class LayoutSprite(object):
     def __init__(self, ls_type, param_list, pos):

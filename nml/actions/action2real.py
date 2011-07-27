@@ -27,12 +27,11 @@ real_action2_alias = {
     'default': (0, [0x05, 0x0B, 0x0D, 0x10]), #canals, cargos, railtypes, airports
 }
 
-def get_real_action2s(spritegroup):
+def get_real_action2s(spritegroup, feature):
     loaded_list = []
     loading_list = []
     actions = []
 
-    feature = spritegroup.feature.value
     if feature not in action2.features_sprite_group:
         raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for feature '%02X'." % feature, spritegroup.pos)
 
@@ -57,6 +56,6 @@ def get_real_action2s(spritegroup):
             if type == 0: loaded_list.append(action1_index)
             else: loading_list.append(action1_index)
 
-    actions.append(Action2Real(feature, spritegroup.name.value, loaded_list, loading_list))
-    spritegroup.set_action2(actions[-1])
+    actions.append(Action2Real(feature, spritegroup.name.value + (" - feature %02X" % feature), loaded_list, loading_list))
+    spritegroup.set_action2(actions[-1], feature)
     return actions
