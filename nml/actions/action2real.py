@@ -46,6 +46,8 @@ def get_real_action2s(spritegroup, feature):
         type, feature_list = real_action2_alias[view.name.value]
         if feature not in feature_list:
             raise generic.ScriptError("Sprite view type '%s' is not supported for feature '%02X'." % (view.name.value, feature), view.pos)
+        if feature in (0x05, 0x0B, 0x0D, 0x10):
+            generic.print_warning("Sprite groups for feature %02X will not be supported in the future, as they are no longer needed. Directly refer to sprite sets instead." % feature, view.pos)
 
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)
