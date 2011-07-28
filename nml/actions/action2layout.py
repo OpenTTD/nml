@@ -110,10 +110,14 @@ class Action2LayoutSprite(object):
             flags |= 1 << 2
         if self.palette_from_action1:
             flags |= 1 << 3
-        assert (self.get_register('xoffset') is not None) == (self.get_register('yoffset') is not None)
+        # for building sprites: bit 4 => xoffset+yoffset, bit 5 => zoffset (x and y always set totgether)
+        # for child sprites: bit 4 => xoffset, bit 5 => yoffset
+        if self.type == Action2LayoutSpriteType.BUILDING:
+            assert (self.get_register('xoffset') is not None) == (self.get_register('yoffset') is not None)
         if self.get_register('xoffset') is not None:
             flags |= 1 << 4
-        if self.get_register('zoffset') is not None:
+        nextreg = 'zoffset' if self.type == Action2LayoutSpriteType.BUILDING else 'yoffset'
+        if self.get_register(nextreg) is not None:
             flags |= 1 << 5
         file.print_wordx(flags)
 
@@ -128,9 +132,9 @@ class Action2LayoutSprite(object):
             self.write_register(file, 'sprite')
         if self.get_register('palette') is not None:
             self.write_register(file, 'palette')
-        assert (self.get_register('xoffset') is not None) == (self.get_register('yoffset') is not None)
         if self.get_register('xoffset') is not None:
             self.write_register(file, 'xoffset')
+        if self.get_register('yoffset') is not None:
             self.write_register(file, 'yoffset')
         if self.get_register('zoffset') is not None:
             self.write_register(file, 'zoffset')
@@ -324,10 +328,12 @@ class Action2LayoutSprite(object):
                 return value
         # Value must be written to a register
         self.create_register(name, value)
-        if name == 'xoffset' and self.get_register('yoffset') is None:
-            self.create_register('yoffset', expression.ConstantNumeric(0))
-        if name == 'yoffset' and self.get_register('xoffset') is None:
-            self.create_register('xoffset', expression.ConstantNumeric(0))
+        if self.type == Action2LayoutSpriteType.BUILDING:
+            # For building sprites, x and y registers are always written together
+            if name == 'xoffset' and self.get_register('yoffset') is None:
+                self.create_register('yoffset', expression.ConstantNumeric(0))
+            if name == 'yoffset' and self.get_register('xoffset') is None:
+                self.create_register('xoffset', expression.ConstantNumeric(0))
         return expression.ConstantNumeric(0)
 
     def _validate_hide_sprite(self, name, value):
