@@ -218,9 +218,6 @@ class Action2LayoutSprite(object):
         assert isinstance(name, expression.Identifier)
         assert isinstance(value, expression.Expression) or isinstance(value, expression.SpriteGroupRef)
         name = name.value
-        if name == 'ttdsprite':
-            name = 'sprite'
-            generic.print_warning("Using 'ttdsprite' in sprite layouts is deprecated, use 'sprite' instead", value.pos)
 
         if not name in self.params:
             raise generic.ScriptError("Unknown sprite parameter '%s'" % name, value.pos)
