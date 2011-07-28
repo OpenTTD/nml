@@ -767,9 +767,20 @@ have an effect on all vehicles of the appropriate type.</p>
 
 <h2><a name="refs-palettes">List default colour translation palettes</a></h2>
 <p>You can use the palette name directly. The numeric value is only given for reference and might come in handy when
-the values are to be used in calculations. <code>PALETTE_USE_DEFAULT</code> in conjunction with the recolour mode
-<code>RECOLOUR_REMAP</code> uses the normal company (and for NewObjects and airports the 2nd company colour)
-settings as defined by the player:</p>
+the values are to be used in calculations. <code>PALETTE_USE_DEFAULT</code> will prompt usage of the default palette,
+which differs per feature:</p>
+<ul>
+<li>For vehicles, it's the 1cc / 2cc colour map in the company's colours.
+<li>For houses, it's the return value of the <code>colour</code> callback,
+or a randomly chosen colour from the <code>random_colours</code> property.
+<li>For industry tiles, the random colour of the industry is used, which
+may be changed by the <code>colour</code> industry callback.
+<li>For objects, the colour scheme of the constructing company is used, which
+may be altered by the <code>colour</code> callback.
+<li>For rail types, the company colour of the owner is always used for
+recolouring, as there is no way to specify a palette yourself.
+<li>For stations and airport tiles, it's the company colour of the owner.
+</ul>
 <table class="t">
 <tr><th>Palette name<th>value</tr>
 <tr><td>PALETTE_USE_DEFAULT<td> 0</tr>
