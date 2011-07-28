@@ -1,4 +1,4 @@
-from nml.actions import action2, action2var, action6
+from nml.actions import action2, action2var, action2real, action6
 from nml import generic, expression, global_constants, nmlop
 
 class Action2Random(action2.Action2):
@@ -218,6 +218,7 @@ def parse_randomswitch(random_switch):
     @return: List of actions
     @rtype: C{list} of L{BaseAction}
     """
+    action_list = action2real.create_spriteset_actions(random_switch)
     feature = random_switch.feature_set.copy().pop()
     type_byte, count, count_expr, start_bit, bits_available = parse_randomswitch_type(random_switch)
 
@@ -237,7 +238,6 @@ def parse_randomswitch(random_switch):
 
     action6.free_parameters.save()
     act6 = action6.Action6()
-    action_list = []
     offset = 8
 
     #divide the 'extra' probabilities in an even manner

@@ -172,7 +172,7 @@ class LiveryOverride(base_statement.BaseStatement):
 
     def get_action_list(self):
         wagon_id = self.wagon_id.reduce_constant([(global_constants.item_names, global_constants.item_to_id)])
-        return action3.parse_graphics_block(self.graphics_block.graphics_list, self.graphics_block.default_graphics, item_feature, wagon_id, True)
+        return action3.parse_graphics_block(self.graphics_block, item_feature, wagon_id, True)
 
     def __str__(self):
         ret = 'livery_override(%s) {\n' % str(self.wagon_id)
@@ -217,7 +217,7 @@ class GraphicsBlock(graphics_base_class):
 
     def get_action_list(self):
         if self.prepare_output():
-            return action3.parse_graphics_block(self.graphics_list, self.default_graphics, item_feature, item_id)
+            return action3.parse_graphics_block(self, item_feature, item_id)
         return []
 
     def __str__(self):

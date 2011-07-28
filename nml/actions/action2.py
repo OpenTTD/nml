@@ -150,7 +150,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
     @param cls_is_spriteset: Whether this class represents a spriteset
     @type cls_is_spriteset: C{bool}
 
-    @param cls_uses_spriteset: True if this classes uses (refers to) spriteset, False if it uses sprite groups (or nothing)
+    @param cls_uses_spriteset: True iff this classes exclusively uses (refers to) spritesets
     @type cls_uses_spriteset: C{bool}
 
     @param cls_is_referenced: True iff this node can be referenced by other nodes
@@ -335,7 +335,6 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             @param action2: Action2 to set
             @type action2: L{Action2}
             """
-            assert not self._is_spriteset()
             assert feature not in self._action2
             self._action2[feature] = action2
 
@@ -349,9 +348,20 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             @return: Action2 to get
             @rtype: L{Action2}
             """
-            assert not self._is_spriteset()
             assert feature in self._action2
             return self._action2[feature]
+
+        def has_action2(self, feature):
+            """
+            Check, if this node already has an action2 for a given feature
+
+            @param feature: Feature to check
+            @type feature: C{int}
+
+            @return: True iff there is an action2 for this feature
+            @rtype: C{bool}
+            """
+            return feature in self._action2
 
         def _add_reference(self, target_ref):
             """
@@ -362,8 +372,6 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             """
 
             target = resolve_spritegroup(target_ref.name)
-            if target._is_spriteset() and not cls_uses_spriteset:
-                raise generic.ScriptError("Unexpected spriteset reference encountered: '%s'" % target_ref.name.value, target_ref.pos)
             if cls_uses_spriteset and not target._is_spriteset():
                 raise generic.ScriptError("Expected a spriteset reference: '%s'" % target_ref.name.value, target_ref.pos)
             if len(target_ref.param_list) != 0 and not target._allow_parameters():

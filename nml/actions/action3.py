@@ -1,5 +1,5 @@
 from nml import generic, expression, global_constants
-from nml.actions import base_action, action0, action2, action2var, action3_callbacks, action6, actionD
+from nml.actions import base_action, action0, action2, action2real, action2var, action3_callbacks, action6, actionD
 
 class Action3(base_action.BaseAction):
     """
@@ -123,9 +123,9 @@ def create_action3(feature, id, action_list, act6, is_livery_override):
     act3.is_livery_override = is_livery_override
     return act3
 
-def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery_override = False):
+def parse_graphics_block(graphics_block, feature, id, is_livery_override = False):
     action6.free_parameters.save()
-    prepend_action_list = []
+    prepend_action_list = action2real.create_spriteset_actions(graphics_block)
     action_list = []
     act6 = action6.Action6()
     act3 = create_action3(feature, id, action_list, act6, is_livery_override)
@@ -135,7 +135,7 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
     callbacks = []
     livery_override = None # Used for rotor graphics
 
-    for graphics in graphics_list:
+    for graphics in graphics_block.graphics_list:
         cargo_id = graphics.cargo_id
         if isinstance(cargo_id, expression.Identifier):
             cb_name = cargo_id.value
@@ -172,12 +172,12 @@ def parse_graphics_block(graphics_list, default_graphics, feature, id, is_livery
              raise generic.ScriptError("Graphics for cargo %d are defined multiple times." % cargo_id.value, cargo_id.pos)
         cargo_gfx[cargo_id.value] = graphics.result
 
-    if default_graphics is not None:
+    if graphics_block.default_graphics is not None:
         if 'default' not in action3_callbacks.callbacks[feature]:
-            raise generic.ScriptError("Default graphics may not be defined for this feature (0x%02X)." % feature, default_graphics.pos)
+            raise generic.ScriptError("Default graphics may not be defined for this feature (0x%02X)." % feature, graphics_block.default_graphics.pos)
         if None in cargo_gfx:
-            raise generic.ScriptError("Default graphics are defined twice.", default_graphics.pos)
-        cargo_gfx[None] = default_graphics
+            raise generic.ScriptError("Default graphics are defined twice.", graphics_block.default_graphics.pos)
+        cargo_gfx[None] = graphics_block.default_graphics
 
     if len(callbacks) != 0:
         cb_flags = 0

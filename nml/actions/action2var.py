@@ -1,4 +1,4 @@
-from nml.actions import action2, action6, actionD, action2var_variables, action4
+from nml.actions import action2, action2real, action2var_variables, action4, action6, actionD
 from nml import expression, generic, global_constants, nmlop, unit
 
 class Action2Var(action2.Action2):
@@ -728,6 +728,7 @@ def parse_varaction2(switch_block):
 
     action6.free_parameters.save()
     act6 = action6.Action6()
+    action_list = action2real.create_spriteset_actions(switch_block)
 
     feature = switch_block.feature_set.copy().pop()
     varaction2 = Action2Var(feature, switch_block.name.value, switch_block.var_range)
@@ -738,7 +739,7 @@ def parse_varaction2(switch_block):
 
     parser = Varaction2Parser(get_feature(switch_block))
     parser.parse_expr(expr)
-    action_list = parser.extra_actions
+    action_list.extend(parser.extra_actions)
     for mod in parser.mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = parser.var_list

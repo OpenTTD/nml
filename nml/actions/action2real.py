@@ -56,3 +56,27 @@ def get_real_action2s(spritegroup, feature):
     actions.append(Action2Real(feature, spritegroup.name.value + (" - feature %02X" % feature), loaded_list, loading_list))
     spritegroup.set_action2(actions[-1], feature)
     return actions
+
+def create_spriteset_actions(spritegroup):
+    """
+    Create action2s for directly-referenced sprite sets
+
+    @param spritegroup: Spritegroup to create the sprite sets for
+    @type spritegroup: L{ASTSpriteGroup}
+
+    @return: Resulting list of actions
+    @rtype: C{list} of L{BaseAction}
+    """
+    action_list = []
+    # Iterate over features first for more efficient action1s
+    for feature in spritegroup.feature_set:
+        if len(spritegroup.used_sprite_sets) != 0 and feature not in action2.features_sprite_group:
+            raise generic.ScriptError("Directly referring to sprite sets is not possible for feature %02X" % feature, spritegroup.pos)
+        for spriteset in spritegroup.used_sprite_sets:
+            if spriteset.has_action2(feature): continue
+            action_list.extend(action1.add_to_action1([spriteset], feature, spritegroup.pos))
+            action1_index = action1.get_action1_index(spriteset)
+            real_action2 = Action2Real(feature, spriteset.name.value + (" - feature %02X" % feature), [action1_index], [action1_index] if feature <= 0x03 else [])
+            action_list.append(real_action2)
+            spriteset.set_action2(real_action2, feature)
+    return action_list

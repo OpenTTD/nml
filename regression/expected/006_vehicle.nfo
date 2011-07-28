@@ -19,33 +19,17 @@
 09 "PASS" "MAIL" "GOOD" "IORE" "GOLD" 
 "FOOD" 
 
-4 * 6 01 01 \b1 FF \wx0008 
-
-5 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
-6 opengfx_generic_trams1.pcx 64 56 01 19 20 -14 -5 
-7 opengfx_generic_trams1.pcx 96 56 01 15 28 -14 -8 
-8 opengfx_generic_trams1.pcx 144 56 01 19 20 -6 -7 
-9 opengfx_generic_trams1.pcx 176 56 01 18 8 -3 -10 
-10 opengfx_generic_trams1.pcx 192 56 01 19 20 -14 -9 
-11 opengfx_generic_trams1.pcx 224 56 01 15 28 -14 -8 
-12 opengfx_generic_trams1.pcx 272 56 01 19 20 -6 -7 
-
-// Name: foster_express_group - feature 01
-13 * 9 02 01 FE \b1 \b1 
-\w0 
-\w0 
-
 // param[0] = 9
-14 * 9 0D 00 \D= FF 00 \dx00000009 
+4 * 9 0D 00 \D= FF 00 \dx00000009 
 
 // param[64] = (param[0] * 5)
-15 * 9 0D 40 \D* 00 FF \dx00000005 
+5 * 9 0D 40 \D* 00 FF \dx00000005 
 
-16 * 7 06 
+6 * 7 06 
 40 01 FF \wx002C 
 FF 
 
-17 * 57 00 01 \b21 01 FF \wx0059 
+7 * 57 00 01 \b21 01 FF \wx0059 
 06 03 
 04 28 
 03 1E 
@@ -68,10 +52,26 @@ FF
 10 FF 
 1C 01 
 
-18 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00 
+8 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00 
 
-19 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
+9 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
+
+10 * 6 01 01 \b1 FF \wx0008 
+
+11 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
+12 opengfx_generic_trams1.pcx 64 56 01 19 20 -14 -5 
+13 opengfx_generic_trams1.pcx 96 56 01 15 28 -14 -8 
+14 opengfx_generic_trams1.pcx 144 56 01 19 20 -6 -7 
+15 opengfx_generic_trams1.pcx 176 56 01 18 8 -3 -10 
+16 opengfx_generic_trams1.pcx 192 56 01 19 20 -14 -9 
+17 opengfx_generic_trams1.pcx 224 56 01 15 28 -14 -8 
+18 opengfx_generic_trams1.pcx 272 56 01 19 20 -6 -7 
+
+// Name: foster_express_set - feature 01
+19 * 9 02 01 FE \b1 \b1 
+\w0 
+\w0 
 
 20 * 9 03 01 01 FF \wx0059 \b0 
-\wx00FE 	// foster_express_group;
+\wx00FE 	// foster_express_set;
 

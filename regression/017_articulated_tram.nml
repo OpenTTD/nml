@@ -24,13 +24,10 @@ template tmpl_tram(x, y) {
 spriteset(foster_express_set, "tram_foster_express.png") {
     tmpl_tram(48,1)
 }
-spritegroup foster_express_group {
-    loading: foster_express_set;
-    loaded: foster_express_set;
-}
+
 switch(FEAT_ROADVEHS, SELF, foster_express_articulated_parts, extra_callback_info1) {
-    1..3: return 88;
-    CB_FAILED;
+    1..3: return foster_express_tram;
+    return 0xFF;
 }
 
 
@@ -61,6 +58,6 @@ item(FEAT_ROADVEHS, foster_express_tram, 88) {
     }
     graphics {
         articulated_part: foster_express_articulated_parts;
-        foster_express_group;
+        foster_express_set;
     }
 }

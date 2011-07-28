@@ -29,11 +29,6 @@ spriteset(foster_express_set, "opengfx_generic_trams1.pcx") {
     [224,56, 28,15,  -14, -8]
     [272,56, 20,19,   -6, -7]
 }
-spritegroup foster_express_group {
-    loading: foster_express_set;
-    loaded: foster_express_set;
-}
-
 
 param[0] = 9;
 
@@ -62,6 +57,6 @@ item(FEAT_ROADVEHS, foster_express_tram, 89) {
         misc_flags:                   bitmask(ROADVEH_FLAG_TRAM); // This is a tram
     }
     graphics {
-        foster_express_group;
+        foster_express_set;
     }
 }
