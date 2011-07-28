@@ -21,12 +21,6 @@ class Action2Real(action2.Action2):
         file.newline()
         file.end_sprite()
 
-real_action2_alias = {
-    'loaded': (0, [0x00, 0x01, 0x02, 0x03]),  #vehicles
-    'loading': (1, [0x00, 0x01, 0x02, 0x03]), #vehicles
-    'default': (0, [0x05, 0x0B, 0x0D, 0x10]), #canals, cargos, railtypes, airports
-}
-
 def get_real_action2s(spritegroup, feature):
     loaded_list = []
     loading_list = []
@@ -35,25 +29,26 @@ def get_real_action2s(spritegroup, feature):
     if feature not in action2.features_sprite_group:
         raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for feature '%02X'." % feature, spritegroup.pos)
 
-    if len(spritegroup.spriteview_list) == 0:
-        raise generic.ScriptError("Sprite groups require at least one sprite set.", spritegroup.pos)
-
     # First make sure that all referenced real sprites are put in a single action1
     actions.extend(action1.add_to_action1(spritegroup.used_sprite_sets, feature, spritegroup.pos))
 
-    for view in spritegroup.spriteview_list:
-        if view.name.value not in real_action2_alias: raise generic.ScriptError("Unknown sprite view type encountered in sprite group: " + view.name.value, view.pos)
-        type, feature_list = real_action2_alias[view.name.value]
-        if feature not in feature_list:
-            raise generic.ScriptError("Sprite view type '%s' is not supported for feature '%02X'." % (view.name.value, feature), view.pos)
-        if feature in (0x05, 0x0B, 0x0D, 0x10):
-            generic.print_warning("Sprite groups for feature %02X will not be supported in the future, as they are no longer needed. Directly refer to sprite sets instead." % feature, view.pos)
+    view_names = sorted([view.name.value for view in spritegroup.spriteview_list])
+    if feature in (0x00, 0x01, 0x02, 0x03):
+        if view_names != sorted(['loading', 'loaded']):
+            raise generic.ScriptError("Expected a 'loading' and a 'loaded' (list of) sprite set(s).", spritegroup.pos)
+    elif feature in (0x05, 0x0B, 0x0D, 0x10):
+        generic.print_warning("Sprite groups for feature %02X will not be supported in the future, as they are no longer needed. Directly refer to sprite sets instead." % feature, spritegroup.pos)
+        if view_names != ['default']:
+            raise generic.ScriptError("Expected only a 'default' (list of) sprite set(s).", spritegroup.pos)
 
+    for view in spritegroup.spriteview_list:
+        if len(view.spriteset_list) == 0:
+            raise generic.ScriptError("Expected at least one sprite set, encountered 0.", view.pos)
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)
             action1_index = action1.get_action1_index(spriteset)
-            if type == 0: loaded_list.append(action1_index)
-            else: loading_list.append(action1_index)
+            if view.name.value == 'loading': loading_list.append(action1_index)
+            else: loaded_list.append(action1_index)
 
     actions.append(Action2Real(feature, spritegroup.name.value + (" - feature %02X" % feature), loaded_list, loading_list))
     spritegroup.set_action2(actions[-1], feature)
