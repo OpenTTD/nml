@@ -98,6 +98,9 @@ class SpriteSet(spriteset_base_class):
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
+        # Warn if spriteset is unused
+        self.prepare_output()
+        # Actions are created when parsing the action2s, not here
         return []
 
     def __str__(self):
