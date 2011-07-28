@@ -138,11 +138,23 @@ Note that tiles for which <code>nearby_tile_is_water</code> is 0 may still have 
 <h2><a name="industries-vars">Industry variables</a></h2>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
+    'production_level' : {'var': 0x93, 'start': 0, 'size': 8},
+<tr><td>production_level</td><td>0, or 4 .. 128</td><td>Current production level of the industry. Usually in range 4 .. 128, default starting level is 16. A level of 0 indicates imminent closure.</td></tr>
 <tr><td>waiting_cargo_1</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the first cargo type awaiting to be processed.</td></tr>
 <tr><td>waiting_cargo_2</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the second cargo type awaiting to be processed.</td></tr>
 <tr><td>waiting_cargo_3</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the third cargo type awaiting to be processed.</td></tr>
+<tr><td>produced_cargo_waiting_1</td><td>0..65535</td><td>The amount of produced 'output cargo type 1' that this waiting to be transported.</td></tr>
+<tr><td>produced_cargo_waiting_2</td><td>0..65535</td><td>The amount of produced 'output cargo type 2' that this waiting to be transported.</td></tr>
+<tr><td>produced_this_month_1</td><td>0..65535</td><td>The amount of 'output cargo type 1' that was produced this month.</td></tr>
+<tr><td>produced_this_month_2</td><td>0..65535</td><td>The amount of 'output cargo type 2' that was produced this month.</td></tr>
 <tr><td>produced_last_month_1</td><td>0..65535</td><td>The amount of 'output cargo type 1' that was produced last month.</td></tr>
 <tr><td>produced_last_month_2</td><td>0..65535</td><td>The amount of 'output cargo type 2' that was produced last month.</td></tr>
+<tr><td>transported_this_month_1</td><td>0..65535</td><td>The amount of 'output cargo type 1' that was transported this month.</td></tr>
+<tr><td>transported_this_month_2</td><td>0..65535</td><td>The amount of 'output cargo type 2' that was transported this month.</td></tr>
+<tr><td>transported_last_month_1</td><td>0..65535</td><td>The amount of 'output cargo type 1' that was produced last month.</td></tr>
+<tr><td>transported_last_month_2</td><td>0..65535</td><td>The amount of 'output cargo type 2' that was produced last month.</td></tr>
+<tr><td>transported_last_month_pct_1</td><td>0..100</td><td>Percentage of produced 'output cargo type 1' that was transported last month.</td></tr>
+<tr><td>transported_last_month_pct_2</td><td>0..100</td><td>Percentage of produced 'output cargo type 2' that was transported last month.</td></tr>
 <tr><td>water_distance</td><td>Distance to the tile</td><td>If the industry is built on water, this variable gives the distance of the closest dry land tile, otherwise it gives the distance of the closest water tile.</td></tr>
 <tr><td>layout_num</td><td>1..255</td><td>Number of the layout being used by the industry.</td></tr>
 <tr><td>founder</td><td>0..16</td><td>Company number of the industry founder. It will be 16 (0x10) if the industry was generated randomly. TTDPatch only supports up to 8 companies (0..7).</td></tr>
@@ -153,6 +165,7 @@ Note that tiles for which <code>nearby_tile_is_water</code> is 0 may still have 
 <tr><td>build_date</td><td>0..1826212865</td><td>Date of the industry foundation in days since year 0.</td></tr>
 <tr><td>build_type</td><td>BUILDTYPE_XX</td><td>BUILDTYPE_UNKNOWN (if created in an old version or with newindustries disabled), BUILDTYPE_GAMEPLAY (if founded or created by the in-game random industry generator), BUILDTYPE_GENERATION (if created during random map generation) or BUILDTYPE_EDITOR (if created with the scenario editor).</td></tr>
 <tr><td>counter</td><td>0..65535</td><td>Decremented every tick, used to time primary industry production in TTD.</td></tr>
+<tr><td>last_accept_date</td><td>date(year, month, day)</td><td>Date when cargo was accepted for the last time. Not valid before 1920 and after 2090.</td></tr>
 </table><br>
 Variables that require some parameters.
 <table class="t">
