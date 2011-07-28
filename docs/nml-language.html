@@ -443,7 +443,7 @@ before writing it to the output file.</p>
 
 <h2><a name="block-template">Template</a></h2>
 NML allows to define templates for use in <a href="#block-spriteset">spritesets</a>, which can be
-referred to when defining real sprites, avoiding repetitive declaratin of the same alignment (e.g.
+referred to when defining real sprites, avoiding repetitive declaration of the same alignment (e.g.
 when coding different train wagons of the same size).
 <pre class="exl">
 template templatename([param [, param [, param...]]]) {
@@ -465,31 +465,52 @@ spriteset (SPRITESET_NAME, graphics_file) {
 	...
 }
 </pre>
+<p>Each sprite may be prefixed with a label, see <a href="#block-spritelayout-sprite">
+sprite layouts</a> for more info. Example:</p>
+<pre class="code">
+	some_label: [... real sprite ...]
+</pre>
+<p>How to use a sprite set depends on the feature:</p>
+<ul>
+<li>For canals, cargos, airports (not tiles!) and railtypes, you can refer to
+sprite sets directly from the graphics block, or use intermediate (random)switches
+to make a descision.
+<li>For vehicles, the same as above is possible. However, to facilitate the
+common case of having multiple loading stages, you can also define
+<a href="#block-spritegroup">sprite groups</a>, see below. These sprite groups
+are then used in place of a single sprite set.
+<li>Stations, houses, industry tiles, objects and airport tiles all define the
+look of a tile. This often requires more than one sprite, for example a concrete
+ground sprite with a building sprite on top of it. To combine and arrange these
+sprites a <a href="#block-spritelayout">sprite layout</a> is used, directly
+referring to sprite sets is not possible here</a>
+<li>Features not mmentioned here have no use for sprite sets, as such they are
+not supported by NML.
+</ul>
 <h2><a name="block-spritegroup">Spritegroup</a></h2>
-A spritegroup associates the several spritesets for use and futher reference in the graphics block
-of an item block.
+<p>A spritegroup combines several spritesets into a single unit. It is supported
+only for vehicles. A typical spritegroup looks like:</p>
 <pre class="exl">
 spritegroup spritegroup_name {
-	block_name: spriteset_names
+	loading: (spriteset_name | [spriteset_name1, spriteset_name2, ...])
+	loaded: (spriteset_name | [spriteset_name1, spriteset_name2, ...])
 }
 </pre>
-The block_names vary by the feature:
-<h3><a name="block-spritegroup-vehicles">Spritegroups for vehicles</a></h3>
-For vehicles a typical spritegroup looks like
-<pre class="exl">
-spritegroup spritegroup_name {
-	loading: [spriteset_name [, spriteset_name [, spriteset_name [, spriteset_name]]]]
-	loaded: [spriteset_name [, spriteset_name [, spriteset_name [, spriteset_name]]]]
-}
-</pre>
-Vehicles take two different spritesets, <code>loading</code> shows the vehicle while
-it is loading within the station and <code>loaded</code> shows the vehicle while it is travelling.
-Each of those can be an array of spritesets and must at least be one. They're
-used to show different graphics depending on how much the vehicle is loaded with increasing load
-from left to right. If only one spriteset is given it will always be used.
+<p>Vehicles take two different series of spritesets; <code>loading</code> is used
+when the vehicle is loading within the station, <code>loaded</code> is used
+when the vehicle is travelling. Each of those can be a single spriteset,
+or a (bracketed) array of spritesets. Both <code>loading</code> and 
+<code>loaded</code> are required and should provide at least one spriteset each.
+If a spritegroup would contain only one spriteset, it's better to omit the
+spritegroup and directly use the spriteset instead. Spritegroups are used
+to show different graphics depending on how much the vehicle is loaded, with
+increasing load from left to right. Furthermore, you can easily provide
+special graphics for when loading in the station (for example: wagon with doors
+open).</p>
 
-A simple example for defining a train engine with a livery override. The passenger wagon shows
-different sprites whether it is travelling empty or is filled with people.
+<p>Below a simple example for defining a train engine with a livery override.
+The passenger wagon shows different sprites whether it is travelling empty
+or is filled with people.</o>
 <pre class="code">
 // Define the sprites for the engine
 template tmpl_train_length78(x, y) {
@@ -528,14 +549,11 @@ spriteset(turbotrain_passenger_traveling_full_set, "src/gfx/turbotrain.png") {
 	[366,159, 20,16,   -6, -7]
 }
 
-// Associate graphics with the engine for the different loading stages
-spritegroup turbotrain_engine_group {
-	loading: turbotrain_engine_set;
-	loaded: turbotrain_engine_set;
-}
+// Engine has no sprite group, because it always looks the same the spriteset is used directly.
+
 // Associate graphics with the wagon for the different loading stages
 spritegroup turbotrain_passenger_group {
-	loading: turbotrain_passenger_set;
+	loading: turbotrain_passenger_loading_set;
 	loaded: [turbotrain_passenger_traveling_empty_set, turbotrain_passenger_traveling_full_set];
 }
 
@@ -546,7 +564,7 @@ item(FEAT_TRAINS, turbotrain, 20) {
 		misc_flags:                   bitmask(TRAIN_FLAG_MU); // We use special sprites for passenger and mail wagons
 	}
 	graphics {                           // graphics for engine
-		turbotrain_engine_group;
+		turbotrain_engine_set; // note that no spritegroup is used here, it is not needed
 	}
 	livery_override(passenger_wagon) {   // graphics for alternative look of passenger wagon when used with this engine
 		turbotrain_passenger_group;
@@ -554,28 +572,21 @@ item(FEAT_TRAINS, turbotrain, 20) {
 }
 </pre>
 
-
-<h3><a name="block-spritegroup-railtypes">Spritegroups for railtypes</a></h3>
-Only the block_name <code>default</code> is used and it only takes one spriteset.
+<h2><a name="block-spritelayout">Spritelayouts</a></h2>
+<p>Stations, houses, industry tiles, objects, and airport tiles use spritelayouts
+to define layouts how sprites are supposed to be arranged on a tile.
+A <code>spritelayout</code> can combine multiple sprites into one entity, which
+represents everything that is to be drawn on a particular tile. A simple example
+to illustrate how it works:</p>
 <pre class="code">
-spritegroup gui_normal_modern_TTD_group {
-	default: gui_normal_modern_TTD;
-}
-</pre>
-<h2><a name="block-spritelayout">Spritelayouts for industry, airport and object tiles</a></h2>
-<p>Industries and airports don't have sprite groups, but they define layouts on how sprites are supposed to be arranged.
-A <code>spritelayout</code> can combine multiple sprites into one entity which are then drawn to represent everything
-that will be drawn on a particular tile. A simple example to illustrate how it works:</p>
-<pre class="code">
-A simple example to illustrate how it works:
 spritelayout airport_building1 {
-	ground { ttdsprite: GROUNDSPRITE_NORMAL; }
+	ground { sprite: GROUNDSPRITE_NORMAL; }
 	childsprite { 
 		sprite: spr_small_dirt_ne; // custom spriteset
 		always_draw: 1; // also draw in transparent mode
 	}
 	building {
-		ttdsprite: 0xA67; // reuse this existing base set sprite
+		sprite: 0xA67; // reuse this existing base set sprite
 		xoffset: 0x0F;
 		xextent: 1;
 		zextent: 6;
@@ -603,32 +614,68 @@ before the first building sprite, they will have no bounding box, as if they
 would use the 'bounding box' of the ground tile. Multiple childsprites may be
 used per ground / building sprite.</li>
 </ul>
+<p>The sprite order is genrally determined by the sprite sorter, that evaluates
+the bounding box (see below) of each sprite. Child sprites are always part of
+the building (or ground) sprite that precedes them. In the GUI, sprites
+are always drawn in the order specified in the layout, so be sure to get this
+correct for spritelayouts that are to be displayed there.</p>
 <p>Per sprite, a number of parameters may be set. These are listed below.
-First, to specify what sprite is to be drawn, you need to set either
-<code>sprite</code> or <code>ttdsprite</code>, but not both.</p>
+Unless otherwise indicated, each may have a value that is dependant on
+variables (in the SELF-scope), parameters or registers. This allows
+highly dynamic behaviour, so you can create different looks without
+requiring huge amounts of spritelayouts.</p>
+
+<h3><a name="block-spritelayout-sprite">sprite</a></h3>
+The most important parameter is <code>sprite</code>, this determines the
+actual sprite to be drawn. If you set this to a number, a TTD sprite will
+be drawn, usually from the base set. Pre-defined constants for some base set
+sprites are:</p>
 <ul>
-<li><code>ttdsprite</code>: sets the TTD sprite number to use, usually from the
-	base set. Pre-defined constants for some base set sprites are:
-	<ul>
-	<li><code>GROUNDSPRITE_NORMAL</code> default terrain type for that climate
-		(temperate, toyland: normal, arctic: without snow, tropical: rainforest).
-	<li><code>GROUNDSPRITE_DESERT</code> desert tile
-	<li><code>GROUNDSPRITE_SNOW</code> snowy ground tile
-	<li><code>GROUNDSPRITE_CONCRETE</code> concrete ground tile
-	<li><code>GROUNDSPRITE_WATER</code> flat water tile
-	<li><code>GROUNDSPRITE_CLEARED</code> ground tile that has just been bulldozed (with brown colour)
-	</ul>
-<li><code>sprite</code>: selects a <a href="nml-language.html#block-spriteset">spriteset</a> to use. When the
-	value is just a spriteset identifier, it will use the first sprite from that
-	set. If you supply an argument (e.g. <code>sprite: some_sprite_set(2);</code>), the
-	corresponding sprite from the sprite set will be used, with an argument of
-	0 corresponding to the first sprite.
+<li><code>GROUNDSPRITE_NORMAL</code> default terrain type for that climate
+    (temperate, toyland: normal, arctic: without snow, tropical: rainforest).
+<li><code>GROUNDSPRITE_DESERT</code> desert tile
+<li><code>GROUNDSPRITE_SNOW</code> snowy ground tile
+<li><code>GROUNDSPRITE_CONCRETE</code> concrete ground tile
+<li><code>GROUNDSPRITE_WATER</code> flat water tile
+<li><code>GROUNDSPRITE_CLEARED</code> ground tile that has just been bulldozed (with brown colour)
 </ul>
-<p>Next, a couple of attributes allow changing altering the way this sprite is displayed:</p>
+<p>Alternatively, you can set the value to (the name of) a
+<a href="nml-language.html#block-spriteset">spriteset</a>, to provide a custom
+sprite. When the value is just a spriteset identifier, a sprite from that set
+will be selected depending on the construction stage, see below. All spritesets
+used in a layout <strong>must</strong> have the same number of sprites, due to
+a restriction in the NFO format. If you supply
+an argument (e.g. <code>sprite: some_sprite_set(2);</code>), the corresponding
+sprite from the sprite set will be used, with an argument of 0 corresponding
+to the first sprite. Note that the argument may also be variable, so you could e.g.
+use <code>sprite: some_set(construction_state);</code> to use the construction
+state to select the sprite (as is the default). If the spriteset has labels
+defined, you can use these labels in the argument expression.</p>
 <ul>
-<li><code>recolour_mode</code>: Available recolour modes are
+    <li>For stations, objects and airport tiles, there are no construction stages,
+    so the first sprite from the set is used always.
+    <li>For houses and industry tiles, sprite chosen depends on the construction
+    stage and the number of sprites available.
+    <ul>
+        <li>If there is only one sprite in the set, it is used always.
+        <li>If there are two sprites, one is used during construction (stages 0-2) and
+        one for the finished building (stage 3)
+        <li>If there are three sprites, one is used for the beginning of construction
+        (stage 0), one for the other construction stages (stages 1-2) and one for the
+        finished building (stage 3).
+        <li>If there are four sprites, one is used for each construction stage.
+        <li>Sprites after the first four are always ignored.
+    </ul>
+</ul>
+
+<h3><a name="block-spritelayout-recolour">recolouring</a></h3>
+<p>Next, you have the option to apply recolouring, i.e. to change the colours
+of the sprite. This is done via the following attributes:</p>
+<ul>
+<li><code>recolour_mode</code>: This must be compile-time constant.
+Available recolour modes are:
 	<ul>
-	<li><code>RECOLOUR_NONE</code>: Use no colour translation
+	<li><code>RECOLOUR_NONE</code>: Use no colour translation (default)
 	<li><code>RECOLOUR_REMAP</code>: Use a colour translation table as defined by <code>palette</code>.
 		This tables maps all colours of the sprite to a new colour.
 	<li><code>RECOLOUR_TRANSPARENT</code>: Draw the sprite in transparant mode,
@@ -638,11 +685,29 @@ First, to specify what sprite is to be drawn, you need to set either
 		is applied to the colours of the underlying sprite, whatever that happens
 		to be. The supplied sprite is only used to determine what pixels to recolour.
 	</ul>
-<li><code>palette</code>: This defines the palette which is used for the colour translation, which e.g. allows to use a
-	random company colour. For default values see the appendix on <a href="refs.html#refs-palettes">available palettes</a>.
-<li><code>always_draw</code>: If set to 1, this sprite will also be drawn when the user has enabled transparant mode.
-	The default value is 0.
+<li><code>palette</code>: This defines the palette which is used for the colour
+    translation. It may only (and must!) be set when <code>recolour_mode</code> is set to
+    <code>RECOLOUR_REMAP</code> or <code>RECOLOUR_TRANSPARANT</code>. The available values
+    are the same as for <code>sprite</code>, i.e. you can use either a default sprite or a
+    sprite from a sprite set. In this case, however, the referenced sprite must not be a real
+    sprite, but a <a href="#recolour_sprites">recolour sprite</a>. For available default
+    recolour sprites, see the appendix on <a href="refs.html#refs-palettes">available palettes</a>.
 </ul>
+<h3><a name="block-spritelayout-display">Display yes/no</a></h3>
+<p>The following attributes allow configuring whether the sprite will be displayed or not.</p>
+<ul>
+    <li><code>hide_sprite</code>: If set to 1, this sprite will not be drawn at all.
+    Default is 0. If a building sprite is not drawn, all child sprites that share
+    its bounding box are not drawn either. Setting this to a constant value makes
+    little sense, but you can use this to enable/disable drawing certain sprites
+    at runtime depending on certain conditions.
+    <li><code>always_draw</code>: This must be a compile-time-constant. If set to 1,
+    this sprite will also be drawn when the user has enabled transparant mode.
+    The default value is 0. This is not available for ground sprites (those
+    are drawn always), but it is for child sprites that share their bounding
+    box with the ground sprite.
+</ul>
+<h3><a name="block-spritelayout-position">Positioning</a></h3>
 <p>How to position the sprite depends on the type of sprite:</p>
 <ul>
 	<li><code>ground</code>: Ground sprites cannot be positioned.
@@ -654,10 +719,12 @@ First, to specify what sprite is to be drawn, you need to set either
 			<li><code>xoffset</code>: Offset from the northwestern edge to the start of the bounding box (X).
 			<li><code>yoffset</code>: Offset from the northeastern edge to the start of the bounding box (Y).
 			<li><code>zoffset</code>: Offset from the lowest tile corner (with foundation added) to the start of the bounding box (Z).
-			<li><code>xextent</code>: Size of the bounding box, in the X-direction.
-			<li><code>yextent</code>: Size of the bounding box, in the Y-direction.
-			<li><code>zextent</code>: Size of the bounding box, in the Z-direction.
+			<li><code>xextent</code>: Size of the bounding box, in the X-direction. Must be a compile-time constant.
+			<li><code>yextent</code>: Size of the bounding box, in the Y-direction. Must be a compile-time constant.
+			<li><code>zextent</code>: Size of the bounding box, in the Z-direction. Must be a compile-time constant.
 		</ul>
+		Default values are 0, 0, 0, 16, 16, 16, respectively. In NewGRF developer mode in OpenTTD,
+		it's possible to view the bounding boxes of all sprites by pressing Ctrl+B.
 	<li><code>childsprite</code>: Child sprites may be positioned relative to
 	their 'parent' sprite that defines the bounding box.
 	<code>xoffset</code> and <code>yoffset</code> may
@@ -692,8 +759,15 @@ tilelayout small_airport_layout_north {
 </pre>
 <p>The actual layout is a list of <code>x-coordinate, y-coordinate: tile;</code> where
 the x- and y-directions refer to the usual directions: x is top-right (North-East) to
-bottom-left (South-West) and the y-direction is perpendicular to that bottom-right
-(South-East) to top-left (North-West).</p>
+bottom-left (South-West) and the y-direction is perpendicular to that; top-left
+(North-West) to bottom-right (South-East). The value of <code>tile</code> may be
+one of the following:</p>
+<ul>
+<li>A number, which refers to an original TTD industry/airport tile.
+<li>The name of an industry/airport tile in your GRF.
+<li>The text <em>clear</em>, the tile will then be checked for clearance during
+construction, but nothing is placed on it.
+</ul>
 <p>Airports additionally have to define a <code>rotation</code> which is one of the
 <a href="refs.html#refs-directions">default directions</a>. Note that only the four
 main compass directions are valid. Industries may not define a rotation.</p>

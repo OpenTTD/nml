@@ -80,7 +80,7 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 
 <h2><a name="railtypes-callbacks">Railtype callbacks</a></h2>
 <p>For rail types a number of callbacks are used to define rail type graphics.
-Each should refer to a sprite group containing the relevant sprite.</p>
+Each should refer to a sprite set containing the relevant sprites.</p>
 <table class="t">
 <tr><th>callbacks</th><th>number of sprites</th><th>meaning</th></tr>
 <tr><td>gui</td><td>         16</td><td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu</td></tr>
@@ -124,7 +124,7 @@ item(FEAT_RAILTYPES, elrail, 0x01) {
         tunnels:         tunnel_switch;             // defines the tracks drawn on a funnel tile
         depots:          depot_switch_electric;     // defines the depot sprites
         brdige_surfaces: bridge_terrain_switch;     // defines the overlay drawn over bridges
-        fences:          fences_group;              // defines the look of fences
+        fences:          fences_set;                // defines the look of fences
         // we don't define catenery wire and pylons, thus we use the default which comes with the base graphics.
     }
 }

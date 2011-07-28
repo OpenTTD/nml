@@ -85,8 +85,11 @@ Note that tiles for which <code>nearby_tile_is_water</code> is 0 may still have 
 <h2><a name="airports-callbacks">Airport callbacks</a></h2>
 <table class="t">
 <tr><th>callback<th>return value<th>comment
-<tr><td>default<td>Sprite group<td>Preview graphics to use in the build menu
-<tr><td>additional_text<td>String<td>Additional text to show in the buy menu
+<tr><td>default<td>Sprite set (with 1 sprite)<td>Preview graphics to use in
+the build menu. One sprite per layout may be given, use the <code>layout</code>
+to distinguish between layouts.
+<tr><td>additional_text<td>String<td>Additional text to show in the buy menu.
+String may differ per layout, use the <code>layout</code> variable for this.
 <tr><td>layout_name<td>String<td>Name of the airport layout in the variable <code>layout</code>
 </table>
 

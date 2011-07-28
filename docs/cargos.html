@@ -83,7 +83,7 @@ Note: This is already a bitmask, don't use the <code>bitmask(..)</code> function
 <h2><a name="cargos-callbacks">Cargo callbacks</a></h2>
 <table class="t">
 <tr><th>callback<th>return value<th>comment
-<tr><td>default<td>Sprite group<td>Graphics for the cargo icon (only if property <code>sprite</code> is set to NEW_CARGO_SPRITE)
+<tr><td>default<td>Sprite set (with 1 sprite)<td>Graphics for the cargo icon (only if property <code>sprite</code> is set to NEW_CARGO_SPRITE)
 <tr><td>station_rating<td>-16384 .. 16383<td>See detailed explanation below
 <tr><td>profit<td>-16384 .. 16383<td>Called whenever cargo is delivered.
 <code>extra_callback_info2</code> contains <code>0xttaadddd</code> with
