@@ -80,7 +80,8 @@ also replaces the ground tile of the object completely. Does not work when objec
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
 <tr><td>relative_x</td><td>0..255</td><td>X-coordinate (top right -> bottom left) of the tile relative to the northernmost tile.</td></tr>
 <tr><td>relative_y</td><td>0..255</td><td>Y-coordinate (top left -> bottom right) of the tile relative to the northernmost tile.</td></tr>
-<tr><td>relative_pos</td><td>0xYYXX</td><td>A combination of relative_x and relative_y in the format 0xYYXX. Useful if you want to check for a single position.</td></tr>
+<tr><td>relative_pos</td><td>0xYYXX</td><td>A combination of relative_x and relative_y in the format 0xYYXX. Useful if you want to check for a single position.
+The <a href="nml-language.html#builtin-functions">builtin function</a> relative_coord(x, y) may be useful when making comparisons.</td></tr>
 <tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
 <tr><td>tile_slope</td><td>Which corners are raised on the given tile.</td><td>
 Bit 0: west corner is above the lowest corner.<br>

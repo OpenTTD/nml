@@ -405,6 +405,27 @@ def builtin_sound_import(name, args, pos):
     grfid = parse_string_to_dword(args[0].reduce())
     sound_num = args[1].reduce_constant().value
     return ConstantNumeric(action11.add_sound((grfid, sound_num)), pos)
+
+def builtin_relative_coord(name, args, pos):
+    """
+    relative_coord(x, y) builtin function.
+
+    @return Coordinates in 0xYYXX format.
+    """
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have x and y coordinates as parameters", pos)
+
+    if isinstance(args[0], ConstantNumeric):
+        generic.check_range(args[0].value, 0, 255, "Argument of '%s'" % name, args[0].pos)
+    if isinstance(args[1], ConstantNumeric):
+        generic.check_range(args[1].value, 0, 255, "Argument of '%s'" % name, args[1].pos)
+
+    x_coord = BinOp(nmlop.AND, args[0], ConstantNumeric(0xFF), args[0].pos)
+    y_coord = BinOp(nmlop.AND, args[1], ConstantNumeric(0xFF), args[1].pos)
+    # Shift Y to its position.
+    y_coord = BinOp(nmlop.SHIFT_LEFT, y_coord, ConstantNumeric(8), y_coord.pos)
+
+    return BinOp(nmlop.OR, x_coord, y_coord, pos)
 #}
 
 function_table = {
@@ -444,4 +465,5 @@ function_table = {
     'rotate' : builtin_rotate,
     'sound' : builtin_sound_file,
     'import_sound': builtin_sound_import,
+    'relative_coord' : builtin_relative_coord,
 }
