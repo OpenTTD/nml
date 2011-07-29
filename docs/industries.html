@@ -138,7 +138,6 @@ Note that tiles for which <code>nearby_tile_is_water</code> is 0 may still have 
 <h2><a name="industries-vars">Industry variables</a></h2>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-    'production_level' : {'var': 0x93, 'start': 0, 'size': 8},
 <tr><td>production_level</td><td>0, or 4 .. 128</td><td>Current production level of the industry. Usually in range 4 .. 128, default starting level is 16. A level of 0 indicates imminent closure.</td></tr>
 <tr><td>waiting_cargo_1</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the first cargo type awaiting to be processed.</td></tr>
 <tr><td>waiting_cargo_2</td><td>0..65535</td><td>If any of the production callbacks is enabled, this variable will contain the amount of the second cargo type awaiting to be processed.</td></tr>
