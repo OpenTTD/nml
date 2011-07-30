@@ -834,22 +834,9 @@ order of the colours is the same as for <code>PALETTE_CC_XX</code>:</p>
 <tr><td>PALETTE_CC_FIRST+15<td>PALETTE_CC_FIRST+15</tr>
 </table>
 
-<h2><a name="refs-slopes">List of tile slopes</a></h2>
-<p>Tiles in TTD can have various slopes. The slope is a 5-bit wide mask:<br>
-<table class="t">
-<tr><th>bit<th>meaning</tr>
-<tr><td>0<td>west corner is above the lowest corner.
-<tr><td>1<td>south corner is above the lowest corner.<br>
-<tr><td>2<td>east corner is above the lowest corner.<br>
-<tr><td>3<td>north corner is above the lowest corner.<br>
-<tr><td>4<td>this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).
-</table>
-</p><p>
-The resulting, possible values are 0 ... 14, 23, 27, 29 and 30. Their meaning is
-illustrated in this image:
-<img src="tileh.png" alt="tile slopes">
-</p>
-<h2><a name="refs-directions">List direction constants</a></h2>
+<h2><a name="refs-directions">List of direction constants</a></h2>
+<p>The following constants can be used for various directions. Refer to the
+picture below for an overview of the compass directions used in TTD.
 <ul>
 <li>DIRECTION_NORTH
 <li>DIRECTION_NORTHEAST
@@ -860,6 +847,44 @@ illustrated in this image:
 <li>DIRECTION_WEST
 <li>DIRECTION_NORTHWEST
 </ul>
+<img src="directions.png" alt="compass directions">
+
+<h2><a name="refs-slopes">List of tile slopes</a></h2>
+<p>Tiles in TTD can have various slopes. The slope is a bitmask that may contain the following bits:</p>
+<table class="t">
+<tr><th>bit flag<th>meaning</tr>
+<tr><td>CORNER_W<td>west corner is above the lowest corner.
+<tr><td>CORNER_S<td>south corner is above the lowest corner.
+<tr><td>CORNER_E<td>east corner is above the lowest corner.
+<tr><td>CORNER_N<td>north corner is above the lowest corner.
+<tr><td>IS_STEEP_SLOPE<td>this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).
+</table>
+<p>The resulting, possible values of this bitmask are given in the following
+table. The image below that illustrates them graphically.</p>
+<table class="t">
+<tr><th>Named constant<th>Equivalent bitmask<th>Numerical value
+<tr><td>SLOPE_FLAT<td><code>bitmask()</code><td>0
+<tr><td>SLOPE_W<td><code>bitmask(CORNER_W)</code><td>1
+<tr><td>SLOPE_S<td><code>bitmask(CORNER_S)</code><td>2
+<tr><td>SLOPE_E<td><code>bitmask(CORNER_E)</code><td>4
+<tr><td>SLOPE_N<td><code>bitmask(CORNER_N)</code><td>8
+<tr><td>SLOPE_NW<td><code>bitmask(CORNER_N, CORNER_W)</code><td>9
+<tr><td>SLOPE_SW<td><code>bitmask(CORNER_S, CORNER_W)</code><td>3
+<tr><td>SLOPE_SE<td><code>bitmask(CORNER_S, CORNER_E)</code><td>6
+<tr><td>SLOPE_NE<td><code>bitmask(CORNER_N, CORNER_E)</code><td>12
+<tr><td>SLOPE_EW<td><code>bitmask(CORNER_E, CORNER_W)</code><td>5
+<tr><td>SLOPE_NS<td><code>bitmask(CORNER_N, CORNER_S)</code><td>10
+<tr><td>SLOPE_NWS<td><code>bitmask(CORNER_N, CORNER_W, CORNER_S)</code><td>11
+<tr><td>SLOPE_WSE<td><code>bitmask(CORNER_W, CORNER_S, CORNER_E)</code><td>7
+<tr><td>SLOPE_SEN<td><code>bitmask(CORNER_S, CORNER_E, CORNER_N)</code><td>14
+<tr><td>SLOPE_ENW<td><code>bitmask(CORNER_E, CORNER_N, CORNER_W)</code><td>13
+<tr><td>SLOPE_STEEP_W<td><code>bitmask(CORNER_N, CORNER_W, CORNER_S, IS_STEEP_SLOPE)</code><td>27
+<tr><td>SLOPE_STEEP_S<td><code>bitmask(CORNER_W, CORNER_S, CORNER_E, IS_STEEP_SLOPE)</code><td>23
+<tr><td>SLOPE_STEEP_E<td><code>bitmask(CORNER_S, CORNER_E, CORNER_N, IS_STEEP_SLOPE)</code><td>30
+<tr><td>SLOPE_STEEP_N<td><code>bitmask(CORNER_E, CORNER_N, CORNER_W, IS_STEEP_SLOPE)</code><td>29
+</table>
+<br>
+<img src="tileh.png" alt="tile slopes">
 
 </body>
 </html>

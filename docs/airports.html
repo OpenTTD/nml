@@ -60,14 +60,7 @@ The <a href="nml-language.html#builtin-functions">builtin function</a> relative_
 offset is relative to the current tile. Offset 0,0 means the current tile.</p>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>nearby_tile_slope</td><td>Which corners are raised on the given tile.</td><td>
-Bit 0: west corner is above the lowest corner.<br>
-Bit 1: south corner is above the lowest corner.<br>
-Bit 2: east corner is above the lowest corner.<br>
-Bit 3: north corner is above the lowest corner.<br>
-Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).<br>
-See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
-</td></tr>
+<tr><td>nearby_tile_slope</td><td>SLOPE_XXX</td><td>See <a href="refs.html#refs-slopes">tile slopes</a> for an overview of possible values</td></tr>
 <tr><td>nearby_tile_is_same_airport</td><td>1 if the tile is part of the same airport, 0 otherwise</td><td></td></tr>
 <tr><td>nearby_tile_is_water</td><td>1 if the tile is water, 0 otherwise</td><td></td></tr>
 <tr><td>nearby_tile_terrain_type</td><td>TILETYPE_XX</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td></tr>

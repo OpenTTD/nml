@@ -83,14 +83,7 @@ also replaces the ground tile of the object completely. Does not work when objec
 <tr><td>relative_pos</td><td>0xYYXX</td><td>A combination of relative_x and relative_y in the format 0xYYXX. Useful if you want to check for a single position.
 The <a href="nml-language.html#builtin-functions">builtin function</a> relative_coord(x, y) may be useful when making comparisons.</td></tr>
 <tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
-<tr><td>tile_slope</td><td>Which corners are raised on the given tile.</td><td>
-Bit 0: west corner is above the lowest corner.<br>
-Bit 1: south corner is above the lowest corner.<br>
-Bit 2: east corner is above the lowest corner.<br>
-Bit 3: north corner is above the lowest corner.<br>
-Bit 4: this tile is a steep slope (the corner opposite to the lowest corner is 2 units higher).<br>
-See <a href="refs.html#refs-slopes">tile slopes</a> for an illustration
-</td></tr>
+<tr><td>tile_slope</td><td>SLOPE_XXX</td><td>See <a href="refs.html#refs-slopes">tile slopes</a> for an overview of possible values</td></tr>
 <tr><td>build_date</td><td></td><td>The date this object was build.</td></tr>
 <tr><td>animation_frame</td><td>0..255</td><td>Current animation frame</td></tr>
 <tr><td>company_colour</td><td>0..15</td><td>Colour used for the company colour mask</td></tr>
@@ -178,17 +171,6 @@ undefined behaviour.</p>
 <tr><td>ANIM_TRIGGER_OBJ_TILELOOP<td>Object tile is processed in the tileloop
 (at different times for different tiles)
 <tr><td>ANIM_TRIGGER_OBJ_256_TICKS<td>Every 256 ticks (all tiles at the same time)
-</table>
-
-<h3><a name="objects-callbacks-slope">Format of slope data</a></h3>
-<p>Slope is a bitmask of raised corners, like <code>bitmask(CORNER_N, CORNER_W)</code>
-A value of 0 (no bits set) indicates flat land. The following bits may be set:</p>
-<table class="t">
-<tr><th>Name<th>Meaning
-<tr><td>CORNER_W<td>West (left) corner of the tile is raised.
-<tr><td>CORNER_S<td>South (bottom) corner of the tile is raised.
-<tr><td>CORNER_E<td>East (right) corner of the tile is raised.
-<tr><td>CORNER_N<td>North (top) corner of the tile is raised.
 </table>
 
 </body>
