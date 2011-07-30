@@ -1476,6 +1476,10 @@ the file size cannot exceed 64KB.
 <tr><td>import_sound(<i>grfid, id</i>)<td>Import sound from a different grf file. <i>grfid</i> refers to the grf-file to import the sound from.
 <i>id</i> is the zero-based internal ID of the sound within the other grf-file.
 <tr><td>relative_coord(<i>x, y</i>)<td>Returns the coordinates in <i>0xYYXX</i> format. x and y must be in the [0, 255] range.
+<tr><td>num_corners_raised(<i>slope</i>)<td>Returns the number of corners raised in a slope.
+Return value is 0 .. 3 for normal slopes and 4 for steep ones. See also
+<a href="refs.html#refs-slopes">here</a> for more information about slopes.
+Using this on values that are not slopes results in undefined behaviour.
 </table>
 
 </body>

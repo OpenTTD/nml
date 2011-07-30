@@ -401,7 +401,7 @@ def builtin_sound_file(name, args, pos):
 
 def builtin_sound_import(name, args, pos):
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have 2 parameter", pos)
+        raise generic.ScriptError(name + "() must have 2 parameters", pos)
     grfid = parse_string_to_dword(args[0].reduce())
     sound_num = args[1].reduce_constant().value
     return ConstantNumeric(action11.add_sound((grfid, sound_num)), pos)
@@ -426,6 +426,31 @@ def builtin_relative_coord(name, args, pos):
     y_coord = BinOp(nmlop.SHIFT_LEFT, y_coord, ConstantNumeric(8), y_coord.pos)
 
     return BinOp(nmlop.OR, x_coord, y_coord, pos)
+
+def builtin_num_corners_raised(num, args, pos):
+    """
+    num_corners_raised(slope) builtin function.
+    slope is a 5-bit value
+
+    @return Number of raised corners in a slope (4 for steep slopes)
+    """
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+
+    slope = args[0]
+    # The returned value is ((slope x 0x8421) & 0x11111) % 0xF
+    # Explanation in steps: (numbers in binary)
+    # - Masking constrains the slope to 5 bits, just to be sure (a|bcde)
+    # - Multiplication creates 4 copies of those bits (abcd|eabc|deab|cdea|bcde)
+    # - And-masking leaves only the lowest bit in each nibble (000d|000c|000b|000a|000e)
+    # - The modulus operation adds one to the output for each set bit
+    # - We now have the count of bits in the slope, which is wat we want. yay!
+    slope = BinOp(nmlop.AND, slope, ConstantNumeric(0x1F),    pos)
+    slope = BinOp(nmlop.MUL, slope, ConstantNumeric(0x8421),  pos)
+    slope = BinOp(nmlop.AND, slope, ConstantNumeric(0x11111), pos)
+
+    return  BinOp(nmlop.MOD, slope, ConstantNumeric(0xF),     pos)
+
 #}
 
 function_table = {
@@ -466,4 +491,5 @@ function_table = {
     'sound' : builtin_sound_file,
     'import_sound': builtin_sound_import,
     'relative_coord' : builtin_relative_coord,
+    'num_corners_raised' : builtin_num_corners_raised,
 }
