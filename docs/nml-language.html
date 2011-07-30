@@ -442,16 +442,17 @@ before writing it to the output file.</p>
 
 
 <h2><a name="block-template">Template</a></h2>
-NML allows to define templates for use in <a href="#block-spriteset">spritesets</a>, which can be
-referred to when defining real sprites, avoiding repetitive declaration of the same alignment (e.g.
-when coding different train wagons of the same size).
+<p>NML allows to define templates to avoid repetitive declaration of the same
+sprite alignment (e.g. when coding different train wagons of the same size).
+The may be used in any place where a real sprite would be used. Templates may
+also be nested. Parameters may be numbers or strings (for the filename).</p>
 <pre class="exl">
 template templatename([param [, param [, param...]]]) {
 	<a href="#real_sprites">list of realsprites</a>
 	...
 }
 </pre>
-For an example see <a href="#block-spritegroup-vehicles">below</a>.
+<p>For an example see <a href="#block-spritegroup">below</a>.</p>
 
 <h2><a name="block-spriteset">Spriteset</a></h2>
 A spriteset associates a name with a number piece of an existing image file and describes
