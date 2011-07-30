@@ -255,73 +255,77 @@ real_sprite_compression_flags = {
 
 
 def parse_real_sprite(sprite, default_file, id_dict):
-    # the number of parameters
+    # check the number of parameters
     num_param = len(sprite.param_list)
     if num_param == 0:
         sprite.is_empty = True
         return RealSpriteAction(sprite)
     elif not (2 <= num_param <= 4 or 6 <= num_param <= 8):
         raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2, 3, 4, 6, 7 or 8.", sprite.param_list[0].pos)
-    try:
-        # create new sprite struct, needed for template expansion
-        new_sprite = RealSprite()
 
-        param_offset = 0
+    # create new sprite struct, needed for template expansion
+    new_sprite = RealSprite()
 
-        if num_param >= 6:
-            # xpos, ypos, xsize and ysize are all optional. If not specified they'll default
-            # to 0, 0, image_width, image_height
-            new_sprite.xpos  = sprite.param_list[0].reduce_constant([id_dict])
-            new_sprite.ypos  = sprite.param_list[1].reduce_constant([id_dict])
-            new_sprite.xsize = sprite.param_list[2].reduce_constant([id_dict])
-            new_sprite.ysize = sprite.param_list[3].reduce_constant([id_dict])
-            new_sprite.check_sprite_size()
-            param_offset += 4
+    param_offset = 0
 
-        new_sprite.xrel  = sprite.param_list[param_offset].reduce_constant([id_dict])
-        new_sprite.yrel  = sprite.param_list[param_offset + 1].reduce_constant([id_dict])
-        generic.check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'xrel'", new_sprite.xrel.pos)
-        generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater 'yrel'", new_sprite.yrel.pos)
-        param_offset += 2
+    if num_param >= 6:
+        # xpos, ypos, xsize and ysize are all optional. If not specified they'll default
+        # to 0, 0, image_width, image_height
+        new_sprite.xpos  = sprite.param_list[0].reduce_constant([id_dict])
+        new_sprite.ypos  = sprite.param_list[1].reduce_constant([id_dict])
+        new_sprite.xsize = sprite.param_list[2].reduce_constant([id_dict])
+        new_sprite.ysize = sprite.param_list[3].reduce_constant([id_dict])
+        new_sprite.check_sprite_size()
+        param_offset += 4
 
-        if num_param > param_offset and (param_offset + 1 != num_param or not isinstance(sprite.param_list[param_offset], expression.StringLiteral)):
+    new_sprite.xrel  = sprite.param_list[param_offset].reduce_constant([id_dict])
+    new_sprite.yrel  = sprite.param_list[param_offset + 1].reduce_constant([id_dict])
+    generic.check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater %d 'xrel'" % (param_offset + 1), new_sprite.xrel.pos)
+    generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater %d 'yrel'" % (param_offset + 2), new_sprite.yrel.pos)
+    param_offset += 2
+
+    if num_param > param_offset:
+        try:
             new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
             new_sprite.compression.value |= 0x01
             param_offset += 1
-        else:
+            if (new_sprite.compression.value & ~0x4B) != 0:
+                raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
+        except generic.ConstError:
+            if num_param >= param_offset + 2:
+                # There are two extra parameters, so both compression and filename are specified and had to be valid
+                raise
+            else:
+                # If it's not a valid compression, it must be filename, check this
+                filename = sprite.param_list[param_offset].reduce([real_sprite_compression_flags, id_dict])
+                if not isinstance(filename, expression.StringLiteral): raise
+            # Apparently it's a string literal, that'll be handled later
             new_sprite.compression = expression.ConstantNumeric(0x01)
-        # only bits 0, 1, 3, and 6 can be set
-        if (new_sprite.compression.value & ~0x4B) != 0:
-            raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
+    else:
+        new_sprite.compression = expression.ConstantNumeric(0x01)
 
-        if num_param > param_offset:
-            new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
-            if not isinstance(new_sprite.file, expression.StringLiteral):
-                raise generic.ScriptError("Real sprite parameter %d 'file' should be a string literal" % (param_offset + 1), new_sprite.file.pos)
-        elif default_file is not None:
-            new_sprite.file = default_file
-        else:
-            raise generic.ScriptError("No image file specified for real sprite")
-    except generic.ConstError:
-        raise generic.ScriptError("Real sprite parameters should be compile-time constants.")
+    if num_param > param_offset:
+        new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
+        if not isinstance(new_sprite.file, expression.StringLiteral):
+            raise generic.ScriptError("Real sprite parameter %d 'file' should be a string literal" % (param_offset + 1), new_sprite.file.pos)
+    elif default_file is not None:
+        new_sprite.file = default_file
+    else:
+        raise generic.ScriptError("No image file specified for real sprite", sprite.param_list[0].pos)
 
     return RealSpriteAction(new_sprite)
 
 
 def parse_recolour_sprite(sprite, id_dict):
-    try:
-        # create new struct, needed for template expansion
-        new_mapping = []
-        for old_assignment in sprite.mapping:
-            from_min_value = old_assignment.name.min.reduce_constant([id_dict])
-            from_max_value = from_min_value if old_assignment.name.max is None else old_assignment.name.max.reduce_constant([id_dict])
-            to_min_value = old_assignment.value.min.reduce_constant([id_dict])
-            to_max_value = None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
-            new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
-        new_sprite = RecolourSprite(new_mapping)
-
-    except generic.ConstError:
-        raise generic.ScriptError("Recolour sprite values should be compile-time constants.")
+    # create new struct, needed for template expansion
+    new_mapping = []
+    for old_assignment in sprite.mapping:
+        from_min_value = old_assignment.name.min.reduce_constant([id_dict])
+        from_max_value = from_min_value if old_assignment.name.max is None else old_assignment.name.max.reduce_constant([id_dict])
+        to_min_value = old_assignment.value.min.reduce_constant([id_dict])
+        to_max_value = None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
+        new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
+    new_sprite = RecolourSprite(new_mapping)
 
     return RecolourSpriteAction(new_sprite)
 
