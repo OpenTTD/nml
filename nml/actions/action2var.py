@@ -461,6 +461,7 @@ class Varaction2Parser(object):
             for expr2 in expr.values:
                 self.parse(expr2)
                 self.var_list.append(nmlop.VAL2)
+                self.var_list_size += 1
             self.var_list.pop()
         else:
             self.parse(expr)
