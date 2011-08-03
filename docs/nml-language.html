@@ -1391,7 +1391,27 @@ versions of OpenTTD have affected the behaviour of many base costs, refer
 to the notes below the cost table for more information.</p>
 
 <h1><a name="units">Units</a></h1>
-
+<p>Units can be used for values of speed, power and weight. See below for an
+example on their usage. Refer to the table for an overview of supported units.</p>
+<pre>
+item(FEAT_TRAINS, some_train) {
+    property {
+        speed: 120 km/h
+    }
+}</pre>
+<table class="t">
+<tr><th>Type<th>Unit string<th>SI Equivalent
+<tr><td>Speed<td>m/s<td>-
+<tr><td>Speed<td>km/h<td>1 km/h = 0.2778 m/s
+<tr><td>Speed<td>mph<td>1 mph = 0.4470 m/s
+<tr><td>Power<td>kW<td>-
+<tr><td>Power<td>hp<td>1 hp = 0.7457 kW (Imperial)
+<tr><td>Power<td>hpI<td>1 hpI = 0.7457 kW (Imperial)
+<tr><td>Power<td>hpM<td>1 hpM = 0.7355 kW (Metric)
+<tr><td>Weight<td>kg<td>-
+<tr><td>Weight<td>ton<td>1000 kg
+<tr><td>Weight<td>tons<td>1000 kg
+</table>
 <h1><a name="expressions">Expressions</a></h1>
 
 <h2><a name="elementary-values">Elementary values</a></h2>
@@ -1406,7 +1426,7 @@ Elementary values in expressions are
 <tr><td>Setting<td>an Identifier<td>The name of a <a href="#block-grf-settings">GRF setting</a>
 <tr><td>Parameter<td>param[<i>&lt;num&gt;</i>]<td>Read/write the parameter with the given number.
 <tr><td>Parameter from another GRF<td>param[<i>&lt;grfid&gt;</i>, <i>&lt;num&gt;</i>]<td>Read the value of a parameter of another grf
-<tr><td>Unit<td>nfo|mph|km/h|m/s|hp|ton<td>One of the strings "nfo", "mph", "km/h", "m/s", "hp", or "ton" (without quotes). Used to set several properties.
+<tr><td>Unit<td>nfo|mph|km/h|m/s|hp|kW|hpI|hpM|tons|ton|kg<td>See the section on <a href="#units">units</a> above.
 </table>
 
 You can combine those elementary values using operators like you're used to from other languages. The following operators are supported:

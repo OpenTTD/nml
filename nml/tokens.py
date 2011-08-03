@@ -137,7 +137,7 @@ class NMLLexer(object):
         return t
 
     def t_UNIT(self, t):
-        r'(nfo)|(mph)|(km/h)|(m/s)|(hp)|(tons)|(ton)'
+        r'(nfo)|(mph)|(km/h)|(m/s)|(hp)|(kW)|(hpI)|(hpM)|(tons)|(ton)|(kg)'
         return t
 
     def t_ID(self, t):
