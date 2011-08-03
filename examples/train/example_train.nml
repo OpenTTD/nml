@@ -1,0 +1,295 @@
+/*
+ * This file is aimed to provide an example on how to code a vehicle in NML
+ * In this case a train is coded, other vehicle types work in a similar fashion.
+ * To keep the code readable, not every property or variable is documented in
+ * detail, refer to the vehicle-specific reference in the documentation.
+ * The coded vehicle is quite comples, in order to show the various possibilities.
+ *
+ * The vehicle coded here is a Dutch EMU, the ICM 'Koploper'
+ * Graphics are by Purno, the original NFO code is written by DJNekkid
+ * As in real life, you can choose between a 3- and 4-part variant,
+ * to be selected via refitting. This adds some complexity, which
+ * provided the needed excuse to implement a lot of callbacks :)
+ *
+ * Apart from this file, you will also need the following
+ * - Graphics, found in icm.png (in the same folder)
+ * - Language files, to be placed in the 'lang' folder.
+ *      Currently english.lng and dutch.lng are supplied.
+ */
+
+/*
+ * First, define a grf block. This defines some basic properties of the grf,
+ * which are required for the grf to be valid and loadable. Additionally,
+ * user-configurable parameters are defined here also.
+ */
+grf {
+    /* This grf is part of NML, therefore "NML" is chosen as the first three
+     * characters of the GRFID. It is the first real grf defined as part of
+     * NML, therefore the last character is set to 0. Successive grfs will
+     * have 1, 2, etc. there, to make sure each example grf has a unique GRFID.
+     */
+    grfid: "NML\00";
+    /* GRF name and description strings are defined in the lang files */
+    name: string(STR_GRF_NAME);
+    desc: string(STR_GRF_DESC);
+    /* This is the first version, start numbering at 0. */
+    version: 0;
+    min_compatible_version: 0;
+
+    /* Define user-configurable parameters */
+    param {
+        /* There is one parameter, which can be used to alter the colour scheme */
+        colour_scheme {
+            type: int;
+            name: string(STR_PARAM_COLOUR_SCHEME_NAME);
+            desc: string(STR_PARAM_COLOUR_SCHEME_DESC);
+            /* There are currently three possible values:
+             * - 1cc
+             * - 2cc (default)
+             * - real-world
+             */
+            min_value: 0;
+            max_value: 2;
+            def_value: 1;
+            names: {
+                0: string(STR_PARAM_COLOUR_SCHEME_1CC);
+                1: string(STR_PARAM_COLOUR_SCHEME_2CC);
+                2: string(STR_PARAM_COLOUR_SCHEME_REAL);
+            };
+        }
+    }
+}
+
+/* Define a rail type table,
+ * this allows referring to railtypes
+ * irrespective of the grfs loaded.
+ */
+railtypetable {
+    RAIL, ELRL, MONO, MGLV,
+}
+
+/* Next: a series of templates for the graphics
+ * Templates allow you to avoid repetitive coding of sprite offsets,
+ * as long as you consistently use the same alignment
+ * Note that layout in png differs slightly from the orignal graphics in the 2cc set */
+
+/* Basic template for 4 vehicle views */
+template tmpl_vehicle_basic(x, y) {
+    // parameters x, y: coordinates of top-left corner of first sprite
+    [x,      y,  8, 24,  -3, -12] //xpos ypos xsize ysize xrel yrel
+    [x +  9, y, 22, 20, -14, -12]
+    [x + 32, y, 32, 16, -16, -12]
+    [x + 65, y, 22, 20,  -6, -12]
+}
+
+/* Template for a vehicle with only 4 views (symmetric) */
+template tmpl_vehicle_4_views(num) {
+    // parameter num: Index in the graphics file, assuming vertical ordering of vehicles
+    tmpl_vehicle_basic(1, 1 + 32 * num)
+}
+
+/* Template for a vehicle with 8 views (non-symmetric) */
+template tmpl_vehicle_8_views(num, reversed) {
+    // parameter num: Index in the graphics file, assuming vertical ordering of vehicles
+    // parameter reversed: Reverse visible orientation of vehicle, if set to 1
+    tmpl_vehicle_basic(reversed ? 89 : 1, 1 + 32 * num)
+    tmpl_vehicle_basic(reversed ? 1 : 89, 1 + 32 * num)
+}
+
+/* Template for a single vehicle sprite */
+template tmpl_vehicle_single(num, xsize, ysize, xrel, yrel) {
+    [1, 1 + 32 * num, xsize, ysize, xrel, yrel]
+}
+
+/* Define the spritesets, these allow referring to these sprites later on */
+spriteset (set_icm_front_lighted, "icm.png") { tmpl_vehicle_8_views(0, 0) }
+spriteset (set_icm_rear_lighted,  "icm.png") { tmpl_vehicle_8_views(1, 1) }
+spriteset (set_icm_front,         "icm.png") { tmpl_vehicle_8_views(2, 0) }
+spriteset (set_icm_rear,          "icm.png") { tmpl_vehicle_8_views(3, 1) }
+spriteset (set_icm_middle,        "icm.png") { tmpl_vehicle_4_views(4)    }
+spriteset (set_icm_purchase,      "icm.png") { tmpl_vehicle_single(5, 53, 14, -25, -10) }
+spriteset (set_icm_invisible,     "icm.png") { tmpl_vehicle_single(6,  1,  1,   0,   0) }
+
+/* --- Graphics callback  --- */
+
+/* Only the frontmost vehicle should have its lights on */
+switch(FEAT_TRAINS, SELF, sw_icm_graphics_front, position_in_consist) {
+    0: set_icm_front_lighted;
+    set_icm_front;
+}
+
+/* Only the rearmost vehicle should have red lights */
+switch(FEAT_TRAINS, SELF, sw_icm_graphics_rear, position_in_consist_from_end) {
+    0: set_icm_rear_lighted;
+    set_icm_rear;
+}
+
+/* In the 3-part version, the 3rd car is invisible */
+switch(FEAT_TRAINS, SELF, sw_icm_graphics_middle, ((position_in_consist % 4) == 2) && (cargo_subtype == 0)) {
+    1: set_icm_invisible;
+    set_icm_middle;
+}
+
+/* Choose between front, middle and back parts */
+switch(FEAT_TRAINS, SELF, sw_icm_graphics, position_in_consist % 4) {
+    0:      sw_icm_graphics_front;
+    1 .. 2: sw_icm_graphics_middle;
+    3:      sw_icm_graphics_rear;
+    CB_FAILED;
+}
+
+/* --- Cargo subtype text --- */
+switch(FEAT_TRAINS, SELF, sw_icm_cargo_subtype_text, cargo_subtype) {
+    0: return string(STR_ICM_SUBTYPE_3_PART);
+    1: return string(STR_ICM_SUBTYPE_4_PART);
+    return 0xFF;
+}
+
+/* --- Colour mapping callback  --- */
+switch(FEAT_TRAINS, SELF, sw_icm_colour_mapping, colour_scheme) {
+    /* Emulate 1cc by making the first colour always yellow, this looks much better (and more realistic) */
+    0: return base_sprite_2cc + 16 * company_colour1 + (PALETTE_CC_YELLOW - PALETTE_CC_FIRST);
+    /* Use the default, i.e. 2 company colours */
+    1: return base_sprite_2cc + CB_RESULT_COLOUR_MAPPING_ADD_CC;
+    /* Use realistic colours, i.e. yellow + dark blue */
+    2: return base_sprite_2cc + (PALETTE_CC_DARK_BLUE - PALETTE_CC_FIRST) * 16 + (PALETTE_CC_YELLOW - PALETTE_CC_FIRST);
+    CB_FAILED; // should not be reached
+}
+
+/* --- Start/stop callback  --- */
+switch(FEAT_TRAINS, SELF, sw_icm_start_stop, num_vehs_in_consist) {
+    /* Vehicles may be coupled to a maximum of 4 units (12-16 cars) */
+    1 .. 16: return 0xFF;
+    return string(STR_ICM_CANNOT_START);
+}
+
+/* --- Articulated part callback  --- */
+switch(FEAT_TRAINS, SELF, sw_icm_articulated_part, extra_callback_info1) {
+    /* Add three articulated parts, for a total of four */
+    1 .. 3: return icm;
+    return 0xFF;
+}
+
+/* --- Wagon attach callback  --- */
+switch(FEAT_TRAINS, SELF, sw_icm_can_attach_wagon, vehicle_type_id) {
+    /* SELF refers to the wagon here, check that it's an ICM */
+    icm: return CB_RESULT_ATTACH_ALLOW;
+    return string(STR_ICM_CANNOT_ATTACH_OTHER);
+}
+
+/* --- Shorten vehicle callback  --- */
+switch(FEAT_TRAINS, SELF, sw_icm_shorten_3_part_vehicle, position_in_consist % 4) {
+    /* In the three part version, shorten the 2nd vehicle to 1/8 and the 3rd to 7/8
+     * The rear (7/8) part is then made invisisble */
+    1: return SHORTEN_TO_1_8;
+    2: return SHORTEN_TO_7_8;
+    return SHORTEN_TO_8_8;
+}
+
+switch(FEAT_TRAINS, SELF, sw_icm_shorten_vehicle, cargo_subtype) {
+    0: sw_icm_shorten_3_part_vehicle;
+    return SHORTEN_TO_8_8; // 4-part vehicle needs no shortening
+}
+
+/* Power, weight and TE are all applied to the front vehicle only */
+switch(FEAT_TRAINS, SELF, sw_icm_power, cargo_subtype) {
+    0: return int(1260 / 0.7457); // kW
+    return int(1890 / 0.7457); // kW
+}
+
+switch(FEAT_TRAINS, SELF, sw_icm_weight, cargo_subtype) {
+    0: return 48 * 3; // 48 ton per wagon
+    return 48 * 4;
+}
+
+switch(FEAT_TRAINS, SELF, sw_icm_te, cargo_subtype) {
+    /* Base TE coefficient = 0.3
+     * 3 parts: 1/3 of weight on driving wheels
+     * 4 parts: 3/8 of weight on driving wheels */
+    0: return int(0.3 * 255 / 3);
+    return int(0.3 * 255 * 3 / 8);
+}
+
+/* Adjust depot view of trains */
+traininfo_y_offset = 2;
+train_width_32_px = 1;
+
+/* Increase base cost to provide a greater range for running costs */
+basecost {
+    PR_RUNNING_TRAIN_ELECTRIC: 2;
+}
+
+/* Define the actual train */
+item(FEAT_TRAINS, icm) {
+    /* Define properties first, make sure to set all of them */
+    property {
+        name: string(STR_ICM_NAME);
+        climates_available: bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPICAL); // not available in toyland
+        introduction_date: date(1983, 1, 1);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        vehicle_life: 30;
+        reliability_decay: 20;
+        refittable_cargo_classes: bitmask(CC_PASSENGERS);
+        non_refittable_cargo_classes: bitmask();
+        refittable_cargo_types: bitmask(); // refitting is done via cargo classes only, no cargoes need explicit enabling/disabling
+        loading_speed: 6; // It's an intercity train, loading is relatively slow
+        cost_factor: 45;
+        running_cost_factor: 100; // Changed by callback
+        sprite_id: SPRITE_ID_NEW_TRAIN;
+        speed: 141 km/h; // actually 140, but there are rounding errors
+        misc_flags: bitmask(TRAIN_FLAG_2CC, TRAIN_FLAG_MU);
+        refit_cost: 0;
+        // callback flags are not set manually
+        track_type: ELRL; // from rail type table
+        ai_special_flag: AI_FLAG_PASSENGER;
+        power: 1260 kW; // Changed by CB
+        running_cost_base: RUNNING_COST_ELECTRIC;
+        dual_headed: 0;
+        cargo_capacity: 36; // lower than in real world, for gameplay
+        weight: 144 ton; // Total weight, changed by callback
+        ai_engine_rank: 0; // not intended to be used by the ai
+        engine_class: ENGINE_CLASS_ELECTRIC;
+        extra_power_per_wagon: 0 kW;
+        tractive_effort_coefficient: 0.1; // Changed by callback
+        air_drag_coefficient: 0.06;
+        shorten_vehicle: SHORTEN_TO_8_8;
+        /* Overridden by callback to disable for non-powered wagons */
+        visual_effect_and_powered: visual_effect_and_powered(VISUAL_EFFECT_ELECTRIC, 2, DISABLE_WAGON_POWER);
+        extra_weight_per_wagon: 0 ton;
+        bitmask_vehicle_info: 0;
+    }
+    /* Define graphics and callbacks
+     * Setting all callbacks is not needed, only define what is used */
+    graphics {
+        default: sw_icm_graphics;
+        purchase: set_icm_purchase;
+        cargo_subtype_text: sw_icm_cargo_subtype_text;
+        additional_text: return string(STR_ICM_ADDITIONAL_TEXT);
+        colour_mapping: sw_icm_colour_mapping;
+        start_stop: sw_icm_start_stop;
+        articulated_part: sw_icm_articulated_part;
+        can_attach_wagon: sw_icm_can_attach_wagon;
+        running_cost_factor: (cargo_subtype == 1) ? 150 : 100;
+        purchase_running_cost_factor: return 100;
+        /* Capacity is per part */
+        cargo_capacity: return (cargo_subtype == 0) && ((position_in_consist % 4) == 2) ? 0 : 36;
+        /* In the purchase menu, we want to show the capacity for the three-part version,
+         * i.e. divide the capacity of three cars across four */
+        purchase_cargo_capacity: return 36 * 3 / 4; 
+        /* Only the front vehicle has a visual effect */
+        visual_effect_and_powered: return (position_in_consist % 4 == 0) ?
+                                        visual_effect_and_powered(VISUAL_EFFECT_ELECTRIC, 2, DISABLE_WAGON_POWER) :
+                                        visual_effect_and_powered(VISUAL_EFFECT_DISABLE, 0, DISABLE_WAGON_POWER);
+        shorten_vehicle: sw_icm_shorten_vehicle;
+        /* Only the front vehicle has power */
+        purchase_power: return int(1260 / 0.7457); // kW
+        power: sw_icm_power;
+        /* Only the front vehicle has weight */
+        purchase_weight: return 144; //tons
+        weight: sw_icm_weight;
+        /* Only the front vehicle has TE */
+        purchase_tractive_effort_coefficient: return int(0.3 * 255 / 3); // Only 1/3 of the weight is on the driving weels.
+        tractive_effort_coefficient: sw_icm_te;
+        
+    }
+}

@@ -1,0 +1,14 @@
+﻿##grflangid 0x1F
+STR_GRF_NAME                                                    :NML Voorbeeld NewGRF: Trein
+STR_GRF_DESC                                                    :{ORANGE}NML Voorbeeld NewGRF: Trein{}{BLACK}Deze NewGRF is bedoeld als voorbeeld van de hogere NewGRF-programmeertaal NML.{}Originele graphics door {SILVER}Purno, {BLACK}geprogrammeerd door {SILVER}DJNekkid.{}{BLACK}Deze NewGRF voegt een Nederlands treinstel toe, de ICM 'Koploper'.
+STR_PARAM_COLOUR_SCHEME_NAME                                    :Kleurenschema
+STR_PARAM_COLOUR_SCHEME_DESC                                    :Kies het soort kleurenschema
+STR_PARAM_COLOUR_SCHEME_1CC                                     :Eén bedrijfskleur
+STR_PARAM_COLOUR_SCHEME_2CC                                     :Twee bedrijfskleuren
+STR_PARAM_COLOUR_SCHEME_REAL                                    :Realistische kleuren
+STR_ICM_NAME                                                    :ICM 'Koploper' (Electrisch)
+STR_ICM_ADDITIONAL_TEXT                                         :Kies door ombouwen tussen een 3- of vierdelig treinstel.{} De waarden hierboven zijn voor de driedelige variant, de vierdelige versie heeft 33% meer capaciteit en 50% meer vermogen en bedrijfskosten.
+STR_ICM_SUBTYPE_3_PART                                          : (driedelig)
+STR_ICM_SUBTYPE_4_PART                                          : (vierdelig)
+STR_ICM_CANNOT_START                                            :... trein te lang (max. 4 gekoppelde treinstellen).
+STR_ICM_CANNOT_ATTACH_OTHER                                     :... ICM kan niet aan andere treinsoorten worden gekoppeld.
