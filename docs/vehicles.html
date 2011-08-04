@@ -78,7 +78,7 @@ to RAIL and make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRI
 <tr><td> visual_effect_and_powered<td> visual_effect_and_powered(VISUAL_EFFECT_XXX, offset, ENABLE_WAGON_POWER or DISABLE_WAGON_POWER)<td>yes<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
 type of the visual effect you want for this vehicle. Default means "take from engine_class property". Offset is the position of the effect. 0 is default, negative values
 mean more to the front and positive values are backwards. Minimum offset is -8, maximum is 7.
-<tr><td> extra_weight_per_wagon<td> 0 ... 255 t (mass units)<td>=0<td>Adds extra weight for powered wagons, see extra_power_per_wagon
+<tr><td> extra_weight_per_wagon<td> 0 ... 255 ton (mass units)<td>=0<td>Adds extra weight for powered wagons, see extra_power_per_wagon
 <tr><td> <a name="bitmask_vehicle_info">bitmask_vehicle_info</a><td> 8-bit bitmask<td>yes<td>Used for obtaining <a href="#bitmask_consist_info">bitmask_consist_info</a>
 </table>
 
@@ -284,6 +284,9 @@ the unfortunate side-effect of requiring the vehicle ID of the articulated part
 to be in the range 0 .. 127, currently there's no way around this limitation.
 <tr><td>can_attach_wagon<td>Trains<td>No<td>String or CB_RESULT_ATTACH_XXX<td>
 Called when a wagon is being attached, to allow or disallow attaching.
+This callback has to be defined at the engine. However, variables in the
+<code>SELF</code> scope refer to the wagon being attached, the <code>PARENT</code>
+scope refers to the engine that the wagon is being attached to.
 Return a string to disallow with the string as error message. Return
 CB_RESULT_ATTACH_DISALLOW to disallow with standard message ("incompatible
 railtypes"), CB_RESULT_ATTACH_ALLOW to allow or CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES
