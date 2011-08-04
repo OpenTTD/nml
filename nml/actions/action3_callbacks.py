@@ -43,6 +43,7 @@ callbacks[0x00] = {
     'tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_tractive_effort_coefficient'},
     'purchase_tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
     'bitmask_vehicle_info' : {'type': 'cb', 'num': 0x36, 'var10': 0x25},
+    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x28},
 }
 callbacks[0x00].update(general_vehicle_cbs)
 
@@ -64,7 +65,7 @@ callbacks[0x01] = {
     'purchase_speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x15, 'purchase': 2},
     'tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x18, 'purchase': 'purchase_tractive_effort_coefficient'},
     'purchase_tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x18, 'purchase': 2},
-    
+    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x22},
 }
 callbacks[0x01].update(general_vehicle_cbs)
 
@@ -78,6 +79,7 @@ callbacks[0x02] = {
     'purchase_speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
     'running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_running_cost_factor'},
     'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
+    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x1D},
 }
 callbacks[0x02].update(general_vehicle_cbs)
 
@@ -92,6 +94,7 @@ callbacks[0x03] = {
     'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 2},
     'mail_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 'purchase_mail_capacity'},
     'purchase_mail_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
+    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x1C},
     'rotor' : {'type': 'override'},
 }
 callbacks[0x03].update(general_vehicle_cbs)

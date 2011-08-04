@@ -229,6 +229,7 @@ properties[0x00] = {
     'refittable_cargo_classes'     : {'size': 2, 'num': 0x28, 'append_function': append_cargo_type(0x00)},
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29, 'append_function': append_cargo_type(0x00)},
     'introduction_date'            : {'size': 4, 'num': 0x2A},
+    'cargo_age_period'             : {'size': 2, 'num': 0x2B},
 }
 properties[0x00].update(general_veh_props)
 
@@ -266,6 +267,7 @@ properties[0x01] = {
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E, 'append_function': append_cargo_type(0x01)},
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     'visual_effect'                : {'size': 1, 'num': 0x21},
+    'cargo_age_period'             : {'size': 2, 'num': 0x22},
 }
 properties[0x01].update(general_veh_props)
 
@@ -292,6 +294,7 @@ properties[0x02] = {
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19, 'append_function': append_cargo_type(0x02)},
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     'visual_effect'                : {'size': 1, 'num': 0x1C},
+    'cargo_age_period'             : {'size': 2, 'num': 0x1D},
 }
 properties[0x02].update(general_veh_props)
 
@@ -318,6 +321,7 @@ properties[0x03] = {
     'refittable_cargo_classes'     : {'size': 2, 'num': 0x18},
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
     'introduction_date'            : {'size': 4, 'num': 0x1A},
+    'cargo_age_period'             : {'size': 2, 'num': 0x1C},
 }
 properties[0x03].update(general_veh_props)
 

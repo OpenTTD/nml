@@ -26,6 +26,7 @@ To make a vehicle available in all climates except toyland you could use: ALL_CL
 <tr><td> loading_speed <td>                    0 ... 255 (cargo units)</td><td>yes</td><td>Units of cargo loaded per tick. Default vehicles use 5 for trains and road vehicles, 10 for ships and 20 for aircraft</td></tr>
 <tr><td> cost_factor</td><td>                  0 ... 255</td><td>=0</td><td>multiplier to the base purchase cost</td></tr>
 <tr><td> running_cost_factor</td><td>          0 ... 255</td><td>=0</td><td>multiplier to the base running costs</td></tr>
+<tr><td> cargo_age_period</td><td>             0 ... 65535</td><td>yes</td><td>This property specifies after how many ticks cargo is aged. Default value is 185. 74 ticks is equal to 1 day.</td></tr>
 </table>
 
 <p>To determine whether your vehicle can be refitted to a certain cargo, OpenTTD uses the following table:</p>
@@ -296,6 +297,7 @@ The property description applies here also, except where otherwise noted.</p>
 <tr><td>speed<td>All<td>Yes, unless <code>purchase_speed</code> is set separately<td>Units are not (yet) available
 <tr><td>cost_factor<td>All<td>Yes, only<td>
 <tr><td>running_cost_factor<td>All<td>Yes, unless <code>purchase_running_cost_factor</code> is set separately<td>
+<tr><td>cargo_age_period<td>All<td>No<td>
 <tr><td>cargo_capacity<td>All except aircraft<td>Yes, unless <code>purchase_cargo_capacity</code> is set separately<td>
 <tr><td>passenger_capacity<td>Aircraft<td>Yes, unless <code>purchase_passenger_capacity</code> is set separately<td>
 <tr><td>mail_capacity<td>Aircraft<td>Yes, unless <code>purchase_mail_capacity</code> is set separately<td>

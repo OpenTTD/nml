@@ -235,6 +235,7 @@ item(FEAT_TRAINS, icm) {
         loading_speed: 6; // It's an intercity train, loading is relatively slow
         cost_factor: 45;
         running_cost_factor: 100; // Changed by callback
+        cargo_age_period: 185; // default value
         sprite_id: SPRITE_ID_NEW_TRAIN;
         speed: 141 km/h; // actually 140, but there are rounding errors
         misc_flags: bitmask(TRAIN_FLAG_2CC, TRAIN_FLAG_MU);
