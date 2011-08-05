@@ -27,7 +27,7 @@ A good place to discuss NewGRFs which are being developed are the
 Questions concerning setup up of NewGRF projects, programming or drawing or
 just discussing features and presenting work being done are well-placed there.
 When you are satisfied with a NewGRF and consider it tested enough that it really
-can be considered to be played with by the general public, you can publish your NewGRF in the 
+can be considered to be played with by the general public, you can publish your NewGRF in the
 <a href="http://www.tt-forums.net/viewforum.php?f=67">NewGRF releases sub-forum</a>
 and you might also consider to publish it to the
 <a href="http://bananas.openttd.org">Online Content Server</a>
@@ -174,9 +174,9 @@ version you should increase the version field by at least 1.</p>
 <p>For a new grf you should set the min_compatible_version to 1. Every time you change
 something in your newgrf which makes it incompatible to previous versions, you should
 set min_compatible_version to the current version. Changes which make a NewGRF
-incompatible to previous versions are most functional changes to existing behaviour, 
+incompatible to previous versions are most functional changes to existing behaviour,
 among others: changing vehicleIDs as well as some of their properties, changing
-industry layouts, railtype compatibility, changing (de-)activation conditions... 
+industry layouts, railtype compatibility, changing (de-)activation conditions...
 Adding new, additional things and expanding existing behaviour (without changing the
 current one) is mostly considered safe).</p>
 <pre class="code">}</pre>
@@ -291,7 +291,7 @@ The minimum acceptable value for the parameter (makes only sense for type int)
 The maximum acceptable value for the parameter (makes only sense for type int)
 <pre class="code">def_value</pre>
 This sets the default value for this parameter. If left out, the default value of 0 will be
-used. 
+used.
 <pre class="code">names</pre>
 If you chose type <code>int</code> and the numbers themselves are only used internally, have
 no direct numerical meaning and are better explained in words, you can use this to associate
@@ -501,7 +501,7 @@ spritegroup spritegroup_name {
 <p>Vehicles take two different series of spritesets; <code>loading</code> is used
 when the vehicle is loading within the station, <code>loaded</code> is used
 when the vehicle is travelling. Each of those can be a single spriteset,
-or a (bracketed) array of spritesets. Both <code>loading</code> and 
+or a (bracketed) array of spritesets. Both <code>loading</code> and
 <code>loaded</code> are required and should provide at least one spriteset each.
 If a spritegroup would contain only one spriteset, it's better to omit the
 spritegroup and directly use the spriteset instead. Spritegroups are used
@@ -583,7 +583,7 @@ to illustrate how it works:</p>
 <pre class="code">
 spritelayout airport_building1 {
 	ground { sprite: GROUNDSPRITE_NORMAL; }
-	childsprite { 
+	childsprite {
 		sprite: spr_small_dirt_ne; // custom spriteset
 		always_draw: 1; // also draw in transparent mode
 	}
@@ -736,6 +736,50 @@ Available recolour modes are:
 	should fit inside the bounding box of the parent sprite to avoid visual
 	glitches.
 </ul>
+<h3><a name="block-spritelayout-position">Advanced Spritelayout</a></h3>
+While parameters cannot yet be assigned explicitly to a spritelayout, variables, temporary storage and parameters can be used inside of a layout nevertheless. A common usage for such parametrized spritelayout is taking care of the tile slope and ground type as illustrated in this example:
+<pre class="code">
+spritelayout company_land_layout {
+	ground {
+		// normal ground sprite - always draw
+		sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
+	}
+	childsprite {
+		// company-coloured border - always draw
+		sprite:        cc_frame(LOAD_TEMP(0));
+		always_draw:   1;
+		recolour_mode: RECOLOUR_REMAP;
+		palette:       PALETTE_USE_DEFAULT;
+	}
+	childsprite {
+		// again the normal ground sprite. Thus in non-transparent view
+		// only the normal ground sprite is shown. In transparent view
+		// this acts as sprite which darkens the other two sprites via
+		// a translation to transparency.
+		sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
+	}
+}
+
+// A pseudo-switch which sets the temporary parameters for the sprite layout, storing the sprite number
+// which belongs to the terrain type and the corresponding offset due to the tile slope
+switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
+			// We store the offset into the spriteset due to the tile slope into the 1st temporary variable
+			STORE_TEMP(tile_slope, 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_N ? 15 : LOAD_TEMP(0), 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_S ? 16 : LOAD_TEMP(0), 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_W ? 17 : LOAD_TEMP(0), 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_E ? 18 : LOAD_TEMP(0), 0),
+
+			// We store the offset to the flat groundsprite we use into the 2nd temporary variable
+			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
+			STORE_TEMP(terrain_type == TILETYPE_DESERT      ? GROUNDSPRITE_DESERT : LOAD_TEMP(1), 1),
+			STORE_TEMP(terrain_type == TILETYPE_SNOW        ? GROUNDSPRITE_SNOW   : LOAD_TEMP(1), 1),
+
+			1
+			]) {
+	company_land_layout;
+}
+</pre>
 
 <h2><a name="block-tilelayout">Tilelayout for industries and airports</a></h2>
 <p>A tile layout describes which industry or airport tiles are associated with
@@ -867,7 +911,7 @@ consumes incoming and creates outgoing cargo. The syntax is:</p>
 <li><code>consume_1</code>, <code>consume_2</code>, <code>consume_3</code> are expressions which
 give the amount of the respective input cargo consumed during this call of the produce block. The
 given amounts are subtracted from the stockpile of cargo waiting to be processed.
-<li><code>produce_1</code>, <code>produce_2</code> are expressions which give the amount of the 
+<li><code>produce_1</code>, <code>produce_2</code> are expressions which give the amount of the
 produced (outgoing) cargos in the produce block.
 <li><code>run_again</code> is a boolean expression which evaluates to either 0 or 1. It indicates
 whether the produce block shall be called again. This is optional, with a default value of 0.
@@ -1456,7 +1500,7 @@ Note that accessing permanent town registers thrashes the contents of temporary 
 the constant representing an OpenTTD version
 <tr><td>cargotype_available(<i>cargotype</i>)<td>Check if a certain cargo type is available in
 this game. <i>cargotype</i> must be a literal string of length 4.
-<tr><td>railtype_available(<i>railtype</i>)<td>Check if a railtype is available in this game. 
+<tr><td>railtype_available(<i>railtype</i>)<td>Check if a railtype is available in this game.
 <i>railtype</i> must be a literal string of length 4.
 <tr><td>grf_current_status(<i>grfid[, mask]</i>)<td>1 if the given GRF is currently active 0, otherwise.
 If <i>mask</i> is set, only the bits set in the mask will be tested. Both parameters must be a literal string
