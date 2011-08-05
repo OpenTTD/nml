@@ -39,7 +39,7 @@ Examples:
 <li>Available everywhere except on the town edge: <code>[ALL_TOWNZONES &amp; ~bitmask(TOWNZONE_EDGE), ALL_CLIMATES | bitmask(ABOVE_SNOWLINE)</code></li>
 </ul>
 <tr><td>callback_flags<td>bitmask(HOUSE_CBF_XX)<td>Do not set this, unless you use <a href="old-callbacks.html">old-style callbacks</a>.
-<tr><td>random_colours<td>array of 4, each 0 ... 15<td>colour values in an array.
+<tr><td>random_colours<td>array of 4, each COLOUR_XXX<td>colour values in an array, refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for a list of possible values.
 <tr><td>refresh_multiplier<td>0 ... 63<td>Defines the frequency with which the tile will be re-randomized which has an impact for random animation.
 <tr><td>animation_info</td><td>Array [ANIMATION_XXX, frame-count]</td><td>XXX = [LOOPING | NON_LOOPING], 1..128 frames</td></tr>
 <tr><td>animation_speed<td>2 ... 16<td>Speed of animation, see <a href="refs.html#refs-animation-speed-values">animation speed table</a> for the meaning of the values.
@@ -101,7 +101,8 @@ to draw standard foundations (default) or CB_RESULT_NO_FOUNDATIONS to not draw t
 allow autoslope (altering the ground below a tile) or CB_RESULT_NO_AUTOSLOPE to
 disallow it.
 <tr><td>name<td>String<td>Name of the building (when using tile query tool)
-<tr><td>colour<td>Palette number<td>Used to recolour the building
+<tr><td>colour<td>Palette number<td>Used to recolour the building. See here
+<a href="refs.html#refs-palettes">here</a> for an overview of default palettes.
 <tr><td>construction_check<td>0 or 1<td>Return 1 to allow building the house or
 0 to disallow.
 <tr><td>destruction<td>0 or 1<td>Called periodically. Return 0 to keep the building

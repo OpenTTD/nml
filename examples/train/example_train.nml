@@ -148,11 +148,11 @@ switch(FEAT_TRAINS, SELF, sw_icm_cargo_subtype_text, cargo_subtype) {
 /* --- Colour mapping callback  --- */
 switch(FEAT_TRAINS, SELF, sw_icm_colour_mapping, colour_scheme) {
     /* Emulate 1cc by making the first colour always yellow, this looks much better (and more realistic) */
-    0: return base_sprite_2cc + 16 * company_colour1 + (PALETTE_CC_YELLOW - PALETTE_CC_FIRST);
+    0: return palette_2cc(COLOUR_YELLOW, company_colour1);
     /* Use the default, i.e. 2 company colours */
     1: return base_sprite_2cc + CB_RESULT_COLOUR_MAPPING_ADD_CC;
     /* Use realistic colours, i.e. yellow + dark blue */
-    2: return base_sprite_2cc + (PALETTE_CC_DARK_BLUE - PALETTE_CC_FIRST) * 16 + (PALETTE_CC_YELLOW - PALETTE_CC_FIRST);
+    2: return palette_2cc(COLOUR_YELLOW, COLOUR_DARK_BLUE);
     CB_FAILED; // should not be reached
 }
 

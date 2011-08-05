@@ -86,7 +86,8 @@ The <a href="nml-language.html#builtin-functions">builtin function</a> relative_
 <tr><td>tile_slope</td><td>SLOPE_XXX</td><td>See <a href="refs.html#refs-slopes">tile slopes</a> for an overview of possible values</td></tr>
 <tr><td>build_date</td><td></td><td>The date this object was build.</td></tr>
 <tr><td>animation_frame</td><td>0..255</td><td>Current animation frame</td></tr>
-<tr><td>company_colour</td><td>0..15</td><td>Colour used for the company colour mask</td></tr>
+<tr><td>company_colour</td><td>COLOUR_XXX</td><td>Colour used for the company colour mask.
+Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possible values.</td></tr>
 <tr><td>owner</td><td>0..0x10</td><td>CompanyID of the owner of the object or 0x10 if it was build in the scenario editor</td></tr>
 <tr><td>town_manhattan_dist</td><td></td><td>Manhattan distance to the nearest town</td></tr>
 <tr><td>town_euclidean_dist</td><td></td><td>Euclidean distance to the nearest town</td></tr>
@@ -149,7 +150,9 @@ between 30 ms and 33 minutes.
 construction. Variable <code>extra_callback_info1</code> contains the colour
 scheme of the constructing company in the same format as the return value, or
 random colours if not available (scenario editor). If OBJ_FLAG_2CC is not set,
-colour2 is zero. This callback can be used to alter the colour scheme of an object.
+colour2 is zero. This callback can be used to alter the colour scheme of an
+object. Refer to the table <a href="refs.html#refs-palettes-helpers">here</a>
+for possible colour values.
 <tr><td>autoslope<td>CB_RESULT[_NO]_AUTOSLOPE<td>Return CB_RESULT_AUTOSLOPE to
 allow autoslope (altering the ground below a tile) or CB_RESULT_NO_AUTOSLOPE to
 disallow it.

@@ -451,6 +451,40 @@ def builtin_num_corners_raised(num, args, pos):
 
     return  BinOp(nmlop.MOD, slope, ConstantNumeric(0xF),     pos)
 
+def builtin_palette_1cc(num, args, pos):
+    """
+    palette_1cc(colour) builtin function.
+
+    @return Recolour sprite to use
+    """
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+
+    if isinstance(args[0], ConstantNumeric):
+        generic.check_range(args[0].value, 0, 15, "Argument of '%s'" % name, args[0].pos)
+
+    return BinOp(nmlop.ADD, args[0], ConstantNumeric(775), pos)
+
+def builtin_palette_2cc(num, args, pos):
+    """
+    palette_2cc(colour1, colour2) builtin function.
+
+    @return Recolour sprite to use
+    """
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have 2 parameters", pos)
+
+    for i in range(0, 2):
+        if isinstance(args[i], ConstantNumeric):
+            generic.check_range(args[i].value, 0, 15, "Argument of '%s'" % name, args[i].pos)
+
+    col2 = BinOp(nmlop.MUL, args[1], ConstantNumeric(16), pos)
+    col12 = BinOp(nmlop.ADD, col2, args[0], pos)
+    # Base sprite is not a constant
+    from nml import global_constants
+    base = global_constants.patch_variable(global_constants.patch_variables['base_sprite_2cc'], pos)
+
+    return BinOp(nmlop.ADD, col12, base, pos)
 #}
 
 function_table = {
@@ -492,4 +526,6 @@ function_table = {
     'import_sound': builtin_sound_import,
     'relative_coord' : builtin_relative_coord,
     'num_corners_raised' : builtin_num_corners_raised,
+    'palette_1cc' : builtin_palette_1cc,
+    'palette_2cc' : builtin_palette_2cc,
 }

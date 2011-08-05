@@ -819,19 +819,36 @@ recolouring, as there is no way to specify a palette yourself.
 <tr><td>PALETTE_CHURCH_CREAM<td> 1439</tr>
 <tr><td>base_sprite_2cc<td> n/a</tr>
 </table>
-<p>The base sprite for 2 company colours may vary. Following <code>base_sprite_2cc</code> are the 16x16 colour
-translations for all possible combinations of a company colour with an arbitrary 2nd company colour. The
-order of the colours is the same as for <code>PALETTE_CC_XX</code>:</p>
+<p>The base sprite for 2 company colours may vary. Following
+<code>base_sprite_2cc</code> are the 16x16 colour translations for all possible
+combinations of a first and second company colour. Their order is defined by the
+following formula: <code>sprite = base_sprite_2cc + colour1 + 16*colour2</code>,
+for info on the colour values see below.</p>
+<h3><a name="refs-palettes-helpers">Company colour helper functions</a></h3>
+<p>For company colour translations, it may be more convenient to use one of
+the following helper functions:</p>
+<pre>palette_1cc(<i>colour</i>)
+palette_2cc(<i>colour1</i>, <i>colour2</i>)</pre>
+<p>Colour values may be taken from the following table. Note that their order
+corresponds with the order of the 1cc palettes <code>PALETTE_CC_XXX</code>.</p>
 <table class="t">
-<tr><td>PALETTE_CC_FIRST<td>PALETTE_CC_FIRST</tr>
-<tr><td>PALETTE_CC_FIRST<td>PALETTE_CC_FIRST+1</tr>
-<tr><td>PALETTE_CC_FIRST<td>...</tr>
-<tr><td>PALETTE_CC_FIRST+1<td>PALETTE_CC_FIRST</tr>
-<tr><td>PALETTE_CC_FIRST+1<td>PALETTE_CC_FIRST+1</tr>
-<tr><td>...<td>...</tr>
-<tr><td>PALETTE_CC_FIRST+15<td>PALETTE_CC_FIRST</tr>
-<tr><td>PALETTE_CC_FIRST+15<td>...</tr>
-<tr><td>PALETTE_CC_FIRST+15<td>PALETTE_CC_FIRST+15</tr>
+<tr><th>Colour name<th>Numerical value
+<tr><td>COLOUR_DARK_BLUE<td>0
+<tr><td>COLOUR_PALE_GREEN<td>1
+<tr><td>COLOUR_PINK<td>2
+<tr><td>COLOUR_YELLOW<td>3
+<tr><td>COLOUR_RED<td>4
+<tr><td>COLOUR_LIGHT_BLUE<td>5
+<tr><td>COLOUR_GREEN<td>6
+<tr><td>COLOUR_DARK_GREEN<td>7
+<tr><td>COLOUR_BLUE<td>8
+<tr><td>COLOUR_CREAM<td>9
+<tr><td>COLOUR_MAUVE<td>10
+<tr><td>COLOUR_PURPLE<td>11
+<tr><td>COLOUR_ORANGE<td>12
+<tr><td>COLOUR_BROWN<td>13
+<tr><td>COLOUR_GREY<td>14
+<tr><td>COLOUR_WHITE<td>15
 </table>
 
 <h2><a name="refs-directions">List of direction constants</a></h2>

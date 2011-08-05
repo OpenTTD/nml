@@ -150,9 +150,9 @@ Note that tiles for which <code>nearby_tile_is_water</code> is 0 may still have 
 <tr><td>layout_num</td><td>1..255</td><td>Number of the layout being used by the industry.</td></tr>
 <tr><td>founder</td><td>0..16</td><td>Company number of the industry founder. It will be 16 (0x10) if the industry was generated randomly. TTDPatch only supports up to 8 companies (0..7).</td></tr>
 <tr><td>founder_type</td><td>PLAYERTYPE_XX</td><td>PLAYERTYPE_HUMAN, PLAYERTYPE_AI, PLAYERTYPE_HUMAN_IN_AI (human managing AI company) or PLAYERTYPE_AI_IN_HUMAN (AI managing human company). OpenTTD only uses PLAYERTYPE_HUMAN and PLAYERTYPE_AI. If you cheat yourself to be part of an AI company OpenTTD will still report PLAYERTYPE_AI for the company with yourself and the AI and it'll report PLAYERTYPE_HUMAN for the now uncontrolled company.</td></tr>
-<tr><td>founder_colour1</td><td>0..15</td><td>Index of founding company's first colour. 0 if not founded by a company.</td></tr>
-<tr><td>founder_colour2</td><td>0..15</td><td>Index of founding company's second colour. It's the same as company_colour1, if no second company colour is chosen. 0 if not founded by a company.</td></tr>
-<tr><td>colour</td><td>0..15</td><td>Random colour for this industry.</td></tr>
+<tr><td>founder_colour1</td><td>COLOUR_XXX</td><td>Index of founding company's first colour. 0 if not founded by a company. Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possible values.</td></tr>
+<tr><td>founder_colour2</td><td>COLOUR_XXX</td><td>Index of founding company's second colour. It's the same as company_colour1, if no second company colour is chosen. 0 if not founded by a company. Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possible values.</td></tr>
+<tr><td>colour</td><td>COLOUR_XXX</td><td>Random colour for this industry. Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possible values.</td></tr>
 <tr><td>build_date</td><td>0..1826212865</td><td>Date of the industry foundation in days since year 0.</td></tr>
 <tr><td>build_type</td><td>BUILDTYPE_XX</td><td>BUILDTYPE_UNKNOWN (if created in an old version or with newindustries disabled), BUILDTYPE_GAMEPLAY (if founded or created by the in-game random industry generator), BUILDTYPE_GENERATION (if created during random map generation) or BUILDTYPE_EDITOR (if created with the scenario editor).</td></tr>
 <tr><td>counter</td><td>0..65535</td><td>Decremented every tick, used to time primary industry production in TTD.</td></tr>
@@ -255,7 +255,7 @@ refuse accepting a certain cargo, for example because the stockpile is full.
 Return 1 to accept or 0 to refuse. Make sure to synchronize this callback with
 the <code>cargo_amount_accept</code> callback for industry tiles.
 <code>extra_callback_info2</code> contains the cargo type to accept or not.
-<tr><td>colour<td>0 .. 15<td>Called after constructing the industry. The
+<tr><td>colour<td>COLOUR_XXX<td>Called after constructing the industry. The
 <code>colour</code> variable is set to a random value at this point, you can
 use this callback to change this.
 <tr><td>cargo_input<td>Cargo type, or 0xFF<td>Decide the input cargo types.

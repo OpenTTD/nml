@@ -91,7 +91,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><td> misc_flags</td><td>                   bitmask(ROADVEH_FLAG_XXX, ...)</td><td>partly; tram flag must the same<td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
 Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> refit_cost<td> 0 ... 255 <td>yes<td> in 25% units of the purchase price cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>yes<td>Used to enable certain callbacks. XXX = [VISUAL_EFFECT, LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>yes<td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-vehicles">old-style callbacks</a>.
 
 <!-- properties not present for all vehicle types -->
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>set to RUNNING_COST_NONE<td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
@@ -114,7 +114,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
 <tr><td> misc_flags<td> bitmask(SHIP_FLAG_2CC)<td> Bitmask with (currently) only one possible flag, set to 0 to disable
 <tr><td> refit_cost<td> 0 ... 255 <td> in 1/32 of the default refit cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>Used to enable certain callbacks. XXX = [VISUAL_EFFECT, LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-vehicles">old-style callbacks</a>.
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_refittable <td> [0 | 1] <td>0=false, 1=true. Note: if you do not set this property to 1, then refittable_cargo_classes /
@@ -136,7 +136,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><td> speed<td> 0 .. 3280 km/h (speed units)<td>
 <tr><td> misc_flags<td> bitmask(AIRCRAFT_FLAG_2CC)<td> Bitmask with (currently) only one possible flag, set to 0 to disable
 <tr><td> refit_cost<td> 0 ... 255 <td> in 1/32 of default refit cost base
-<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>XXX = [LOAD_AMOUNT | REFITTED_CAPACITY | CARGO_SUFFIX | COLOUR_MAPPING | SOUND_EFFECT]
+<tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-vehicles">old-style callbacks</a>.
 
 <!-- properties not present for all vehicle types -->
 <tr><td> is_helicopter<td> AIRCRAFT_TYPE_XXX<td>XXX=[NORMAL | HELICOPTER]
@@ -183,8 +183,9 @@ of all vehicles (engines, wagons) in the consist. Only available for rail vehicl
 uses PLAYERTYPE_HUMAN and PLAYERTYPE_AI. If you cheat yourself to be part of an AI company OpenTTD
 will still report PLAYERTYPE_AI for the company with yourself and the AI and it'll report
 PLAYERTYPE_HUMAN for the now uncontrolled company.
-<tr><td>company_colour1 <td>0 ... 15 <td>Yes<td>index into company colour
-<tr><td>company_colour2 <td>0 ... 15 <td>Yes<td>index into company colour. It's the same as company_colour1, if no 2nd company colour is chosen.
+<tr><td>company_colour1 <td>COLOUR_XXX <td>Yes<td>Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possible values.
+<tr><td>company_colour2 <td>COLOUR_XXX <td>Yes<td>Same as company_colour1, if no 2nd company colour is chosen.
+Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possible values.
 <tr><td>aircraft_height <td>0 ... 255 <td>No<td>Height difference between the aircraft and its shadow. 8 Units are equivalent to one height level on the map.
 <tr><td>airport_type <td>AIRPORTTYPE_XX <td>No<td>AIRPORTTYPE_SMALL, AIRPORTTYPE_LARGE, AIRPORTTYPE_HELIPORT or AIRPORTTYPE_OILRIG
 <tr><td>curv_info_prev_cur <td>-2 ... 2 <td>No<td>Curvature to the right is positive. 1 unit is 45 degrees.

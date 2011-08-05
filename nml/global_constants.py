@@ -794,6 +794,24 @@ constant_numbers = {
     'PALETTE_CHURCH_RED'                    : 1438,
     'PALETTE_CHURCH_CREAM'                  : 1439,
 
+    # Company colours
+    'COLOUR_DARK_BLUE'                      : 0,
+    'COLOUR_PALE_GREEN'                     : 1,
+    'COLOUR_PINK'                           : 2,
+    'COLOUR_YELLOW'                         : 3,
+    'COLOUR_RED'                            : 4,
+    'COLOUR_LIGHT_BLUE'                     : 5,
+    'COLOUR_GREEN'                          : 6,
+    'COLOUR_DARK_GREEN'                     : 7,
+    'COLOUR_BLUE'                           : 8,
+    'COLOUR_CREAM'                          : 9,
+    'COLOUR_MAUVE'                          : 10,
+    'COLOUR_PURPLE'                         : 11,
+    'COLOUR_ORANGE'                         : 12,
+    'COLOUR_BROWN'                          : 13,
+    'COLOUR_GREY'                           : 14,
+    'COLOUR_WHITE'                          : 15,
+
     # Town growth effect of cargo
     'TOWNGROWTH_PASSENGERS'                 : 0x00,
     'TOWNGROWTH_MAIL'                       : 0x02,
