@@ -1,0 +1,151 @@
+/*
+ * This file is aimed to provide an example on how to code an Object in NML.
+ * In this case a train is coded, other vehicle types work in a similar fashion.
+ * To keep the code readable, not every property or variable is documented in
+ * detail, refer to the vehicle-specific reference in the documentation.
+ * The coded vehicle is quite comples, in order to show the various possibilities.
+ *
+ * The NewGRF implements a replacement for the company land as NewObject which does
+ * not show a sign but blends in with the terrain naturally. In transparent view
+ * it shows a company-coloured border around the tiles.
+ *
+ * Apart from this file, you will also need the following
+ * - Graphics, found in cc_grid.png (in the same folder)
+ * - Language files, to be placed in the 'lang' folder.
+ *      Currently english.lng is supplied.
+ */
+ 
+ /*
+ * First, define a grf block. This defines some basic properties of the grf,
+ * which are required for the grf to be valid and loadable.
+ */
+grf {
+    /* This grf is part of NML, therefore "NML" is chosen as the first three
+     * characters of the GRFID. It is the second real grf defined as part of
+     * NML (the first is the train example), therefore the last character is
+	 * set to 1. Successive grfs will have 2, 3, etc. there, to make sure each
+	 * example grf has a unique GRFID.
+     */
+    grfid: "NML\01";
+    /* GRF name and description strings are defined in the lang files */
+    name: string(STR_GRF_NAME);
+    desc: string(STR_GRF_DESCRIPTION);
+    /* This is the first version, start numbering at 0. */
+    version: 0;
+    min_compatible_version: 0;
+	/* This NewGRF has no parameters. See the train example NewGRF for parameter
+	 * usage
+	 */
+}
+
+// Template for 19 sprites: one for each possible tile slope
+template tmpl_groundsprites(x, y) {
+    [   0+x,   y, 64, 31, -31,  0 ]
+    [  80+x,   y, 64, 31, -31,  0 ]
+    [ 160+x,   y, 64, 23, -31,  0 ]
+    [ 240+x,   y, 64, 23, -31,  0 ]
+    
+    [ 320+x,   y, 64, 31, -31,  0 ]
+    [ 398+x,   y, 64, 31, -31,  0 ]
+    [ 478+x,   y, 64, 23, -31,  0 ]
+    [ 558+x,   y, 64, 23, -31,  0 ]
+    
+    [ 638+x,   y, 64, 39, -31, -8 ]
+    [ 718+x,   y, 64, 39, -31, -8 ]
+    [ 798+x,   y, 64, 31, -31, -8 ]
+    [ 878+x,   y, 64, 31, -31, -8 ]
+    
+    [ 958+x,   y, 64, 39, -31, -8 ]
+    [1038+x,   y, 64, 39, -31, -8 ]
+    [1118+x,   y, 64, 31, -31, -8 ]
+    [1196+x,   y, 64, 47, -31,-16 ]
+    
+    [1276+x,   y, 64, 15, -31,  0 ]
+    [1356+x,   y, 64, 31, -31, -8 ]
+    [1436+x,   y, 64, 31, -31, -8 ]
+}
+
+/* Spriteset of the 19 possible landslopes with company-coloured grid */
+spriteset (cc_frame, "cc_grid.png") { tmpl_groundsprites(1, 1) }
+
+spritelayout company_land_layout {
+	ground {
+		/* normal ground sprite - always draw */
+		sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
+	}
+	childsprite {
+		/* company-coloured border - always draw */
+		sprite:        cc_frame(LOAD_TEMP(0));
+		always_draw:   1;
+		recolour_mode: RECOLOUR_REMAP;
+		palette:       PALETTE_USE_DEFAULT;
+	}
+	childsprite {
+		/* again the normal ground sprite. Thus in non-transparent view
+		 * only the normal ground sprite is shown. In transparent view
+		 * this acts as sprite which darkens the other two sprites via
+		 * a translation to transparency.
+		 */
+		sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
+	}
+}
+
+/* A pseudo-switch which sets the temporary parameters for the sprite layout */
+switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
+			/* We store the offset into the spriteset due to the tile slope into the 1st temporary variable
+			 * (= storage register 0)
+			 */
+			STORE_TEMP(tile_slope, 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_N ? 15 : LOAD_TEMP(0), 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_S ? 16 : LOAD_TEMP(0), 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_W ? 17 : LOAD_TEMP(0), 0),
+			STORE_TEMP(tile_slope == SLOPE_STEEP_E ? 18 : LOAD_TEMP(0), 0),
+			
+			/* We store the offset to the flat groundsprite we use into the 2nd temporary variable
+			 * (= storage register 1)
+			 */
+			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
+			STORE_TEMP(terrain_type == TILETYPE_DESERT      ? GROUNDSPRITE_DESERT : LOAD_TEMP(1), 1),
+			STORE_TEMP(terrain_type == TILETYPE_SNOW        ? GROUNDSPRITE_SNOW   : LOAD_TEMP(1), 1),
+		
+			1
+			]) {
+	company_land_layout;
+}
+
+/* Pseudo switch for the purchase list branch: we want to display the flat ground tile */
+switch (FEAT_OBJECTS, SELF, company_land_purchase_switch, [
+			STORE_TEMP(0, 0),
+			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
+			
+			1
+			]) {
+	company_land_layout;
+}
+
+/* Define the object itself */
+item(FEAT_OBJECTS, company_land) {
+	property {
+		/* The class allows to sort objects into categories. This is 'infrastructure' */
+		class:                  "INFR";
+		/* If no other NewGRF provides this class before us, we have to name it */
+		classname:              string(STR_NAME_OBJCLASS_INFRASTRUCTURE);
+		/* Name of this particular object */
+		name:                   string(STR_NAME_COMPANY_LAND);
+		climates_available:     ALL_CLIMATES;
+		size:                   [1, 1];
+		build_cost_multiplier:  1;
+		remove_cost_multiplier: 1;
+		introduction_date:      date(1,1,1);        // available from day 1
+		end_of_life_date:       date(10000,1,1);    // available till year 10000
+		/* Anything can overbuild the object, removing returns the money, we don't want foundations and we want to allow bridges */
+		object_flags:           bitmask(OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_REMOVE_IS_INCOME, OBJ_FLAG_NO_FOUNDATIONS, OBJ_FLAG_ALLOW_BRIDGE);
+		height:                 0;                  // it's only a ground tile
+	}
+	graphics {
+		purchase:            company_land_purchase_switch;
+		slope_check:         return 0;
+		additional_text:     return string(STR_NAME_COMPANY_LAND);
+		company_land_terrain_switch;
+	}
+}
