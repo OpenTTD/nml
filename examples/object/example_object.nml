@@ -1,9 +1,7 @@
 /*
  * This file is aimed to provide an example on how to code an Object in NML.
- * In this case a train is coded, other vehicle types work in a similar fashion.
  * To keep the code readable, not every property or variable is documented in
- * detail, refer to the vehicle-specific reference in the documentation.
- * The coded vehicle is quite comples, in order to show the various possibilities.
+ * detail, refer to the object-specific reference in the documentation.
  *
  * The NewGRF implements a replacement for the company land as NewObject which does
  * not show a sign but blends in with the terrain naturally. In transparent view
@@ -14,7 +12,7 @@
  * - Language files, to be placed in the 'lang' folder.
  *      Currently english.lng is supplied.
  */
- 
+
  /*
  * First, define a grf block. This defines some basic properties of the grf,
  * which are required for the grf to be valid and loadable.
@@ -44,22 +42,22 @@ template tmpl_groundsprites(x, y) {
     [  80+x,   y, 64, 31, -31,  0 ]
     [ 160+x,   y, 64, 23, -31,  0 ]
     [ 240+x,   y, 64, 23, -31,  0 ]
-    
+
     [ 320+x,   y, 64, 31, -31,  0 ]
     [ 398+x,   y, 64, 31, -31,  0 ]
     [ 478+x,   y, 64, 23, -31,  0 ]
     [ 558+x,   y, 64, 23, -31,  0 ]
-    
+
     [ 638+x,   y, 64, 39, -31, -8 ]
     [ 718+x,   y, 64, 39, -31, -8 ]
     [ 798+x,   y, 64, 31, -31, -8 ]
     [ 878+x,   y, 64, 31, -31, -8 ]
-    
+
     [ 958+x,   y, 64, 39, -31, -8 ]
     [1038+x,   y, 64, 39, -31, -8 ]
     [1118+x,   y, 64, 31, -31, -8 ]
     [1196+x,   y, 64, 47, -31,-16 ]
-    
+
     [1276+x,   y, 64, 15, -31,  0 ]
     [1356+x,   y, 64, 31, -31, -8 ]
     [1436+x,   y, 64, 31, -31, -8 ]
@@ -100,14 +98,14 @@ switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
 			STORE_TEMP(tile_slope == SLOPE_STEEP_S ? 16 : LOAD_TEMP(0), 0),
 			STORE_TEMP(tile_slope == SLOPE_STEEP_W ? 17 : LOAD_TEMP(0), 0),
 			STORE_TEMP(tile_slope == SLOPE_STEEP_E ? 18 : LOAD_TEMP(0), 0),
-			
+
 			/* We store the offset to the flat groundsprite we use into the 2nd temporary variable
 			 * (= storage register 1)
 			 */
 			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
 			STORE_TEMP(terrain_type == TILETYPE_DESERT      ? GROUNDSPRITE_DESERT : LOAD_TEMP(1), 1),
 			STORE_TEMP(terrain_type == TILETYPE_SNOW        ? GROUNDSPRITE_SNOW   : LOAD_TEMP(1), 1),
-		
+
 			1
 			]) {
 	company_land_layout;
@@ -117,7 +115,7 @@ switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
 switch (FEAT_OBJECTS, SELF, company_land_purchase_switch, [
 			STORE_TEMP(0, 0),
 			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
-			
+
 			1
 			]) {
 	company_land_layout;
