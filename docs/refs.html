@@ -879,28 +879,35 @@ picture below for an overview of the compass directions used in TTD.
 <p>The resulting, possible values of this bitmask are given in the following
 table. The image below that illustrates them graphically. See also the
 <a href="nml-language.html#builtin-functions">builtin function</a>
-<code>num_corners_raised()</code>.</p>
+<code>num_corners_raised(<i>slope</i>)</code>.</p>
+<p>Sprites for slopes are always in the same order in TTD. For example,
+<code>GROUND_SPRITE_NORMAL</code> is the sprite number of a flat grass tile.
+It is followed by 18 other sprites, that display a flat grass tile for each
+possible slope. The order of these sprites is given in the last column of the
+table. The <a href="nml-language.html#builtin-functions">builtin function</a>
+<code>slope_to_sprite_offset(<i>slope</i>)</code> can be used to determine
+the sprite offset of a given slope.</p>
 <table class="t">
-<tr><th>Named constant<th>Equivalent bitmask<th>Numerical value
-<tr><td>SLOPE_FLAT<td><code>bitmask()</code><td>0
-<tr><td>SLOPE_W<td><code>bitmask(CORNER_W)</code><td>1
-<tr><td>SLOPE_S<td><code>bitmask(CORNER_S)</code><td>2
-<tr><td>SLOPE_E<td><code>bitmask(CORNER_E)</code><td>4
-<tr><td>SLOPE_N<td><code>bitmask(CORNER_N)</code><td>8
-<tr><td>SLOPE_NW<td><code>bitmask(CORNER_N, CORNER_W)</code><td>9
-<tr><td>SLOPE_SW<td><code>bitmask(CORNER_S, CORNER_W)</code><td>3
-<tr><td>SLOPE_SE<td><code>bitmask(CORNER_S, CORNER_E)</code><td>6
-<tr><td>SLOPE_NE<td><code>bitmask(CORNER_N, CORNER_E)</code><td>12
-<tr><td>SLOPE_EW<td><code>bitmask(CORNER_E, CORNER_W)</code><td>5
-<tr><td>SLOPE_NS<td><code>bitmask(CORNER_N, CORNER_S)</code><td>10
-<tr><td>SLOPE_NWS<td><code>bitmask(CORNER_N, CORNER_W, CORNER_S)</code><td>11
-<tr><td>SLOPE_WSE<td><code>bitmask(CORNER_W, CORNER_S, CORNER_E)</code><td>7
-<tr><td>SLOPE_SEN<td><code>bitmask(CORNER_S, CORNER_E, CORNER_N)</code><td>14
-<tr><td>SLOPE_ENW<td><code>bitmask(CORNER_E, CORNER_N, CORNER_W)</code><td>13
-<tr><td>SLOPE_STEEP_W<td><code>bitmask(CORNER_N, CORNER_W, CORNER_S, IS_STEEP_SLOPE)</code><td>27
-<tr><td>SLOPE_STEEP_S<td><code>bitmask(CORNER_W, CORNER_S, CORNER_E, IS_STEEP_SLOPE)</code><td>23
-<tr><td>SLOPE_STEEP_E<td><code>bitmask(CORNER_S, CORNER_E, CORNER_N, IS_STEEP_SLOPE)</code><td>30
-<tr><td>SLOPE_STEEP_N<td><code>bitmask(CORNER_E, CORNER_N, CORNER_W, IS_STEEP_SLOPE)</code><td>29
+<tr><th>Named constant<th>Equivalent bitmask<th>Numerical value<th>Sprite offset
+<tr><td>SLOPE_FLAT<td><code>bitmask()</code><td>0<td>0
+<tr><td>SLOPE_W<td><code>bitmask(CORNER_W)</code><td>1<td>1
+<tr><td>SLOPE_S<td><code>bitmask(CORNER_S)</code><td>2<td>2
+<tr><td>SLOPE_E<td><code>bitmask(CORNER_E)</code><td>4<td>4
+<tr><td>SLOPE_N<td><code>bitmask(CORNER_N)</code><td>8<td>8
+<tr><td>SLOPE_NW<td><code>bitmask(CORNER_N, CORNER_W)</code><td>9<td>9
+<tr><td>SLOPE_SW<td><code>bitmask(CORNER_S, CORNER_W)</code><td>3<td>3
+<tr><td>SLOPE_SE<td><code>bitmask(CORNER_S, CORNER_E)</code><td>6<td>6
+<tr><td>SLOPE_NE<td><code>bitmask(CORNER_N, CORNER_E)</code><td>12<td>12
+<tr><td>SLOPE_EW<td><code>bitmask(CORNER_E, CORNER_W)</code><td>5<td>5
+<tr><td>SLOPE_NS<td><code>bitmask(CORNER_N, CORNER_S)</code><td>10<td>10
+<tr><td>SLOPE_NWS<td><code>bitmask(CORNER_N, CORNER_W, CORNER_S)</code><td>11<td>11
+<tr><td>SLOPE_WSE<td><code>bitmask(CORNER_W, CORNER_S, CORNER_E)</code><td>7<td>7
+<tr><td>SLOPE_SEN<td><code>bitmask(CORNER_S, CORNER_E, CORNER_N)</code><td>14<td>14
+<tr><td>SLOPE_ENW<td><code>bitmask(CORNER_E, CORNER_N, CORNER_W)</code><td>13<td>13
+<tr><td>SLOPE_STEEP_W<td><code>bitmask(CORNER_N, CORNER_W, CORNER_S, IS_STEEP_SLOPE)</code><td>27<td>17
+<tr><td>SLOPE_STEEP_S<td><code>bitmask(CORNER_W, CORNER_S, CORNER_E, IS_STEEP_SLOPE)</code><td>23<td>16
+<tr><td>SLOPE_STEEP_E<td><code>bitmask(CORNER_S, CORNER_E, CORNER_N, IS_STEEP_SLOPE)</code><td>30<td>18
+<tr><td>SLOPE_STEEP_N<td><code>bitmask(CORNER_E, CORNER_N, CORNER_W, IS_STEEP_SLOPE)</code><td>29<td>15
 </table>
 <br>
 <img src="tileh.png" alt="tile slopes">

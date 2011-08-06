@@ -451,6 +451,31 @@ def builtin_num_corners_raised(num, args, pos):
 
     return  BinOp(nmlop.MOD, slope, ConstantNumeric(0xF),     pos)
 
+def builtin_slope_to_sprite_offset(num, args, pos):
+    """
+    builtin function slope_to_sprite_offset(slope)
+
+    @return sprite offset to use
+    """
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+
+    if isinstance(args[0], ConstantNumeric):
+        generic.check_range(args[0].value, 0, 15, "Argument of '%s'" % name, args[0].pos)
+
+    # step 1: ((slope >= 0) & (slope <= 14)) * slope
+    # This handles all non-steep slopes
+    expr = BinOp(nmlop.AND, BinOp(nmlop.CMP_LE, args[0], ConstantNumeric(14), pos),
+            BinOp(nmlop.CMP_GE, args[0], ConstantNumeric(0), pos), pos)
+    expr = BinOp(nmlop.MUL, expr, args[0], pos)
+    # Now handle the steep slopes separately
+    # So add (slope == SLOPE_XX) * offset_of_SLOPE_XX for each steep slope
+    steep_slopes = [(23, 16), (27, 17), (29, 15), (30, 18)]
+    for slope, offset in steep_slopes:
+        to_add = BinOp(nmlop.MUL, BinOp(nmlop.CMP_EQ, args[0], ConstantNumeric(slope), pos), ConstantNumeric(offset), pos)
+        expr = BinOp(nmlop.ADD, expr, to_add, pos)
+    return expr
+
 def builtin_palette_1cc(num, args, pos):
     """
     palette_1cc(colour) builtin function.
@@ -526,6 +551,7 @@ function_table = {
     'import_sound': builtin_sound_import,
     'relative_coord' : builtin_relative_coord,
     'num_corners_raised' : builtin_num_corners_raised,
+    'slope_to_sprite_offset' : builtin_slope_to_sprite_offset,
     'palette_1cc' : builtin_palette_1cc,
     'palette_2cc' : builtin_palette_2cc,
 }

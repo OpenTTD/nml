@@ -633,14 +633,20 @@ actual sprite to be drawn. If you set this to a number, a TTD sprite will
 be drawn, usually from the base set. Pre-defined constants for some base set
 sprites are:</p>
 <ul>
-<li><code>GROUNDSPRITE_NORMAL</code> default terrain type for that climate
+<li><code>GROUNDSPRITE_NORMAL (a)</code> default terrain type for that climate
     (temperate, toyland: normal, arctic: without snow, tropical: rainforest).
-<li><code>GROUNDSPRITE_DESERT</code> desert tile
-<li><code>GROUNDSPRITE_SNOW</code> snowy ground tile
+<li><code>GROUNDSPRITE_DESERT (a)</code> desert tile
+<li><code>GROUNDSPRITE_SNOW (a)</code> snowy ground tile
 <li><code>GROUNDSPRITE_CONCRETE</code> concrete ground tile
 <li><code>GROUNDSPRITE_WATER</code> flat water tile
-<li><code>GROUNDSPRITE_CLEARED</code> ground tile that has just been bulldozed (with brown colour)
+<li><code>GROUNDSPRITE_CLEARED (a)</code> ground tile that has just been bulldozed (with brown colour)
 </ul>
+<p>(a) These constants can be used for sprites on flat ground. There are also
+equivalent sprites for sloped ground, however. These sprites follow
+the initial ground sprite, the <a href="#builtin-functions">builtin function</a>
+<code>slope_to_sprite_offset(<i>slope</i>)</code> may be used to compute the required
+offset. Refer to the reference on <a href="refs.html#refs-slopes">slopes</a>
+or the <a href="#block-spritelayout-example">example</a> below.</p>
 <p>Alternatively, you can set the value to (the name of) a
 <a href="nml-language.html#block-spriteset">spriteset</a>, to provide a custom
 sprite. When the value is just a spriteset identifier, a sprite from that set
@@ -736,7 +742,7 @@ Available recolour modes are:
 	should fit inside the bounding box of the parent sprite to avoid visual
 	glitches.
 </ul>
-<h3><a name="block-spritelayout-position">Advanced Spritelayout</a></h3>
+<h3><a name="block-spritelayout-example">Example (advanced) Spritelayout</a></h3>
 While parameters cannot yet be assigned explicitly to a spritelayout, variables, temporary storage and parameters can be used inside of a layout nevertheless. A common usage for such parametrized spritelayout is taking care of the tile slope and ground type as illustrated in this example:
 <pre class="code">
 spritelayout company_land_layout {
@@ -764,11 +770,7 @@ spritelayout company_land_layout {
 // which belongs to the terrain type and the corresponding offset due to the tile slope
 switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
 			// We store the offset into the spriteset due to the tile slope into the 1st temporary variable
-			STORE_TEMP(tile_slope, 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_N ? 15 : LOAD_TEMP(0), 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_S ? 16 : LOAD_TEMP(0), 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_W ? 17 : LOAD_TEMP(0), 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_E ? 18 : LOAD_TEMP(0), 0),
+			STORE_TEMP(slope_to_sprite_offset(tile_slope), 0),
 
 			// We store the offset to the flat groundsprite we use into the 2nd temporary variable
 			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
@@ -1544,6 +1546,12 @@ the file size cannot exceed 64KB.
 <tr><td>num_corners_raised(<i>slope</i>)<td>Returns the number of corners raised in a slope.
 Return value is 0 .. 3 for normal slopes and 4 for steep ones. See also
 <a href="refs.html#refs-slopes">here</a> for more information about slopes.
+Using this on values that are not slopes results in undefined behaviour.
+<tr><td>slope_to_sprite_offset(<i>slope</i>)<td>Returns the sprite offset
+corresponding to a given slope. Return value is in range 0 .. 18. See also
+<a href="refs.html#refs-slopes">here</a> for more information about slopes.
+The section on <a href="#block-spritelayout">spritelayouts</a> contains
+some more information one possible uses, as well as an example.
 Using this on values that are not slopes results in undefined behaviour.
 <tr><td>palette_1cc(<i>colour</i>)<td>Returns the 1cc palette for the given company colour,
 see <a href="refs.html#refs-palettes-helpers">here</a> for more info.

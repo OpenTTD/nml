@@ -93,11 +93,7 @@ switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
 			/* We store the offset into the spriteset due to the tile slope into the 1st temporary variable
 			 * (= storage register 0)
 			 */
-			STORE_TEMP(tile_slope, 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_N ? 15 : LOAD_TEMP(0), 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_S ? 16 : LOAD_TEMP(0), 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_W ? 17 : LOAD_TEMP(0), 0),
-			STORE_TEMP(tile_slope == SLOPE_STEEP_E ? 18 : LOAD_TEMP(0), 0),
+			STORE_TEMP(slope_to_sprite_offset(tile_slope), 0),
 
 			/* We store the offset to the flat groundsprite we use into the 2nd temporary variable
 			 * (= storage register 1)
@@ -105,8 +101,6 @@ switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
 			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
 			STORE_TEMP(terrain_type == TILETYPE_DESERT      ? GROUNDSPRITE_DESERT : LOAD_TEMP(1), 1),
 			STORE_TEMP(terrain_type == TILETYPE_SNOW        ? GROUNDSPRITE_SNOW   : LOAD_TEMP(1), 1),
-
-			1
 			]) {
 	company_land_layout;
 }
