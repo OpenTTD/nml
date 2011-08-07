@@ -292,23 +292,34 @@ class Varaction2Parser(object):
         assert isinstance(expr, expression.TernaryOp)
         guard = expression.Boolean(expr.guard).reduce()
         self.parse(guard)
-        guard_var = VarAction2StoreTempVar()
-        guard_var.comment = "guard"
-        inverted_guard_var = VarAction2StoreTempVar()
-        inverted_guard_var.comment = "!guard"
-        self.var_list.append(nmlop.STO_TMP)
-        self.var_list.append(guard_var)
-        self.var_list.append(nmlop.XOR)
-        var = VarAction2Var(0x1A, 0, 1)
-        self.var_list.append(var)
-        self.var_list.append(nmlop.STO_TMP)
-        self.var_list.append(inverted_guard_var)
-        self.var_list.append(nmlop.VAL2)
-        # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
-        self.var_list_size += 4 + guard_var.get_size() + inverted_guard_var.get_size() + var.get_size()
-        expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
-        expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
-        return expression.BinOp(nmlop.ADD, expr1, expr2)
+        if isinstance(expr.expr1, expression.ConstantNumeric) and isinstance(expr.expr2, expression.ConstantNumeric):
+            # This can be done more efficiently as (guard)*(expr2-expr1) + expr1
+            self.var_list.append(nmlop.MUL)
+            diff_var = VarAction2Var(0x1A, 0, expr.expr2.value - expr.expr1.value)
+            diff_var.comment = "expr2 - expr1"
+            self.var_list.append(diff_var)
+            self.var_list.append(nmlop.ADD)
+            # Add var sizes, +2 for the operators
+            self.var_list_size += 2 + diff_var.get_size()
+            return expr.expr1
+        else:
+            guard_var = VarAction2StoreTempVar()
+            guard_var.comment = "guard"
+            inverted_guard_var = VarAction2StoreTempVar()
+            inverted_guard_var.comment = "!guard"
+            self.var_list.append(nmlop.STO_TMP)
+            self.var_list.append(guard_var)
+            self.var_list.append(nmlop.XOR)
+            var = VarAction2Var(0x1A, 0, 1)
+            self.var_list.append(var)
+            self.var_list.append(nmlop.STO_TMP)
+            self.var_list.append(inverted_guard_var)
+            self.var_list.append(nmlop.VAL2)
+            # the +4 is for the 4 operators added above (STO_TMP, XOR, STO_TMP, VAL2)
+            self.var_list_size += 4 + guard_var.get_size() + inverted_guard_var.get_size() + var.get_size()
+            expr1 = expression.BinOp(nmlop.MUL, expr.expr1, VarAction2LoadTempVar(guard_var))
+            expr2 = expression.BinOp(nmlop.MUL, expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
+            return expression.BinOp(nmlop.ADD, expr1, expr2)
 
 
     def preprocess_storageop(self, expr):
