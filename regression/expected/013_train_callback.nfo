@@ -184,19 +184,17 @@
 \wx00FB // bulk_wagon_graphics_switch;
 
 // Name: @action3_2
-52 * 43 02 00 FD 89 
+52 * 33 02 00 FD 89 
 0C 00 \dx0000FFFF 
-\b3 
-\wx00FB \dx00000000 \dx00000000 	// bulk_wagon_graphics_switch;
+\b2 
 \wx00FC \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch;
 \wx00FD \dx00000036 \dx00000036 	// @action3_0;
 \wx00FB // bulk_wagon_graphics_switch;
 
 // Name: @action3_3
-53 * 33 02 00 FB 89 
+53 * 23 02 00 FB 89 
 0C 00 \dx0000FFFF 
-\b2 
-\wx00FB \dx00000000 \dx00000000 	// bulk_wagon_graphics_switch;
+\b1 
 \wx00FE \dx00000036 \dx00000036 	// @action3_1;
 \wx00FB // bulk_wagon_graphics_switch;
 

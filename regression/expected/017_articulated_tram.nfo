@@ -72,10 +72,9 @@
 17 10 
 
 // Name: @action3_0
-18 * 33 02 01 FD 89 
+18 * 23 02 01 FD 89 
 0C 00 \dx0000FFFF 
-\b2 
-\wx00FD \dx00000000 \dx00000000 	// foster_express_set;
+\b1 
 \wx00FE \dx00000016 \dx00000016 	// foster_express_articulated_parts;
 \wx00FD // foster_express_set;
 

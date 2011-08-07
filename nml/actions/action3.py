@@ -242,8 +242,9 @@ def parse_graphics_block(graphics_block, feature, id, is_livery_override = False
             if len(mapping) == 0:
                 # No callbacks here, so move along
                 continue
-            if feature <= 0x04:
-                # For vehicles and stations, there are cargo-specific gfx
+            if cargo_gfx[cargo] != default_val:
+                # There are cargo-specific graphics, be sure to handle those
+                # Unhandled callbacks should chain to the default, though
                 mapping = mapping.copy()
                 mapping[0x00] = cargo_gfx[cargo]
             actions, cb_ref = create_intermediate_varaction2(feature, 0x0C, 0xFFFF, mapping, default_val)
