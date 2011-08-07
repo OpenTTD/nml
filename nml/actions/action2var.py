@@ -293,15 +293,15 @@ class Varaction2Parser(object):
         guard = expression.Boolean(expr.guard).reduce()
         self.parse(guard)
         if isinstance(expr.expr1, expression.ConstantNumeric) and isinstance(expr.expr2, expression.ConstantNumeric):
-            # This can be done more efficiently as (guard)*(expr2-expr1) + expr1
+            # This can be done more efficiently as (guard)*(expr1-expr2) + expr2
             self.var_list.append(nmlop.MUL)
-            diff_var = VarAction2Var(0x1A, 0, expr.expr2.value - expr.expr1.value)
-            diff_var.comment = "expr2 - expr1"
+            diff_var = VarAction2Var(0x1A, 0, expr.expr1.value - expr.expr2.value)
+            diff_var.comment = "expr1 - expr2"
             self.var_list.append(diff_var)
             self.var_list.append(nmlop.ADD)
             # Add var sizes, +2 for the operators
             self.var_list_size += 2 + diff_var.get_size()
-            return expr.expr1
+            return expr.expr2
         else:
             guard_var = VarAction2StoreTempVar()
             guard_var.comment = "guard"
