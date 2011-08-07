@@ -623,9 +623,11 @@ are always drawn in the order specified in the layout, so be sure to get this
 correct for spritelayouts that are to be displayed there.</p>
 <p>Per sprite, a number of parameters may be set. These are listed below.
 Unless otherwise indicated, each may have a value that is dependant on
-variables (in the SELF-scope), parameters or registers. This allows
-highly dynamic behaviour, so you can create different looks without
-requiring huge amounts of spritelayouts.</p>
+<strong>variables, parameters or registers</strong>. Accessed variables are
+always in the <code>SELF</code> scope. Accessing variables inside the purchase
+list is <strong>not</strong> supported, make sure that layouts accessed from
+there do not use them. Using variables and parameters, it's possible to
+create wildly differing looks with few spritelayouts.</p>
 
 <h3><a name="block-spritelayout-sprite">sprite</a></h3>
 The most important parameter is <code>sprite</code>, this determines the
