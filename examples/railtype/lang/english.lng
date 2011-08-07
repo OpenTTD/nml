@@ -1,0 +1,3 @@
+##grflangid 0x01
+STR_GRF_NAME                                                    :NML Example NewGRF: Railtype
+STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Railtype{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}Original graphics by {SILVER}Irwe, {BLACK}coding by {SILVER}planetmaker.{}{BLACK}This NewGRF defines a graphical replacement for normal and electric rails

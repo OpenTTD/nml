@@ -1,0 +1,379 @@
+/*
+ * This file is aimed to provide an example on how to code a railtype in NML.
+ * To keep the code readable, not every property or variable is documented in
+ * detail, refer to the object-specific reference in the documentation.
+ *
+ * The NewGRF implements a graphical replacement for the normal and electric
+ * rails. Since almost all sprites (except caternary) are supplied, you can
+ * use this grf to see in detail what sprites are needed and in what order.
+ *
+ * Essentially this is a cut-down version of the Swedish Rails grf, drawn by
+ * Irwe and coded by planetmaker. Support for parameters, time-dependent
+ * graphics and snow support has been removed to keep this example within
+ * reasonable size. Due to the large quantity of sprites required for a
+ * railtype grf, the number of lines of code is still relatively high.
+ * 
+ * All real sprites have been templated, even if the template is used only
+ * once. This allows adding e.g. snowed graphics fairly easily.
+ *
+ * Apart from this file, you will also need the following
+ * - Graphics, found in in the gfx folder
+ * - Language files, to be placed in the 'lang' folder.
+ *      Currently english.lng is supplied.
+ */
+
+/**********************************************
+ * Header, containing some general stuff:
+ **********************************************/
+
+ /*
+ * First, define a grf block. This defines some basic properties of the grf,
+ * which are required for the grf to be valid and loadable.
+ */
+grf {
+    /* This grf is part of NML, therefore "NML" is chosen as the first three
+     * characters of the GRFID. It is the third real grf defined as part of
+     * NML, therefore the last character is set to 2. Successive grfs will
+     * have 3, 4, etc. there, to make sure each example grf has a unique GRFID.
+     */
+    grfid : "NML\02";
+    name : string(STR_GRF_NAME);
+    desc : string(STR_GRF_DESCRIPTION);
+    version : 0; // must be numeric
+    min_compatible_version : 0;
+}
+
+/* Check for NuTracks and disable, if we're not active _after_ NuTracks */
+if (!grf_order_behind("DJT\01")) {
+    error(FATAL, MUST_LOAD_AFTER, "NuTracks");
+}
+
+/* Default ground tile template (re-use as needed) */
+template ground_tile(x, y) { [x, y, 64, 31, -31, 0, TILE] }
+
+/**********************************************
+ * Track underlays (tracks + ballast):
+ **********************************************/
+/* Underlays (single track bits with ballast)\
+ * Used for bridge surfaces also, therefore the template is split */
+template tmpl_underlay_straight() {
+    ground_tile(75, 0)
+    ground_tile( 0, 0)
+}
+template tmpl_underlay_slope() {
+    [ 75, 40, 64,39, -31, -8]
+    [150, 40, 64,23, -31,  0]
+    [225, 40, 64,23, -31,  0]
+    [300, 40, 64,39, -30, -9]
+}
+template tmpl_underlay_diagonal() {
+    ground_tile(150,  0)
+    ground_tile(225,  0)
+    ground_tile(  0, 40)
+    ground_tile(300,  0)
+}
+
+template tmpl_underlay_railtypes() {
+    tmpl_underlay_straight()
+    tmpl_underlay_diagonal()
+    tmpl_underlay_slope()
+
+    /* X-crossing */
+    ground_tile(0, 120)
+
+    /* underlay for crossings w/o tracks */
+    ground_tile(  0, 80)
+    ground_tile(225, 80)
+    ground_tile(150, 80)
+    ground_tile( 75, 80)
+    ground_tile(300, 80)
+}
+/* Spriteset containing all underlays */
+spriteset(track_underlays, "gfx/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+/**********************************************
+ * Track overlays (tracks without ballast):
+ **********************************************/
+
+/* Template for overlays; 2x straight track, 4x diagonal track, 4x slope */
+template tmpl_overlay_railtypes() {
+    [  0,155, 40,21, -19,  5]
+    [ 50,155, 40,21, -19,  5]
+
+    [100,155, 40, 7, -19,  4]
+    [150,155, 40, 7, -21, 20]
+    [200,155, 12,19,  11,  6]
+    [250,155, 12,19, -21,  6]
+
+    [  0,195, 64,39, -33, -8]
+    [ 75,195, 64,23, -31,  0]
+    [150,195, 64,23, -31,  0]
+    [225,195, 64,39, -32, -9]
+}
+/* Spriteset for overlays */
+spriteset(track_overlays, "gfx/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+
+/**********************************************
+ * Level crossings:
+ **********************************************/
+
+/* Level crossings require differing sprites depending
+ * on the open/closed state and on the driving side */
+
+/* Template for the track overlays (x/y) */
+template tmpl_rails_crossing(x,y) {
+    [x,    y, 44, 23, -21, 4]
+    [x+50, y, 44, 23, -21, 4]
+}
+
+template tmpl_level_crossing_railtypes_open(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [ 0,  y, 5,12, -3,  -8]
+    [ 50, y, 8,21, -5, -14]
+    [100, y, 6,23, -7, -20]
+    [150, y, 5,12, -5,  -8]
+    [200, y, 7,21,  3, -15]
+    [250, y, 5,12, -1,  -8]
+    [300, y, 5,12, -3, -10]
+    [350, y, 8,22, -3, -19]
+}
+
+template tmpl_level_crossing_railtypes_closed(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [ 0,  y,  5, 12,  -3,  -8]
+    [ 50, y, 19, 19,  -4,  -6]
+    [100, y, 23, 17, -24,  -9]
+    [150, y,  5, 12,  -5,  -8]
+    [200, y, 25, 14,   3,  -9]
+    [250, y,  5, 12,  -1,  -8]
+    [300, y,  5, 12,  -3, -10]
+    [350, y, 19, 14, -15, -11]
+}
+
+template tmpl_level_crossing_railtypes_left_open(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [ 0,  y, 7, 21,  0, -14]
+    [ 50, y, 5, 12, -2,  -6]
+    [100, y, 5, 12, -3,  -9]
+    [150, y, 7, 21, -7, -15]
+    [200, y, 5, 12,  4,  -7]
+    [250, y, 7, 22,  0, -17]
+    [300, y, 6, 21, -2, -19]
+    [350, y, 5, 12, -3,  -9]
+}
+template tmpl_level_crossing_railtypes_left_closed(y) {
+    tmpl_rails_crossing(5, 5)
+
+    [  0, y, 21, 19, -14,  -6]
+    [ 50, y, 5,  12,  -2,  -6]
+    [100, y, 5,  12,  -3,  -9]
+    [150, y, 23, 15, -23,  -9]
+    [200, y, 5,  12,   4,  -7]
+    [250, y, 23, 17,   0,  -7]
+    [300, y, 21, 13,  -2, -11]
+    [350, y, 5,  12,  -3,  -9]
+}
+// right hand traffic:
+spriteset(lc_right_closed, "gfx/lc_right.png") {
+    tmpl_level_crossing_railtypes_closed(100)
+}
+spriteset(lc_right_open, "gfx/lc_right.png") {
+    tmpl_level_crossing_railtypes_open(50)
+}
+
+// left hand traffic:
+spriteset(lc_left_closed, "gfx/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_closed(100)
+}
+spriteset(lc_left_open, "gfx/lc_left.png") {
+    tmpl_level_crossing_railtypes_left_open(50)
+}
+
+switch(FEAT_RAILTYPES, SELF, right_level_crossing_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_right_closed;
+    lc_right_open;
+}
+switch(FEAT_RAILTYPES, SELF, left_level_crossing_state_switch, level_crossing_status) {
+    LEVEL_CROSSING_CLOSED: lc_left_closed;
+    lc_left_open;
+}
+switch(FEAT_RAILTYPES, SELF, level_crossing_switch, traffic_side) {
+    TRAFFIC_SIDE_LEFT: left_level_crossing_state_switch;
+    right_level_crossing_state_switch;
+}
+
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+/* Template for tunnel track overlays */
+template tmpl_tunnel_tracks() {
+    ground_tile(75,  0)
+    ground_tile( 0,  0)
+    ground_tile(75, 50)
+    ground_tile( 0, 50)
+}
+spriteset(tunnel_overlays, "gfx/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+/* Template for depot sprites */
+template tmpl_depot() {
+    [200, 10, 16,  8,  17,   7]
+    [118,  8, 64, 47,  -9, -31]
+    [  0, 10, 16,  8, -31,   7]
+    [ 37,  8, 64, 47, -53, -31]
+    [ 37, 63, 64, 47, -53, -31]
+    [118, 63, 64, 47,  -9, -31]
+}
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail, "gfx/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail, "gfx/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Bridge surface, uses the same sprites as track underlays, but in a different order */
+template tmpl_bridges_underlay() {
+    tmpl_underlay_straight()
+    tmpl_underlay_slope()
+    tmpl_underlay_diagonal()
+}
+/* Spriteset for bridge surfaces */
+spriteset(bridge_underlay, "gfx/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+/**********************************************
+ * Fences:
+ **********************************************/
+
+/* Template for fences, parametrized to allow multiple sets of fences (unused) */
+template tmpl_fences(y) {
+    [ 0, y, 32,20, -30, -4]
+    [ 48, y, 32,20, 0, -3]
+    [ 96, y, 2,30, 0,-17]
+    [112, y, 64, 5, -30, -4]
+    [192, y, 32,12, -30, -4]
+    [240, y, 32,12, 2, -3]
+    [288, y, 32,28, -31,-12]
+    [350, y, 32,28, 1,-10]
+}
+
+/* Spriteset for (company-coloured) fences */
+spriteset(fencesCC, "gfx/fences.png") {
+    tmpl_fences(0)
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Template for a single icon sprite */
+template tmpl_gui_icon(x, y) {
+    [x, y, 20, 20, 0, 0]
+}
+
+/* Template for a single cursor sprite */
+template tmpl_gui_cursor(x, y) {
+    [x, y, 32, 32, 0, 0]
+}
+/* Template for all the GUI sprites (8 icons + 8 cursors) */
+template tmpl_gui() {
+    tmpl_gui_icon(  0, 0)
+    tmpl_gui_icon( 25, 0)
+    tmpl_gui_icon( 50, 0)
+    tmpl_gui_icon( 75, 0)
+    tmpl_gui_icon(100, 0)
+    tmpl_gui_icon(125, 0)
+    tmpl_gui_icon(150, 0)
+    tmpl_gui_icon(175, 0)
+
+    tmpl_gui_cursor(200, 0)
+    tmpl_gui_cursor(250, 0)
+    tmpl_gui_cursor(300, 0)
+    tmpl_gui_cursor(350, 0)
+    tmpl_gui_cursor(400, 0)
+    tmpl_gui_cursor(450, 0)
+    tmpl_gui_cursor(500, 0)
+    tmpl_gui_cursor(550, 0)
+}
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal, "gfx/gui_rail.png") {
+    tmpl_gui()
+}
+spriteset(gui_electric, "gfx/gui_erail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Railtype definitions:
+ **********************************************/
+
+/* Define the normal rails */
+item(FEAT_RAILTYPES, rail) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+        label: "RAIL"; // Let this railtype replace the default normal rails
+        compatible_railtype_list: ["RAIL", "ELRL", "_040", "_080", "RLOW", "RMED", "RHIG", "E040", "E080", "ELOW", "EMED", "EHIG", "HSTR", "DBNN", "DBNE", "DBHN", "DBHE"];
+        powered_railtype_list: ["RAIL", "ELRL", "_040", "_080", "RLOW", "RMED", "RHIG", "E040", "E080", "ELOW", "EMED", "EHIG", "HSTR", "DBNN", "DBNE", "DBHN", "DBHE"];
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        level_crossings: level_crossing_switch;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_rail;
+        bridge_surfaces: bridge_underlay;
+        fences: fencesCC;
+        gui: gui_normal;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
+
+/* Define the electric rails */
+item(FEAT_RAILTYPES, elrail) {
+    /* Set only the most essential properties,
+     * Lots of compatible railtypes are defined to allow compatibility with
+     * various other sets out there */
+    property {
+        label: "ELRL"; // Let this railtype replace the default electric rails
+        compatible_railtype_list: ["RAIL", "ELRL", "_040", "_080", "RLOW", "RMED", "RHIG", "E040", "E080", "ELOW", "EMED", "EHIG", "HSTR", "DBNN", "DBNE", "DBHN", "DBHE"];
+        powered_railtype_list: ["ELRL", "E040", "E080", "ELOW", "EMED", "EHIG", "HSTR", "DBNE", "DBHE"];
+    }
+
+    /* Associate graphics with this railtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        level_crossings: level_crossing_switch;
+        tunnels: tunnel_overlays;
+        depots: depot_electric_rail;
+        bridge_surfaces: bridge_underlay;
+        fences: fencesCC;
+        gui: gui_electric;
+        /* Caternary is not not implemented here, use the default */
+    }
+}
