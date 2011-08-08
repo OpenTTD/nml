@@ -759,16 +759,26 @@ def parse_varaction2(switch_block):
 
     none_result = None
     if any(map(lambda x: x is None, [r.result for r in switch_block.body.ranges] + [switch_block.body.default])):
+        # Computed result is returned in at least one result
         if len(switch_block.body.ranges) == 0:
-            # What we return does not matter here
-            none_result = expression.ConstantNumeric(0)
+            # There is only a default, which is 'return computed result', so we're fine
+            none_result = expression.ConstantNumeric(0) # Return value does not matter
         else:
+            # Add an extra action to return the computed value
             extra_actions, none_result = create_return_action(expression.Variable(expression.ConstantNumeric(0x1C)),
                     feature, switch_block.name.value + "@return", 0x89)
             action_list.extend(extra_actions)
 
+    if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
+        # Computed result is not returned, but there are no ranges
+        # Add one range, to avoid the nvar == 0 bear trap
+        from nml.ast import switch
+        ranges_list = [switch.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), switch_block.body.default)]
+    else:
+        ranges_list = switch_block.body.ranges
+
     used_ranges = []
-    for r in switch_block.body.ranges:
+    for r in ranges_list:
         comment = str(r.min) + " .. " + str(r.max) + ": "
 
         range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
@@ -804,11 +814,6 @@ def parse_varaction2(switch_block):
     default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
     varaction2.default_result = default
     varaction2.default_comment = 'Return computed value' if switch_block.body.default is None else 'default: ' + default_comment
-
-    if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
-        # Add an extra (bogus) range to avoid the nvar == 0 bear trap
-        varaction2.ranges.append(Varaction2Range(expression.ConstantNumeric(1), expression.ConstantNumeric(0),
-                expression.ConstantNumeric(0), "Bogus range to avoid the special nvar == 0 case"))
 
     if len(act6.modifications) > 0: action_list.append(act6)
 
