@@ -243,7 +243,7 @@ class NMLParser(object):
 
     def p_string(self, t):
         'string : STRING LPAREN expression_list RPAREN'
-        t[0] = expression.String(t[3][0], t[3][1:], t.lineno(1))
+        t[0] = expression.String(t[3], t.lineno(1))
 
     def p_non_empty_expression_list(self, t):
         '''non_empty_expression_list : expression
