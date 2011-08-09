@@ -433,6 +433,9 @@ constant_numbers = {
     'IND_TYPE_OLD'             : 0,
     'IND_TYPE_NEW'             : 1,
 
+    #founder for industries (founder variable)
+    'FOUNDER_GAME'             : 16,
+
     #object flags
     'OBJ_FLAG_ONLY_SE'         : 0,
     'OBJ_FLAG_IRREMOVABLE'     : 1,
