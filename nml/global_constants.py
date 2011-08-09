@@ -653,7 +653,7 @@ constant_numbers = {
 
     #game mode
     'GAMEMODE_MENU'                         : 0,
-    'GAMEMODE_GMAE'                         : 1,
+    'GAMEMODE_GAME'                         : 1,
     'GAMEMODE_EDITOR'                       : 2,
 
     #difficulty
