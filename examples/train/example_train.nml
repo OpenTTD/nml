@@ -4,6 +4,7 @@
  * To keep the code readable, not every property or variable is documented in
  * detail, refer to the vehicle-specific reference in the documentation.
  * The coded vehicle is quite complex, in order to show the various possibilities.
+ * For a more simple example, refer to the example road vehicle.
  *
  * The vehicle coded here is a Dutch EMU, the ICM 'Koploper'
  * Graphics are by Purno, the original NFO code is written by DJNekkid

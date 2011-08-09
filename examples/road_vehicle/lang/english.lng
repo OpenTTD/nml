@@ -1,0 +1,5 @@
+﻿##grflangid 0x01
+STR_GRF_NAME                                                    :NML Example NewGRF: Road Vehicle
+STR_GRF_DESC                                                    :{ORANGE}NML Example NewGRF: Road Vehicle{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}Original graphics by {SILVER}DanMack, Zephyris, {BLACK}coding by {SILVER}Terkhen, planetmaker.{}{BLACK}This NewGRF defines first-generation flatbed truck.
+STR_ERROR_ENGINE_POOL                                           :enable multiple NewGRF engine sets = on
+STR_NAME_FLATBED_TRUCK_1                                        :Flatbed Truck MkI
