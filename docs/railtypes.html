@@ -23,7 +23,7 @@
 <tr><td>powered_railtype_list<td>   list of railtype labels<td>Provide a list of rail types that trains of this type are powered on.
 <tr><td>railtype_flags<td>          bitmask(RAILTYPE_FLAG_XXX, ...)<td>XXX = [CATENARY|NO_LEVEL_CROSSING] Flags enable catenary and/or disable level crossings.
 <tr><td>curve_speed_multiplier<td>  0...65525<td>max curve speed is defined as multiple of the base curve speed (see below)
-<tr><td>station graphics<td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV<td>Type of station graphics to use for the default stations
+<tr><td>station_graphics<td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV<td>Type of station graphics to use for the default stations
 <tr><td>construction_cost<td>       0 ... 65525<td>per piece of track as multiplier to PR_BUILD_RAIL base cost. Since OpenTTD r19307
 <tr><td>speed_limit<td>             0 ... 65525 km/h (speed units)<td>A speed limit of 0 means unlimited speed
 <tr><td>acceleration_model<td>      ACC_MODEL_RAIL, ACC_MODEL_MONORAIL, ACC_MODEL_MAGLEV<td>ACC_MODEL_RAIL and ACC_MODEL_MONORAIL behave the same currently
@@ -80,7 +80,8 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 
 <h2><a name="railtypes-callbacks">Railtype callbacks</a></h2>
 <p>For rail types a number of callbacks are used to define rail type graphics.
-Each should refer to a sprite set containing the relevant sprites.</p>
+Each should refer to a sprite set containing the relevant sprites. Refer to the
+example railtype grf for an example on what sprites are needed in what order.</p>
 <table class="t">
 <tr><th>callbacks<th>number of sprites<th>meaning
 <tr><td>gui<td>         16<td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu
@@ -89,13 +90,16 @@ Each should refer to a sprite set containing the relevant sprites.</p>
 <tr><td>tunnels*<td>     4<td>4 track sprites, one for each tunnel entrance. Only track with foundations, no landscape
 <tr><td>catenary_wire<td>28<td>
 <tr><td>catenary_pylons<td>8<td>
-<tr><td>bridge_surfaces<td>6<td>
+<tr><td>bridge_surfaces*<td>6<td>
 <tr><td>level_crossings*<td>10<td>For each direction: one track sprite and 4 sprites for road lights etc
-<tr><td>depots*<td>6<td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.
+<tr><td>depot<td>6<td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.
 <tr><td>fences<td>8<td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301
 </table>
 
-<p>The entries marked by * are required. Note that there are no default graphics.</p>
+<p>The entries marked by * are required. If a non-required callback is not
+implemented or fails, graphics from the fallback railtype (picked via
+the <code>station_graphics</code> property will be used instead.<br>
+Note that there is no "default graphics"-callback.</p>
 
 <h3><a name="railtypes-example">Example</a></h3>
 <p>A typical implementation for railtypes can look like:
