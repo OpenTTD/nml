@@ -35,9 +35,9 @@ class Action2(base_action.BaseAction):
         self.id = None
         self.references = []
         #0x00 - 0x7F: available to user
-        #0x80 - 0x85: used for production CB
-        #0x86 - 0x100: available as temp. registers
-        self.tmp_locations = list(range(0x86, 0x100))
+        #0x80 - 0xFF: used by NML
+        #0x100 - 0x10F: Special meaning (used for some CB results)
+        self.tmp_locations = list(range(0x80, 0x100))
 
     def prepare_output(self):
         free_references(self)
