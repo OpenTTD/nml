@@ -7,12 +7,12 @@
 
 // Name: layout1 - feature 11
 0 * 23 02 11 FE \b65 \dx00000000 \wx0000 
-\dx00000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
+\dx00000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 80 
 
 // Name: layout1@registers - feature 11
 1 * 38 02 11 FE 89 
 44 60 \dx000000FF \dx00000A68 \dx00000001 
-\2sto 1A 00 \dx00000086 
+\2sto 1A 00 \dx00000080 
 \b1 
 \wx00FE \dx00000000 \dx00000000 
 \wx00FE // 
@@ -28,18 +28,18 @@
 
 // Name: layout2 - feature 0F
 7 * 37 02 0F FE \b66 \dx00000000 \wx0000 
-\dx80000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
-\dx80000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b16 88 87 
+\dx80000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 80 
+\dx80000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b16 82 81 
 
 // Name: layout2@registers - feature 0F
 8 * 66 02 0F FE 89 
 43 20 \dx000000FF 
-\2sto 1A 20 \dx00000086 
+\2sto 1A 20 \dx00000080 
 \2r 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000087 
+\2sto 1A 20 \dx00000081 
 \2r 62 00 29 \dx00000001 
 \2^ 1A 20 \dx00000001 
-\2sto 1A 00 \dx00000088 
+\2sto 1A 00 \dx00000082 
 \b1 
 \wx00FE \dx00000000 \dx00000000 
 \wx00FE // 
@@ -52,18 +52,18 @@
 
 // Name: layout2 - feature 11
 13 * 37 02 11 FD \b66 \dx00000000 \wx0000 
-\dx80000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 86 
-\dx80000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b16 88 87 
+\dx80000000 \wx0002 \b0 \b0 \b0 \b16 \b16 \b16 80 
+\dx80000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b16 82 81 
 
 // Name: layout2@registers - feature 11
 14 * 66 02 11 FD 89 
 44 20 \dx000000FF 
-\2sto 1A 20 \dx00000086 
+\2sto 1A 20 \dx00000080 
 \2r 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000087 
+\2sto 1A 20 \dx00000081 
 \2r 60 00 29 \dx00000001 
 \2^ 1A 20 \dx00000001 
-\2sto 1A 00 \dx00000088 
+\2sto 1A 00 \dx00000082 
 \b1 
 \wx00FD \dx00000000 \dx00000000 
 \wx00FD // 
