@@ -378,6 +378,10 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
                 raise generic.ScriptError("Passing parameters to '%s' is not possible." % target_ref.name.value, target_ref.pos)
             self._referenced_nodes.add(target)
             if target._is_spriteset():
+                if not cls_uses_spriteset and len(target_ref.param_list) != 0:
+                    # Referencing a spriteset directly from graphics/[random]switch
+                    # Passing parameters is not possible here
+                    raise generic.ScriptError("Passing parameters to '%s' is only possible from a spritelayout.", target_ref.pos)
                 self.used_sprite_sets.append(target)
             target._referencing_nodes.add(self)
 

@@ -46,6 +46,8 @@ def get_real_action2s(spritegroup, feature):
             raise generic.ScriptError("Expected at least one sprite set, encountered 0.", view.pos)
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)
+            if len(set_ref.param_list) != 0:
+                raise generic.ScriptError("Spritesets referenced from a spritegroup may not have parameters.", set_ref.pos)
             action1_index = action1.get_action1_index(spriteset)
             if view.name.value == 'loading': loading_list.append(action1_index)
             else: loaded_list.append(action1_index)
