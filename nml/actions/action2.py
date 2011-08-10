@@ -79,8 +79,8 @@ class Action2(base_action.BaseAction):
                                 also for 'chained' action2s.
         @type force_recursive: C{bool}
         """
-        if location not in self.tmp_locations: return
-        self.tmp_locations.remove(location)
+        if location in self.tmp_locations:
+            self.tmp_locations.remove(location)
         for act2_ref in self.references:
             if force_recursive or act2_ref.is_proc:
                 act2_ref.action2.remove_tmp_location(location, True)
