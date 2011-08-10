@@ -9,13 +9,13 @@ class Action2Production(action2.Action2):
     @type version: C{int}
 
     @ivar sub_in: Amounts (v0) or registers (v1) to subtract from incoming cargos.
-    @type sub_in: C{list} of C{int}
+    @type sub_in: C{list} of (C{int} or L{VarAction2Var})
 
     @ivar add_out: Amounts (v0) or registers (v1) to add to the output cargos.
-    @type add_out: C{list} of C{int}
+    @type add_out: C{list} of (C{int} or L{VarAction2Var})
 
     @ivar again: Number (v0) or register (v1), production CB will be run again if nonzero.
-    @type again C{int}
+    @type again C{int} or L{VarAction2Var}
     """
     def __init__(self, name, version, sub_in, add_out, again):
         action2.Action2.__init__(self, 0x0A, name)
@@ -35,9 +35,13 @@ class Action2Production(action2.Action2):
         size = 2 + 5 * cargo_size
         action2.Action2.write_sprite_start(self, file, size)
         file.print_bytex(self.version)
-        for c in self.sub_in + self.add_out:
-            file.print_varx(c, cargo_size)
-        file.print_bytex(self.again)
+        values = self.sub_in + self.add_out + [self.again]
+        # Read register numbers if needed
+        if self.version == 1: values = [val.parameter for val in values]
+
+        for val in values[:-1]:
+            file.print_varx(val, cargo_size)
+        file.print_bytex(values[-1])
         file.newline()
         file.end_sprite()
 
@@ -73,15 +77,17 @@ def get_production_actions(produce):
             if isinstance(param, expression.StorageOp) and param.name == 'LOAD_TEMP' and \
                     isinstance(param.register, expression.ConstantNumeric):
                 # We can load a register directly
-                result_list.append(param.register.value)
+                result_list.append(action2var.VarAction2Var(0x7D, 0, 0xFFFFFFFF, param.register.value))
             else:
-                expr = expression.BinOp(nmlop.STO_TMP, param, expression.ConstantNumeric(0x80 + i))
                 if len(varact2parser.var_list) != 0:
                     varact2parser.var_list.append(nmlop.VAL2)
                     varact2parser.var_list_size += 1
-                varact2parser.parse_expr(action2var.reduce_varaction2_expr(expr, 0x0A))
-                result_list.append(0x80 + i)
-
+                varact2parser.parse_expr(action2var.reduce_varaction2_expr(param, 0x0A))
+                store_tmp = action2var.VarAction2StoreTempVar()
+                result_list.append(action2var.VarAction2LoadTempVar(store_tmp))
+                varact2parser.var_list.append(nmlop.STO_TMP)
+                varact2parser.var_list.append(store_tmp)
+                varact2parser.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
 
     if len(act6.modifications) > 0: action_list.append(act6)
     prod_action = Action2Production(produce.name.value, version, result_list[0:3], result_list[3:5], result_list[5])
