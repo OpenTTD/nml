@@ -11,40 +11,40 @@
 
 <h2><a name="railtypes-property">Railtype properties</a></h2>
 <table class="t">
-<tr><th>property</th><th>value range</th><th>comment</th></tr>
-<tr><td>label</td><td>                   4-byte string</td><td>names of default rail types: "RAIL", "ELRL", "MONO", "MLEV", "3RDR"</td></tr>
-<tr><td>introduction_date</td><td>       date(yyyy,mm,dd)</td><td>Valid range for yyyy is 0 ... 5000000. Since OpenTTD r21842</td></tr>
-<tr><td>name</td><td>                    string</td><td></td></tr>
-<tr><td>menu_text</td><td>               string</td><td></td></tr>
-<tr><td>build_window_caption</td><td>    string</td><td></td></tr>
-<tr><td>autoreplace_text</td><td>        string</td><td></td></tr>
-<tr><td>new_engine_text</td><td>         string</td><td></td></tr>
-<tr><td>compatible_railtype_list</td><td>list of railtype labels</td><td>e.g. ["RAIL", "ELRL", "MONO"]</td></tr>
-<tr><td>powered_railtype_list</td><td>   list of railtype labels</td><td></td></tr>
-<tr><td>railtype_flags</td><td>          bitmask(RAILTYPE_FLAG_CATENARY, RAILTYPE_FLAG_NO_LEVEL_CROSSING (OpenTTD r20049))</td><td></td></tr>
-<tr><td>curve_speed_multiplier</td><td>  0...65525</td><td>max curve speed is defined as multiple of the base curve speed (see below)</td></tr>
-<tr><td>station graphics</td><td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV</td><td></td></tr>
-<tr><td>construction_cost</td><td>       0 ... 65525</td><td>per piece of track as multiplier to PR_BUILD_RAIL base cost. Since OpenTTD r19307</td></tr>
-<tr><td>speed_limit</td><td>             0 ... 65525 km/h (speed units)</td><td>A speed limit of 0 means unlimited speed</td></tr>
-<tr><td>acceleration_model</td><td>      ACC_MODEL_RAIL, ACC_MODEL_MONORAIL, ACC_MODEL_MAGLEV</td><td>ACC_MODEL_RAIL and ACC_MODEL_MONORAIL behave the same currently</td></tr>
-<tr><td>map_colour</td><td>              0 ... 255</td><td>entry in the colour palette. Since OpenTTD r19307</td></tr>
-<tr><td>requires_railtype_list</td><td>  list of railtype labels</td><td>List of rail types on that need to be available to the company of the player for this rail type to be
-            introduced at (or after) the introduction date. This limit does not apply when the rail type is introduced by the introduction of a vehicle. Since OpenTTD r21842</td></tr>
-<tr><td>introduces_railtype_list</td><td>list of railtype labels</td><td>List of rail types that get introduced when this rail type is introduced. For example, to make sure
-            that when a fast rail type is introduced the slow variant exists. Since OpenTTD r21841</td></tr>
-<tr><td>sort_order</td><td>              0 ... 255</td><td>number which defines the sort order among rail types. If this entry is not defined, it gets assigned sort order n*10+7 for the n-th railtype. Since OpenTTD r21866</td></tr>
+<tr><th>property<th>value range<th>comment
+<tr><td>label<td>                   4-byte string<td>names of default rail types: "RAIL", "ELRL", "MONO", "MLEV", "3RDR"
+<tr><td>introduction_date<td>       date(yyyy,mm,dd)<td>Valid range for yyyy is 0 ... 5000000. Since OpenTTD r21842
+<tr><td>name<td>                    string<td>Caption of the build rail toolbar
+<tr><td>menu_text<td>               string<td>Shown in the dropdown menu for all railtypes
+<tr><td>build_window_caption<td>    string<td>Caption of the build vehicle window
+<tr><td>autoreplace_text<td>        string<td>String for the autoreplace window
+<tr><td>new_engine_text<td>         string<td>String for the "We have invented a new &lt;rail type&gt; engine" news message 
+<tr><td>compatible_railtype_list<td>list of railtype labels<td>Provide a list of rail types that trains of this type can also run on. e.g. ["RAIL", "ELRL", "MONO"]
+<tr><td>powered_railtype_list<td>   list of railtype labels<td>Provide a list of rail types that trains of this type are powered on.
+<tr><td>railtype_flags<td>          bitmask(RAILTYPE_FLAG_XXX, ...)<td>XXX = [CATENARY|NO_LEVEL_CROSSING] Flags enable catenary and/or disable level crossings.
+<tr><td>curve_speed_multiplier<td>  0...65525<td>max curve speed is defined as multiple of the base curve speed (see below)
+<tr><td>station graphics<td>        RAILTYPE_STATION_NORMAL, RAILTYPE_STATION_MONORAIL, RAILTYPE_STATION_MAGLEV<td>Type of station graphics to use for the default stations
+<tr><td>construction_cost<td>       0 ... 65525<td>per piece of track as multiplier to PR_BUILD_RAIL base cost. Since OpenTTD r19307
+<tr><td>speed_limit<td>             0 ... 65525 km/h (speed units)<td>A speed limit of 0 means unlimited speed
+<tr><td>acceleration_model<td>      ACC_MODEL_RAIL, ACC_MODEL_MONORAIL, ACC_MODEL_MAGLEV<td>ACC_MODEL_RAIL and ACC_MODEL_MONORAIL behave the same currently
+<tr><td>map_colour<td>              0 ... 255<td>entry in the colour palette. Since OpenTTD r19307
+<tr><td>requires_railtype_list<td>  list of railtype labels<td>List of rail types on that need to be available to the company of the player for this rail type to be
+            introduced at (or after) the introduction date. This limit does not apply when the rail type is introduced by the introduction of a vehicle. Since OpenTTD r21842
+<tr><td>introduces_railtype_list<td>list of railtype labels<td>List of rail types that get introduced when this rail type is introduced. For example, to make sure
+            that when a fast rail type is introduced the slow variant exists. Since OpenTTD r21841
+<tr><td>sort_order<td>              0 ... 255<td>number which defines the sort order among rail types. If this entry is not defined, it gets assigned sort order n*10+7 for the n-th railtype. Since OpenTTD r21866
 </table>
 
 <h3>Sort order</h3>
 <p>
 The sort_order influences the sort order of the drop down lists with rail types. Default values are as follows:
 <table class="t">
-<tr><th>Value</th><th>Meaning</th></tr>
-<tr><td>07</td><td>	normal rail</td></tr>
-<tr><td>17</td><td>	electrified rail</td></tr>
-<tr><td>27</td><td>	monorail</td></tr>
-<tr><td>37</td><td>	maglev</td></tr>
-<tr><td>n7</td><td>	railtype #n</td></tr>
+<tr><th>Value<th>Meaning
+<tr><td>07<td>	normal rail
+<tr><td>17<td>	electrified rail
+<tr><td>27<td>	monorail
+<tr><td>37<td>	maglev
+<tr><td>n7<td>	railtype #n
 </table>
 Thus the rail type that (internally) gets index 8 will get a default value of 87. These defaults are to keep the ordering when this property is not supported as they were.
 </p>
@@ -53,28 +53,28 @@ Thus the rail type that (internally) gets index 8 will get a default value of 87
 <p>
 The base speeds relevant for the curve_speed_multiplier are:</p>
 <table class="t">
-<tr><th>curve length</th><th>base speed [km/h]</th></tr>
-<tr><td>0 (90 degree turn)</td><td>30</td></tr>
-<tr><td>1</td><td>44</td></tr>
-<tr><td>2</td><td>55</td></tr>
-<tr><td>3</td><td>66</td></tr>
-<tr><td>4</td><td>75</td></tr>
-<tr><td>5</td><td>84</td></tr>
-<tr><td>6</td><td>91</td></tr>
-<tr><td>7</td><td>98</td></tr>
-<tr><td>8</td><td>103</td></tr>
-<tr><td>9</td><td>108</td></tr>
-<tr><td>10</td><td>111</td></tr>
-<tr><td>11</td><td>114</td></tr>
-<tr><td>12+</td><td>115</td></tr>
+<tr><th>curve length<th>base speed [km/h]
+<tr><td>0 (90 degree turn)<td>30
+<tr><td>1<td>44
+<tr><td>2<td>55
+<tr><td>3<td>66
+<tr><td>4<td>75
+<tr><td>5<td>84
+<tr><td>6<td>91
+<tr><td>7<td>98
+<tr><td>8<td>103
+<tr><td>9<td>108
+<tr><td>10<td>111
+<tr><td>11<td>114
+<tr><td>12+<td>115
 </table>
 
 <h2><a name="railtypes-vars">Railtype variables</a></h2>
 <table class="t">
-<tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>terrain_type</td><td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW</td><td></td></tr>
-<tr><td>enhanced_tunnels</td><td>0</td><td>should custom tunnel entrances be modified other values than 0 might be returned</td></tr>
-<tr><td>level_crossing_status</td><td>LEVEL_CROSSING_CLOSED, LEVEL_CROSSING_OPEN</td><td></td></tr>
+<tr><th>name<th>value range<th>comment
+<tr><td>terrain_type<td>TILETYPE_NORMAL, TILETYPE_DESERT, TILETYPE_RAIN_FOREST, TILETYPE_SNOW<td>
+<tr><td>enhanced_tunnels<td>0<td>should custom tunnel entrances be modified other values than 0 might be returned
+<tr><td>level_crossing_status<td>LEVEL_CROSSING_CLOSED, LEVEL_CROSSING_OPEN<td>
 <tr><td>build_date <td>0 .. 5000000 <td>for depots only: build date of the depot in days since 0
 </table>
 
@@ -82,17 +82,17 @@ The base speeds relevant for the curve_speed_multiplier are:</p>
 <p>For rail types a number of callbacks are used to define rail type graphics.
 Each should refer to a sprite set containing the relevant sprites.</p>
 <table class="t">
-<tr><th>callbacks</th><th>number of sprites</th><th>meaning</th></tr>
-<tr><td>gui</td><td>         16</td><td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu</td></tr>
-<tr><td>track_overlay*</td><td>10</td><td>6 flat and 4 slope sprites. Track without landscape</td></tr>
-<tr><td>underlay*</td><td>    16</td><td>6 flat and 4 slope, one crossing WITH track, 5 junction pieces without track. Tracks with foundations but without landscape</td></tr>
-<tr><td>tunnels*</td><td>     4</td><td>4 track sprites, one for each tunnel entrance. Only track with foundations, no landscape</td></tr>
-<tr><td>catenary_wire</td><td>28</td><td></td></tr>
-<tr><td>catenary_pylons</td><td>8</td><td></td></tr>
-<tr><td>bridge_surfaces</td><td>6</td><td></td></tr>
-<tr><td>level_crossings*</td><td>10</td><td>For each direction: one track sprite and 4 sprites for road lights etc</td></tr>
-<tr><td>depots*</td><td>6</td><td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.</td></tr>
-<tr><td>fences</td><td>8</td><td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301</td></tr>
+<tr><th>callbacks<th>number of sprites<th>meaning
+<tr><td>gui<td>         16<td>4 rail directions, autorail, depot, tunnel and convert rail sprites for rail menu
+<tr><td>track_overlay*<td>10<td>6 flat and 4 slope sprites. Track without landscape
+<tr><td>underlay*<td>    16<td>6 flat and 4 slope, one crossing WITH track, 5 junction pieces without track. Tracks with foundations but without landscape
+<tr><td>tunnels*<td>     4<td>4 track sprites, one for each tunnel entrance. Only track with foundations, no landscape
+<tr><td>catenary_wire<td>28<td>
+<tr><td>catenary_pylons<td>8<td>
+<tr><td>bridge_surfaces<td>6<td>
+<tr><td>level_crossings*<td>10<td>For each direction: one track sprite and 4 sprites for road lights etc
+<tr><td>depots*<td>6<td>2 sprites for each south-ish, 1 sprite for each north-ish depot. Like original depots.
+<tr><td>fences<td>8<td>x, y, vertical, horizontal, SW, SE, NE and NW slopes like original fences at sprite 1301
 </table>
 
 <p>The entries marked by * are required. Note that there are no default graphics.</p>
@@ -108,14 +108,14 @@ item(FEAT_RAILTYPES, elrail, 0x01) {
         build_window_caption:       string(STR_BUILD_CAPTION);
         autoreplace_text:           string(STR_AUTOREPLACE);
         new_engine_text:            string(STR_NEW_ENGINE);
-        compatile_railtype_list:    ["SHIN","RAIL","ELRL"];           // Tracks of rail and electrified rail are compatible
-        powered_railtype_list:      ["ELRL","SHIN"];                  // But we got only power when we have electricity
-        railtype_flags:             RAILTYPE_FLAG_CATANERY;           // High speed tracks should not have level crossings
+        compatile_railtype_list:    ["SHIN","RAIL","ELRL"];                   // Tracks of rail and electrified rail are compatible
+        powered_railtype_list:      ["ELRL","SHIN"];                          // But we got only power when we have electricity
+        railtype_flags:             bitmask(RAILTYPE_FLAG_NO_LEVEL_CROSSING); // High speed tracks should not have level crossings
         curve_speed_multiplier:     1;
-        station_graphics:           RAILTYPE_STATION_MAGLEV;          // We want the most modern stations
-        construction_cost:          32;                               // should be pretty steep
+        station_graphics:           RAILTYPE_STATION_MAGLEV;                  // We want the most modern stations
+        construction_cost:          32;                                       // should be pretty steep
         speed_limit:                500 km/h;
-        acceleration_model:         ACC_MODEL_RAIL;                   // This is still rail, though
+        acceleration_model:         ACC_MODEL_RAIL;                           // This is still rail, though
     }
     graphics {
         track_overlay:   ground_switch_overlay;     // defines the sprites drawn as overlay for junctions and highlight
