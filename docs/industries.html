@@ -21,9 +21,9 @@ This <em>must</em> be the first property to be set, before any other properties 
 <tr><td>layouts</td><td>Array of tilelayouts</td><td>See <a href="nml-language.html#block-tilelayout">Tilelayout</a> syntax.</td></tr>
 <tr><td>life_type</td><td>One of IND_LIFE_TYPE_XXX, XXX = BLACK_HOLE | EXTRACTIVE | ORGANIC | PROCESSING</td><td>The generic type of industry. This determines the production
 changes that occur by default (when not using the callback). Examples are respectively power plants, coal mines, forests en steel mills.</td></tr>
-<tr><td>closure_msg</td><td>string</td><td>Message displayed when the industry announces closure.</td></tr>
-<tr><td>prod_increase_msg</td><td>string</td><td>Message displayed when industry increases production.</td></tr>
-<tr><td>prod_decrease_msg</td><td>string</td><td>Message displayed when industry decreases production.</td></tr>
+<tr><td>closure_msg</td><td>string</td><td>Message displayed when the industry announces closure. Use a custom string or one of the <a href="refs.html#refs-default-TTD-strings">default TTD strings</a>.</td></tr>
+<tr><td>prod_increase_msg</td><td>string</td><td>Message displayed when industry increases production. Use a custom string or one of the <a href="refs.html#refs-default-TTD-strings">default TTD strings</a>.</td></tr>
+<tr><td>prod_decrease_msg</td><td>string</td><td>Message displayed when industry decreases production. Use a custom string or one of the <a href="refs.html#refs-default-TTD-strings">default TTD strings</a>.</td></tr>
 <tr><td>fund_cost_multiplier</td><td>0..255</td><td>Fund cost multiplier. Note that in OpenTTD the unmodified base cost is 8x higher for building (not prospecting) raw (=extractive / organic, see life_type) industries.</td></tr>
 <tr><td>prod_cargo_types</td><td>array of up to 2 ints</td><td>Types of cargo produced. Use the cargotype(&lt;label&gt;) built-in function to specify a label from the cargotable.</td></tr>
 <tr><td>accept_cargo_types</td> <td>array of up to 3 ints</td><td>Types of cargo accepted. Use the cargotype(&lt;label&gt;) built-in function to specify a label from the cargotable</td></tr>
@@ -41,7 +41,7 @@ to define either an old industry (using the global ID) or a new industry from yo
 <tr><td>input_multiplier_1</td><td>array of up to 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the first accepted cargo.</td></tr>
 <tr><td>input_multiplier_2</td><td>array of up to 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the second accepted cargo.</td></tr>
 <tr><td>input_multiplier_3</td><td>array of up to 2 floats (0..255)</td><td>Output cargo multiplication factors for getting a unit of the third accepted cargo.</td></tr>
-<tr><td>name</td><td>string</td><td>Name of the industry</td></tr>
+<tr><td>name</td><td>string</td><td>Name of the industry, use a custom string or one of the <a href="refs.html#refs-default-TTD-strings">default TTD strings</a>.</td></tr>
 <tr><td>prospect_chance</td><td>Fraction between 0 and 1</td><td>Chance of successful prospecting.</td></tr>
 <tr><td>callback_flags</td><td>bitmask(flags)</td><td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-industries">old-style callbacks</a>.
 <tr><td>remove_cost_multiplier</td><td>int</td><td>Cost multiplier for removing the industry (currently only possible with magic bulldozer).</td></tr>
