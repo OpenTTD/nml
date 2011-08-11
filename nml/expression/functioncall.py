@@ -136,6 +136,7 @@ def builtin_date(name, args, pos):
 
     @return Days since 1 jan 1 of the given date.
     """
+    days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     if len(args) != 3:
         raise generic.ScriptError("date() requires exactly 3 arguments", pos)
     from nml import global_constants
@@ -147,6 +148,9 @@ def builtin_date(name, args, pos):
         day = args[2].reduce_constant().value
     except generic.ConstError:
         raise generic.ScriptError("Month and day parameters of date() should be compile-time constants", pos)
+    generic.check_range(month, 1, 12, "month", args[1].pos)
+    generic.check_range(day, 1, days_in_month[month-1], "day", args[2].pos)
+
     if not isinstance(year, ConstantNumeric):
         if month != 1 or day != 1:
             raise generic.ScriptError("when the year parameter of date() is not a compile time constant month and day should be 1", pos)
@@ -159,7 +163,8 @@ def builtin_date(name, args, pos):
         res = BinOp(nmlop.SUB, res, part3)
         res = BinOp(nmlop.ADD, res, part4)
         return res
-    days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    generic.check_range(year.value, 0, 5000000, "year", year.pos)
     day_in_year = 0
     for i in range(month - 1):
         day_in_year += days_in_month[i]
