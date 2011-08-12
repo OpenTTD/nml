@@ -141,7 +141,7 @@ features_sprite_layout = [0x04, 0x07, 0x09, 0x0F, 0x11]
 # All features that need sprite sets
 features_sprite_set = features_sprite_group + features_sprite_layout
 
-def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referenced, cls_has_explicit_feature, cls_allow_parameters = False, cls_is_relocatable = False):
+def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referenced, cls_has_explicit_feature, cls_is_relocatable = False):
     """
     Metaclass factory which makes base classes for all nodes 'Action 2 graph'
     This graph is made up of all blocks that are eventually compiled to Action2,
@@ -159,10 +159,6 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
     @param cls_has_explicit_feature: Whether the feature of an instance is explicitly set,
                                     or derived from nodes that link to it.
     @type cls_has_explicit_feature: C{bool}
-
-    @param cls_allow_parameters: Whether parameters can be passed when referencing to an instance of this class.
-                                    If true, the derived class is expected to have a C{param_list} variable
-    @type cls_allow_parameters: C{bool}
 
     @param cls_is_relocatable: Whether instances of this class can be freely moved around or whether they need
                                to to be converted to nfo code at the same location as they are in the nml code.
@@ -205,6 +201,9 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
         @ivar name: Name of this node, as declared by the user
         @type name: L{Identifier}
 
+        @ivar num_params: Number of parameters that can be (and have to be) passed
+        @type num_params: C{int}
+
         @ivar used_sprite_sets: List of sprite sets used by this node
         @type used_sprite_sets: C{list} of L{SpriteSet}
         """
@@ -216,7 +215,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             """
             raise NotImplementedError('__init__ must be implemented in ASTSpriteGroup-subclass %r, initialize(..) should be called instead' % type(self))
 
-        def initialize(self, name = None, feature = None):
+        def initialize(self, name = None, feature = None, num_params = 0):
             """
             Initialize this instance.
             This function is generally, but not necessarily, called from the child class' constructor.
@@ -239,6 +238,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             self._action2 = {}
             self.feature_set = set([feature]) if feature is not None else set()
             self.name = name
+            self.num_params = num_params
             self.used_sprite_sets = []
 
         def register_names(self):
@@ -374,15 +374,27 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             target = resolve_spritegroup(target_ref.name)
             if cls_uses_spriteset and not target._is_spriteset():
                 raise generic.ScriptError("Expected a spriteset reference: '%s'" % target_ref.name.value, target_ref.pos)
-            if len(target_ref.param_list) != 0 and not target._allow_parameters():
-                raise generic.ScriptError("Passing parameters to '%s' is not possible." % target_ref.name.value, target_ref.pos)
-            self._referenced_nodes.add(target)
             if target._is_spriteset():
-                if not cls_uses_spriteset and len(target_ref.param_list) != 0:
+                assert target.num_params == 0
+                # Spritesets may have 1 'unofficial' parameter (offset)
+                if cls_uses_spriteset:
+                    # Referencing a spriteset from a group / layout
+                    # 0 or 1 parameter may be passed here
+                    # Note that passing parameters from groups is not possible,
+                    # A separate check is done there
+                    if len(target_ref.param_list) not in (0, 1):
+                        raise generic.ScriptError("Expected 0 or 1 parameter to '%s', encountered %d" % (target_ref.name.value, len(target_ref.param_list)), target_ref.pos)
+                else:
                     # Referencing a spriteset directly from graphics/[random]switch
                     # Passing parameters is not possible here
-                    raise generic.ScriptError("Passing parameters to '%s' is only possible from a spritelayout.", target_ref.pos)
+                    if len(target_ref.param_list) != 0:
+                        raise generic.ScriptError("Passing parameters to '%s' is only possible from a spritelayout." % target_ref.name.value, target_ref.pos)
                 self.used_sprite_sets.append(target)
+            else:
+                if len(target_ref.param_list) != target.num_params:
+                    raise generic.ScriptError("'%s' expects %d parameters, encountered %d." % (target_ref.name.value, target.num_params, len(target_ref.param_list)), target_ref.pos)
+
+            self._referenced_nodes.add(target)
             target._referencing_nodes.add(self)
 
         def _remove_reference(self, target):
@@ -403,9 +415,6 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
 
         def _has_explicit_feature(self):
             return cls_has_explicit_feature
-
-        def _allow_parameters(self):
-            return cls_allow_parameters
 
     return ASTSpriteGroup
 

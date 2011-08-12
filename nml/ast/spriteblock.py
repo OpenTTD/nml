@@ -55,7 +55,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
         ret += "}\n"
         return ret
 
-spriteset_base_class = action2.make_sprite_group_class(True, False, True, False, True, cls_is_relocatable = True)
+spriteset_base_class = action2.make_sprite_group_class(True, False, True, False, cls_is_relocatable = True)
 
 class SpriteSet(spriteset_base_class):
     def __init__(self, param_list, sprite_list, pos):
@@ -170,12 +170,12 @@ class SpriteView(object):
     def __str__(self):
         return "%s: [%s];" % (str(self.name), ", ".join([str(spriteset) for spriteset in self.spriteset_list]))
 
-spritelayout_base_class = action2.make_sprite_group_class(False, True, True, False, True)
+spritelayout_base_class = action2.make_sprite_group_class(False, True, True, False)
 
 class SpriteLayout(spritelayout_base_class):
     def __init__(self, name, param_list, layout_sprite_list, pos = None):
         base_statement.BaseStatement.__init__(self, "spritelayout", pos, False, False)
-        self.initialize(name)
+        self.initialize(name, None, len(param_list))
         self.param_list = param_list
         if len(param_list) != 0:
             generic.print_warning("spritelayout parameters are not (yet) supported, ignoring.", pos)
