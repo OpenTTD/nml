@@ -149,6 +149,8 @@ class VarAction2Var(object):
         assert not raise_error
         return False
 
+# General load and store class for temp parameters
+# Register is allocated at the store operation
 class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
         VarAction2Var.__init__(self, 0x1A, 0, 0)
@@ -191,6 +193,56 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
     def supported_by_actionD(self, raise_error):
         assert not raise_error
         return False
+
+# Temporary load and store classes used for spritelayout parameters
+# Register is allocated in a separate entity
+class VarAction2LayoutParam(object):
+    def __init__(self):
+        self.register = None
+        self.store_vars = []
+        self.load_vars = []
+
+    def set_register(self, register):
+        self.register = register
+        for store_var in self.store_vars:
+            store_var.mask = register
+        for load_var in self.load_vars:
+            load_var.parameter = register
+
+class VarAction2LoadLayoutParam(VarAction2Var, expression.Expression):
+    def __init__(self, param):
+        VarAction2Var.__init__(self, 0x7D, 0, 0)
+        expression.Expression.__init__(self, None)
+        assert isinstance(param, VarAction2LayoutParam)
+        param.load_vars.append(self)
+        # Register is stored in parameter
+
+    def write(self, file, size):
+        self.mask = get_mask(size)
+        VarAction2Var.write(self, file, size)
+
+    def get_size(self):
+        return 7
+
+    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        return self
+
+    def supported_by_action2(self, raise_error):
+        return True
+
+    def supported_by_actionD(self, raise_error):
+        assert not raise_error
+        return False
+
+class VarAction2StoreLayoutParam(VarAction2Var):
+    def __init__(self, param):
+        VarAction2Var.__init__(self, 0x1A, 0, 0)
+        assert isinstance(param, VarAction2LayoutParam)
+        param.store_vars.append(self)
+        # Register is stored in mask
+
+    def get_size(self):
+        return 6
 
 class Varaction2Range(object):
     def __init__(self, min, max, result, comment):
@@ -412,7 +464,7 @@ class Varaction2Parser(object):
         if expr.op.act2_num is None: expr.supported_by_action2(True)
 
         if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
-                isinstance(expr.expr2, VarAction2LoadTempVar) or \
+                isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadLayoutParam)) or \
                 (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
                 expr.op == nmlop.VAL2:
             expr2 = expr.expr2
@@ -520,7 +572,7 @@ class Varaction2Parser(object):
         elif isinstance(expr, expression.String):
             self.parse_string(expr)
 
-        elif isinstance(expr, VarAction2LoadTempVar):
+        elif isinstance(expr, (VarAction2LoadTempVar, VarAction2LoadLayoutParam)):
             self.var_list.append(expr)
             self.var_list_size += expr.get_size()
 
