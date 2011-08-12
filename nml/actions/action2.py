@@ -141,17 +141,16 @@ features_sprite_layout = [0x04, 0x07, 0x09, 0x0F, 0x11]
 # All features that need sprite sets
 features_sprite_set = features_sprite_group + features_sprite_layout
 
-def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referenced, cls_has_explicit_feature, cls_is_relocatable = False):
+def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explicit_feature, cls_is_relocatable = False):
     """
     Metaclass factory which makes base classes for all nodes 'Action 2 graph'
     This graph is made up of all blocks that are eventually compiled to Action2,
-    which use the same name space.
+    which use the same name space. Spritesets do inherit from this class to make
+    referencing them possible, but they are not part of the refernce graph that
+    is built.
 
     @param cls_is_spriteset: Whether this class represents a spriteset
     @type cls_is_spriteset: C{bool}
-
-    @param cls_uses_spriteset: True iff this classes exclusively uses (refers to) spritesets
-    @type cls_uses_spriteset: C{bool}
 
     @param cls_is_referenced: True iff this node can be referenced by other nodes
     @type cls_is_referenced: C{bool}
@@ -372,30 +371,18 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             """
 
             target = resolve_spritegroup(target_ref.name)
-            if cls_uses_spriteset and not target._is_spriteset():
-                raise generic.ScriptError("Expected a spriteset reference: '%s'" % target_ref.name.value, target_ref.pos)
-            if target._is_spriteset():
+            if target.is_spriteset():
                 assert target.num_params == 0
-                # Spritesets may have 1 'unofficial' parameter (offset)
-                if cls_uses_spriteset:
-                    # Referencing a spriteset from a group / layout
-                    # 0 or 1 parameter may be passed here
-                    # Note that passing parameters from groups is not possible,
-                    # A separate check is done there
-                    if len(target_ref.param_list) not in (0, 1):
-                        raise generic.ScriptError("Expected 0 or 1 parameter to '%s', encountered %d" % (target_ref.name.value, len(target_ref.param_list)), target_ref.pos)
-                else:
-                    # Referencing a spriteset directly from graphics/[random]switch
-                    # Passing parameters is not possible here
-                    if len(target_ref.param_list) != 0:
-                        raise generic.ScriptError("Passing parameters to '%s' is only possible from a spritelayout." % target_ref.name.value, target_ref.pos)
+                # Referencing a spriteset directly from graphics/[random]switch
+                # Passing parameters is not possible here
+                if len(target_ref.param_list) != 0:
+                    raise generic.ScriptError("Passing parameters to '%s' is only possible from a spritelayout." % target_ref.name.value, target_ref.pos)
                 self.used_sprite_sets.append(target)
             else:
                 if len(target_ref.param_list) != target.num_params:
                     raise generic.ScriptError("'%s' expects %d parameters, encountered %d." % (target_ref.name.value, target.num_params, len(target_ref.param_list)), target_ref.pos)
-
-            self._referenced_nodes.add(target)
-            target._referencing_nodes.add(self)
+                self._referenced_nodes.add(target)
+                target._referencing_nodes.add(self)
 
         def _remove_reference(self, target):
             """
@@ -410,7 +397,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_uses_spriteset, cls_is_referen
             target._referencing_nodes.remove(self)
 
         #Make metaclass arguments available outside of the class
-        def _is_spriteset(self):
+        def is_spriteset(self):
             return cls_is_spriteset
 
         def _has_explicit_feature(self):

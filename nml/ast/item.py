@@ -182,7 +182,7 @@ class LiveryOverride(base_statement.BaseStatement):
         ret += '}\n'
         return ret
 
-graphics_base_class = action2.make_sprite_group_class(False, False, False, True)
+graphics_base_class = action2.make_sprite_group_class(False, False, True)
 
 class GraphicsBlock(graphics_base_class):
     def __init__(self, graphics_list, default_graphics, pos):

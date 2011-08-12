@@ -30,7 +30,10 @@ def get_real_action2s(spritegroup, feature):
         raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for feature '%02X'." % feature, spritegroup.pos)
 
     # First make sure that all referenced real sprites are put in a single action1
-    actions.extend(action1.add_to_action1(spritegroup.used_sprite_sets, feature, spritegroup.pos))
+    spriteset_list = []
+    for view in spritegroup.spriteview_list:
+        spriteset_list.extend([action2.resolve_spritegroup(sg_ref.name) for sg_ref in view.spriteset_list])
+    actions.extend(action1.add_to_action1(spriteset_list, feature, spritegroup.pos))
 
     view_names = sorted([view.name.value for view in spritegroup.spriteview_list])
     if feature in (0x00, 0x01, 0x02, 0x03):
@@ -46,8 +49,6 @@ def get_real_action2s(spritegroup, feature):
             raise generic.ScriptError("Expected at least one sprite set, encountered 0.", view.pos)
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)
-            if len(set_ref.param_list) != 0:
-                raise generic.ScriptError("Spritesets referenced from a spritegroup may not have parameters.", set_ref.pos)
             action1_index = action1.get_action1_index(spriteset)
             if view.name.value == 'loading': loading_list.append(action1_index)
             else: loaded_list.append(action1_index)

@@ -345,15 +345,29 @@ def get_layout_action2s(spritelayout, feature):
     if feature not in action2.features_sprite_layout:
         raise generic.ScriptError("Sprite layouts are not supported for feature '%02X'." % feature)
 
-    actions.extend(action1.add_to_action1(spritelayout.used_sprite_sets, feature, spritelayout.pos))
+    # Reduce all expresssions, can't do that earlier as feature is not known
+    all_sprite_sets = []
+    layout_sprite_list = [] # Create a new structure
+    for layout_sprite in spritelayout.layout_sprite_list:
+        param_list = []
+        layout_sprite_list.append( (layout_sprite.type, layout_sprite.pos, param_list) )
+        for param in layout_sprite.param_list:
+            param_val = action2var.reduce_varaction2_expr(param.value, feature)
+            param_list.append( (param.name, param_val) )
+            if isinstance(param_val, expression.SpriteGroupRef):
+                spriteset = action2.resolve_spritegroup(param_val.name)
+                if not spriteset.is_spriteset():
+                    raise generic.ScriptError("Expected a reference to a spriteset.", param_val.pos)
+                all_sprite_sets.append(spriteset)
+    actions.extend(action1.add_to_action1(all_sprite_sets, feature, spritelayout.pos))
 
     temp_registers = []
-    for layout_sprite in spritelayout.layout_sprite_list:
-        if layout_sprite.type.value not in layout_sprite_types:
-            raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % layout_sprite.type.value, layout_sprite.type.pos)
-        sprite = Action2LayoutSprite(layout_sprite_types[layout_sprite.type.value], layout_sprite.pos)
-        for param in layout_sprite.param_list:
-            sprite.set_param(param.name, param.value)
+    for type, pos, param_list in layout_sprite_list:
+        if type.value not in layout_sprite_types:
+            raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % type.value, type.pos)
+        sprite = Action2LayoutSprite(layout_sprite_types[type.value], pos)
+        for name, value in param_list:
+            sprite.set_param(name, value)
         temp_registers.extend(sprite.get_all_registers())
         if sprite.type == Action2LayoutSpriteType.GROUND:
             if ground_sprite is not None:
