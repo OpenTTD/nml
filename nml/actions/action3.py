@@ -97,7 +97,7 @@ def create_intermediate_varaction2(feature, var_num, and_mask, mapping, default)
     offset = 5 + varact2parser.var_list_size
     for value in sorted(mapping):
         result, comment = action2var.parse_result(mapping[value], action_list, extra_act6, offset, varaction2, None, 0x89)
-        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(value), expression.ConstantNumeric(value), result, comment))
+        varaction2.ranges.append(action2var.VarAction2Range(expression.ConstantNumeric(value), expression.ConstantNumeric(value), result, comment))
         offset += 10
     result, comment = action2var.parse_result(default, action_list, extra_act6, offset, varaction2, None, 0x89)
     varaction2.default_result = default

@@ -280,7 +280,7 @@ def parse_randomswitch(random_switch):
             extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
         if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
         ref = expression.SpriteGroupRef(random_switch.name, [], None, random_action2)
-        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
+        varaction2.ranges.append(action2var.VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
         varaction2.default_result = ref
         varaction2.default_comment = ''
 

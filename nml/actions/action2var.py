@@ -20,7 +20,7 @@ class Action2Var(action2.Action2):
                   maximum (inclusive) of one range the result of that range is
                   returned. The result can be either an integer of another
                   action2.
-    @ivar ranges: C{list} of L{Varaction2Range}
+    @ivar ranges: C{list} of L{VarAction2Range}
     """
     def __init__(self, feature, name, type_byte):
         action2.Action2.__init__(self, feature, name)
@@ -244,7 +244,7 @@ class VarAction2StoreLayoutParam(VarAction2Var):
     def get_size(self):
         return 6
 
-class Varaction2Range(object):
+class VarAction2Range(object):
     def __init__(self, min, max, result, comment):
         self.min = min
         self.max = max
@@ -861,7 +861,7 @@ def parse_varaction2(switch_block):
                         i += 1
 
         if not range_overlap:
-            varaction2.ranges.append(Varaction2Range(range_min, range_max, range_result, comment))
+            varaction2.ranges.append(VarAction2Range(range_min, range_max, range_result, comment))
 
     default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
     varaction2.default_result = default

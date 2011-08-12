@@ -423,7 +423,7 @@ def get_layout_action2s(spritelayout, feature):
         varaction2 = action2var.Action2Var(feature, "%s@registers - feature %02X" % (spritelayout.name.value, feature), 0x89)
         varaction2.var_list = varact2parser.var_list
         ref = expression.SpriteGroupRef(spritelayout.name, [], None, layout_action)
-        varaction2.ranges.append(action2var.Varaction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
+        varaction2.ranges.append(action2var.VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
         varaction2.default_result = ref
         varaction2.default_comment = ''
 
