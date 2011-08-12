@@ -2,11 +2,18 @@ from nml import generic, global_constants, expression, nmlop
 from nml.actions import action2, action6, actionD, action1, action2var, real_sprite
 
 class Action2Layout(action2.Action2):
-    def __init__(self, feature, name, ground_sprite, sprite_list):
+    def __init__(self, feature, name, ground_sprite, sprite_list, param_registers):
         action2.Action2.__init__(self, feature, name)
         assert ground_sprite.type == Action2LayoutSpriteType.GROUND
         self.ground_sprite = ground_sprite
         self.sprite_list = sprite_list
+        self.param_registers = param_registers
+
+    def resolve_tmp_storage(self):
+        for reg in self.param_registers:
+            location = self.tmp_locations[0]
+            self.remove_tmp_location(location, False)
+            reg.set_register(location)
 
     def write(self, file):
         advanced = any(x.is_advanced_sprite() for x in self.sprite_list + [self.ground_sprite])
@@ -67,10 +74,11 @@ layout_sprite_types = {
 }
 
 class Action2LayoutSprite(object):
-    def __init__(self, feature, type, pos = None):
+    def __init__(self, feature, type, pos = None, extra_dicts = []):
         self.feature = feature
         self.type = type
         self.pos = pos
+        self.extra_dicts = extra_dicts
         self.params = {
             'sprite'        : {'value': None, 'validator': self._validate_sprite},
             'recolour_mode' : {'value': 0,  'validator': self._validate_recolour_mode},
@@ -217,7 +225,7 @@ class Action2LayoutSprite(object):
 
     def set_param(self, name, value):
         assert isinstance(name, expression.Identifier)
-        assert isinstance(value, expression.Expression) or isinstance(value, expression.SpriteGroupRef)
+        assert isinstance(value, expression.Expression)
         name = name.value
 
         if not name in self.params:
@@ -244,7 +252,7 @@ class Action2LayoutSprite(object):
             offset = None
         elif len(sg_ref.param_list) == 1:
             id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
-            offset = action2var.reduce_varaction2_expr(sg_ref.param_list[0], self.feature, id_dicts)
+            offset = action2var.reduce_varaction2_expr(sg_ref.param_list[0], self.feature, self.extra_dicts + id_dicts)
             if isinstance(offset, expression.ConstantNumeric):
                 generic.check_range(offset.value, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", sg_ref.pos)
         else:
@@ -344,6 +352,16 @@ def get_layout_action2s(spritelayout, feature):
     if feature not in action2.features_sprite_layout:
         raise generic.ScriptError("Sprite layouts are not supported for feature '%02X'." % feature)
 
+    # Allocate registers
+    param_map = {}
+    param_registers = []
+    for i, param in enumerate(spritelayout.param_list):
+        reg = action2var.VarAction2LayoutParam()
+        param_registers.append(reg)
+        param_map[param.value] = reg
+    param_map = (param_map, lambda value, pos: action2var.VarAction2LoadLayoutParam(value))
+    spritelayout.register_map[feature] = param_registers
+
     # Reduce all expresssions, can't do that earlier as feature is not known
     all_sprite_sets = []
     layout_sprite_list = [] # Create a new structure
@@ -351,7 +369,7 @@ def get_layout_action2s(spritelayout, feature):
         param_list = []
         layout_sprite_list.append( (layout_sprite.type, layout_sprite.pos, param_list) )
         for param in layout_sprite.param_list:
-            param_val = action2var.reduce_varaction2_expr(param.value, feature)
+            param_val = action2var.reduce_varaction2_expr(param.value, feature, [param_map])
             param_list.append( (param.name, param_val) )
             if isinstance(param_val, expression.SpriteGroupRef):
                 spriteset = action2.resolve_spritegroup(param_val.name)
@@ -364,7 +382,7 @@ def get_layout_action2s(spritelayout, feature):
     for type, pos, param_list in layout_sprite_list:
         if type.value not in layout_sprite_types:
             raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % type.value, type.pos)
-        sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos)
+        sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos, [param_map])
         for name, value in param_list:
             sprite.set_param(name, value)
         temp_registers.extend(sprite.get_all_registers())
@@ -407,7 +425,7 @@ def get_layout_action2s(spritelayout, feature):
     if len(act6.modifications) > 0:
         actions.append(act6)
 
-    layout_action = Action2Layout(feature, spritelayout.name.value + (" - feature %02X" % feature), ground_sprite, building_sprites)
+    layout_action = Action2Layout(feature, spritelayout.name.value + (" - feature %02X" % feature), ground_sprite, building_sprites, param_registers)
     actions.append(layout_action)
 
     if temp_registers:
@@ -441,8 +459,9 @@ def get_layout_action2s(spritelayout, feature):
         varaction2.default_comment = ''
 
         # Add two references (default + range)
-        action2.add_ref(ref, varaction2)
-        action2.add_ref(ref, varaction2)
+        # Make sure that registers allocated here are not used by the spritelayout
+        action2.add_ref(ref, varaction2, True)
+        action2.add_ref(ref, varaction2, True)
         spritelayout.set_action2(varaction2, feature)
         actions.append(varaction2)
     else:

@@ -692,6 +692,68 @@ def create_return_action(expr, feature, name, var_range):
     action_list.append(varaction2)
     return (action_list, ref)
 
+def parse_sg_ref_result(result, action_list, parent_action, var_range):
+    """
+    Parse a result that is a sprite group reference.
+
+    @param result: Result to parse
+    @type result: L{SpriteGroupRef}
+
+    @param action_list: List to append any extra actions to
+    @type action_list: C{list} of L{BaseAction}
+
+    @param parent_action: Reference to the action of which this is a result
+    @type parent_action: L{BaseAction}
+
+    @param var_range: Variable range to use for variables in the expression
+    @type var_range: C{int}
+
+    @return: Result to use in the calling varaction2
+    @rtype: L{SpriteGroupRef}
+    """
+    if len(result.param_list) == 0:
+        action2.add_ref(result, parent_action)
+        return result
+
+    # Result is parametrized
+    # Insert an intermediate varaction2 to store expressions in registers
+    var_feature = parent_action.feature if var_range == 0x89 else action2var_variables.varact2parent_scope[parent_action.feature]
+    varact2parser = Varaction2Parser(var_feature)
+    layout = action2.resolve_spritegroup(result.name)
+    for i, param in enumerate(result.param_list):
+        if i > 0:
+            varact2parser.var_list.append(nmlop.VAL2)
+            varact2parser.var_list_size += 1
+        varact2parser.parse_expr(reduce_varaction2_expr(param, var_feature))
+        varact2parser.var_list.append(nmlop.STO_TMP)
+        store_tmp = VarAction2StoreLayoutParam(layout.register_map[parent_action.feature][i])
+        varact2parser.var_list.append(store_tmp)
+        varact2parser.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
+
+    action_list.extend(varact2parser.extra_actions)
+    extra_act6 = action6.Action6()
+    for mod in varact2parser.mods:
+        extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
+    if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
+
+    global return_action_id
+    name = "@return_action_%d" % return_action_id
+    varaction2 = Action2Var(parent_action.feature, name, var_range)
+    return_action_id += 1
+    varaction2.var_list = varact2parser.var_list
+    ref = expression.SpriteGroupRef(result.name, [], result.pos)
+    varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, result.name.value))
+    varaction2.default_result = ref
+    varaction2.default_comment = result.name.value
+    # Add the references as procs, to make sure, that any intermediate registers
+    # are freed at the spritelayout and thus not selected to pass parameters
+    action2.add_ref(ref, varaction2, True)
+    action2.add_ref(ref, varaction2, True)
+
+    ref = expression.SpriteGroupRef(expression.Identifier(name), [], None, varaction2)
+    action_list.append(varaction2)
+    return ref
+
 def parse_result(value, action_list, act6, offset, parent_action, none_result, var_range, repeat_result = 1):
     """
     Parse a result (another switch or CB result) in a switch block.
@@ -714,6 +776,9 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
     @param none_result: Result to use to return the computed value
     @type none_result: L{Expression}
 
+    @param var_range: Variable range to use for variables in the expression
+    @type var_range: C{int}
+
     @param repeat_result: Repeat any action6 modifying of the next sprite this many times.
     @type repeat_result: C{int}
 
@@ -725,13 +790,13 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
     if value is None:
         comment = "return;"
         assert none_result is not None
-        result = none_result
         if isinstance(result, expression.SpriteGroupRef):
-            action2.add_ref(result, parent_action)
+            result = parse_sg_ref_result(none_result, action_list, parent_action, var_range)
+        else:
+            result = none_result
     elif isinstance(value, expression.SpriteGroupRef):
         comment = value.name.value + ';'
-        action2.add_ref(value, parent_action)
-        result = value
+        result = parse_sg_ref_result(value, action_list, parent_action, var_range)
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value
         result = value

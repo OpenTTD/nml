@@ -175,13 +175,20 @@ class SpriteLayout(spritelayout_base_class):
         base_statement.BaseStatement.__init__(self, "spritelayout", pos, False, False)
         self.initialize(name, None, len(param_list))
         self.param_list = param_list
-        if len(param_list) != 0:
-            generic.print_warning("spritelayout parameters are not (yet) supported, ignoring.", pos)
+        self.register_map = {} # Set during action generation for easier referencing
         self.layout_sprite_list = layout_sprite_list
 
     # Do not reduce expressions here as they may contain variables
     # And the feature is not known yet
     def pre_process(self):
+        # Check parameter names
+        seen_names = set()
+        for param in self.param_list:
+            if not isinstance(param, expression.Identifier):
+                raise generic.ScriptError("spritelayout parameter names must be identifiers.", param.pos)
+            if param.value in seen_names:
+                raise generic.ScriptError("Duplicate parameter name '%s' encountered." % param.value, param.pos)
+            seen_names.add(param.value)
         spritelayout_base_class.pre_process(self)
 
     def collect_references(self):
