@@ -674,7 +674,7 @@ def create_return_action(expr, feature, name, var_range):
                 - Reference to the created varaction2
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
-    varact2parser = Varaction2Parser(feature)
+    varact2parser = Varaction2Parser(feature if var_range == 0x89 else action2var_variables.varact2parent_scope[feature])
     varact2parser.parse_expr(expr)
 
     action_list = varact2parser.extra_actions
