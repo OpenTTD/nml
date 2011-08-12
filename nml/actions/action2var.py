@@ -754,7 +754,7 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
         result = expression.ConstantNumeric(0)
     else:
         global return_action_id
-        extra_actions, result = create_return_action(value, parent_action.feature, parent_action.name + "@return%d" % return_action_id, var_range)
+        extra_actions, result = create_return_action(value, parent_action.feature, "@return_action_%d" % return_action_id, var_range)
         return_action_id += 1
         action2.add_ref(result, parent_action)
         action_list.extend(extra_actions)
