@@ -67,7 +67,8 @@ layout_sprite_types = {
 }
 
 class Action2LayoutSprite(object):
-    def __init__(self, type, pos = None):
+    def __init__(self, feature, type, pos = None):
+        self.feature = feature
         self.type = type
         self.pos = pos
         self.params = {
@@ -243,9 +244,7 @@ class Action2LayoutSprite(object):
             offset = None
         elif len(sg_ref.param_list) == 1:
             id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
-            expression.identifier.ignore_all_invalid_ids = True
-            offset = sg_ref.param_list[0].reduce(global_constants.const_list + id_dicts)
-            expression.identifier.ignore_all_invalid_ids = False
+            offset = action2var.reduce_varaction2_expr(sg_ref.param_list[0], self.feature, id_dicts)
             if isinstance(offset, expression.ConstantNumeric):
                 generic.check_range(offset.value, 0, len(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx)) - 1, "offset within spriteset", sg_ref.pos)
         else:
@@ -365,7 +364,7 @@ def get_layout_action2s(spritelayout, feature):
     for type, pos, param_list in layout_sprite_list:
         if type.value not in layout_sprite_types:
             raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % type.value, type.pos)
-        sprite = Action2LayoutSprite(layout_sprite_types[type.value], pos)
+        sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos)
         for name, value in param_list:
             sprite.set_param(name, value)
         temp_registers.extend(sprite.get_all_registers())
@@ -381,7 +380,7 @@ def get_layout_action2s(spritelayout, feature):
             #no sprites defined at all, that's not very much.
             raise generic.ScriptError("Sprite layout requires at least one sprite", spritegroup.pos)
         #set to 0 for no ground sprite
-        ground_sprite = Action2LayoutSprite(Action2LayoutSpriteType.GROUND)
+        ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
         ground_sprite.set_param(expression.Identifier('sprite'), expression.ConstantNumeric(0))
 
     action6.free_parameters.save()
@@ -416,7 +415,7 @@ def get_layout_action2s(spritelayout, feature):
         for register_info in temp_registers:
             reg, expr = register_info[1], register_info[2]
             if reg is None: continue
-            varact2parser.parse_expr(action2var.reduce_varaction2_expr(expr, feature))
+            varact2parser.parse_expr(expr)
             varact2parser.var_list.append(nmlop.STO_TMP)
             varact2parser.var_list.append(reg)
             varact2parser.var_list.append(nmlop.VAL2)
