@@ -61,3 +61,9 @@ class SpriteGroupRef(Expression):
 
     def type(self):
         return Type.SPRITEGROUP_REF
+
+    def __eq__(self, other):
+        return other is not None and isinstance(other, SpriteGroupRef) and other.name == self.name and other.param_list == self.param_list
+
+    def __hash__(self):
+        return hash(self.name) ^ hash(tuple(self.param_list))
