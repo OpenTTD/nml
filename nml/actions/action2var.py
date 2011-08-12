@@ -692,7 +692,7 @@ def create_return_action(expr, feature, name, var_range):
     action_list.append(varaction2)
     return (action_list, ref)
 
-def parse_result(value, action_list, act6, offset, varaction2, none_result, var_range, repeat_result = 1):
+def parse_result(value, action_list, act6, offset, parent_action, none_result, var_range, repeat_result = 1):
     """
     Parse a result (another switch or CB result) in a switch block.
 
@@ -708,8 +708,8 @@ def parse_result(value, action_list, act6, offset, varaction2, none_result, var_
     @param offset: Current offset to use for action6
     @type offset: C{int}
 
-    @param varaction2: Reference to the resulting varaction2
-    @type varaction2: L{Action2Var}
+    @param parent_action: Reference to the action of which this is a result
+    @type parent_action: L{BaseAction}
 
     @param none_result: Result to use to return the computed value
     @type none_result: L{Expression}
@@ -727,10 +727,10 @@ def parse_result(value, action_list, act6, offset, varaction2, none_result, var_
         assert none_result is not None
         result = none_result
         if isinstance(result, expression.SpriteGroupRef):
-            action2.add_ref(result, varaction2)
+            action2.add_ref(result, parent_action)
     elif isinstance(value, expression.SpriteGroupRef):
         comment = value.name.value + ';'
-        action2.add_ref(value, varaction2)
+        action2.add_ref(value, parent_action)
         result = value
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value
@@ -754,9 +754,9 @@ def parse_result(value, action_list, act6, offset, varaction2, none_result, var_
         result = expression.ConstantNumeric(0)
     else:
         global return_action_id
-        extra_actions, result = create_return_action(value, varaction2.feature, varaction2.name + "@return%d" % return_action_id, var_range)
+        extra_actions, result = create_return_action(value, parent_action.feature, parent_action.name + "@return%d" % return_action_id, var_range)
         return_action_id += 1
-        action2.add_ref(result, varaction2)
+        action2.add_ref(result, parent_action)
         action_list.extend(extra_actions)
         comment = "return %s" % str(value)
     return (result, comment)
