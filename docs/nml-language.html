@@ -745,7 +745,8 @@ Available recolour modes are:
 	glitches.
 </ul>
 <h3><a name="block-spritelayout-example">Example (advanced) Spritelayout</a></h3>
-While parameters cannot yet be assigned explicitly to a spritelayout, variables, temporary storage and parameters can be used inside of a layout nevertheless. A common usage for such parametrized spritelayout is taking care of the tile slope and ground type as illustrated in this example:
+OpenTTD <version>1.2 (r22723)</version> allows for nice shorthands in defining multiple views, e.g. for different slopes:
+Spritelayout can have parameters and may use variables and temporary storage inside of a layout. A common usage for such parametrized spritelayout is taking care of the tile slope and ground type as illustrated in this example:
 <pre class="code">
 spritelayout company_land_layout {
 	ground {

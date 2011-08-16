@@ -36,6 +36,14 @@ grf {
 	 */
 }
 
+/* Using parametrized sprite layouts are only valid in OpenTTD r22723 or later.
+ * Earlier versions will choke on those and otherwise disable the NewGRF.
+ */
+if (version_openttd(1,2,0,22723) > openttd_version) {
+	error(FATAL, REQUIRES_OPENTTD, string(STR_VERSION_22723));
+}
+
+
 // Template for 19 sprites: one for each possible tile slope
 template tmpl_groundsprites(x, y) {
     [   0+x,   y, 64, 31, -31,  0 ]

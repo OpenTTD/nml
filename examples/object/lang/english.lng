@@ -2,6 +2,8 @@
 STR_GRF_NAME                                                    :NML Example NewGRF: Object
 STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Object{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}Original graphics by {SILVER}planetmaker, {BLACK}coding by {SILVER}planetmaker.{}{BLACK}This NewGRF defines a tile which can act as company-land replacement.
 
+STR_VERSION_22723                                               :1.2.0 (r22723)
+
 STR_NAME_OBJCLASS_INFRASTRUCTURE                                :Infrastructure
 
 STR_NAME_COMPANY_LAND                                           :Company land
