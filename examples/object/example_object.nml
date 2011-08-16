@@ -144,7 +144,7 @@ item(FEAT_OBJECTS, company_land) {
 	}
 	graphics {
 		purchase:            company_land_purchase_switch;
-		slope_check:         return 0;
+		tile_check:          return 0;
 		additional_text:     return string(STR_NAME_COMPANY_LAND);
 		company_land_terrain_switch;
 	}

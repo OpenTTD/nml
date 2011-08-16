@@ -139,7 +139,7 @@ callbacks[0x09] = {
     'anim_speed'          : {'type': 'cb', 'num': 0x27, 'flag_bit': 1},
     'cargo_amount_accept' : {'type': 'cb', 'num': 0x2B, 'flag_bit': 2}, # Should work like the industry CB, i.e. call multiple times
     'cargo_type_accept'   : {'type': 'cb', 'num': 0x2C, 'flag_bit': 3}, # Should work like the industry CB, i.e. call multiple times
-    'slope_check'         : {'type': 'cb', 'num': 0x2F, 'flag_bit': 4},
+    'tile_check'          : {'type': 'cb', 'num': 0x2F, 'flag_bit': 4},
     'foundations'         : {'type': 'cb', 'num': 0x30, 'flag_bit': 5},
     'autoslope'           : {'type': 'cb', 'num': 0x3B, 'flag_bit': 6},
     'default'             : {'type': 'cargo', 'num': None},
@@ -184,7 +184,7 @@ callbacks[0x0D] = {
 
 # Objects
 callbacks[0x0F] = {
-    'slope_check'     : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2}, # The 'toggle bit 10'-magic needs to be a abstracted away
+    'tile_check'      : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2}, # The 'toggle bit 10'-magic needs to be a abstracted away
     'anim_next_frame' : {'type': 'cb', 'num': 0x158, 'flag_bit': 1},
     'anim_control'    : {'type': 'cb', 'num': 0x159},
     'anim_speed'      : {'type': 'cb', 'num': 0x15A, 'flag_bit': 2},
