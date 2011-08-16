@@ -26,10 +26,10 @@ To make a vehicle available in all climates except toyland you could use: ALL_CL
 <tr><td> loading_speed <td>                    0 ... 255 (cargo units)</td><td>yes</td><td>Units of cargo loaded per tick. Default vehicles use 5 for trains and road vehicles, 10 for ships and 20 for aircraft</td></tr>
 <tr><td> cost_factor</td><td>                  0 ... 255</td><td>=0</td><td>multiplier to the base purchase cost</td></tr>
 <tr><td> running_cost_factor</td><td>          0 ... 255</td><td>=0</td><td>multiplier to the base running costs</td></tr>
-<tr><td> cargo_age_period</td><td>             0 ... 65535</td><td>yes</td><td>This property specifies after how many ticks cargo is aged. Default value is 185. 74 ticks is equal to 1 day.</td></tr>
+<tr><td> cargo_age_period</td><td>             0 ... 65535</td><td>yes</td><td><version>1.2 (r22713)</version> This property specifies after how many ticks cargo is aged. Default value is 185. 74 ticks is equal to 1 day.</td></tr>
 </table>
 
-<p>To determine whether your vehicle can be refitted to a certain cargo, OpenTTD uses the following table:</p>
+<p>To determine whether your vehicle can be refitted to a certain cargo, OpenTTD uses the following table
 <table class="t">
 <tr><th>Cargo matches refittable_cargo_classes</th><th>Cargo matches non_refittable_cargo_classes</th><th>Cargo in refittable_cargo_types</th><th>Result</th></tr>
 <tr><td>No</td><td>Doesn't matter</td><td>No</td><td>Not refittable</td></tr>

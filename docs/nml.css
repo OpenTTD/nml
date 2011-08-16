@@ -26,6 +26,17 @@ em.hd {
 em,b,th {
    color:#000000;
 }
+
+version {
+	color:       #EE0000;
+	font-style:  typewriter;
+	font-family: sansserif;
+}
+version:before
+{
+content:url(version_icon.png);
+}
+
 body {
    margin-left:40px;
    margin-right:40px;
