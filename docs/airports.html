@@ -9,28 +9,30 @@
 
 <h1><a name="airports">Airports and airport tiles</a></h1>
 
+Airports and airport tiles can only be defined in OpenTTD <version>1.1 (r19459)</version> or later.
+
 <h2><a name="airports-properties">Airport properties</a></h2>
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>name<td>string<td>Name of the airport
-<tr><td>override<td><td>the id of airport to replace / override
-<tr><td>layouts<td>list of layouts<td>
-<tr><td>years_available<td>[start year, last year]<td>list of the availablility years: first and last year it can be built 
-<tr><td>ttd_airport-type<td>0 ... 3<td>substitute TTDPatch airport type
-<tr><td>catchment_area<td><td>catchment area of the airport in tiles around its perimeter
-<tr><td>noise_level<td><td>noise generation of this airport
+<tr><td>name<td>string<td><version>1.1 (r19459) </version>Name of the airport
+<tr><td>override<td><td><version>1.1 (r19459) </version>the id of airport to replace / override
+<tr><td>layouts<td>list of layouts<td><version>1.1 (r20377) </version>
+<tr><td>years_available<td>[start year, last year]<td><version>1.1 (r19459) </version>list of the availablility years: first and last year it can be built 
+<tr><td>ttd_airport-type<td>0 ... 3<td><version>1.1 (r19459) </version>substitute TTDPatch airport type
+<tr><td>catchment_area<td><td><version>1.1 (r19459) </version>catchment area of the airport in tiles around its perimeter
+<tr><td>noise_level<td><td><version>1.1 (r19459) </version>noise generation of this airport
 </table>
 
 <h2><a name="airporttiles-properties">Airport tile properties</a></h2>
 
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>override<td><td>the id of airport tile to override
-<tr><td>substitute<td><td>the id of airport tile to replace
-<tr><td>callback_flags<td>bitmask<td>Do not set this, unless you use <a href="old-callbacks.html">old-style callbacks</a>.
-<tr><td>animation_info<td><td>
-<tr><td>animation_speed<td><td>see <a href="refs.html#refs-animation-speed-values">speed settings</a>
-<tr><td>animation_triggers<td>bitmask(ANIM_TRIGGER_APT_XXX, ... )<td>Bitmask of
+<tr><td>override<td><td><version>1.1 (r19204) </version>the id of airport tile to override
+<tr><td>substitute<td><td><version>1.1 (r19204) </version>the id of airport tile to replace
+<tr><td>callback_flags<td>bitmask<td><version>1.1 (r19204) </version>Do not set this, unless you use <a href="old-callbacks.html">old-style callbacks</a>.
+<tr><td>animation_info<td><td><version>1.1 (r19204) </version>
+<tr><td>animation_speed<td><td><version>1.1 (r19204) </version>see <a href="refs.html#refs-animation-speed-values">speed settings</a>
+<tr><td>animation_triggers<td>bitmask(ANIM_TRIGGER_APT_XXX, ... )<td><version>1.1 (r19204) </version>Bitmask of
 triggers that will trigger the <code>anim_control</code> callback,
 see the <a href="#airporttiles-callbacks-animtriggers">table</a> below.
 </table>
@@ -39,7 +41,7 @@ see the <a href="#airporttiles-callbacks-animtriggers">table</a> below.
 
 <table class="t">
 <tr><th>name</th><th>value range</th><th>comment</th></tr>
-<tr><td>layout<td>0 .. (number of layouts - 1)<td>Layout number of the airport (index in the layouts array)
+<tr><td>layout<td>0 .. (number of layouts - 1)<td><version>1.1 (r20364) </version>Layout number of the airport (index in the layouts array)
 </table>
 
 
