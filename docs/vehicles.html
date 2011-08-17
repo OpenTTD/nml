@@ -16,9 +16,9 @@
 <tr><td> climates_available</td><td>           bitmask(CLIMATE_XXX, CLIMATE_YYY, ...)</td><td>set to NO_CLIMATES</td><td>XXX = [TEMPERATE | ARCTIC | TROPICAL | TOYLAND], alternatively NO_CLIMATE or ALL_CLIMATES.
 To make a vehicle available in all climates except toyland you could use: ALL_CLIMATES &amp; ~bitmask(CLIMATE_TOYLAND).</td></tr>
 <tr><td> introduction_date</td><td>            date(yyyy,mm,dd)</td><td>no</td><td>Valid range for yyyy is 0 ... 5000000. In TTDPatch, dates after 2044 will be limited to 2044. Unless the engine is introduced within two years after game-start (always 1920 in TTDPatch), a random number of days between 0 and 511 will be added to this.</td></tr>
-<tr><td> model_life</td><td>                   0 ... 254 (years) or VEHICLE_NEVER_EXPIRES</td><td>no</td><td>Number of years a model is "supported" by the manufacturer, before reliability starts dropping.</td></tr>
-<tr><td> retire_early</td><td>                 (years)</td><td>no</td><td>Number of years before <i>model_life</i> when no new vehicles can be bought. May be negative.</td></tr>
-<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>no</td><td>Age of a vehicle when it gets old.</td></tr>
+<tr><td> model_life</td><td>                   0 ... 254 (years) or VEHICLE_NEVER_EXPIRES</td><td>no</td><td>Number of years a model is "supported" by the manufacturer, see <a href="#vehicles-property-life-cycle">below</a>.</td></tr>
+<tr><td> retire_early</td><td>                 -128 ... 127 (years)</td><td>no</td><td>Retire the vehicle (make it unavailable in the purchase menu) this many years before reliability starts dropping, see <a href="#vehicles-property-life-cycle">below</a>. May be negative.</td></tr>
+<tr><td> vehicle_life</td><td>                 0 ... 255 (years)</td><td>no</td><td>Life length of an individual vehicle, before it is considered too old and in need of replacement.</td></tr>
 <tr><td> reliability_decay</td><td>            0 ... 255</td><td>no</td><td>Default vehicles use 20. The higher the value the faster reliability decays, the more frequent service is needed. 0 means reliability never decreases if the vehicle is not too old</td></tr>
 <tr><td> refittable_cargo_classes</td><td>     bit set of <a href="cargos.html#cargos-property">cargo classes</a></td><td>yes</td><td>for example: <code>bitmask(CC_BULK, CC_COVERED)</code></td></tr>
 <tr><td> non_refittable_cargo_classes</td><td> bit set of <a href="cargos.html#cargos-property">cargo classes</a></td><td>yes</td><td>for example: <code>bitmask(CC_OVERSIZED, CC_SPECIAL)</code></td></tr>
@@ -29,6 +29,7 @@ To make a vehicle available in all climates except toyland you could use: ALL_CL
 <tr><td> cargo_age_period</td><td>             0 ... 65535</td><td>yes</td><td><version>1.2 (r22713)</version> This property specifies after how many ticks cargo is aged. Default value is 185. 74 ticks is equal to 1 day.</td></tr>
 </table>
 
+<h3><a name="vehicles-property-refitting">Refittability</a></h3>
 <p>To determine whether your vehicle can be refitted to a certain cargo, OpenTTD uses the following table
 <table class="t">
 <tr><th>Cargo matches refittable_cargo_classes</th><th>Cargo matches non_refittable_cargo_classes</th><th>Cargo in refittable_cargo_types</th><th>Result</th></tr>
@@ -45,6 +46,21 @@ refittable_cargo_types as a last resort to include/exclude some cargo type.</p>
 <p>Note that the default cargo cannot be selected explicitly. Instead it is
 automatically set to use the first refittable cargo, whenever one of the
 refitting properties is set.</p>
+
+<h3><a name="vehicles-property-life-cycle">Engine life cycle</a></h3>
+<p>The life cycle of a vehicle model consists of three phases, as outlined in
+the following table.</p>
+<table class="t">
+<tr><th>phase<th>duration<th>reliability
+<tr><td>1<td>7 to 38 months<td>increases from 48-73% to 75-100%
+<tr><td>2<td><code>model_life</code> - 8 years<td>stays constant at peak, 75-100%
+<tr><td>3<td>10 to 20.5 years<td>decreases from peak to 25-50%
+</table>
+<p>If <code>model_life</code> is set to <code>VEHICLE_NEVER_EXPIRES</code>,
+the engine remains in phase 2 forever.</p>
+<p>Normally, the vehicle is removed from the purchase menu at the and of phase
+3. However if you set the <code>retire_early</code> property, it will be retired
+this many years before (or after, if the value is negative) the end of phase 2.</p>
 
 <h2><a name="trains-property">Train properties</a></h2>
 <table class="t">
