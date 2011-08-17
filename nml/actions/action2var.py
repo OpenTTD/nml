@@ -790,7 +790,7 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
     if value is None:
         comment = "return;"
         assert none_result is not None
-        if isinstance(result, expression.SpriteGroupRef):
+        if isinstance(none_result, expression.SpriteGroupRef):
             result = parse_sg_ref_result(none_result, action_list, parent_action, var_range)
         else:
             result = none_result
