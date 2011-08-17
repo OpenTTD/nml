@@ -372,7 +372,6 @@ def builtin_trigonometric(name, args, pos):
     val = args[0].reduce()
     if not isinstance(val, (ConstantNumeric, ConstantFloat)):
         raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
-        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
     trigonometric_func_table = {
         'acos': math.acos,
         'asin': math.asin,
