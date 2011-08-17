@@ -432,7 +432,7 @@ def builtin_relative_coord(name, args, pos):
 
     return BinOp(nmlop.OR, x_coord, y_coord, pos)
 
-def builtin_num_corners_raised(num, args, pos):
+def builtin_num_corners_raised(name, args, pos):
     """
     num_corners_raised(slope) builtin function.
     slope is a 5-bit value
@@ -456,7 +456,7 @@ def builtin_num_corners_raised(num, args, pos):
 
     return  BinOp(nmlop.MOD, slope, ConstantNumeric(0xF),     pos)
 
-def builtin_slope_to_sprite_offset(num, args, pos):
+def builtin_slope_to_sprite_offset(name, args, pos):
     """
     builtin function slope_to_sprite_offset(slope)
 
@@ -481,7 +481,7 @@ def builtin_slope_to_sprite_offset(num, args, pos):
         expr = BinOp(nmlop.ADD, expr, to_add, pos)
     return expr
 
-def builtin_palette_1cc(num, args, pos):
+def builtin_palette_1cc(name, args, pos):
     """
     palette_1cc(colour) builtin function.
 
@@ -495,7 +495,7 @@ def builtin_palette_1cc(num, args, pos):
 
     return BinOp(nmlop.ADD, args[0], ConstantNumeric(775), pos)
 
-def builtin_palette_2cc(num, args, pos):
+def builtin_palette_2cc(name, args, pos):
     """
     palette_2cc(colour1, colour2) builtin function.
 
