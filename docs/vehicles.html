@@ -212,9 +212,18 @@ PLAYERTYPE_HUMAN for the now uncontrolled company.
 Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possible values.
 <tr><td>aircraft_height <td>0 ... 255 <td>No<td>Height difference between the aircraft and its shadow. 8 Units are equivalent to one height level on the map.
 <tr><td>airport_type <td>AIRPORTTYPE_XX <td>No<td>AIRPORTTYPE_SMALL, AIRPORTTYPE_LARGE, AIRPORTTYPE_HELIPORT or AIRPORTTYPE_OILRIG
-<tr><td>curv_info_prev_cur <td>-2 ... 2 <td>No<td>Curvature to the right is positive. 1 unit is 45 degrees.
-<tr><td>curv_info_cur_next <td>-2 ... 2 <td>No<td>Curvature to the right is positive. 1 unit is 45 degrees.
-<tr><td>curv_info_prev_next <td>-4 ... 4 <td>No<td>Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>curv_info_prev_cur <td>-2 ... 2 <td>No<td>Difference in direction between the previous (towards engine) vehicle and this vehicle.
+Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>curv_info_cur_next <td>-2 ... 2 <td>No<td>Difference in direction between this vehicle and the next (towards rear end) vehicle.
+Curvature to the right is positive. 1 unit is 45 degrees.
+<tr><td>curv_info_prev_next <td>-4 ... 4 <td>No<td>Difference in direction between the previous (towards engine) and next (towards rear end) vehicle.
+Curvature to the right is positive. 1 unit is 45 degrees. Equal to <code>curve_invo_prev_cur + curv_info_cur_next</code>.
+<tr><td>curv_info <td> vehicle_curv_info(<i>prev_cur</i>, <i>cur_next<i>)<td>No<td>Returns a magic number that represents
+the curvature state of the prev-cur-next vehicle triplet. Do not try to make sense of this magic number, use the
+<a href="nml-language.html#builtin-functions">builtin function</a> <code>vehicle_curv_info()</code>
+instead to make comparisons. <code>curv_info == vehicle_curv_info(a, b)</code> is equivalent
+to <code>(curv_info_prev_cur == a) && (curv_info_cur_next == b)</code>, however the former
+can easily be used in a switch-block.
 <tr><td>motion_counter <td>0 ... 15 <td>Yes, always 0<td>Is increased every time the vehicle moves a single step on the map. Useful for animations.
 <tr><td>cargo_type_in_veh <td>entry in cargo translation table <td>Yes, for the default cargo<td> 0xFF if not present in the table
 <tr><td>cargo_unit_weight <td>weight per unit in 1/16t <td>Yes, for the default cargo<td>

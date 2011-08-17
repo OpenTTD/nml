@@ -514,6 +514,24 @@ def builtin_palette_2cc(name, args, pos):
     base = global_constants.patch_variable(global_constants.patch_variables['base_sprite_2cc'], pos)
 
     return BinOp(nmlop.ADD, col12, base, pos)
+
+def builtin_vehicle_curv_info(name, args, pos):
+    """
+    vehicle_curv_info(prev_cur, cur_next) builtin function
+
+    @return Value to use with vehicle var curv_info
+    """
+    if len(args) != 2:
+        raise generic.ScriptError(name + "() must have 2 parameters", pos)
+
+    for arg in args:
+        if isinstance(arg, ConstantNumeric):
+            generic.check_range(arg.value, -2, 2, "Argument of '%s'" % name, arg.pos)
+
+    args = [BinOp(nmlop.AND, arg, ConstantNumeric(0xF), pos) for arg in args]
+    cur_next = BinOp(nmlop.SHIFT_LEFT, args[1], ConstantNumeric(8), pos)
+    return BinOp(nmlop.OR, args[0], cur_next, pos)
+
 #}
 
 function_table = {
@@ -558,4 +576,5 @@ function_table = {
     'slope_to_sprite_offset' : builtin_slope_to_sprite_offset,
     'palette_1cc' : builtin_palette_1cc,
     'palette_2cc' : builtin_palette_2cc,
+    'vehicle_curv_info' : builtin_vehicle_curv_info,
 }

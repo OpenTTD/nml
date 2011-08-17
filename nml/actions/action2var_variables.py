@@ -85,6 +85,7 @@ varact2vars_vehicles = {
     'curv_info_prev_cur' : {'var': 0x45, 'start': 0, 'size': 4, 'function': signextend},
     'curv_info_cur_next' : {'var': 0x45, 'start': 8, 'size': 4, 'function': signextend},
     'curv_info_prev_next' : {'var': 0x45, 'start': 16, 'size': 4, 'function': signextend},
+    'curv_info' : {'var': 0x45, 'start': 0, 'size': 12, 'function': lambda var, info: expression.BinOp(nmlop.AND, var, expression.ConstantNumeric(0x0F0F, var.pos), var.pos).reduce()},
     'motion_counter' : {'var': 0x46, 'start': 8, 'size': 4},
     'cargo_type_in_veh' : {'var': 0x47, 'start': 0, 'size': 8},
     'cargo_unit_weight' : {'var': 0x47, 'start': 8, 'size': 8},
