@@ -68,7 +68,7 @@ this many years before (or after, if the value is negative) the end of phase 2.<
 
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>SPRITE_ID_NEW_TRAIN</td><td>yes</td><td>Set this property to enable new graphics</td></tr>
-<tr><td> speed<td> 0 ... 65000 (speed units)<td>no</td><td>Max speed for engines, speed limit for wagons
+<tr><td> speed<td> 0 ... 65000 (float, speed units)<td>no</td><td>Max speed for engines, speed limit for wagons
 <tr><td> misc_flags</td><td> bitmask(TRAIN_FLAG_XXX, ...)</td><td>FLIP should not be set, TILT and MU the same value</td><td>XXX=[TILT | 2CC | MU | FLIP] which allows the train to enjoy the tilt bonus, use the 
 2nd company colour, act as a multiple unit (used for livery selection only) or allow the vehicle to be flipped (reversed) in the depot</td></tr>
 <tr><td> refit_cost<td> 0 ... 255 <td>yes</td><td> in 50% units of the purchase price cost base
@@ -80,25 +80,25 @@ If you install a railtypetable yourself you'll always get the railtype you speci
 want a vehicle to run on electric rail and you don't have a railtypetable, set <tt>track_type</tt>
 to RAIL and make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRIC.
 <tr><td> ai_special_flag<td> [AI_FLAG_PASSENGER | AI_FLAG_CARGO]<td>no<td> Set to AI_FLAG_PASSENGER to tell computer players that it's an engine that should only be used for passenger service.
-<tr><td> power<td> 0 ... 65000 hp (power units)<td>=0<td>
+<tr><td> power<td> 0 ... 65000 hp (float, power units)<td>=0<td>
 <tr><td> running_cost_base</td><td>RUNNING_COST_XXX</td><td>=0<td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
 <tr><td> dual_headed<td> [0 | 1]<td>=0 for both parts<td>1 = dual_headed, otherwise normal engine
 <tr><td> cargo_capacity<td> 0 .. 255 <td>yes<td>
-<tr><td> weight<td> 0 .. 1279 ton (mass units)<td>=0<td>
+<tr><td> weight<td> 0 .. 1279 ton (float, mass units)<td>=0<td>
 <tr><td> ai_engine_rank<td> 0 ... 255<td>no<td>TTDPatch only: Higher values make the engine for the TTDPatch AI more attractive
 <tr><td> engine_class<td> ENGINE_CLASS_XXX<td>no<td>XXX=[STEAM | DIESEL | ELECTRIC | MONORAIL | MAGLEV]
-<tr><td> extra_power_per_wagon<td> 0 ... 65000 hp (power units) <td>=0<td>Only wagons with a livery override for this engine will add power
-<tr><td> tractive_effort_coefficient<td> 0 ... 1<td>=0<td>Fraction of the vehicle weight that is available as tractive effort.
+<tr><td> extra_power_per_wagon<td> 0 ... 65000 hp (float, power units) <td>=0<td>Only wagons with a livery override for this engine will add power
+<tr><td> tractive_effort_coefficient<td> 0 ... 1 (float)<td>=0<td>Fraction of the vehicle weight that is available as tractive effort.
 Tractive effort (in kN) is calculated as (TE coefficient) * 10 * weight (in tons),
 with 10 being an approximation of the acceleration of gravity (9.81 m/s). Default
 value is 0.3.
-<tr><td> air_drag_coefficient<td> 0 ... 1<td>=0<td>Coefficient of the relative air drag, in arbitrary units.
+<tr><td> air_drag_coefficient<td> 0 ... 1 (float)<td>=0<td>Coefficient of the relative air drag, in arbitrary units.
 The default value is approximately (8 / max_speed), with max_speed in km/h, clamped to the range 0.004 .. 0.75.
 <tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>yes<td>XXX=[8_8 | 7_8 | ... | 1_8]
 <tr><td> visual_effect_and_powered<td> visual_effect_and_powered(VISUAL_EFFECT_XXX, offset, ENABLE_WAGON_POWER or DISABLE_WAGON_POWER)<td>yes<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
 type of the visual effect you want for this vehicle. Default means "take from engine_class property". Offset is the position of the effect. 0 is default, negative values
 mean more to the front and positive values are backwards. Minimum offset is -8, maximum is 7.
-<tr><td> extra_weight_per_wagon<td> 0 ... 255 ton (mass units)<td>=0<td>Adds extra weight for powered wagons, see extra_power_per_wagon
+<tr><td> extra_weight_per_wagon<td> 0 ... 255 ton (float, mass units)<td>=0<td>Adds extra weight for powered wagons, see extra_power_per_wagon
 <tr><td> <a name="bitmask_vehicle_info">bitmask_vehicle_info</a><td> 8-bit bitmask<td>yes<td>Used for obtaining <a href="#bitmask_consist_info">bitmask_consist_info</a>
 </table>
 
@@ -107,7 +107,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><th> property</th><th>value range</th><th>available for<br>articulated<br>vehicle</th><th>comment</th></tr>
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id</td><td>                    SPRITE_ID_NEW_ROADVEH</td><td>yes<td>Set this property to enable new graphics</td></tr>
-<tr><td> speed</td><td>                        0 ... 514km/h (speed units)</td><td>no<td></td></tr>
+<tr><td> speed</td><td>                        0 ... 514km/h (float, speed units)</td><td>no<td></td></tr>
 <tr><td> misc_flags</td><td>                   bitmask(ROADVEH_FLAG_XXX, ...)</td><td>partly; tram flag must the same<td>The following flags are defined: ROADVEH_FLAG_TRAM, ROADVEH_FLAG_2CC. 
 Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> refit_cost<td> 0 ... 255 <td>yes<td> in 25% units of the purchase price cost base
@@ -115,13 +115,13 @@ Use 0 if you don't want to set any of these flags.</td></tr>
 
 <!-- properties not present for all vehicle types -->
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>set to RUNNING_COST_NONE<td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
-<tr><td> power</td><td>                        0 ... 2550hp (power units)</td><td>=0<td></td></tr>
-<tr><td> weight</td><td>                       0 ... 63.75ton (mass units)</td><td>=0<td></td></tr>
-<tr><td> tractive_effort_coefficient<td> 0 ... 1<td>=0<td>Fraction of the vehicle weight that is available as tractive effort.
+<tr><td> power</td><td>                        0 ... 2550hp (float, power units)</td><td>=0<td></td></tr>
+<tr><td> weight</td><td>                       0 ... 63.75ton (float, mass units)</td><td>=0<td></td></tr>
+<tr><td> tractive_effort_coefficient<td> 0 ... 1 (float)<td>=0<td>Fraction of the vehicle weight that is available as tractive effort.
 Tractive effort (in kN) is calculated as (TE coefficient) * 10 * weight (in tons),
 with 10 being an approximation of the acceleration of gravity (9.81 m/s). Default
 value is 0.3.
-<tr><td> air_drag_coefficient<td> 0 ... 1<td>=0<td>Coefficient of the relative air drag, in arbitrary units.
+<tr><td> air_drag_coefficient<td> 0 ... 1 (float)<td>=0<td>Coefficient of the relative air drag, in arbitrary units.
 The default value is approximately (8 / max_speed), with max_speed in km/h, clamped to the range 0.004 .. 0.75.
 <tr><td> cargo_capacity</td><td>               0 ... 255</td><td>yes<td></td></tr>
 <tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>no<td>See available <a href="refs.html#refs-sounds">sound effects</a>.</td></tr>
@@ -135,7 +135,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_SHIP <td>Set this property to enable new graphics
-<tr><td> speed</td><td> 0 ... 127 km/h (speed units)</td><td></td></tr>
+<tr><td> speed</td><td> 0 ... 127 km/h (float, speed units)</td><td></td></tr>
 <tr><td> misc_flags<td> bitmask(SHIP_FLAG_2CC)<td> Bitmask with (currently) only one possible flag, set to 0 to disable
 <tr><td> refit_cost<td> 0 ... 255 <td> in 1/32 of the default refit cost base
 <tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-vehicles">old-style callbacks</a>.
@@ -145,8 +145,8 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 non_refittable_cargo_classes have no effect.
 <tr><td> cargo_capacity<td>0 ... 255<td>
 <tr><td> sound_effect<td> SOUND_XXX<td>See available <a href="refs.html#refs-sounds">sound effects</a>.
-<tr><td> ocean_speed_fraction<td>0 ... 1<td><version>1.2 (r22639)</version> fraction of base speed on ocean tiles
-<tr><td> canal_speed_fraction<td>0 ... 1<td><version>1.2 (r22639)</version> fraction of base speed on canal tiles
+<tr><td> ocean_speed_fraction<td>0 ... 1 (float)<td><version>1.2 (r22639)</version> fraction of base speed on ocean tiles
+<tr><td> canal_speed_fraction<td>0 ... 1 (float)<td><version>1.2 (r22639)</version> fraction of base speed on canal tiles
 <tr><td> visual_effect<td> visual_effect(VISUAL_EFFECT_XXX, offset)<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
 type of the visual effect you want for this ship. Default means no effect. Offset is the position of the effect. 0 is default, negative values
 mean more to the front and positive values are backwards. Minimum offset is -8, maximum is 7.
@@ -157,7 +157,7 @@ mean more to the front and positive values are backwards. Minimum offset is -8, 
 <tr><th> property</th><th>value range</th><th>comment</th></tr>
 <!-- properties common to all vehicle types but with different value ranges or meaning -->
 <tr><td> sprite_id <td> SPRITE_ID_NEW_AIRCRAFT <td>Set this property to enable new graphics
-<tr><td> speed<td> 0 .. 3280 km/h (speed units)<td>
+<tr><td> speed<td> 0 .. 3280 km/h (float, speed units)<td>
 <tr><td> misc_flags<td> bitmask(AIRCRAFT_FLAG_2CC)<td> Bitmask with (currently) only one possible flag, set to 0 to disable
 <tr><td> refit_cost<td> 0 ... 255 <td> in 1/32 of default refit cost base
 <tr><td> callback_flags<td> bitmask(VEH_CBF_XXX, ...)<td>Do not set this, unless you use <a href="old-callbacks.html#old-callbacks-vehicles">old-style callbacks</a>.
