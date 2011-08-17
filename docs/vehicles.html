@@ -72,8 +72,12 @@ to RAIL and make sure that you set <tt>engine_class</tt> to ENGINE_CLASS_ELECTRI
 <tr><td> ai_engine_rank<td> 0 ... 255<td>no<td>TTDPatch only: Higher values make the engine for the TTDPatch AI more attractive
 <tr><td> engine_class<td> ENGINE_CLASS_XXX<td>no<td>XXX=[STEAM | DIESEL | ELECTRIC | MONORAIL | MAGLEV]
 <tr><td> extra_power_per_wagon<td> 0 ... 65000 hp (power units) <td>=0<td>Only wagons with a livery override for this engine will add power
-<tr><td> tractive_effort_coefficient<td> 0 ... 1<td>=0<td>
-<tr><td> air_drag_coefficient</td><td>   0 ... 1</td><td>=0<td></td></tr>
+<tr><td> tractive_effort_coefficient<td> 0 ... 1<td>=0<td>Fraction of the vehicle weight that is available as tractive effort.
+Tractive effort (in kN) is calculated as (TE coefficient) * 10 * weight (in tons),
+with 10 being an approximation of the acceleration of gravity (9.81 m/s). Default
+value is 0.3.
+<tr><td> air_drag_coefficient<td> 0 ... 1<td>=0<td>Coefficient of the relative air drag, in arbitrary units.
+The default value is approximately (8 / max_speed), with max_speed in km/h, clamped to the range 0.004 .. 0.75.
 <tr><td> shorten_vehicle<td> SHORTEN_TO_XXX<td>yes<td>XXX=[8_8 | 7_8 | ... | 1_8]
 <tr><td> visual_effect_and_powered<td> visual_effect_and_powered(VISUAL_EFFECT_XXX, offset, ENABLE_WAGON_POWER or DISABLE_WAGON_POWER)<td>yes<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
 type of the visual effect you want for this vehicle. Default means "take from engine_class property". Offset is the position of the effect. 0 is default, negative values
@@ -97,8 +101,12 @@ Use 0 if you don't want to set any of these flags.</td></tr>
 <tr><td> running_cost_base</td><td>            RUNNING_COST_XXX</td><td>set to RUNNING_COST_NONE<td>XXX = [STEAM | DIESEL | ELECTRIC | ROADVEH | NONE]</td></tr>
 <tr><td> power</td><td>                        0 ... 2550hp (power units)</td><td>=0<td></td></tr>
 <tr><td> weight</td><td>                       0 ... 63.75ton (mass units)</td><td>=0<td></td></tr>
-<tr><td> tractive_effort_coefficient</td><td>  0 ... 1</td><td>=0<td></td></tr>
-<tr><td> air_drag_coefficient</td><td>         0 ... 1</td><td>=0<td></td></tr>
+<tr><td> tractive_effort_coefficient<td> 0 ... 1<td>=0<td>Fraction of the vehicle weight that is available as tractive effort.
+Tractive effort (in kN) is calculated as (TE coefficient) * 10 * weight (in tons),
+with 10 being an approximation of the acceleration of gravity (9.81 m/s). Default
+value is 0.3.
+<tr><td> air_drag_coefficient<td> 0 ... 1<td>=0<td>Coefficient of the relative air drag, in arbitrary units.
+The default value is approximately (8 / max_speed), with max_speed in km/h, clamped to the range 0.004 .. 0.75.
 <tr><td> cargo_capacity</td><td>               0 ... 255</td><td>yes<td></td></tr>
 <tr><td> sound_effect</td><td>                 SOUND_XXX</td><td>no<td>See available <a href="refs.html#refs-sounds">sound effects</a>.</td></tr>
 <tr><td> visual_effect<td> visual_effect(VISUAL_EFFECT_XXX, offset)<td>yes<td>XXX=[DEFAULT | STEAM | DIESEL | ELECTRIC | DISABLE], it is the 
