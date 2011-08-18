@@ -141,6 +141,7 @@ item(FEAT_OBJECTS, company_land) {
 		/* Anything can overbuild the object, removing returns the money, we don't want foundations and we want to allow bridges */
 		object_flags:           bitmask(OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_REMOVE_IS_INCOME, OBJ_FLAG_NO_FOUNDATIONS, OBJ_FLAG_ALLOW_BRIDGE);
 		height:                 0;                  // it's only a ground tile
+		num_views:              1;
 	}
 	graphics {
 		purchase:            company_land_purchase_switch;

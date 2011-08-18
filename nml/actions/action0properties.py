@@ -664,6 +664,7 @@ properties[0x0F] = {
     'remove_cost_multiplier' : {'size': 1, 'num': 0x14},
     'callback_flags'         : {'size': 2, 'num': 0x15},
     'height'                 : {'size': 1, 'num': 0x16},
+    'num_views'              : {'size': 1, 'num': 0x17},
 }
 
 #

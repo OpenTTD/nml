@@ -313,6 +313,7 @@ varact2vars_objects = {
     'town_zone'              : { 'var' : 0x45, 'start': 16, 'size':  8 },
 
     'town_euclidean_dist'    : { 'var' : 0x46, 'start':  0, 'size': 32 },
+    'view'                  : { 'var' : 0x48, 'start':  0, 'size':  8 },
 }
 
 varact2vars60x_objects = {

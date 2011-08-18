@@ -35,6 +35,10 @@ in every class.</td></tr>
 set height to 2. In OpenTTD this property is used to determine the height of the build object window; the height for the
 object preview is set to 32 + "value of property" * 8. The property is also used to determine how high a bridge must be
 if it is allowed by the bit in object_flags.</td></tr>
+<tr><td>num_views</td><td>1, 2 or 4</td><td>Objects may have "views", i.e. different graphical representations, e.g. used to show rotated views of an object.
+Number of views may be 1, 2, or 4. Default value is 1.
+For non-square objects, x and y sizes are swapped for odd views.
+Use variable <code>view</code> to determine the view of a built object. </td></tr>
 </table>
 
 <h3><a name="object-classes">Default object classes</a></h3>
@@ -93,9 +97,10 @@ Refer to the table <a href="refs.html#refs-palettes-helpers">here</a> for possib
 <tr><td>town_euclidean_dist</td><td></td><td>Euclidean distance to the nearest town</td></tr>
 <tr><td>town_zone</td><td><a href="refs.html#refs-town-zones">town zone</a></td><td>The town zone of the current tile. The town zone from the closest town (measured in manhattan
 distance) is used.</td></tr>
+<tr><td>view</td><td>0 .. <code>num_views - 1</code></td><td><version>1.1 (r21455)</version> The view of the particular object. See also the <code>num_views</code> property.</td></tr>
 </table>
 
-Variables that require some parameters.
+<p>Variables that require one or more parameters:</p>
 <table class="t">
 <tr><th>name</th>                        <th>arguments</th>           <th>value range</th> <th>comment</th></tr>
 <tr><td>nearby_tile_object_type</td>     <td>x, y offset (-8..7)</td> <td></td> <td>ID of the object on a nearby tile, if defined by the same grf.
