@@ -281,7 +281,7 @@ def speed_fraction_prop(value, propnr):
     if not (0 <= value.value <= 255):
         # Do not use check_range to provide better error message
         raise generic.ScriptError("speed fraction must be in range 0 .. 1", value.pos)
-    value = expression.ConstantNumeric(255 - value.value, value.pos)
+    value = ConstantNumeric(255 - value.value, value.pos)
     return [Action0Property(propnr, value, 1)]
 
 properties[0x02] = {
