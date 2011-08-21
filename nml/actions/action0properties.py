@@ -275,6 +275,15 @@ properties[0x01].update(general_veh_props)
 # Feature 0x02 (Ships)
 #
 
+def speed_fraction_prop(value, propnr):
+    # Unit is already converted to 0 .. 255 range when we get here
+    value = value.reduce_constant()
+    if not (0 <= value.value <= 255):
+        # Do not use check_range to provide better error message
+        raise generic.ScriptError("speed fraction must be in range 0 .. 1", value.pos)
+    value = expression.ConstantNumeric(255 - value.value, value.pos)
+    return [Action0Property(propnr, value, 1)]
+
 properties[0x02] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'is_refittable'                : {'size': 1, 'num': 0x09},
@@ -286,8 +295,8 @@ properties[0x02] = {
     'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'append_function': append_cargo_type(0x02)},
     'callback_flags'               : {'size': 1, 'num': 0x12},
     'refit_cost'                   : {'size': 1, 'num': 0x13},
-    'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255},
-    'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255},
+    'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x14)},
+    'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x15)},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
     'refittable_cargo_classes'     : {'size': 2, 'num': 0x18, 'append_function': append_cargo_type(0x02)},
