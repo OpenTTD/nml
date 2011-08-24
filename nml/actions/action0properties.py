@@ -26,6 +26,8 @@ class Action0Property(object):
                 biggest = 1 << (8 * size)
                 if val.value >= biggest:
                     raise generic.ScriptError("Action 0 property too large", val.pos)
+                elif val.value < 0 and val.value + (biggest / 2) < 0:
+                    raise generic.ScriptError("Action 0 property too small", val.pos)
 
     def write(self, file):
         file.print_bytex(self.num)
