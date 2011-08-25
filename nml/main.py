@@ -108,6 +108,9 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     generic.OnlyOnce.clear()
 
     script = inputfile.read()
+    # Strip a possible BOM
+    script = script.lstrip(unicode(codecs.BOM_UTF8, "utf-8"))
+
     if script.strip() == "":
         generic.print_warning("Empty input file")
         return 4
