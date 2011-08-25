@@ -1,3 +1,5 @@
+from nml import expression, nmlop
+
 callbacks = 0x12 * [{}]
 
 # Possible values for 'purchase':
@@ -184,7 +186,7 @@ callbacks[0x0D] = {
 
 # Objects
 callbacks[0x0F] = {
-    'tile_check'      : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2}, # The 'toggle bit 10'-magic needs to be a abstracted away
+    'tile_check'      : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2, 'value_function': lambda val: expression.BinOp(nmlop.XOR, val, expression.ConstantNumeric(0x400), val.pos)},
     'anim_next_frame' : {'type': 'cb', 'num': 0x158, 'flag_bit': 1},
     'anim_control'    : {'type': 'cb', 'num': 0x159},
     'anim_speed'      : {'type': 'cb', 'num': 0x15A, 'flag_bit': 2},
