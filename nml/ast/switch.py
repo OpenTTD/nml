@@ -36,7 +36,7 @@ class Switch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
-            if isinstance(result, expression.SpriteGroupRef) and result.name.value != 'CB_FAILED':
+            if isinstance(result, expression.SpriteGroupRef):
                 all_refs.append(result)
         return all_refs
 
@@ -210,7 +210,7 @@ class RandomSwitch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for choice in self.choices:
-            if isinstance(choice.result, expression.SpriteGroupRef) and choice.result.name.value != 'CB_FAILED':
+            if isinstance(choice.result, expression.SpriteGroupRef):
                 all_refs.append(choice.result)
         return all_refs
 

@@ -317,7 +317,6 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
         def collect_references(self):
             """
             This function should collect all references to other nodes from this instance.
-            It must be implemented and called iff the C{cls_referring_to_type} metaclass parameter is not 0
 
             @return: A collection containing all links to other nodes.
             @rtype: C{iterable} of L{SpriteGroupRef}
@@ -370,6 +369,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             @type target_ref: L{SpriteGroupRef}
             """
 
+            if target_ref.name.value == "CB_FAILED": return
             target = resolve_spritegroup(target_ref.name)
             if target.is_spriteset():
                 assert target.num_params == 0
