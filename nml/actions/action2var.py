@@ -293,6 +293,7 @@ class Varaction2Parser(object):
         self.mods = []
         self.var_list = []
         self.var_list_size = 0
+        self.proc_call_list = []
 
 
     def preprocess_binop(self, expr):
@@ -538,6 +539,14 @@ class Varaction2Parser(object):
         self.extra_actions.extend(tmp_param_actions)
         num = expression.ConstantNumeric(tmp_param)
         self.parse(expression.Parameter(num))
+
+
+    def parse_proc_call(self, expr):
+        assert isinstance(expr, expression.SpriteGroupRef)
+        var_access = VarAction2ProcCallVar(expr)
+        self.var_list.append(var_access)
+        self.var_list_size += var_access.get_size()
+        self.proc_call_list.append(expr)
 
 
     def parse_expr(self, expr):
