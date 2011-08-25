@@ -100,7 +100,7 @@ def create_intermediate_varaction2(feature, var_num, and_mask, mapping, default)
         varaction2.ranges.append(action2var.VarAction2Range(expression.ConstantNumeric(value), expression.ConstantNumeric(value), result, comment))
         offset += 10
     result, comment = action2var.parse_result(default, action_list, extra_act6, offset, varaction2, None, 0x89)
-    varaction2.default_result = default
+    varaction2.default_result = result
     varaction2.default_comment = comment
 
     return_ref = expression.SpriteGroupRef(name, [], None, varaction2)
