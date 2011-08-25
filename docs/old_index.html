@@ -1,0 +1,174 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>NML documentation</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+<link rel="stylesheet" title="Standard Style" type="text/css" href="nml.css">
+</head>
+<body>
+
+<h1>Contents</h1>
+<ul>
+<li><a href="nml-language.html#preface">Preface</a></li>
+<li><a href="nml-language.html#installation">Getting started</a></li>
+<li><a href="nml-language.html#graphic-files">Graphic files</a></li>
+<li><a href="nml-language.html#structure">Language structure</a>
+	<ul>
+		<li><a href="nml-language.html#structure-blocks">Blocks</a></li>
+		<li><a href="nml-language.html#structure-features">Features</a></li>
+	</ul>
+</li>
+<li><a href="nml-language.html#block-syntax">Block syntax</a>
+<ul>
+	<li><a href="nml-language.html#block-grf">GRF</a>
+		<ul>
+			<li><a href="nml-language.html#block-grf-settings">GRF parameters</a></li>
+		</ul>
+	</li>
+	<li><a href="nml-language.html#block-item">Item</a>
+		<ul>
+			<li><a href="nml-language.html#block-item-property">Property</a></li>
+			<li><a href="nml-language.html#block-item-graphics">Graphics</a></li>
+			<li><a href="nml-language.html#block-item-livery_override">Livery override</a></li>
+		</ul>
+	</li>
+	<li><a href="nml-language.html#real_sprites">Realsprites</a></li>
+	<li><a href="nml-language.html#recolour_sprites">Recolour sprites</a></li>
+	<li><a href="nml-language.html#block-template">Template</a></li>
+	<li><a href="nml-language.html#block-spriteset">Spriteset</a></li>
+	<li><a href="nml-language.html#block-spritegroup">Spritegroup</a></li>
+	<li><a href="nml-language.html#block-spritelayout">Spritelayout</a></li>
+	<li><a href="nml-language.html#block-tilelayout">Tilelayout</a></li>
+	<li><a href="nml-language.html#block-switch">Switch</a></li>
+	<li><a href="nml-language.html#block-produce">Produce</a></li>
+	<li><a href="nml-language.html#block-randomswitch">Random switch</a></li>
+	<li><a href="nml-language.html#block-cargotable">Cargotable</a></li>
+	<li><a href="nml-language.html#block-railtypetable">Railtypetable</a></li>
+	<li><a href="nml-language.html#block-if">If/else</a></li>
+	<li><a href="nml-language.html#block-while">While</a></li>
+	<li><a href="nml-language.html#block-error">Error</a></li>
+	<li><a href="nml-language.html#block-disable_item">Disable items</a></li>
+	<li><a href="nml-language.html#block-deactivate">Deactivate other NewGRFs</a></li>
+	<li><a href="nml-language.html#block-othergrf">Testing for other NewGRFs</a></li>
+	<li><a href="nml-language.html#block-override-grf">Overriding vehicles in other NewGRFs</a></li>
+	<li><a href="nml-language.html#block-replacement">Sprite replacement</a>
+		<ul>
+			<li><a href="nml-language.html#block-replacement-replace">Replace TTD sprites</a></li>
+			<li><a href="nml-language.html#block-replacement-replacenew">Replace new sprites</a></li>
+			<li><a href="nml-language.html#block-replacement-fontglpyh">Add font glpyhs</a></li>
+		</ul>
+	</li>
+	<li><a href="nml-language.html#block-alt_sprites">32bpp sprites</a></li>
+	<li><a href="nml-language.html#block-town_names">Town names</a>
+		<ul>
+			<li><a href="nml-language.html#block-town_names-parts">Town names parts</a></li>
+		</ul>
+	</li>
+	<li><a href="nml-language.html#block-assignment">Parameter assignment</a></li>
+	<li><a href="nml-language.html#block-basecost">Setting base costs</a></li>
+</ul>
+</li>
+<li><a href="nml-language.html#units">Units</a></li>
+<li><a href="nml-language.html#expressions">Expressions</a>
+<ul>
+	<li><a href="nml-language.html#elementary-values">Elementary values</a></li>
+	<li><a href="nml-language.html#builtin-functions">Builtin functions</a></li>
+</ul>
+</li>
+<li><a href="language-files.html#language-files">Language files</a></li>
+<li>Lists of variables and properties.
+<ul>
+<li><a href="general.html">General</a>
+	(<a href="general.html#general-vars">general variables</a>,
+	<a href="general.html#snowline-property">snowline</a>)
+</li>
+<li><a href="vehicles.html">Vehicles</a>
+	(<a href="vehicles.html#vehicles-property">common properties</a>,
+	<a href="vehicles.html#trains-property">train properties</a>,
+	<a href="vehicles.html#roadvehs-property">road vehicle properties</a>,
+	<a href="vehicles.html#ships-property">ship properties</a>,
+	<a href="vehicles.html#planes-property">plane properties</a>,
+	<a href="vehicles.html#vehicles-vars">vehicle variables</a>,
+	<a href="vehicles.html#vehicles-callbacks">vehicle callbacks</a>)
+</li>
+<li><a href="stations.html">Stations</a>
+	(<a href="stations.html#stations-property">properties</a>,
+	<a href="stations.html#stations-vars">variables</a>,
+	<a href="stations.html#stations-callbacks">callbacks</a>)
+</li>
+<li><a href="canals.html">Canals</a>
+	(<a href="canals.html#canals-property">properties</a>,
+	<a href="canals.html#canals-vars">variables</a>,
+	<a href="canals.html#canals-callbacks">callbacks</a>)
+</li>
+<li><a href="bridges.html">Bridges</a>
+	(<a href="bridges.html#bridges-property">properties</a>,
+	<a href="bridges.html#bridges-vars">variables</a>,
+	<a href="bridges.html#bridges-callbacks">callbacks</a>)
+</li>
+<li>Towns (not implemented yet)
+</li>
+<li><a href="houses.html">Houses</a>
+	(<a href="houses.html#houses-property">properties</a>,
+	<a href="houses.html#houses-vars">variables</a>,
+	<a href="houses.html#houses-callbacks">callbacks</a>)
+</li>
+<li><a href="industries.html">Industries</a>
+	(<a href="industries.html#industries-property">industry properties</a>,
+	<a href="industries.html#industrytiles-property">industry tile properties</a>,
+	<a href="industries.html#industries-vars-common">common variables</a>,
+	<a href="industries.html#industries-vars">industry variables</a>,
+	<a href="industries.html#industrytiles-vars">industry tile variables</a>,
+	<a href="industries.html#industries-callbacks">industry callbacks</a>,
+	<a href="industries.html#industrytiles-callbacks">industry tile callbacks</a>)
+</li>
+<li><a href="cargos.html">Cargos</a>
+	(<a href="cargos.html#cargos-property">properties</a>,
+	<a href="cargos.html#cargos-vars">variables</a>,
+	<a href="cargos.html#cargos-callbacks">callbacks</a>)
+</li>
+<li><a href="airports.html">Airports</a>
+	(<a href="airports.html#airports-property">airport properties</a>,
+	<a href="airports.html#airporttiles-property">airport tile properties</a>,
+	<a href="airports.html#airports-vars">airport variables</a>,
+	<a href="airports.html#airporttiles-vars">airport tile variables</a>,
+	<a href="airports.html#airports-callbacks">airport callbacks</a>,
+	<a href="airports.html#airporttiles-callbacks">airport tile callbacks</a>)
+</li>
+<li><a href="objects.html">Objects</a>
+	(<a href="objects.html#objects-property">properties</a>,
+	<a href="objects.html#objects-vars">variables</a>,
+	<a href="objects.html#objects-callbacks">callbacks</a>)
+</li>
+<li><a href="railtypes.html">Railtypes</a>
+	(<a href="railtypes.html#railtypes-property">properties</a>,
+	<a href="railtypes.html#railtypes-vars">variables</a>,
+	<a href="railtypes.html#railtypes-callbacks">callbacks</a>)
+</li>
+</ul>
+</li>
+<li><a href="warnings.html#warnings">Warnings</a></li>
+<li><a href="refs.html#refs">Additional references</a>
+	<ul>
+		<li><a href="refs.html#refs-animation-speed-values">Animation speed</a></li>
+		<li><a href="refs.html#refs-default-industries">Default industries</a></li>
+		<li><a href="refs.html#refs-default-industrytiles">Default industry tiles</a></li>
+		<li><a href="refs.html#refs-basecost-table">Base cost table</a></li>
+		<li><a href="refs.html#refs-sounds">List of sound effects</a></li>
+		<li><a href="refs.html#refs-vehicleIDs">List of default vehicle IDs</a></li>
+		<li><a href="refs.html#refs-houseProperties">List of default house properties</a></li>
+		<li><a href="refs.html#refs-town-zones">List of town zones</a></li>
+		<li><a href="refs.html#refs-tile-classes">List of tile classes</a></li>
+		<li><a href="refs.html#refs-palettes">List of default colour translation palettes</a></li>
+		<li><a href="refs.html#refs-directions">List of direction constants</a></li>
+		<li><a href="refs.html#refs-slopes">List of tile slopes</a></li>
+		<li><a href="refs.html#refs-default-TTD-strings">Default TTD strings</a></li>
+	</ul>
+</li>
+<li><a href="compatible.html">NewGRF compatibility</a></li>
+<li><a href="old-callbacks.html">Old-style callbacks</a></li>
+</ul>
+
+</body>
+</html>
+
