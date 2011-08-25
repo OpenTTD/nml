@@ -39,6 +39,10 @@ class Action2Var(action2.Action2):
         for i in range(0, len(self.var_list) - 1, 2):
             self.var_list[i].shift |= 0x20
 
+        for i in range(0, len(self.var_list), 2):
+            if isinstance(self.var_list[i], VarAction2ProcCallVar):
+                self.var_list[i].resolve_parameter(self.feature)
+
         for r in self.ranges:
             if isinstance(r.result, expression.SpriteGroupRef):
                 r.result = r.result.get_action2_id(self.feature)
@@ -148,6 +152,23 @@ class VarAction2Var(object):
     def supported_by_actionD(self, raise_error):
         assert not raise_error
         return False
+
+# Class for var 7E procedure calls
+class VarAction2ProcCallVar(VarAction2Var):
+    def __init__(self, sg_ref):
+        VarAction2Var.__init__(self, 0x7E, 0, 0)
+        # Reference to the called action2
+        self.sg_ref = sg_ref
+
+    def resolve_parameter(self, feature):
+        self.parameter = self.sg_ref.get_action2_id(feature)
+
+    def get_size(self):
+        return 7
+
+    def write(self, file, size):
+        self.mask = get_mask(size)
+        VarAction2Var.write(self, file, size)
 
 # General load and store class for temp parameters
 # Register is allocated at the store operation
