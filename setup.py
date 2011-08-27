@@ -32,6 +32,8 @@ setup(name='nml',
                      ],
       packages=['nml', 'nml.actions', 'nml.ast', 'nml.expression'],
       url='http://dev.openttdcoop.org/projects/nml',
+      author='NML Development Team',
+      author_email='nml-team@openttdcoop.org',
       entry_points="""
       [console_scripts]
       nmlc = nml.main:run
