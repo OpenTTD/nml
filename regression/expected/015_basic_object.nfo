@@ -15,11 +15,13 @@
 00 
 00 
 2 * 52 08 07 "NML\15" "NML regression test" 00 "A test newgrf testing NML" 00 
+3 * 33 04 08 FF 02 \wxD000 "Miscellaneous" 00 "Basic object" 00 
+
 // Name: obj_basic_tile - feature 0F
-3 * 18 02 0F FE \b1 \dx0000058C 
+4 * 18 02 0F FE \b1 \dx0000058C 
 \dx03078A48 \b0 \b0 \b0 \b16 \b16 \b30 
 
-4 * 39 00 0F \b11 01 00 
+5 * 39 00 0F \b11 01 00 
 08 "MISC" 
 09 \wxD000 
 0A \wxD001 
@@ -32,8 +34,6 @@
 10 \wx0800 
 16 04 
 
-5 * 7 03 0F 01 00 \b0 
+6 * 7 03 0F 01 00 \b0 
 \wx00FE 	// obj_basic_tile;
-
-6 * 33 04 08 FF 02 \wxD000 "Miscellaneous" 00 "Basic object" 00 
 

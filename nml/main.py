@@ -153,7 +153,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
             lang_id, lang = lang_pair
             lang_actions.extend(action0.get_language_translation_tables(lang))
         # Add global strings
-        actions.extend(action4.get_global_string_actions())
+        lang_actions.extend(action4.get_global_string_actions())
         actions = actions[:action8_index + 1] + lang_actions + actions[action8_index + 1:]
 
     sprite_files = set()
