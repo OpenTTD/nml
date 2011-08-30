@@ -291,7 +291,7 @@ varact2vars60x_industries = {
 }
 
 varact2vars_airports = {
-    'layout' : {'var': 0x40, 'start': 0, 'sise': 32},
+    'layout' : {'var': 0x40, 'start': 0, 'size': 32},
 }
 
 varact2vars_objects = {
