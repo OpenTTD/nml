@@ -28,6 +28,6 @@ STR_STATIONS                   :Test Stations
 STR_OBJ_MISC_CLASS             :Miscellaneous
 STR_OBJ_BASIC                  :Basic object
 
-STR_COALMINE_EXTRA_TEXT        :{BLACK}Extra info for coal mine: {DWORD_S}
+STR_COALMINE_EXTRA_TEXT        :{BLACK}Extra info for coal mine: {COMMA}
 STR_COALMINE_MONTH_0_10        :{BLACK}coal
 STR_COALMINE_MONTH_11          :{BLACK}diamonds

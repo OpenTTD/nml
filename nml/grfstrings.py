@@ -129,36 +129,40 @@ def get_translations(string):
     return translations
 
 commands = {
+# Special characters / glyphs
 '':               {'unicode': r'\0D',       'ascii': r'\0D'},
 '{':              {'unicode': r'{',         'ascii': r'{'  },
 'NBSP':           {'unicode': r'\U00A0',    'ascii': r'\A0'},
 'COPYRIGHT':      {'unicode': r'\U00A9',    'ascii': r'\A9'},
+'TRAIN':          {'unicode': r'\UE0B4',    'ascii': r'\B4'},
+'LORRY':          {'unicode': r'\UE0B5',    'ascii': r'\B5'},
+'BUS':            {'unicode': r'\UE0B6',    'ascii': r'\B6'},
+'PLANE':          {'unicode': r'\UE0B7',    'ascii': r'\B7'},
+'SHIP':           {'unicode': r'\UE0B8',    'ascii': r'\B8'},
+
+# Change the font size.
 'TINYFONT':       {'unicode': r'\0E',       'ascii': r'\0E'},
 'BIGFONT':        {'unicode': r'\0F',       'ascii': r'\0F'},
-'DWORD_S':        {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True},
-'PARAM':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True},
-'WORD_S':         {'unicode': r'\UE07C',    'ascii': r'\7C', 'important': True},
-'BYTE_S':         {'unicode': r'\UE07D',    'ascii': r'\7D', 'important': True},
-'WORD_U':         {'unicode': r'\UE07E',    'ascii': r'\7E', 'important': True},
+
+'COMMA':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True},
+'SIGNED_WORD':    {'unicode': r'\UE07C',    'ascii': r'\7C', 'important': True},
+'UNSIGNED_WORD':  {'unicode': r'\UE07E',    'ascii': r'\7E', 'important': True},
 'CURRENCY':       {'unicode': r'\UE07F',    'ascii': r'\7F', 'important': True},
 'STRING':         {'unicode': r'\UE080',    'ascii': r'\80', 'allow_case': True, 'important': True},
 'DATE1920_LONG':  {'unicode': r'\UE082',    'ascii': r'\82', 'important': True},
 'DATE1920_SHORT': {'unicode': r'\UE082',    'ascii': r'\83', 'important': True},
 'VELOCITY':       {'unicode': r'\UE084',    'ascii': r'\84', 'important': True},
-'POP_WORD':       {'unicode': r'\UE085',    'ascii': r'\85', 'important': True},
+'SKIP':           {'unicode': r'\UE085',    'ascii': r'\85', 'important': True},
 'ROTATE':         {'unicode': r'\UE086',    'ascii': r'\86', 'important': True},
 'VOLUME':         {'unicode': r'\UE087',    'ascii': r'\87', 'important': True},
-'CURRENCY_QWORD': {'unicode': r'\UE09A\01', 'ascii': r'\9A\01', 'important': True},
-'PUSH_WORD':      {'unicode': r'\UE09A\03', 'ascii': r'\9A\03', 'important': True},
-'UNPRINT':        {'unicode': r'\UE09A\04', 'ascii': r'\9A\04', 'important': True},
-'BYTE_HEX':       {'unicode': r'\UE09A\06', 'ascii': r'\9A\06', 'important': True},
-'WORD_HEX':       {'unicode': r'\UE09A\07', 'ascii': r'\9A\07', 'important': True},
-'DWORD_HEX':      {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'important': True},
-'QWORD_HEX':      {'unicode': r'\UE09A\0B', 'ascii': r'\9A\0B', 'important': True},
-'WORD_S_TONNES':  {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'important': True},
+'HEX':            {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'important': True},
+'STATION':        {'unicode': r'\UE09A\0C', 'ascii': r'\9A\0C', 'important': True},
+'WEIGHT':         {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'important': True},
 'DATE_LONG':      {'unicode': r'\UE09A\16', 'ascii': r'\9A\16', 'important': True},
 'DATE_SHORT':     {'unicode': r'\UE09A\17', 'ascii': r'\9A\17', 'important': True},
 'POWER':          {'unicode': r'\UE09A\18', 'ascii': r'\9A\18', 'important': True},
+
+# Colors
 'BLUE':           {'unicode': r'\UE088',    'ascii': r'\88'},
 'SILVER':         {'unicode': r'\UE089',    'ascii': r'\89'},
 'GOLD':           {'unicode': r'\UE08A',    'ascii': r'\8A'},
@@ -176,11 +180,23 @@ commands = {
 'GRAY':           {'unicode': r'\UE096',    'ascii': r'\96'},
 'DKBLUE':         {'unicode': r'\UE097',    'ascii': r'\97'},
 'BLACK':          {'unicode': r'\UE098',    'ascii': r'\98'},
-'TRAIN':          {'unicode': r'\UE0B4',    'ascii': r'\B4'},
-'LORRY':          {'unicode': r'\UE0B5',    'ascii': r'\B5'},
-'BUS':            {'unicode': r'\UE0B6',    'ascii': r'\B6'},
-'PLANE':          {'unicode': r'\UE0B7',    'ascii': r'\B7'},
-'SHIP':           {'unicode': r'\UE0B8',    'ascii': r'\B8'},
+
+
+# Deprecated string codes
+'DWORD_S':        {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True, 'deprecated': True},
+'PARAM':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True, 'deprecated': True},
+'WORD_S':         {'unicode': r'\UE07C',    'ascii': r'\7C', 'important': True, 'deprecated': True},
+'BYTE_S':         {'unicode': r'\UE07D',    'ascii': r'\7D', 'important': True, 'deprecated': True},
+'WORD_U':         {'unicode': r'\UE07E',    'ascii': r'\7E', 'important': True, 'deprecated': True},
+'POP_WORD':       {'unicode': r'\UE085',    'ascii': r'\85', 'important': True, 'deprecated': True},
+'CURRENCY_QWORD': {'unicode': r'\UE09A\01', 'ascii': r'\9A\01', 'important': True, 'deprecated': True},
+'PUSH_WORD':      {'unicode': r'\UE09A\03', 'ascii': r'\9A\03', 'important': True, 'deprecated': True},
+'UNPRINT':        {'unicode': r'\UE09A\04', 'ascii': r'\9A\04', 'important': True, 'deprecated': True},
+'BYTE_HEX':       {'unicode': r'\UE09A\06', 'ascii': r'\9A\06', 'important': True, 'deprecated': True},
+'WORD_HEX':       {'unicode': r'\UE09A\07', 'ascii': r'\9A\07', 'important': True, 'deprecated': True},
+'DWORD_HEX':      {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'important': True, 'deprecated': True},
+'QWORD_HEX':      {'unicode': r'\UE09A\0B', 'ascii': r'\9A\0B', 'important': True, 'deprecated': True},
+'WORD_S_TONNES':  {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'important': True, 'deprecated': True},
 }
 
 special_commands = [
@@ -330,6 +346,9 @@ class NewGRFString(object):
                     command_name += '='
                 if command_name not in commands and command_name not in special_commands:
                     raise generic.ScriptError("Undefined command \"%s\"" % command_name, pos)
+                if command_name in commands and 'deprecated' in commands[command_name]:
+                    generic.print_warning("String code '%s' has been deprecated and will be removed soon" % command_name, pos)
+                    del commands[command_name]['deprecated']
                 #
                 command = StringCommand(command_name)
                 if end >= len(string):
