@@ -80,25 +80,28 @@ def get_global_string_actions():
     texts = []
     actions = []
     for string_range, strings in used_strings.iteritems():
-        for string_name, id in strings.iteritems():
-            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name)) )
+        for feature_name, id in strings.iteritems():
+            feature, string_name = feature_name
+            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name), feature) )
             for lang_id in grfstrings.get_translations(string_name):
-                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name, lang_id)) )
+                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name, lang_id), feature) )
 
     last_lang = -1
     last_id = -1
+    last_feature = -1
     # Sort to have a deterministic ordering and to have as much consecutive IDs as possible
     texts.sort(key=lambda text: (-1 if text[0] == 0x7F else text[0], text[1]))
 
     for text in texts:
-        str_lang, str_id, str_text = text
+        str_lang, str_id, str_text, feature = text
         # If possible, append strings to the last action 4 instead of creating a new one
-        if str_lang != last_lang or str_id - 1 != last_id:
-            actions.append(Action4(0x08, str_lang, 2, str_id, [str_text]))
+        if str_lang != last_lang or str_id - 1 != last_id or feature != last_feature:
+            actions.append(Action4(feature, str_lang, 2, str_id, [str_text]))
         else:
             actions[-1].texts.append(str_text)
         last_lang = str_lang
         last_id = str_id
+        last_feature = feature
     return actions
 
 def get_string_action4s(feature, string_range, string, id = None):
@@ -134,11 +137,11 @@ def get_string_action4s(feature, string_range, string, id = None):
         if string_ranges[string_range]['random_id']:
             # ID is allocated randomly, we will output the actions later
             write_action4s = False
-            if string in used_strings[string_range]:
-                id_val = used_strings[string_range][string]
+            if (feature, string) in used_strings[string_range]:
+                id_val = used_strings[string_range][(feature, string)]
             else:
                 id_val = string_ranges[string_range]['ids'].pop()
-                used_strings[string_range][string] = id_val
+                used_strings[string_range][(feature, string)] = id_val
         else:
             # ID must be supplied
             assert id is not None
