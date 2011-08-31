@@ -229,13 +229,13 @@ def read_extra_commands(custom_tags_file):
 
 
 class StringCommand(object):
-    def __init__(self, name):
+    def __init__(self, name, str_pos):
         assert name in commands or name in special_commands
         self.name = name
         self.case = None
         self.arguments = []
         self.offset = None
-        self.str_pos = None
+        self.str_pos = str_pos
 
     def set_arguments(self, arg_string):
         start = -1
@@ -338,6 +338,14 @@ class NewGRFString(object):
                     parsed_string = None
                 start = idx + 1
                 end = start
+                cmd_pos = None
+                if string[start].isdigit():
+                    while end < len(string) and string[end].isdigit(): end += 1
+                    if end == len(string) or string[end] != ':':
+                        raise generic.ScriptError("Error while parsing position part of string command", pos)
+                    cmd_pos = int(string[start:end])
+                    start = end + 1
+                    end = start
                 #Read the command name
                 while end < len(string) and string[end] not in '} =.': end += 1
                 command_name = string[start:end]
@@ -349,7 +357,7 @@ class NewGRFString(object):
                     generic.print_warning("String code '%s' has been deprecated and will be removed soon" % command_name, pos)
                     del commands[command_name]['deprecated']
                 #
-                command = StringCommand(command_name)
+                command = StringCommand(command_name, cmd_pos)
                 if end >= len(string):
                     raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
                 if string[end] == '.':
@@ -377,6 +385,13 @@ class NewGRFString(object):
                 idx = end
             idx += 1
         if parsed_string is not None: self.components.append(parsed_string)
+        cmd_pos = 0
+        for cmd in self.components:
+            if not isinstance(cmd, StringCommand):
+                continue
+            if cmd.str_pos is None:
+                cmd.str_pos = cmd_pos
+            cmd_pos = cmd.str_pos + 1
 
     def get_type(self):
         for comp in self.components:
@@ -410,16 +425,12 @@ class NewGRFString(object):
 
     def get_command_sizes(self):
         sizes = {}
-        str_pos = 0
         for cmd in self.components:
             if not (isinstance(cmd, StringCommand) and cmd.is_important_command()):
                 continue
-            if cmd.str_pos is not None:
-                str_pos = cmd.str_pos
-            if str_pos in sizes:
+            if cmd.str_pos in sizes:
                 raise generic.ScriptError("Two or more string commands are using the same argument", self.pos)
-            sizes[str_pos] = cmd.get_arg_size()
-            str_pos += 1
+            sizes[cmd.str_pos] = cmd.get_arg_size()
         sizes_list = []
         for idx in range(len(sizes)):
             if idx not in sizes:
