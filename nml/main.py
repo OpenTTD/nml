@@ -172,7 +172,10 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
     for f in sprite_files:
         if not os.path.exists(f):
             raise generic.ImageError("File doesn't exist", f)
-        im = Image.open(f)
+        try:
+            im = Image.open(f)
+        except IOError, ex:
+            raise generic.ImageError(str(ex), f)
         if im.mode != "P":
             raise generic.ImageError("image does not have a palette", f)
         pal = palette.validate_palette(im, f)
