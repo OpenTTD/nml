@@ -153,7 +153,6 @@ commands = {
 'DATE1920_SHORT': {'unicode': r'\UE083',    'ascii': r'\83', 'size': 2},
 'VELOCITY':       {'unicode': r'\UE084',    'ascii': r'\84', 'size': 2},
 'SKIP':           {'unicode': r'\UE085',    'ascii': r'\85', 'size': 2},
-'ROTATE':         {'unicode': r'\UE086',    'ascii': r'\86'},
 'VOLUME':         {'unicode': r'\UE087',    'ascii': r'\87', 'size': 2},
 'HEX':            {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'size': 4},
 'STATION':        {'unicode': r'\UE09A\0C', 'ascii': r'\9A\0C', 'size': 2},
