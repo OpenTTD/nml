@@ -273,9 +273,33 @@ class StringCommand(object):
         elif len(self.arguments) != 0:
             raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, pos)
 
-    def parse_string(self, str_type, lang):
+    def parse_string(self, str_type, lang, stack):
         if self.name in commands:
-            return commands[self.name][str_type]
+            if not self.is_important_command():
+                return commands[self.name][str_type]
+            stack_pos = 0
+            for (pos, size) in stack:
+                if pos == self.str_pos:
+                    break
+                stack_pos += size
+            self_size = commands[self.name]['size']
+            stack.remove((self.str_pos, self_size))
+            if stack_pos == 0:
+                return commands[self.name][str_type]
+            if stack_pos + self_size > 8:
+                raise generic.ScriptError("Trying to read an argument from the stack without reading the arguments before")
+            if self_size == 4 and stack_pos == 4:
+                return STRING_ROTATE[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type]
+            if self_size == 4:
+                assert stack_pos == 2
+                return STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type]
+            assert self_size == 2
+            if stack_pos == 6:
+                return STRING_ROTATE[str_type] + commands[self.name][str_type]
+            if stack_pos == 4:
+                return STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type]
+            assert stack_pos == 2
+            return STRING_PUSH_WORD[str_type] + STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type] + STRING_SKIP[str_type]
         assert self.name in special_commands
         if self.name == 'P':
             if self.offset is None: self.offset = 0
@@ -416,9 +440,10 @@ class NewGRFString(object):
 
     def parse_string(self, str_type, lang):
         ret = ""
+        stack = [(idx, size) for idx, size in enumerate(self.get_command_sizes())]
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                ret += comp.parse_string(str_type, lang)
+                ret += comp.parse_string(str_type, lang, stack)
             else:
                 ret += comp
         return ret
@@ -457,6 +482,9 @@ BEGIN_GENDER_CHOICE_LIST = {'unicode': r'\UE09A\13', 'ascii': r'\9A\13'}
 BEGIN_CASE_CHOICE_LIST   = {'unicode': r'\UE09A\14', 'ascii': r'\9A\14'}
 BEGIN_PLURAL_CHOICE_LIST = {'unicode': r'\UE09A\15', 'ascii': r'\9A\15'}
 SET_STRING_GENDER        = {'unicode': r'\UE09A\0E', 'ascii': r'\9A\0E'}
+STRING_SKIP              = {'unicode': r'\UE085',    'ascii': r'\85'}
+STRING_ROTATE            = {'unicode': r'\UE086',    'ascii': r'\86'}
+STRING_PUSH_WORD         = {'unicode': r'\UE09A\03\20\20', 'ascii': r'\9A\03\20\20'}
 
 class Language:
     def __init__(self):
