@@ -412,7 +412,7 @@ class NewGRFString(object):
         if parsed_string is not None: self.components.append(parsed_string)
         cmd_pos = 0
         for cmd in self.components:
-            if not isinstance(cmd, StringCommand):
+            if not (isinstance(cmd, StringCommand) and cmd.is_important_command()):
                 continue
             if cmd.str_pos is None:
                 cmd.str_pos = cmd_pos
