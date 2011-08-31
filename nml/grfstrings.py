@@ -144,23 +144,23 @@ commands = {
 'TINYFONT':       {'unicode': r'\0E',       'ascii': r'\0E'},
 'BIGFONT':        {'unicode': r'\0F',       'ascii': r'\0F'},
 
-'COMMA':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True},
-'SIGNED_WORD':    {'unicode': r'\UE07C',    'ascii': r'\7C', 'important': True},
-'UNSIGNED_WORD':  {'unicode': r'\UE07E',    'ascii': r'\7E', 'important': True},
-'CURRENCY':       {'unicode': r'\UE07F',    'ascii': r'\7F', 'important': True},
-'STRING':         {'unicode': r'\UE080',    'ascii': r'\80', 'allow_case': True, 'important': True},
-'DATE1920_LONG':  {'unicode': r'\UE082',    'ascii': r'\82', 'important': True},
-'DATE1920_SHORT': {'unicode': r'\UE082',    'ascii': r'\83', 'important': True},
-'VELOCITY':       {'unicode': r'\UE084',    'ascii': r'\84', 'important': True},
-'SKIP':           {'unicode': r'\UE085',    'ascii': r'\85', 'important': True},
-'ROTATE':         {'unicode': r'\UE086',    'ascii': r'\86', 'important': True},
-'VOLUME':         {'unicode': r'\UE087',    'ascii': r'\87', 'important': True},
-'HEX':            {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'important': True},
-'STATION':        {'unicode': r'\UE09A\0C', 'ascii': r'\9A\0C', 'important': True},
-'WEIGHT':         {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'important': True},
-'DATE_LONG':      {'unicode': r'\UE09A\16', 'ascii': r'\9A\16', 'important': True},
-'DATE_SHORT':     {'unicode': r'\UE09A\17', 'ascii': r'\9A\17', 'important': True},
-'POWER':          {'unicode': r'\UE09A\18', 'ascii': r'\9A\18', 'important': True},
+'COMMA':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'size': 4},
+'SIGNED_WORD':    {'unicode': r'\UE07C',    'ascii': r'\7C', 'size': 2},
+'UNSIGNED_WORD':  {'unicode': r'\UE07E',    'ascii': r'\7E', 'size': 2},
+'CURRENCY':       {'unicode': r'\UE07F',    'ascii': r'\7F', 'size': 4},
+'STRING':         {'unicode': r'\UE080',    'ascii': r'\80', 'allow_case': True, 'size': 2},
+'DATE1920_LONG':  {'unicode': r'\UE082',    'ascii': r'\82', 'size': 2},
+'DATE1920_SHORT': {'unicode': r'\UE083',    'ascii': r'\83', 'size': 2},
+'VELOCITY':       {'unicode': r'\UE084',    'ascii': r'\84', 'size': 2},
+'SKIP':           {'unicode': r'\UE085',    'ascii': r'\85', 'size': 2},
+'ROTATE':         {'unicode': r'\UE086',    'ascii': r'\86'},
+'VOLUME':         {'unicode': r'\UE087',    'ascii': r'\87', 'size': 2},
+'HEX':            {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'size': 4},
+'STATION':        {'unicode': r'\UE09A\0C', 'ascii': r'\9A\0C', 'size': 2},
+'WEIGHT':         {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'size': 2},
+'DATE_LONG':      {'unicode': r'\UE09A\16', 'ascii': r'\9A\16', 'size': 4},
+'DATE_SHORT':     {'unicode': r'\UE09A\17', 'ascii': r'\9A\17', 'size': 4},
+'POWER':          {'unicode': r'\UE09A\18', 'ascii': r'\9A\18', 'size': 2},
 
 # Colors
 'BLUE':           {'unicode': r'\UE088',    'ascii': r'\88'},
@@ -183,20 +183,20 @@ commands = {
 
 
 # Deprecated string codes
-'DWORD_S':        {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True, 'deprecated': True},
-'PARAM':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'important': True, 'deprecated': True},
-'WORD_S':         {'unicode': r'\UE07C',    'ascii': r'\7C', 'important': True, 'deprecated': True},
-'BYTE_S':         {'unicode': r'\UE07D',    'ascii': r'\7D', 'important': True, 'deprecated': True},
-'WORD_U':         {'unicode': r'\UE07E',    'ascii': r'\7E', 'important': True, 'deprecated': True},
-'POP_WORD':       {'unicode': r'\UE085',    'ascii': r'\85', 'important': True, 'deprecated': True},
-'CURRENCY_QWORD': {'unicode': r'\UE09A\01', 'ascii': r'\9A\01', 'important': True, 'deprecated': True},
-'PUSH_WORD':      {'unicode': r'\UE09A\03', 'ascii': r'\9A\03', 'important': True, 'deprecated': True},
-'UNPRINT':        {'unicode': r'\UE09A\04', 'ascii': r'\9A\04', 'important': True, 'deprecated': True},
-'BYTE_HEX':       {'unicode': r'\UE09A\06', 'ascii': r'\9A\06', 'important': True, 'deprecated': True},
-'WORD_HEX':       {'unicode': r'\UE09A\07', 'ascii': r'\9A\07', 'important': True, 'deprecated': True},
-'DWORD_HEX':      {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'important': True, 'deprecated': True},
-'QWORD_HEX':      {'unicode': r'\UE09A\0B', 'ascii': r'\9A\0B', 'important': True, 'deprecated': True},
-'WORD_S_TONNES':  {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'important': True, 'deprecated': True},
+'DWORD_S':        {'unicode': r'\UE07B',    'ascii': r'\7B', 'deprecated': True, 'size': 4},
+'PARAM':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'deprecated': True, 'size': 4},
+'WORD_S':         {'unicode': r'\UE07C',    'ascii': r'\7C', 'deprecated': True, 'size': 2},
+'BYTE_S':         {'unicode': r'\UE07D',    'ascii': r'\7D', 'deprecated': True},
+'WORD_U':         {'unicode': r'\UE07E',    'ascii': r'\7E', 'deprecated': True, 'size': 2},
+'POP_WORD':       {'unicode': r'\UE085',    'ascii': r'\85', 'deprecated': True, 'size': 2},
+'CURRENCY_QWORD': {'unicode': r'\UE09A\01', 'ascii': r'\9A\01', 'deprecated': True},
+'PUSH_WORD':      {'unicode': r'\UE09A\03', 'ascii': r'\9A\03', 'deprecated': True},
+'UNPRINT':        {'unicode': r'\UE09A\04', 'ascii': r'\9A\04', 'deprecated': True},
+'BYTE_HEX':       {'unicode': r'\UE09A\06', 'ascii': r'\9A\06', 'deprecated': True},
+'WORD_HEX':       {'unicode': r'\UE09A\07', 'ascii': r'\9A\07', 'deprecated': True, 'size': 2},
+'DWORD_HEX':      {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'deprecated': True, 'size': 4},
+'QWORD_HEX':      {'unicode': r'\UE09A\0B', 'ascii': r'\9A\0B', 'deprecated': True},
+'WORD_S_TONNES':  {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'deprecated': True, 'size': 2},
 }
 
 special_commands = [
@@ -235,6 +235,7 @@ class StringCommand(object):
         self.case = None
         self.arguments = []
         self.offset = None
+        self.str_pos = None
 
     def set_arguments(self, arg_string):
         start = -1
@@ -314,19 +315,17 @@ class StringCommand(object):
 
     def is_important_command(self):
         if self.name in special_commands: return False
-        return 'important' in commands[self.name]
+        return 'size' in commands[self.name]
 
-    def __eq__(self, other):
-        return isinstance(other, StringCommand) and self.name == other.name
-
-    def __hash__(self):
-        return hash(self.name)
+    def get_arg_size(self):
+        return commands[self.name]['size']
 
 class NewGRFString(object):
     def __init__(self, string, lang, strip_choice_lists, pos):
         self.string = string
         self.cases = {}
         self.components = []
+        self.pos = pos
         parsed_string = None
         idx = 0
         while idx < len(string):
@@ -409,10 +408,27 @@ class NewGRFString(object):
                 ret += comp
         return ret
 
+    def get_command_sizes(self):
+        sizes = {}
+        str_pos = 0
+        for cmd in self.components:
+            if not (isinstance(cmd, StringCommand) and cmd.is_important_command()):
+                continue
+            if cmd.str_pos is not None:
+                str_pos = cmd.str_pos
+            if str_pos in sizes:
+                raise generic.ScriptError("Two or more string commands are using the same argument", self.pos)
+            sizes[str_pos] = cmd.get_arg_size()
+            str_pos += 1
+        sizes_list = []
+        for idx in range(len(sizes)):
+            if idx not in sizes:
+                raise generic.ScriptError("String argument %d is not used" % idx, self.pos)
+            sizes_list.append(sizes[idx])
+        return sizes_list
+
     def match_commands(self, other_string):
-        comps_self = [x for x in self.components if isinstance(x, StringCommand) and x.is_important_command()]
-        comps_other = [x for x in other_string.components if isinstance(x, StringCommand) and x.is_important_command()]
-        return comps_self == comps_other
+        return self.get_command_sizes() == other_string.get_command_sizes()
 
 def isint(x, base = 10):
     try:
