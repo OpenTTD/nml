@@ -128,6 +128,20 @@ def get_translations(string):
             translations.append(langid)
     return translations
 
+def com_parse_comma(val):
+    val = val.reduce_constant()
+    return str(val)
+
+def com_parse_hex(val):
+    val = val.reduce_constant()
+    return "0x%X" % val.value
+
+def com_parse_string(val):
+    import nml.expression
+    if not isinstance(val, nml.expression.StringLiteral):
+        raise generic.ScriptError("Expected a literal string", val.pos)
+    return val.value
+
 commands = {
 # Special characters / glyphs
 '':               {'unicode': r'\0D',       'ascii': r'\0D'},
@@ -144,17 +158,17 @@ commands = {
 'TINYFONT':       {'unicode': r'\0E',       'ascii': r'\0E'},
 'BIGFONT':        {'unicode': r'\0F',       'ascii': r'\0F'},
 
-'COMMA':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'size': 4},
-'SIGNED_WORD':    {'unicode': r'\UE07C',    'ascii': r'\7C', 'size': 2},
-'UNSIGNED_WORD':  {'unicode': r'\UE07E',    'ascii': r'\7E', 'size': 2},
+'COMMA':          {'unicode': r'\UE07B',    'ascii': r'\7B', 'size': 4, 'parse': com_parse_comma},
+'SIGNED_WORD':    {'unicode': r'\UE07C',    'ascii': r'\7C', 'size': 2, 'parse': com_parse_comma},
+'UNSIGNED_WORD':  {'unicode': r'\UE07E',    'ascii': r'\7E', 'size': 2, 'parse': com_parse_comma},
 'CURRENCY':       {'unicode': r'\UE07F',    'ascii': r'\7F', 'size': 4},
-'STRING':         {'unicode': r'\UE080',    'ascii': r'\80', 'allow_case': True, 'size': 2},
+'STRING':         {'unicode': r'\UE080',    'ascii': r'\80', 'allow_case': True, 'size': 2, 'parse': com_parse_string},
 'DATE1920_LONG':  {'unicode': r'\UE082',    'ascii': r'\82', 'size': 2},
 'DATE1920_SHORT': {'unicode': r'\UE083',    'ascii': r'\83', 'size': 2},
 'VELOCITY':       {'unicode': r'\UE084',    'ascii': r'\84', 'size': 2},
 'SKIP':           {'unicode': r'\UE085',    'ascii': r'\85', 'size': 2},
 'VOLUME':         {'unicode': r'\UE087',    'ascii': r'\87', 'size': 2},
-'HEX':            {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'size': 4},
+'HEX':            {'unicode': r'\UE09A\08', 'ascii': r'\9A\08', 'size': 4, 'parse': com_parse_hex},
 'STATION':        {'unicode': r'\UE09A\0C', 'ascii': r'\9A\0C', 'size': 2},
 'WEIGHT':         {'unicode': r'\UE09A\0D', 'ascii': r'\9A\0D', 'size': 2},
 'DATE_LONG':      {'unicode': r'\UE09A\16', 'ascii': r'\9A\16', 'size': 4},
@@ -272,7 +286,7 @@ class StringCommand(object):
         elif len(self.arguments) != 0:
             raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, pos)
 
-    def parse_string(self, str_type, lang, stack):
+    def parse_string(self, str_type, lang, stack, static_args):
         if self.name in commands:
             if not self.is_important_command():
                 return commands[self.name][str_type]
@@ -283,6 +297,10 @@ class StringCommand(object):
                 stack_pos += size
             self_size = commands[self.name]['size']
             stack.remove((self.str_pos, self_size))
+            if self.str_pos < len(static_args):
+                if 'parse' not in commands[self.name]:
+                    raise generic.ScriptError("Provided a static argument for string command '%s' which is invalid" % self.name)
+                return commands[self.name]['parse'](static_args[self.str_pos])
             if stack_pos == 0:
                 return commands[self.name][str_type]
             if stack_pos + self_size > 8:
@@ -308,6 +326,7 @@ class StringCommand(object):
             if not stack:
                 raise generic.ScriptError("A plural or gender choice list {P} or {G} has to be followed by another string code or provide an offset")
             self.offset = stack[0][0]
+        self.offset -= len(static_args)
         if self.name == 'P':
             ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + self.offset)
             for idx, arg in enumerate(self.arguments):
@@ -439,12 +458,12 @@ class NewGRFString(object):
                     self.components[i] = comp.arguments[-1]
             i += 1
 
-    def parse_string(self, str_type, lang):
+    def parse_string(self, str_type, lang, static_args):
         ret = ""
         stack = [(idx, size) for idx, size in enumerate(self.get_command_sizes())]
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                ret += comp.parse_string(str_type, lang, stack)
+                ret += comp.parse_string(str_type, lang, stack, static_args)
             else:
                 ret += comp
         return ret
@@ -526,9 +545,9 @@ class Language:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
             for case_name, case_string in self.strings[string_id].cases.iteritems():
                 case_id = self.cases[case_name]
-                parsed_string += CHOICE_LIST_ITEM[str_type] + ('\\%02X' % case_id) + case_string.parse_string(str_type, self)
+                parsed_string += CHOICE_LIST_ITEM[str_type] + ('\\%02X' % case_id) + case_string.parse_string(str_type, self, string.params)
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
-        parsed_string += self.strings[string_id].parse_string(str_type, self)
+        parsed_string += self.strings[string_id].parse_string(str_type, self, string.params)
         if len(self.strings[string_id].cases) > 0:
             parsed_string += CHOICE_LIST_END[str_type]
         return parsed_string
