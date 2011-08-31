@@ -300,8 +300,15 @@ class StringCommand(object):
             assert stack_pos == 2
             return STRING_PUSH_WORD[str_type] + STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type] + STRING_SKIP[str_type]
         assert self.name in special_commands
+        if self.name == 'G=':
+            ret = SET_STRING_GENDER[str_type]
+            ret += '\\%02X' % lang.genders[self.arguments[0]]
+            return ret
+        if self.offset is None:
+            if not stack:
+                raise generic.ScriptError("A plural or gender choice list {P} or {G} has to be followed by another string code or provide an offset")
+            self.offset = stack[0][0]
         if self.name == 'P':
-            if self.offset is None: self.offset = 0
             ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + self.offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
@@ -312,7 +319,6 @@ class StringCommand(object):
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G':
-            if self.offset is None: self.offset = 0
             ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + self.offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
@@ -321,10 +327,6 @@ class StringCommand(object):
                     ret += CHOICE_LIST_ITEM[str_type] + '\\%02X' % (idx + 1)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
-            return ret
-        if self.name == 'G=':
-            ret = SET_STRING_GENDER[str_type]
-            ret += '\\%02X' % lang.genders[self.arguments[0]]
             return ret
 
     def get_type(self):
