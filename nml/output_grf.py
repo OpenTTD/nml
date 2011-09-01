@@ -142,21 +142,21 @@ class OutputGRF(output_base.BinaryOutputBase):
                 l -= 1
         return output
 
-    def wsprite_encoderegular(self, sprite, data, xoffset, yoffset, compression):
+    def sprite_compress(self, data):
         data_str = ''.join(chr(c) for c in data)
         if self.compress_grf:
             lz = lz77.LZ77(data_str)
             stream = lz.encode()
         else:
             stream = self.fakecompress(data_str)
-        streamlength = len(stream)
-        if (compression & 2) == 0: size = len(data)
-        else: size = streamlength
-        self.wsprite_header(sprite, size, xoffset, yoffset, compression)
-        for c in stream:
+        return stream
+
+    def wsprite_encoderegular(self, sprite, data, data_len, xoffset, yoffset, compression):
+        self.wsprite_header(sprite, data_len, xoffset, yoffset, compression)
+        for c in data:
             self.print_byte(ord(c))
         #make up for the difference in byte count
-        self._byte_count += size - streamlength
+        self._byte_count += data_len - len(data)
         self.end_sprite()
 
     def sprite_encode_tile(self, sprite, data):
@@ -269,11 +269,15 @@ class OutputGRF(output_base.BinaryOutputBase):
         data = list(sprite.getdata())
         if orig_pal == "WIN" and self.palette == "DOS":
             data = [palmap_w2d[x] for x in data]
-        tile_compressed_data = self.sprite_encode_tile(sprite, data)
-        if len(tile_compressed_data) < len(data):
+        tile_data = self.sprite_encode_tile(sprite, data)
+        compressed_data = self.sprite_compress(data)
+        tile_compressed_data =self.sprite_compress(tile_data) 
+        data_len = len(data)
+        if len(tile_compressed_data) < len(compressed_data):
             compression |= 8
-            data = tile_compressed_data
-        self.wsprite_encoderegular(sprite, data, xoffset, yoffset, compression)
+            compressed_data = tile_compressed_data
+            data_len = len(tile_data)
+        self.wsprite_encoderegular(sprite, compressed_data, data_len, xoffset, yoffset, compression)
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
