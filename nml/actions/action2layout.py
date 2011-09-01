@@ -1,5 +1,6 @@
 from nml import generic, global_constants, expression, nmlop
 from nml.actions import action2, action6, actionD, action1, action2var, real_sprite
+from nml.ast import general
 
 class Action2Layout(action2.Action2):
     def __init__(self, feature, name, ground_sprite, sprite_list, param_registers):
@@ -350,7 +351,7 @@ def get_layout_action2s(spritelayout, feature):
     actions = []
 
     if feature not in action2.features_sprite_layout:
-        raise generic.ScriptError("Sprite layouts are not supported for feature '%02X'." % feature)
+        raise generic.ScriptError("Sprite layouts are not supported for feature '%s'." % general.feature_name(feature))
 
     # Allocate registers
     param_map = {}

@@ -1,6 +1,7 @@
 from nml.actions.action0properties import Action0Property, properties
 from nml import generic, expression, nmlop, grfstrings
 from nml.actions import base_action, action4, action6, actionD, actionE, action7
+from nml.ast import general
 
 # Features that use an extended byte as ID (vehicles, sounds)
 action0_extended_byte_id = [0, 1, 2, 3, 0x0C]
@@ -113,7 +114,7 @@ def parse_property(feature, name, value, id, unit):
     #Validate feature
     assert feature in range (0, len(properties)) #guaranteed by item
     if properties[feature] is None:
-        raise generic.ScriptError("Setting properties for feature '%02X' is not possible, no properties are defined." % feature, name.pos)
+        raise generic.ScriptError("Setting properties for feature '%s' is not possible, no properties are defined." % general.feature_name(feature), name.pos)
 
     if isinstance(name, expression.Identifier):
         if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value, name.pos)

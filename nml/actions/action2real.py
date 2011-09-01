@@ -1,5 +1,6 @@
 from nml import generic
 from nml.actions import action2, action1
+from nml.ast import general
 
 class Action2Real(action2.Action2):
     def __init__(self, feature, name, loaded_list, loading_list):
@@ -27,7 +28,7 @@ def get_real_action2s(spritegroup, feature):
     actions = []
 
     if feature not in action2.features_sprite_group:
-        raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for feature '%02X'." % feature, spritegroup.pos)
+        raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for feature '%s'." % general.feature_name(feature), spritegroup.pos)
 
     # First make sure that all referenced real sprites are put in a single action1
     spriteset_list = []

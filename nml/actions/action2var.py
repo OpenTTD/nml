@@ -1,5 +1,6 @@
 from nml.actions import action2, action2real, action2var_variables, action4, action6, actionD
 from nml import expression, generic, global_constants, nmlop, unit
+from nml.ast import general
 
 class Action2Var(action2.Action2):
     """
@@ -402,7 +403,7 @@ class Varaction2Parser(object):
         if isinstance(expr.register, expression.ConstantNumeric) and expr.register.value > max:
             raise generic.ScriptError("Register number must be in range 0..%d, encountered %d." % (max, expr.register.value), expr.pos)
         if expr.info['perm'] and self.feature not in (0x08, 0x0A, 0x0D):
-            raise generic.ScriptError("Persistent storage is not supported for feature '%02X'" % self.feature, expr.pos)
+            raise generic.ScriptError("Persistent storage is not supported for feature '%s'" % general.feature_name(self.feature), expr.pos)
 
         if expr.info['store']:
             op = nmlop.STO_PERM if expr.info['perm'] else nmlop.STO_TMP

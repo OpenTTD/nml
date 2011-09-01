@@ -1,6 +1,6 @@
 from nml import generic
 from nml.actions import base_action
-from nml.ast import base_statement
+from nml.ast import base_statement, general
 import nml
 
 free_action2_ids = list(range(1, 255))
@@ -279,8 +279,8 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                     assert len(self.feature_set) == 1
                     for n in self._referencing_nodes:
                         if n.feature_set != self.feature_set:
-                            raise generic.ScriptError("Cannot refer to block '%s' with feature '%02X', expected feature is '%02X'" % \
-                                    (self.name.value, self.feature_set.copy().pop(), n.feature_set.difference(self.feature_set).pop()), n.pos)
+                            raise generic.ScriptError("Cannot refer to block '%s' with feature '%s', expected feature is '%s'" % \
+                                    (self.name.value, general.feature_name(self.feature_set.copy().pop()), general.feature_name(n.feature_set.difference(self.feature_set).pop())), n.pos)
                 elif len(self._referencing_nodes) != 0:
                     for n in self._referencing_nodes:
                         # Add the features from all calling blocks to the set

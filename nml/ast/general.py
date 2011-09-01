@@ -22,6 +22,22 @@ feature_ids = {
     'FEAT_AIRPORTTILES': 0x11,
 }
 
+def feature_name(feature):
+    """
+    Given a feature number, return the identifier as normally used for that
+    feature in nml files.
+
+    @param feature: The feature number to convert to a string.
+    @type feature: C{int}
+
+    @return: String with feature as used in nml files.
+    @rtype: C{str}
+    """
+    for name, num in feature_ids.iteritems():
+        if num == feature:
+            return name
+    assert False, "Invalid feature number"
+
 def parse_feature(expr):
     """
     Parse an expression into a valid feature number.
