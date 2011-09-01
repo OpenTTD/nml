@@ -245,10 +245,6 @@ class TemplateUsage(object):
         return "%s(%s)" % (str(self.name), ", ".join([str(param) for param in self.param_list]))
 
 real_sprite_compression_flags = {
-    'NORMAL'       : 0x00,
-    'TILE'         : 0x08,
-    'UNCOMPRESSED' : 0x00,
-    'COMPRESSED'   : 0x02,
     'CROP'         : 0x00,
     'NOCROP'       : 0x40,
 }
@@ -287,10 +283,10 @@ def parse_real_sprite(sprite, default_file, id_dict):
     if num_param > param_offset:
         try:
             new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
-            new_sprite.compression.value |= 0x01
             param_offset += 1
-            if (new_sprite.compression.value & ~0x4B) != 0:
-                raise generic.ScriptError("Real sprite compression is invalid; can only have bit 0, 1, 3 and/or 6 set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
+            if (new_sprite.compression.value & ~0x40) != 0:
+                raise generic.ScriptError("Real sprite compression is invalid; can only have the NOCROP bit (0x40) set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
+            new_sprite.compression.value |= 0x01
         except generic.ConstError:
             if num_param >= param_offset + 2:
                 # There are two extra parameters, so both compression and filename are specified and had to be valid

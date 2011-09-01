@@ -159,7 +159,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         self._byte_count += size - streamlength
         self.end_sprite()
 
-    def wsprite_encodetile(self, sprite, data, xoffset, yoffset, compression):
+    def sprite_encode_tile(self, sprite, data):
         size_x, size_y = sprite.size
         if size_x > 255: raise generic.ScriptError("sprites wider than 255px are not supported")
         data_output = []
@@ -189,7 +189,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             output.append(offset & 0xFF)
             output.append(offset >> 8)
         output += data_output
-        self.wsprite_encoderegular(sprite, output, xoffset, yoffset, compression)
+        return output
 
     def crop_sprite(self, sprite, xoffset, yoffset):
         data = list(sprite.getdata())
@@ -269,12 +269,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         data = list(sprite.getdata())
         if orig_pal == "WIN" and self.palette == "DOS":
             data = [palmap_w2d[x] for x in data]
-        if compression == 9:
-            self.wsprite_encodetile(sprite, data, xoffset, yoffset, compression)
-        elif compression == 1 or compression == 3:
-            self.wsprite_encoderegular(sprite, data, xoffset, yoffset, compression)
-        else:
-            raise generic.ScriptError("Invalid sprite compression")
+        tile_compressed_data = self.sprite_encode_tile(sprite, data)
+        if len(tile_compressed_data) < len(data):
+            compression |= 8
+            data = tile_compressed_data
+        self.wsprite_encoderegular(sprite, data, xoffset, yoffset, compression)
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
