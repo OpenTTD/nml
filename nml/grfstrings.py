@@ -332,6 +332,8 @@ class StringCommand(object):
             offset = stack[0][0]
         offset -= len(static_args)
         if self.name == 'P':
+            if offset < 0:
+                return self.arguments[lang.static_plural_form(static_args[offset]) - 1]
             ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
@@ -538,6 +540,80 @@ class Language:
             12: 4,
         }
         return num_plurals[self.plural]
+
+    def static_plural_form(self, expr):
+        #Return values are the same as "Plural index" here:
+        #http://newgrf-specs.tt-wiki.net/wiki/StringCodes#Using_plural_forms
+        val = expr.reduce_constant().value
+        if self.plural == 0:
+            return 1 if val == 1 else 2
+        if self.plural == 1:
+            return 1
+        if self.plural == 2:
+            return 1 if val in (0, 1) else 2
+        if self.plural == 3:
+            if val % 10 == 1 and val % 100 != 11:
+                return 1
+            return 2 if val == 0 else 3
+        if self.plural == 4:
+            if val == 1:
+                return 1
+            if val == 2:
+                return 2
+            if 3 <= val <= 6:
+                return 3
+            if 7 <= val <= 10:
+                return 4
+            return 5
+        if self.plural == 5:
+            if val % 10 == 1 and val % 100 != 11:
+                return 1
+            if 2 <= (val % 10) <= 9 and not 12 <= (val % 100) <= 19:
+                return 2
+            return 3
+        if self.plural == 6:
+            if val % 10 == 1 and val % 100 != 11:
+                return 1
+            if 2 <= (val % 10) <= 4 and not 12 <= (val % 100) <= 14:
+                return 2
+            return 3
+        if self.plural == 7:
+            if val == 0:
+                return 1
+            if 2 <= (val % 10) <= 4 and not 12 <= (val % 100) <= 14:
+                return 2
+            return 3
+        if self.plural == 8:
+            if val % 100 == 1:
+                return 1
+            if val % 100 == 2:
+                return 2
+            if val % 100 in (3, 4):
+                return 3
+            return 4
+        if self.plural == 9:
+            if val % 10 == 1 and val % 100 != 11:
+                return 1
+            return 2
+        if self.plural == 10:
+            if val == 1:
+                return 1
+            if 2 <= val <= 4:
+                return 2
+            return 3
+        if self.plural == 11:
+            if val % 10 in (0, 1, 3, 6, 7, 8):
+                return 1
+            return 2
+        if self.plural == 12:
+            if val == 1:
+                return 1
+            if val == 0 or 2 <= (val % 100) <= 10:
+                return 2
+            if 11 <= (val % 100) <= 19:
+                return 3
+            return 4
+        assert False, "Unknown plural type"
 
     def get_string(self, string):
         string_id = string.name.value
