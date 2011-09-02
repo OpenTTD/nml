@@ -128,18 +128,20 @@ def get_translations(string):
             translations.append(langid)
     return translations
 
-def com_parse_comma(val):
+def com_parse_comma(val, lang_id):
     val = val.reduce_constant()
     return str(val)
 
-def com_parse_hex(val):
+def com_parse_hex(val, lang_id):
     val = val.reduce_constant()
     return "0x%X" % val.value
 
-def com_parse_string(val):
+def com_parse_string(val, lang_id):
     import nml.expression
-    if not isinstance(val, nml.expression.StringLiteral):
-        raise generic.ScriptError("Expected a literal string", val.pos)
+    if not isinstance(val, (nml.expression.StringLiteral, nml.expression.String)):
+        raise generic.ScriptError("Expected a (literal) string", val.pos)
+    if isinstance(val, nml.expression.String):
+        return get_translation(val, lang_id)
     return val.value
 
 commands = {
@@ -300,7 +302,7 @@ class StringCommand(object):
             if self.str_pos < len(static_args):
                 if 'parse' not in commands[self.name]:
                     raise generic.ScriptError("Provided a static argument for string command '%s' which is invalid" % self.name)
-                return commands[self.name]['parse'](static_args[self.str_pos])
+                return commands[self.name]['parse'](static_args[self.str_pos], lang.langid)
             if stack_pos == 0:
                 return commands[self.name][str_type]
             if stack_pos + self_size > 8:
