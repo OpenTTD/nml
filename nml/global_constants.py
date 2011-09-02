@@ -252,8 +252,8 @@ constant_numbers = {
     'NEW_CARGO_SPRITE'       : 0xFFFF,
 
     #aircraft type/size
-    'AIRCRAFT_TYPE_NORMAL'     : 0x00,
-    'AIRCRAFT_TYPE_HELICOPTER' : 0x02,
+    'AIRCRAFT_TYPE_NORMAL'     : 0x02,
+    'AIRCRAFT_TYPE_HELICOPTER' : 0x00,
     'AIRCRAFT_SIZE_SMALL'      : 0x00,
     'AIRCRAFT_SIZE_LARGE'      : 0x01,
 
