@@ -324,13 +324,15 @@ class StringCommand(object):
             ret = SET_STRING_GENDER[str_type]
             ret += '\\%02X' % lang.genders[self.arguments[0]]
             return ret
-        if self.offset is None:
+        # Create a local copy because we shouldn't modify the original
+        offset = self.offset
+        if offset is None:
             if not stack:
                 raise generic.ScriptError("A plural or gender choice list {P} or {G} has to be followed by another string code or provide an offset")
-            self.offset = stack[0][0]
-        self.offset -= len(static_args)
+            offset = stack[0][0]
+        offset -= len(static_args)
         if self.name == 'P':
-            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + self.offset)
+            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
@@ -340,7 +342,7 @@ class StringCommand(object):
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G':
-            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + self.offset)
+            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
