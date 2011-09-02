@@ -344,6 +344,8 @@ class StringCommand(object):
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G':
+            if offset < 0:
+                return self.arguments[lang.static_gender(static_args[offset]) - 1]
             ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
@@ -540,6 +542,19 @@ class Language:
             12: 4,
         }
         return num_plurals[self.plural]
+
+    def static_gender(self, expr):
+        import nml.expression
+        if isinstance(expr, nml.expression.StringLiteral):
+            return len(self.genders)
+        if not isinstance(expr, nml.expression.String):
+            raise generic.ScriptError("{G} can only refer to a string argument")
+        parsed = self.get_string(expr)
+        if parsed.find(SET_STRING_GENDER['ascii']) == 0:
+            return int(parsed[len(SET_STRING_GENDER['ascii']) + 1 : len(SET_STRING_GENDER['ascii']) + 3], 16)
+        if parsed.find(SET_STRING_GENDER['unicode']) == 0:
+            return int(parsed[len(SET_STRING_GENDER['unicode']) + 1 : len(SET_STRING_GENDER['unicode']) + 3], 16)
+        return len(self.genders)
 
     def static_plural_form(self, expr):
         #Return values are the same as "Plural index" here:
