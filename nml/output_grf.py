@@ -176,14 +176,14 @@ class OutputGRF(output_base.BinaryOutputBase):
             while True:
                 while x1 < size_x and row_data[x1] == 0: x1 += 1
                 x2 = x1 + 1
-                while x2 < size_x and row_data[x2] != 0: x2 += 1
+                while x2 < size_x and row_data[x2] != 0 and (x2 - x1) < 0x7f: x2 += 1
                 high_byte = x2 - x1
                 if x2 == last + 1: high_byte |= 0x80
                 data_output.append(high_byte)
                 data_output.append(x1)
                 data_output += row_data[x1 : x2]
                 if x2 == last + 1: break
-                x1 = x2 + 1
+                x1 = x2
         output = []
         for offset in offsets:
             output.append(offset & 0xFF)
