@@ -284,7 +284,7 @@ class StringCommand(object):
                 raise generic.ScriptError("Invalid number of arguments to gender command, expected %d but got %d" % (len(lang.genders), len(self.arguments)), pos)
         elif self.name == 'G=':
             if len(self.arguments) != 1:
-                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected 1 but got %d" % len(self.arguments), pos)
+                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected %d but got %d" % (1, len(self.arguments)), pos)
         elif len(self.arguments) != 0:
             raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, pos)
 
@@ -320,10 +320,6 @@ class StringCommand(object):
             assert stack_pos == 2
             return STRING_PUSH_WORD[str_type] + STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type] + STRING_SKIP[str_type]
         assert self.name in special_commands
-        if self.name == 'G=':
-            ret = SET_STRING_GENDER[str_type]
-            ret += '\\%02X' % lang.genders[self.arguments[0]]
-            return ret
         # Create a local copy because we shouldn't modify the original
         offset = self.offset
         if offset is None:
@@ -413,7 +409,7 @@ class NewGRFString(object):
                 if end >= len(string):
                     raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
                 if string[end] == '.':
-                    if 'allow_case' not in commands[command_name]:
+                    if command_name not in commands or 'allow_case' not in commands[command_name]:
                         raise generic.ScriptError("Command \"%s\" can't have a case" % command_name, pos)
                     case_start = end + 1
                     end = case_start 
@@ -433,10 +429,19 @@ class NewGRFString(object):
                     if not command.set_arguments(string[arg_start:end]):
                         raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
                 command.validate_arguments(lang, pos)
+                if command_name == 'G=' and self.components:
+                    raise generic.ScriptError("Set-gender command {G=} must be at the start of the string", pos)
                 self.components.append(command)
                 idx = end
             idx += 1
         if parsed_string is not None: self.components.append(parsed_string)
+        if len(self.components) > 0 and isinstance(self.components[0], StringCommand) and self.components[0].name == 'G=':
+            self.gender = self.components[0].arguments[0]
+            if self.gender not in lang.genders:
+                raise generic.ScriptError("Invalid gender name '%s'" % self.gender, pos)
+            self.components.pop(0)
+        else:
+            self.gender = None
         cmd_pos = 0
         for cmd in self.components:
             if not (isinstance(cmd, StringCommand) and cmd.is_important_command()):
@@ -636,6 +641,8 @@ class Language:
         assert string_id in self.strings
         str_type = self.strings[string_id].get_type()
         parsed_string = ""
+        if self.strings[string_id].gender is not None:
+            parsed_string += SET_STRING_GENDER[str_type] + '\\%02X' % self.genders[self.strings[string_id].gender]
         if len(self.strings[string_id].cases) > 0:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
             for case_name, case_string in self.strings[string_id].cases.iteritems():
@@ -744,6 +751,9 @@ class Language:
                     return
                 if case in self.strings[string].cases:
                     raise generic.ScriptError("String name \"%s.%s\" is used multiple times" % (string, case), pos)
+                if newgrf_string.gender:
+                    generic.print_warning("Case-strings can't set the gender, only the base string can", pos)
+                    return
                 self.strings[string].cases[case] = newgrf_string
 
 
