@@ -4,7 +4,7 @@ from nml import expression, nmlop, generic
 varact2vars = 0x13 * [{}]
 varact2vars60x = 0x13 * [{}]
 # feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12
-varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x12, None, 0x12, 0x12, None, 0x0A, 0x12, None, None, None, None, 0x08, None, None, None]
+varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x12, None, 0x12, 0x12, None, 0x0A, 0x12, None, None, None, None, 0x12, None, None, None]
 
 def default_60xvar(name, args, pos, info):
     """
@@ -363,6 +363,22 @@ varact2vars60x_airporttiles = {
     'nearby_tile_airporttile_id'   : {'var': 0x62, 'start':  0, 'size': 16, 'function': signed_tile_offset},
 }
 
+varact2vars_towns = {
+    'is_city'                        : {'var': 0x40, 'start': 0, 'size': 1},
+    'cities_enabled'                 : {'var': 0x40, 'start': 1, 'size': 1, 'function': lambda var, info: expression.Not(var, var.pos)},
+    'population'                     : {'var': 0x82, 'start': 0, 'size': 16},
+    'has_church'                     : {'var': 0x92, 'start': 1, 'size': 1},
+    'has_stadium'                    : {'var': 0x92, 'start': 2, 'size': 1},
+    'town_zone_0_radius_square'      : {'var': 0x94, 'start': 0, 'size': 16},
+    'town_zone_1_radius_square'      : {'var': 0x96, 'start': 0, 'size': 16},
+    'town_zone_2_radius_square'      : {'var': 0x98, 'start': 0, 'size': 16},
+    'town_zone_3_radius_square'      : {'var': 0x9A, 'start': 0, 'size': 16},
+    'town_zone_4_radius_square'      : {'var': 0x9C, 'start': 0, 'size': 16},
+    'num_houses'                     : {'var': 0xB6, 'start': 0, 'size': 16},
+    'percent_transported_passengers' : {'var': 0xCA, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 100, 256)},
+    'percent_transported_mail'       : {'var': 0xCB, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 100, 256)},
+}
+
 
 varact2vars[0x00] = varact2vars_trains
 varact2vars60x[0x00] = varact2vars60x_vehicles
@@ -382,3 +398,4 @@ varact2vars60x[0x0F] = varact2vars60x_objects
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
 varact2vars60x[0x11] = varact2vars60x_airporttiles
+varact2vars[0x12] = varact2vars_towns
