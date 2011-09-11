@@ -375,8 +375,8 @@ varact2vars_towns = {
     'town_zone_3_radius_square'      : {'var': 0x9A, 'start': 0, 'size': 16},
     'town_zone_4_radius_square'      : {'var': 0x9C, 'start': 0, 'size': 16},
     'num_houses'                     : {'var': 0xB6, 'start': 0, 'size': 16},
-    'percent_transported_passengers' : {'var': 0xCA, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 100, 256)},
-    'percent_transported_mail'       : {'var': 0xCB, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 100, 256)},
+    'percent_transported_passengers' : {'var': 0xCA, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 101, 256)},
+    'percent_transported_mail'       : {'var': 0xCB, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 101, 256)},
 }
 
 
