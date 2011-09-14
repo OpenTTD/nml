@@ -212,6 +212,7 @@ varact2vars_industries = {
     'founder_colour1' : {'var': 0x45, 'start': 24, 'size': 4},
     'founder_colour2' : {'var': 0x45, 'start': 28, 'size': 4},
     'build_date' : {'var': 0x46, 'start': 0, 'size': 32},
+    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 16},
     'produced_cargo_waiting_1' : {'var': 0x8A, 'start': 0, 'size': 16},
     'produced_cargo_waiting_2' : {'var': 0x8C, 'start': 0, 'size': 16},
     'production_level' : {'var': 0x93, 'start': 0, 'size': 8},
