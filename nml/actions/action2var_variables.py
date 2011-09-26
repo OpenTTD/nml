@@ -166,6 +166,7 @@ varact2vars_industrytiles = {
     'relative_y': {'var': 0x43, 'start': 8, 'size': 8},
     'relative_pos': {'var': 0x43, 'start': 0, 'size': 16},
     'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
+    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
 }
 
 def tile_offset(name, args, pos, info, min, max):
@@ -306,7 +307,7 @@ varact2vars_objects = {
     'build_date'             : { 'var' : 0x42, 'start':  0, 'size': 32 },
 
     'animation_frame'        : { 'var' : 0x43, 'start':  0, 'size':  8 },
-    'company_colour'          : { 'var' : 0x43, 'start':  8, 'size':  8 },
+    'company_colour'         : { 'var' : 0x43, 'start':  8, 'size':  8 },
 
     'owner'                  : { 'var' : 0x44, 'start':  0, 'size':  8 },
 
@@ -314,7 +315,8 @@ varact2vars_objects = {
     'town_zone'              : { 'var' : 0x45, 'start': 16, 'size':  8 },
 
     'town_euclidean_dist'    : { 'var' : 0x46, 'start':  0, 'size': 32 },
-    'view'                  : { 'var' : 0x48, 'start':  0, 'size':  8 },
+    'view'                   : { 'var' : 0x48, 'start':  0, 'size':  8 },
+    'random_bits'            : { 'var' : 0x5F, 'start':  8, 'size':  8 },
 }
 
 varact2vars60x_objects = {
@@ -341,6 +343,7 @@ varact2vars_railtype = {
     'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
     'level_crossing_status': {'var': 0x42, 'start': 0, 'size': 8},
     'build_date': {'var': 0x43, 'start': 0, 'size': 32},
+    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 2},
 }
 
 varact2vars_airporttiles = {
