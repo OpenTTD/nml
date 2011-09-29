@@ -30,7 +30,9 @@ def parse_cli(argv):
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
-    opt_parser.add_option("-M", dest="dep_filename", metavar="<file>", help="write graphics dependencies to <file> (requires --grf or input file)")
+    opt_parser.add_option("-M", action="store_true", dest="dep_check", help="output a rule suitable for make describing the graphics dependencies of the main grf file (requires input file or --grf)")
+    opt_parser.add_option("--MF", dest="dep_filename", metavar="<file>", help="When used with -M, specifies a file to write the dependencies to")
+    opt_parser.add_option("--MT", dest="depgrf_filename", metavar="<file>", help="target of the rule emitted by dependency generation (requires -M)")
     opt_parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
     opt_parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     opt_parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
@@ -76,27 +78,45 @@ def main(argv):
     grfstrings.read_extra_commands(opts.custom_tags)
     grfstrings.read_lang_files(opts.lang_dir, opts.default_lang)
 
+    # We have to do the dependency check first or we might later have
+    #   more targets than we asked for
+    outputs = []
+    if opts.dep_check:
+        # First make sure we have a file to output the dependencies to:
+        dep_filename = opts.dep_filename
+        if dep_filename is None and opts.grf_filename is not None:
+            dep_filename = filename_output_from_input(opts.grf_filename, ".dep")
+        if dep_filename is None and input_filename is not None:
+            dep_filename = filename_output_from_input(input_filename, ".dep")
+        if dep_filename is None:
+            raise generic.ScriptError("-M requires a dependency file either via -MF, an input filename or a valid output via --grf")
+
+        # Now make sure we have a file which is the target for the dependencies:
+        depgrf_filename = opts.depgrf_filename
+        if depgrf_filename is None and opts.grf_filename is not None:
+            depgrf_filename = opts.grf_filename
+        if depgrf_filename is None and input_filename is not None:
+                depgrf_filename = filename_output_from_input(input_filename, ".grf")
+        if depgrf_filename is None:
+            raise generic.ScriptError("-M requires either a target grf file via -MT, an input filename or a valid output via --grf")
+
+        # Only append the dependency check to the output targets when we have both,
+        #   a target grf and a file to write to
+        if dep_filename is not None and depgrf_filename is not None:
+            outputs.append(output_dep.OutputDEP(dep_filename, depgrf_filename))
+
     if input_filename is None:
         input = sys.stdin
     else:
         input = codecs.open(input_filename, 'r', 'utf-8')
-        if not opts.outputfile_given:
+        # Only append an output grf name, if no ouput is given, also not implicitly via -M
+        if not opts.outputfile_given and outputs is None:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
-    outputs = []
     if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop))
     if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename, opts.start_sprite_num))
     if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
-    if opts.dep_filename:
-        depgrf_filename = None
-        if opts.grf_filename:
-            depgrf_filename = opts.grf_filename
-        if depgrf_filename is None and input_filename is not None:
-            depgrf_filename = filename_output_from_input(input_filename, ".grf")
-        if depgrf_filename is None:
-            raise generic.ScriptError("-M <file> requires additionally an input filename or valid filename for output via --grf.")
-        else:
-            outputs.append(output_dep.OutputDEP(opts.dep_filename, depgrf_filename))
+
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
