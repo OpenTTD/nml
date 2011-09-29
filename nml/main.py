@@ -1,5 +1,5 @@
 import sys, os, codecs, optparse
-from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, palette
+from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, output_dep, palette
 from nml.actions import action2layout, action2var, action8, sprite_count, real_sprite, action4, action0, action1, action11
 from nml.ast import general, grf, alt_sprites
 
@@ -30,6 +30,7 @@ def parse_cli(argv):
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
+    opt_parser.add_option("--dep", dest="dep_filename", metavar="<file>", help="write graphics dependencies to <file> (requires --grf or input file)")
     opt_parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
     opt_parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     opt_parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
@@ -49,7 +50,7 @@ def parse_cli(argv):
 
     opts, args = opt_parser.parse_args(argv)
 
-    opts.outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.outputs)
+    opts.outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.dep_filename or opts.outputs)
 
     if not args:
         if not opts.outputfile_given:
@@ -86,12 +87,23 @@ def main(argv):
     if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop))
     if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename, opts.start_sprite_num))
     if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
+    if opts.dep_filename:
+        depgrf_filename = None
+        if opts.grf_filename:
+            depgrf_filename = opts.grf_filename
+        if depgrf_filename is None and input_filename is not None:
+            depgrf_filename = filename_output_from_input(input_filename, ".grf")
+        if depgrf_filename is None:
+            raise generic.ScriptError("Dependency check requires either an input filename or valid filename for grf output.")
+        else:
+            outputs.append(output_dep.OutputDEP(opts.dep_filename, depgrf_filename))
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
         if outext == '.grf': outputs.append(output_grf.OutputGRF(output, opts.compress, opts.crop))
         elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output, opts.start_sprite_num))
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
+        elif outext == '.dep': outputs.append(output_dep.OutputDEP(output, opts.grf_filename))
         else:
             generic.print_warning("Unknown output format %s" % outext)
             sys.exit(2)
@@ -162,6 +174,19 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
             if action.sprite.is_empty: continue
             action.sprite.validate_size()
             sprite_files.add(action.sprite.file.value)
+
+    # Check whether we can terminate sprite processing prematurely for
+    #     dependency checks
+    skip_sprite_processing = True
+    for outputfile in outputfiles:
+        if isinstance(outputfile, output_dep.OutputDEP):
+            outputfile.open()
+            for f in sprite_files:
+                outputfile.write(f)
+            outputfile.close()
+        skip_sprite_processing &= outputfile.skip_sprite_checks()
+
+    if skip_sprite_processing: return 0
 
     if not Image and len(sprite_files) > 0:
         generic.print_warning("PIL (python-imaging) wasn't found, no support for using graphics")

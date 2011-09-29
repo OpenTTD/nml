@@ -58,6 +58,12 @@ class OutputBase(object):
         real_file.close()
         self.file.close()
 
+    def skip_sprite_checks(self):
+        """
+        Return wether sprites need detailed parsing.
+        """
+        return False
+
 class BinaryOutputBase(OutputBase):
     """
     Base class for output to a binary data file.
