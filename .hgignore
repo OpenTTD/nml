@@ -1,5 +1,7 @@
 ^build/
-
+.*buildout.*
+\.install
+egg
 syntax: glob
 *.pyc
 regression/output/
