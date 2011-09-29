@@ -30,7 +30,7 @@ def parse_cli(argv):
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
-    opt_parser.add_option("--dep", dest="dep_filename", metavar="<file>", help="write graphics dependencies to <file> (requires --grf or input file)")
+    opt_parser.add_option("-M", dest="dep_filename", metavar="<file>", help="write graphics dependencies to <file> (requires --grf or input file)")
     opt_parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
     opt_parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
     opt_parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
@@ -94,7 +94,7 @@ def main(argv):
         if depgrf_filename is None and input_filename is not None:
             depgrf_filename = filename_output_from_input(input_filename, ".grf")
         if depgrf_filename is None:
-            raise generic.ScriptError("Dependency check requires either an input filename or valid filename for grf output.")
+            raise generic.ScriptError("-M <file> requires additionally an input filename or valid filename for output via --grf.")
         else:
             outputs.append(output_dep.OutputDEP(opts.dep_filename, depgrf_filename))
     for output in opts.outputs:
