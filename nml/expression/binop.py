@@ -140,7 +140,7 @@ class BinOp(Expression):
                 return BinOp(nmlop.SUB, expr1.expr1, ConstantNumeric(expr1.expr2.value - val), self.pos).reduce()
 
         if op == nmlop.OR and isinstance(expr1, Boolean) and isinstance(expr2, Boolean):
-            return Boolean(BinOp(op, expr1.expr, expr2.expr, self.pos)).reduce()
+            return Boolean(BinOp(op, expr1.expr, expr2.expr, self.pos)).reduce(id_dicts)
 
         return BinOp(op, expr1, expr2, self.pos)
 
