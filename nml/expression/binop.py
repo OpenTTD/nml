@@ -2,6 +2,7 @@ from nml import generic, nmlop
 from .base_expression import Expression, ConstantNumeric, ConstantFloat
 from .string_literal import StringLiteral
 from .variable import Variable
+from .boolean import Boolean
 
 class BinOp(Expression):
     def __init__(self, op, expr1, expr2, pos = None):
@@ -137,6 +138,9 @@ class BinOp(Expression):
                 return BinOp(nmlop.ADD, expr1.expr1, ConstantNumeric(expr1.expr2.value + val), self.pos).reduce()
             if expr1.op == nmlop.SUB:
                 return BinOp(nmlop.SUB, expr1.expr1, ConstantNumeric(expr1.expr2.value - val), self.pos).reduce()
+
+        if op == nmlop.OR and isinstance(expr1, Boolean) and isinstance(expr2, Boolean):
+            return Boolean(BinOp(op, expr1.expr, expr2.expr, self.pos)).reduce()
 
         return BinOp(op, expr1, expr2, self.pos)
 
