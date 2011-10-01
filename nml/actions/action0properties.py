@@ -1,5 +1,5 @@
 from nml import generic
-from nml.expression import ConstantNumeric, Array, StringLiteral, Identifier
+from nml.expression import ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier
 
 tilelayout_names = {}
 
@@ -522,8 +522,12 @@ def industry_conflicting_types(value):
 def industry_input_multiplier(value, prop_num):
     if not isinstance(value, Array) or len(value.values) > 2:
         raise generic.ScriptError("Input multiplier must be an array of up to two values", value.pos)
-    mul1 = value.values[0].reduce_constant().value * 256 if len(value.values) > 0 else 0
-    mul2 = value.values[1].reduce_constant().value * 256 if len(value.values) > 1 else 0
+    val1 = value.values[0].reduce() if len(value.values) > 0 else ConstantNumeric(0)
+    val2 = value.values[1].reduce() if len(value.values) > 1 else ConstantNumeric(0)
+    if not isinstance(val1, (ConstantNumeric, ConstantFloat)) or not isinstance(val2, (ConstantNumeric, ConstantFloat)):
+        raise generic.ScriptError("Expected a compile-time integer constant", value.pos)
+    mul1 = val1.value * 256
+    mul2 = val2.value * 256
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
 properties[0x0A] = {
