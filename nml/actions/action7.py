@@ -91,6 +91,10 @@ def parse_conditional(expr):
                 param, actions = actionD.get_tmp_parameter(expr.expr1)
             op = op_to_cond_op(expr.op)
             return (param, actions, op, expr.expr2.value, 4)
+
+    if isinstance(expr, expression.Boolean):
+        expr = expr.expr
+
     if isinstance(expr, expression.Not):
         param, actions = actionD.get_tmp_parameter(expr.expr)
         return (param, actions, (3, r'\7!'), 0, 4)
