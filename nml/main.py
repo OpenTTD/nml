@@ -110,7 +110,7 @@ def main(argv):
     else:
         input = codecs.open(input_filename, 'r', 'utf-8')
         # Only append an output grf name, if no ouput is given, also not implicitly via -M
-        if not opts.outputfile_given and outputs is None:
+        if not opts.outputfile_given and not outputs:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
     if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop))
