@@ -347,7 +347,7 @@ constant_numbers = {
     'INDTILE_CB_AUTOSLOPE'            : 0x3C,
 
     #industry tile special flags
-    'INDTILE_FLAG_RANDOM_ANIMATION'   : 0x01,
+    'INDTILE_FLAG_RANDOM_ANIMATION'   : 0,
 
     #industry callback flags
     'IND_CBF_AVAILABILITY'          : 0,
