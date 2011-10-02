@@ -525,9 +525,11 @@ def industry_input_multiplier(value, prop_num):
     val1 = value.values[0].reduce() if len(value.values) > 0 else ConstantNumeric(0)
     val2 = value.values[1].reduce() if len(value.values) > 1 else ConstantNumeric(0)
     if not isinstance(val1, (ConstantNumeric, ConstantFloat)) or not isinstance(val2, (ConstantNumeric, ConstantFloat)):
-        raise generic.ScriptError("Expected a compile-time integer constant", value.pos)
-    mul1 = val1.value * 256
-    mul2 = val2.value * 256
+        raise generic.ScriptError("Expected a compile-time constant", value.pos)
+    generic.check_range(val1.value, 0, 256, "input_multiplier", val1.pos)
+    generic.check_range(val2.value, 0, 256, "input_multiplier", val2.pos)
+    mul1 = int(val1.value * 256)
+    mul2 = int(val2.value * 256)
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
 properties[0x0A] = {
