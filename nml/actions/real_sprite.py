@@ -328,6 +328,7 @@ def parse_recolour_sprite(sprite, id_dict):
 sprite_template_map = {}
 
 def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = True, block_name = None):
+    assert block_name is None or isinstance(block_name, expression.Identifier)
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
@@ -340,5 +341,5 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = 
             new_sprites[0].label = sprite.label
         real_sprite_list.extend(new_sprites)
     if outer_scope: real_sprite_list[-1].last = True
-    if block_name: real_sprite_list[0].block_name = block_name
+    if block_name: real_sprite_list[0].block_name = block_name.value
     return real_sprite_list
