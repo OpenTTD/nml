@@ -256,8 +256,8 @@ def parse_real_sprite(sprite, default_file, id_dict):
     if num_param == 0:
         sprite.is_empty = True
         return RealSpriteAction(sprite)
-    elif not (2 <= num_param <= 4 or 6 <= num_param <= 8):
-        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2, 3, 4, 6, 7 or 8.", sprite.param_list[0].pos)
+    elif not (2 <= num_param <= 9):
+        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2..9.", sprite.param_list[0].pos)
 
     # create new sprite struct, needed for template expansion
     new_sprite = RealSprite()
@@ -280,6 +280,7 @@ def parse_real_sprite(sprite, default_file, id_dict):
     generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater %d 'yrel'" % (param_offset + 2), new_sprite.yrel.pos)
     param_offset += 2
 
+    new_sprite.compression = expression.ConstantNumeric(0x01)
     if num_param > param_offset:
         try:
             new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
@@ -288,26 +289,24 @@ def parse_real_sprite(sprite, default_file, id_dict):
                 raise generic.ScriptError("Real sprite compression is invalid; can only have the NOCROP bit (0x40) set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
             new_sprite.compression.value |= 0x01
         except generic.ConstError:
-            if num_param >= param_offset + 2:
-                # There are two extra parameters, so both compression and filename are specified and had to be valid
-                raise
-            else:
-                # If it's not a valid compression, it must be filename, check this
-                filename = sprite.param_list[param_offset].reduce([real_sprite_compression_flags, id_dict])
-                if not isinstance(filename, expression.StringLiteral): raise
-            # Apparently it's a string literal, that'll be handled later
-            new_sprite.compression = expression.ConstantNumeric(0x01)
-    else:
-        new_sprite.compression = expression.ConstantNumeric(0x01)
+            pass
 
     if num_param > param_offset:
         new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
+        param_offset += 1
         if not isinstance(new_sprite.file, expression.StringLiteral):
             raise generic.ScriptError("Real sprite parameter %d 'file' should be a string literal" % (param_offset + 1), new_sprite.file.pos)
     elif default_file is not None:
         new_sprite.file = default_file
     else:
         raise generic.ScriptError("No image file specified for real sprite", sprite.param_list[0].pos)
+
+    if num_param > param_offset:
+        new_sprite.mask_file = sprite.param_list[param_offset].reduce([id_dict])
+        if not isinstance(new_sprite.mask_file, expression.StringLiteral):
+            raise generic.ScriptError("Real sprite parameter %d 'mask_file' should be a string literal" % (param_offset + 1), new_sprite.file.pos)
+    else:
+        new_sprite.mask_file = None
 
     return RealSpriteAction(new_sprite)
 
