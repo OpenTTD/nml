@@ -86,10 +86,11 @@ class AltSpritesBlock(base_statement.BaseStatement):
             # trunk anyway, so follow the format needed for extra-zoom-levels there.
             postfix = "" if zoom_level == 2 else "_z" + str(zoom_level)
             filename = os.path.join(dir_name, str(sprite_id) + postfix + ".png")
-            write_32bpp_sprite(sprite, filename)
+            mask_filename = os.path.join(dir_name, str(sprite_id) + postfix + "m.png")
+            write_32bpp_sprite(sprite, filename, mask_filename)
             sprite_id += 1
 
-def write_32bpp_sprite(sprite_info, filename):
+def write_32bpp_sprite(sprite_info, filename, mask_filename):
     """
     Actually write a png file with a single sprite.
 
@@ -113,6 +114,12 @@ def write_32bpp_sprite(sprite_info, filename):
     sprite.info["x_offs"] = str(sprite_info.xrel.value)
     sprite.info["y_offs"] = str(sprite_info.yrel.value)
     pngsave(sprite, filename)
+    if sprite_info.mask_file:
+        im = Image.open(sprite_info.mask_file.value)
+        if im.mode != "P":
+            raise generic.ImageError("Not a paletted image", sprite_info.file.value)
+        sprite = im.crop((x, y, x + size_x, y + size_y))
+        pngsave(sprite, mask_filename)
 
 def pngsave(im, file):
     """
