@@ -303,22 +303,29 @@ class StringCommand(object):
                 if 'parse' not in commands[self.name]:
                     raise generic.ScriptError("Provided a static argument for string command '%s' which is invalid" % self.name)
                 return commands[self.name]['parse'](static_args[self.str_pos], lang.langid)
-            if stack_pos == 0:
-                return commands[self.name][str_type]
+            prefix = u''
+            suffix = u''
+            if self.case:
+                prefix += STRING_SELECT_CASE[str_type] + '\\%02X' % self.case
             if stack_pos + self_size > 8:
                 raise generic.ScriptError("Trying to read an argument from the stack without reading the arguments before")
             if self_size == 4 and stack_pos == 4:
-                return STRING_ROTATE[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type]
-            if self_size == 4:
+                prefix += STRING_ROTATE[str_type] + STRING_ROTATE[str_type]
+            elif self_size == 4:
                 assert stack_pos == 2
-                return STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type]
-            assert self_size == 2
-            if stack_pos == 6:
-                return STRING_ROTATE[str_type] + commands[self.name][str_type]
-            if stack_pos == 4:
-                return STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type]
-            assert stack_pos == 2
-            return STRING_PUSH_WORD[str_type] + STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + commands[self.name][str_type] + STRING_SKIP[str_type] + STRING_SKIP[str_type]
+                prefix += STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + STRING_ROTATE[str_type]
+                suffix += STRING_SKIP[str_type]
+            elif stack_pos == 6:
+                prefix += STRING_ROTATE[str_type]
+            elif stack_pos == 4:
+                prefix += STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type]
+                suffix += STRING_SKIP[str_type]
+            elif stack_pos == 2:
+                prefix += STRING_PUSH_WORD[str_type] + STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type]
+                suffix += STRING_SKIP[str_type] + STRING_SKIP[str_type]
+            else:
+                assert stack_pos == 0
+            return prefix + commands[self.name][str_type] + suffix
         assert self.name in special_commands
         # Create a local copy because we shouldn't modify the original
         offset = self.offset
@@ -518,6 +525,7 @@ SET_STRING_GENDER        = {'unicode': r'\UE09A\0E', 'ascii': r'\9A\0E'}
 STRING_SKIP              = {'unicode': r'\UE085',    'ascii': r'\85'}
 STRING_ROTATE            = {'unicode': r'\UE086',    'ascii': r'\86'}
 STRING_PUSH_WORD         = {'unicode': r'\UE09A\03\20\20', 'ascii': r'\9A\03\20\20'}
+STRING_SELECT_CASE       = {'unicode': r'\UE09A\0F', 'ascii': r'\9A\0F'}
 
 class Language:
     def __init__(self):
