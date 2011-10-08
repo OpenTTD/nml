@@ -311,16 +311,15 @@ class StringCommand(object):
                 raise generic.ScriptError("Trying to read an argument from the stack without reading the arguments before")
             if self_size == 4 and stack_pos == 4:
                 prefix += STRING_ROTATE[str_type] + STRING_ROTATE[str_type]
-            elif self_size == 4:
-                assert stack_pos == 2
+            elif self_size == 4 and stack_pos == 2:
                 prefix += STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type] + STRING_ROTATE[str_type]
                 suffix += STRING_SKIP[str_type]
-            elif stack_pos == 6:
+            elif self_size == 2 and stack_pos == 6:
                 prefix += STRING_ROTATE[str_type]
-            elif stack_pos == 4:
+            elif self_size == 2 and stack_pos == 4:
                 prefix += STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type]
                 suffix += STRING_SKIP[str_type]
-            elif stack_pos == 2:
+            elif self_size == 2 and stack_pos == 2:
                 prefix += STRING_PUSH_WORD[str_type] + STRING_PUSH_WORD[str_type] + STRING_ROTATE[str_type]
                 suffix += STRING_SKIP[str_type] + STRING_SKIP[str_type]
             else:
