@@ -161,7 +161,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
     def sprite_encode_tile(self, sprite, data):
         size_x, size_y = sprite.size
-        if size_x > 255: raise generic.ScriptError("sprites wider than 255px are not supported")
+        if size_y > 255: raise generic.ScriptError("sprites higher than 255px are not supported")
         data_output = []
         offsets = size_y * [0]
         for y in range(size_y):
