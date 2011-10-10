@@ -68,8 +68,8 @@ palmap_w2d = [
         208, 209, 210, 211, 212, 213, 214,   1, # 208..215
           2, 245, 246, 247, 248, 249, 250, 251, # 216..223
         252, 253, 254, 229, 230, 231, 227, 228, # 224..231
-        235, 236, 237, 238, 232, 233, 234, 239, # 232..239
-        240, 241, 242, 244, 243,   9, 218, 219, # 240..247
+        232, 233, 234, 235, 236, 237, 238, 239, # 232..239
+        240, 241, 242, 243, 244,   9, 218, 219, # 240..247
         220, 221, 222, 223, 224, 225, 226, 255, # 248..255
 ]
 
@@ -175,12 +175,13 @@ class RecolourSpriteAction(RealSpriteAction):
             if assignment.value.max is not None and assignment.name.max.value - assignment.name.min.value != assignment.value.max.value - assignment.value.min.value:
                 raise generic.ScriptError("From and to ranges in a recolour block need to have the same size", assignment.pos)
             for i in range(assignment.name.max.value - assignment.name.min.value + 1):
-                if 0xD7 <= i <= 0xE2:
-                    raise generic.ScriptError("Trying to set recolour index 0x%X which is reserved" % i, assignment.pos)
+                idx = assignment.name.min.value + i
+                if 0xD7 <= idx <= 0xE2:
+                    raise generic.ScriptError("Trying to set recolour index 0x%X which is reserved" % idx, assignment.pos)
                 val = assignment.value.min.value
                 if assignment.value.max is not None:
                     val += i
-                colour_mapping[assignment.name.min.value + i] = val
+                colour_mapping[idx] = val
         for i in range(256):
             if 0xD7 <= i <= 0xE2:
                 colour = 0
