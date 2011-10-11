@@ -105,7 +105,7 @@ callbacks[0x03].update(general_vehicle_cbs)
 
 # Canals
 callbacks[0x05] = {
-    'sprite_offset' : {'type': 'cb', 'num': 0x147},
+    'sprite_offset' : {'type': 'cb', 'num': 0x147, 'flag_bit': 0},
     'default' : {'type': 'cargo', 'num': None},
 }
 

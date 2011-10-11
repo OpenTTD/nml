@@ -164,13 +164,6 @@ varact2vars_canals = {
     'random_bits'  : {'var': 0x83, 'start': 0, 'size': 8},
 }
 
-varact2vars_aircraft = {
-    #0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
-    #for aircraft speed
-    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
-    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
-    #No such thing as identical to vehicle_is_in_depot exists for aircraft
-}
 
 varact2vars_industrytiles = {
     'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
