@@ -267,8 +267,12 @@ class OutputGRF(output_base.BinaryOutputBase):
                 sprite, xoffset, yoffset = self.crop_sprite(sprite, xoffset, yoffset)
         compression &= ~0x40
         data = list(sprite.getdata())
-        if orig_pal == "WIN" and self.palette == "DOS":
-            data = [palmap_w2d[x] for x in data]
+        if orig_pal == "WIN":
+            for c in data:
+                if 0x01 <= c <= 0x09 or 0xF6 <= c <= 0xFE:
+                    raise generic.ScriptError("Using magic pink in a windows paletted sprite.")
+            if self.palette == "DOS":
+                data = [palmap_w2d[x] for x in data]
         tile_data = self.sprite_encode_tile(sprite, data)
         compressed_data = self.sprite_compress(data)
         tile_compressed_data =self.sprite_compress(tile_data) 

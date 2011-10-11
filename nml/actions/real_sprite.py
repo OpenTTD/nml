@@ -76,8 +76,8 @@ palmap_w2d = [
 def convert_palette(pal):
     ret = 256 * [0]
     for idx, colour in enumerate(pal):
-        if 0xD7 <= idx <= 0xE2:
-            continue
+        if 0xD7 <= idx <= 0xE2 and idx != colour:
+            raise generic.ScriptError("Indices 0xD7..0xE2 are not allowed in recolour sprites when the output is in the WIN palette")
         ret[palmap_d2w[idx]] = palmap_d2w[colour]
     return ret
 
@@ -176,16 +176,12 @@ class RecolourSpriteAction(RealSpriteAction):
                 raise generic.ScriptError("From and to ranges in a recolour block need to have the same size", assignment.pos)
             for i in range(assignment.name.max.value - assignment.name.min.value + 1):
                 idx = assignment.name.min.value + i
-                if 0xD7 <= idx <= 0xE2:
-                    raise generic.ScriptError("Trying to set recolour index 0x%X which is reserved" % idx, assignment.pos)
                 val = assignment.value.min.value
                 if assignment.value.max is not None:
                     val += i
                 colour_mapping[idx] = val
         for i in range(256):
-            if 0xD7 <= i <= 0xE2:
-                colour = 0
-            elif i in colour_mapping:
+            if i in colour_mapping:
                 colour = colour_mapping[i]
             else:
                 colour = i
