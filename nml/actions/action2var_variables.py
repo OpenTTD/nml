@@ -153,9 +153,23 @@ varact2vars_aircraft = {
     #No such thing as identical to vehicle_is_in_depot exists for aircraft
 }
 varact2vars_aircraft.update(varact2vars_vehicles)
-    
+
 varact2vars60x_vehicles = {
     'count_veh_id': {'var': 0x60, 'start': 0, 'size': 8},
+}
+    
+varact2vars_canals = {
+    'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8},
+    'terrain_type' : {'var': 0x81, 'start': 0, 'size': 8},
+    'random_bits'  : {'var': 0x83, 'start': 0, 'size': 8},
+}
+
+varact2vars_aircraft = {
+    #0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
+    #for aircraft speed
+    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+    #No such thing as identical to vehicle_is_in_depot exists for aircraft
 }
 
 varact2vars_industrytiles = {
@@ -392,6 +406,7 @@ varact2vars[0x02] = varact2vars_ships
 varact2vars60x[0x02] = varact2vars60x_vehicles
 varact2vars[0x03] = varact2vars_aircraft
 varact2vars60x[0x03] = varact2vars60x_vehicles
+varact2vars[0x05] = varact2vars_canals
 varact2vars[0x09] = varact2vars_industrytiles
 varact2vars60x[0x09] = varact2vars60x_industrytiles
 varact2vars[0x0A] = varact2vars_industries

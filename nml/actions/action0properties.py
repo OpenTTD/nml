@@ -338,6 +338,10 @@ properties[0x03].update(general_veh_props)
 
 # TODO: Feature 0x04 .. 0x06 (Stations, Canals, Bridges)
 
+properties[0x05] = {
+    'graphic_flags' : {'size': 1, 'num': 0x09},
+}
+
 #
 # Feature 0x07 (Houses)
 #

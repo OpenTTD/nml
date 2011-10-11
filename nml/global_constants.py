@@ -141,6 +141,20 @@ constant_numbers = {
     #for those, who can't tell the difference between a train and an aircraft:
     'VEHICLE_FLAG_2CC' : 1,
 
+    #Graphic flags for waterfeatures
+    'WATERFEATURE_ALTERNATIVE_SPRITES' : 0,
+
+    #IDs for waterfeatures
+    'WF_WATERCLIFFS' : 0x00,
+    'WF_LOCKS'       : 0x01,
+    'WF_DIKES'       : 0x02,
+    'WF_CANAL_GUI'   : 0x03,
+    'WF_FLAT_DOCKS'  : 0x04,
+    'WF_RIVER_SLOPE' : 0x05,
+    'WF_RIVERBANKS'  : 0x06,
+    'WF_RIVER_GUI'   : 0x07,
+    'WF_BUOY'        : 0x08,
+
     #ai flags
     'AI_FLAG_PASSENGER' : 0x01,
     'AI_FLAG_CARGO'     : 0x00,

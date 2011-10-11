@@ -103,8 +103,9 @@ callbacks[0x03].update(general_vehicle_cbs)
 
 # Stations (0x04) are not yet implemented
 
-# Canals (missing callbacks)
+# Canals
 callbacks[0x05] = {
+    'sprite_offset' : {'type': 'cb', 'num': 0x147},
     'default' : {'type': 'cargo', 'num': None},
 }
 
