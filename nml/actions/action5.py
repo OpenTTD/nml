@@ -8,18 +8,18 @@ class Action5(base_action.BaseAction):
         self.offset = offset
 
     def prepare_output(self):
-        if self.offset != 0:
+        if self.offset is not None:
             self.type |= 0x80
 
     def write(self, file):
         #<Sprite-number> * <Length> 05 <type> <num-sprites> [<offset>]
-        size = 5 if self.offset == 0 else 8
+        size = 5 if self.offset is None else 8
         file.start_sprite(size)
         file.print_bytex(0x05)
         file.print_bytex(self.type)
         file.print_bytex(0xFF)
         file.print_word(self.num_sprites)
-        if self.offset != 0:
+        if self.offset is not None:
             file.print_bytex(0xFF)
             file.print_word(self.offset)
         file.newline()
@@ -71,6 +71,7 @@ def parse_action5(replaces):
     if replaces.type.value not in action5_table:
         raise generic.ScriptError(replaces.type.value + " is not a valid sprite replacement type", replaces.type.pos)
     type_id, num_required, block_type = action5_table[replaces.type.value]
+    offset = None
 
     if block_type == Action5BlockType.FIXED:
         if num_sprites < num_required:
@@ -85,7 +86,9 @@ def parse_action5(replaces):
     elif block_type == Action5BlockType.OFFSET:
         if num_sprites + replaces.offset > num_required:
             generic.print_warning("Exceeding the limit of %d spriets for sprite replacement type '%s', extra sprites may be ignored" % (num_required, replaces.type), replaces.pos)
+        if replaces.offset != 0 or num_sprites != num_required:
+            offset = replaces.offset
     else:
         assert 0
 
-    return [Action5(type_id, num_sprites, replaces.offset)] + real_sprite_list
+    return [Action5(type_id, num_sprites, offset)] + real_sprite_list
