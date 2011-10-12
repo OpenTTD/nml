@@ -590,9 +590,9 @@ constant_numbers = {
     'IND_LIFE_TYPE_ORGANIC'              : 0x02,
     'IND_LIFE_TYPE_PROCESSING'           : 0x04,
 
-    #traffic side (right hand traffic when bit 4 is set)
-    'TRAFFIC_SIDE_LEFT'                  : 0x00,
-    'TRAFFIC_SIDE_RIGHT'                 : 0x10,
+    #traffic side (bool, true = right hand side)
+    'TRAFFIC_SIDE_LEFT'                  : 0,
+    'TRAFFIC_SIDE_RIGHT'                 : 1,
 
     #which platform has loaded this grf
     'PLATFORM_TTDPATCH'                  : 0x00,
@@ -1095,8 +1095,6 @@ def param_from_info(info, pos):
 global_parameters = {
     'climate'                            : {'num': 0x83, 'size': 1},
     'loading_stage'                      : {'num': 0x84, 'size': 4},
-    'ttdpatch_flags'                     : {'num': 0x85, 'size': 4},
-    'traffic_side'                       : {'num': 0x86, 'size': 1},
     'ttdpatch_version'                   : {'num': 0x8B, 'size': 4},
     'current_palette'                    : {'num': 0x8D, 'size': 1},
     'traininfo_y_offset'                 : {'num': 0x8E, 'size': 1, 'writable': 1, 'function': signextend},
@@ -1125,6 +1123,7 @@ def misc_grf_bit(info, pos):
     return expression.SpecialParameter(generic.reverse_lookup(misc_grf_bits, info), info, misc_bit_write, misc_bit_read, True, pos)
 
 misc_grf_bits = {
+    'traffic_side'                       : {'param': 0x86, 'bit': 4},
     'desert_paved_roads'                 : {'param': 0x9E, 'bit': 1},
     'train_width_32_px'                  : {'param': 0x9E, 'bit': 3},
 }
