@@ -173,17 +173,31 @@ class OutputGRF(output_base.BinaryOutputBase):
                 data_output += [0x80, 0]
                 continue
             x1 = 0
-            while True:
-                while x1 < size_x and row_data[x1] == 0: x1 += 1
-                x2 = x1 + 1
-                while x2 < size_x and row_data[x2] != 0 and (x2 - x1) < 0x7f: x2 += 1
-                high_byte = x2 - x1
-                if x2 == last + 1: high_byte |= 0x80
-                data_output.append(high_byte)
+            while x1 < size_x and row_data[x1] == 0:
+                x1 += 1
+
+            if x1 == size_x:
+                # Completely transparant line
+                data_output.append(0)
+                data_output.append(0)
+                continue
+
+            x2 = size_x
+            while row_data[x2 - 1] == 0:
+                x2 -= 1
+
+            # Chunk can start maximu at 0xFF and has maximum width of 0x7F
+            if x2 - 0xFF > 0x7F:
+                return None
+            if x2 - x1 > 0x7F:
+                #too large to fit in one chunk, so split it up.
+                data_output.append(0x7F)
                 data_output.append(x1)
-                data_output += row_data[x1 : x2]
-                if x2 == last + 1: break
-                x1 = x2
+                data_output += row_data[x1 : x1 + 0x7F]
+                x1 += 0x7F
+            data_output.append((x2 - x1) | 0x80)
+            data_output.append(x1)
+            data_output += row_data[x1 : x2]
         output = []
         for offset in offsets:
             output.append(offset & 0xFF)
@@ -270,14 +284,15 @@ class OutputGRF(output_base.BinaryOutputBase):
         if orig_pal == "WIN":
             if self.palette == "DOS":
                 data = [palmap_w2d[x] for x in data]
-        tile_data = self.sprite_encode_tile(sprite, data)
         compressed_data = self.sprite_compress(data)
-        tile_compressed_data =self.sprite_compress(tile_data) 
         data_len = len(data)
-        if len(tile_compressed_data) < len(compressed_data):
-            compression |= 8
-            compressed_data = tile_compressed_data
-            data_len = len(tile_data)
+        tile_data = self.sprite_encode_tile(sprite, data)
+        if tile_data is not None:
+            tile_compressed_data = self.sprite_compress(tile_data) 
+            if len(tile_compressed_data) < len(compressed_data):
+                compression |= 8
+                compressed_data = tile_compressed_data
+                data_len = len(tile_data)
         self.wsprite_encoderegular(sprite, compressed_data, data_len, xoffset, yoffset, compression)
 
     def print_named_filedata(self, filename):
