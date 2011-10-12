@@ -279,7 +279,6 @@ class OutputGRF(output_base.BinaryOutputBase):
                 yoffset = 0
             else:
                 sprite, xoffset, yoffset = self.crop_sprite(sprite, xoffset, yoffset)
-        compression &= ~0x40
         data = list(sprite.getdata())
         if orig_pal == "WIN":
             if self.palette == "DOS":
