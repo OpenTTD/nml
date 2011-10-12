@@ -76,8 +76,10 @@ palmap_w2d = [
 def convert_palette(pal):
     ret = 256 * [0]
     for idx, colour in enumerate(pal):
-        if 0xD7 <= idx <= 0xE2 and idx != colour:
-            raise generic.ScriptError("Indices 0xD7..0xE2 are not allowed in recolour sprites when the output is in the WIN palette")
+        if 0xD7 <= idx <= 0xE2:
+            if idx != colour:
+                raise generic.ScriptError("Indices 0xD7..0xE2 are not allowed in recolour sprites when the output is in the WIN palette")
+            continue
         ret[palmap_d2w[idx]] = palmap_d2w[colour]
     return ret
 
