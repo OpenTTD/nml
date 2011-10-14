@@ -3,6 +3,7 @@ from nml.actions import action8, action14
 from nml.ast import base_statement
 
 palette_node = None
+blitter_node = None
 
 def set_palette_used(pal):
     """
@@ -13,6 +14,16 @@ def set_palette_used(pal):
     """
     if palette_node:
         palette_node.pal = pal
+
+def set_preferred_blitter(blitter):
+    """
+    Set the preferred blitter in the action14 node, if applicable
+    
+    @param blitter: The blitter to set
+    @type blitter: C{str} of length 1
+    """
+    if blitter_node:
+        blitter_node.blitter = blitter
 
 class GRF(base_statement.BaseStatement):
     """
@@ -91,12 +102,14 @@ class GRF(base_statement.BaseStatement):
         self.min_compatible_version.debug_print(indentation + 4)
 
     def get_action_list(self):
-        global palette_node
+        global palette_node, blitter_node
         palette_node = action14.UsedPaletteNode("A")
+        blitter_node = action14.BlitterNode("8")
         action14_root = action14.BranchNode("INFO")
         action14.grf_name_desc_actions(action14_root, self.name, self.desc, self.version, self.min_compatible_version)
         action14.param_desc_actions(action14_root, self.params)
         action14_root.subnodes.append(palette_node)
+        action14_root.subnodes.append(blitter_node)
         return action14.get_actions(action14_root) + [action8.Action8(self.grfid, self.name, self.desc)]
 
     def __str__(self):

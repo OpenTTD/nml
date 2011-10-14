@@ -159,6 +159,17 @@ class UsedPaletteNode(BinaryNode):
         file.print_string(self.pal, False, True)
         file.newline()
 
+class BlitterNode(BinaryNode):
+    def __init__(self, blitter):
+        BinaryNode.__init__(self, "BLTR", 1)
+        self.blitter = blitter
+
+    def write(self, file):
+        self.write_type_id(file)
+        file.print_word(self.size)
+        file.print_string(self.blitter, False, True)
+        file.newline()
+
 class SettingMaskNode(BinaryNode):
     def __init__(self, param_num, first_bit, num_bits):
         BinaryNode.__init__(self, "MASK", 3)
