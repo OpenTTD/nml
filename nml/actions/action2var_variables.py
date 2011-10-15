@@ -157,9 +157,9 @@ varact2vars_aircraft.update(varact2vars_vehicles)
 varact2vars60x_vehicles = {
     'count_veh_id': {'var': 0x60, 'start': 0, 'size': 8},
 }
-    
+
 varact2vars_canals = {
-    'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8},
+    'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 8, 1)},
     'terrain_type' : {'var': 0x81, 'start': 0, 'size': 8},
     'random_bits'  : {'var': 0x83, 'start': 0, 'size': 8},
 }
@@ -181,7 +181,7 @@ def tile_offset(name, args, pos, info, min, max):
         raise generic.ScriptError("'%s'() requires 2 arguments, encountered %d" % (name, len(args)), pos)
     for arg in args:
         if isinstance(arg, expression.ConstantNumeric):
-            generic.check_range(arg.value, min, max, "Argument of '%s'" % name, arg.pos)    
+            generic.check_range(arg.value, min, max, "Argument of '%s'" % name, arg.pos)
 
     x = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xF), args[0].pos)
     y = expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xF), args[1].pos)
