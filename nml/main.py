@@ -244,7 +244,7 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
         outputfile.palette = used_palette
     #If there are any 32bpp sprites hint to openttd that we'd like a 32bpp blitter
     if alt_sprites.alt_sprites_list:
-        grf.set_palette_used("3")
+        grf.set_preferred_blitter("3")
 
     if action8_index != -1:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
