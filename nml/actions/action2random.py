@@ -113,7 +113,7 @@ def parse_randomswitch_type(random_switch):
         else:
             count = 0
             count_expr = expression.BinOp(nmlop.STO_TMP, random_switch.type_count, expression.ConstantNumeric(0x100), type_pos)
-        count = rtype_info['value'] | count
+        count = type_info['value'] | count
 
     if random_switch.triggers.value != 0 and not type_info['triggers']:
         raise generic.ScriptError("Triggers may not be set for random_switch feature %d and type '%s'. " % (feature_val, type_str), type_pos)
