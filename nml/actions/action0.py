@@ -483,6 +483,20 @@ def get_engine_override_action(override):
     act0.num_ids = 1
     act0.prop_list.append(EngineOverrideProp(override.source_grfid, override.grfid))
     return [act0]
+    
+def parse_sort_block(feature, vehid_list):
+    prop_num = [0x1A, 0x20, 0x1B, 0x1B]
+    action_list = []
+    last = vehid_list[0]
+    idx = len(vehid_list) - 1
+    while idx >= 0:
+        cur = vehid_list[idx]
+        prop = Action0Property(prop_num[feature], [last], 3)
+        action_list.append(Action0(feature, cur.value))
+        action_list[-1].prop_list.append(prop)
+        last = cur
+        idx -= 1
+    return action_list
 
 def get_callback_flags_actions(feature, id, flags):
     """
