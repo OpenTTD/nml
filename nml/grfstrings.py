@@ -36,7 +36,7 @@ def is_ascii_string(string):
     i = 0
     while i < len(string):
         if string[i] != '\\':
-            if ord(string[i]) >= 0x80:
+            if ord(string[i]) >= 0x7B:
                 return False
             i += 1
         else:
