@@ -176,6 +176,8 @@ commands = {
 'DATE_LONG':      {'unicode': r'\UE09A\16', 'ascii': r'\9A\16', 'size': 4},
 'DATE_SHORT':     {'unicode': r'\UE09A\17', 'ascii': r'\9A\17', 'size': 4},
 'POWER':          {'unicode': r'\UE09A\18', 'ascii': r'\9A\18', 'size': 2},
+'VOLUME_SHORT':   {'unicode': r'\UE09A\19', 'ascii': r'\9A\19', 'size': 2},
+'WEIGHT_SHORT':   {'unicode': r'\UE09A\1A', 'ascii': r'\9A\1A', 'size': 2},
 
 # Colors
 'BLUE':           {'unicode': r'\UE088',    'ascii': r'\88'},
