@@ -112,7 +112,7 @@ varact2vars_vehicles = {
     'vehicle_is_stopped' : {'var': 0xB2, 'start': 1, 'size': 1},
     'vehicle_is_crashed' : {'var': 0xB2, 'start': 7, 'size': 1},
     'vehicle_is_broken' : {'var': 0xCB, 'start': 0, 'size': 8, 'function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(1, var.pos), var.pos)},
-    'date_of_last_service' : {'var': 0x92, 'start': 0, 'size': 16, 'function': func_add_constant(701265)},
+    'date_of_last_service' : {'var': 0x4B, 'start': 0, 'size': 32},
     'breakdowns_since_last_service' : {'var': 0xCA, 'start': 0, 'size': 8},
     'reliability' : {'var': 0xCE, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 101, 0x10000)},
     'age_in_days' : {'var': 0xC0, 'start': 0, 'size': 16},
