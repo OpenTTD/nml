@@ -4,10 +4,10 @@ from .parameter import parse_string_to_dword
 from .string_literal import StringLiteral
 
 storage_op_info = {
-    'STORE_PERM' : {'store': True,  'perm': True,  'grfid': False},
-    'STORE_TEMP' : {'store': True,  'perm': False, 'grfid': False},
-    'LOAD_PERM'  : {'store': False, 'perm': True,  'grfid': True},
-    'LOAD_TEMP'  : {'store': False, 'perm': False, 'grfid': False},
+    'STORE_PERM' : {'store': True,  'perm': True,  'grfid': False, 'max': 0x0F},
+    'STORE_TEMP' : {'store': True,  'perm': False, 'grfid': False, 'max': 0x10F},
+    'LOAD_PERM'  : {'store': False, 'perm': True,  'grfid': True,  'max': 0x0F},
+    'LOAD_TEMP'  : {'store': False, 'perm': False, 'grfid': False, 'max': 0xFF},
 }
 
 class StorageOp(Expression):
@@ -88,6 +88,8 @@ class StorageOp(Expression):
         register = self.register.reduce(id_dicts)
         if register.type() != Type.INTEGER:
             raise generic.ScriptError("Register to access must be an integer.", register.pos)
+        if isinstance(register, ConstantNumeric) and register.value > self.info['max']:
+            raise generic.ScriptError("Maximum register for %s is %d" % (self.name, self.info['max']), self.pos)
         args.append(register)
 
         if self.grfid is not None:
