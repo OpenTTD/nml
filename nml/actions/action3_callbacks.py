@@ -23,12 +23,13 @@ general_vehicle_cbs = {
     'start_stop' : {'type': 'cb', 'num': 0x31},
     'every_32_days' : {'type': 'cb', 'num': 0x32},
     'sound_effect' : {'type': 'cb', 'num': 0x33, 'flag_bit': 7},
+    'refit_costs' : {'type': 'cb', 'num': 0x15E},
 }
 
 # Trains
 callbacks[0x00] = {
     'visual_effect_and_powered' : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'shorten_vehicle' : {'type': 'cb', 'num': 0x11, 'flag_bit': 1}, # Should this become 'length' at some point (with inverted meaning)? 
+    'shorten_vehicle' : {'type': 'cb', 'num': 0x11, 'flag_bit': 1}, # Should this become 'length' at some point (with inverted meaning)?
     'cargo_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
     'articulated_part' : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'purchase': 1}, # Don't add separate purchase CB here
@@ -52,7 +53,7 @@ callbacks[0x00].update(general_vehicle_cbs)
 # Road vehicles
 callbacks[0x01] = {
     'visual_effect' : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'shorten_vehicle' : {'type': 'cb', 'num': 0x11, 'flag_bit': 1}, # Should this become 'length' at some point (with inverted meaning)? 
+    'shorten_vehicle' : {'type': 'cb', 'num': 0x11, 'flag_bit': 1}, # Should this become 'length' at some point (with inverted meaning)?
     'cargo_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
     'articulated_part' : {'type': 'cb', 'num': 0x16, 'flag_bit': 4,  'purchase': 1}, # Don't add separate purchase CB here

@@ -127,19 +127,24 @@ constant_numbers = {
     'TRAIN_FLAG_2CC'  : 1,
     'TRAIN_FLAG_MU'   : 2,
     'TRAIN_FLAG_FLIP' : 3,
+    'TRAIN_FLAG_AUTOREFIT': 4,
 
     #roadveh misc flags
     'ROADVEH_FLAG_TRAM' : 0,
     'ROADVEH_FLAG_2CC'  : 1,
+    'ROADVEH_FLAG_AUTOREFIT': 4,
 
     #ship misc flags
     'SHIP_FLAG_2CC'  : 1,
+    'SHIP_FLAG_AUTOREFIT': 4,
 
     #aircrafts misc flags
     'AIRCRAFT_FLAG_2CC'  : 1,
+    'AIRCRAFT_FLAG_AUTOREFIT': 4,
 
     #for those, who can't tell the difference between a train and an aircraft:
     'VEHICLE_FLAG_2CC' : 1,
+    'VEHICLE_FLAG_AUTOREFIT': 4,
 
     #Graphic flags for waterfeatures
     'WATERFEATURE_ALTERNATIVE_SPRITES' : 0,
@@ -168,6 +173,8 @@ constant_numbers = {
     'CB_RESULT_32_DAYS_COLOUR_MAPPING'     : 1,
 
     'CB_RESULT_COLOUR_MAPPING_ADD_CC'      : 0x4000,
+
+    'CB_RESULT_AUTOREFIT'                  : 0x4000,
 
     'CB_RESULT_NO_SOUND'                   : 0x7EFF, # Never a valid sound id
 
@@ -412,10 +419,10 @@ constant_numbers = {
 
     'CB_RESULT_IND_DO_NOT_USE_SPECIAL'  : 0x00,
     'CB_RESULT_IND_USE_SPECIAL'         : 0x01,
-    
+
     'CB_RESULT_IND_ALLOW'               : 0x00,
     'CB_RESULT_IND_DISALLOW'            : 0x01,
-    
+
     'CB_RESULT_LOCATION_ALLOW'                        : 0x400,
     'CB_RESULT_LOCATION_DISALLOW'                     : 0x401,
     'CB_RESULT_LOCATION_DISALLOW_ONLY_RAINFOREST'     : 0x402,
