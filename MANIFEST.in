@@ -3,5 +3,6 @@ recursive-include docs *.html *.gpl *.css
 recursive-include regression *.nml *.lng *.grf *.nfo
 global-include *.png *.pcx *.jpg
 prune regression/output
+include Makefile
 include regression/Makefile
 include regression/beef.wav
