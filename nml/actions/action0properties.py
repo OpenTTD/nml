@@ -717,7 +717,8 @@ def railtype_list(value, prop_num):
 
 properties[0x10] = {
     'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4},
-    'name'                     : {'size': 2, 'num': 0x09, 'string': 0xDC},
+    'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
+    'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
     'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
     'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
     'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
