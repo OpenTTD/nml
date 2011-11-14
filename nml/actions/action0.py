@@ -229,7 +229,7 @@ def get_cargolist_action(cargo_list):
 def get_railtypelist_action(railtype_list):
     action6.free_parameters.save()
     act6 = action6.Action6()
-    
+
     action_list = []
     action0 = Action0(0x08, 0)
     id_table = []
@@ -274,12 +274,12 @@ class ByteListProp(object):
 
 def get_snowlinetable_action(snowline_table):
     assert(len(snowline_table) == 12*32)
-    
+
     action6.free_parameters.save()
     action_list = []
     tmp_param_map = {} #Cache for tmp parameters
     act6 = action6.Action6()
-    
+
     act0 = Action0(0x08, 0)
     act0.num_ids = 1
 
@@ -309,7 +309,7 @@ def get_snowlinetable_action(snowline_table):
         expr = expression.BinOp(nmlop.OR, expr, val3)
         expr = expression.BinOp(nmlop.OR, expr, val4)
         expr = expr.reduce()
-        
+
         #Cache lookup, saves some ActionDs
         if expr in tmp_param_map:
             tmp_param, tmp_param_actions = tmp_param_map[expr], []
@@ -483,7 +483,7 @@ def get_engine_override_action(override):
     act0.num_ids = 1
     act0.prop_list.append(EngineOverrideProp(override.source_grfid, override.grfid))
     return [act0]
-    
+
 def parse_sort_block(feature, vehid_list):
     prop_num = [0x1A, 0x20, 0x1B, 0x1B]
     action_list = []
