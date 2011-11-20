@@ -104,13 +104,6 @@ def parse_conditional(expr):
 
 def cond_skip_actions(action_list, param, condtype, value, value_size):
     if len(action_list) == 0: return []
-    if len(free_labels.states) == 0:
-        # We only save a single state (at toplevel nml-blocks) because
-        # we don't know at the start of the block how many labels we need.
-        # Getting the same label for a block that was already used in a
-        # sub-block would be very bad, since the action7/9 would skip
-        # to the action10 of the sub-block.
-        free_labels.save()
     actions = []
     start, length = 0, 0
     # Whether to allow not-skipping, using action7 or using action9
@@ -157,11 +150,21 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
         skip_opts = act_opts
     assert start == len(action_list)
 
-    if len(free_labels.states) == 1:
-        free_labels.restore()
     return actions
 
+recursive_cond_blocks = 0    
+
 def parse_conditional_block(cond_list):
+    global recursive_cond_blocks
+    recursive_cond_blocks += 1
+    if recursive_cond_blocks == 1:
+        # We only save a single state (at toplevel nml-blocks) because
+        # we don't know at the start of the block how many labels we need.
+        # Getting the same label for a block that was already used in a
+        # sub-block would be very bad, since the action7/9 would skip
+        # to the action10 of the sub-block.
+        free_labels.save()
+
     blocks = []
     for cond in cond_list.statements:
         if isinstance(cond.expr, expression.ConstantNumeric):
@@ -219,10 +222,18 @@ def parse_conditional_block(cond_list):
                 action_list.append(actionD.ActionD(expression.ConstantNumeric(block['param_dst']), expression.ConstantNumeric(block['param_dst']), nmlop.AND, expression.ConstantNumeric(param_skip_all)))
         action_list.extend(cond_skip_actions(block['action_list'], param, block['cond_type'], block['cond_value'], block['cond_value_size']))
 
+    if recursive_cond_blocks == 1:
+        free_labels.restore()
+    recursive_cond_blocks -= 1
     action6.free_parameters.restore()
     return action_list
 
 def parse_loop_block(loop):
+    global recursive_cond_blocks
+    recursive_cond_blocks += 1
+    if recursive_cond_blocks == 1:
+        free_labels.save()
+
     action6.free_parameters.save()
     begin_label = free_labels.pop_unique()
     action_list = [action10.Action10(begin_label)]
@@ -236,5 +247,8 @@ def parse_loop_block(loop):
     block_actions.append(UnconditionalSkipAction(9, begin_label))
     action_list.extend(cond_skip_actions(block_actions, cond_param, cond_type, cond_value, cond_value_size))
 
+    if recursive_cond_blocks == 1:
+        free_labels.restore()
+    recursive_cond_blocks -= 1
     action6.free_parameters.restore()
     return action_list
