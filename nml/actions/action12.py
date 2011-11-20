@@ -25,6 +25,7 @@ font_sizes = {
     'NORMAL' : 0,
     'SMALL'  : 1,
     'LARGE'  : 2,
+    'MONO'   : 3,
 }
 
 def parse_action12(font_glyphs):
