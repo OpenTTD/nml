@@ -24,7 +24,7 @@ def check_range(value, min_value, max_value, name, pos):
     @type value: C{int}
 
     @param min_value: Minimum valid value.
-    @type min_value; C{int}
+    @type min_value: C{int}
 
     @param max_value: Maximum valid value.
     @type max_value: C{int}

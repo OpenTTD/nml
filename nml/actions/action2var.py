@@ -9,7 +9,7 @@ class Action2Var(action2.Action2):
     return value based on the result of the computation. The return value can
     be either a 15bit integer or a reference to another action2.
 
-    @ivar type_byte: The size (byte, word, double word) and access type (own 
+    @ivar type_byte: The size (byte, word, double word) and access type (own
                      object or related object). 0x89 (own object, double word)
                      and 0x8A (related object, double word) and the only
                      supported values.
@@ -667,10 +667,7 @@ def parse_minmax(value, unit_str, action_list, act6, offset):
     """
     check_range = True
     if unit_str is not None:
-        if not isinstance(value, expression.ConstantNumeric):
-            raise generic.ScriptError("Using a unit is only allowed in combination with a compile-time constant", value.pos)
-        assert unit_str in unit.units
-        result = expression.ConstantNumeric(int(value.value / unit.units[unit_str]['convert']))
+        raise generic.ScriptError("Using a unit is in switch-ranges is not (temporarily) not supported", value.pos)
     elif isinstance(value, expression.ConstantNumeric):
         result = value
     elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):

@@ -198,6 +198,9 @@ general_veh_props = {
     'name'               : {'num': -1, 'string': None},
 }
 
+def ottd_display_speed(value, divisor, unit):
+    return (value.value / divisor * 10 / 16 * unit.ottd_mul) >> unit.ottd_shift
+
 #
 # Feature 0x00 (Trains)
 #
@@ -205,7 +208,7 @@ general_veh_props = {
 properties[0x00] = {
     'track_type'                   : {'size': 1, 'num': 0x05},
     'ai_special_flag'              : {'size': 1, 'num': 0x08},
-    'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': 3.5790976},
+    'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': 3.5790976, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
     'power'                        : {'size': 2, 'num': 0x0B, 'unit_type': 'power'},
     'running_cost_factor'          : {'size': 1, 'num': 0x0D},
     'running_cost_base'            : {'size': 4, 'num': 0x0E},
@@ -249,7 +252,7 @@ def roadveh_speed_prop(value):
     return props
 
 properties[0x01] = {
-    'speed'                        : {'custom_function' : roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': 7.1581952},
+    'speed'                        : {'custom_function' : roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': 7.1581952, 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
     'running_cost_factor'          : {'size': 1, 'num': 0x09},
     'running_cost_base'            : {'size': 4, 'num': 0x0A},
     'sprite_id'                    : {'size': 1, 'num': 0x0E},
@@ -290,7 +293,7 @@ properties[0x02] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'is_refittable'                : {'size': 1, 'num': 0x09},
     'cost_factor'                  : {'size': 1, 'num': 0x0A},
-    'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': 7.1581952},
+    'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': 7.1581952, 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
     'cargo_capacity'               : {'size': 2, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0F},
     'sound_effect'                 : {'size': 1, 'num': 0x10},
@@ -318,7 +321,7 @@ properties[0x03] = {
     'is_helicopter'                : {'size': 1, 'num': 0x09},
     'is_large'                     : {'size': 1, 'num': 0x0A},
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
-    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.279617},
+    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.279617, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0E},
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},

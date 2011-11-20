@@ -82,6 +82,8 @@ class Unit(object):
         self.name = name
         self.type = unit.units[name]['type']
         self.convert = unit.units[name]['convert']
+        self.ottd_mul = unit.units[name]['ottd_mul']
+        self.ottd_shift = unit.units[name]['ottd_shift']
 
     def __str__(self):
         return self.name

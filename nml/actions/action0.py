@@ -6,6 +6,29 @@ from nml.ast import general
 # Features that use an extended byte as ID (vehicles, sounds)
 action0_extended_byte_id = [0, 1, 2, 3, 0x0C]
 
+def adjust_value(value, org_value, unit, ottd_convert_func):
+    """
+    Make sure that the property value written to the NewGRF will match exactly
+    the value as quoted
+
+    @param value: The value to check, converted to base units
+    @type value: L{Expression}
+
+    @param org_value: The original value as written in the input file
+    @type org_value: L{Expression}
+
+    @param unit: The unit of the org_value
+    @type unit: L{Unit} or C{None}
+
+    @return: The adjusted value
+    @rtype: L{Expression}
+    """
+    while ottd_convert_func(value, unit) > org_value.value:
+        value = expression.ConstantNumeric(int(value.value - 1), value.pos)
+    while ottd_convert_func(value, unit) < org_value.value:
+        value = expression.ConstantNumeric(int(value.value + 1), value.pos)
+    return value
+
 class Action0(base_action.BaseAction):
     def __init__(self, feature, id):
         self.feature = feature
@@ -128,6 +151,9 @@ def parse_property(feature, name, value, id, unit):
     else: assert False
 
     if unit is None or unit.type != 'nfo':
+        # Save the original value to test conversion against it
+        org_value = value
+
         mul = 1
         if 'unit_conversion' in prop: mul = prop['unit_conversion']
         if unit is not None:
@@ -138,6 +164,9 @@ def parse_property(feature, name, value, id, unit):
             if not isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
                 raise generic.ScriptError("Unit conversion specified for property, but no constant value found", value.pos)
             value = expression.ConstantNumeric(int(value.value * mul + 0.5), value.pos)
+
+        if unit is not None and 'adjust_value' in prop:
+            value = adjust_value(value, org_value, unit, prop['adjust_value'])
 
     if isinstance(value, expression.ConstantFloat): # Always round floats
         value = expression.ConstantNumeric(int(value.value + 0.5), value.pos)

@@ -275,7 +275,7 @@ class NMLParser(object):
         t[0] = assignment.Assignment(t[1], t[3], t.lineno(1))
 
     def p_generic_assignment_list(self, t):
-        '''generic_assignment_list : 
+        '''generic_assignment_list :
                                    | generic_assignment_list generic_assignment'''
         t[0] = [] if len(t) == 1 else t[1] + [t[2]]
 
@@ -639,7 +639,7 @@ class NMLParser(object):
     def p_engine_override(self, t):
         'engine_override : ENGINE_OVERRIDE LPAREN expression_list RPAREN SEMICOLON'
         t[0] = override.EngineOverride(t[3], t.lineno(1))
-        
+
     def p_sort_vehicles(self, t):
         'sort_vehicles : SORT_VEHICLES LPAREN expression_list RPAREN SEMICOLON'
         t[0] = sort_vehicles.SortVehicles(t[3], t.lineno(1))
