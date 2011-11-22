@@ -201,6 +201,27 @@ general_veh_props = {
 def ottd_display_speed(value, divisor, unit):
     return (value.value / divisor * 10 / 16 * unit.ottd_mul) >> unit.ottd_shift
 
+class CargotypeListProp(object):
+    def __init__(self, prop_num, data):
+        self.prop_num = prop_num
+        self.data = data
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        file.print_byte(len(self.data))
+        for i, data_val in enumerate(self.data):
+            if i % 8 == 0: file.newline()
+            file.print_bytex(data_val)
+        file.newline()
+
+    def get_size(self):
+        return len(self.data) + 2
+
+def ctt_list(prop_num, value):
+    if not isinstance(value, expression.Array):
+        raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
+    return [CargotypeListProp(prop_num, [val.reduce_constant().value for val in value.values])]
+
 #
 # Feature 0x00 (Trains)
 #
@@ -235,6 +256,8 @@ properties[0x00] = {
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29, 'append_function': append_cargo_type(0x00)},
     'introduction_date'            : {'size': 4, 'num': 0x2A},
     'cargo_age_period'             : {'size': 2, 'num': 0x2B},
+    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x2C, value)},
+    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x2D, value)},
 }
 properties[0x00].update(general_veh_props)
 
@@ -273,6 +296,8 @@ properties[0x01] = {
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     'visual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
+    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x23, value)},
+    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x24, value)},
 }
 properties[0x01].update(general_veh_props)
 
@@ -309,6 +334,8 @@ properties[0x02] = {
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     'visual_effect'                : {'size': 1, 'num': 0x1C},
     'cargo_age_period'             : {'size': 2, 'num': 0x1D},
+    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x1E, value)},
+    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x1F, value)},
 }
 properties[0x02].update(general_veh_props)
 
@@ -336,6 +363,8 @@ properties[0x03] = {
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     'cargo_age_period'             : {'size': 2, 'num': 0x1C},
+    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x1D, value)},
+    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x1E, value)},
 }
 properties[0x03].update(general_veh_props)
 
