@@ -218,7 +218,7 @@ class CargotypeListProp(object):
         return len(self.data) + 2
 
 def ctt_list(prop_num, value):
-    if not isinstance(value, expression.Array):
+    if not isinstance(value, Array):
         raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
     return [CargotypeListProp(prop_num, [val.reduce_constant().value for val in value.values])]
 
