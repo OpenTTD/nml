@@ -125,6 +125,11 @@ base_cost_table = {
     'PR_CLEAR_AQUEDUCT'             : (63, 'PR_CONSTRUCTION'),
     'PR_BUILD_LOCK'                 : (64, 'PR_CONSTRUCTION'),
     'PR_CLEAR_LOCK'                 : (65, 'PR_CONSTRUCTION'),
+    'PR_MAINTENANCE_RAIL'           : (66, 'PR_RUNNING'),
+    'PR_MAINTENANCE_ROAD'           : (67, 'PR_RUNNING'),
+    'PR_MAINTENANCE_CANAL'          : (68, 'PR_RUNNING'),
+    'PR_MAINTENANCE_STATION'        : (69, 'PR_RUNNING'),
+    'PR_MAINTENANCE_AIRPORT'        : (70, 'PR_RUNNING'),
 }
 
 generic_base_costs = ['PR_CONSTRUCTION', 'PR_RUNNING', 'PR_BUILD_VEHICLE']
