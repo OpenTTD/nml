@@ -750,7 +750,7 @@ def railtype_list(value, prop_num):
 
 properties[0x10] = {
     'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4},
-    'name'                     : {'size': 2, 'num': 0x09, 'string': 0xDC},
+    'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
     'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
     'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
     'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
@@ -768,6 +768,7 @@ properties[0x10] = {
     'requires_railtype_list'   : {'custom_function': lambda x: railtype_list(x, 0x18)},
     'introduces_railtype_list' : {'custom_function': lambda x: railtype_list(x, 0x19)},
     'sort_order'               : {'size': 1, 'num': 0x1A},
+    'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
     'maintenance_cost'         : {'size': 2, 'num': 0x1C},
 }
 
