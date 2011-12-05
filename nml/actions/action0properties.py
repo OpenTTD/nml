@@ -684,6 +684,7 @@ properties[0x0D] = {
     'catchment_area'   : {'size': 1, 'num': 0x0E},
     'noise_level'      : {'size': 1, 'num': 0x0F},
     'name'             : {'size': 2, 'num': 0x10, 'string': 0xDC},
+    'maintenance_cost' : {'size': 2, 'num': 0x11},
 }
 
 # Feature 0x0E (Signals) doesn't currently have any action0
@@ -767,6 +768,7 @@ properties[0x10] = {
     'requires_railtype_list'   : {'custom_function': lambda x: railtype_list(x, 0x18)},
     'introduces_railtype_list' : {'custom_function': lambda x: railtype_list(x, 0x19)},
     'sort_order'               : {'size': 1, 'num': 0x1A},
+    'maintenance_cost'         : {'size': 2, 'num': 0x1C},
 }
 
 #
