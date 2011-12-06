@@ -1,0 +1,3 @@
+Changes in 0.2.1 (2011-12-06)
+- Fix: Text files in docs/ were not included in source package
+- Doc: Add GPL v2 header to all .py files
