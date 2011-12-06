@@ -1,6 +1,6 @@
 NML readme
-Last updated:    2011-06-04
-Release version: 0.1.0
+Last updated:    2011-12-06
+Release version: 0.2.1
 ------------------------------------------------------------------------
 
 
@@ -24,7 +24,7 @@ with their associated language, sound and graphic files) into grf
 and / or nfo files.
 
 The documentation about the language can be found on
-http://hg.openttdcoop.org/nml/raw-file/tip/docs/index.html
+http://newgrf-specs.tt-wiki.net/wiki/NML:Main
 
 NML is licensed under the GNU General Public License version 2, or at
 your option, any later version. For more information, see 'license.txt'
@@ -80,6 +80,13 @@ Options:
   -s, --stack           Dump stack when an error occurs
   --grf=<file>          write the resulting grf to <file>
   --nfo=<file>          write nfo output to <file>
+  -M                    output a rule suitable for make describing the
+                        graphics dependencies of the main grf file (requires
+                        input file or --grf)
+  --MF=<file>           When used with -M, specifies a file to write the
+                        dependencies to
+  --MT=<file>           target of the rule emitted by dependency generation
+                        (requires -M)
   -c                    crop extraneous transparent blue from real sprites
   -u                    save uncompressed data in the grf file
   --nml=<file>          write optimized nml to <file>
