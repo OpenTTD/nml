@@ -51,14 +51,19 @@ def parse_actionA(replaces):
     if isinstance(replaces.start_id, expression.ConstantNumeric):
         sprite_num = replaces.start_id.value
     else:
+        action6.free_parameters.save()
         if isinstance(replaces.start_id, expression.Parameter) and isinstance(replaces.start_id.num, expression.ConstantNumeric):
-            param_num = replaces.start_id.num
+            param_num = replaces.start_id.num.value
         else:
             param_num, tmp_param_actions = actionD.get_tmp_parameter(replaces.start_id)
             action_list.extend(tmp_param_actions)
         act6 = action6.Action6()
-        act6.modify_bytes(param_num.value, 2, 3)
+        act6.modify_bytes(param_num, 2, 3)
         action_list.append(act6)
         sprite_num = 0
+        action6.free_parameters.restore()
+        
+    action_list.append(ActionA([(len(real_sprite_list), sprite_num)]))
+    action_list.extend(real_sprite_list)
 
-    return action_list + [ActionA([(len(real_sprite_list), sprite_num)])] + real_sprite_list
+    return action_list
