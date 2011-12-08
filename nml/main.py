@@ -154,7 +154,10 @@ def filename_output_from_input(name, ext):
 def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, forced_palette):
     generic.OnlyOnce.clear()
 
-    script = inputfile.read()
+    try:
+        script = inputfile.read()
+    except UnicodeDecodeError, ex:
+        raise generic.ScriptError('Input file is not utf-8 encoded: %s' % ex)
     # Strip a possible BOM
     script = script.lstrip(unicode(codecs.BOM_UTF8, "utf-8"))
 
