@@ -55,7 +55,7 @@ class Item(base_statement.BaseStatementList):
                 if not isinstance(existing_id, expression.ConstantNumeric):
                     raise generic.ScriptError("Item with name '%s' has already been assigned a non-constant ID, extending this item definition is not possible." % self.name.value, self.pos)
                 if self.id is not None and (not isinstance(self.id, expression.ConstantNumeric) or existing_id.value != self.id.value):
-                    raise generic.ScriptError("Item with name '%s' has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, existing_id.value, self.id.value), self.pos)
+                    raise generic.ScriptError("Duplicate item with name '%s'. This item has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, existing_id.value, self.id.value), self.pos)
                 self.id = existing_id
 
         if self.id is None:
