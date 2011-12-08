@@ -148,12 +148,26 @@ class OnlyOnce:
     def clear(cls):
         cls.seen = {}
 
+do_print_warnings = True
+
+def disable_warnings():
+    global do_print_warnings
+    do_print_warnings = False
+
 def print_warning(msg, pos = None):
     """
     Output a warning message to the user.
     """
+    if not do_print_warnings:
+        return
     if pos:
         print >> sys.stderr, str(pos) + ":",
 
+    print >> sys.stderr, msg
+    
+def print_error(msg):
+    """
+    Output an error message to the user.
+    """
     print >> sys.stderr, msg
 

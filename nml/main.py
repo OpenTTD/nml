@@ -40,7 +40,7 @@ def parse_cli(argv):
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
                             custom_tags="custom_tags.txt", lang_dir="lang", sprites_dir="sprites", default_lang="english.lng",
-                            forced_palette="ANY")
+                            forced_palette="ANY", quiet=False)
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
@@ -64,8 +64,13 @@ def parse_cli(argv):
                         help="Set the first sprite number to write (do not use except when you output nfo that you want to include in other files)")
     opt_parser.add_option("-p", "--palette", dest="forced_palette", metavar="<palette>", choices = ["DOS", "WIN", "ANY"],
                         help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DOS', 'WIN', 'ANY'")
-
+    opt_parser.add_option("--quiet", action="store_true", dest="quiet",
+                        help="Disable all warnings. Errors will be printed normally.")
+    
     opts, args = opt_parser.parse_args(argv)
+    
+    if opts.quiet:
+        generic.disable_warnings()
 
     opts.outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.dep_filename or opts.outputs)
 
@@ -140,7 +145,7 @@ def main(argv):
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         elif outext == '.dep': outputs.append(output_dep.OutputDEP(output, opts.grf_filename))
         else:
-            generic.print_warning("Unknown output format %s" % outext)
+            generic.print_error("Unknown output format %s" % outext)
             sys.exit(2)
 
     ret = nml(input, input_filename, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette)
@@ -162,7 +167,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
     script = script.lstrip(unicode(codecs.BOM_UTF8, "utf-8"))
 
     if script.strip() == "":
-        generic.print_warning("Empty input file")
+        generic.print_error("Empty input file")
         return 4
     nml_parser = parser.NMLParser()
     if input_filename is None:
@@ -229,7 +234,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
     if skip_sprite_processing: return 0
 
     if not Image and len(sprite_files) > 0:
-        generic.print_warning("PIL (python-imaging) wasn't found, no support for using graphics")
+        generic.print_error("PIL (python-imaging) wasn't found, no support for using graphics")
         sys.exit(3)
 
     used_palette = forced_palette
@@ -297,7 +302,7 @@ def run():
         main(sys.argv[1:])
 
     except generic.ScriptError, ex:
-        generic.print_warning("nmlc: %s" % str(ex))
+        generic.print_error("nmlc: %s" % str(ex))
 
         if developmode: raise # Reraise exception in developmode
         sys.exit(1)
@@ -306,7 +311,7 @@ def run():
         raise
 
     except KeyboardInterrupt, ex:
-        generic.print_warning('Application forcibly terminated by user.')
+        generic.print_error('Application forcibly terminated by user.')
 
         if developmode: raise # Reraise exception in developmode
 
@@ -344,7 +349,7 @@ def run():
               "Command:    %(cli)s\n" \
               "Location:   %(loc)s\n" % ex_data
 
-        generic.print_warning(msg)
+        generic.print_error(msg)
         sys.exit(1)
 
     sys.exit(0)
