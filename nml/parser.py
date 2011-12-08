@@ -25,7 +25,8 @@ class NMLParser(object):
         self.tokens = self.lexer.tokens
         self.parser = yacc.yacc(debug = False, module = self)
 
-    def parse(self, text):
+    def parse(self, text, input_filename):
+        self.lexer.set_position(input_filename, 1)
         return self.parser.parse(text, lexer = self.lexer.lexer)
 
 

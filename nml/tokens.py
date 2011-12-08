@@ -206,7 +206,6 @@ class NMLLexer(object):
 
     def build(self, **kwargs):
         self.lexer = lex.lex(module=self, **kwargs)
-        self.set_position('input', 1)
 
 
     def set_position(self, fname, line):

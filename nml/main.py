@@ -143,7 +143,7 @@ def main(argv):
             generic.print_warning("Unknown output format %s" % outext)
             sys.exit(2)
 
-    ret = nml(input, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette)
+    ret = nml(input, input_filename, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette)
 
     input.close()
     sys.exit(ret)
@@ -151,7 +151,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, forced_palette):
+def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start_sprite_num, forced_palette):
     generic.OnlyOnce.clear()
 
     try:
@@ -165,7 +165,9 @@ def nml(inputfile, output_debug, outputfiles, sprites_dir, start_sprite_num, for
         generic.print_warning("Empty input file")
         return 4
     nml_parser = parser.NMLParser()
-    result = nml_parser.parse(script)
+    if input_filename is None:
+        input_filename = 'input'
+    result = nml_parser.parse(script, input_filename)
     result.validate([])
 
     if output_debug > 0:
