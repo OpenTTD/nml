@@ -13,10 +13,10 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import free_number_list
+from nml import free_number_list, generic
 from nml.actions import base_action
 
-free_parameters = free_number_list.FreeNumberList(list(range(0x7F, 0x3F, -1)))
+free_parameters = free_number_list.FreeNumberList(list(range(0x7F, 0x3F, -1)), generic.ScriptError("No free paramters available to use for internal computations."), generic.ScriptError("No unique free parameters available for internal computations."))
 
 class Action6(base_action.BaseAction):
     def __init__(self):

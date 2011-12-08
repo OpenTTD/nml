@@ -32,11 +32,21 @@ class FreeNumberList(object):
     @ivar used_numbers: A set with all numbers that have been used at
         some time. This is used by L{pop_unique}.
     @type used_numbers: C{set}
+    
+    @ivar exception: Exception to be thrown when there is no number available
+        when requested via pop() or pop_global().
+    @type exception: C{Exception}
+    
+    @ivar exception_unique: Exception to be thrown when there is no unique number
+        available when it is requested via pop_unique().
+    @type exception_unique: C{Exception}
     """
-    def __init__(self, free_numbers):
+    def __init__(self, free_numbers, exception, exception_unique):
         self.free_numbers = free_numbers
         self.states = []
         self.used_numbers = set()
+        self.exception = exception
+        self.exception_unique = exception_unique
 
     def pop(self):
         """
@@ -46,7 +56,8 @@ class FreeNumberList(object):
         @return: Some free number.
         """
         assert len(self.states) > 0
-        assert len(self.free_numbers) > 0
+        if self.free_numbers == 0:
+            raise self.exception
         num = self.free_numbers.pop()
         self.states[-1].append(num)
         self.used_numbers.add(num)
@@ -59,7 +70,8 @@ class FreeNumberList(object):
 
         @return: Some free number.
         """
-        assert len(self.free_numbers) > 0
+        if self.free_numbers == 0:
+            raise self.exception
         return self.free_numbers.pop()
 
     def pop_unique(self):
@@ -74,7 +86,7 @@ class FreeNumberList(object):
             self.free_numbers.remove(num)
             self.used_numbers.add(num)
             return num
-        assert False, "No unique number available"
+        raise self.exception_unique
 
     def save(self):
         """

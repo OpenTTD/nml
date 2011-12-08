@@ -13,10 +13,10 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, nmlop, free_number_list
+from nml import expression, nmlop, free_number_list, generic
 from nml.actions import base_action, action6, actionD, action10
 
-free_labels = free_number_list.FreeNumberList(list(range(0xFF, 0x0F, -1)))
+free_labels = free_number_list.FreeNumberList(list(range(0xFF, 0x0F, -1)), generic.ScriptError("No label available to use for large if-blocks and loops."), generic.ScriptError("No unique label available to use for large if-blocks and loops."))
 
 class SkipAction(base_action.BaseAction):
     def __init__(self, action_type, var, varsize, condtype, value, label):
