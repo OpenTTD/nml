@@ -44,7 +44,7 @@ class Action1(base_action.BaseAction):
         file.newline()
         file.end_sprite()
 
-class SpritesetCollection(object):
+class SpritesetCollection(base_action.BaseAction):
     """
     A collection that contains multiple spritesets. All spritesets will be
     written to the same Action1, so they need to have the same number of sprites.
@@ -65,6 +65,15 @@ class SpritesetCollection(object):
         self.feature = feature
         self.num_sprites_per_spriteset = num_sprites_per_spriteset
         self.spritesets = {}
+
+    def skip_action7(self):
+        return False
+
+    def skip_action9(self):
+        return False
+
+    def skip_needed(self):
+        return False
 
     def can_add(self, spritesets, feature):
         """
