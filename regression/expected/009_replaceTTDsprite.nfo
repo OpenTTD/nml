@@ -15,7 +15,7 @@
 "B" "BLTR" \w1 "8" 
 00 
 00 
-2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 08 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 3 * 5 0A \b1 \b2 \w3092 
 
 4 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 

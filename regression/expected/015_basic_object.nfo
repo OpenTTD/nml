@@ -15,7 +15,7 @@
 "B" "BLTR" \w1 "8" 
 00 
 00 
-2 * 52 08 07 "NML\15" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 08 "NML\15" "NML regression test" 00 "A test newgrf testing NML" 00 
 3 * 33 04 0F FF 02 \wxD000 "Miscellaneous" 00 "Basic object" 00 
 
 // Name: obj_basic_tile - feature 0F

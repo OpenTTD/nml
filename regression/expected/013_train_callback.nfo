@@ -15,7 +15,7 @@
 "B" "BLTR" \w1 "8" 
 00 
 00 
-2 * 52 08 07 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 08 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00 
 3 * 206 00 08 \b1 32 00 
 09 "WDPR" "SCRP" "CMNT" "WOOD" "LVST" 
 "STEL" "VEHI" "BRCK" "WOOL" "BUBL" 

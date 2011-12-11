@@ -15,7 +15,7 @@
 "B" "BLTR" \w1 "8" 
 00 
 00 
-2 * 52 08 07 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 08 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 3 * 51 04 00 FF 03 \wxD000 "\98coal" 00 "\98diamonds" 00 "\98Extra info for coal mine: \7B" 00 
 
 // Name: coal_mine_subtype_switch

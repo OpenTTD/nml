@@ -34,7 +34,7 @@
 "B" "BLTR" \w1 "8" 
 00 
 00 
-2 * 52 08 07 "NML\14" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 08 "NML\14" "NML regression test" 00 "A test newgrf testing NML" 00 
 // param[16] = param[0]
 3 * 5 0D 10 \D= 00 00 
 
