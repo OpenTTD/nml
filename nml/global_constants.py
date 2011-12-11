@@ -297,8 +297,8 @@ constant_numbers = {
     'CB_RESULT_IND_DO_NOT_USE_SPECIAL'  : 0x00,
     'CB_RESULT_IND_USE_SPECIAL'         : 0x01,
 
-    'CB_RESULT_IND_ALLOW'               : 0x00,
-    'CB_RESULT_IND_DISALLOW'            : 0x01,
+    'CB_RESULT_IND_NO_CONSTRUCTION'            : 0x0000,
+    'CB_RESULT_IND_PROBABILITY_FROM_PROPERTY'  : 0x0100,
 
     'CB_RESULT_LOCATION_ALLOW'                        : 0x400,
     'CB_RESULT_LOCATION_DISALLOW'                     : 0x401,

@@ -166,7 +166,7 @@ callbacks[0x09] = {
 
 # Industries
 callbacks[0x0A] = {
-    'availability'          : {'type': 'cb', 'num': 0x22,  'flag_bit': 0},
+    'construction_probability' : {'type': 'cb', 'num': 0x22,  'flag_bit': 0},
     'produce_cargo_arrival' : {'type': 'cb', 'num': 0x00,  'flag_bit': 1, 'var18': 0},
     'produce_256_ticks'     : {'type': 'cb', 'num': 0x00,  'flag_bit': 2, 'var18': 1},
     'location_check'        : {'type': 'cb', 'num': 0x28,  'flag_bit': 3}, # We need a way to access all those special variables
