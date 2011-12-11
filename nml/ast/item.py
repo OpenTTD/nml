@@ -41,20 +41,16 @@ class Item(base_statement.BaseStatementList):
         if len(params) > 3:
             raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
-        self.id = params[2] if len(params) == 3 else None
+        self.id = params[2].reduce_constant() if len(params) == 3 else None
         self.name = params[1] if len(params) >= 2 else None
 
     def register_names(self):
-        if self.id:
-            self.id = self.id.reduce(global_constants.const_list)
         if self.name:
             if not isinstance(self.name, expression.Identifier):
                 raise generic.ScriptError("Item parameter 2 'name' should be an identifier", self.pos)
             if self.name.value in global_constants.item_names:
                 existing_id = global_constants.item_names[self.name.value].id
-                if not isinstance(existing_id, expression.ConstantNumeric):
-                    raise generic.ScriptError("Item with name '%s' has already been assigned a non-constant ID, extending this item definition is not possible." % self.name.value, self.pos)
-                if self.id is not None and (not isinstance(self.id, expression.ConstantNumeric) or existing_id.value != self.id.value):
+                if self.id is not None and existing_id.value != self.id.value:
                     raise generic.ScriptError("Duplicate item with name '%s'. This item has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, existing_id.value, self.id.value), self.pos)
                 self.id = existing_id
 
