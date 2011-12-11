@@ -1036,16 +1036,17 @@ def patch_variable(info, pos):
     return expression.SpecialParameter(generic.reverse_lookup(patch_variables, info), info, None, patch_variable_read, False, pos)
 
 patch_variables = {
-    'starting_year'   : {'num': 0x0B, 'start':  0, 'size': 32, 'function': add_1920},
-    'freight_trains'  : {'num': 0x0E, 'start':  0, 'size': 32},
-    'plane_speed'     : {'num': 0x10, 'start':  0, 'size': 32},
-    'base_sprite_2cc' : {'num': 0x11, 'start':  0, 'size': 32},
-    'map_type'        : {'num': 0x13, 'start': 24, 'size':  2},
-    'map_min_edge'    : {'num': 0x13, 'start': 20, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
-    'map_max_edge'    : {'num': 0x13, 'start': 16, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
-    'map_x_edge'      : {'num': 0x13, 'start': 12, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
-    'map_y_edge'      : {'num': 0x13, 'start':  8, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
-    'map_size'        : {'num': 0x13, 'start':  0, 'size':  8, 'log_offset': 12, 'function': map_exponentiate},
+    'starting_year'    : {'num': 0x0B, 'start':  0, 'size': 32, 'function': add_1920},
+    'freight_trains'   : {'num': 0x0E, 'start':  0, 'size': 32},
+    'plane_speed'      : {'num': 0x10, 'start':  0, 'size': 32},
+    'base_sprite_2cc'  : {'num': 0x11, 'start':  0, 'size': 32},
+    'map_type'         : {'num': 0x13, 'start': 24, 'size':  2},
+    'map_min_edge'     : {'num': 0x13, 'start': 20, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_max_edge'     : {'num': 0x13, 'start': 16, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_x_edge'       : {'num': 0x13, 'start': 12, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_y_edge'       : {'num': 0x13, 'start':  8, 'size':  4, 'log_offset':  6, 'function': map_exponentiate},
+    'map_size'         : {'num': 0x13, 'start':  0, 'size':  8, 'log_offset': 12, 'function': map_exponentiate},
+    'max_height_level' : {'num': 0x14, 'start':  0, 'size': 32},
 }
 
 def config_flag_read(bit, pos):
