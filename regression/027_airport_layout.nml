@@ -21,7 +21,6 @@ item(FEAT_AIRPORTTILES, small_airport_tiles) {
 		animation_info: [1, 4]; // loop, 4 frames
 		animation_speed: 1;
 		animation_triggers: 1;
-		callback_flags: bitmask(APT_CBF_ANIM_NEXT_FRAME);
 	}
 	graphics {
 		small_airport_tile_layout;

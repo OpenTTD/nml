@@ -123,7 +123,6 @@ item(FEAT_TRAINS, bulk_wagon) {
         running_cost_factor: 5;
         speed: 0;
         refit_cost: 40;
-        callback_flags: bitmask(VEH_CBF_REFITTED_CAPACITY);
         track_type: RAIL;
         power: 0;
         running_cost_base: RUNNING_COST_STEAM;
