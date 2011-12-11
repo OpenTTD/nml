@@ -214,7 +214,7 @@ callbacks[0x0D] = {
 
 # Objects
 callbacks[0x0F] = {
-    'tile_check'      : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2, 'value_function': lambda val: expression.BinOp(nmlop.XOR, val, expression.ConstantNumeric(0x400), val.pos)},
+    'tile_check'      : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2},
     'anim_next_frame' : {'type': 'cb', 'num': 0x158, 'flag_bit': 1},
     'anim_control'    : {'type': 'cb', 'num': 0x159},
     'anim_speed'      : {'type': 'cb', 'num': 0x15A, 'flag_bit': 2},
