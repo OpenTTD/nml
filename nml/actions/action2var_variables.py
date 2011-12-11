@@ -72,7 +72,7 @@ varact2_globalvars = {
     'extra_callback_info2' : {'var': 0x18, 'start': 0, 'size': 32},
     'display_options' : {'var': 0x1B, 'start': 0, 'size': 6},
     'last_computed_result' : {'var': 0x1C, 'start': 0, 'size': 32},
-    'snowline_height' : {'var': 0x20, 'start': 0, 'size': 8},
+    'snowline_height' : {'var': 0x20, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 8, 1)},
     'difficulty_level' : {'var': 0x22, 'start': 0, 'size': 8},
     'current_date' : {'var': 0x23, 'start': 0, 'size': 32},
     'current_year' : {'var': 0x24, 'start': 0, 'size': 32},
