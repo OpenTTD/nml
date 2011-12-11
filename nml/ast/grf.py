@@ -67,6 +67,7 @@ class GRF(base_statement.BaseStatement):
         base_statement.BaseStatement.__init__(self, "grf-block", pos, False, False)
         self.name = None
         self.desc = None
+        self.url = None
         self.grfid = None
         self.version = None
         self.min_compatible_version = None
@@ -77,6 +78,7 @@ class GRF(base_statement.BaseStatement):
                 self.params.append(assignment)
             elif assignment.name.value == "name": self.name = assignment.value
             elif assignment.name.value == "desc": self.desc = assignment.value
+            elif assignment.name.value == "url": self.url = assignment.value
             elif assignment.name.value == "grfid": self.grfid = assignment.value
             elif assignment.name.value == "version": self.version = assignment.value
             elif assignment.name.value == "min_compatible_version": self.min_compatible_version = assignment.value
@@ -96,6 +98,11 @@ class GRF(base_statement.BaseStatement):
         if not isinstance(self.desc, expression.String):
             raise generic.ScriptError("GRF-description must be a string", self.desc.pos)
         grfstrings.validate_string(self.desc)
+        if self.url is not None:
+            self.url = self.url.reduce()
+            if not isinstance(self.url, expression.String):
+                raise generic.ScriptError("URL must be a string", self.url.pos)
+            grfstrings.validate_string(self.url)
         self.version = self.version.reduce_constant()
         self.min_compatible_version = self.min_compatible_version.reduce_constant()
         param_num = 0
@@ -111,6 +118,9 @@ class GRF(base_statement.BaseStatement):
         self.name.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Description:'
         self.desc.debug_print(indentation + 4)
+        if self.url is not None:
+            print (2+indentation)*' ' + 'URL:'
+            self.url.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Version:'
         self.version.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Minimal compatible version:'
@@ -121,7 +131,7 @@ class GRF(base_statement.BaseStatement):
         palette_node = action14.UsedPaletteNode("A")
         blitter_node = action14.BlitterNode("8")
         action14_root = action14.BranchNode("INFO")
-        action14.grf_name_desc_actions(action14_root, self.name, self.desc, self.version, self.min_compatible_version)
+        action14.grf_name_desc_actions(action14_root, self.name, self.desc, self.url, self.version, self.min_compatible_version)
         action14.param_desc_actions(action14_root, self.params)
         action14_root.subnodes.append(palette_node)
         action14_root.subnodes.append(blitter_node)
@@ -132,6 +142,8 @@ class GRF(base_statement.BaseStatement):
         ret += '\tgrfid: %s;\n' % str(self.grfid)
         ret += '\tname: %s;\n' % str(self.name)
         ret += '\tdesc: %s;\n' % str(self.desc)
+        if self.url is not None:
+            ret += '\turl: %s;\n' % str(self.url)
         ret += '\tversion: %s;\n' % str(self.version)
         ret += '\tmin_compatible_version: %s;\n' % str(self.min_compatible_version)
         for param in self.params:
