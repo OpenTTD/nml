@@ -123,9 +123,9 @@ constant_numbers = {
     'AI_FLAG_CARGO'     : 0x00,
 
     # Callback results
-    'CB_RESULT_ATTACH_DISALLOW'            : 0xFD,
-    'CB_RESULT_ATTACH_ALLOW'               : 0xFE,
-    'CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES'  : 0xFF,
+    'CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES'  : 0x400,
+    'CB_RESULT_ATTACH_ALLOW'               : 0x401,
+    'CB_RESULT_ATTACH_DISALLOW'            : 0x402,
 
     'CB_RESULT_32_DAYS_TRIGGER'            : 0,
     'CB_RESULT_32_DAYS_COLOUR_MAPPING'     : 1,
