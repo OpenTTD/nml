@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml.actions.action0properties import Action0Property, properties
+from nml.actions.action0properties import Action0Property, properties, two_byte_property
 from nml import generic, expression, nmlop, grfstrings
 from nml.actions import base_action, action4, action6, actionD, actionE, action7
 from nml.ast import general
@@ -541,6 +541,20 @@ def parse_sort_block(feature, vehid_list):
         last = cur
         idx -= 1
     return action_list
+    
+callback_flag_properties = {
+    0x00: {'size': 1, 'num': 0x1E},
+    0x01: {'size': 1, 'num': 0x17},
+    0x02: {'size': 1, 'num': 0x12},
+    0x03: {'size': 1, 'num': 0x14},
+    0x05: {'size': 1, 'num': 0x08},
+    0x07: {'custom_function': lambda x: two_byte_property(x, 0x14, 0x1D)},
+    0x09: {'size': 1, 'num': 0x0E},
+    0x0A: {'custom_function': lambda x: two_byte_property(x, 0x21, 0x22)},
+    0x0B: {'size': 1, 'num': 0x1A},
+    0x0F: {'size': 2, 'num': 0x15},
+    0x11: {'size': 1, 'num': 0x0E},
+}
 
 def get_callback_flags_actions(feature, id, flags):
     """
@@ -558,18 +572,15 @@ def get_callback_flags_actions(feature, id, flags):
     @return: A list of actions
     @rtype: C{list} of L{BaseAction}
     """
-    action_list = []
-    act6 = action6.Action6()
-    act0, offset = create_action0(feature, id, act6, action_list)
+    assert isinstance(id, expression.ConstantNumeric)
+    act0, offset = create_action0(feature, id, None, None)
     act0.num_ids = 1
-    assert 'callback_flags' in properties[feature]
+    assert feature in callback_flag_properties
 
-    props, extra_actions, mods, extra_append_actions = parse_property(feature, expression.Identifier('callback_flags'), expression.ConstantNumeric(flags), id, None)
-    act0.prop_list.extend(props)
-    action_list.extend(extra_actions)
-    for mod in mods:
-        act6.modify_bytes(mod[0], mod[1], mod[2] + offset)
-    if len(act6.modifications) > 0: action_list.append(act6)
-    action_list.append(act0)
-    action_list.extend(extra_append_actions)
-    return action_list
+    prop = callback_flag_properties[feature]
+    if 'custom_function' in prop:
+        act0.prop_list.extend(prop['custom_function'](expression.ConstantNumeric(flags)))
+    else:
+        act0.prop_list.append(Action0Property(prop['num'], expression.ConstantNumeric(flags), prop['size']))
+
+    return [act0]

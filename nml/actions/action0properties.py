@@ -258,7 +258,6 @@ properties[0x00] = {
     'extra_power_per_wagon'        : {'size': 2, 'num': 0x1B, 'unit_type': 'power'},
     'refit_cost'                   : {'size': 1, 'num': 0x1C},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x1D, 'append_function': append_cargo_type(0x00)},
-    'callback_flags'               : {'size': 1, 'num': 0x1E},
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
     'shorten_vehicle'              : {'size': 1, 'num': 0x21},
@@ -300,7 +299,6 @@ properties[0x01] = {
     'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': 0.1},
     'weight'                       : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x16, 'append_function': append_cargo_type(0x01)},
-    'callback_flags'               : {'size': 1, 'num': 0x17},
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x19, 'unit_conversion': 255},
     'refit_cost'                   : {'size': 1, 'num': 0x1A},
@@ -338,7 +336,6 @@ properties[0x02] = {
     'running_cost_factor'          : {'size': 1, 'num': 0x0F},
     'sound_effect'                 : {'size': 1, 'num': 0x10},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'append_function': append_cargo_type(0x02)},
-    'callback_flags'               : {'size': 1, 'num': 0x12},
     'refit_cost'                   : {'size': 1, 'num': 0x13},
     'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x14)},
     'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x15)},
@@ -370,7 +367,6 @@ properties[0x03] = {
     'mail_capacity'                : {'size': 1, 'num': 0x11},
     'sound_effect'                 : {'size': 1, 'num': 0x12},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x13},
-    'callback_flags'               : {'size': 1, 'num': 0x14},
     'refit_cost'                   : {'size': 1, 'num': 0x15},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
@@ -386,7 +382,6 @@ properties[0x03].update(general_veh_props)
 # TODO: Feature 0x04 .. 0x06 (Stations, Canals, Bridges)
 
 properties[0x05] = {
-    'callback_flags' : {'size': 1, 'num': 0x08},
     'graphic_flags'  : {'size': 1, 'num': 0x09},
 }
 
@@ -434,7 +429,6 @@ properties[0x07] = {
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
     'availability_mask'       : {'custom_function': house_available_mask},
-    'callback_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x14, 0x1D)},
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
     'random_colours'          : {'custom_function': house_random_colours},
@@ -475,7 +469,6 @@ properties[0x09] = {
     'override'           : {'size': 1, 'num': 0x09},
     'accepted_cargos'    : {'custom_function': industrytile_cargos},
     'land_shape_flags'   : {'size': 1, 'num': 0x0D},
-    'callback_flags'     : {'size': 1, 'num': 0x0E},
     'animation_info'     : {'custom_function': lambda value: animation_info(0x0F, value)},
     'animation_speed'    : {'size': 1, 'num': 0x10},
     'animation_triggers' : {'size': 1, 'num': 0x11},
@@ -609,7 +602,6 @@ properties[0x0A] = {
     'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E)},
     'name'                   : {'size': 2, 'num': 0x1F, 'string': 0xDC},
     'prospect_chance'        : {'size': 4, 'num': 0x20, 'unit_conversion': 0xFFFFFFFF},
-    'callback_flags'         : {'custom_function': lambda x: two_byte_property(x, 0x21, 0x22)},
     'remove_cost_multiplier' : {'size': 4, 'num': 0x23},
     'nearby_station_name'    : {'size': 2, 'num': 0x24, 'string': 0xDC},
 }
@@ -637,7 +629,6 @@ properties[0x0B] = {
     'cargo_label'               : {'num' : 0x17, 'size' : 4, 'string_literal': 4},
     'town_growth_effect'        : {'num' : 0x18, 'size' : 1},
     'town_growth_multiplier'    : {'num' : 0x19, 'size' : 2, 'unit_conversion' : 0x100},
-    'callback_flags'            : {'num' : 0x1A, 'size' : 1},
     'units_of_cargo'            : {'num' : 0x1B, 'size' : 2, 'string' : 0xDC},
     'items_of_cargo'            : {'num' : 0x1C, 'size' : 2, 'string' : 0xDC},
 }

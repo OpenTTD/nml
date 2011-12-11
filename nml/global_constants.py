@@ -61,63 +61,6 @@ constant_numbers = {
     'RUNNING_COST_ROADVEH'  : 0x4C48,
     'RUNNING_COST_NONE'     : 0x0000,
 
-    #vehicle cb flags
-    'VEH_CBF_VISUAL_EFFECT_AND_POWERED' : 0, # trains
-    'VEH_CBF_VISUAL_EFFECT'             : 0, # rvs/ships
-    'VEH_CBF_WAGON_LENGTH'              : 1,
-    'VEH_CBF_LOAD_AMOUNT'               : 2,
-    'VEH_CBF_REFITTED_CAPACITY'         : 3,
-    'VEH_CBF_ARTICULATED_PARTS'         : 4,
-    'VEH_CBF_CARGO_SUFFIX'              : 5,
-    'VEH_CBF_COLOUR_MAPPING'            : 6,
-    'VEH_CBF_SOUND_EFFECT'              : 7,
-
-    #corresponding callbacks
-    'VEH_CB_VISUAL_EFFECT_AND_POWERED'  : 0x10, # trains
-    'VEH_CB_VISUAL_EFFECT'              : 0x10, # rvs/ships
-    'VEH_CB_WAGON_LENGTH'               : 0x11,
-    'VEH_CB_LOAD_AMOUNT'                : 0x12,
-    'VEH_CB_REFITTED_CAPACITY'          : 0x15,
-    'VEH_CB_ARTICULATED_PARTS'          : 0x16,
-    'VEH_CB_CARGO_SUFFIX'               : 0x19,
-    'VEH_CB_CAN_ATTACH_WAGON'           : 0x1D,
-    'VEH_CB_TEXT_PURCHASE_SCREEN'       : 0x23,
-    'VEH_CB_COLOUR_MAPPING'             : 0x2D,
-    'VEH_CB_START_STOP_CHECK'           : 0x31,
-    'VEH_CB_32DAY'                      : 0x32,
-    'VEH_CB_SOUND_EFFECT'               : 0x33,
-    'VEH_CB_AUTOREPLACE_SELECT'         : 0x34,
-    'VEH_CB_VEHICLE_PROPERTIES'         : 0x36,
-
-    #properties for callback 0x36
-    'PROP_TRAINS_SPEED'                         : 0x09,
-    'PROP_TRAINS_POWER'                         : 0x0B,
-    'PROP_TRAINS_RUNNING_COST_FACTOR'           : 0x0D,
-    'PROP_TRAINS_CARGO_CAPACITY'                : 0x14,
-    'PROP_TRAINS_WEIGHT'                        : 0x16,
-    'PROP_TRAINS_COST_FACTOR'                   : 0x17,
-    'PROP_TRAINS_TRACTIVE_EFFORT_COEFFICIENT'   : 0x1F,
-    'PROP_TRAINS_BITMASK_VEHICLE_INFO'          : 0x25,
-
-    'PROP_ROADVEHS_RUNNING_COST_FACTOR'         : 0x09,
-    'PROP_ROADVEHS_CARGO_CAPACITY'              : 0x0F,
-    'PROP_ROADVEHS_COST_FACTOR'                 : 0x11,
-    'PROP_ROADVEHS_POWER'                       : 0x13,
-    'PROP_ROADVEHS_WEIGHT'                      : 0x14,
-    'PROP_ROADVEHS_SPEED'                       : 0x15,
-    'PROP_ROADVEHS_TRACTIVE_EFFORT_COEFFICIENT' : 0x18,
-
-    'PROP_SHIPS_COST_FACTOR'                    : 0x0A,
-    'PROP_SHIPS_SPEED'                          : 0x0B,
-    'PROP_SHIPS_CARGO_CAPACITY'                 : 0x0D,
-    'PROP_SHIPS_RUNNING_COST_FACTOR'            : 0x0F,
-
-    'PROP_AIRCRAFT_COST_FACTOR'                 : 0x0B,
-    'PROP_AIRCRAFT_SPEED'                       : 0x0C,
-    'PROP_AIRCRAFT_RUNNING_COST_FACTOR'         : 0x0E,
-    'PROP_AIRCRAFT_PASSENGER_CAPACITY'          : 0x0F,
-    'PROP_AIRCRAFT_MAIL_CAPACITY'               : 0x11,
-
     #shorten factor
     'SHORTEN_TO_8_8' : 0x00,
     'SHORTEN_TO_7_8' : 0x01,
@@ -304,38 +247,6 @@ constant_numbers = {
     # general CB for rerandomizing
     'CB_RANDOM_TRIGGER'        : 0x01,
 
-    #house callback flags
-    'HOUSE_CBF_BUILD'               : 0,
-    'HOUSE_CBF_ANIM_NEXT_FRAME'     : 1,
-    'HOUSE_CBF_ANIM_CONROL'         : 2,
-    'HOUSE_CBF_CONSTRUCTION_ANIM'   : 3,
-    'HOUSE_CBF_COLOUR'              : 4,
-    'HOUSE_CBF_CARGO_AMOUNT_ACCEPT' : 5,
-    'HOUSE_CBF_ANIM_SPEED'          : 6,
-    'HOUSE_CBF_DESTRUCTION'         : 7,
-    'HOUSE_CBF_CARGO_TYPE_ACCEPT'   : 8,
-    'HOUSE_CBF_CARGO_PRODUCTION'    : 9,
-    'HOUSE_CBF_PROTECTION'          : 10,
-    'HOUSE_CBF_FOUNDATIONS'         : 11,
-    'HOUSE_CBF_AUTOSLOPE'           : 12,
-
-    #corresponding callbacks
-    'HOUSE_CB_BUILD'                : 0x17,
-    'HOUSE_CB_ANIM_NEXT_FRAME'      : 0x1A,
-    'HOUSE_CB_ANIM_CONTROL'         : 0x1B,
-    'HOUSE_CB_CONSTRUCTION_ANIM'    : 0x1C,
-    'HOUSE_CB_COLOUR'               : 0x1E,
-    'HOUSE_CB_CARGO_AMOUNT_ACCEPT'  : 0x1F,
-    'HOUSE_CB_ANIM_SPEED'           : 0x20,
-    'HOUSE_CB_DESTRUCTION'          : 0x21,
-    'HOUSE_CB_CARGO_TYPE_ACCEPT'    : 0x2A,
-    'HOUSE_CB_CARGO_PRODUCTION'     : 0x2E,
-    'HOUSE_CB_PROTECTION'           : 0x143,
-    'HOUSE_CB_ACCEPTED_CARGO'       : 0x148,
-    'HOUSE_CB_BUILDING_NAME'        : 0x14D,
-    'HOUSE_CB_FOUNDATIONS'          : 0x14E,
-    'HOUSE_CB_AUTOSLOPE'            : 0x14F,
-
     #house flags
     'HOUSE_FLAG_SIZE_1x1'           : 0,
     'HOUSE_FLAG_NOT_SLOPED'         : 1,
@@ -363,57 +274,8 @@ constant_numbers = {
     'TOWNZONE_CENTRE'               : 4,
     'ALL_TOWNZONES'                 : 0x1F,
 
-    #industry tile callback flags
-    'INDTILE_CBF_ANIM_NEXT_FRAME'     : 0,
-    'INDTILE_CBF_ANIM_SPEED'          : 1,
-    'INDTILE_CBF_CARGO_AMOUNT_ACCEPT' : 2,
-    'INDTILE_CBF_CARGO_TYPE_ACCEPT'   : 3,
-    'INDTILE_CBF_SLOPE_IS_SUITABLE'   : 4,
-    'INDTILE_CBF_FOUNDATIONS'         : 5,
-    'INDTILE_CBF_AUTOSLOPE'           : 6,
-
-    #corresponding callbacks
-    'INDTILE_CB_ANIM_CONTROL'         : 0x25,
-    'INDTILE_CB_ANIM_NEXT_FRAME'      : 0x26,
-    'INDTILE_CB_ANIM_SPEED'           : 0x27,
-    'INDTILE_CB_CARGO_AMOUNT_ACCEPT'  : 0x2B,
-    'INDTILE_CB_CARGO_TYPE_ACCEPT'    : 0x2C,
-    'INDTILE_CB_SLOPE_IS_SUITABLE'    : 0x2F,
-    'INDTILE_CB_FOUNDATIONS'          : 0x30,
-    'INDTILE_CB_AUTOSLOPE'            : 0x3C,
-
     #industry tile special flags
     'INDTILE_FLAG_RANDOM_ANIMATION'   : 0,
-
-    #industry callback flags
-    'IND_CBF_AVAILABILITY'          : 0,
-    'IND_CBF_PROD_CB_CARGO_ARRIVE'  : 1,
-    'IND_CBF_PROD_CB_256_TICKS'     : 2,
-    'IND_CBF_LOCATION_CHECK'        : 3,
-    'IND_CBF_RANDOM_PROD_CHANGE'    : 4,
-    'IND_CBF_MONTHLY_PROD_CHANGE'   : 5,
-    'IND_CBF_CARGO_SUBTYPE_DISPLAY' : 6,
-    'IND_CBF_EXTRA_TEXT_FUND'       : 7,
-    'IND_CBF_EXTRA_TEXT_INDUSTRY'   : 8,
-    'IND_CBF_CONTROL_SPECIAL'       : 9,
-    'IND_CBF_STOP_ACCEPT_CARGO'     : 10,
-    'IND_CBF_COLOUR'                : 11,
-    'IND_CBF_CARGO_INPUT'           : 12,
-    'IND_CBF_CARGO_OUTPUT'          : 13,
-
-    #corresponding callbacks
-    'IND_CB_AVAILABILITY'           : 0x22,
-    'IND_CB_LOCATION_CHECK'         : 0x28,
-    'IND_CB_RANDOM_PROD_CHANGE'     : 0x29,
-    'IND_CB_MONTHLY_PROD_CHANGE'    : 0x35,
-    'IND_CB_CARGO_SUBTYPE_DISPLAY'  : 0x37,
-    'IND_CB_EXTRA_TEXT_FUND'        : 0x38,
-    'IND_CB_EXTRA_TEXT_INDUSTRY'    : 0x3A,
-    'IND_CB_CONTROL_SPECIAL'        : 0x3B,
-    'IND_CB_STOP_ACCEPT_CARGO'      : 0x3D,
-    'IND_CB_COLOUR'                 : 0x14A,
-    'IND_CB_CARGO_INPUT'            : 0x14B,
-    'IND_CB_CARGO_OUTPUT'           : 0x14C,
 
     'CB_RESULT_IND_PROD_NO_CHANGE'      : 0x00,
     'CB_RESULT_IND_PROD_HALF'           : 0x01,
@@ -495,43 +357,9 @@ constant_numbers = {
     'OBJ_ANIM_PERIODIC'        : 1,
     'OBJ_ANIM_SYNC'            : 2,
 
-    #object callback flags
-    'OBJ_CBF_SLOPE_CHECK'      : 0,
-    'OBJ_CBF_ANIM_NEXT_FRAME'  : 1,
-    'OBJ_CBF_ANIM_SPEED'       : 2,
-    'OBJ_CBF_DECIDE_COLOUR'    : 3,
-    'OBJ_CBF_ADDITIONAL_TEXT'  : 4,
-    'OBJ_CBF_AUTOSLOPE'        : 5,
-
-    #corresponding callbacks
-    'OBJ_CB_SLOPE_CHECK'            : 0x157,
-    'OBJ_CB_ANIM_NEXT_FRAME'        : 0x158,
-    'OBJ_CB_ANIM_CONTROL'           : 0x159,
-    'OBJ_CB_ANIM_SPEED'             : 0x15A,
-    'OBJ_CB_DECIDE_COLOUR'          : 0x15B,
-    'OBJ_CB_ADDITIONAL_TEXT'        : 0x15C,
-    'OBJ_CB_AUTOSLOPE'              : 0x15D,
-
     # Special values for object var 0x60
     'OBJECT_TYPE_OTHER_GRF'     : 0xFFFE,
     'OBJECT_TYPE_NO_OBJECT'     : 0xFFFF,
-
-    #airport tile callback flags
-    'APT_CBF_ANIM_NEXT_FRAME'   : 0,
-    'APT_CBF_ANIM_SPEED'        : 1,
-    'APT_CBF_SLOPE_CHECK'       : 4,
-    'APT_CBF_FOUNDATIONS'       : 5,
-    'APT_CBF_AUTOSLOPE'         : 6,
-
-    #corresponding callbacks
-    'APT_CB_ANIM_CONTROL'       : 0x152,
-    'APT_CB_ANIM_NEXT_FRAME'    : 0x153,
-    'APT_CB_ANIM_SPEED'         : 0x154,
-    'APT_CB_FOUNDATIONS'        : 0x150,
-
-    #Airport callbacks
-    'AIRPORT_CB_ADDITIONAL_TEXT' : 0x155,
-    'AIRPORT_CB_LAYOUT_NAME'     : 0x156,
 
     #railtype flags
     'RAILTYPE_FLAG_CATENARY'          : 0,
