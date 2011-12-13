@@ -241,7 +241,12 @@ constant_numbers = {
     'GROUNDSPRITE_CLEARED'     : 3924,
     'GROUNDSPRITE_NORMAL'      : 3981,
     'GROUNDSPRITE_WATER'       : 4061,
+    'GROUNDSPRITE_SNOW_1_4'    : 4493,
+    'GROUNDSPRITE_SNOW_2_4'    : 4512,
+    'GROUNDSPRITE_SNOW_3_4'    : 4531,
+    'GROUNDSPRITE_SNOW_4_4'    : 4550,
     'GROUNDSPRITE_SNOW'        : 4550,
+    'GROUNDSPRITE_DESERT_1_2'  : 4512,
     'GROUNDSPRITE_DESERT'      : 4550,
 
     # general CB for rerandomizing
