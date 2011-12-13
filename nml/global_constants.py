@@ -126,6 +126,9 @@ constant_numbers = {
     'CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES'  : 0x400,
     'CB_RESULT_ATTACH_ALLOW'               : 0x401,
     'CB_RESULT_ATTACH_DISALLOW'            : 0x402,
+    
+    'CB_RESULT_NO_MORE_ARTICULATED_PARTS'  : 0x7FFF,
+    'CB_RESULT_REVERSED_VEHICLE'           : 0x4000,
 
     'CB_RESULT_32_DAYS_TRIGGER'            : 0,
     'CB_RESULT_32_DAYS_COLOUR_MAPPING'     : 1,
