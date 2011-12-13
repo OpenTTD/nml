@@ -184,6 +184,9 @@ constant_numbers = {
     'CB_RESULT_ATTACH_ALLOW'               : 0xFE,
     'CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES'  : 0xFF,
 
+    'CB_RESULT_NO_MORE_ARTICULATED_PARTS'  : 0xFF,
+    'CB_RESULT_REVERSED_VEHICLE'           : 0x80,
+
     'CB_RESULT_32_DAYS_TRIGGER'            : 0,
     'CB_RESULT_32_DAYS_COLOUR_MAPPING'     : 1,
 
@@ -437,6 +440,8 @@ constant_numbers = {
 
     'CB_RESULT_IND_ALLOW'               : 0x00,
     'CB_RESULT_IND_DISALLOW'            : 0x01,
+
+    'CB_RESULT_NO_TEXT'                 : 0xFF,
 
     'CB_RESULT_LOCATION_ALLOW'                        : 0x400,
     'CB_RESULT_LOCATION_DISALLOW'                     : 0x401,
