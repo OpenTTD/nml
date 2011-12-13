@@ -143,7 +143,7 @@ switch(FEAT_TRAINS, SELF, sw_icm_graphics, position_in_consist % 4) {
 switch(FEAT_TRAINS, SELF, sw_icm_cargo_subtype_text, cargo_subtype) {
     0: return string(STR_ICM_SUBTYPE_3_PART);
     1: return string(STR_ICM_SUBTYPE_4_PART);
-    return 0xFF;
+    return CB_RESULT_NO_TEXT;
 }
 
 /* --- Colour mapping callback  --- */
@@ -160,7 +160,7 @@ switch(FEAT_TRAINS, SELF, sw_icm_colour_mapping, colour_scheme) {
 /* --- Start/stop callback  --- */
 switch(FEAT_TRAINS, SELF, sw_icm_start_stop, num_vehs_in_consist) {
     /* Vehicles may be coupled to a maximum of 4 units (12-16 cars) */
-    1 .. 16: return 0xFF;
+    1 .. 16: return CB_RESULT_NO_TEXT;
     return string(STR_ICM_CANNOT_START);
 }
 
@@ -168,7 +168,7 @@ switch(FEAT_TRAINS, SELF, sw_icm_start_stop, num_vehs_in_consist) {
 switch(FEAT_TRAINS, SELF, sw_icm_articulated_part, extra_callback_info1) {
     /* Add three articulated parts, for a total of four */
     1 .. 3: return icm;
-    return 0xFF;
+    return CB_RESULT_NO_MORE_ARTICULATED_PARTS;
 }
 
 /* --- Wagon attach callback  --- */
