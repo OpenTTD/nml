@@ -307,6 +307,8 @@ constant_numbers = {
 
     'CB_RESULT_IND_NO_CONSTRUCTION'            : 0x0000,
     'CB_RESULT_IND_PROBABILITY_FROM_PROPERTY'  : 0x0100,
+    
+    'CB_RESULT_NO_TEXT'                 : 0x400,
 
     'CB_RESULT_LOCATION_ALLOW'                        : 0x400,
     'CB_RESULT_LOCATION_DISALLOW'                     : 0x401,
