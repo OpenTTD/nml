@@ -376,6 +376,7 @@ properties[0x03] = {
     'cargo_age_period'             : {'size': 2, 'num': 0x1C},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x1D, value)},
     'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x1E, value)},
+    'range'                        : {'size': 2, 'num': 0x1F},
 }
 properties[0x03].update(general_veh_props)
 
