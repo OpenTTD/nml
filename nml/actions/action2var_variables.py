@@ -174,7 +174,7 @@ varact2vars60x_vehicles = {
 }
 
 varact2vars_canals = {
-    'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8, 'function': lambda var, info: muldiv(var, 8, 1)},
+    'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8},
     'terrain_type' : {'var': 0x81, 'start': 0, 'size': 8},
     'random_bits'  : {'var': 0x83, 'start': 0, 'size': 8},
 }
