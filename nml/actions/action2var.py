@@ -755,7 +755,6 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     @rtype: L{SpriteGroupRef}
     """
     if len(result.param_list) == 0:
-        action2.add_ref(result, parent_action)
         return result
 
     # Result is parametrized
@@ -835,11 +834,13 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
         assert none_result is not None
         if isinstance(none_result, expression.SpriteGroupRef):
             result = parse_sg_ref_result(none_result, action_list, parent_action, var_range)
+            action2.add_ref(result, parent_action)
         else:
             result = none_result
     elif isinstance(value, expression.SpriteGroupRef):
-        comment = value.name.value + ';'
         result = parse_sg_ref_result(value, action_list, parent_action, var_range)
+        action2.add_ref(result, parent_action)
+        comment = result.name.value + ';'
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value
         result = value
