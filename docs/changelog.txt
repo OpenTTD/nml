@@ -1,3 +1,14 @@
-Changes in 0.2.1 (2011-12-06)
+0.2.1 (2011-12-18)
+------------------------------------------------------------------------
+- Add: CB_RESULT_NO_MORE_ARTICULATED_PARTS, CB_RESULT_REVERSED_VEHICLE
+       and CB_RESULT_NO_TEXT as constants to make porting projects to
+	   NML 0.3 easier.
+- Fix: Internal error when the ID in a replace-block was not a compile-time constant 
+- Fix: Crash when referencing a SpriteSetCollection in a graphics-block that was inside an if-block
 - Fix: Text files in docs/ were not included in source package
 - Doc: Add GPL v2 header to all .py files
+
+
+0.2.0 (2011-11-20)
+------------------------------------------------------------------------
+No changelog available for 0.2.0 and earlier.
