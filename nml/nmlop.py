@@ -192,14 +192,14 @@ CMP_GT = Operator(
 MIN = Operator(
     act2_supports = True, act2_str = r'\2<', act2_num = 2,
     actd_supports = True,
-    compiletime_func = lambda a, b: min(a, b),
+    compiletime_func = min,
     validate_func = validate_func_float,
 )
 
 MAX = Operator(
     act2_supports = True, act2_str = r'\2>', act2_num = 3,
     actd_supports = True,
-    compiletime_func = lambda a, b: max(a, b),
+    compiletime_func = max,
     validate_func = validate_func_float,
 )
 
