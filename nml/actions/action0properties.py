@@ -309,8 +309,8 @@ properties[0x01] = {
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     'visual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
-    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x23, value)},
-    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x24, value)},
+    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x24, value)},
+    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x25, value)},
 }
 properties[0x01].update(general_veh_props)
 
