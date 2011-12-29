@@ -3,6 +3,7 @@ recursive-include docs *.html *.txt nmlc.1
 recursive-include regression *.nml *.lng *.grf *.nfo *.png *.pcx
 recursive-include examples *.nml *.lng *.png *.pcx
 prune regression/output
-include Makefile bootstrap.py
+prune regression/output2
+include Makefile bootstrap.py nmlc
 include regression/Makefile
 include regression/beef.wav
