@@ -1,3 +1,10 @@
+- Doc: add notice about ZPL in readme.txt
+- Add: clean target to Makefile in main dir and let make clean remove regression/parsetab.py
+- Fix: include nmlc script so regression runs out-of-the-box for source package
+- Fix: several files from examples/ were missing in source distributions
+- Fix: 'make install' was broken
+
+
 0.2.1 (2011-12-18)
 ------------------------------------------------------------------------
 - Add: CB_RESULT_NO_MORE_ARTICULATED_PARTS, CB_RESULT_REVERSED_VEHICLE
