@@ -8,7 +8,7 @@ regression:
 test: regression
 
 install:
-	$(PYTHON) setup.py
+	$(PYTHON) setup.py install
 
 bundle:
 	$(PYTHON) bootstrap.py
