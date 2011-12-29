@@ -21,4 +21,4 @@ $(NMLC) --nfo output2/$@.nfo --grf output2/$@.grf nml_output/$@.nml
 diff -u output2/$@.nfo expected/$@.nfo && diff -u output2/$@.grf expected/$@.grf
 
 clean:
-	$(_V) rm -rf output nml_output output2
+	$(_V) rm -rf output nml_output output2 parsetab.py

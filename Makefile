@@ -1,7 +1,7 @@
 MAKE?=make
 PYTHON?=python
 
-.PHONY: regression install bundle
+.PHONY: regression install bundle clean
 
 regression:
 	$(MAKE) -C regression
@@ -12,3 +12,6 @@ install:
 
 bundle:
 	$(PYTHON) bootstrap.py
+
+clean:
+	$(MAKE) -C regression clean
