@@ -110,7 +110,7 @@ def get_global_string_actions():
     for text in texts:
         str_lang, str_id, str_text, feature = text
         # If possible, append strings to the last action 4 instead of creating a new one
-        if str_lang != last_lang or str_id - 1 != last_id or feature != last_feature:
+        if str_lang != last_lang or str_id - 1 != last_id or feature != last_feature or len(actions[-1].texts) == 0xFF:
             actions.append(Action4(feature, str_lang, 2, str_id, [str_text]))
         else:
             actions[-1].texts.append(str_text)
