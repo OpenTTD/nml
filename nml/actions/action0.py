@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml.actions.action0properties import Action0Property, properties, two_byte_property
+from nml.actions.action0properties import BaseAction0Property, Action0Property, properties, two_byte_property
 from nml import generic, expression, nmlop, grfstrings
 from nml.actions import base_action, action4, action6, actionD, actionE, action7
 from nml.ast import general
@@ -45,6 +45,23 @@ def adjust_value(value, org_value, unit, ottd_convert_func):
     return value
 
 class Action0(base_action.BaseAction):
+    """
+    Representation of NFO action 0. Action 0 is used to set properties on all
+    kinds of objects. It can set any number of properties on a list of
+    consecutive IDs. Each property is defined by a unique (per feature) integer.
+
+    @ivar feature: Feature number to set properties for.
+    @type feature: C{int}
+
+    @ivar id: First ID to set properties for
+    @type id: C{int}
+
+    @ivar prop_list: List of all properties that are to be set.
+    @type prop_list: C{list} of L{BaseAction0Property}
+
+    @ivar num_ids: Number of IDs to set properties for.
+    @type num_ids: C{int} or C{None}
+    """
     def __init__(self, feature, id):
         self.feature = feature
         self.id = id
@@ -249,7 +266,7 @@ def parse_property_block(prop_list, feature, id):
     action6.free_parameters.restore()
     return action_list
 
-class IDListProp(object):
+class IDListProp(BaseAction0Property):
     def __init__(self, prop_num, id_list):
         self.prop_num = prop_num
         self.id_list = id_list
@@ -300,7 +317,7 @@ def get_railtypelist_action(railtype_list):
     action6.free_parameters.restore()
     return action_list
 
-class ByteListProp(object):
+class ByteListProp(BaseAction0Property):
     def __init__(self, prop_num, data):
         self.prop_num = prop_num
         self.data = data
@@ -424,7 +441,7 @@ def get_basecost_action(basecost):
     action6.free_parameters.restore()
     return action_list
 
-class LanguageTranslationTable(object):
+class LanguageTranslationTable(BaseAction0Property):
     def __init__(self, num, name_list, extra_names):
         self.num = num
         self.mappings = []
@@ -508,7 +525,7 @@ def get_disable_actions(disable):
 
     return [act0]
 
-class EngineOverrideProp(object):
+class EngineOverrideProp(BaseAction0Property):
     def __init__(self, source, target):
         self.source = source
         self.target = target

@@ -18,8 +18,34 @@ from nml.expression import ConstantNumeric, ConstantFloat, Array, StringLiteral,
 
 tilelayout_names = {}
 
-class Action0Property(object):
+class BaseAction0Property(object):
     """
+    Base class for Action0 properties.
+    """
+
+    def write(self, file):
+        """
+        Write this property to the output given by file.
+
+        @param file: The outputfile we have to write to.
+        @type  file: L{BinaryOutputBase}
+        """
+        raise NotImplementedError('write is not implemented in %r' % type(self))
+
+    def get_size(self):
+        """
+        Get the number of bytes that this property will write to
+        the output.
+
+        @return: The size of this property in bytes.
+        @rtype:  C{int}
+        """
+        raise NotImplementedError('get_size is not implemented in %r' % type(self))
+
+class Action0Property(BaseAction0Property):
+    """
+    Simple Action 0 property with a fixed size.
+
     @ivar num: Number of the property.
     @type num: C{int}
 
