@@ -777,6 +777,7 @@ properties[0x10] = {
     'sort_order'               : {'size': 1, 'num': 0x1A},
     'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
     'maintenance_cost'         : {'size': 2, 'num': 0x1C},
+    'alternative_railtype_list': {'custom_function': lambda x: railtype_list(x, 0x1D)},
 }
 
 #
