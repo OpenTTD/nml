@@ -42,6 +42,9 @@ constant_numbers = {
     'CC_HAZARDOUS'    : 8,
     'CC_COVERED'      : 9,
     'CC_OVERSIZED'    : 10,
+    'CC_POWDERIZED'   : 11,
+    'CC_NON_POURABLE' : 12,
+    'CC_NEO_BULK'     : 12,
     'CC_SPECIAL'      : 15,
     'NO_CARGO_CLASS'           : 0,
     'ALL_NORMAL_CARGO_CLASSES' : 0x07FF,
@@ -126,7 +129,7 @@ constant_numbers = {
     'CB_RESULT_ATTACH_ALLOW_IF_RAILTYPES'  : 0x400,
     'CB_RESULT_ATTACH_ALLOW'               : 0x401,
     'CB_RESULT_ATTACH_DISALLOW'            : 0x402,
-    
+
     'CB_RESULT_NO_MORE_ARTICULATED_PARTS'  : 0x7FFF,
     'CB_RESULT_REVERSED_VEHICLE'           : 0x4000,
 
@@ -307,7 +310,7 @@ constant_numbers = {
 
     'CB_RESULT_IND_NO_CONSTRUCTION'            : 0x0000,
     'CB_RESULT_IND_PROBABILITY_FROM_PROPERTY'  : 0x0100,
-    
+
     'CB_RESULT_NO_TEXT'                 : 0x400,
 
     'CB_RESULT_LOCATION_ALLOW'                        : 0x400,
