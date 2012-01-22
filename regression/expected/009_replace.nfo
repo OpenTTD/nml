@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum pcxfile xpos ypos compression ysize xsize xrel yrel
 
-0 * 4 \d5 
+0 * 4 \d12 
 
 1 * 54 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -20,4 +20,13 @@
 
 4 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 -10 
 5 opengfx_generic_trams1.pcx 48 56 01 18 8 -3 4 
+
+6 * 5 05 09 FF \w6 
+
+7 oneway.png 18 8 01 16 24 -12 -8 
+8 oneway.png 50 8 01 16 24 -12 -8 
+9 oneway.png 82 8 01 16 28 -14 -8 
+10 oneway.png 114 8 01 16 24 -10 -8 
+11 oneway.png 146 8 01 16 24 -10 -8 
+12 oneway.png 178 8 01 16 28 -12 -8 
 
