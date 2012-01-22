@@ -883,8 +883,6 @@ def reduce_varaction2_expr(expr, feature, extra_dicts = []):
     # TODO pass the function name along to avoid this
     func60x = lambda value, pos: expression.FunctionPtr(expression.Identifier(generic.reverse_lookup(vars_60x, value), pos), parse_60x_var, value)
 
-    # make sure, that variables take precedence about global constants / parameters
-    # this way, use the current climate instead of the climate at load time.
     return expr.reduce(extra_dicts + [(action2var_variables.varact2_globalvars, parse_var), \
         (vars_normal, parse_var), \
         (vars_60x, func60x)] + \
