@@ -137,3 +137,12 @@ class ReplaceNewSprite(base_statement.BaseStatement):
 
     def get_action_list(self):
         return action5.parse_action5(self)
+
+    def __str__(self):
+        name = str(self.name) if self.name is not None else ""
+        ret = "replacenew %s(%s) {\n" % (name, ", ".join([str(param) for param in self.param_list]))
+        for sprite in self.sprite_list:
+            ret += "\t%s\n" % str(sprite)
+        ret += "}\n"
+        return ret
+
