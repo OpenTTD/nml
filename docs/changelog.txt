@@ -1,8 +1,14 @@
-- Doc: add notice about ZPL in readme.txt
+- Add: support for (optional) url-information in the grf-block
+- Add: names for newly defined cargo classes: CC_POWDERIZED and CC_NEO_BULK
 - Add: clean target to Makefile in main dir and let make clean remove regression/parsetab.py
+- Fix: each action4 is limited to 255 strings. Write multiple actions when we have more than that
+- Fix: groff warning about manpage
+- Fix: include buildout.cfg in src distribution and prune regression/nml_output/ (issue #3490)
+- Fix: Add NML output for replacenew-block (issue #3450)
 - Fix: include nmlc script so regression runs out-of-the-box for source package
 - Fix: several files from examples/ were missing in source distributions
 - Fix: 'make install' was broken
+- Doc: add notice about ZPL in readme.txt
 
 
 0.2.1 (2011-12-18)
@@ -10,7 +16,7 @@
 - Add: CB_RESULT_NO_MORE_ARTICULATED_PARTS, CB_RESULT_REVERSED_VEHICLE
        and CB_RESULT_NO_TEXT as constants to make porting projects to
 	   NML 0.3 easier.
-- Fix: Internal error when the ID in a replace-block was not a compile-time constant 
+- Fix: Internal error when the ID in a replace-block was not a compile-time constant
 - Fix: Crash when referencing a SpriteSetCollection in a graphics-block that was inside an if-block
 - Fix: Text files in docs/ were not included in source package
 - Doc: Add GPL v2 header to all .py files
