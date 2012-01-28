@@ -246,12 +246,16 @@ def read_extra_commands(custom_tags_file):
     if not os.access(custom_tags_file, os.R_OK):
         #Failed to open custom_tags.txt, ignore this
         return
+    line_no = 0
     for line in codecs.open(custom_tags_file, "r", "utf-8"):
+        line_no += 1
         line = line.strip()
         if len(line) == 0 or line[0] == "#":
             pass
         else:
-            i = line.index(':')
+            i = line.find(':')
+            if i == -1:
+                raise generic.ScriptError("Line has no ':' delimiter", generic.LinePosition(custom_tags_file, line_no))
             name = line[:i].strip()
             value = line[i+1:]
             if name in commands:
