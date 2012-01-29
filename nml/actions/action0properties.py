@@ -291,7 +291,7 @@ properties[0x00] = {
     'refittable_cargo_types'       : {'size': 4, 'num': 0x1D, 'append_function': append_cargo_type(0x00)},
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
-    'shorten_vehicle'              : {'size': 1, 'num': 0x21},
+    'shorten_vehicle'              : {'size': 1, 'num': 0x21, 'deprecate_message': "Property 'shorten_vehicle' is deprecated, use 'length' instead.  Use a value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH)."},
     'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x21)},
     'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},

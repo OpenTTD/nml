@@ -230,6 +230,8 @@ def parse_graphics_block(graphics_block, feature, id, is_livery_override = False
                     info_list = [info_list]
 
                 for info in info_list:
+                    if 'deprecate_message' in info:
+                        generic.print_warning(info['deprecate_message'], cargo_id.pos)
                     if info['type'] == 'cargo':
                         # Not a callback, but an alias for a certain cargo type
                         if info['num'] in cargo_gfx:

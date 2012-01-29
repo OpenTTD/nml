@@ -182,6 +182,9 @@ def parse_property(feature, name, value, id, unit):
         if prop is None: raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
     else: assert False
 
+    if 'deprecate_message' in prop:
+        generic.print_warning(prop['deprecate_message'], name.pos)
+
     if unit is None or unit.type != 'nfo':
         # Save the original value to test conversion against it
         org_value = value
