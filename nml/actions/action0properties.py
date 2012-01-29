@@ -406,11 +406,13 @@ properties[0x03] = {
 }
 properties[0x03].update(general_veh_props)
 
-# TODO: Feature 0x04 .. 0x06 (Stations, Canals, Bridges)
+# TODO: Feature 0x04
 
 properties[0x05] = {
     'graphic_flags'  : {'size': 1, 'num': 0x09},
 }
+
+# TODO: Feature 0x06
 
 #
 # Feature 0x07 (Houses)
