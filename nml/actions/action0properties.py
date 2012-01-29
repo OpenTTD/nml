@@ -263,6 +263,11 @@ def ctt_list(prop_num, value):
         raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
     return [CargotypeListProp(prop_num, [val.reduce_constant().value for val in value.values])]
 
+def vehicle_length(value, prop_num):
+    value = value.reduce_constant()
+    generic.check_range(value.value, 1, 8, "vehicle length", value.pos)
+    return [Action0Property(prop_num, ConstantNumeric(8 - value.value), 1)]
+
 #
 # Feature 0x00 (Trains)
 #
@@ -287,6 +292,7 @@ properties[0x00] = {
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
     'shorten_vehicle'              : {'size': 1, 'num': 0x21},
+    'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x21)},
     'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
     'bitmask_vehicle_info'         : {'size': 1, 'num': 0x25},
@@ -335,6 +341,7 @@ properties[0x01] = {
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     'visual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
+    'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x23)},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x24, value)},
     'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x25, value)},
 }

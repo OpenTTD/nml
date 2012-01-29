@@ -74,6 +74,9 @@ constant_numbers = {
     'SHORTEN_TO_2_8' : 0x06,
     'SHORTEN_TO_1_8' : 0x07,
 
+    #vehicle length
+    'VEHICLE_LENGTH' : 8,
+
     #visual effect / wagon power
     'VISUAL_EFFECT_DEFAULT'  : 0x00,
     'VISUAL_EFFECT_STEAM'    : 0x10,
