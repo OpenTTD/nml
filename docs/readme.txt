@@ -1,6 +1,6 @@
 NML readme
-Last updated:    2011-12-18
-Release version: 0.2.1
+Last updated:    2012-01-29
+Release version: 0.2.2
 ------------------------------------------------------------------------
 
 

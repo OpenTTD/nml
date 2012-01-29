@@ -1,6 +1,9 @@
+0.2.2 (2021-01-29)
+------------------------------------------------------------------------
 - Add: support for (optional) url-information in the grf-block
 - Add: names for newly defined cargo classes: CC_POWDERIZED and CC_NEO_BULK
 - Add: clean target to Makefile in main dir and let make clean remove regression/parsetab.py
+- Fix: don't crash when a line in custom_tags.txt is missing a colon delimiter
 - Fix: each action4 is limited to 255 strings. Write multiple actions when we have more than that
 - Fix: groff warning about manpage
 - Fix: include buildout.cfg in src distribution and prune regression/nml_output/ (issue #3490)
