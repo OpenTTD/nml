@@ -162,10 +162,6 @@ def two_byte_property(value, low_prop, high_prop):
     high_byte = ConstantNumeric(value.value >> 8)
     return [Action0Property(low_prop, low_byte, 1), Action0Property(high_prop, high_byte, 1)]
 
-def append_cargo_type(feature):
-    propnums = [0x15, 0x10, 0x0C]
-    return lambda value: [Action0Property(propnums[feature], ConstantNumeric(0xFF), 1)]
-
 def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
     """
     Convert animation info array of two elements to an animation info property.
@@ -288,7 +284,7 @@ properties[0x00] = {
     'engine_class'                 : {'size': 1, 'num': 0x19},
     'extra_power_per_wagon'        : {'size': 2, 'num': 0x1B, 'unit_type': 'power'},
     'refit_cost'                   : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x1D, 'append_function': append_cargo_type(0x00)},
+    'refittable_cargo_types'       : {'size': 4, 'num': 0x1D},
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
     'shorten_vehicle'              : {'size': 1, 'num': 0x21, 'deprecate_message': "Property 'shorten_vehicle' is deprecated, use 'length' instead.  Use a value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH)."},
@@ -298,8 +294,8 @@ properties[0x00] = {
     'bitmask_vehicle_info'         : {'size': 1, 'num': 0x25},
     'retire_early'                 : {'size': 1, 'num': 0x26},
     'misc_flags'                   : {'size': 1, 'num': 0x27},
-    'refittable_cargo_classes'     : {'size': 2, 'num': 0x28, 'append_function': append_cargo_type(0x00)},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29, 'append_function': append_cargo_type(0x00)},
+    'refittable_cargo_classes'     : {'size': 2, 'num': 0x28},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29},
     'introduction_date'            : {'size': 4, 'num': 0x2A},
     'cargo_age_period'             : {'size': 2, 'num': 0x2B},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x2C, value)},
@@ -330,14 +326,14 @@ properties[0x01] = {
     'sound_effect'                 : {'size': 1, 'num': 0x12},
     'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': 0.1},
     'weight'                       : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x16, 'append_function': append_cargo_type(0x01)},
+    'refittable_cargo_types'       : {'size': 4, 'num': 0x16},
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x19, 'unit_conversion': 255},
     'refit_cost'                   : {'size': 1, 'num': 0x1A},
     'retire_early'                 : {'size': 1, 'num': 0x1B},
     'misc_flags'                   : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_classes'     : {'size': 2, 'num': 0x1D, 'append_function': append_cargo_type(0x01)},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E, 'append_function': append_cargo_type(0x01)},
+    'refittable_cargo_classes'     : {'size': 2, 'num': 0x1D},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E},
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     'visual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
@@ -368,14 +364,14 @@ properties[0x02] = {
     'cargo_capacity'               : {'size': 2, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0F},
     'sound_effect'                 : {'size': 1, 'num': 0x10},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'append_function': append_cargo_type(0x02)},
+    'refittable_cargo_types'       : {'size': 4, 'num': 0x11},
     'refit_cost'                   : {'size': 1, 'num': 0x13},
     'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x14)},
     'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x15)},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
-    'refittable_cargo_classes'     : {'size': 2, 'num': 0x18, 'append_function': append_cargo_type(0x02)},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19, 'append_function': append_cargo_type(0x02)},
+    'refittable_cargo_classes'     : {'size': 2, 'num': 0x18},
+    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     'visual_effect'                : {'size': 1, 'num': 0x1C},
     'cargo_age_period'             : {'size': 2, 'num': 0x1D},
