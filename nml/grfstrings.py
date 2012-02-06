@@ -164,7 +164,7 @@ commands = {
 # Special characters / glyphs
 '':               {'unicode': r'\0D',       'ascii': r'\0D'},
 '{':              {'unicode': r'{',         'ascii': r'{'  },
-'NBSP':           {'unicode': r'\U00A0',    'ascii': r'\A0'},
+'NBSP':           {'unicode': r'\U00A0'}, # character A0 is used as up arrow in TTD, so don't use ASCII here.
 'COPYRIGHT':      {'unicode': r'\U00A9',    'ascii': r'\A9'},
 'TRAIN':          {'unicode': r'\UE0B4',    'ascii': r'\B4'},
 'LORRY':          {'unicode': r'\UE0B5',    'ascii': r'\B5'},
