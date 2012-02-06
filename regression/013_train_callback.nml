@@ -111,7 +111,8 @@ item(FEAT_TRAINS, bulk_wagon) {
         climates_available: ALL_CLIMATES;
         refittable_cargo_classes: bitmask(CC_BULK);
         non_refittable_cargo_classes: bitmask(CC_PASSENGERS, CC_MAIL, CC_ARMOURED, CC_LIQUID, CC_REFRIGERATED, CC_HAZARDOUS);
-        refittable_cargo_types: bitmask(WDPR, SCRP, FRUT, FRVG);
+        cargo_allow_refit: [WDPR, SCRP, FRUT, FRVG];
+        default_cargo_type: COAL;
         sprite_id: SPRITE_ID_NEW_TRAIN;
         introduction_date: date(1880,1,1);
         model_life: VEHICLE_NEVER_EXPIRES;

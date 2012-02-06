@@ -142,14 +142,13 @@ FF
 \wx8012 \dx0000001A \dx0000001A 	// 26 .. 26: return 18;
 \wx0000 // default: CB_FAILED;
 
-49 * 70 00 00 \b25 01 FF \wx0074 
+49 * 67 00 00 \b23 01 FF \wx0074 
 06 0F 
 28 \wx0010 
-15 FF 
 29 \wx01CB 
-15 FF 
-1D \dx00003003 
-15 FF 
+2C \b4 
+00 01 0C 0D 
+15 13 
 12 FD 
 2A \dx000A7A40 
 04 FF 

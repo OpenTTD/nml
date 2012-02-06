@@ -70,13 +70,11 @@
 33 * 9 03 00 81 FF \wx001B \b0 
 \wx00FC 	// turbotrain_passenger_group;
 
-34 * 21 00 00 \b6 01 FF \wx001B 
+34 * 17 00 00 \b4 01 FF \wx001B 
 12 FD 
 27 04 
 28 \wx0001 
-15 FF 
 29 \wx0000 
-15 FF 
 
 35 * 9 03 00 01 FF \wx001B \b0 
 \wx00FD 	// normal_passenger_group;
