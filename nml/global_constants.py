@@ -50,8 +50,8 @@ constant_numbers = {
     'CC_NEO_BULK'     : 12,
     'CC_SPECIAL'      : 15,
     'NO_CARGO_CLASS'           : 0,
-    'ALL_NORMAL_CARGO_CLASSES' : 0x07FF,
-    'ALL_CARGO_CLASSES'        : 0x87FF,
+    'ALL_NORMAL_CARGO_CLASSES' : 0x1FFF,
+    'ALL_CARGO_CLASSES'        : 0x9FFF,
 
     #engine class
     'ENGINE_CLASS_STEAM'    : 0x00,
