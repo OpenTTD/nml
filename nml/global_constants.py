@@ -30,6 +30,9 @@ constant_numbers = {
     #never expire
     'VEHICLE_NEVER_EXPIRES' : 0xFF,
 
+    #default_cargo
+    'DEFAULT_CARGO_FIRST_REFITTABLE' : 0xFF,
+
     #cargo classes
     'CC_PASSENGERS'   : 0,
     'CC_MAIL'         : 1,
