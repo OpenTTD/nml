@@ -119,6 +119,9 @@ class OutputGRF(output_base.BinaryOutputBase):
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
         size_y = sprite_info.ysize.value
+        (im_width, im_height) = im.size
+        if x + size_x > im_width or y + size_y > im_height:
+            raise generic.ScriptError("Read beyond bounds of image file '%s'" % sprite_info.file.value, sprite_info.file.pos)
         sprite = im.crop((x, y, x + size_x, y + size_y))
 
         # Check for white pixels; those that cause "artefacts" when shading
