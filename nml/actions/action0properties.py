@@ -274,9 +274,12 @@ properties[0x00] = {
     'track_type'                   : {'size': 1, 'num': 0x05},
     'ai_special_flag'              : {'size': 1, 'num': 0x08},
     'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': 3.5790976, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
+    # 09 doesn't exist
     'power'                        : {'size': 2, 'num': 0x0B, 'unit_type': 'power'},
+    # 0A doesn't exist
     'running_cost_factor'          : {'size': 1, 'num': 0x0D},
     'running_cost_base'            : {'size': 4, 'num': 0x0E},
+    # 0F -11 don't exist
     'sprite_id'                    : {'size': 1, 'num': 0x12},
     'dual_headed'                  : {'size': 1, 'num': 0x13},
     'cargo_capacity'               : {'size': 1, 'num': 0x14},
@@ -285,15 +288,18 @@ properties[0x00] = {
     'cost_factor'                  : {'size': 1, 'num': 0x17},
     'ai_engine_rank'               : {'size': 1, 'num': 0x18},
     'engine_class'                 : {'size': 1, 'num': 0x19},
+    # 1A (sort purchase list) is implemented elsewhere
     'extra_power_per_wagon'        : {'size': 2, 'num': 0x1B, 'unit_type': 'power'},
     'refit_cost'                   : {'size': 1, 'num': 0x1C},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x1D, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 1E (callback flags) is not set by user
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
     'shorten_vehicle'              : {'size': 1, 'num': 0x21, 'warning': "Property 'shorten_vehicle' is deprecated, use 'length' instead.  Use a value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH)."},
     'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x21)},
     'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
+    # 24 is high byte of 16 (weight)
     'bitmask_vehicle_info'         : {'size': 1, 'num': 0x25},
     'retire_early'                 : {'size': 1, 'num': 0x26},
     'misc_flags'                   : {'size': 1, 'num': 0x27},
@@ -323,6 +329,7 @@ properties[0x01] = {
     'speed'                        : {'custom_function' : roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': 7.1581952, 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
     'running_cost_factor'          : {'size': 1, 'num': 0x09},
     'running_cost_base'            : {'size': 4, 'num': 0x0A},
+    # 0B -0D don't exist
     'sprite_id'                    : {'size': 1, 'num': 0x0E},
     'cargo_capacity'               : {'size': 1, 'num': 0x0F},
     'default_cargo_type'           : {'size': 1, 'num': 0x10},
@@ -330,7 +337,9 @@ properties[0x01] = {
     'sound_effect'                 : {'size': 1, 'num': 0x12},
     'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': 0.1},
     'weight'                       : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
+    # 15 is set together with 08 (see above)
     'refittable_cargo_types'       : {'size': 4, 'num': 0x16, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 17 (callback flags) is not set by user
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x19, 'unit_conversion': 255},
     'refit_cost'                   : {'size': 1, 'num': 0x1A},
@@ -339,7 +348,8 @@ properties[0x01] = {
     'refittable_cargo_classes'     : {'size': 2, 'num': 0x1D},
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E},
     'introduction_date'            : {'size': 4, 'num': 0x1F},
-    'visual_effect'                : {'size': 1, 'num': 0x21},
+    # 20 (sort purchase list) is implemented elsewhere
+    'viual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
     'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x23)},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x24, value)},
@@ -367,9 +377,11 @@ properties[0x02] = {
     'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': 7.1581952, 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
     'default_cargo_type'           : {'size': 1, 'num': 0x0C},
     'cargo_capacity'               : {'size': 2, 'num': 0x0D},
+    # 0E does not exist
     'running_cost_factor'          : {'size': 1, 'num': 0x0F},
     'sound_effect'                 : {'size': 1, 'num': 0x10},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 12 (callback flags) is not set by user
     'refit_cost'                   : {'size': 1, 'num': 0x13},
     'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x14)},
     'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x15)},
@@ -378,6 +390,7 @@ properties[0x02] = {
     'refittable_cargo_classes'     : {'size': 2, 'num': 0x18},
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
     'introduction_date'            : {'size': 4, 'num': 0x1A},
+    # 1B (sort purchase list) is implemented elsewhere
     'visual_effect'                : {'size': 1, 'num': 0x1C},
     'cargo_age_period'             : {'size': 2, 'num': 0x1D},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x1E, value)},
@@ -398,15 +411,18 @@ properties[0x03] = {
     'acceleration'                 : {'size': 1, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0E},
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},
+    # 10 does not exist
     'mail_capacity'                : {'size': 1, 'num': 0x11},
     'sound_effect'                 : {'size': 1, 'num': 0x12},
     'refittable_cargo_types'       : {'size': 4, 'num': 0x13, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 14 (callback flags) is not set by user
     'refit_cost'                   : {'size': 1, 'num': 0x15},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
     'refittable_cargo_classes'     : {'size': 2, 'num': 0x18},
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
     'introduction_date'            : {'size': 4, 'num': 0x1A},
+    # 1B (sort purchase list) is implemented elsewhere
     'cargo_age_period'             : {'size': 2, 'num': 0x1C},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x1D, value)},
     'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x1E, value)},
@@ -416,7 +432,12 @@ properties[0x03].update(general_veh_props)
 
 # TODO: Feature 0x04
 
+#
+# Feature 0x05 (Canals)
+#
+
 properties[0x05] = {
+    # 08 (callback flags) not set by user
     'graphic_flags'  : {'size': 1, 'num': 0x09},
 }
 
@@ -456,7 +477,7 @@ def house_available_mask(value):
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08},
     'building_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x09, 0x19)},
-    'years_available'         : {'custom_function': house_available_years},
+    'years_available'         : {'custom_function': house_available_years},  # = prop 0A, 21 and 22
     'population'              : {'size': 1, 'num': 0x0B},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C},
     'pax_acceptance'          : {'size': 1, 'num': 0x0D, 'unit_conversion': 8},
@@ -465,16 +486,21 @@ properties[0x07] = {
     'local_authority_impact'  : {'size': 2, 'num': 0x10},
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
-    'availability_mask'       : {'custom_function': house_available_mask},
+    'availability_mask'       : {'custom_function': house_available_mask}, # = prop 13
+    # prop 14 (callback flags 1) is not set by user
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
-    'random_colours'          : {'custom_function': house_random_colours},
+    'random_colours'          : {'custom_function': house_random_colours}, # = prop 17
     'probability'             : {'size': 1, 'num': 0x18, 'unit_conversion': 16},
+    # prop 19 is the high byte of prop 09
     'animation_info'          : {'custom_function': lambda value: animation_info(0x1A, value, 7, 128, 1)},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
     'building_class'          : {'size': 1, 'num': 0x1C},
+    # prop 1D (callback flags 2) is not set by user
     'accepted_cargos'         : {'custom_function': lambda value: cargo_list(value, 3, 0x1E, 4)},
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
+    # prop 20 not yet implemented (TODO)
+    # prop 21 -22 see above (years_available, prop 0A)
 }
 
 # Feature 0x08 (General Vars) is implemented elsewhere (e.g. basecost, snowline)
@@ -504,8 +530,9 @@ def industrytile_cargos(value):
 properties[0x09] = {
     'substitute'         : {'size': 1, 'num': 0x08},
     'override'           : {'size': 1, 'num': 0x09},
-    'accepted_cargos'    : {'custom_function': industrytile_cargos},
+    'accepted_cargos'    : {'custom_function': industrytile_cargos}, # = prop 0A - 0C
     'land_shape_flags'   : {'size': 1, 'num': 0x0D},
+    # prop 0E (callback flags) is not set by user
     'animation_info'     : {'custom_function': lambda value: animation_info(0x0F, value)},
     'animation_speed'    : {'size': 1, 'num': 0x10},
     'animation_triggers' : {'size': 1, 'num': 0x11},
@@ -617,7 +644,7 @@ def industry_input_multiplier(value, prop_num):
 properties[0x0A] = {
     'substitute'             : {'size': 1, 'num': 0x08},
     'override'               : {'size': 1, 'num': 0x09},
-    'layouts'                : {'custom_function': industry_layouts},
+    'layouts'                : {'custom_function': industry_layouts}, # = prop 0A
     'life_type'              : {'size': 1, 'num': 0x0B},
     'closure_msg'            : {'size': 2, 'num': 0x0C},
     'prod_increase_msg'      : {'size': 2, 'num': 0x0D},
@@ -625,10 +652,10 @@ properties[0x0A] = {
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
     'prod_cargo_types'       : {'custom_function': lambda value: cargo_list(value, 2, 0x10, 2)},
     'accept_cargo_types'     : {'custom_function': lambda value: cargo_list(value, 3, 0x11, 4)},
-    'prod_multiplier'        : {'custom_function': industry_prod_multiplier},
+    'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12,13
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
-    'random_sound_effects'   : {'custom_function': random_sounds},
-    'conflicting_ind_types'  : {'custom_function': industry_conflicting_types},
+    'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
+    'conflicting_ind_types'  : {'custom_function': industry_conflicting_types}, # = prop 16
     'prob_random'            : {'size': 1, 'num': 0x17},
     'prob_in_game'           : {'size': 1, 'num': 0x18},
     'map_colour'             : {'size': 1, 'num': 0x19},
@@ -639,6 +666,7 @@ properties[0x0A] = {
     'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E)},
     'name'                   : {'size': 2, 'num': 0x1F, 'string': 0xDC},
     'prospect_chance'        : {'size': 4, 'num': 0x20, 'unit_conversion': 0xFFFFFFFF},
+    # prop 21, 22 (callback flags) are not set by user
     'remove_cost_multiplier' : {'size': 4, 'num': 0x23},
     'nearby_station_name'    : {'size': 2, 'num': 0x24, 'string': 0xDC},
 }
@@ -666,8 +694,10 @@ properties[0x0B] = {
     'cargo_label'               : {'num' : 0x17, 'size' : 4, 'string_literal': 4},
     'town_growth_effect'        : {'num' : 0x18, 'size' : 1},
     'town_growth_multiplier'    : {'num' : 0x19, 'size' : 2, 'unit_conversion' : 0x100},
+    # 1A (callback flags) is not set by user
     'units_of_cargo'            : {'num' : 0x1B, 'size' : 2, 'string' : 0xDC},
     'items_of_cargo'            : {'num' : 0x1C, 'size' : 2, 'string' : 0xDC},
+    # TODO property 1D (capacity multiplier)
 }
 
 # TODO: Feature 0x0C (Sound Effects)
@@ -721,8 +751,10 @@ def airport_layouts(value):
 
 properties[0x0D] = {
     'override'         : {'size': 1, 'num': 0x08},
-    'layouts'          : {'custom_function': airport_layouts},
-    'years_available'  : {'custom_function': airport_years},
+    # 09 does not exist
+    'layouts'          : {'custom_function': airport_layouts}, # = prop 0A
+    # 0B does not exist
+    'years_available'  : {'custom_function': airport_years}, # = prop 0C
     'ttd_airport_type' : {'size': 1, 'num': 0x0D},
     'catchment_area'   : {'size': 1, 'num': 0x0E},
     'noise_level'      : {'size': 1, 'num': 0x0F},
@@ -751,7 +783,7 @@ properties[0x0F] = {
     'classname'              : {'size': 2, 'num': 0x09, 'string': 0xD0},
     'name'                   : {'size': 2, 'num': 0x0A, 'string': 0xD0},
     'climates_available'     : {'size': 1, 'num': 0x0B},
-    'size'                   : {'custom_function': object_size},
+    'size'                   : {'custom_function': object_size}, # = prop 0C
     'build_cost_multiplier'  : {'size': 1, 'num': 0x0D},
     'introduction_date'      : {'size': 4, 'num': 0x0E},
     'end_of_life_date'       : {'size': 4, 'num': 0x0F},
@@ -823,6 +855,7 @@ properties[0x10] = {
 properties[0x11] = {
     'substitute'         : {'size': 1, 'num': 0x08},
     'override'           : {'size': 1, 'num': 0x09},
+    # 0A - 0D don't exist (yet?)
     'callback_flags'     : {'size': 1, 'num': 0x0E},
     'animation_info'     : {'custom_function': lambda value: animation_info(0x0F, value)},
     'animation_speed'    : {'size': 1, 'num': 0x10},
