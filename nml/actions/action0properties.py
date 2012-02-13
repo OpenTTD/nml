@@ -136,6 +136,8 @@ class Action0Property(BaseAction0Property):
 #
 # 'warning' is a string (optional) containing a warning message that will be
 # shown if a property is used. Use for deprecating properties.
+#
+# 'first' (value doesn't matter) if the property should be set first (generally a substitute type)
 
 properties = 0x12 * [None]
 
@@ -475,7 +477,7 @@ def house_available_mask(value):
     return [Action0Property(0x13, ConstantNumeric(town_zones | (climates & 0x800) | ((climates & 0x0F) << 12)), 2)]
 
 properties[0x07] = {
-    'substitute'              : {'size': 1, 'num': 0x08},
+    'substitute'              : {'size': 1, 'num': 0x08 , 'first': None},
     'building_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x09, 0x19)},
     'years_available'         : {'custom_function': house_available_years},  # = prop 0A, 21 and 22
     'population'              : {'size': 1, 'num': 0x0B},
@@ -528,7 +530,7 @@ def industrytile_cargos(value):
     return props
 
 properties[0x09] = {
-    'substitute'         : {'size': 1, 'num': 0x08},
+    'substitute'         : {'size': 1, 'num': 0x08, 'first': None},
     'override'           : {'size': 1, 'num': 0x09},
     'accepted_cargos'    : {'custom_function': industrytile_cargos}, # = prop 0A - 0C
     'land_shape_flags'   : {'size': 1, 'num': 0x0D},
@@ -642,7 +644,7 @@ def industry_input_multiplier(value, prop_num):
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
 properties[0x0A] = {
-    'substitute'             : {'size': 1, 'num': 0x08},
+    'substitute'             : {'size': 1, 'num': 0x08, 'first': None},
     'override'               : {'size': 1, 'num': 0x09},
     'layouts'                : {'custom_function': industry_layouts}, # = prop 0A
     'life_type'              : {'size': 1, 'num': 0x0B},
@@ -750,7 +752,7 @@ def airport_layouts(value):
     return [AirportLayoutProp(layouts)]
 
 properties[0x0D] = {
-    'override'         : {'size': 1, 'num': 0x08},
+    'override'         : {'size': 1, 'num': 0x08, 'first':None},
     # 09 does not exist
     'layouts'          : {'custom_function': airport_layouts}, # = prop 0A
     # 0B does not exist
@@ -778,7 +780,7 @@ def object_size(value):
     return [Action0Property(0x0C, ConstantNumeric(sizey.value << 4 | sizex.value), 1)]
 
 properties[0x0F] = {
-    'class'                  : {'size': 4, 'num': 0x08, 'string_literal': 4},
+    'class'                  : {'size': 4, 'num': 0x08, 'first': None, 'string_literal': 4},
     # strings might be according to specs be either 0xD0 or 0xD4
     'classname'              : {'size': 2, 'num': 0x09, 'string': 0xD0},
     'name'                   : {'size': 2, 'num': 0x0A, 'string': 0xD0},
@@ -824,7 +826,7 @@ def railtype_list(value, prop_num):
     return [RailtypeListProp(prop_num, value.values)]
 
 properties[0x10] = {
-    'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4},
+    'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
     'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
     'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
     'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
@@ -853,7 +855,7 @@ properties[0x10] = {
 #
 
 properties[0x11] = {
-    'substitute'         : {'size': 1, 'num': 0x08},
+    'substitute'         : {'size': 1, 'num': 0x08, 'first': None},
     'override'           : {'size': 1, 'num': 0x09},
     # 0A - 0D don't exist (yet?)
     # 0E (callback flags) is not set by user

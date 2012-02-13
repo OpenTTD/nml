@@ -270,6 +270,26 @@ def parse_property(prop_info, value, feature, id):
 
     return (props, action_list, mods, action_list_append)
 
+def validate_prop_info_list(prop_info_list, pos_list, feature):
+    """
+    Perform various checks on a list of properties in a property-block
+        - make sure that properties that should appear first (substitute type) appear first
+
+    @param prop_info_list: List of dictionaries with property information
+    @type prop_info_list: C{list} of C{dict}
+
+    @param pos_list: List containing position information (order matches prop_info_list)
+    @type pos_list: C{list} of L{Position}
+
+    @param feature: Feature of the associated item
+    @type feature: C{int}
+    """
+    global properties
+    first_warnings = [(info, pos_list[i]) for i, info in enumerate(prop_info_list) if 'first' in info and i != 0]
+    for info, pos in first_warnings:
+        generic.print_warning("Property '%s' should be set before all other properties and graphics." % generic.reverse_lookup(properties[feature], info), pos)
+
+
 def parse_property_block(prop_list, feature, id):
     """
     Parse a property block to an action0 (with possibly various other actions)
@@ -295,6 +315,8 @@ def parse_property_block(prop_list, feature, id):
 
     prop_info_list = map(lambda prop: get_property_info(feature, prop.name), prop_list)
     value_list = map(lambda prop_info, prop: parse_property_value(prop_info, prop.value, prop.unit), prop_info_list, prop_list)
+    pos_list = map(lambda prop: prop.name.pos, prop_list)
+    validate_prop_info_list(prop_info_list, pos_list, feature)
 
     for prop_info, value in zip(prop_info_list, value_list):
         properties, extra_actions, mods, extra_append_actions = parse_property(prop_info, value, feature, id)
