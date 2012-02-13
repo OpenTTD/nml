@@ -271,6 +271,21 @@ def parse_property(prop_info, value, feature, id):
     return (props, action_list, mods, action_list_append)
 
 def parse_property_block(prop_list, feature, id):
+    """
+    Parse a property block to an action0 (with possibly various other actions)
+
+    @param prop_list: List of properties to parse
+    @type prop_list: C{list} of L{Property}
+
+    @param feature: Feature of the associated item
+    @type feature: C{int}
+
+    @param id: ID of the associated item
+    @type id: L{Expression}
+
+    @return: List of resulting actions
+    @rtype: C{list} of L{BaseAction}
+    """
     action6.free_parameters.save()
     action_list = []
     action_list_append = []
@@ -278,9 +293,10 @@ def parse_property_block(prop_list, feature, id):
 
     action0, offset = create_action0(feature, id, act6, action_list)
 
-    for prop in prop_list:
-        prop_info = get_property_info(feature, prop.name)
-        value = parse_property_value(prop_info, prop.value, prop.unit)
+    prop_info_list = map(lambda prop: get_property_info(feature, prop.name), prop_list)
+    value_list = map(lambda prop_info, prop: parse_property_value(prop_info, prop.value, prop.unit), prop_info_list, prop_list)
+
+    for prop_info, value in zip(prop_info_list, value_list):
         properties, extra_actions, mods, extra_append_actions = parse_property(prop_info, value, feature, id)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
