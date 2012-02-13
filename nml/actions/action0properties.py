@@ -501,7 +501,7 @@ properties[0x07] = {
     # prop 1D (callback flags 2) is not set by user
     'accepted_cargos'         : {'custom_function': lambda value: cargo_list(value, 3, 0x1E, 4)},
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
-    # prop 20 not yet implemented (TODO)
+    'watched_cargo_types'     : {'custom_function': lambda value: ctt_list(0x20, value)}
     # prop 21 -22 see above (years_available, prop 0A)
 }
 
