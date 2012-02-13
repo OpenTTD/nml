@@ -699,7 +699,7 @@ properties[0x0B] = {
     # 1A (callback flags) is not set by user
     'units_of_cargo'            : {'num' : 0x1B, 'size' : 2, 'string' : 0xDC},
     'items_of_cargo'            : {'num' : 0x1C, 'size' : 2, 'string' : 0xDC},
-    # TODO property 1D (capacity multiplier)
+    'capacity_multiplier'       : {'num' : 0x1D, 'size' : 2, 'unit_conversion' : 0x100},
 }
 
 # TODO: Feature 0x0C (Sound Effects)
