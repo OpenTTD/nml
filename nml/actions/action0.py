@@ -174,7 +174,6 @@ def parse_property(feature, name, value, id, unit):
     if isinstance(name, expression.Identifier):
         if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value, name.pos)
         prop = properties[feature][name.value]
-        if name.value == 'refittable_cargo_types': generic.print_warning("Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead.", name.pos)
     elif isinstance(name, expression.ConstantNumeric):
         for p in properties[feature]:
             pdata = properties[feature][p]
@@ -183,8 +182,8 @@ def parse_property(feature, name, value, id, unit):
         if prop is None: raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
     else: assert False
 
-    if 'deprecate_message' in prop:
-        generic.print_warning(prop['deprecate_message'], name.pos)
+    if 'warning' in prop:
+        generic.print_warning(prop['warning'], name.pos)
 
     if unit is None or unit.type != 'nfo':
         # Save the original value to test conversion against it

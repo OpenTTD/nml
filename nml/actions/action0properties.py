@@ -134,6 +134,8 @@ class Action0Property(BaseAction0Property):
 # 'custom_function' is needed. If 'custom_function' is set or 'num' is equal
 # to -1, this parameter is not needed and can be left out.
 #
+# 'warning' is a string (optional) containing a warning message that will be
+# shown if a property is used. Use for deprecating properties.
 
 properties = 0x12 * [None]
 
@@ -285,10 +287,10 @@ properties[0x00] = {
     'engine_class'                 : {'size': 1, 'num': 0x19},
     'extra_power_per_wagon'        : {'size': 2, 'num': 0x1B, 'unit_type': 'power'},
     'refit_cost'                   : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x1D},
+    'refittable_cargo_types'       : {'size': 4, 'num': 0x1D, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
-    'shorten_vehicle'              : {'size': 1, 'num': 0x21, 'deprecate_message': "Property 'shorten_vehicle' is deprecated, use 'length' instead.  Use a value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH)."},
+    'shorten_vehicle'              : {'size': 1, 'num': 0x21, 'warning': "Property 'shorten_vehicle' is deprecated, use 'length' instead.  Use a value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH)."},
     'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x21)},
     'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
@@ -328,7 +330,7 @@ properties[0x01] = {
     'sound_effect'                 : {'size': 1, 'num': 0x12},
     'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': 0.1},
     'weight'                       : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x16},
+    'refittable_cargo_types'       : {'size': 4, 'num': 0x16, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x19, 'unit_conversion': 255},
     'refit_cost'                   : {'size': 1, 'num': 0x1A},
@@ -367,7 +369,7 @@ properties[0x02] = {
     'cargo_capacity'               : {'size': 2, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0F},
     'sound_effect'                 : {'size': 1, 'num': 0x10},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x11},
+    'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
     'refit_cost'                   : {'size': 1, 'num': 0x13},
     'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x14)},
     'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x15)},
@@ -398,7 +400,7 @@ properties[0x03] = {
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},
     'mail_capacity'                : {'size': 1, 'num': 0x11},
     'sound_effect'                 : {'size': 1, 'num': 0x12},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x13},
+    'refittable_cargo_types'       : {'size': 4, 'num': 0x13, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
     'refit_cost'                   : {'size': 1, 'num': 0x15},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
