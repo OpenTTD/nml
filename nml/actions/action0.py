@@ -134,9 +134,9 @@ def create_action0(feature, id, act6, action_list):
     action0 = Action0(feature, id_val)
     return (action0, offset + size)
 
-def parse_property(feature, name, value, id, unit):
+def get_property_info(feature, name):
     """
-    Parse a single property
+    Find information on a single property, based on feature and name/number
 
     @param feature: Feature of the associated item
     @type feature: C{int}
@@ -144,27 +144,9 @@ def parse_property(feature, name, value, id, unit):
     @param name: Name (or number) of the property
     @type name: L{Identifier} or L{ConstantNumeric}
 
-    @param value: Value of the property
-    @type value: L{Expression}
-
-    @param id: ID of the associated item
-    @type id: L{Expression}
-
-    @param unit: Unit of the property value (e.g. km/h)
-    @type unit: L{Unit} or C{None}
-
-    @return: A tuple containing the following:
-                - List of properties to add to the action 0
-                - List of actions to prepend
-                - List of modifications to apply via action 6
-                - List of actions to append
-    @rtype: C{tuple} of (C{list} of L{Action0Property}, C{list} of L{BaseAction}, C{list} of 3-C{tuple}, C{list} of L{BaseAction})
+    @return: A dictionary with property information
     """
     global properties
-    prop = None
-    action_list = []
-    action_list_append = []
-    mods = []
 
     #Validate feature
     assert feature in range (0, len(properties)) #guaranteed by item
@@ -173,72 +155,118 @@ def parse_property(feature, name, value, id, unit):
 
     if isinstance(name, expression.Identifier):
         if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value, name.pos)
-        prop = properties[feature][name.value]
+        prop_info = properties[feature][name.value]
     elif isinstance(name, expression.ConstantNumeric):
         for p in properties[feature]:
             pdata = properties[feature][p]
             if 'num' not in pdata or pdata['num'] != name.value: continue
-            prop = pdata
-        if prop is None: raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
+            prop_info = pdata
+        if prop_info is None: raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
     else: assert False
 
-    if 'warning' in prop:
-        generic.print_warning(prop['warning'], name.pos)
+    if 'warning' in prop_info:
+        generic.print_warning(prop_info['warning'], name.pos)
+    return prop_info
 
+def parse_property_value(prop_info, value, unit):
+    """
+    Parse a single property value / unit
+    To determine the value that is to be used in nfo
+
+    @param prop_info: A dictionary with property information
+    @type prop_info: C{dict}
+
+    @param value: Value of the property
+    @type value: L{Expression}
+
+    @param unit: Unit of the property value (e.g. km/h)
+    @type unit: L{Unit} or C{None}
+
+    @return: Value to actually use (in nfo) for the property
+    @rtype: L{Expression}
+    """
     if unit is None or unit.type != 'nfo':
         # Save the original value to test conversion against it
         org_value = value
 
         mul = 1
-        if 'unit_conversion' in prop: mul = prop['unit_conversion']
+        if 'unit_conversion' in prop_info: mul = prop_info['unit_conversion']
         if unit is not None:
-            if not 'unit_type' in prop or unit.type != prop['unit_type']:
-                raise generic.ScriptError("Invalid unit for property: " + str(name), name.pos)
+            if not 'unit_type' in prop_info or unit.type != prop_info['unit_type']:
+                raise generic.ScriptError("Invalid unit for property", value.pos)
             mul = mul / unit.convert
         if mul != 1:
             if not isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
                 raise generic.ScriptError("Unit conversion specified for property, but no constant value found", value.pos)
             value = expression.ConstantNumeric(int(value.value * mul + 0.5), value.pos)
 
-        if unit is not None and 'adjust_value' in prop:
-            value = adjust_value(value, org_value, unit, prop['adjust_value'])
+        if unit is not None and 'adjust_value' in prop_info:
+            value = adjust_value(value, org_value, unit, prop_info['adjust_value'])
 
     if isinstance(value, expression.ConstantFloat): # Always round floats
         value = expression.ConstantNumeric(int(value.value + 0.5), value.pos)
+    return value
 
-    if 'custom_function' in prop:
-        props = prop['custom_function'](value)
-    elif 'string_literal' in prop and (isinstance(value, expression.StringLiteral) or prop['string_literal'] != 4):
+def parse_property(prop_info, value, feature, id):
+    """
+    Parse a single property
+
+    @param prop_info: A dictionary with property information
+    @type prop_info: C{dict}
+
+    @param value: Value of the property, with unit conversion applied
+    @type value: L{Expression}
+
+    @param feature: Feature of the associated item
+    @type feature: C{int}
+
+    @param id: ID of the associated item
+    @type id: L{Expression}
+
+    @return: A tuple containing the following:
+                - List of properties to add to the action 0
+                - List of actions to prepend
+                - List of modifications to apply via action 6
+                - List of actions to append
+    @rtype: C{tuple} of (C{list} of L{Action0Property}, C{list} of L{BaseAction}, C{list} of 3-C{tuple}, C{list} of L{BaseAction})
+    """
+    action_list = []
+    action_list_append = []
+    mods = []
+
+    if 'custom_function' in prop_info:
+        props = prop_info['custom_function'](value)
+    elif 'string_literal' in prop_info and (isinstance(value, expression.StringLiteral) or prop_info['string_literal'] != 4):
         # Parse non-string exprssions just like integers. User will have to take care of proper value.
         # This can be used to set a label (=string of length 4) to the value of a parameter.
-        if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop['num'], value.pos)
-        if len(value.value) != prop['string_literal']:
-            raise generic.ScriptError("Value for property %d must be of length %d" % (prop['num'], prop['string_literal']), value.pos)
-        props = [Action0Property(prop['num'], value, prop['size'])]
+        if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop_info['num'], value.pos)
+        if len(value.value) != prop_info['string_literal']:
+            raise generic.ScriptError("Value for property %d must be of length %d" % (prop_info['num'], prop_info['string_literal']), value.pos)
+        props = [Action0Property(prop_info['num'], value, prop_info['size'])]
     else:
         if isinstance(value, expression.ConstantNumeric):
             pass
         elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
-            mods.append((value.num.value, prop['size'], 1))
+            mods.append((value.num.value, prop_info['size'], 1))
             value = expression.ConstantNumeric(0)
         elif isinstance(value, expression.String):
-            if not 'string' in prop: raise generic.ScriptError("String used as value for non-string property: " + str(prop['num']), value.pos)
-            string_range = prop['string']
+            if not 'string' in prop_info: raise generic.ScriptError("String used as value for non-string property: " + str(prop_info['num']), value.pos)
+            string_range = prop_info['string']
             stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
             value = expression.ConstantNumeric(stringid)
             action_list_append.extend(string_actions)
         else:
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
-            mods.append((tmp_param, prop['size'], 1))
+            mods.append((tmp_param, prop_info['size'], 1))
             action_list.extend(tmp_param_actions)
             value = expression.ConstantNumeric(0)
-        if prop['num'] != -1:
-            props = [Action0Property(prop['num'], value, prop['size'])]
+        if prop_info['num'] != -1:
+            props = [Action0Property(prop_info['num'], value, prop_info['size'])]
         else:
             props = []
 
-    if 'append_function' in prop:
-        props.extend(prop['append_function'](value))
+    if 'append_function' in prop_info:
+        props.extend(prop_info['append_function'](value))
 
     return (props, action_list, mods, action_list_append)
 
@@ -251,7 +279,9 @@ def parse_property_block(prop_list, feature, id):
     action0, offset = create_action0(feature, id, act6, action_list)
 
     for prop in prop_list:
-        properties, extra_actions, mods, extra_append_actions = parse_property(feature, prop.name, prop.value, id, prop.unit)
+        prop_info = get_property_info(feature, prop.name)
+        value = parse_property_value(prop_info, prop.value, prop.unit)
+        properties, extra_actions, mods, extra_append_actions = parse_property(prop_info, value, feature, id)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:
