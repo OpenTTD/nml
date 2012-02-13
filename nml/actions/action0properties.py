@@ -792,7 +792,7 @@ properties[0x0F] = {
     'animation_speed'        : {'size': 1, 'num': 0x12},
     'animation_triggers'     : {'size': 2, 'num': 0x13},
     'remove_cost_multiplier' : {'size': 1, 'num': 0x14},
-    'callback_flags'         : {'size': 2, 'num': 0x15},
+    # 15 (callback flags) is not set by user
     'height'                 : {'size': 1, 'num': 0x16},
     'num_views'              : {'size': 1, 'num': 0x17},
 }
@@ -856,7 +856,7 @@ properties[0x11] = {
     'substitute'         : {'size': 1, 'num': 0x08},
     'override'           : {'size': 1, 'num': 0x09},
     # 0A - 0D don't exist (yet?)
-    'callback_flags'     : {'size': 1, 'num': 0x0E},
+    # 0E (callback flags) is not set by user
     'animation_info'     : {'custom_function': lambda value: animation_info(0x0F, value)},
     'animation_speed'    : {'size': 1, 'num': 0x10},
     'animation_triggers' : {'size': 1, 'num': 0x11},
