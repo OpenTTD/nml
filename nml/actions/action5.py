@@ -77,6 +77,7 @@ action5_table = {
     'FLAGS' : (0x14, 36, Action5BlockType.OFFSET),
     'OTTD_GUI' : (0x15, 162, Action5BlockType.OFFSET),
     'AIRPORT_PREVIEW' : (0x16, 9, Action5BlockType.OFFSET),
+    'RAILTYPE_TUNNELS': (0x17, 16, Action5BlockType.OFFSET),
 }
 
 def parse_action5(replaces):
