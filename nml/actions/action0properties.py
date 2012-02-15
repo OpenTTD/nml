@@ -351,7 +351,7 @@ properties[0x01] = {
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E},
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     # 20 (sort purchase list) is implemented elsewhere
-    'viual_effect'                : {'size': 1, 'num': 0x21},
+    'visual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
     'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x23)},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x24, value)},
