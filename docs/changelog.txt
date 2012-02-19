@@ -1,4 +1,12 @@
-0.2.2 (2021-01-29)
+0.2.3 (2012-02-19)
+------------------------------------------------------------------------
+- Add: Action5 for tunnel portals
+- Fix: Properly catch out-of-bounds image reads (issue #3666)
+- Fix: Character code 0xA0 (NBSP) is used for an up arrow in TTD, so
+       don't write it as ascii. Force unicode instead (issue #3643)
+
+
+0.2.2 (2012-01-29)
 ------------------------------------------------------------------------
 - Add: support for (optional) url-information in the grf-block
 - Add: names for newly defined cargo classes: CC_POWDERIZED and CC_NEO_BULK
