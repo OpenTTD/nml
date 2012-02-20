@@ -1,3 +1,5 @@
 R;%{RPMBUILDDIR}/RPMS/noarch/nml-*.noarch.rpm
 5;%{BUILD}/dist/*
 %{BUILD}/regression/*.log
+%{BUILD}/docs/changelog.txt
+%{BUILD}/docs/readme.txt
