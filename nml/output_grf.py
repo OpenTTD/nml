@@ -27,72 +27,100 @@ class OutputGRF(output_base.BinaryOutputBase):
         output_base.BinaryOutputBase.__init__(self, filename)
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
+        self.data_output = []
+        self.sprite_output = []
+        # sprite_num is deliberately off-by-one because it is used as an
+        # id between data and sprite section. For the sprite section an id
+        # of 0 is invalid (means end of sprites), and for a non-NewGRF GRF
+        # the first sprite is a real sprite.
+        self.sprite_num = 1
 
     def open_file(self):
         return open(self.filename, 'wb')
 
     def pre_close(self):
         output_base.BinaryOutputBase.pre_close(self)
-        #terminate with 6 zero bytes (zero-size sprite + checksum)
-        i = 0
-        while i < 6:
-            self.wb(0)
-            i += 1
 
-    def wb(self, byte):
-        self.file.write(chr(byte))
+        #add end-of-chunks
+        self._in_sprite = True
+        self.print_dword(0, True)
+        self.print_dword(0, False)
+        self._in_sprite = False
 
-    def print_byte(self, value):
+        #add header
+        for c in [ '\x00', '\x00', 'G', 'R', 'F', '\x82', '\x0D', '\x0A', '\x1A', '\x0A' ]:
+            self.file.write(c)
+        size = len(self.data_output) + 1
+        self.file.write(chr(size & 0xFF))
+        self.file.write(chr((size >> 8) & 0xFF))
+        self.file.write(chr((size >> 16) & 0xFF))
+        self.file.write(chr(size >> 24))
+
+        self.file.write('\x00') #no compression
+
+        #add data section, and then the sprite section
+        for c in self.data_output:
+            self.file.write(c)
+        for c in self.sprite_output:
+            self.file.write(c)
+
+    def wb(self, byte, data = True):
+        if data:
+            self.data_output.append(chr(byte))
+        else:
+            self.sprite_output.append(chr(byte))
+
+    def print_byte(self, value, data = True):
         value = self.prepare_byte(value)
-        self.wb(value)
+        self.wb(value, data)
 
-    def print_bytex(self, value, pretty_print = None):
-        self.print_byte(value)
+    def print_bytex(self, value, data = True, pretty_print = None):
+        self.print_byte(value, data)
 
-    def print_word(self, value):
+    def print_word(self, value, data = True):
         value = self.prepare_word(value)
-        self.wb(value & 0xFF)
-        self.wb(value >> 8)
+        self.wb(value & 0xFF, data)
+        self.wb(value >> 8, data)
 
-    def print_wordx(self, value):
-        self.print_word(value)
+    def print_wordx(self, value, data = True):
+        self.print_word(value, data)
 
-    def print_dword(self, value):
+    def print_dword(self, value, data = True):
         value = self.prepare_dword(value)
-        self.wb(value & 0xFF)
-        self.wb((value >> 8) & 0xFF)
-        self.wb((value >> 16) & 0xFF)
-        self.wb(value >> 24)
+        self.wb(value & 0xFF, data)
+        self.wb((value >> 8) & 0xFF, data)
+        self.wb((value >> 16) & 0xFF, data)
+        self.wb(value >> 24, data)
 
-    def print_dwordx(self, value):
-        self.print_dword(value)
+    def print_dwordx(self, value, data = True):
+        self.print_dword(value, data)
 
-    def _print_utf8(self, char):
+    def _print_utf8(self, char, data = True):
         for c in unichr(char).encode('utf8'):
-            self.print_byte(ord(c))
+            self.print_byte(ord(c), data)
 
-    def print_string(self, value, final_zero = True, force_ascii = False):
+    def print_string(self, value, final_zero = True, force_ascii = False, data = True):
         if not grfstrings.is_ascii_string(value):
             if force_ascii:
                 raise generic.ScriptError("Expected ascii string but got a unicode string")
-            self.print_byte(0xC3)
-            self.print_byte(0x9E)
+            self.print_byte(0xC3, data)
+            self.print_byte(0x9E, data)
         i = 0
         while i < len(value):
             if value[i] == '\\':
                 if value[i+1] in ('\\', 'n', '"'):
-                    self.print_byte(ord(value[i+1]))
+                    self.print_byte(ord(value[i+1]), data)
                     i += 2
                 elif value[i+1] == 'U':
-                    self._print_utf8(int(value[i+2:i+6], 16))
+                    self._print_utf8(int(value[i+2:i+6], 16), data)
                     i += 6
                 else:
-                    self.print_byte(int(value[i+1:i+3], 16))
+                    self.print_byte(int(value[i+1:i+3], 16), data)
                     i += 3
             else:
-                self._print_utf8(ord(value[i]))
+                self._print_utf8(ord(value[i]), data)
                 i += 1
-        if final_zero: self.print_byte(0)
+        if final_zero: self.print_byte(0, data)
 
     def newline(self, msg = "", prefix = "\t"):
         pass
@@ -100,13 +128,26 @@ class OutputGRF(output_base.BinaryOutputBase):
     def comment(self, msg):
         pass
 
-    def start_sprite(self, size, type = 0xFF):
-        #The compression byte (=type) is counted when *not* 0xFF
-        size += (type != 0xFF)
-        output_base.BinaryOutputBase.start_sprite(self, size + 2)
-        self.print_word(size)
-        self.print_byte(type)
-        if type == 0xFF: self._byte_count -= 1
+    def start_sprite(self, size, type = 0xFF, data = True):
+        if type == 0xFF:
+            output_base.BinaryOutputBase.start_sprite(self, size + 5)
+            if not data:
+                # The compression byte (=type) is counted when in the sprite section,
+                # however since this is a sound we need to emit the sprite number as well.
+                self.print_dword(self.sprite_num, data)
+                self._byte_count -= 3
+            self.print_dword(size, data)
+            self.print_byte(type, data)
+        else:
+            output_base.BinaryOutputBase.start_sprite(self, size + 9)
+            self.print_dword(self.sprite_num, False)
+            self.print_dword(size + 1, False)
+            self.print_byte(type, False)
+
+            self.print_dword(4)
+            self.print_byte(0xfd)
+            self.print_dword(self.sprite_num)
+            self._byte_count -= 9
 
     def print_sprite(self, sprite_info):
         if not os.path.exists(sprite_info.file.value):
@@ -137,16 +178,17 @@ class OutputGRF(output_base.BinaryOutputBase):
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
-        self.print_byte(0)
+        self.print_byte(0, True)
         self.end_sprite()
 
     def wsprite_header(self, sprite, size, xoffset, yoffset, compression):
         size_x, size_y = sprite.size
-        self.start_sprite(size + 7, compression)
-        self.print_byte(size_y)
-        self.print_word(size_x)
-        self.print_word(xoffset)
-        self.print_word(yoffset)
+        self.start_sprite(size + 9, compression & ~1 | 0x04) # Determine Type, remove bit 0, TODO
+        self.print_byte(0, False) # Zoom, TODO
+        self.print_word(size_y, False)
+        self.print_word(size_x, False)
+        self.print_word(xoffset, False)
+        self.print_word(yoffset, False)
 
     def fakecompress(self, data):
         i = 0
@@ -170,16 +212,29 @@ class OutputGRF(output_base.BinaryOutputBase):
         return stream
 
     def wsprite_encoderegular(self, sprite, data, data_len, xoffset, yoffset, compression):
-        self.wsprite_header(sprite, data_len, xoffset, yoffset, compression)
+        chunked = compression & 8 != 0
+        size = len(data)
+        if chunked:
+            size += 4
+        self.wsprite_header(sprite, size, xoffset, yoffset, compression)
+        if chunked:
+            self.print_dword(data_len, False)
         for c in data:
-            self.print_byte(ord(c))
-        #make up for the difference in byte count
-        self._byte_count += data_len - len(data)
+            self.print_byte(ord(c), False)
         self.end_sprite()
 
-    def sprite_encode_tile(self, sprite, data):
+    def sprite_encode_tile(self, sprite, data, long_format = False):
         size_x, size_y = sprite.size
-        if size_y > 255: raise generic.ScriptError("sprites higher than 255px are not supported")
+
+        # There are basically four different encoding configurations here,
+        # but just two variables. If the width of the sprite is more than
+        # 256, then the chunk could be 'out of bounds' and thus the long
+        # chunk format is used. If the sprite is more than 65536 bytes,
+        # then the offsets might not fit and the long format method is
+        # used. The latter is enabled via recursion if it's needed.
+        long_chunk = size_x > 256
+        chunk_len = 0x7fff if long_chunk else 0x7f
+        trans_len = 0xffff if long_chunk else 0xff
         data_output = []
         offsets = size_y * [0]
         for y in range(size_y):
@@ -188,7 +243,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             last = size_x - 1
             while last >= 0 and row_data[last] == 0: last -= 1
             if last == -1:
-                data_output += [0x80, 0]
+                data_output += [0, 0x80, 0, 0] if long_chunk else [0x80, 0]
                 continue
             x1 = 0
             while x1 < size_x and row_data[x1] == 0:
@@ -198,29 +253,50 @@ class OutputGRF(output_base.BinaryOutputBase):
                 # Completely transparant line
                 data_output.append(0)
                 data_output.append(0)
+                if long_chunk:
+                    data_output.append(0)
+                    data_output.append(0)
                 continue
 
             x2 = size_x
             while row_data[x2 - 1] == 0:
                 x2 -= 1
 
-            # Chunk can start maximu at 0xFF and has maximum width of 0x7F
-            if x2 - 0xFF > 0x7F:
+            # Chunk can start maximum at trans_len and has maximum width of chunk_len
+            if x2 - trans_len > chunk_len:
                 return None
-            if x2 - x1 > 0x7F:
+            if x2 - x1 > chunk_len:
                 #too large to fit in one chunk, so split it up.
-                data_output.append(0x7F)
+                if long_chunk:
+                    data_output.append(0xFF)
+                    data_output.append(0x7F)
+                    data_output.append(x1 & 0xFF)
+                    data_output.append(x1 >> 8)
+                else:
+                    data_output.append(0x7F)
+                    data_output.append(x1)
+                data_output += row_data[x1 : x1 + chunk_len]
+                x1 += chunk_len
+            if long_chunk:
+                data_output.append((x2 - x1) & 0xFF)
+                data_output.append((x2 - x1) >> 8 | 0x80)
+                data_output.append(x1 & 0xFF)
+                data_output.append(x1 >> 8)
+            else:
+                data_output.append((x2 - x1) | 0x80)
                 data_output.append(x1)
-                data_output += row_data[x1 : x1 + 0x7F]
-                x1 += 0x7F
-            data_output.append((x2 - x1) | 0x80)
-            data_output.append(x1)
             data_output += row_data[x1 : x2]
         output = []
         for offset in offsets:
             output.append(offset & 0xFF)
-            output.append(offset >> 8)
+            output.append((offset >> 8) & 0xFF)
+            if long_format:
+                output.append((offset >> 16) & 0xFF)
+                output.append((offset >> 24) & 0xFF)
         output += data_output
+        if len(output) > 65535 and not long_format:
+            # Recurse into the long format if that's possible.
+            return self.sprite_encode_tile(sprite, data, True)
         return output
 
     def crop_sprite(self, sprite, xoffset, yoffset):
@@ -305,7 +381,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         data_len = len(data)
         tile_data = self.sprite_encode_tile(sprite, data)
         if tile_data is not None:
-            tile_compressed_data = self.sprite_compress(tile_data) 
+            tile_compressed_data = self.sprite_compress(tile_data)
             if len(tile_compressed_data) < len(compressed_data):
                 compression |= 8
                 compressed_data = tile_compressed_data
@@ -315,17 +391,26 @@ class OutputGRF(output_base.BinaryOutputBase):
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
         size = os.path.getsize(filename)
-        total = 2 + len(name) + 1 + size
-        self.start_sprite(total)
-        self.print_bytex(0xff)
-        self.print_bytex(len(name))
-        self.print_string(name, force_ascii = True, final_zero = True)  # ASCII filenames seems sufficient.
+        total = 3 + len(name) + 1 + size
+
+        self.start_sprite(total, 0xff, False)
+        self.print_byte(0xff, False)
+        self.print_byte(len(name), False)
+        self.print_string(name, force_ascii = True, final_zero = True, data = False)  # ASCII filenames seems sufficient.
         fp = open(filename, 'rb')
         while True:
             data = fp.read(1024)
             if len(data) == 0: break
             for d in data:
-                self.print_bytex(ord(d))
+                self.print_byte(ord(d), False)
         fp.close()
+
+        self.print_dword(4)
+        self.print_byte(0xfd)
+        self.print_dword(self.sprite_num)
+        self._byte_count -= 9
         self.end_sprite()
 
+    def end_sprite(self):
+        output_base.BinaryOutputBase.end_sprite(self)
+        self.sprite_num += 1
