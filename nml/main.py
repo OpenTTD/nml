@@ -268,19 +268,16 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
     for outputfile in outputfiles:
         outputfile.palette = used_palette
     #If there are any 32bpp sprites hint to openttd that we'd like a 32bpp blitter
-    if alt_sprites.alt_sprites_list:
+    if alt_sprites.any_32bpp_sprites:
         grf.set_preferred_blitter("3")
 
     if action8_index != -1:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
 
-    block_names = {}
     for idx, action in enumerate(actions):
         num = start_sprite_num + idx
         action.prepare_output()
         if isinstance(action, real_sprite.RealSpriteAction):
-            if action.block_name:
-                block_names[action.block_name] = num
             if action.sprite_num is not None:
                 if action.sprite_num.value != num:
                     raise generic.ScriptError("Sprite number %d given in base_sprites-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))
@@ -291,9 +288,6 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
             for action in actions:
                 action.write(outputfile)
             outputfile.close()
-
-    for block in alt_sprites.alt_sprites_list:
-        block.process(sprites_dir, block_names)
 
     return 0
 

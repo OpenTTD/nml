@@ -153,7 +153,6 @@ class RealSpriteAction(base_action.BaseAction):
     def __init__(self, sprite):
         self.sprite = sprite
         self.last = False
-        self.block_name = None
         self.label = None
         self.sprite_num = None
 
@@ -253,7 +252,7 @@ class TemplateUsage(object):
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
 
-        return parse_sprite_list(template.sprite_list, default_file, param_dict, False, None)
+        return parse_sprite_list(template.sprite_list, default_file, param_dict, False)
 
     def __str__(self):
         return "%s(%s)" % (str(self.name), ", ".join([str(param) for param in self.param_list]))
@@ -340,8 +339,7 @@ def parse_recolour_sprite(sprite, id_dict):
 
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = True, block_name = None):
-    assert block_name is None or isinstance(block_name, expression.Identifier)
+def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = True):
     real_sprite_list = []
     for sprite in sprite_list:
         if isinstance(sprite, RealSprite):
@@ -354,5 +352,4 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = 
             new_sprites[0].label = sprite.label
         real_sprite_list.extend(new_sprites)
     if outer_scope: real_sprite_list[-1].last = True
-    if block_name: real_sprite_list[0].block_name = block_name.value
     return real_sprite_list

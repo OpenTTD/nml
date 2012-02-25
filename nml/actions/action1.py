@@ -136,7 +136,7 @@ class SpritesetCollection(base_action.BaseAction):
         for idx in range(len(self.spritesets)):
             for spriteset, spriteset_offset in self.spritesets.iteritems():
                 if idx == spriteset_offset:
-                    actions.extend(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx, block_name = spriteset.name))
+                    actions.extend(real_sprite.parse_sprite_list(spriteset.sprite_list, spriteset.pcx))
                     break
         return actions
         

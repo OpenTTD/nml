@@ -45,7 +45,7 @@ def parse_actionA(replaces):
     @param replaces: Replace-block to parse.
     @type  replaces: L{ReplaceSprite}
     """
-    real_sprite_list = real_sprite.parse_sprite_list(replaces.sprite_list, replaces.pcx, block_name = replaces.name)
+    real_sprite_list = real_sprite.parse_sprite_list(replaces.sprite_list, replaces.pcx)
     action_list = []
 
     if isinstance(replaces.start_id, expression.ConstantNumeric):
