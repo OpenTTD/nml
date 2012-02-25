@@ -15,32 +15,57 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, expression
 from nml.actions import action12
-from nml.ast import base_statement
+from nml.ast import base_statement, sprite_container
 
-class FontGlyphBlock(base_statement.BaseStatement):
+class FontGlyphBlock(base_statement.BaseStatement, sprite_container.SpriteContainer):
+    """
+    AST class for a font_glpyh block
+    Syntax: font_glpyh(
+
+    @ivar font_size: Size of the font to provide characters for (NORMAL/SMALL/LARGE/MONO)
+    @type font_size: L{Expression}
+
+    @ivar base_char: First character to replace
+    @type base_char: L{Expression}
+
+    @ivar image_file: Default file to use for the contained real sprites (none if N/A)
+    @type image_file: L{StringLiteral} or C{None}
+
+    @ivar sprite_list: List of real sprites
+    @type sprite_list: C{list} of L{RealSprite}
+    """
     def __init__(self, param_list, sprite_list, name, pos):
         base_statement.BaseStatement.__init__(self, "font_glpyh-block", pos)
+        sprite_container.SpriteContainer.__init__(self, "font_glpyh-block", name)
         if not (2 <= len(param_list) <= 3):
             raise generic.ScriptError("font_glpyh-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
         self.font_size = param_list[0]
         self.base_char = param_list[1]
-        self.pcx = param_list[2] if len(param_list) >= 3 else None
+        self.image_file = param_list[2].reduce() if len(param_list) >= 3 else None
+        if self.image_file is not None and not isinstance(self.image_file, expression.StringLiteral):
+            raise generic.ScriptError("font_glpyh-block parameter 3 'file' must be a string literal", self.image_file.pos)
         self.sprite_list = sprite_list
-        self.name = name
-
-    def pre_process(self):
-        if self.pcx:
-            self.pcx.reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("font_glpyh-block parameter 3 'file' must be a string literal", self.pcx.pos)
+        self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Load font glyphs, starting at', self.base_char
         print (indentation+2)*' ' + 'Font size:  ', self.font_size
-        print (indentation+2)*' ' + 'Source:  ', self.pcx.value if self.pcx is not None else 'None'
+        print (indentation+2)*' ' + 'Source:  ', self.image_file.value if self.image_file is not None else 'None'
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
         return action12.parse_action12(self)
+
+    def __str__(self):
+        name = str(self.block_name) if self.block_name is not None else ""
+        params = [self.font_size, self.base_char]
+        if self.image_file is not None:
+            params.append(self.image_file)
+        ret = "font_glyph %s(%s) {\n" % (name, ", ".join([str(param) for param in params]))
+        for sprite in self.sprite_list:
+            ret += "\t%s\n" % str(sprite)
+        ret += "}\n"
+        return ret
+

@@ -353,3 +353,8 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = 
         real_sprite_list.extend(new_sprites)
     if outer_scope: real_sprite_list[-1].last = True
     return real_sprite_list
+
+def parse_sprite_data(sprite_data):
+    sprite_list, default_file, zoom_level, bit_depth = sprite_data[0]
+    return parse_sprite_list(sprite_list, default_file)
+

@@ -57,7 +57,7 @@ def parse_action12(font_glyphs):
     if not (0 <= base_char.value <= 0xFFFF):
         raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF", base_char.pos)
 
-    real_sprite_list = real_sprite.parse_sprite_list(font_glyphs.sprite_list, font_glyphs.pcx)
+    real_sprite_list = real_sprite.parse_sprite_data(font_glyphs.get_all_sprite_data())
     char = base_char.value
     last_char = char + len(real_sprite_list)
     if last_char > 0xFFFF:
@@ -74,3 +74,4 @@ def parse_action12(font_glyphs):
         char += num_in_set
 
     return [Action12(sets)] + real_sprite_list
+
