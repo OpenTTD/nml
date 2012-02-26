@@ -270,7 +270,7 @@ class Action2LayoutSprite(object):
             id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
             offset = action2var.reduce_varaction2_expr(sg_ref.param_list[0], self.feature, self.extra_dicts + id_dicts)
             if isinstance(offset, expression.ConstantNumeric):
-                generic.check_range(offset.value, 0, len(real_sprite.parse_sprite_data(spriteset.get_all_sprite_data())) - 1, "offset within spriteset", sg_ref.pos)
+                generic.check_range(offset.value, 0, len(real_sprite.parse_sprite_data(spriteset)) - 1, "offset within spriteset", sg_ref.pos)
         else:
             raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(sg_ref.param_list)), sg_ref.pos)
 

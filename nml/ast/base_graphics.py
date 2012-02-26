@@ -62,7 +62,7 @@ class BaseGraphics(base_statement.BaseStatement, sprite_container.SpriteContaine
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
-        actions = real_sprite.parse_sprite_data(self.get_all_sprite_data())
+        actions = real_sprite.parse_sprite_data(self)
         actions[0].sprite_num = self.sprite_num
         return actions
 

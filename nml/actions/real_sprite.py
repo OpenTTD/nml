@@ -354,7 +354,15 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = 
     if outer_scope: real_sprite_list[-1].last = True
     return real_sprite_list
 
-def parse_sprite_data(sprite_data):
+def parse_sprite_data(sprite_container):
+    """
+    @param sprite_container: AST node that contains the sprite data
+    @type sprite_container: L{SpriteContainer}
+
+    @return: List of real sprite actions
+    @rtype: C{list} of L{BaseAction}
+    """
+    sprite_data = sprite_container.get_all_sprite_data()
     sprite_list, default_file, zoom_level, bit_depth = sprite_data[0]
     return parse_sprite_list(sprite_list, default_file)
 

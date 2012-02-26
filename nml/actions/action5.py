@@ -81,7 +81,7 @@ action5_table = {
 }
 
 def parse_action5(replaces):
-    real_sprite_list = real_sprite.parse_sprite_data(replaces.get_all_sprite_data())
+    real_sprite_list = real_sprite.parse_sprite_data(replaces)
     num_sprites = len(real_sprite_list)
 
     if replaces.type.value not in action5_table:

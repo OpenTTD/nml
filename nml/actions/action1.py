@@ -92,7 +92,7 @@ class SpritesetCollection(base_action.BaseAction):
         if feature != self.feature:
             return False
         for spriteset in spritesets:
-            if len(real_sprite.parse_sprite_data(spriteset.get_all_sprite_data())) != self.num_sprites_per_spriteset:
+            if len(real_sprite.parse_sprite_data(spriteset)) != self.num_sprites_per_spriteset:
                 return False
         num_new_sets = len([x for x in spritesets if (x not in self.spritesets)])
         return len(self.spritesets) + num_new_sets < 0x100
@@ -136,7 +136,7 @@ class SpritesetCollection(base_action.BaseAction):
         for idx in range(len(self.spritesets)):
             for spriteset, spriteset_offset in self.spritesets.iteritems():
                 if idx == spriteset_offset:
-                    actions.extend(real_sprite.parse_sprite_data(spriteset.get_all_sprite_data()))
+                    actions.extend(real_sprite.parse_sprite_data(spriteset))
                     break
         return actions
         
@@ -165,15 +165,15 @@ def add_to_action1(spritesets, feature, pos):
     if not spritesets:
         return []
 
-    setsize = len(real_sprite.parse_sprite_data(spritesets[0].get_all_sprite_data()))
+    setsize = len(real_sprite.parse_sprite_data(spritesets[0]))
     for spriteset in spritesets:
-        if setsize != len(real_sprite.parse_sprite_data(spriteset.get_all_sprite_data())):
+        if setsize != len(real_sprite.parse_sprite_data(spriteset)):
             raise generic.ScriptError("Using spritesets with different sizes in a single sprite group / layout is not possible", pos)
 
     global last_spriteset_collection
     actions = []
     if last_spriteset_collection is None or not last_spriteset_collection.can_add(spritesets, feature):
-        last_spriteset_collection = SpritesetCollection(feature, len(real_sprite.parse_sprite_data(spritesets[0].get_all_sprite_data())))
+        last_spriteset_collection = SpritesetCollection(feature, len(real_sprite.parse_sprite_data(spritesets[0])))
         actions.append(last_spriteset_collection)
 
     last_spriteset_collection.add(spritesets)
