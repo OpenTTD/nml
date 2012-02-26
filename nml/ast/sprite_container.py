@@ -28,7 +28,7 @@ class SpriteContainer(object):
     @type block_name: L{Identifier}, or C{None} if N/A
 
     @ivar sprite_data: Mapping of (zoom level, bit-depth) to (sprite list, default file)
-    @type sprite_data: C{dict} that maps (C{tuple} of (C{int}, C{int})) to (C{tuple} of (C{list} of L{RealSprite}, L{StringLiteral} of C{None}))
+    @type sprite_data: C{dict} that maps (C{tuple} of (C{int}, C{int})) to (C{tuple} of (C{list} of (L{RealSprite}, L{RecolourSprite} or L{TemplateUsage}), L{StringLiteral} or C{None}))
     """
     sprite_blocks = {}
 
@@ -48,12 +48,6 @@ class SpriteContainer(object):
         if key in self.sprite_data:
             generic.print_warning("Sprites are already defined for %s '%s' for this zoom level / bit depth combination. This data will be overridden." \
                     % (self.block_type, self.block_name.value), pos)
-        if len(self.sprite_data) != 0:
-            # Some trickery to get a random item out of a dictionary
-            num_sprites = len(next(iter(self.sprite_data.values()))[0])
-            if num_sprites != len(sprite_list):
-                raise generic.ScriptError("Expected %d sprites as alternative_sprites for %s ' %s', got %d." \
-                        % (num_sprites, self.block_type, self.block_name.value, len(sprite_list)), pos)
         self.sprite_data[key] = (sprite_list, default_file)
 
     def get_all_sprite_data(self):
