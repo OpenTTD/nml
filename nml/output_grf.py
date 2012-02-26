@@ -149,7 +149,15 @@ class OutputGRF(output_base.BinaryOutputBase):
             self.print_dword(self.sprite_num)
             self._byte_count -= 9
 
-    def print_sprite(self, sprite_info):
+    def print_sprite(self, sprite_list):
+        """
+        @param sprite_list: List of non-empty real sprites for various bit depths / zoom levels
+        @type sprite_list: C{list} of L{RealSprite}
+        """
+        for sprite in sprite_list:
+            self.print_single_sprite(sprite)
+
+    def print_single_sprite(self, sprite_info):
         if not os.path.exists(sprite_info.file.value):
             raise generic.ImageError("File doesn't exist", sprite_info.file.value)
         im = Image.open(sprite_info.file.value)

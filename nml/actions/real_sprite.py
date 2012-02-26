@@ -150,17 +150,20 @@ class RealSprite(object):
         return ret
 
 class RealSpriteAction(base_action.BaseAction):
-    def __init__(self, sprite):
-        self.sprite = sprite
+    def __init__(self):
+        self.sprite_list = []
         self.last = False
         self.label = None
         self.sprite_num = None
 
+    def add_sprite(self, sprite):
+        self.sprite_list.append(sprite)
+
     def write(self, file):
-        if self.sprite.is_empty:
+        if len(self.sprite_list) == 0 or self.sprite_list[0].is_empty:
             file.print_empty_realsprite()
         else:
-            file.print_sprite(self.sprite)
+            file.print_sprite([s for s in self.sprite_list if not s.is_empty])
         if self.last: file.newline()
 
 class RecolourSprite(object):
@@ -182,7 +185,8 @@ class RecolourSprite(object):
 
 class RecolourSpriteAction(RealSpriteAction):
     def __init__(self, sprite):
-        RealSpriteAction.__init__(self, sprite)
+        RealSpriteAction.__init__(self)
+        self.sprite = sprite
         self.output_table = []
 
     def prepare_output(self):
@@ -268,7 +272,7 @@ def parse_real_sprite(sprite, default_file, id_dict):
     num_param = len(sprite.param_list)
     if num_param == 0:
         sprite.is_empty = True
-        return RealSpriteAction(sprite)
+        return sprite
     elif not (2 <= num_param <= 9):
         raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2..9.", sprite.param_list[0].pos)
 
@@ -321,7 +325,7 @@ def parse_real_sprite(sprite, default_file, id_dict):
     else:
         new_sprite.mask_file = None
 
-    return RealSpriteAction(new_sprite)
+    return new_sprite
 
 
 def parse_recolour_sprite(sprite, id_dict):
@@ -335,7 +339,7 @@ def parse_recolour_sprite(sprite, id_dict):
         new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
     new_sprite = RecolourSprite(new_mapping)
 
-    return RecolourSpriteAction(new_sprite)
+    return new_sprite
 
 sprite_template_map = {}
 
@@ -351,7 +355,6 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = 
         if outer_scope and sprite.label is not None:
             new_sprites[0].label = sprite.label
         real_sprite_list.extend(new_sprites)
-    if outer_scope: real_sprite_list[-1].last = True
     return real_sprite_list
 
 def parse_sprite_data(sprite_container):
@@ -362,7 +365,33 @@ def parse_sprite_data(sprite_container):
     @return: List of real sprite actions
     @rtype: C{list} of L{BaseAction}
     """
-    sprite_data = sprite_container.get_all_sprite_data()
-    sprite_list, default_file, zoom_level, bit_depth = sprite_data[0]
-    return parse_sprite_list(sprite_list, default_file)
+    all_sprite_data = sprite_container.get_all_sprite_data()
+    action_list = []
+    first = True
+
+    for sprite_data in all_sprite_data:
+        sprite_list, default_file, zoom_level, bit_depth = sprite_data
+        new_sprite_list = parse_sprite_list(sprite_list, default_file)
+        if not first and len(new_sprite_list) != len(action_list):
+            raise generic.ScriptError("Expected %d alternative sprites for %s '%s', got %d." % \
+                    (len(action_list), sprite_container.block_type, sprite_container.block_name.value, len(new_sprite_list)), sprite_container.pos)
+
+        for i, sprite in enumerate(new_sprite_list):
+            if first:
+                if isinstance(sprite, RealSprite):
+                    action_list.append(RealSpriteAction())
+                else:
+                    assert isinstance(sprite, RecolourSprite)
+                    action_list.append(RecolourSpriteAction(sprite))
+            elif isinstance(sprite, RecolourSprite) or isinstance(action_list[i], RecolourSpriteAction):
+                raise generic.ScriptError("Alternative sprites may only be provided for and contain real sprites, not recolour sprites.", sprite_container.pos)
+            elif action_list[i].sprite_list[0].is_empty and not sprite.is_empty:
+                # if the first sprite is empty, all others are ignored
+                generic.print_warning("Alternative sprites for an empty real sprite are ignored.", sprite_container.pos)
+            action_list[i].add_sprite(sprite)
+        first = False
+
+    if len(action_list) != 0: action_list[-1].last = True
+    return action_list
+    return 
 

@@ -96,19 +96,27 @@ class OutputNFO(output_base.BinaryOutputBase):
             self.file.write("* ")
             self.print_decimal(size)
 
-    def print_sprite(self, sprite_info):
+    def print_sprite(self, sprite_list):
+        """
+        @param sprite_list: List of non-empty real sprites for various bit depths / zoom levels
+        @type sprite_list: C{list} of L{RealSprite}
+        """
         self.start_sprite(0, True)
-        self.file.write(sprite_info.file.value + " ")
-        self.file.write("8bpp ")
-        self.print_decimal(sprite_info.xpos.value)
-        self.print_decimal(sprite_info.ypos.value)
-        self.print_decimal(sprite_info.xsize.value)
-        self.print_decimal(sprite_info.ysize.value)
-        self.print_decimal(sprite_info.xrel.value)
-        self.print_decimal(sprite_info.yrel.value)
-        self.file.write("normal ")
-        if (sprite_info.compression.value & 0x40) != 0:
-            self.file.write("nocrop ")
+        for i, sprite_info in enumerate(sprite_list):
+            self.file.write(sprite_info.file.value + " ")
+            self.file.write("8bpp ")
+            self.print_decimal(sprite_info.xpos.value)
+            self.print_decimal(sprite_info.ypos.value)
+            self.print_decimal(sprite_info.xsize.value)
+            self.print_decimal(sprite_info.ysize.value)
+            self.print_decimal(sprite_info.xrel.value)
+            self.print_decimal(sprite_info.yrel.value)
+            self.file.write("normal ")
+            if (sprite_info.compression.value & 0x40) != 0:
+                self.file.write("nocrop ")
+            if i + 1 < len(sprite_list):
+                self.newline()
+                self.file.write("|\t")
         self.end_sprite()
 
     def print_empty_realsprite(self):

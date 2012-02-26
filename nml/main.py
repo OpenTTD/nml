@@ -216,9 +216,10 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
     sprite_files = set()
     for action in actions:
         if isinstance(action, real_sprite.RealSpriteAction) and not isinstance(action, real_sprite.RecolourSpriteAction):
-            if action.sprite.is_empty: continue
-            action.sprite.validate_size()
-            sprite_files.add(action.sprite.file.value)
+            for sprite in action.sprite_list:
+                if sprite.is_empty: continue
+                sprite.validate_size()
+                sprite_files.add(sprite.file.value)
 
     # Check whether we can terminate sprite processing prematurely for
     #     dependency checks
