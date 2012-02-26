@@ -15,61 +15,62 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic
 from nml.actions import real_sprite
-from nml.ast import base_statement
+from nml.ast import base_statement, sprite_container
 
-class BaseGraphics(base_statement.BaseStatement):
+class BaseGraphics(base_statement.BaseStatement, sprite_container.SpriteContainer):
     """
     AST node for a 'base_graphics' block.
     NML syntax: base_graphics [block_name]([[sprite_num ,]default_file]) { ..real sprites.. }
 
-    @ivar param_list: List of parameters passed to the replace-block
-    @type param_list: C{list} of L{Expression}
+    @ivar image_file: Default image file to use for sprites.
+    @type image_file: C{None} if not specified, else L{StringLiteral}
+
+    @ivar sprite_num: Sprite number of the first sprite (if provided explicitly)
+    @type sprite_num: L{Expression} or C{None}
 
     @ivar sprite_list: List of real sprites to use
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
-
-    @ivar pcx: Default image file to use for sprites. Extracted from C{param_list} during pre-processing.
-    @type pcx: C{None} if not specified, else L{StringLiteral}
-
-    @ivar name: Name of this block.
-    @type name: C{None] if not given, else C{str}
     """
     def __init__(self, param_list, sprite_list, name, pos):
         base_statement.BaseStatement.__init__(self, "base_graphics-block", pos)
-        self.param_list = param_list
-        self.sprite_list = sprite_list
-        self.sprite_num = None
-        self.name = name
+        sprite_container.SpriteContainer.__init__(self, "base_graphics-block", name)
 
-    def pre_process(self):
-        num_params = len(self.param_list)
+        num_params = len(param_list)
         if not (0 <= num_params <= 2):
-            raise generic.ScriptError("base_graphics-block requires 0 to 2 parameters, encountered %d" % num_params, self.pos)
+            raise generic.ScriptError("base_graphics-block requires 0 to 2 parameters, encountered %d" % num_params, pos)
         if num_params >= 2:
-            self.sprite_num = self.param_list[0].reduce_constant()
-        if num_params >= 1:
-            self.pcx = self.param_list[-1].reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("The last base_graphics-block parameter 'file' must be a string literal", self.pcx.pos)
+            self.sprite_num = param_list[0].reduce_constant()
         else:
-            self.pcx = None
+            self.sprite_num = None
+
+        if num_params >= 1:
+            self.image_file = param_list[-1].reduce()
+            if not isinstance(self.image_file, expression.StringLiteral):
+                raise generic.ScriptError("The last base_graphics-block parameter 'file' must be a string literal", self.image_file.pos)
+        else:
+            self.image_file = None
+        self.sprite_list = sprite_list
+        self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'base_graphics-block'
-        print (indentation+2)*' ' + 'Source:', self.pcx.value if self.pcx is not None else 'None'
-        if self.name: print (indentation+2)*' ' + 'Name:', self.name
+        print (indentation+2)*' ' + 'Source:', self.image_file.value if self.image_file is not None else 'None'
+        if self.block_name: print (indentation+2)*' ' + 'Name:', self.block_name
+        if self.sprite_num is not None: print (indentation+2)*' ' + 'Sprite number:', str(self.sprite_num)
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
-        actions = real_sprite.parse_sprite_list(self.sprite_list, self.pcx)
+        actions = real_sprite.parse_sprite_data(self.get_all_sprite_data())
         actions[0].sprite_num = self.sprite_num
         return actions
 
     def __str__(self):
-        name = str(self.name) if self.name is not None else ""
-        ret = "base_graphics %s(%s) {\n" % (name, ", ".join([str(param) for param in self.param_list]))
+        name = str(self.block_name) if self.block_name is not None else ""
+        params = [] if self.sprite_num is None else [self.sprite_num]
+        if self.image_file is not None: params.append(self.image_file)
+        ret = "base_graphics %s(%s) {\n" % (name, ", ".join([str(param) for param in params]))
         for sprite in self.sprite_list:
             ret += "\t%s\n" % str(sprite)
         ret += "}\n"
