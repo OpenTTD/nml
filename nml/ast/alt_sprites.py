@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, global_constants
 from nml.actions import real_sprite
-from nml.ast import base_statement
+from nml.ast import base_statement, sprite_container
 import os, Image
 
 """
@@ -24,50 +24,94 @@ if so ask to enable the 32bpp blitter via action14
 """
 any_32bpp_sprites = False
 
+zoom_levels = {
+    'ZOOM_LEVEL_NORMAL' : 0,
+    'ZOOM_LEVEL_IN_4X'  : 1,
+    'ZOOM_LEVEL_IN_2X'  : 2,
+    'ZOOM_LEVEL_OUT_2X' : 3,
+    'ZOOM_LEVEL_OUT_4X' : 4,
+    'ZOOM_LEVEL_OUT_8X' : 5,
+}
+
+bit_depths = {
+    'BIT_DEPTH_8BPP' : 8,
+    'BIT_DEPTH_32BPP' : 32.
+}
+
 class AltSpritesBlock(base_statement.BaseStatement):
     """
     AST Node for alternative graphics. These are normally 32bpp graphics, possible
     for a higher zoom-level than the default sprites.
+    Syntax: alternative_sprites(name, zoom_level, bit_depth[, image_file])
 
-    @ivar name: The name of the replace/font_glyph/replace_new/spriteblock-block this
+    @ivar name: The name of the replace/font_glyph/replace_new/spriteset/base_graphics-block this
                 block contains alternative graphics for.
     @type name: L{expression.Identifier}
 
     @ivar zoom_level: The zoomlevel these graphics are for.
-    @type zoom_level: L{expression.Expression}
+    @type zoom_level: C{int}
 
-    @ivar pcx: Default graphics file for the sprites in this block.
-    @type pcx: L{expression.StringLiteral} or C{None}
+    @ivar bit_depth: Bit depth these graphics are for
+    @type bit_depth: C{int}
+
+    @ivar image_file: Default graphics file for the sprites in this block.
+    @type image_file: L{expression.StringLiteral} or C{None}
 
     @ivar sprite_list: List of real sprites or templates expanding to real sprites.
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
     """
     def __init__(self, param_list, sprite_list, pos):
         base_statement.BaseStatement.__init__(self, "alt_sprites-block", pos)
-        if not (2 <= len(param_list) <= 3):
-            raise generic.ScriptError("alternative_sprites-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
-        self.name = param_list[0]
-        self.zoom_level = param_list[1]
-        self.pcx = param_list[2] if len(param_list) >= 3 else None
-        self.sprite_list = sprite_list
-        any_32bpp_sprites = True
+        if not (3 <= len(param_list) <= 4):
+            raise generic.ScriptError("alternative_sprites-block requires 3 or 4 parameters, encountered " + str(len(param_list)), pos)
 
+        self.name = param_list[0]
+        if not isinstance(self.name, expression.Identifier):
+            raise generic.ScriptError("alternative_sprites parameter 1 'name' must be an identifier", self.name.pos)
+
+        if isinstance(param_list[1], expression.Identifier) and param_list[1].value in zoom_levels:
+            self.zoom_level = zoom_levels[param_list[1].value]
+        else:
+            raise generic.ScriptError("value for alternative_sprites parameter 2 'zoom level' is not a valid zoom level", param_list[1].pos)
+
+        if isinstance(param_list[2], expression.Identifier) and param_list[2].value in bit_depths:
+            self.bit_depth = bit_depths[param_list[2].value]
+        else:
+            raise generic.ScriptError("value for alternative_sprites parameter 3 'bit depth' is not a valid bit depthl", param_list[2].pos)
+        if self.bit_depth == 32: any_32bpp_sprites = True
+
+        if len(param_list) >= 4:
+            self.image_file = param_list[3].reduce()
+            if not isinstance(self.image_file, expression.StringLiteral):
+                raise generic.ScriptError("alternative_sprites-block parameter 4 'file' must be a string literal", self.image_file.pos)
+        else:
+            self.image_file = None
+
+        self.sprite_list = sprite_list
 
     def pre_process(self):
-        if self.pcx:
-            self.pcx.reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("alternative_sprites-block parameter 3 'file' must be a string literal", self.pcx.pos)
+        block = sprite_container.SpriteContainer.resolve_sprite_block(self.name)
+        block.add_sprite_data(self.sprite_list, self.image_file, self.pos, self.zoom_level, self.bit_depth)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Alternative sprites'
         print (indentation+2)*' ' + 'Replacement for sprite:', str(self.name)
         print (indentation+2)*' ' + 'Zoom level:', str(self.zoom_level)
-        print (indentation+2)*' ' + 'Source:', self.pcx.value if self.pcx is not None else 'None'
+        print (indentation+2)*' ' + 'Bit depth:', str(self.bit_depth)
+        print (indentation+2)*' ' + 'Source:', self.image_file.value if self.image_file is not None else 'None'
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
     def get_action_list(self):
         return []
+
+    def __str__(self):
+        params = [self.name, generic.reverse_lookup(zoom_levels, self.zoom_level), generic.reverse_lookup(bit_depths, self.bit_depth)]
+        if self.image_file is not None: params.append(self.image_file)
+        ret = "alternative_sprites(%s) {\n" % ", ".join([str(p) for p in params])
+        for sprite in self.sprite_list:
+            ret += "\t%s\n" % str(sprite)
+        ret += "}\n"
+        return ret
 

@@ -636,12 +636,6 @@ constant_numbers = {
     'CB_RESULT_AUTOSLOPE'                   : 0x00,  # callback 0x3C
     'CB_RESULT_NO_AUTOSLOPE'                : 0x01,  # callback 0x3C
 
-    #Zoom levels
-    'ZOOM_LEVEL_NORMAL'                     : 2,
-    'ZOOM_LEVEL_Z0'                         : 0,
-    'ZOOM_LEVEL_Z1'                         : 1,
-    'ZOOM_LEVEL_Z2'                         : 2,
-
     # Recolour modes for layout sprites
     'RECOLOUR_NONE'                         : 0,
     'RECOLOUR_TRANSPARENT'                  : 1,

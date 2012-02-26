@@ -46,7 +46,7 @@ class SpriteContainer(object):
         assert bit_depth in (8, 32)
         key = (zoom_level, bit_depth)
         if key in self.sprite_data:
-            generic.print_warning("Sprites are already defined for %s '%' for this zoom level / bit depth combination. This data will be overridden." \
+            generic.print_warning("Sprites are already defined for %s '%s' for this zoom level / bit depth combination. This data will be overridden." \
                     % (self.block_type, self.block_name.value), pos)
         if len(self.sprite_data) != 0:
             # Some trickery to get a random item out of a dictionary
@@ -59,6 +59,7 @@ class SpriteContainer(object):
     def get_all_sprite_data(self):
         """
         Get all sprite data as a list of 4-tuples (sprite_list, default_file, zoom_level, bit_depth)
+        Sorting makes sure that the order is consistent, and that the normal zoom, 8bpp sprites appear first
         """
         keys = sorted(self.sprite_data)
         return map(lambda key: (self.sprite_data[key][0], self.sprite_data[key][1], key[0], key[1]), keys)
