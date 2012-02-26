@@ -382,7 +382,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         tile_data = self.sprite_encode_tile(sprite, data)
         if tile_data is not None:
             tile_compressed_data = self.sprite_compress(tile_data)
-            if len(tile_compressed_data) < len(compressed_data):
+            # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
+            if len(tile_compressed_data) + 4 < len(compressed_data):
                 compression |= 8
                 compressed_data = tile_compressed_data
                 data_len = len(tile_data)
