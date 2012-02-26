@@ -30,6 +30,18 @@ spriteset(foster_express_set, "opengfx_generic_trams1.pcx") {
     [272,56, 20,19,   -6, -7]
 }
 
+alternative_sprites(foster_express_set, ZOOM_LEVEL_IN_2X, BIT_DEPTH_8BPP, "opengfx_generic_trams1.pcx") {
+    [ 48,56,  8,18,   -3,-10]
+    [ 64,56, 20,19,  -14, -5]
+    [ 96,56, 28,15,  -14, -8]
+    [144,56, 20,19,   -6, -7]
+    [176,56,  8,18,   -3,-10]
+    [192,56, 20,19,  -14, -9]
+    [224,56, 28,15,  -14, -8]
+    [272,56, 20,19,   -6, -7]
+}
+
+
 param[0] = 9;
 
 // Trams:
@@ -51,7 +63,7 @@ item(FEAT_ROADVEHS, foster_express_tram, 89) {
         loading_speed:                16;                       // loading speed
         tractive_effort_coefficient:  0.3;
         air_drag_coefficient:         0.5;
-        cargo_capacity:               param[0] * 5;             // passengers
+        cargo_capacity:               param[0] * 5 + 5;             // passengers
         refittable_cargo_classes:     bitmask(CC_PASSENGERS, CC_MAIL);
         non_refittable_cargo_classes: NO_CARGO_CLASS;           // Disallow other cargos
         misc_flags:                   bitmask(ROADVEH_FLAG_TRAM); // This is a tram

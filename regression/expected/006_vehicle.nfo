@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d20 
+0 * 4 \d21 
 
 1 * 54 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -23,14 +23,17 @@
 // param[0] = 9
 4 * 9 0D 00 \D= FF 00 \dx00000009 
 
-// param[64] = (param[0] * 5)
-5 * 9 0D 40 \D* 00 FF \dx00000005 
+// param[65] = (param[0] * 5)
+5 * 9 0D 41 \D* 00 FF \dx00000005 
 
-6 * 7 06 
+// param[64] = (param[65] + 5)
+6 * 9 0D 40 \D+ 41 FF \dx00000005 
+
+7 * 7 06 
 40 01 FF \wx002C 
 FF 
 
-7 * 53 00 01 \b19 01 FF \wx0059 
+8 * 53 00 01 \b19 01 FF \wx0059 
 06 03 
 04 28 
 03 1E 
@@ -51,26 +54,34 @@ FF
 1E \wx0000 
 1C 01 
 
-8 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00 
+9 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00 
 
-9 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
+10 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
 
-10 * 6 01 01 \b1 FF \wx0008 
+11 * 6 01 01 \b1 FF \wx0008 
 
-11 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal 
-12 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal 
-13 opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 normal 
-14 opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 normal 
-15 opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 normal 
-16 opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 normal 
-17 opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 normal 
-18 opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 normal 
+12 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal 
+|	opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 zi2 
+13 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal 
+|	opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 zi2 
+14 opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 normal 
+|	opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 zi2 
+15 opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 normal 
+|	opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 zi2 
+16 opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 normal 
+|	opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 zi2 
+17 opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 normal 
+|	opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 zi2 
+18 opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 normal 
+|	opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 zi2 
+19 opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 normal 
+|	opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 zi2 
 
 // Name: foster_express_set - feature 01
-19 * 9 02 01 FE \b1 \b1 
+20 * 9 02 01 FE \b1 \b1 
 \w0 
 \w0 
 
-20 * 9 03 01 01 FF \wx0059 \b0 
+21 * 9 03 01 01 FF \wx0059 \b0 
 \wx00FE 	// foster_express_set;
 
