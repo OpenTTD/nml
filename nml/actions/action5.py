@@ -81,7 +81,7 @@ action5_table = {
 }
 
 def parse_action5(replaces):
-    real_sprite_list = real_sprite.parse_sprite_list(replaces.sprite_list, replaces.pcx)
+    real_sprite_list = real_sprite.parse_sprite_data(replaces.get_all_sprite_data())
     num_sprites = len(real_sprite_list)
 
     if replaces.type.value not in action5_table:
@@ -108,3 +108,4 @@ def parse_action5(replaces):
         assert 0
 
     return [Action5(type_id, num_sprites, offset)] + real_sprite_list
+
