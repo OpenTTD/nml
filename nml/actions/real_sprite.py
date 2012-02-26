@@ -153,7 +153,6 @@ class RealSpriteAction(base_action.BaseAction):
     def __init__(self):
         self.sprite_list = []
         self.last = False
-        self.label = None
         self.sprite_num = None
 
     def add_sprite(self, sprite):
@@ -234,9 +233,11 @@ class TemplateUsage(object):
             param.debug_print(indentation + 4)
 
     def get_labels(self):
+        # Load labels from the template definition
         if self.name.value not in sprite_template_map:
             raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
         labels, offset = sprite_template_map[self.name.value].get_labels()
+        # Add (possibly) label applied to ourselves
         if self.label is not None:
             if self.label.value in labels:
                 raise generic.ScriptError("Duplicate label encountered; '%s' already exists." % self.label.value, self.pos)
@@ -352,8 +353,6 @@ def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = 
             new_sprites = [parse_recolour_sprite(sprite, parameters)]
         else:
             new_sprites = sprite.expand(default_file, parameters)
-        if outer_scope and sprite.label is not None:
-            new_sprites[0].label = sprite.label
         real_sprite_list.extend(new_sprites)
     return real_sprite_list
 
