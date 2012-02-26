@@ -17,6 +17,20 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import codecs
 from nml import generic, grfstrings, output_base
 
+zoom_levels = {
+    0 : 'normal',
+    1 : 'zi4',
+    2 : 'zi2',
+    3 : 'zo2',
+    4 : 'zo4',
+    5 : 'zo8',
+}
+
+bit_depths = {
+    8 : '8bpp',
+    32 : '32bpp',
+}
+
 class OutputNFO(output_base.BinaryOutputBase):
     def __init__(self, filename, start_sprite_num):
         output_base.BinaryOutputBase.__init__(self, filename)
@@ -104,14 +118,14 @@ class OutputNFO(output_base.BinaryOutputBase):
         self.start_sprite(0, True)
         for i, sprite_info in enumerate(sprite_list):
             self.file.write(sprite_info.file.value + " ")
-            self.file.write("8bpp ")
+            self.file.write(bit_depths[sprite_info.bit_depth] + " ")
             self.print_decimal(sprite_info.xpos.value)
             self.print_decimal(sprite_info.ypos.value)
             self.print_decimal(sprite_info.xsize.value)
             self.print_decimal(sprite_info.ysize.value)
             self.print_decimal(sprite_info.xrel.value)
             self.print_decimal(sprite_info.yrel.value)
-            self.file.write("normal ")
+            self.file.write(zoom_levels[sprite_info.zoom_level] + " ")
             if (sprite_info.compression.value & 0x40) != 0:
                 self.file.write("nocrop ")
             if i + 1 < len(sprite_list):

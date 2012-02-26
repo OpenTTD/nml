@@ -377,6 +377,8 @@ def parse_sprite_data(sprite_container):
                     (len(action_list), sprite_container.block_type, sprite_container.block_name.value, len(new_sprite_list)), sprite_container.pos)
 
         for i, sprite in enumerate(new_sprite_list):
+            sprite.zoom_level = zoom_level
+            sprite.bit_depth = bit_depth
             if first:
                 if isinstance(sprite, RealSprite):
                     action_list.append(RealSpriteAction())
