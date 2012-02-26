@@ -215,7 +215,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
 
     sprite_files = set()
     for action in actions:
-        if isinstance(action, real_sprite.RealSpriteAction) and not isinstance(action, real_sprite.RecolourSpriteAction):
+        if isinstance(action, real_sprite.RealSpriteAction):
             for sprite in action.sprite_list:
                 if sprite.is_empty: continue
                 sprite.validate_size()
@@ -278,7 +278,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
     for idx, action in enumerate(actions):
         num = start_sprite_num + idx
         action.prepare_output()
-        if isinstance(action, real_sprite.RealSpriteAction):
+        if isinstance(action, (real_sprite.RealSpriteAction, real_sprite.RecolourSpriteAction)):
             if action.sprite_num is not None:
                 if action.sprite_num.value != num:
                     raise generic.ScriptError("Sprite number %d given in base_graphics-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))

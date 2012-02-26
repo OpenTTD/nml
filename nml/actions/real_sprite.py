@@ -189,9 +189,10 @@ class RecolourSprite(object):
         ret += "}"
         return ret
 
-class RecolourSpriteAction(RealSpriteAction):
+class RecolourSpriteAction(base_action.BaseAction):
     def __init__(self, sprite):
-        RealSpriteAction.__init__(self)
+        self.last = False
+        self.sprite_num = None
         self.sprite = sprite
         self.output_table = []
 
@@ -391,12 +392,14 @@ def parse_sprite_data(sprite_container):
                 else:
                     assert isinstance(sprite, RecolourSprite)
                     action_list.append(RecolourSpriteAction(sprite))
-            elif isinstance(sprite, RecolourSprite) or isinstance(action_list[i], RecolourSpriteAction):
-                raise generic.ScriptError("Alternative sprites may only be provided for and contain real sprites, not recolour sprites.", sprite_container.pos)
-            elif action_list[i].sprite_list[0].is_empty and not sprite.is_empty:
-                # if the first sprite is empty, all others are ignored
-                generic.print_warning("Alternative sprites for an empty real sprite are ignored.", sprite_container.pos)
-            action_list[i].add_sprite(sprite)
+            else:
+                # Not the first sprite, so an alternative sprite
+                if isinstance(sprite, RecolourSprite) or isinstance(action_list[i], RecolourSpriteAction):
+                    raise generic.ScriptError("Alternative sprites may only be provided for and contain real sprites, not recolour sprites.", sprite_container.pos)
+                if action_list[i].sprite_list[0].is_empty and not sprite.is_empty:
+                    # if the first sprite is empty, all others are ignored
+                    generic.print_warning("Alternative sprites for an empty real sprite are ignored.", sprite_container.pos)
+            if isinstance(sprite, RealSprite): action_list[i].add_sprite(sprite)
         first = False
 
     if len(action_list) != 0: action_list[-1].last = True
