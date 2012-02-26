@@ -17,10 +17,10 @@ from nml import expression, generic
 from nml.actions import real_sprite
 from nml.ast import base_statement
 
-class BaseSprite(base_statement.BaseStatement):
+class BaseGraphics(base_statement.BaseStatement):
     """
-    AST node for a 'base_sprite' block.
-    NML syntax: base_sprite [block_name]([default_file]) { ..real sprites.. }
+    AST node for a 'base_graphics' block.
+    NML syntax: base_graphics [block_name]([[sprite_num ,]default_file]) { ..real sprites.. }
 
     @ivar param_list: List of parameters passed to the replace-block
     @type param_list: C{list} of L{Expression}
@@ -35,7 +35,7 @@ class BaseSprite(base_statement.BaseStatement):
     @type name: C{None] if not given, else C{str}
     """
     def __init__(self, param_list, sprite_list, name, pos):
-        base_statement.BaseStatement.__init__(self, "base_sprites-block", pos)
+        base_statement.BaseStatement.__init__(self, "base_graphics-block", pos)
         self.param_list = param_list
         self.sprite_list = sprite_list
         self.sprite_num = None
@@ -44,18 +44,18 @@ class BaseSprite(base_statement.BaseStatement):
     def pre_process(self):
         num_params = len(self.param_list)
         if not (0 <= num_params <= 2):
-            raise generic.ScriptError("base_sprites-block requires 0 to 2 parameters, encountered %d" % num_params, self.pos)
+            raise generic.ScriptError("base_graphics-block requires 0 to 2 parameters, encountered %d" % num_params, self.pos)
         if num_params >= 2:
             self.sprite_num = self.param_list[0].reduce_constant()
         if num_params >= 1:
             self.pcx = self.param_list[-1].reduce()
             if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("The last base_sprites-block parameter 'file' must be a string literal", self.pcx.pos)
+                raise generic.ScriptError("The last base_graphics-block parameter 'file' must be a string literal", self.pcx.pos)
         else:
             self.pcx = None
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Base_sprite-block'
+        print indentation*' ' + 'base_graphics-block'
         print (indentation+2)*' ' + 'Source:', self.pcx.value if self.pcx is not None else 'None'
         if self.name: print (indentation+2)*' ' + 'Name:', self.name
         print (indentation+2)*' ' + 'Sprites:'
@@ -69,8 +69,9 @@ class BaseSprite(base_statement.BaseStatement):
 
     def __str__(self):
         name = str(self.name) if self.name is not None else ""
-        ret = "base_sprites %s(%s) {\n" % (name, ", ".join([str(param) for param in self.param_list]))
+        ret = "base_graphics %s(%s) {\n" % (name, ", ".join([str(param) for param in self.param_list]))
         for sprite in self.sprite_list:
             ret += "\t%s\n" % str(sprite)
         ret += "}\n"
         return ret
+

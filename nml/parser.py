@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, expression, tokens, nmlop
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_sprites, override, sort_vehicles
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 
@@ -92,7 +92,7 @@ class NMLParser(object):
                       | deactivate
                       | replace
                       | replace_new
-                      | base_sprites
+                      | base_graphics
                       | font_glyph
                       | alt_sprites
                       | snowline
@@ -485,11 +485,11 @@ class NMLParser(object):
         if len(t) == 9: t[0] = replace.ReplaceNewSprite(t[4], t[7], t[2], t.lineno(1))
         else: t[0] = replace.ReplaceNewSprite(t[3], t[6], None, t.lineno(1))
 
-    def p_base_sprites(self, t):
-        '''base_sprites : BASE_SPRITES LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE
-                        | BASE_SPRITES ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
-        if len(t) == 9: t[0] = base_sprites.BaseSprite(t[4], t[7], t[2], t.lineno(1))
-        else: t[0] = base_sprites.BaseSprite(t[3], t[6], None, t.lineno(1))
+    def p_base_graphics(self, t):
+        '''base_graphics : BASE_GRAPHICS LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE
+                        | BASE_GRAPHICS ID LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE'''
+        if len(t) == 9: t[0] = base_graphics.BaseGraphics(t[4], t[7], t[2], t.lineno(1))
+        else: t[0] = base_graphics.BaseGraphics(t[3], t[6], None, t.lineno(1))
 
     def p_font_glyph(self, t):
         '''font_glyph : FONTGLYPH LPAREN expression_list RPAREN LBRACE spriteset_contents RBRACE

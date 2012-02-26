@@ -51,7 +51,7 @@ reserved = {
     'tilelayout' : 'TILELAYOUT',
     'spritelayout' : 'SPRITELAYOUT',
     'alternative_sprites' : 'ALT_SPRITES',
-    'base_graphics' : 'BASE_SPRITES',
+    'base_graphics' : 'BASE_GRAPHICS',
     'recolour_sprite' : 'RECOLOUR_SPRITE',
     'engine_override' : 'ENGINE_OVERRIDE',
     'sort' : 'SORT_VEHICLES',

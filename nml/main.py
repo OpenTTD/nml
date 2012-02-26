@@ -280,7 +280,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
         if isinstance(action, real_sprite.RealSpriteAction):
             if action.sprite_num is not None:
                 if action.sprite_num.value != num:
-                    raise generic.ScriptError("Sprite number %d given in base_sprites-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))
+                    raise generic.ScriptError("Sprite number %d given in base_graphics-block, but it doesn't match output sprite number %d" % (action.sprite_num.value, num))
 
     for outputfile in outputfiles:
         if isinstance(outputfile, output_base.BinaryOutputBase):
