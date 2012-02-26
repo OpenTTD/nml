@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, global_constants
 from nml.actions import action1, action2, action2layout, action2real, real_sprite
-from nml.ast import base_statement
+from nml.ast import base_statement, sprite_container
 
 class TemplateDeclaration(base_statement.BaseStatement):
     def __init__(self, name, param_list, sprite_list, pos):
@@ -72,7 +72,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
 
 spriteset_base_class = action2.make_sprite_group_class(True, True, False, cls_is_relocatable = True)
 
-class SpriteSet(spriteset_base_class):
+class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
     def __init__(self, param_list, sprite_list, pos):
         base_statement.BaseStatement.__init__(self, "spriteset", pos, False, False)
         if not (1 <= len(param_list) <= 2):
@@ -80,16 +80,19 @@ class SpriteSet(spriteset_base_class):
         name = param_list[0]
         if not isinstance(name, expression.Identifier):
             raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", name.pos)
+        sprite_container.SpriteContainer.__init__(self, "spriteset", name)
         self.initialize(name)
+
         if len(param_list) >= 2:
-            self.pcx = param_list[1].reduce()
-            if not isinstance(self.pcx, expression.StringLiteral):
-                raise generic.ScriptError("Spriteset-block parameter 2 'file' must be a string literal", self.pcx.pos)
+            self.image_file = param_list[1].reduce()
+            if not isinstance(self.image_file, expression.StringLiteral):
+                raise generic.ScriptError("Spriteset-block parameter 2 'file' must be a string literal", self.image_file.pos)
         else:
-            self.pcx = None
+            self.image_file = None
         self.sprite_list = sprite_list
         self.action1_num = None #set number in action1
         self.labels = {} #mapping of real sprite labels to offsets
+        self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def pre_process(self):
         spriteset_base_class.pre_process(self)
@@ -107,7 +110,7 @@ class SpriteSet(spriteset_base_class):
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Sprite set:', self.name.value
-        print (indentation+2)*' ' + 'Source:  ', self.pcx.value if self.pcx is not None else 'None'
+        print (indentation+2)*' ' + 'Source:  ', self.image_file.value if self.image_file is not None else 'None'
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -117,7 +120,7 @@ class SpriteSet(spriteset_base_class):
         return []
 
     def __str__(self):
-        filename = (", " + str(self.pcx)) if self.pcx is not None else ""
+        filename = (", " + str(self.image_file)) if self.image_file is not None else ""
         ret = "spriteset(%s%s) {\n" % (self.name, filename)
         for sprite in self.sprite_list:
             ret += "\t%s\n" % str(sprite)
