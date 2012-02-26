@@ -450,8 +450,12 @@ class NMLParser(object):
         t[0] = assignment.Assignment(assignment.Range(t[1], t[3]), assignment.Range(t[5], None), t[1].pos)
 
     def p_recolour_sprite(self, t):
-        'real_sprite : RECOLOUR_SPRITE LBRACE recolour_assignment_list RBRACE'
-        t[0] = real_sprite.RecolourSprite(t[3])
+        '''real_sprite : RECOLOUR_SPRITE LBRACE recolour_assignment_list RBRACE
+                       | ID COLON RECOLOUR_SPRITE LBRACE recolour_assignment_list RBRACE'''
+        if len(t) == 5:
+            t[0] = real_sprite.RecolourSprite(t[3])
+        else:
+            t[0] = real_sprite.RecolourSprite(t[5], t[1])
 
     def p_template_declaration(self, t):
         'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE spriteset_contents RBRACE'

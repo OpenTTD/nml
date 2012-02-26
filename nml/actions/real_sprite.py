@@ -166,17 +166,24 @@ class RealSpriteAction(base_action.BaseAction):
         if self.last: file.newline()
 
 class RecolourSprite(object):
-    def __init__(self, mapping):
+    def __init__(self, mapping, label = None):
         self.mapping = mapping
-        self.label = None
+        self.label = label
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Recolour sprite, mapping:'
         for assignment in self.mapping:
             print (indentation + 2)*' ' + '%s: %s;' % (str(assignment.name), str(assignment.value))
 
+    def get_labels(self):
+        labels = {}
+        if self.label is not None:
+            labels[self.label.value] = 0
+        return labels, 1
+
     def __str__(self):
-        ret = "recolour_sprite {\n"
+        ret = "" if self.label is None else str(self.label) + ": "
+        ret += "recolour_sprite {\n"
         for assignment in self.mapping:
             ret += '%s: %s;' % (str(assignment.name), str(assignment.value))
         ret += "}"
