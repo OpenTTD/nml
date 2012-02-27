@@ -241,23 +241,27 @@ class OutputGRF(output_base.BinaryOutputBase):
         # then the offsets might not fit and the long format method is
         # used. The latter is enabled via recursion if it's needed.
         long_chunk = size_x > 256
-        chunk_len = 0x7fff if long_chunk else 0x7f
+        max_chunk_len = 0x7fff if long_chunk else 0x7f
         trans_len = 0xffff if long_chunk else 0xff
         data_output = []
         offsets = size_y * [0]
         for y in range(size_y):
             offsets[y] = len(data_output) + 2 * size_y
             row_data = data[y*size_x : (y+1)*size_x]
-            last = size_x - 1
-            while last >= 0 and row_data[last] == 0: last -= 1
-            if last == -1:
-                data_output += [0, 0x80, 0, 0] if long_chunk else [0x80, 0]
-                continue
-            x1 = 0
-            while x1 < size_x and row_data[x1] == 0:
-                x1 += 1
 
-            if x1 == size_x:
+            line_parts = []
+            x1 = 0
+            while x1 < size_x:
+                while x1 < size_x and row_data[x1] == 0:
+                    x1 += 1
+                x2 = x1 + 1
+                while x2 < size_x and row_data[x2] != 0:
+                    x2 += 1
+                if x1 < size_x:
+                    line_parts.append((x1, x2))
+                x1 = x2
+
+            if len(line_parts) == 0:
                 # Completely transparant line
                 data_output.append(0)
                 data_output.append(0)
@@ -266,34 +270,21 @@ class OutputGRF(output_base.BinaryOutputBase):
                     data_output.append(0)
                 continue
 
-            x2 = size_x
-            while row_data[x2 - 1] == 0:
-                x2 -= 1
-
-            # Chunk can start maximum at trans_len and has maximum width of chunk_len
-            if x2 - trans_len > chunk_len:
-                return None
-            if x2 - x1 > chunk_len:
-                #too large to fit in one chunk, so split it up.
+            for idx, part in enumerate(line_parts):
+                x1, x2 = part
+                last_mask = 0x80 if idx == len(line_parts) - 1 else 0
+                chunk_len = x2 - x1
+                assert chunk_len < max_chunk_len
                 if long_chunk:
-                    data_output.append(0xFF)
-                    data_output.append(0x7F)
+                    data_output.append(chunk_len & 0xFF)
+                    data_output.append(chunk_len >> 8 | last_mask)
                     data_output.append(x1 & 0xFF)
                     data_output.append(x1 >> 8)
                 else:
-                    data_output.append(0x7F)
+                    data_output.append(chunk_len | last_mask)
                     data_output.append(x1)
-                data_output += row_data[x1 : x1 + chunk_len]
-                x1 += chunk_len
-            if long_chunk:
-                data_output.append((x2 - x1) & 0xFF)
-                data_output.append((x2 - x1) >> 8 | 0x80)
-                data_output.append(x1 & 0xFF)
-                data_output.append(x1 >> 8)
-            else:
-                data_output.append((x2 - x1) | 0x80)
-                data_output.append(x1)
-            data_output += row_data[x1 : x2]
+                data_output.extend(row_data[x1 : x2])
+
         output = []
         for offset in offsets:
             output.append(offset & 0xFF)

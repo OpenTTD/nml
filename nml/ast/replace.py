@@ -38,7 +38,7 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
         num_params = len(param_list)
         if not (1 <= num_params <= 2):
             raise generic.ScriptError("replace-block requires 1 or 2 parameters, encountered " + str(num_params), pos)
-        self.start_id = param_list[0].reduce(global_constants.const_list)
+        self.start_id = param_list[0]
         if num_params >= 2:
             self.image_file = param_list[1].reduce()
             if not isinstance(self.image_file, expression.StringLiteral):
@@ -47,6 +47,9 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
             self.image_file = None
         self.sprite_list = sprite_list
         self.add_sprite_data(self.sprite_list, self.image_file, pos)
+
+    def pre_process(self):
+        self.start_id = self.start_id.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Replace sprites starting at'
