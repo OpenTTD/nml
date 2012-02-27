@@ -41,6 +41,17 @@ alternative_sprites(foster_express_set, ZOOM_LEVEL_IN_2X, BIT_DEPTH_8BPP, "openg
     [272,56, 20,19,   -6, -7]
 }
 
+alternative_sprites(foster_express_set, ZOOM_LEVEL_NORMAL, BIT_DEPTH_32BPP, "opengfx_generic_trams1.png") {
+    [ 48,56,  8,18,   -3,-10]
+    [ 64,56, 20,19,  -14, -5]
+    [ 96,56, 28,15,  -14, -8]
+    [144,56, 20,19,   -6, -7]
+    [176,56,  8,18,   -3,-10]
+    [192,56, 20,19,  -14, -9]
+    [224,56, 28,15,  -14, -8]
+    [272,56, 20,19,   -6, -7]
+}
+
 
 param[0] = 9;
 

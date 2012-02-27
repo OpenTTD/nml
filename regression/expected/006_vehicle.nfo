@@ -12,7 +12,7 @@
 "B" "MINV" \w4 \dx00000000 
 "B" "NPAR" \w1 00 
 "B" "PALS" \w1 "W" 
-"B" "BLTR" \w1 "8" 
+"B" "BLTR" \w1 "3" 
 00 
 00 
 2 * 52 08 08 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
@@ -61,20 +61,28 @@ FF
 11 * 6 01 01 \b1 FF \wx0008 
 
 12 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal 
+|	opengfx_generic_trams1.png 32bpp 48 56 8 18 -3 -10 normal 
 |	opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 zi2 
 13 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal 
+|	opengfx_generic_trams1.png 32bpp 64 56 20 19 -14 -5 normal 
 |	opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 zi2 
 14 opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 normal 
+|	opengfx_generic_trams1.png 32bpp 96 56 28 15 -14 -8 normal 
 |	opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 zi2 
 15 opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 normal 
+|	opengfx_generic_trams1.png 32bpp 144 56 20 19 -6 -7 normal 
 |	opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 zi2 
 16 opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 normal 
+|	opengfx_generic_trams1.png 32bpp 176 56 8 18 -3 -10 normal 
 |	opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 zi2 
 17 opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 normal 
+|	opengfx_generic_trams1.png 32bpp 192 56 20 19 -14 -9 normal 
 |	opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 zi2 
 18 opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 normal 
+|	opengfx_generic_trams1.png 32bpp 224 56 28 15 -14 -8 normal 
 |	opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 zi2 
 19 opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 normal 
+|	opengfx_generic_trams1.png 32bpp 272 56 20 19 -6 -7 normal 
 |	opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 zi2 
 
 // Name: foster_express_set - feature 01
