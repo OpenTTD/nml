@@ -306,14 +306,13 @@ def parse_real_sprite(sprite, default_file, id_dict):
     generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater %d 'yrel'" % (param_offset + 2), new_sprite.yrel.pos)
     param_offset += 2
 
-    new_sprite.compression = expression.ConstantNumeric(0x01)
+    new_sprite.compression = expression.ConstantNumeric(0)
     if num_param > param_offset:
         try:
             new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
             param_offset += 1
             if (new_sprite.compression.value & ~0x40) != 0:
                 raise generic.ScriptError("Real sprite compression is invalid; can only have the NOCROP bit (0x40) set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
-            new_sprite.compression.value |= 0x01
         except generic.ConstError:
             pass
 
