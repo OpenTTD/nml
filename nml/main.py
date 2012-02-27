@@ -248,7 +248,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
         except IOError, ex:
             raise generic.ImageError(str(ex), f)
         if im.mode != "P":
-            raise generic.ImageError("image does not have a palette", f)
+            continue
         pal = palette.validate_palette(im, f)
 
         if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DOS" and pal == "WIN"):

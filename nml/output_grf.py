@@ -22,6 +22,13 @@ try:
 except ImportError:
     pass
 
+# Some constants for the 'info' byte
+INFO_RGB    = 1
+INFO_ALPHA  = 2
+INFO_PAL    = 4
+INFO_TILE   = 8
+INFO_NOCROP = 0x40
+
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
         output_base.BinaryOutputBase.__init__(self, filename)
@@ -138,32 +145,48 @@ class OutputGRF(output_base.BinaryOutputBase):
                 self._byte_count -= 3
             self.print_dword(size, data)
             self.print_byte(type, data)
-        else:
-            output_base.BinaryOutputBase.start_sprite(self, size + 9)
-            self.print_dword(self.sprite_num, False)
-            self.print_dword(size + 1, False)
-            self.print_byte(type, False)
-
+        elif type == 0xFD:
+            # Real sprite, this means no data is written to the data section
+            # This call is still needed to open 'output mode'
+            assert size == 0
+            output_base.BinaryOutputBase.start_sprite(self, 9)
             self.print_dword(4)
             self.print_byte(0xfd)
             self.print_dword(self.sprite_num)
-            self._byte_count -= 9
+        else:
+            assert False, "Unexpected info byte encountered."
 
     def print_sprite(self, sprite_list):
         """
         @param sprite_list: List of non-empty real sprites for various bit depths / zoom levels
         @type sprite_list: C{list} of L{RealSprite}
         """
+        self.start_sprite(0, 0xFD)
         for sprite in sprite_list:
             self.print_single_sprite(sprite)
+        self.end_sprite()
 
     def print_single_sprite(self, sprite_info):
+        # Open file
         if not os.path.exists(sprite_info.file.value):
             raise generic.ImageError("File doesn't exist", sprite_info.file.value)
         im = Image.open(sprite_info.file.value)
-        if im.mode != "P":
-            raise generic.ImageError("image does not have a palette", sprite_info.file.value)
-        im_pal = palette.validate_palette(im, sprite_info.file.value)
+
+        # Check that file type matches bit depth, and load palette if applicable
+        if sprite_info.bit_depth == 8:
+            if im.mode != "P":
+                raise generic.ImageError("8bpp image does not have a palette", sprite_info.file.value)
+            im_pal = palette.validate_palette(im, sprite_info.file.value)
+            info_byte = INFO_PAL
+        else:
+            if im.mode not in ("RGB", "RGBA"):
+                raise generic.ImageError("32bpp image is not a full colour RGB(A) image.", sprite_info.file.value)
+            im_pal = None
+            info_byte = INFO_RGB
+            if im.mode == "RGBA": info_byte |= INFO_ALPHA
+        info_byte |= sprite_info.compression.value
+
+        # Select region of image bounded by x/ypos and x/ysize
         x = sprite_info.xpos.value
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
@@ -174,25 +197,29 @@ class OutputGRF(output_base.BinaryOutputBase):
         sprite = im.crop((x, y, x + size_x, y + size_y))
 
         # Check for white pixels; those that cause "artefacts" when shading
-        white_pixels = 0
-        for p in sprite.getdata():
-            if p == 255:
-                white_pixels += 1
-        if white_pixels != 0:
-            pixels = sprite.size[0] * sprite.size[1]
-            pos = generic.PixelPosition(sprite_info.file.value, x, y)
-            generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), pos)
-        self.wsprite(sprite, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.compression.value, im_pal)
+        if sprite_info.bit_depth == 8:
+            white_pixels = 0
+            for p in sprite.getdata():
+                if p == 255:
+                    white_pixels += 1
+            if white_pixels != 0:
+                pixels = sprite.size[0] * sprite.size[1]
+                pos = generic.PixelPosition(sprite_info.file.value, x, y)
+                generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), pos)
+        self.wsprite(sprite, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, im_pal)
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
         self.print_byte(0, True)
         self.end_sprite()
 
-    def wsprite_header(self, sprite, size, xoffset, yoffset, compression):
+    def wsprite_header(self, sprite, size, xoffset, yoffset, info, zoom_level):
         size_x, size_y = sprite.size
-        self.start_sprite(size + 9, compression & ~1 | 0x04) # Determine Type, remove bit 0, TODO
-        self.print_byte(0, False) # Zoom, TODO
+        self._expected_count += size + 18
+        self.print_dword(self.sprite_num, False)
+        self.print_dword(size + 10, False)
+        self.print_byte(info, False)
+        self.print_byte(zoom_level, False)
         self.print_word(size_y, False)
         self.print_word(size_x, False)
         self.print_word(xoffset, False)
@@ -211,7 +238,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         return output
 
     def sprite_compress(self, data):
-        data_str = ''.join(chr(c) for c in data)
+        data_str = ''.join(chr(c) for pixel in data for c in pixel)
         if self.compress_grf:
             lz = lz77.LZ77(data_str)
             stream = lz.encode()
@@ -219,17 +246,17 @@ class OutputGRF(output_base.BinaryOutputBase):
             stream = self.fakecompress(data_str)
         return stream
 
-    def wsprite_encoderegular(self, sprite, data, data_len, xoffset, yoffset, compression):
-        chunked = compression & 8 != 0
-        size = len(data)
+    def wsprite_encoderegular(self, sprite, data, data_len, xoffset, yoffset, info, zoom_level):
+        chunked = info & INFO_TILE != 0
+        size = len(data) * len(data[0]) # Size * bpp
         if chunked:
             size += 4
-        self.wsprite_header(sprite, size, xoffset, yoffset, compression)
+        self.wsprite_header(sprite, size, xoffset, yoffset, info, zoom_level)
         if chunked:
             self.print_dword(data_len, False)
-        for c in data:
-            self.print_byte(ord(c), False)
-        self.end_sprite()
+        for pixel in data:
+            for c in pixel:
+                self.print_byte(ord(c), False)
 
     def sprite_encode_tile(self, sprite, data, long_format = False):
         size_x, size_y = sprite.size
@@ -358,8 +385,9 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite = sprite.crop((0, 0, x + 1, size_y))
         return (sprite, xoffset, yoffset)
 
-    def wsprite(self, sprite, xoffset, yoffset, compression, orig_pal):
-        if self.crop_sprites and (compression & 0x40 == 0):
+    def wsprite(self, sprite, xoffset, yoffset, info, zoom_level, orig_pal):
+        if self.crop_sprites and (info & INFO_NOCROP == 0):
+            # TODO fix sprite cropping for RGB(A)
             all_blue = True
             for p in sprite.getdata():
                 if p != 0:
@@ -371,21 +399,29 @@ class OutputGRF(output_base.BinaryOutputBase):
                 yoffset = 0
             else:
                 sprite, xoffset, yoffset = self.crop_sprite(sprite, xoffset, yoffset)
+
         data = list(sprite.getdata())
+        if not isinstance(data[0], tuple):
+            # Palette data isn't a tuple, but rgb(a) is. Convert the former to a tuple also
+            data = [(d, ) for d in data]
+
+        # Palconvert if needed
         if orig_pal == "WIN":
             if self.palette == "DOS":
                 data = [palmap_w2d[x] for x in data]
+
         compressed_data = self.sprite_compress(data)
         data_len = len(data)
+        # Try tile compression, and see if it results in a smaller file size
         tile_data = self.sprite_encode_tile(sprite, data)
-        if tile_data is not None:
+        if False: # tile_data is not None: TODO fix tile compression
             tile_compressed_data = self.sprite_compress(tile_data)
             # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
             if len(tile_compressed_data) + 4 < len(compressed_data):
-                compression |= 8
+                info |= INFO_TILE
                 compressed_data = tile_compressed_data
                 data_len = len(tile_data)
-        self.wsprite_encoderegular(sprite, compressed_data, data_len, xoffset, yoffset, compression)
+        self.wsprite_encoderegular(sprite, compressed_data, data_len, xoffset, yoffset, info, zoom_level)
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
