@@ -78,6 +78,7 @@ class AltSpritesBlock(base_statement.BaseStatement):
             self.bit_depth = bit_depths[param_list[2].value]
         else:
             raise generic.ScriptError("value for alternative_sprites parameter 3 'bit depth' is not a valid bit depthl", param_list[2].pos)
+        global any_32bpp_sprites
         if self.bit_depth == 32: any_32bpp_sprites = True
 
         if len(param_list) >= 4:
