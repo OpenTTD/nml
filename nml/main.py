@@ -40,10 +40,11 @@ def parse_cli(argv):
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
                             custom_tags="custom_tags.txt", lang_dir="lang", sprites_dir="sprites", default_lang="english.lng",
-                            forced_palette="ANY", quiet=False)
+                            forced_palette="ANY", quiet=False, md5_filename=None)
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
+    opt_parser.add_option("--md5", dest="md5_filename", metavar="<file>", help="Write an md5sum of the resulting grf to <file>")
     opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
     opt_parser.add_option("-M", action="store_true", dest="dep_check", help="output a rule suitable for make describing the graphics dependencies of the main grf file (requires input file or --grf)")
     opt_parser.add_option("--MF", dest="dep_filename", metavar="<file>", help="When used with -M, specifies a file to write the dependencies to")
@@ -148,7 +149,7 @@ def main(argv):
             generic.print_error("Unknown output format %s" % outext)
             sys.exit(2)
 
-    ret = nml(input, input_filename, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette)
+    ret = nml(input, input_filename, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette, opts.md5_filename)
 
     input.close()
     sys.exit(ret)
@@ -156,7 +157,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start_sprite_num, forced_palette):
+def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start_sprite_num, forced_palette, md5_filename):
     generic.OnlyOnce.clear()
 
     try:
@@ -279,12 +280,19 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
         num = start_sprite_num + idx
         action.prepare_output(num)
 
+    md5 = None
     for outputfile in outputfiles:
         if isinstance(outputfile, output_base.BinaryOutputBase):
             outputfile.open()
             for action in actions:
                 action.write(outputfile)
             outputfile.close()
+            if isinstance(outputfile, output_grf.OutputGRF):
+                md5 = outputfile.get_md5()
+
+    if md5 is not None and md5_filename is not None:
+        with open(md5_filename, 'w') as f:
+            f.write(md5 + '\n')
 
     return 0
 

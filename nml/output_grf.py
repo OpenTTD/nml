@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import os
+import os, hashlib
 from nml import generic, palette, output_base, lz77, grfstrings
 from nml.actions.real_sprite import palmap_w2d
 
@@ -45,6 +45,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.crop_sprites = crop_sprites
         self.data_output = []
         self.sprite_output = []
+        self.md5 = hashlib.md5()
         # sprite_num is deliberately off-by-one because it is used as an
         # id between data and sprite section. For the sprite section an id
         # of 0 is invalid (means end of sprites), and for a non-NewGRF GRF
@@ -53,6 +54,9 @@ class OutputGRF(output_base.BinaryOutputBase):
 
     def open_file(self):
         return open(self.filename, 'wb')
+
+    def get_md5(self):
+        return self.md5.hexdigest()
 
     def pre_close(self):
         output_base.BinaryOutputBase.pre_close(self)
@@ -64,19 +68,22 @@ class OutputGRF(output_base.BinaryOutputBase):
         self._in_sprite = False
 
         #add header
-        for c in [ '\x00', '\x00', 'G', 'R', 'F', '\x82', '\x0D', '\x0A', '\x1A', '\x0A' ]:
-            self.file.write(c)
+        header = ['\x00', '\x00', 'G', 'R', 'F', '\x82', '\x0D', '\x0A', '\x1A', '\x0A']
         size = len(self.data_output) + 1
-        self.file.write(chr(size & 0xFF))
-        self.file.write(chr((size >> 8) & 0xFF))
-        self.file.write(chr((size >> 16) & 0xFF))
-        self.file.write(chr(size >> 24))
-
-        self.file.write('\x00') #no compression
+        header.append(chr(size & 0xFF))
+        header.append(chr((size >> 8) & 0xFF))
+        header.append(chr((size >> 16) & 0xFF))
+        header.append(chr(size >> 24))
+        header.append('\x00') #no compression
+        
+        for c in header:
+            self.file.write(c)
+            self.md5.update(c)
 
         #add data section, and then the sprite section
         for c in self.data_output:
             self.file.write(c)
+            self.md5.update(c)
         for c in self.sprite_output:
             self.file.write(c)
 

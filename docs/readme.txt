@@ -81,6 +81,7 @@ Options:
   -d, --debug           write the AST to stdout
   -s, --stack           Dump stack when an error occurs
   --grf=<file>          write the resulting grf to <file>
+  --md5=<file>          Write an md5sum of the resulting grf to <file>
   --nfo=<file>          write nfo output to <file>
   -M                    output a rule suitable for make describing the
                         graphics dependencies of the main grf file (requires
