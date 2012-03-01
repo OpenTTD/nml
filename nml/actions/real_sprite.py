@@ -119,6 +119,9 @@ class RealSprite(object):
             labels[self.label.value] = 0
         return labels, 1
 
+    def expand(self, default_file, id_dict):
+        return [parse_real_sprite(self, default_file, id_dict)]
+
     def check_sprite_size(self):
         generic.check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", self.xpos.pos)
         generic.check_range(self.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", self.ypos.pos)
@@ -180,6 +183,17 @@ class RecolourSprite(object):
         if self.label is not None:
             labels[self.label.value] = 0
         return labels, 1
+
+    def expand(self, default_file, id_dict):
+        # create new struct, needed for template expansion
+        new_mapping = []
+        for old_assignment in self.mapping:
+            from_min_value = old_assignment.name.min.reduce_constant([id_dict])
+            from_max_value = from_min_value if old_assignment.name.max is None else old_assignment.name.max.reduce_constant([id_dict])
+            to_min_value = old_assignment.value.min.reduce_constant([id_dict])
+            to_max_value = None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
+            new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
+        return [RecolourSprite(new_mapping)]
 
     def __str__(self):
         ret = "" if self.label is None else str(self.label) + ": "
@@ -265,7 +279,7 @@ class TemplateUsage(object):
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
 
-        return parse_sprite_list(template.sprite_list, default_file, param_dict, False)
+        return parse_sprite_list(template.sprite_list, default_file, param_dict)
 
     def __str__(self):
         return "%s(%s)" % (str(self.name), ", ".join([str(param) for param in self.param_list]))
@@ -335,32 +349,12 @@ def parse_real_sprite(sprite, default_file, id_dict):
 
     return new_sprite
 
-
-def parse_recolour_sprite(sprite, id_dict):
-    # create new struct, needed for template expansion
-    new_mapping = []
-    for old_assignment in sprite.mapping:
-        from_min_value = old_assignment.name.min.reduce_constant([id_dict])
-        from_max_value = from_min_value if old_assignment.name.max is None else old_assignment.name.max.reduce_constant([id_dict])
-        to_min_value = old_assignment.value.min.reduce_constant([id_dict])
-        to_max_value = None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
-        new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
-    new_sprite = RecolourSprite(new_mapping)
-
-    return new_sprite
-
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list, default_file, parameters = {}, outer_scope = True):
+def parse_sprite_list(sprite_list, default_file, parameters = {}):
     real_sprite_list = []
     for sprite in sprite_list:
-        if isinstance(sprite, RealSprite):
-            new_sprites = [parse_real_sprite(sprite, default_file, parameters)]
-        elif isinstance(sprite, RecolourSprite):
-            new_sprites = [parse_recolour_sprite(sprite, parameters)]
-        else:
-            new_sprites = sprite.expand(default_file, parameters)
-        real_sprite_list.extend(new_sprites)
+        real_sprite_list.extend(sprite.expand(default_file, parameters))
     return real_sprite_list
 
 def parse_sprite_data(sprite_container):
