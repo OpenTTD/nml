@@ -54,7 +54,7 @@ class Action2(base_action.BaseAction):
         #0x100 - 0x10F: Special meaning (used for some CB results)
         self.tmp_locations = list(range(0x80, 0x100))
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         free_references(self)
 
         if self.num_refs == 0:
@@ -270,7 +270,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             if (not cls_is_relocatable) and cls_is_referenced:
                 register_spritegroup(self)
 
-        def prepare_output(self):
+        def prepare_act2_output(self):
             """
             Prepare this node for outputting.
             This sets the feature and makes sure it is correct.
@@ -284,7 +284,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                 # copy, since we're going to modify
                 ref_nodes = self._referencing_nodes.copy()
                 for node in ref_nodes:
-                    used = node.prepare_output()
+                    used = node.prepare_act2_output()
                     if not used:
                         node._remove_reference(self)
 

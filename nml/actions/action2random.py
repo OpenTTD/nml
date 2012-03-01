@@ -26,8 +26,8 @@ class Action2Random(action2.Action2):
         self.nrand = nrand
         self.choices = []
 
-    def prepare_output(self):
-        action2.Action2.prepare_output(self)
+    def prepare_output(self, sprite_num):
+        action2.Action2.prepare_output(self, sprite_num)
         for choice in self.choices:
             if isinstance(choice.result, expression.SpriteGroupRef):
                 choice.result = choice.result.get_action2_id(self.feature)

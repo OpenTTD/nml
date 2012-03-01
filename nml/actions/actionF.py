@@ -85,7 +85,7 @@ class ActionF(base_action.BaseAction):
         self.free_bit = None
         self.pos = pos
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         # Resolve references to earlier townname actions
         blocks = set()
         for part in self.parts:

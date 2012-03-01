@@ -17,8 +17,8 @@ class SpriteCountAction(object):
     def __init__(self, count):
         self.count = count
 
-    def prepare_output(self):
-        pass
+    def prepare_output(self, sprite_num):
+        assert sprite_num == 0
 
     def write(self, file):
         file.start_sprite(4)

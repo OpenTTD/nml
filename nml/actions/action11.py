@@ -40,7 +40,7 @@ class LoadBinaryFile(base_action.BaseAction):
         self.fname = fname
         self.last = False
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         if not os.access(self.fname, os.R_OK):
             raise generic.ScriptError("File does not exist.", self.fname)
         size = os.path.getsize(self.fname)

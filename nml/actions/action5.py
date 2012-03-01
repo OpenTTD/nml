@@ -22,7 +22,7 @@ class Action5(base_action.BaseAction):
         self.num_sprites = num_sprites
         self.offset = offset
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         if self.offset is not None:
             self.type |= 0x80
 

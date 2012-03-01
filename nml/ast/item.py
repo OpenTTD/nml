@@ -229,7 +229,7 @@ class GraphicsBlock(graphics_base_class):
             self.default_graphics.debug_print(indentation + 4)
 
     def get_action_list(self):
-        if self.prepare_output():
+        if self.prepare_act2_output():
             return action3.parse_graphics_block(self, item_feature, item_id)
         return []
 

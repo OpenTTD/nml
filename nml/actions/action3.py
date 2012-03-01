@@ -41,7 +41,7 @@ class Action3(base_action.BaseAction):
         self.cid_mappings = []
         self.references = []
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         action2.free_references(self)
         map_cid = lambda cid: cid.get_action2_id(self.feature) if isinstance(cid, expression.SpriteGroupRef) else cid.value | 0x8000
         self.cid_mappings = [(cargo, map_cid(cid), comment) for cargo, cid, comment in self.cid_mappings]

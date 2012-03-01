@@ -43,7 +43,7 @@ class Action4(base_action.BaseAction):
         self.id = id
         self.texts = texts
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         #To indicate a word value, bit 7 of the lang ID must be set
         if self.size == 2: self.lang = self.lang | 0x80
 

@@ -14,11 +14,14 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 class BaseAction(object):
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         """
         Called just before L{write}, this function can be used to do some
         last modifications to the action (like resolving some IDs that can't
         be resolved earlier).
+
+        @param sprite_num: The sprite number in the nfo/grf output.
+        @type sprite_num: C{int}
         """
         pass
 

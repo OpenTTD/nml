@@ -150,7 +150,7 @@ class SpriteGroup(spritegroup_base_class):
 
     def get_action_list(self):
         action_list = []
-        if self.prepare_output():
+        if self.prepare_act2_output():
             for feature in sorted(self.feature_set):
                 action_list.extend(action2real.get_real_action2s(self, feature))
         return action_list
@@ -226,7 +226,7 @@ class SpriteLayout(spritelayout_base_class):
 
     def get_action_list(self):
         action_list = []
-        if self.prepare_output():
+        if self.prepare_act2_output():
             for feature in sorted(self.feature_set):
                 action_list.extend(action2layout.get_layout_action2s(self, feature))
         return action_list

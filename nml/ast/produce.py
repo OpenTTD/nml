@@ -65,6 +65,6 @@ class Produce(produce_base_class):
         self.param_list[5].debug_print(indentation + 4)
 
     def get_action_list(self):
-        if self.prepare_output():
+        if self.prepare_act2_output():
             return action2production.get_production_actions(self)
         return []

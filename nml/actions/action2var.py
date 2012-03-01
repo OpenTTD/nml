@@ -50,8 +50,8 @@ class Action2Var(action2.Action2):
                 self.remove_tmp_location(location, False)
                 var.set_register(location)
 
-    def prepare_output(self):
-        action2.Action2.prepare_output(self)
+    def prepare_output(self, sprite_num):
+        action2.Action2.prepare_output(self, sprite_num)
         for i in range(0, len(self.var_list) - 1, 2):
             self.var_list[i].shift |= 0x20
 

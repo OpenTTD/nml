@@ -152,11 +152,19 @@ class RealSprite(object):
         ret += "]"
         return ret
 
-class RealSpriteAction(base_action.BaseAction):
+class SpriteAction(base_action.BaseAction):
     def __init__(self):
-        self.sprite_list = []
-        self.last = False
         self.sprite_num = None
+        self.last = False
+
+    def prepare_output(self, sprite_num):
+        if self.sprite_num is not None and self.sprite_num.value != sprite_num:
+            raise generic.ScriptError("Sprite number %d given in base_graphics-block, but it doesn't match output sprite number %d" % (self.sprite_num.value, sprite_num))
+
+class RealSpriteAction(SpriteAction):
+    def __init__(self):
+        SpriteAction.__init__(self)
+        self.sprite_list = []
 
     def add_sprite(self, sprite):
         self.sprite_list.append(sprite)
@@ -203,14 +211,14 @@ class RecolourSprite(object):
         ret += "}"
         return ret
 
-class RecolourSpriteAction(base_action.BaseAction):
+class RecolourSpriteAction(SpriteAction):
     def __init__(self, sprite):
-        self.last = False
-        self.sprite_num = None
+        SpriteAction.__init__(self)
         self.sprite = sprite
         self.output_table = []
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
+        SpriteAction.prepare_output(self, sprite_num)
         colour_mapping = {}
         for assignment in self.sprite.mapping:
             if assignment.value.max is not None and assignment.name.max.value - assignment.name.min.value != assignment.value.max.value - assignment.value.min.value:

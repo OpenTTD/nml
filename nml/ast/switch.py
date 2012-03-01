@@ -63,7 +63,7 @@ class Switch(switch_base_class):
         self.body.debug_print(indentation + 4)
 
     def get_action_list(self):
-        if self.prepare_output():
+        if self.prepare_act2_output():
             return action2var.parse_varaction2(self)
         return []
 
@@ -248,7 +248,7 @@ class RandomSwitch(switch_base_class):
             choice.debug_print(indentation + 4)
 
     def get_action_list(self):
-        if self.prepare_output():
+        if self.prepare_act2_output():
             return action2random.parse_randomswitch(self)
         return []
 

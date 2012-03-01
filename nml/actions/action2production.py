@@ -42,8 +42,8 @@ class Action2Production(action2.Action2):
         assert len(self.add_out) == 2
         self.again = again
 
-    def prepare_output(self):
-        action2.Action2.prepare_output(self)
+    def prepare_output(self, sprite_num):
+        action2.Action2.prepare_output(self, sprite_num)
 
     def write(self, file):
         cargo_size = 2 if self.version == 0 else 1

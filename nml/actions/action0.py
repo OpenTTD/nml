@@ -68,7 +68,7 @@ class Action0(base_action.BaseAction):
         self.prop_list = []
         self.num_ids = None
 
-    def prepare_output(self):
+    def prepare_output(self, sprite_num):
         if self.num_ids is None: self.num_ids = 1
 
     def write(self, file):
