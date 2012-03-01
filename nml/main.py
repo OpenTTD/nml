@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 __license__ = """
 NML is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -13,7 +15,6 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from __future__ import with_statement
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, output_dep, palette
 from nml.actions import action2layout, action2var, action8, sprite_count, real_sprite, action4, action0, action1, action11
