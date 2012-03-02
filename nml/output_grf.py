@@ -97,7 +97,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         value = self.prepare_byte(value)
         self.wb(value, data)
 
-    def print_bytex(self, value, data = True, pretty_print = None):
+    def print_bytex(self, value, pretty_print = None, data = True):
         self.print_byte(value, data)
 
     def print_word(self, value, data = True):
