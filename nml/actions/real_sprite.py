@@ -409,6 +409,8 @@ def parse_sprite_data(sprite_container):
         for i, sprite in enumerate(new_sprite_list):
             sprite.zoom_level = zoom_level
             sprite.bit_depth = bit_depth
+            if bit_depth == 8 and isinstance(sprite, RealSprite) and (not sprite.is_empty) and sprite.mask_file is not None:
+                raise generic.ScriptError("Mask file may only be specified for 32bpp sprites.", sprite.mask_file.pos)
             if first:
                 if isinstance(sprite, RealSprite):
                     action_list.append(RealSpriteAction())
