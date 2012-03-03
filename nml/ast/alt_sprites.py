@@ -57,12 +57,15 @@ class AltSpritesBlock(base_statement.BaseStatement):
     @ivar image_file: Default graphics file for the sprites in this block.
     @type image_file: L{expression.StringLiteral} or C{None}
 
+    @ivar mask_file: Default graphics file for the mask sprites in this block.
+    @type mask_file: L{expression.StringLiteral} or C{None}
+
     @ivar sprite_list: List of real sprites or templates expanding to real sprites.
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
     """
     def __init__(self, param_list, sprite_list, pos):
         base_statement.BaseStatement.__init__(self, "alt_sprites-block", pos)
-        if not (3 <= len(param_list) <= 4):
+        if not (3 <= len(param_list) <= 5):
             raise generic.ScriptError("alternative_sprites-block requires 3 or 4 parameters, encountered " + str(len(param_list)), pos)
 
         self.name = param_list[0]
@@ -88,11 +91,20 @@ class AltSpritesBlock(base_statement.BaseStatement):
         else:
             self.image_file = None
 
+        if len(param_list) >= 5:
+            self.mask_file = param_list[4].reduce()
+            if not isinstance(self.mask_file, expression.StringLiteral):
+                raise generic.ScriptError("alternative_sprites-block parameter 5 'mask_file' must be a string literal", self.mask_file.pos)
+            if not self.bit_depth == 32:
+                raise generic.ScriptError("A mask file may only be specified for 32 bpp sprites.", self.mask_file.pos)
+        else:
+            self.mask_file = None
+
         self.sprite_list = sprite_list
 
     def pre_process(self):
         block = sprite_container.SpriteContainer.resolve_sprite_block(self.name)
-        block.add_sprite_data(self.sprite_list, self.image_file, self.pos, self.zoom_level, self.bit_depth)
+        block.add_sprite_data(self.sprite_list, self.image_file, self.pos, self.zoom_level, self.bit_depth, self.mask_file)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Alternative sprites'
@@ -100,6 +112,7 @@ class AltSpritesBlock(base_statement.BaseStatement):
         print (indentation+2)*' ' + 'Zoom level:', str(self.zoom_level)
         print (indentation+2)*' ' + 'Bit depth:', str(self.bit_depth)
         print (indentation+2)*' ' + 'Source:', self.image_file.value if self.image_file is not None else 'None'
+        print (indentation+2)*' ' + 'Mask source:', self.mask_file.value if self.mask_file is not None else 'None'
         print (indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
@@ -110,6 +123,7 @@ class AltSpritesBlock(base_statement.BaseStatement):
     def __str__(self):
         params = [self.name, generic.reverse_lookup(zoom_levels, self.zoom_level), generic.reverse_lookup(bit_depths, self.bit_depth)]
         if self.image_file is not None: params.append(self.image_file)
+        if self.mask_file is not None: params.append(self.mask_file)
         ret = "alternative_sprites(%s) {\n" % ", ".join([str(p) for p in params])
         for sprite in self.sprite_list:
             ret += "\t%s\n" % str(sprite)

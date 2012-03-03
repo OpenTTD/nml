@@ -41,22 +41,22 @@ class SpriteContainer(object):
                 raise generic.ScriptError("Block with name '%s' is already defined." % block_name.value, block_name.pos)
             SpriteContainer.sprite_blocks[block_name.value] = self
 
-    def add_sprite_data(self, sprite_list, default_file, pos, zoom_level = 0, bit_depth = 8):
+    def add_sprite_data(self, sprite_list, default_file, pos, zoom_level = 0, bit_depth = 8, default_mask_file = None):
         assert zoom_level in range(0, 6)
         assert bit_depth in (8, 32)
         key = (zoom_level, bit_depth)
         if key in self.sprite_data:
             generic.print_warning("Sprites are already defined for %s '%s' for this zoom level / bit depth combination. This data will be overridden." \
                     % (self.block_type, self.block_name.value), pos)
-        self.sprite_data[key] = (sprite_list, default_file)
+        self.sprite_data[key] = (sprite_list, default_file, default_mask_file)
 
     def get_all_sprite_data(self):
         """
-        Get all sprite data as a list of 4-tuples (sprite_list, default_file, zoom_level, bit_depth)
+        Get all sprite data as a list of 4-tuples (sprite_list, default_file, default_mask_file, zoom_level, bit_depth)
         Sorting makes sure that the order is consistent, and that the normal zoom, 8bpp sprites appear first
         """
         keys = sorted(self.sprite_data)
-        return map(lambda key: (self.sprite_data[key][0], self.sprite_data[key][1], key[0], key[1]), keys)
+        return map(lambda key: (self.sprite_data[key][0], self.sprite_data[key][1], self.sprite_data[key][2], key[0], key[1]), keys)
 
     @classmethod
     def resolve_sprite_block(cls, block_name):
