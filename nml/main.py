@@ -223,6 +223,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start
                 if sprite.is_empty: continue
                 sprite.validate_size()
                 sprite_files.add(sprite.file.value)
+                if sprite.mask_file is not None:
+                    sprite_files.add(sprite.mask_file.value)
 
     # Check whether we can terminate sprite processing prematurely for
     #     dependency checks

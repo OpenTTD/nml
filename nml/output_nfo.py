@@ -128,6 +128,14 @@ class OutputNFO(output_base.BinaryOutputBase):
             self.file.write(zoom_levels[sprite_info.zoom_level] + " ")
             if (sprite_info.compression.value & 0x40) != 0:
                 self.file.write("nocrop ")
+            if sprite_info.mask_file is not None:
+                self.newline()
+                self.file.write("|\t")
+                self.file.write(sprite_info.mask_file.value)
+                self.file.write(" mask ")
+                mask_x, mask_y = sprite_info.mask_pos if sprite_info.mask_pos is not None else (sprite_info.xpos, sprite_info.ypos)
+                self.print_decimal(mask_x.value)
+                self.print_decimal(mask_y.value)
             if i + 1 < len(sprite_list):
                 self.newline()
                 self.file.write("|\t")

@@ -126,22 +126,24 @@ class RealSprite(object):
         generic.check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", self.xpos.pos)
         generic.check_range(self.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", self.ypos.pos)
         generic.check_range(self.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'", self.xsize.pos)
-        generic.check_range(self.ysize.value, 1, 0xFF,         "Real sprite paramater 'ysize'", self.ysize.pos)
+        generic.check_range(self.ysize.value, 1, 0xFFFF,       "Real sprite paramater 'ysize'", self.ysize.pos)
 
     def validate_size(self):
         """
         Check if xpos/ypos/xsize/ysize are already set and if not, set them
         to 0,0,image_width,image_height.
         """
-        if self.xpos is not None: return
-        if not os.path.exists(self.file.value):
-            raise generic.ImageError("File doesn't exist", self.file.value)
-        im = Image.open(self.file.value)
-        self.xpos = expression.ConstantNumeric(0)
-        self.ypos = expression.ConstantNumeric(0)
-        self.xsize = expression.ConstantNumeric(im.size[0])
-        self.ysize = expression.ConstantNumeric(im.size[1])
-        self.check_sprite_size()
+        if self.xpos is None:
+            if not os.path.exists(self.file.value):
+                raise generic.ImageError("File doesn't exist", self.file.value)
+            im = Image.open(self.file.value)
+            self.xpos = expression.ConstantNumeric(0)
+            self.ypos = expression.ConstantNumeric(0)
+            self.xsize = expression.ConstantNumeric(im.size[0])
+            self.ysize = expression.ConstantNumeric(im.size[1])
+            self.check_sprite_size()
+        if self.mask_pos is None:
+            self.mask_pos = (self.xpos, self.ypos)
 
     def __str__(self):
         ret = ""
@@ -328,6 +330,7 @@ def parse_real_sprite(sprite, default_file, id_dict):
     generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater %d 'yrel'" % (param_offset + 2), new_sprite.yrel.pos)
     param_offset += 2
 
+    # Next may follow any combination of (compression, filename, mask), but always in that order
     new_sprite.compression = expression.ConstantNumeric(0)
     if num_param > param_offset:
         try:
@@ -338,22 +341,41 @@ def parse_real_sprite(sprite, default_file, id_dict):
         except generic.ConstError:
             pass
 
-    if num_param > param_offset:
+    new_sprite.file = default_file
+    if num_param > param_offset and not isinstance(sprite.param_list[param_offset], expression.Array):
         new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
         param_offset += 1
         if not isinstance(new_sprite.file, expression.StringLiteral):
             raise generic.ScriptError("Real sprite parameter %d 'file' should be a string literal" % (param_offset + 1), new_sprite.file.pos)
-    elif default_file is not None:
-        new_sprite.file = default_file
-    else:
+
+    if new_sprite.file is None:
         raise generic.ScriptError("No image file specified for real sprite", sprite.param_list[0].pos)
 
+    new_sprite.mask_file = None
+    new_sprite.mask_pos = None
     if num_param > param_offset:
-        new_sprite.mask_file = sprite.param_list[param_offset].reduce([id_dict])
-        if not isinstance(new_sprite.mask_file, expression.StringLiteral):
-            raise generic.ScriptError("Real sprite parameter %d 'mask_file' should be a string literal" % (param_offset + 1), new_sprite.file.pos)
-    else:
-        new_sprite.mask_file = None
+        mask = sprite.param_list[param_offset]
+        param_offset += 1
+        # Mask may be either string (file only) or array (empty => no mask, 1 value => file only, 3 => file + offsets)
+        if isinstance(mask, expression.Array):
+            if len(mask.values) not in (0, 1, 3):
+                raise generic.ScriptError("Real sprite mask should be an array with 0, 1 or 3 values", mask.pos)
+            if len(mask.values) == 0:
+                # disable any default mask
+                new_sprite.mask_file = None
+            else:
+                new_sprite.mask_file = mask.values[0].reduce([id_dict])
+                if not isinstance(new_sprite.mask_file, expression.StringLiteral):
+                    raise generic.ScriptError("Real sprite parameter 'mask_file' should be a string literal", new_sprite.file.pos)
+                if len(mask.values) == 3:
+                    new_sprite.mask_pos = tuple(mask.values[i].reduce_constant([id_dict]) for i in range(1,3))
+        else:
+            new_sprite.mask_file = mask.reduce([id_dict])
+            if not isinstance(new_sprite.mask_file, expression.StringLiteral):
+                raise generic.ScriptError("Real sprite parameter %d 'mask' should be an array or string literal" % (param_offset + 1), new_sprite.file.pos)
+
+    if num_param > param_offset:
+        raise generic.ScriptError("Real sprite has too many parameters, the last %d parameter(s) cannot be parsed." % (num_param - param_offset), sprite.param_list[param_offset].pos)
 
     return new_sprite
 

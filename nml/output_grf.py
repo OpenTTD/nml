@@ -201,6 +201,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
         size_y = sprite_info.ysize.value
+        if sprite_info.bit_depth == 8 or sprite_info.mask_pos is None:
+            mask_x, mask_y = x, y
+        else:
+            mask_x = sprite_info.mask_pos[0].value
+            mask_y = sprite_info.mask_pos[1].value
 
         if filename_32bpp is not None:
             # Open file
@@ -229,9 +234,9 @@ class OutputGRF(output_base.BinaryOutputBase):
             info_byte |= INFO_PAL
 
             (im_width, im_height) = mask_im.size
-            if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
+            if mask_x < 0 or mask_y < 0 or mask_x + size_x > im_width or mask_y + size_y > im_height:
                 raise generic.ScriptError("Read beyond bounds of image file '%s'" % filename_8bpp.value, filename_8bpp.pos)
-            mask_sprite = mask_im.crop((x, y, x + size_x, y + size_y))
+            mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
 
             # Check for white pixels; those that cause "artefacts" when shading
             white_pixels = len(filter(lambda p: p == 255, mask_sprite.getdata()))
