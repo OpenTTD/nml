@@ -356,19 +356,23 @@ def parse_real_sprite(sprite, default_file, default_mask_file, id_dict):
     if num_param > param_offset:
         mask = sprite.param_list[param_offset]
         param_offset += 1
-        # Mask may be either string (file only) or array (empty => no mask, 1 value => file only, 3 => file + offsets)
+        # Mask may be either string (file only) or array (empty => no mask, 1 value => file only, 2 => offsets only, 3 => file + offsets)
         if isinstance(mask, expression.Array):
-            if len(mask.values) not in (0, 1, 3):
-                raise generic.ScriptError("Real sprite mask should be an array with 0, 1 or 3 values", mask.pos)
+            if not (0 <= len(mask.values) <= 3):
+                raise generic.ScriptError("Real sprite mask should be an array with 0 to 3 values, encountered %d" % len(mask.values), mask.pos)
             if len(mask.values) == 0:
                 # disable any default mask
                 new_sprite.mask_file = None
             else:
-                new_sprite.mask_file = mask.values[0].reduce([id_dict])
-                if not isinstance(new_sprite.mask_file, expression.StringLiteral):
-                    raise generic.ScriptError("Real sprite parameter 'mask_file' should be a string literal", new_sprite.file.pos)
-                if len(mask.values) == 3:
-                    new_sprite.mask_pos = tuple(mask.values[i].reduce_constant([id_dict]) for i in range(1,3))
+                if len(mask.values) & 1:
+                    new_sprite.mask_file = mask.values[0].reduce([id_dict])
+                    if not isinstance(new_sprite.mask_file, expression.StringLiteral):
+                        raise generic.ScriptError("Real sprite parameter 'mask_file' should be a string literal", new_sprite.file.pos)
+                if len(mask.values) & 2:
+                    new_sprite.mask_pos = tuple(mask.values[i].reduce_constant([id_dict]) for i in range(-2, 0))
+                    # Check that there is also a mask specified, else the offsets make no sense
+                    if new_sprite.mask_file is None:
+                        raise generic.ScriptError("Mask offsets are specified, but there is no mask file set.", new_sprite.mask_pos[0].pos)
         else:
             new_sprite.mask_file = mask.reduce([id_dict])
             if not isinstance(new_sprite.mask_file, expression.StringLiteral):
