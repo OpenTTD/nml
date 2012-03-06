@@ -21,7 +21,7 @@ setup(name='nml',
       description='A tool to compile nml files to grf or nfo files',
       long_description = 'A tool to compile nml files to grf and / or nfo files.' \
                          'NML is a meta-language that aims to be a lot simpler to learn and use than nfo.',
-      license='GPLv2',
+      license='GPL-2.0+',
       classifiers = ['Development Status :: 2 - Pre-Alpha',
                      'Environment :: Console',
                      'Intended Audience :: Developers',
