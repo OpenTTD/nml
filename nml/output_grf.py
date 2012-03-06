@@ -333,7 +333,10 @@ class OutputGRF(output_base.BinaryOutputBase):
 
                 # Grab as many non-transparent pixels as possible, but not without x2-x1 going out of bounds
                 x2 = x1 + 1
-                while x2 < size_x and x2 - x1 < max_chunk_len and not is_transparent(row_data[x2], info):
+                while x2 - x1 < max_chunk_len and (
+                        (x2 < size_x and not is_transparent(row_data[x2], info)) or
+                        (x2 + 1 < size_x and not is_transparent(row_data[x2 + 1], info)) or
+                        (x2 + 2 < size_x and not is_transparent(row_data[x2 + 2], info))):
                     x2 += 1
                 line_parts.append((x1, x2))
                 x1 = x2
