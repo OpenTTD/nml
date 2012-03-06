@@ -314,7 +314,6 @@ class OutputGRF(output_base.BinaryOutputBase):
         # then the offsets might not fit and the long format method is
         # used. The latter is enabled via recursion if it's needed.
         max_chunk_len = 0x7fff if long_chunk else 0x7f
-        trans_len = 0xffff if long_chunk else 0xff
         data_output = []
         offsets = size_y * [0]
         for y in range(size_y):
@@ -325,22 +324,17 @@ class OutputGRF(output_base.BinaryOutputBase):
             line_parts = []
             x1 = 0
             while True:
+                # Skip transparent pixels
                 while x1 < size_x and is_transparent(row_data[x1], info):
                     x1 += 1
                 if x1 == size_x:
+                    # End-of-line reached
                     break
+
+                # Grab as many non-transparent pixels as possible, but not without x2-x1 going out of bounds
                 x2 = x1 + 1
-                while x2 < size_x and not is_transparent(row_data[x2], info):
+                while x2 < size_x and x2 - x1 < max_chunk_len and not is_transparent(row_data[x2], info):
                     x2 += 1
-                if x2 > trans_len:
-                    if x1 > trans_len:
-                        x1 = trans_len
-                    x2 = size_x
-                    while is_transparent(row_data[x2 - 1], info):
-                        x2 -= 1
-                    if x2 - x1 > max_chunk_len:
-                        assert x1 < trans_len
-                        x2 = trans_len
                 line_parts.append((x1, x2))
                 x1 = x2
 
