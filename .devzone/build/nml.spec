@@ -26,8 +26,7 @@ BuildRequires:  python-ply python-imaging
 BuildRequires:  mercurial
 # We need wine for windows nmlc.exe
 BuildRequires:  nml-dot-wine p7zip
-# We use setuptools for the packaging, but it's also needed at runtime, why ever?
-Requires:       python-setuptools
+# We use setuptools for the packaging
 BuildRequires:  python-setuptools
 
 %description
@@ -57,17 +56,20 @@ rename .tar.gz .src.tar.gz dist/*
 %{__python} setup.py build
 
 %install
-%{__python} setup.py install --skip-build --root=%{buildroot} --prefix=%{_prefix} --record=INSTALLED_FILES
+%{__python} setup.py install --skip-build --root=%{buildroot} --prefix=%{_prefix}
+install -D -m0644 docs/nmlc.1 %{buildroot}%{_mandir}/man1/nmlc.1
+#setuptools should not be a requirement on running, so we install the nmlc wrapper from source
+install -m0755 nmlc %{buildroot}%{_bindir}/nmlc
 
 %check
 cd regression
 PYTHONPATH=%{buildroot}%{python_sitelib} make _V= NMLC=%{buildroot}%{_bindir}/nmlc 1>%{name}-%{version}-build.test.log 2>&1
 
-%files -f INSTALLED_FILES 
+%files
 %defattr(-,root,root,-)
-%dir %{python_sitelib}/nml
-%dir %{python_sitelib}/nml/actions
-%dir %{python_sitelib}/nml/ast
-%dir %{python_sitelib}/nml/expression
+%doc docs/*.txt
+%{_bindir}/nmlc
+%{_mandir}/man1/nmlc.1*
+%{python_sitelib}/*
 
 %changelog
