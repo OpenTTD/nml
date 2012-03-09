@@ -317,7 +317,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         data_output = []
         offsets = size_y * [0]
         for y in range(size_y):
-            offsets[y] = sum(len(x) for x in data_output) + 2 * size_y
+            offsets[y] = sum(len(x) for x in data_output) + (4 if long_format else 2) * size_y
             row_data = data[y*size_x : (y+1)*size_x]
             assert size_x == len(row_data)
 
@@ -365,7 +365,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         output = []
         for offset in offsets:
             output.append([offset & 0xFF, (offset >> 8) & 0xFF])
-            if long_chunk:
+            if long_format:
                 output.append([(offset >> 16) & 0xFF, (offset >> 24) & 0xFF])
         output += data_output
         if sum(len(x) for x in output) > 65535 and not long_format:
