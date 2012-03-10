@@ -316,8 +316,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         max_chunk_len = 0x7fff if long_chunk else 0x7f
         data_output = []
         offsets = size_y * [0]
+        total_length = (4 if long_format else 2) * size_y
+        bpp = len(data[0])
+
         for y in range(size_y):
-            offsets[y] = sum(len(x) for x in data_output) + (4 if long_format else 2) * size_y
+            offsets[y] = total_length
             row_data = data[y*size_x : (y+1)*size_x]
             assert size_x == len(row_data)
 
@@ -345,8 +348,10 @@ class OutputGRF(output_base.BinaryOutputBase):
                 # Completely transparant line
                 if long_chunk:
                     data_output.append([0, 0x80, 0, 0])
+                    total_length += 4
                 else:
                     data_output.append([0x80, 0])
+                    total_length += 2
                 continue
 
             for idx, part in enumerate(line_parts):
@@ -358,20 +363,26 @@ class OutputGRF(output_base.BinaryOutputBase):
                                        (chunk_len >> 8) | last_mask,
                                        x1 & 0xFF,
                                        x1 >> 8])
+                    total_length += 4
                 else:
                     data_output.append([chunk_len | last_mask, x1])
+                    total_length += 2
                 data_output.extend(row_data[x1 : x2])
-
+                total_length += bpp * (x2 - x1)
+ 
         output = []
         for offset in offsets:
             output.append([offset & 0xFF, (offset >> 8) & 0xFF])
             if long_format:
                 output.append([(offset >> 16) & 0xFF, (offset >> 24) & 0xFF])
         output += data_output
-        if sum(len(x) for x in output) > 65535 and not long_format:
+        if total_length > 65535 and not long_format:
             # Recurse into the long format if that's possible.
             return self.sprite_encode_tile(size_x, size_y, data, info, True)
-        return reduce(list.__add__, output)
+
+        ret = reduce(list.__add__, output)
+        assert len(ret) == total_length
+        return ret
 
     def crop_sprite(self, data, size_x, size_y, xoffset, yoffset, info):
         #Crop the top of the sprite
