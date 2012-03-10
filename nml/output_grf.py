@@ -239,20 +239,20 @@ class OutputGRF(output_base.BinaryOutputBase):
             mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
 
             # Check for white pixels; those that cause "artefacts" when shading
-            white_pixels = len(filter(lambda p: p == 255, mask_sprite.getdata()))
-            if white_pixels != 0:
+            if 255 in mask_sprite.getdata():
+                white_pixels = len(filter(lambda p: p == 255, mask_sprite.getdata()))
                 pixels = im_width * im_height
                 pos = generic.PixelPosition(filename_8bpp.value, x, y)
                 generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), pos)
 
         if (info_byte & INFO_ALPHA) != 0 and (info_byte & INFO_PAL) != 0:
-            sprite_data = [[x[0][0], x[0][1], x[0][2], x[0][3], x[1]] for x in zip(sprite.getdata(), mask_sprite.getdata())]
+            sprite_data = [(x[0][0], x[0][1], x[0][2], x[0][3], x[1]) for x in zip(sprite.getdata(), mask_sprite.getdata())]
         elif (info_byte & INFO_RGB) != 0 and (info_byte & INFO_PAL) != 0:
-            sprite_data = [[x[0][0], x[0][1], x[0][2], x[1]] for x in zip(sprite.getdata(), mask_sprite.getdata())]
+            sprite_data = [(x[0][0], x[0][1], x[0][2], x[1]) for x in zip(sprite.getdata(), mask_sprite.getdata())]
         elif (info_byte & INFO_RGB) != 0:
-            sprite_data = [list(x) for x in sprite.getdata()]
+            sprite_data = [tuple(x) for x in sprite.getdata()]
         else:
-            sprite_data = [[x] for x in mask_sprite.getdata()]
+            sprite_data = [(x,) for x in mask_sprite.getdata()]
         self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, im_mask_pal)
 
     def print_empty_realsprite(self):
@@ -348,10 +348,10 @@ class OutputGRF(output_base.BinaryOutputBase):
             if len(line_parts) == 0:
                 # Completely transparant line
                 if long_chunk:
-                    data_output.append([0, 0x80, 0, 0])
+                    data_output.append((0, 0x80, 0, 0))
                     total_length += 4
                 else:
-                    data_output.append([0x80, 0])
+                    data_output.append((0x80, 0))
                     total_length += 2
                 continue
 
@@ -360,13 +360,13 @@ class OutputGRF(output_base.BinaryOutputBase):
                 last_mask = 0x80 if idx == len(line_parts) - 1 else 0
                 chunk_len = x2 - x1
                 if long_chunk:
-                    data_output.append([chunk_len & 0xFF,
+                    data_output.append((chunk_len & 0xFF,
                                        (chunk_len >> 8) | last_mask,
                                        x1 & 0xFF,
-                                       x1 >> 8])
+                                       x1 >> 8))
                     total_length += 4
                 else:
-                    data_output.append([chunk_len | last_mask, x1])
+                    data_output.append((chunk_len | last_mask, x1))
                     total_length += 2
                 data_output.extend(row_data[x1 : x2])
                 total_length += bpp * (x2 - x1)
