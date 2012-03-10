@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import os, hashlib
+import os, hashlib, itertools
 from nml import generic, palette, output_base, lz77, grfstrings
 from nml.actions.real_sprite import palmap_w2d
 
@@ -284,13 +284,14 @@ class OutputGRF(output_base.BinaryOutputBase):
         return output
 
     def sprite_compress(self, data):
-        data_str = ''.join(chr(c) for c in data)
+        # Returns a compressed data stream and the UNcompressed length
+        data_str = ''.join(chr(c) for c in itertools.chain.from_iterable(data))
         if self.compress_grf:
             lz = lz77.LZ77(data_str)
             stream = lz.encode()
         else:
             stream = self.fakecompress(data_str)
-        return stream
+        return stream, len(data_str)
 
     def wsprite_encoderegular(self, size_x, size_y, data, data_len, xoffset, yoffset, info, zoom_level):
         chunked = info & INFO_TILE != 0
@@ -379,10 +380,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         if total_length > 65535 and not long_format:
             # Recurse into the long format if that's possible.
             return self.sprite_encode_tile(size_x, size_y, data, info, True)
-
-        ret = reduce(list.__add__, output)
-        assert len(ret) == total_length
-        return ret
+        return output
 
     def crop_sprite(self, data, size_x, size_y, xoffset, yoffset, info):
         #Crop the top of the sprite
@@ -421,17 +419,15 @@ class OutputGRF(output_base.BinaryOutputBase):
                 for p in sprite_data:
                     p[-1] = palmap_w2d[p[-1]]
 
-        compressed_data = self.sprite_compress(reduce(list.__add__, sprite_data))
-        data_len = len(sprite_data)
+        compressed_data, data_len = self.sprite_compress(sprite_data)
         # Try tile compression, and see if it results in a smaller file size
         tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info)
         if tile_data is not None:
-            tile_compressed_data = self.sprite_compress(tile_data)
+            tile_compressed_data, tile_data_len = self.sprite_compress(tile_data)
             # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
             if len(tile_compressed_data) + 4 < len(compressed_data):
                 info |= INFO_TILE
-                compressed_data = tile_compressed_data
-                data_len = len(tile_data)
+                compressed_data, data_len = tile_compressed_data, tile_data_len
         self.wsprite_encoderegular(size_x, size_y, compressed_data, data_len, xoffset, yoffset, info, zoom_level)
 
     def print_named_filedata(self, filename):
