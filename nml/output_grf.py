@@ -245,15 +245,17 @@ class OutputGRF(output_base.BinaryOutputBase):
                 pos = generic.PixelPosition(filename_8bpp.value, x, y)
                 generic.print_warning("%i of %i pixels (%i%%) are pure white" % (white_pixels, pixels, white_pixels * 100 / pixels), pos)
 
+            mask_sprite_data = self.palconvert(mask_sprite.getdata(), im_mask_pal)
+
         if (info_byte & INFO_ALPHA) != 0 and (info_byte & INFO_PAL) != 0:
-            sprite_data = [(x[0][0], x[0][1], x[0][2], x[0][3], x[1]) for x in zip(sprite.getdata(), mask_sprite.getdata())]
+            sprite_data = [(x[0][0], x[0][1], x[0][2], x[0][3], x[1]) for x in zip(sprite.getdata(), mask_sprite_data)]
         elif (info_byte & INFO_RGB) != 0 and (info_byte & INFO_PAL) != 0:
-            sprite_data = [(x[0][0], x[0][1], x[0][2], x[1]) for x in zip(sprite.getdata(), mask_sprite.getdata())]
+            sprite_data = [(x[0][0], x[0][1], x[0][2], x[1]) for x in zip(sprite.getdata(), mask_sprite_data)]
         elif (info_byte & INFO_RGB) != 0:
             sprite_data = [tuple(x) for x in sprite.getdata()]
         else:
-            sprite_data = [(x,) for x in mask_sprite.getdata()]
-        self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, im_mask_pal)
+            sprite_data = [(x,) for x in mask_sprite_data]
+        self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level)
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
@@ -407,17 +409,17 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         return (data, size_x, size_y, xoffset, yoffset)
 
-    def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, orig_pal):
+    def palconvert(self, sprite_data, orig_pal):
+        if orig_pal == "WIN" and self.palette == "DOS":
+            return (palmap_w2d[p] for p in sprite_data)
+        return sprite_data
+        
+
+    def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level):
         assert len(sprite_data) == size_x * size_y
         if self.crop_sprites and (info & INFO_NOCROP == 0):
             sprite_data, size_x, size_y, xoffset, yoffset = self.crop_sprite(sprite_data, size_x, size_y, xoffset, yoffset, info)
         assert len(sprite_data) == size_x * size_y
-
-        # Palconvert if needed
-        if (info & INFO_PAL) != 0 and orig_pal == "WIN":
-            if self.palette == "DOS":
-                for p in sprite_data:
-                    p[-1] = palmap_w2d[p[-1]]
 
         compressed_data, data_len = self.sprite_compress(sprite_data)
         # Try tile compression, and see if it results in a smaller file size
