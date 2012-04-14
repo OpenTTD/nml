@@ -167,7 +167,7 @@ callbacks[0x09] = {
     'cargo_type_accept'   : {'type': 'cb', 'num': 0x2C, 'flag_bit': 3}, # Should work like the industry CB, i.e. call multiple times
     'tile_check'          : {'type': 'cb', 'num': 0x2F, 'flag_bit': 4},
     'foundations'         : {'type': 'cb', 'num': 0x30, 'flag_bit': 5},
-    'autoslope'           : {'type': 'cb', 'num': 0x3B, 'flag_bit': 6},
+    'autoslope'           : {'type': 'cb', 'num': 0x3C, 'flag_bit': 6},
     'default'             : {'type': 'cargo', 'num': None},
 }
 
