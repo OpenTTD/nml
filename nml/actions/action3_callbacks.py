@@ -187,6 +187,7 @@ callbacks[0x0A] = {
     'colour'                : {'type': 'cb', 'num': 0x14A, 'flag_bit': 11},
     'cargo_input'           : {'type': 'cb', 'num': 0x14B, 'flag_bit': 12},
     'cargo_output'          : {'type': 'cb', 'num': 0x14C, 'flag_bit': 13},
+    'build_prod_change'     : {'type': 'cb', 'num': 0x15F, 'flag_bit': 14},
     'default'               : {'type': 'cargo', 'num': None},
 }
 
