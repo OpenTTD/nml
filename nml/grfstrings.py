@@ -548,6 +548,70 @@ STRING_ROTATE            = {'unicode': r'\UE086',    'ascii': r'\86'}
 STRING_PUSH_WORD         = {'unicode': r'\UE09A\03\20\20', 'ascii': r'\9A\03\20\20'}
 STRING_SELECT_CASE       = {'unicode': r'\UE09A\0F', 'ascii': r'\9A\0F'}
 
+# Mapping of language names to their code, borrowed from OpenTTD.
+LANG_NAMES = {'af_ZA' : 0x1b,
+              'ar_EG' : 0x14,
+              'be_BY' : 0x10,
+              'bg_BG' : 0x18,
+              'ca_ES' : 0x22,
+              'cs_CZ' : 0x15,
+              'cv_RU' : 0x0B,
+              'cy_GB' : 0x0f,
+              'da_DK' : 0x2d,
+              'de_DE' : 0x02,
+              'el_GR' : 0x1e,
+              'en_AU' : 0x3D,
+              'en_GB' : 0x01,
+              'en_US' : 0x00,
+              'eo_EO' : 0x05,
+              'es_ES' : 0x04,
+              'et_EE' : 0x34,
+              'eu_ES' : 0x21,
+              'fa_IR' : 0x62,
+              'fi_FI' : 0x35,
+              'fo_FO' : 0x12,
+              'fr_FR' : 0x03,
+              'fy_NL' : 0x32,
+              'ga_IE' : 0x08,
+              'gl_ES' : 0x31,
+              'he_IL' : 0x61,
+              'hr_HR' : 0x38,
+              'hu_HU' : 0x24,
+              'id_ID' : 0x5a,
+              'io_IO' : 0x06,
+              'is_IS' : 0x29,
+              'it_IT' : 0x27,
+              'ja_JP' : 0x39,
+              'ko_KR' : 0x3a,
+              'lb_LU' : 0x23,
+              'lt_LT' : 0x2b,
+              'lv_LV' : 0x2a,
+              'mk_MK' : 0x26,
+              'mr_IN' : 0x11,
+              'ms_MY' : 0x3c,
+              'mt_MT' : 0x09,
+              'nb_NO' : 0x2f,
+              'nl_NL' : 0x1f,
+              'nn_NO' : 0x0e,
+              'pl_PL' : 0x30,
+              'pt_BR' : 0x37,
+              'pt_PT' : 0x36,
+              'ro_RO' : 0x28,
+              'ru_RU' : 0x07,
+              'sk_SK' : 0x16,
+              'sl_SI' : 0x2c,
+              'sr_RS' : 0x0d,
+              'sv_SE' : 0x2e,
+              'ta_IN' : 0x0A,
+              'th_TH' : 0x42,
+              'tr_TR' : 0x3e,
+              'uk_UA' : 0x33,
+              'ur_PK' : 0x5c,
+              'vi_VN' : 0x54,
+              'zh_CN' : 0x56,
+              'zh_TW' : 0x0c,
+             }
+
 class Language:
     def __init__(self):
         self.langid = None
@@ -687,10 +751,13 @@ class Language:
         if line[:10] == "grflangid ":
             if self.langid is not None:
                 raise generic.ScriptError("grflangid already set", pos)
-            try:
-                value = int(line[10:], 16)
-            except ValueError:
-                raise generic.ScriptError("Invalid grflangid", pos)
+            lang_text = line[10:].strip()
+            value = LANG_NAMES.get(lang_text)
+            if value is None:
+                try:
+                    value = int(lang_text, 16)
+                except ValueError:
+                    raise generic.ScriptError("Invalid grflangid %r" % lang_text, pos)
             if value < 0 or value >= 0x7F:
                 raise generic.ScriptError("Invalid grflangid", pos)
             self.langid = value
