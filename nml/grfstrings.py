@@ -397,7 +397,7 @@ class StringCommand(object):
         return commands[self.name]['size']
 
 class NewGRFString(object):
-    def __init__(self, string, lang, strip_choice_lists, pos):
+    def __init__(self, string, lang, pos):
         self.string = string
         self.cases = {}
         self.components = []
@@ -868,14 +868,14 @@ class Language(object):
             raise generic.ScriptError("String name \"%s\" is used multiple times" % string, pos)
 
         if self.default:
-            self.strings[string] = NewGRFString(value, self, True, pos)
+            self.strings[string] = NewGRFString(value, self, pos)
             self.strings[string].remove_non_default_commands()
         else:
             if string not in default_lang.strings:
                 generic.print_warning("String name \"%s\" does not exist in master file" % string, pos)
                 return
 
-            newgrf_string = NewGRFString(value, self, False, pos)
+            newgrf_string = NewGRFString(value, self, pos)
             if not default_lang.strings[string].match_commands(newgrf_string):
                 generic.print_warning("String commands don't match with english.lng", pos)
                 return
