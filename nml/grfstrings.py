@@ -980,6 +980,8 @@ def parse_file(filename, default):
             for idx, line in enumerate(f):
                 pos = generic.LinePosition(filename, idx + 1)
                 line = line.rstrip('\n\r').lstrip(u'\uFEFF')
+                # The default language is processed twice here. Once as fallback langauge
+                # and once as normal language.
                 if default: default_lang.handle_string(line, pos)
                 lang.handle_string(line, pos)
     except UnicodeDecodeError:
