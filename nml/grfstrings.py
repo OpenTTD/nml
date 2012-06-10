@@ -612,8 +612,34 @@ LANG_NAMES = {'af_ZA' : 0x1b,
               'zh_TW' : 0x0c,
              }
 
-class Language:
-    def __init__(self):
+class Language(object):
+    """
+    @ivar default: Whether the language is the default language.
+    @type default: C{bool}
+
+    @ivar langid: Language id of the language, if known.
+    @type langid: C{None} or C{int}
+
+    @ivar plural:
+    @type plural:
+
+    @ivar genders:
+    @type genders:
+
+    @ivar gender_map:
+    @type gender_map:
+
+    @ivar cases:
+    @type cases:
+
+    @ivar case_map:
+    @type case_map:
+
+    @ivar strings: Language strings of the file.
+    @type strings: C{dict} of
+    """
+    def __init__(self, default):
+        self.default = default
         self.langid = None
         self.plural = None
         self.genders = None
@@ -797,11 +823,11 @@ class Language:
         else:
             raise generic.ScriptError("Invalid pragma", pos)
 
-    def handle_string(self, line, default, pos):
+    def handle_string(self, line, pos):
         if len(line) == 0: return
 
         if line[0] == '#':
-            if len(line) > 2 and line[1] == '#' and line[2] != '#' and not default: self.handle_pragma(line[2:], pos)
+            if len(line) > 2 and line[1] == '#' and line[2] != '#' and not self.default: self.handle_pragma(line[2:], pos)
             return
 
         s = line.find(':')
@@ -816,14 +842,14 @@ class Language:
             case = None
         else:
             # Ignore cases for the default language
-            if default: return
+            if self.default: return
             case = string[case_pos + 1:]
             string = string[:case_pos]
 
         if string in self.strings and case is None:
             raise generic.ScriptError("String name \"%s\" is used multiple times" % string, pos)
 
-        if default:
+        if self.default:
             self.strings[string] = NewGRFString(value, self, True, pos)
             self.strings[string].remove_non_default_commands()
         else:
@@ -853,7 +879,7 @@ class Language:
                 self.strings[string].cases[case] = newgrf_string
 
 
-default_lang = Language()
+default_lang = Language(True)
 default_lang.langid = DEFAULT_LANGUAGE
 langs = []
 
@@ -867,14 +893,14 @@ def parse_file(filename, default):
     @param default: True iff this is the default language.
     @type  default: C{bool}
     """
-    lang = Language()
+    lang = Language(False)
     try:
         with codecs.open(filename, "r", "utf-8") as f:
             for idx, line in enumerate(f):
                 pos = generic.LinePosition(filename, idx + 1)
                 line = line.rstrip('\n\r').lstrip(u'\uFEFF')
-                if default: default_lang.handle_string(line, True, pos)
-                lang.handle_string(line, False, pos)
+                if default: default_lang.handle_string(line, pos)
+                lang.handle_string(line, pos)
     except UnicodeDecodeError:
         if default:
             raise generic.ScriptError("The default language file (\"%s\") contains non-utf8 characters." % filename)
