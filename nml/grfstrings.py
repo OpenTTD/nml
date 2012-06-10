@@ -449,12 +449,8 @@ class NewGRFString(object):
             if string[end] != '}':
                 command.argument_is_assigment = string[end] == '='
                 arg_start = end + 1
-                while True:
-                    end += 1
-                    if end >= len(string):
-                        raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
-                    if string[end] == '}': break
-                if not command.set_arguments(string[arg_start:end]):
+                end = string.find('}', end + 1)
+                if end == -1 or not command.set_arguments(string[arg_start:end]):
                     raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
             command.validate_arguments(lang, pos)
             if command_name == 'G=' and self.components:
