@@ -402,67 +402,66 @@ class NewGRFString(object):
         self.cases = {}
         self.components = []
         self.pos = pos
-        parsed_string = None
         idx = 0
         while idx < len(string):
             if string[idx] != '{':
-                if parsed_string is None: parsed_string = u""
-                parsed_string += string[idx]
-            else:
-                if parsed_string is not None:
-                    self.components.append(parsed_string)
-                    parsed_string = None
-                start = idx + 1
+                j = string.find('{', idx)
+                if j == -1:
+                    self.components.append(string[idx:])
+                    break
+                self.components.append(string[idx:j])
+                idx = j
+
+            start = idx + 1
+            end = start
+            cmd_pos = None
+            if string[start].isdigit():
+                while end < len(string) and string[end].isdigit(): end += 1
+                if end == len(string) or string[end] != ':':
+                    raise generic.ScriptError("Error while parsing position part of string command", pos)
+                cmd_pos = int(string[start:end])
+                start = end + 1
                 end = start
-                cmd_pos = None
-                if string[start].isdigit():
-                    while end < len(string) and string[end].isdigit(): end += 1
-                    if end == len(string) or string[end] != ':':
-                        raise generic.ScriptError("Error while parsing position part of string command", pos)
-                    cmd_pos = int(string[start:end])
-                    start = end + 1
-                    end = start
-                #Read the command name
-                while end < len(string) and string[end] not in '} =.': end += 1
-                command_name = string[start:end]
-                if end < len(string) and string[end] == '=':
-                    command_name += '='
-                if command_name not in commands and command_name not in special_commands:
-                    raise generic.ScriptError("Undefined command \"%s\"" % command_name, pos)
-                if command_name in commands and 'deprecated' in commands[command_name]:
-                    generic.print_warning("String code '%s' has been deprecated and will be removed soon" % command_name, pos)
-                    del commands[command_name]['deprecated']
-                #
-                command = StringCommand(command_name, cmd_pos)
-                if end >= len(string):
-                    raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
-                if string[end] == '.':
-                    if command_name not in commands or 'allow_case' not in commands[command_name]:
-                        raise generic.ScriptError("Command \"%s\" can't have a case" % command_name, pos)
-                    case_start = end + 1
-                    end = case_start 
-                    while end < len(string) and string[end] not in '} ': end += 1
-                    case = string[case_start:end]
-                    if lang.cases is None or case not in lang.cases:
-                        raise generic.ScriptError("Invalid case-name \"%s\"" % case, pos)
-                    command.case = lang.cases[case]
-                if string[end] != '}':
-                    command.argument_is_assigment = string[end] == '='
-                    arg_start = end + 1
-                    while True:
-                        end += 1
-                        if end >= len(string):
-                            raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
-                        if string[end] == '}': break
-                    if not command.set_arguments(string[arg_start:end]):
+            #Read the command name
+            while end < len(string) and string[end] not in '} =.': end += 1
+            command_name = string[start:end]
+            if end < len(string) and string[end] == '=':
+                command_name += '='
+            if command_name not in commands and command_name not in special_commands:
+                raise generic.ScriptError("Undefined command \"%s\"" % command_name, pos)
+            if command_name in commands and 'deprecated' in commands[command_name]:
+                generic.print_warning("String code '%s' has been deprecated and will be removed soon" % command_name, pos)
+                del commands[command_name]['deprecated']
+            #
+            command = StringCommand(command_name, cmd_pos)
+            if end >= len(string):
+                raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
+            if string[end] == '.':
+                if command_name not in commands or 'allow_case' not in commands[command_name]:
+                    raise generic.ScriptError("Command \"%s\" can't have a case" % command_name, pos)
+                case_start = end + 1
+                end = case_start 
+                while end < len(string) and string[end] not in '} ': end += 1
+                case = string[case_start:end]
+                if lang.cases is None or case not in lang.cases:
+                    raise generic.ScriptError("Invalid case-name \"%s\"" % case, pos)
+                command.case = lang.cases[case]
+            if string[end] != '}':
+                command.argument_is_assigment = string[end] == '='
+                arg_start = end + 1
+                while True:
+                    end += 1
+                    if end >= len(string):
                         raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
-                command.validate_arguments(lang, pos)
-                if command_name == 'G=' and self.components:
-                    raise generic.ScriptError("Set-gender command {G=} must be at the start of the string", pos)
-                self.components.append(command)
-                idx = end
-            idx += 1
-        if parsed_string is not None: self.components.append(parsed_string)
+                    if string[end] == '}': break
+                if not command.set_arguments(string[arg_start:end]):
+                    raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
+            command.validate_arguments(lang, pos)
+            if command_name == 'G=' and self.components:
+                raise generic.ScriptError("Set-gender command {G=} must be at the start of the string", pos)
+            self.components.append(command)
+            idx = end + 1
+
         if len(self.components) > 0 and isinstance(self.components[0], StringCommand) and self.components[0].name == 'G=':
             self.gender = self.components[0].arguments[0]
             if self.gender not in lang.genders:
