@@ -266,13 +266,14 @@ def read_extra_commands(custom_tags_file):
 
 
 class StringCommand(object):
-    def __init__(self, name, str_pos):
+    def __init__(self, name, str_pos, pos):
         assert name in commands or name in special_commands
         self.name = name
         self.case = None
         self.arguments = []
         self.offset = None
         self.str_pos = str_pos
+        self.pos = pos
 
     def set_arguments(self, arg_string):
         start = -1
@@ -296,19 +297,25 @@ class StringCommand(object):
             start = -1
         return start == -1
 
-    def validate_arguments(self, lang, pos):
+    def validate_arguments(self, lang):
         if lang.langid == DEFAULT_LANGUAGE: return
         if self.name == 'P':
+            if not lang.has_plural_pragma():
+                raise generic.ScriptError("Using {P} without a ##plural pragma", self.pos)
             if len(self.arguments) != lang.get_num_plurals():
-                raise generic.ScriptError("Invalid number of arguments to plural command, expected %d but got %d" % (lang.get_num_plurals(), len(self.arguments)), pos)
+                raise generic.ScriptError("Invalid number of arguments to plural command, expected %d but got %d" % (lang.get_num_plurals(), len(self.arguments)), self.pos)
         elif self.name == 'G':
+            if not lang.has_gender_pragma():
+                raise generic.ScriptError("Using {G} without a ##gender pragma", self.pos)
             if len(self.arguments) != len(lang.genders):
-                raise generic.ScriptError("Invalid number of arguments to gender command, expected %d but got %d" % (len(lang.genders), len(self.arguments)), pos)
+                raise generic.ScriptError("Invalid number of arguments to gender command, expected %d but got %d" % (len(lang.genders), len(self.arguments)), self.pos)
         elif self.name == 'G=':
+            if not lang.has_gender_pragma():
+                raise generic.ScriptError("Using {G+} without a ##gender pragma", self.pos)
             if len(self.arguments) != 1:
-                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected %d but got %d" % (1, len(self.arguments)), pos)
+                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected %d but got %d" % (1, len(self.arguments)), self.pos)
         elif len(self.arguments) != 0:
-            raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, pos)
+            raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, self.pos)
 
     def parse_string(self, str_type, lang, stack, static_args):
         if self.name in commands:
@@ -323,14 +330,14 @@ class StringCommand(object):
             stack.remove((self.str_pos, self_size))
             if self.str_pos < len(static_args):
                 if 'parse' not in commands[self.name]:
-                    raise generic.ScriptError("Provided a static argument for string command '%s' which is invalid" % self.name)
+                    raise generic.ScriptError("Provided a static argument for string command '%s' which is invalid" % self.name, self.pos)
                 return commands[self.name]['parse'](static_args[self.str_pos], lang.langid)
             prefix = u''
             suffix = u''
             if self.case:
                 prefix += STRING_SELECT_CASE[str_type] + '\\%02X' % self.case
             if stack_pos + self_size > 8:
-                raise generic.ScriptError("Trying to read an argument from the stack without reading the arguments before")
+                raise generic.ScriptError("Trying to read an argument from the stack without reading the arguments before", self.pos)
             if self_size == 4 and stack_pos == 4:
                 prefix += STRING_ROTATE[str_type] + STRING_ROTATE[str_type]
             elif self_size == 4 and stack_pos == 2:
@@ -352,7 +359,7 @@ class StringCommand(object):
         offset = self.offset
         if offset is None:
             if not stack:
-                raise generic.ScriptError("A plural or gender choice list {P} or {G} has to be followed by another string code or provide an offset")
+                raise generic.ScriptError("A plural or gender choice list {P} or {G} has to be followed by another string code or provide an offset", self.pos)
             offset = stack[0][0]
         offset -= len(static_args)
         if self.name == 'P':
@@ -433,7 +440,7 @@ class NewGRFString(object):
                 generic.print_warning("String code '%s' has been deprecated and will be removed soon" % command_name, pos)
                 del commands[command_name]['deprecated']
             #
-            command = StringCommand(command_name, cmd_pos)
+            command = StringCommand(command_name, cmd_pos, pos)
             if end >= len(string):
                 raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
             if string[end] == '.':
@@ -452,7 +459,7 @@ class NewGRFString(object):
                 end = string.find('}', end + 1)
                 if end == -1 or not command.set_arguments(string[arg_start:end]):
                     raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
-            command.validate_arguments(lang, pos)
+            command.validate_arguments(lang)
             if command_name == 'G=' and self.components:
                 raise generic.ScriptError("Set-gender command {G=} must be at the start of the string", pos)
             self.components.append(command)
@@ -661,6 +668,12 @@ class Language(object):
             12: 4,
         }
         return num_plurals[self.plural]
+        
+    def has_plural_pragma(self):
+        return self.plural is not None
+    
+    def has_gender_pragma(self):
+        return self.genders is not None
 
     def static_gender(self, expr):
         import nml.expression
