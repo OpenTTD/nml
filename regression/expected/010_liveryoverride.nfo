@@ -46,17 +46,17 @@
 27 opengfx_trains_start.pcx 8bpp 366 139 20 16 -6 -7 normal 
 
 // Name: turbotrain_engine_group - feature 00
-28 * 9 02 00 FE \b1 \b1 
+28 * 9 02 00 FF \b1 \b1 
 \w0 
 \w0 
 
 // Name: normal_passenger_group - feature 00
-29 * 9 02 00 FD \b1 \b1 
+29 * 9 02 00 FE \b1 \b1 
 \w1 
 \w1 
 
 // Name: turbotrain_passenger_group - feature 00
-30 * 9 02 00 FC \b1 \b1 
+30 * 9 02 00 FD \b1 \b1 
 \w2 
 \w2 
 
@@ -65,10 +65,10 @@
 27 04 
 
 32 * 9 03 00 01 FF \wx0014 \b0 
-\wx00FE 	// turbotrain_engine_group;
+\wx00FF 	// turbotrain_engine_group;
 
 33 * 9 03 00 81 FF \wx001B \b0 
-\wx00FC 	// turbotrain_passenger_group;
+\wx00FD 	// turbotrain_passenger_group;
 
 34 * 17 00 00 \b4 01 FF \wx001B 
 12 FD 
@@ -77,5 +77,5 @@
 29 \wx0000 
 
 35 * 9 03 00 01 FF \wx001B \b0 
-\wx00FD 	// normal_passenger_group;
+\wx00FE 	// normal_passenger_group;
 

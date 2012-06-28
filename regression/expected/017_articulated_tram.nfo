@@ -17,7 +17,7 @@
 00 
 2 * 52 08 08 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 // Name: foster_express_articulated_parts
-3 * 23 02 01 FE 89 
+3 * 23 02 01 FF 89 
 10 00 \dxFFFFFFFF 
 \b1 
 \wx8058 \dx00000001 \dx00000003 	// 1 .. 3: return 88;
@@ -62,7 +62,7 @@
 15 tram_foster_express.png 8bpp 272 1 20 18 -6 -7 normal 
 
 // Name: foster_express_set - feature 01
-16 * 9 02 01 FD \b1 \b1 
+16 * 9 02 01 FE \b1 \b1 
 \w0 
 \w0 
 
@@ -70,12 +70,12 @@
 17 10 
 
 // Name: @action3_0
-18 * 23 02 01 FD 89 
+18 * 23 02 01 FE 89 
 0C 00 \dx0000FFFF 
 \b1 
-\wx00FE \dx00000016 \dx00000016 	// foster_express_articulated_parts;
-\wx00FD // foster_express_set;
+\wx00FF \dx00000016 \dx00000016 	// foster_express_articulated_parts;
+\wx00FE // foster_express_set;
 
 19 * 9 03 01 01 FF \wx0058 \b0 
-\wx00FD 	// @action3_0;
+\wx00FE 	// @action3_0;
 

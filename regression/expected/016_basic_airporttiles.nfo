@@ -10,7 +10,7 @@
 1 opengfx_trains_start.pcx 8bpp 142 112 8 22 -3 -10 normal 
 
 // Name: small_airport_tiles_graphics - feature 11
-2 * 15 02 11 FE \b1 \dx00000F8D 
+2 * 15 02 11 FF \b1 \dx00000F8D 
 \dxC0000000 \b0 \b0 80 
 
 3 * 14 00 11 \b4 01 00 
@@ -20,5 +20,5 @@
 11 01 
 
 4 * 7 03 11 01 00 \b0 
-\wx00FE 	// small_airport_tiles_graphics;
+\wx00FF 	// small_airport_tiles_graphics;
 

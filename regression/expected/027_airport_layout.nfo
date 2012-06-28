@@ -10,7 +10,7 @@
 1 * 1 00 
 
 // Name: small_airport_tile_layout - feature 11
-2 * 25 02 11 FE \b2 \dx80000000 
+2 * 25 02 11 FF \b2 \dx80000000 
 \dxC0008000 \b32 \b16 80 
 \dx80000000 \b0 \b0 \b0 \b16 \b16 \b16 
 
@@ -21,7 +21,7 @@
 11 01 
 
 4 * 7 03 11 01 00 \b0 
-\wx00FE 	// small_airport_tile_layout;
+\wx00FF 	// small_airport_tile_layout;
 
 5 * 34 00 0D \b2 01 00 
 08 00 

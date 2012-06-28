@@ -86,10 +86,10 @@ FF
 |	opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 zi2 
 
 // Name: foster_express_set - feature 01
-20 * 9 02 01 FE \b1 \b1 
+20 * 9 02 01 FF \b1 \b1 
 \w0 
 \w0 
 
 21 * 9 03 01 01 FF \wx0059 \b0 
-\wx00FE 	// foster_express_set;
+\wx00FF 	// foster_express_set;
 

@@ -19,7 +19,7 @@
 3 * 33 04 0F FF 02 \wxD000 "Miscellaneous" 00 "Basic object" 00 
 
 // Name: obj_basic_tile - feature 0F
-4 * 18 02 0F FE \b1 \dx0000058C 
+4 * 18 02 0F FF \b1 \dx0000058C 
 \dx03078A48 \b0 \b0 \b0 \b16 \b16 \b30 
 
 5 * 39 00 0F \b11 01 00 
@@ -36,5 +36,5 @@
 16 04 
 
 6 * 7 03 0F 01 00 \b0 
-\wx00FE 	// obj_basic_tile;
+\wx00FF 	// obj_basic_tile;
 
