@@ -61,7 +61,7 @@ class Action2(base_action.BaseAction):
             self.id = free_action2_ids[0]
         else:
             try:
-                self.id = free_action2_ids.pop()d
+                self.id = free_action2_ids.pop()
             except IndexError:
                 raise generic.ScriptError("Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block. Try reducing the number of such blocks.")
 
