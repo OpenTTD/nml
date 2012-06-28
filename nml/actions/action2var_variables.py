@@ -135,8 +135,9 @@ varact2vars_vehicles = {
 varact2vars_trains = {
     #0x4786 / 0x10000 is an approximation of 3.5790976, the conversion factor
     #for train speed
-    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
-    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
+    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
+    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
+    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
 varact2vars_trains.update(varact2vars_vehicles)
@@ -144,8 +145,9 @@ varact2vars_trains.update(varact2vars_vehicles)
 varact2vars_roadvehs = {
     #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
     #for road vehicle speed
-    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
-    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 0, 'size': 8, 'function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(0xFE, var.pos))},
 }
 varact2vars_roadvehs.update(varact2vars_vehicles)
@@ -153,17 +155,20 @@ varact2vars_roadvehs.update(varact2vars_vehicles)
 varact2vars_ships = {
     #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
     #for ship speed
-    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
-    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
 varact2vars_ships.update(varact2vars_vehicles)
 
 varact2vars_aircraft = {
     #0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
+    #Note that the denominator has one less zero here!
     #for aircraft speed
-    'max_speed'     : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
-    'current_speed' : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+    'max_speed'         : {'var': 0x98, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+    'current_speed'     : {'var': 0xB4, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
+    'current_max_speed' : {'var': 0x4C, 'start': 0, 'size': 16, 'function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
     #No such thing as identical to vehicle_is_in_depot exists for aircraft
 }
 varact2vars_aircraft.update(varact2vars_vehicles)
