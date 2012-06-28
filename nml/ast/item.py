@@ -124,7 +124,7 @@ class Property(object):
 
     def pre_process(self):
         self.value = self.value.reduce(global_constants.const_list, unknown_id_fatal = False)
-        if self.unit is not None and not (isinstance(self.value, expression.ConstantNumeric) or isinstance(self.value, expression.ConstantFloat)):
+        if (self.unit is not None and self.unit.type != 'nfo') and not (isinstance(self.value, expression.ConstantNumeric) or isinstance(self.value, expression.ConstantFloat)):
             raise generic.ScriptError("Using a unit for a property is only allowed if the value is constant", self.pos)
 
     def debug_print(self, indentation):
