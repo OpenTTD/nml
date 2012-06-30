@@ -672,3 +672,40 @@ def get_callback_flags_actions(feature, id, flags):
         act0.prop_list.append(Action0Property(prop['num'], expression.ConstantNumeric(flags), prop['size']))
 
     return [act0]
+
+def get_volume_actions(volume_list):
+    """
+    Get a list of actions to set sound volumes
+
+    @param volume_list: List of (sound id, volume) tuples, sorted in ascending order
+    @type volume_list: C{list} of (C{int}, C{int})-tuples
+
+    @return: A list of actions
+    @rtype: C{list} of L{BaseAction}
+    """
+    action_list = []
+    first_id = None # First ID in a series of consecutive IDs
+    value_series = [] # Series of values to write in a single action
+
+    for id, volume in volume_list:
+        if first_id is None:
+            first_id = id
+        continue_series = first_id + len(value_series) == id
+        if continue_series:
+            value_series.append(volume)
+
+        if not continue_series or id == volume_list[-1][0]:
+            # Write action for this series
+            act0, offset = create_action0(0x0C, expression.ConstantNumeric(first_id), None, None)
+            act0.num_ids = len(value_series)
+            act0.prop_list.append(Action0Property(0x08, [expression.ConstantNumeric(v) for v in value_series], 1))
+            action_list.append(act0)
+
+            # start new series, if needed
+            if not continue_series:
+                first_id = id
+                value_series = [volume]
+
+    return action_list
+
+

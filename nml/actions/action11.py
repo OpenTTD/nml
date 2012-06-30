@@ -19,7 +19,7 @@ Action 11 support classes (sounds).
 import os
 from operator import itemgetter
 from nml import generic
-from nml.actions import base_action
+from nml.actions import base_action, action0
 
 class Action11(base_action.BaseAction):
     def __init__(self, num_sounds):
@@ -80,11 +80,12 @@ class ImportSound(base_action.BaseAction):
         if self.last: file.newline()
 
 registered_sounds = {}
+SOUND_OFFSET = 73 # No of original sounds
 
 def add_sound(args):
     if args not in registered_sounds:
         registered_sounds[args] = len(registered_sounds)
-    return registered_sounds[args] + 73
+    return registered_sounds[args] + SOUND_OFFSET
 
 def get_sound_actions():
     """
@@ -95,11 +96,18 @@ def get_sound_actions():
 
     action_list = []
     action_list.append(Action11(len(registered_sounds)))
+    volume_list = []
 
-    for sound in map(itemgetter(0), sorted(registered_sounds.iteritems(), key=itemgetter(1))):
-        if isinstance(sound, tuple):
-            action_list.append(ImportSound(*sound))
+    for sound, i in sorted(registered_sounds.iteritems(), key=itemgetter(1)):
+        if len(sound) == 3:
+            action_list.append(ImportSound(sound[0], sound[1]))
         else:
-            action_list.append(LoadBinaryFile(sound))
+            action_list.append(LoadBinaryFile(sound[0]))
+        if sound[-1] != 100:
+            volume_list.append( (i + SOUND_OFFSET, int(sound[-1] * 128 / 100)) )
+
+    if volume_list:
+        action_list.extend(action0.get_volume_actions(volume_list))
 
     return action_list
+

@@ -702,7 +702,7 @@ properties[0x0B] = {
     'capacity_multiplier'       : {'num' : 0x1D, 'size' : 2, 'unit_conversion' : 0x100},
 }
 
-# TODO: Feature 0x0C (Sound Effects)
+# Feature 0x0C (Sound Effects) is implemented differently
 
 #
 # Feature 0x0D (Airports)

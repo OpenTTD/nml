@@ -14,7 +14,6 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import datetime, calendar, math
-from nml.actions import action11
 from nml import generic, nmlop
 from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
 from .binop import BinOp
@@ -412,18 +411,24 @@ def builtin_abs(name, args, pos):
     return TernaryOp(guard, BinOp(nmlop.SUB, ConstantNumeric(0), args[0], args[0].pos), args[0], args[0].pos).reduce()
 
 def builtin_sound_file(name, args, pos):
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    from nml.actions import action11
+    if len(args) not in (1, 2):
+        raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
     if not isinstance(args[0], StringLiteral):
         raise generic.ScriptError("Parameter for " + name + "() must be a string literal", pos)
-    return ConstantNumeric(action11.add_sound(args[0].value), pos)
+    volume = args[1].reduce_constant().value if len(args) >= 2 else 100
+    generic.check_range(volume, 0, 100, "sound volume", pos)
+    return ConstantNumeric(action11.add_sound( (args[0].value, volume) ), pos)
 
 def builtin_sound_import(name, args, pos):
-    if len(args) != 2:
-        raise generic.ScriptError(name + "() must have 2 parameters", pos)
+    from nml.actions import action11
+    if len(args) not in (2, 3):
+        raise generic.ScriptError(name + "() must have 2 or 3 parameters", pos)
     grfid = parse_string_to_dword(args[0].reduce())
     sound_num = args[1].reduce_constant().value
-    return ConstantNumeric(action11.add_sound((grfid, sound_num)), pos)
+    volume = args[2].reduce_constant().value if len(args) >= 3 else 100
+    generic.check_range(volume, 0, 100, "sound volume", pos)
+    return ConstantNumeric(action11.add_sound( (grfid, sound_num, volume) ), pos)
 
 def builtin_relative_coord(name, args, pos):
     """
