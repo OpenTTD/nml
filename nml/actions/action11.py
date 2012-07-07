@@ -46,8 +46,6 @@ class LoadBinaryFile(base_action.BaseAction):
         size = os.path.getsize(self.fname)
         if size == 0:
             raise generic.ScriptError("Expected a sound file with non-zero length.", self.fname)
-        if size > 0x10000:
-            raise generic.ScriptError("Sound file too big (max 64KB).", self.fname)
 
     def write(self, file):
         file.print_named_filedata(self.fname)
