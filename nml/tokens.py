@@ -199,7 +199,7 @@ class NMLLexer(object):
         self.increment_lines(len(t.value))
 
     def t_error(self, t):
-        print "Illegal character '%s' at %s" % (t.value[0], t.lexer.lineno)
+        print "Illegal character '%s' (character code 0x%02X) at %s, column %d" % (t.value[0], ord(t.value[0]), t.lexer.lineno, self.find_column(t))
         sys.exit(1)
 
 
@@ -207,6 +207,10 @@ class NMLLexer(object):
     def build(self, **kwargs):
         self.lexer = lex.lex(module=self, **kwargs)
 
+
+    def setup(self, text, fname):
+        self.text = text
+        self.set_position(fname, 1)
 
     def set_position(self, fname, line):
         """
@@ -216,4 +220,10 @@ class NMLLexer(object):
 
     def increment_lines(self, count):
         self.set_position(self.lexer.lineno.filename, self.lexer.lineno.line_start + count)
+
+    def find_column(self, t):
+        last_cr = self.text.rfind('\n', 0, t.lexpos)
+        if last_cr < 0: last_cr = 0
+        return t.lexpos - last_cr
+
 
