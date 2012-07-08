@@ -422,6 +422,8 @@ class NewGRFString(object):
             start = idx + 1
             end = start
             cmd_pos = None
+            if start >= len(string):
+                raise generic.ScriptError("Expected '}' before end-of-line.", pos)
             if string[start].isdigit():
                 while end < len(string) and string[end].isdigit(): end += 1
                 if end == len(string) or string[end] != ':':
