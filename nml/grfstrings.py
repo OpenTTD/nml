@@ -56,7 +56,7 @@ def is_ascii_string(string):
                 return False
             i += 1
         else:
-            if string[i+1] in ('\\', 'n', '"'):
+            if string[i+1] in ('\\', '"'):
                 i += 2
             elif string[i+1] == 'U':
                 return False
@@ -94,7 +94,7 @@ def get_string_size(string, final_zero = True, force_ascii = False):
             size += utf8_get_size(ord(string[i]))
             i += 1
         else:
-            if string[i+1] in ('\\', 'n', '"'):
+            if string[i+1] in ('\\', '"'):
                 size += 1
                 i += 2
             elif string[i+1] == 'U':
@@ -403,8 +403,44 @@ class StringCommand(object):
     def get_arg_size(self):
         return commands[self.name]['size']
 
+# Characters that are valid in hex numbers
+VALID_HEX = "0123456789abcdefABCDEF"
+def is_valid_hex(string):
+    return all(c in VALID_HEX for c in string)
+
+def validate_escapes(string, pos):
+    """
+    Validate that all escapes (starting with a backslash) are correct.
+    When an invalid escape is encountered, an error is thrown
+
+    @param string: String to validate
+    @type string: C{unicode}
+
+    @param pos: Position information
+    @type pos: L{Position}
+    """
+    i = 0
+    while i < len(string):
+        # find next '\'
+        i = string.find('\\', i)
+        if i == -1: break
+
+        if i+1 >= len(string):
+            raise generic.ScriptError("Unexpected end-of-line encountered after '\\'", pos)
+        if string[i+1] in ('\\', '"'):
+            i += 2
+        elif string[i+1] == 'U':
+            if i+5 >= len(string) or not is_valid_hex(string[i+2:i+6]):
+                raise generic.ScriptError("Expected 4 hexadecimal characters after '\\U'", pos)
+            i += 6
+        else:
+            if i+2 >= len(string) or not is_valid_hex(string[i+1:i+3]):
+                raise generic.ScriptError("Expected 2 hexadecimal characters after '\\'", pos)
+            i += 3
+
 class NewGRFString(object):
     def __init__(self, string, lang, pos):
+        validate_escapes(string, pos)
         self.string = string
         self.cases = {}
         self.components = []

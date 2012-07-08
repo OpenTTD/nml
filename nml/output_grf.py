@@ -131,7 +131,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         i = 0
         while i < len(value):
             if value[i] == '\\':
-                if value[i+1] in ('\\', 'n', '"'):
+                if value[i+1] in ('\\', '"'):
                     self.print_byte(ord(value[i+1]), data)
                     i += 2
                 elif value[i+1] == 'U':
