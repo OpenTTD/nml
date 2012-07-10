@@ -433,5 +433,4 @@ def parse_sprite_data(sprite_container):
 
     if len(action_list) != 0: action_list[-1].last = True
     return action_list
-    return 
 

@@ -46,7 +46,8 @@ item(FEAT_AIRPORTTILES, tile2) {
 
 item(FEAT_OBJECTS, tile2) {
     graphics {
-        layout2;
+        default: layout2;
+        colour: CB_FAILED;
     }
 }
 

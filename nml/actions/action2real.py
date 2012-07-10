@@ -73,6 +73,24 @@ def get_real_action2s(spritegroup, feature):
     spritegroup.set_action2(actions[-1], feature)
     return actions
 
+def make_simple_real_action2(feature, name, action1_index):
+    """
+    Make a simple real action2, referring to only 1 action1 sprite set
+
+    @param feature: Feature of the needed action2
+    @type feature: C{int}
+
+    @param name: Name of the action2
+    @type name: C{str}
+
+    @param action1_index: Index of the action1 sprite set to use
+    @type action1_index: C{int}
+
+    @return: The created real action2
+    @rtype: L{Action2Real}
+    """
+    return Action2Real(feature, name, [action1_index], [action1_index] if feature <= 0x03 else [])
+
 def create_spriteset_actions(spritegroup):
     """
     Create action2s for directly-referenced sprite sets
@@ -91,8 +109,9 @@ def create_spriteset_actions(spritegroup):
         for spriteset in spritegroup.used_sprite_sets:
             if spriteset.has_action2(feature): continue
             action_list.extend(action1.add_to_action1([spriteset], feature, spritegroup.pos))
-            action1_index = action1.get_action1_index(spriteset)
-            real_action2 = Action2Real(feature, spriteset.name.value + (" - feature %02X" % feature), [action1_index], [action1_index] if feature <= 0x03 else [])
+
+            real_action2 = make_simple_real_action2(feature, spriteset.name.value + (" - feature %02X" % feature), action1.get_action1_index(spriteset))
             action_list.append(real_action2)
             spriteset.set_action2(real_action2, feature)
     return action_list
+

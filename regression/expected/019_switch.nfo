@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d9 
+0 * 4 \d11 
 
 1 * 54 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -41,15 +41,25 @@
 \b0 
 \wx8000 // Return computed value
 
+// Name: @CB_FAILED_PROD
+8 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00 
+
+// Name: @CB_FAILED0A
+9 * 23 02 0A FD 89 
+0C 00 \dx0000FFFF 
+\b1 
+\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
+\wx00FD // Non-graphics callback, return graphics result
+
 // Name: @action3_0
-8 * 43 02 0A FE 89 
+10 * 43 02 0A FD 89 
 0C 00 \dx0000FFFF 
 \b3 
 \wx00FF \dx00000037 \dx00000037 	// coal_mine_subtype_switch;
 \wx8002 \dx0000003A \dx0000003A 	// return string(STR_COALMINE_EXTRA_TEXT);
 \wx00FE \dx0000003B \dx0000003B 	// return var[0x10, 0, 1]
-\wx0000 // CB_FAILED;
+\wx00FD // @CB_FAILED0A;
 
-9 * 7 03 0A 01 00 \b0 
-\wx00FE 	// @action3_0;
+11 * 7 03 0A 01 00 \b0 
+\wx00FD 	// @action3_0;
 

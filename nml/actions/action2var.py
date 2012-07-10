@@ -735,6 +735,63 @@ def create_return_action(expr, feature, name, var_range):
     action_list.append(varaction2)
     return (action_list, ref)
 
+failed_cb_results = {}
+
+def get_failed_cb_result(feature, action_list, parent_action):
+    """
+    Get a sprite group reference to use for a failed callback
+    The actions needed are created on first use, then cached in L{failed_cb_results}
+
+    @param feature: Feature to use
+    @type feature: C{int}
+
+    @param action_list: Action list to append any extra actions to
+    @type action_list: C{list} of L{BaseAction}
+
+    @param parent_action: Reference to the action of which this is a result
+    @type parent_action: L{BaseAction}
+
+    @return: Sprite group reference to use
+    @rtype: L{SpriteGroupRef}
+    """
+    if feature in failed_cb_results:
+        varaction2 = failed_cb_results[feature]
+    else:
+        # Create action2 (+ action1, if needed)
+        # Import here to avoid circular imports
+        import action1, action2layout, action2production, action2real
+        if feature == 0x0A:
+            # Industries -> production action2
+            act2 = action2production.make_empty_production_action2()
+        elif feature in (0x07, 0x09, 0x0F, 0x11):
+            # Tile layout action2
+            act2 = action2layout.make_empty_layout_action2(feature)
+        else:
+            # Normal action2
+            act1_actions, act1_index = action1.make_cb_failure_action1(feature)
+            action_list.extend(act1_actions)
+            act2 = action2real.make_simple_real_action2(feature, "@CB_FAILED_REAL%02X" % feature, act1_index)
+        action_list.append(act2)
+
+        # Create varaction2, to choose between returning graphics and 0, depending on CB
+        varact2parser = Varaction2Parser(feature)
+        varact2parser.parse_expr(expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF)))
+
+        varaction2 = Action2Var(feature, "@CB_FAILED%02X" % feature, 0x89)
+        varaction2.var_list = varact2parser.var_list
+
+        varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), expression.ConstantNumeric(0), "graphics callback -> return 0"))
+        varaction2.default_result = expression.SpriteGroupRef(expression.Identifier(act2.name), [], None, act2)
+        varaction2.default_comment = "Non-graphics callback, return graphics result"
+        action2.add_ref(varaction2.default_result, varaction2)
+
+        action_list.append(varaction2)
+        failed_cb_results[feature] = varaction2
+
+    ref = expression.SpriteGroupRef(expression.Identifier(varaction2.name), [], None, varaction2)
+    action2.add_ref(ref, parent_action)
+    return ref
+
 def parse_sg_ref_result(result, action_list, parent_action, var_range):
     """
     Parse a result that is a sprite group reference.
@@ -754,7 +811,11 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     @return: Result to use in the calling varaction2
     @rtype: L{SpriteGroupRef}
     """
+    if result.name.value == "CB_FAILED":
+        return get_failed_cb_result(parent_action.feature, action_list, parent_action)
+
     if len(result.param_list) == 0:
+        action2.add_ref(result, parent_action)
         return result
 
     # Result is parametrized
@@ -789,11 +850,14 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     varaction2.default_comment = result.name.value
     # Add the references as procs, to make sure, that any intermediate registers
     # are freed at the spritelayout and thus not selected to pass parameters
+    # Reference is used twice (range + default) so call add_ref twice
     action2.add_ref(ref, varaction2, True)
     action2.add_ref(ref, varaction2, True)
 
     ref = expression.SpriteGroupRef(expression.Identifier(name), [], None, varaction2)
     action_list.append(varaction2)
+    action2.add_ref(ref, parent_action)
+
     return ref
 
 def parse_result(value, action_list, act6, offset, parent_action, none_result, var_range, repeat_result = 1):
@@ -834,12 +898,10 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
         assert none_result is not None
         if isinstance(none_result, expression.SpriteGroupRef):
             result = parse_sg_ref_result(none_result, action_list, parent_action, var_range)
-            action2.add_ref(result, parent_action)
         else:
             result = none_result
     elif isinstance(value, expression.SpriteGroupRef):
         result = parse_sg_ref_result(value, action_list, parent_action, var_range)
-        action2.add_ref(result, parent_action)
         comment = result.name.value + ';'
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value

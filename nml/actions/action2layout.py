@@ -490,3 +490,19 @@ def get_layout_action2s(spritelayout, feature):
 
     action6.free_parameters.restore()
     return actions
+
+def make_empty_layout_action2(feature):
+    """
+    Make an empty layout action2
+    For use with failed callbacks
+
+    @param feature: Feature of the sprite layout to create
+    @type feature: C{int}
+
+    @return: The created sprite layout action2
+    @rtype: L{Action2Layout}
+    """
+    ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
+    ground_sprite.set_param(expression.Identifier('sprite'), expression.ConstantNumeric(0))
+    return Action2Layout(feature, "@CB_FAILED_LAYOUT%02X" % feature, ground_sprite, [], [])
+

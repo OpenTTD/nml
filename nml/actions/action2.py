@@ -18,7 +18,7 @@ from nml.actions import base_action
 from nml.ast import base_statement, general
 import nml
 
-free_action2_ids = list(range(1, 256))
+free_action2_ids = list(range(0, 256))
 
 class Action2(base_action.BaseAction):
     """
@@ -135,7 +135,6 @@ def add_ref(ref, source_action, reference_as_proc = False):
     """
 
     # Add reference to list of references of the source action
-    if ref.name.value == 'CB_FAILED': return
     act2 = ref.act2 if ref.act2 is not None else resolve_spritegroup(ref.name).get_action2(source_action.feature)
     source_action.references.append(Action2Reference(act2, reference_as_proc))
     act2.num_refs += 1

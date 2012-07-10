@@ -133,3 +133,14 @@ def get_production_actions(produce):
     action6.free_parameters.restore()
 
     return action_list
+
+def make_empty_production_action2():
+    """
+    Make an empty production action2
+    For use with failed callbacks
+
+    @return: The created production action2
+    @rtype: L{Action2Production}
+    """
+    return Action2Production("@CB_FAILED_PROD", 0, [0, 0, 0], [0, 0], 0)
+

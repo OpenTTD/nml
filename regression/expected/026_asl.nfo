@@ -147,6 +147,26 @@ F0 F1 F2 F3 F4 F5 00 00 00 00 00 00 00 00 00 FF
 21 * 7 03 11 01 01 \b0 
 \wx00FE 	// layout2;
 
-22 * 7 03 0F 01 01 \b0 
-\wx00FF 	// layout2;
+22 * 8 00 0F \b1 01 01 
+15 \wx0008 
+
+// Name: @CB_FAILED_LAYOUT0F
+23 * 17 02 0F FE \b0 \dx00000000 
+\dx00000000 \b0 \b0 \b0 \b0 \b0 
+// Name: @CB_FAILED0F
+24 * 23 02 0F FE 89 
+0C 00 \dx0000FFFF 
+\b1 
+\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
+\wx00FE // Non-graphics callback, return graphics result
+
+// Name: @action3_0
+25 * 23 02 0F FF 89 
+0C 00 \dx0000FFFF 
+\b1 
+\wx00FE \dx0000015B \dx0000015B 	// @CB_FAILED0F;
+\wx00FF // layout2;
+
+26 * 7 03 0F 01 01 \b0 
+\wx00FF 	// @action3_0;
 

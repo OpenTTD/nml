@@ -196,3 +196,23 @@ def get_action1_index(spriteset):
     assert last_spriteset_collection is not None
     return last_spriteset_collection.get_index(spriteset)
 
+def make_cb_failure_action1(feature):
+    """
+    Create an action1 that may be used for a callback failure
+    If the last action1 is of the correct feature, no new action1 is needed
+    Else, add a new action1 with 1 spriteset containing 0 sprites
+
+    @param feature: Feature of the requested action 1
+    @type feature: C{int}
+
+    @return: List of actions to append (if any) and action1 index to use
+    @rtype: C{tuple} of (C{list} of L{BaseAction}, C{int})
+    """
+    global last_spriteset_collection
+    if last_spriteset_collection is not None and last_spriteset_collection.feature == feature:
+        actions = []
+    else:
+        last_spriteset_collection = None
+        actions = [Action1(feature, 1, 0)]
+    return (actions, 0) # Index is currently always 0, but will change with ext. A1
+
