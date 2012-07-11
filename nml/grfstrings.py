@@ -157,6 +157,9 @@ def com_parse_string(val, lang_id):
     if not isinstance(val, (nml.expression.StringLiteral, nml.expression.String)):
         raise generic.ScriptError("Expected a (literal) string", val.pos)
     if isinstance(val, nml.expression.String):
+        # Check that the string exists
+        if val.name.value not in default_lang.strings:
+            raise generic.ScriptError("Substring \"%s\" does not exist" % val.name.value, val.pos)
         return get_translation(val, lang_id)
     return val.value
 
