@@ -123,8 +123,8 @@ def get_translation(string, lang_id = DEFAULT_LANGUAGE):
         langid, lang = lang_pair
         if langid != lang_id: continue
         if string.name.value not in lang.strings: break
-        return lang.get_string(string)
-    return default_lang.get_string(string)
+        return lang.get_string(string, lang_id)
+    return default_lang.get_string(string, lang_id)
 
 def get_translations(string):
     """
@@ -140,8 +140,16 @@ def get_translations(string):
     for lang_pair in langs:
         langid, lang = lang_pair
         assert langid is not None
-        if string.name.value in lang.strings and lang.get_string(string) != default_lang.get_string(string):
+        if string.name.value in lang.strings and lang.get_string(string, langid) != default_lang.get_string(string, langid):
             translations.append(langid)
+
+    # Also check for translated substrings
+    import nml.expression
+    for param in string.params:
+        if not isinstance(param, nml.expression.String): continue
+        param_translations = get_translations(param)
+        translations.extend([langid for langid in param_translations if not langid in translations])
+
     return translations
 
 def com_parse_comma(val, lang_id):
@@ -314,13 +322,13 @@ class StringCommand(object):
                 raise generic.ScriptError("Invalid number of arguments to gender command, expected %d but got %d" % (len(lang.genders), len(self.arguments)), self.pos)
         elif self.name == 'G=':
             if not lang.has_gender_pragma():
-                raise generic.ScriptError("Using {G+} without a ##gender pragma", self.pos)
+                raise generic.ScriptError("Using {G=} without a ##gender pragma", self.pos)
             if len(self.arguments) != 1:
                 raise generic.ScriptError("Invalid number of arguments to set-gender command, expected %d but got %d" % (1, len(self.arguments)), self.pos)
         elif len(self.arguments) != 0:
             raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, self.pos)
 
-    def parse_string(self, str_type, lang, stack, static_args):
+    def parse_string(self, str_type, lang, wanted_lang_id, stack, static_args):
         if self.name in commands:
             if not self.is_important_command():
                 return commands[self.name][str_type]
@@ -334,7 +342,8 @@ class StringCommand(object):
             if self.str_pos < len(static_args):
                 if 'parse' not in commands[self.name]:
                     raise generic.ScriptError("Provided a static argument for string command '%s' which is invalid" % self.name, self.pos)
-                return commands[self.name]['parse'](static_args[self.str_pos], lang.langid)
+                # Parse commands using the wanted (not current) lang id, so translations are used if present
+                return commands[self.name]['parse'](static_args[self.str_pos], wanted_lang_id)
             prefix = u''
             suffix = u''
             if self.case:
@@ -539,15 +548,15 @@ class NewGRFString(object):
             comp = self.components[i]
             if isinstance(comp, StringCommand):
                 if comp.name == 'P' or comp.name == 'G':
-                    self.components[i] = comp.arguments[-1]
+                    self.components[i] = comp.arguments[-1] if comp.arguments else ""
             i += 1
 
-    def parse_string(self, str_type, lang, static_args):
+    def parse_string(self, str_type, lang, wanted_lang_id, static_args):
         ret = ""
         stack = [(idx, size) for idx, size in enumerate(self.get_command_sizes())]
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                ret += comp.parse_string(str_type, lang, stack, static_args)
+                ret += comp.parse_string(str_type, lang, wanted_lang_id, stack, static_args)
             else:
                 ret += comp
         return ret
@@ -722,7 +731,7 @@ class Language(object):
             return len(self.genders)
         if not isinstance(expr, nml.expression.String):
             raise generic.ScriptError("{G} can only refer to a string argument")
-        parsed = self.get_string(expr)
+        parsed = self.get_string(expr, self.langid)
         if parsed.find(SET_STRING_GENDER['ascii']) == 0:
             return int(parsed[len(SET_STRING_GENDER['ascii']) + 1 : len(SET_STRING_GENDER['ascii']) + 3], 16)
         if parsed.find(SET_STRING_GENDER['unicode']) == 0:
@@ -803,10 +812,26 @@ class Language(object):
             return 4
         assert False, "Unknown plural type"
 
-    def get_string(self, string):
+    def get_string(self, string, lang_id):
+        """
+        Lookup up a string by name/params and return the actual created string
+
+        @param string: String object
+        @type string: L{expression.String}
+
+        @param lang_id: Language ID we are actually looking for. 
+                This may differ from the ID of this language,
+                if the string is missing from the target language.
+        @type lang_id: C{int}
+
+        @return: The created string
+        @rtype: C{basestring}
+        """
         string_id = string.name.value
         assert isinstance(string_id, basestring)
         assert string_id in self.strings
+        assert lang_id == self.langid or self.langid == DEFAULT_LANGUAGE
+
         str_type = self.strings[string_id].get_type()
         parsed_string = ""
         if self.strings[string_id].gender is not None:
@@ -815,9 +840,9 @@ class Language(object):
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
             for case_name, case_string in self.strings[string_id].cases.iteritems():
                 case_id = self.cases[case_name]
-                parsed_string += CHOICE_LIST_ITEM[str_type] + ('\\%02X' % case_id) + case_string.parse_string(str_type, self, string.params)
+                parsed_string += CHOICE_LIST_ITEM[str_type] + ('\\%02X' % case_id) + case_string.parse_string(str_type, self, lang_id, string.params)
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
-        parsed_string += self.strings[string_id].parse_string(str_type, self, string.params)
+        parsed_string += self.strings[string_id].parse_string(str_type, self, lang_id, string.params)
         if len(self.strings[string_id].cases) > 0:
             parsed_string += CHOICE_LIST_END[str_type]
         return parsed_string
