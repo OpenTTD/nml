@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d11 
+0 * 4 \d12 
 
 1 * 54 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -18,41 +18,50 @@
 2 * 52 08 08 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
 3 * 51 04 00 FF 03 \wxD000 "\98coal" 00 "\98diamonds" 00 "\98Extra info for coal mine: \7B" 00 
 
+// Name: return_switch
+4 * 38 02 0A FF 89 
+24 60 \dxFFFFFFFF \dxFFFFF862 \dx00000001 
+\2psto 1A 00 \dx00000001 
+\b1 
+\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx8000 // default: return 0;
+
 // Name: coal_mine_subtype_switch
-4 * 37 02 0A FF 89 
+5 * 47 02 0A FF 89 
 1A 20 \dx00000004 
 \2psto 1A 20 \dx00000000 
 \2r 02 00 \dx000000FF 
-\b1 
+\b2 
 \wx8000 \dx00000000 \dx0000000A 	// 0 .. 10: return string(STR_COALMINE_MONTH_0_10);
+\wx00FF \dx0000000D \dx0000000D 	// 13 .. 13: return_switch;
 \wx8001 // default: return string(STR_COALMINE_MONTH_11);
 
-5 * 9 00 0A \b2 01 00 
+6 * 9 00 0A \b2 01 00 
 08 00 
 09 00 
 
-6 * 9 00 0A \b2 01 00 
+7 * 9 00 0A \b2 01 00 
 21 40 
 22 03 
 
 // Name: @return_action_0
-7 * 13 02 0A FE 89 
+8 * 13 02 0A FE 89 
 10 00 \dx00000001 
 \b0 
 \wx8000 // Return computed value
 
 // Name: @CB_FAILED_PROD
-8 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00 
+9 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00 
 
 // Name: @CB_FAILED0A
-9 * 23 02 0A FD 89 
+10 * 23 02 0A FD 89 
 0C 00 \dx0000FFFF 
 \b1 
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FD // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-10 * 43 02 0A FD 89 
+11 * 43 02 0A FD 89 
 0C 00 \dx0000FFFF 
 \b3 
 \wx00FF \dx00000037 \dx00000037 	// coal_mine_subtype_switch;
@@ -60,6 +69,6 @@
 \wx00FE \dx0000003B \dx0000003B 	// return var[0x10, 0, 1]
 \wx00FD // @CB_FAILED0A;
 
-11 * 7 03 0A 01 00 \b0 
+12 * 7 03 0A 01 00 \b0 
 \wx00FD 	// @action3_0;
 

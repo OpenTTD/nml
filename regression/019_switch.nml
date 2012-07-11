@@ -6,13 +6,19 @@ grf {
     min_compatible_version: 0;
 }
 
+switch(FEAT_INDUSTRIES, SELF, return_switch, STORE_PERM(current_year - 1950, 0x01)) {
+    return 0;
+}
+
 /* store a value of 4 into the permanent register 0x00, but evaluate current_month
  * use the array notation
  */
 switch(FEAT_INDUSTRIES, SELF, coal_mine_subtype_switch, [STORE_PERM(4, 0x00), current_month]) {
     0..10: return string(STR_COALMINE_MONTH_0_10);
+    13: return_switch; // unreachable
     return string(STR_COALMINE_MONTH_11);
 }
+
 
 
 item(FEAT_INDUSTRIES, coal_mine) {
@@ -27,3 +33,4 @@ item(FEAT_INDUSTRIES, coal_mine) {
         // no default
     }
 }
+

@@ -985,16 +985,8 @@ def parse_varaction2(switch_block):
                     feature, switch_block.name.value + "@return", 0x89)
             action_list.extend(extra_actions)
 
-    if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
-        # Computed result is not returned, but there are no ranges
-        # Add one range, to avoid the nvar == 0 bear trap
-        from nml.ast import switch
-        ranges_list = [switch.SwitchRange(expression.ConstantNumeric(0), expression.ConstantNumeric(0), switch_block.body.default)]
-    else:
-        ranges_list = switch_block.body.ranges
-
     used_ranges = []
-    for r in ranges_list:
+    for r in switch_block.body.ranges:
         comment = str(r.min) + " .. " + str(r.max) + ": "
 
         range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
@@ -1027,9 +1019,18 @@ def parse_varaction2(switch_block):
         if not range_overlap:
             varaction2.ranges.append(VarAction2Range(range_min, range_max, range_result, comment))
 
+    if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
+        # Computed result is not returned, but there are no ranges
+        # Add one range, to avoid the nvar == 0 bear trap
+        offset += 10
+        varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(1), expression.ConstantNumeric(0),
+                expression.ConstantNumeric(0), "Bogus range to avoid nvar == 0"))
+
     default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
     varaction2.default_result = default
     varaction2.default_comment = 'Return computed value' if switch_block.body.default is None else 'default: ' + default_comment
+
+
 
     if len(act6.modifications) > 0: action_list.append(act6)
 
