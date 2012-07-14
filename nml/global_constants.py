@@ -242,11 +242,10 @@ constant_numbers = {
 
     'NEW_CARGO_SPRITE'       : 0xFFFF,
 
-    #aircraft type/size
-    'AIRCRAFT_TYPE_NORMAL'     : 0x02,
+    #aircraft type
     'AIRCRAFT_TYPE_HELICOPTER' : 0x00,
-    'AIRCRAFT_SIZE_SMALL'      : 0x00,
-    'AIRCRAFT_SIZE_LARGE'      : 0x01,
+    'AIRCRAFT_TYPE_SMALL'      : 0x02,
+    'AIRCRAFT_TYPE_LARGE'      : 0x03,
 
     #ground sprite IDs
     'GROUNDSPRITE_CONCRETE'    : 1420,

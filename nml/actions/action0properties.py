@@ -404,10 +404,16 @@ properties[0x02].update(general_veh_props)
 # Feature 0x03 (Aircraft)
 #
 
+def aircraft_type_prop(value):
+    value = value.reduce_constant()
+    if not value.value in (0, 2, 3):
+        raise generic.ScriptError("Invalid value for aircraft_type", value.pos)
+    return [Action0Property(0x09, ConstantNumeric(value.value & 2), 1),
+            Action0Property(0x0A, ConstantNumeric(value.value & 1), 1)]
+
 properties[0x03] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
-    'is_helicopter'                : {'size': 1, 'num': 0x09},
-    'is_large'                     : {'size': 1, 'num': 0x0A},
+    'aircraft_type'                : {'custom_function': aircraft_type_prop},
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
     'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.279617, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
