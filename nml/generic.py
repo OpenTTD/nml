@@ -63,9 +63,13 @@ class Position(object):
 
     @ivar filename: Name of the file.
     @type filename: C{str}
+
+    @ivar includes: List of file includes
+    @type includes: C{list} of L{Position}
     """
-    def __init__(self, filename):
+    def __init__(self, filename, includes):
         self.filename = filename
+        self.includes = includes
 
 class LinePosition(Position):
     """
@@ -74,8 +78,8 @@ class LinePosition(Position):
     @ivar line_start: Line number (starting with 1) where the position starts.
     @type line_start: C{int}
     """
-    def __init__(self, filename, line_start):
-        Position.__init__(self, filename)
+    def __init__(self, filename, line_start, includes = []):
+        Position.__init__(self, filename, includes)
         self.line_start = line_start
 
     def __str__(self):
@@ -92,7 +96,7 @@ class PixelPosition(Position):
     @type ypos: C{int}
     """
     def __init__(self, filename, xpos, ypos):
-        Position.__init__(self, filename)
+        Position.__init__(self, filename, [])
         self.xpos = xpos
         self.ypos = ypos
 
@@ -109,7 +113,10 @@ class ScriptError(Exception):
         if self.pos is None:
             return self.value
         else:
-            return str(self.pos) + ": " + self.value
+            ret = str(self.pos) + ": " + self.value
+            for inc in reversed(self.pos.includes):
+                ret += "\nIncluded from: " + str(inc)
+            return ret
 
 class ConstError(ScriptError):
     def __init__(self, pos = None):

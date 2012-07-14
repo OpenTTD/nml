@@ -184,14 +184,39 @@ class NMLLexer(object):
         m = line_directive1_pat.match(t.value)
         assert m is not None
         fname = self.lexer.lineno.filename if m.group(3) is None else m.group(3)
+
+        # This type of line directive contains no information about includes, so we have to make some assumptions
+        if self.includes and self.includes[-1].filename == fname:
+            # Filename equal to the one on top of the stack -> end of an include
+            self.includes.pop()
+        elif fname != self.lexer.lineno.filename:
+            # Not an end of include and not the current file -> start of an include
+            self.includes.append(self.lexer.lineno)
+
         self.set_position(fname, int(m.group(1), 10))
         self.increment_lines(t.value.count('\n') - 1)
 
     def t_line_directive2(self, t):
         r'\#\s+\d+\s+".*"(\s+\d+\s*)?\r?\n'
+        # Format: # lineno filename flags
         m = line_directive2_pat.match(t.value)
         assert m is not None
-        self.set_position(m.group(2), int(m.group(1), 10))
+        line, fname, flags = m.groups()
+        line = int(line, 10)
+        flags = [int(f, 10) for f in flags.split(" ") if f != ""] if flags is not None else []
+
+        if 1 in flags:
+            # File is being included, add current file/line to stack
+            self.includes.append(self.lexer.lineno)
+        elif 2 in flags:
+            # End of include, new file should be equal to the one on top of the stack
+            if self.includes and self.includes[-1].filename == fname:
+                self.includes.pop()
+            else:
+                # But of course user input can never be trusted
+                generic.print_warning("Information about included files is inconsistent, position information for errors may be wrong.")
+
+        self.set_position(fname, line)
         self.increment_lines(t.value.count('\n') - 1)
 
     def t_newline(self, t):
@@ -209,6 +234,7 @@ class NMLLexer(object):
 
 
     def setup(self, text, fname):
+        self.includes = []
         self.text = text
         self.set_position(fname, 1)
 
@@ -216,7 +242,7 @@ class NMLLexer(object):
         """
         @note: The lexer.lineno contains a Position object.
         """
-        self.lexer.lineno = generic.LinePosition(fname, line)
+        self.lexer.lineno = generic.LinePosition(fname, line, self.includes[:])
 
     def increment_lines(self, count):
         self.set_position(self.lexer.lineno.filename, self.lexer.lineno.line_start + count)
