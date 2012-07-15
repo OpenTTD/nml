@@ -27,6 +27,10 @@ class Action2Layout(action2.Action2):
 
     def resolve_tmp_storage(self):
         for reg in self.param_registers:
+            if not self.tmp_locations:
+                raise generic.ScriptError("There are not enough registers available " +
+                        "to perform all required computations in switch blocks. " +
+                        "Please reduce the complexity of your code.")
             location = self.tmp_locations[0]
             self.remove_tmp_location(location, False)
             reg.set_register(location)

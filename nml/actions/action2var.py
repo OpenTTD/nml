@@ -46,6 +46,10 @@ class Action2Var(action2.Action2):
     def resolve_tmp_storage(self):
         for var in self.var_list:
             if isinstance(var, VarAction2StoreTempVar):
+                if not self.tmp_locations:
+                    raise generic.ScriptError("There are not enough registers available " +
+                            "to perform all required computations in switch blocks. " +
+                            "Please reduce the complexity of your code.")
                 location = self.tmp_locations[0]
                 self.remove_tmp_location(location, False)
                 var.set_register(location)
