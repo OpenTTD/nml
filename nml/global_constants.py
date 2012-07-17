@@ -527,10 +527,10 @@ constant_numbers = {
     'SLOPE_STEEP_N'                       : 29,
 
     #loading stages
-    'LOADINGSTAGE_INITIALIZE'             : 0x0000,
-    'LOADINGSTAGE_RESERVE'                : 0x0101,
-    'LOADINGSTAGE_ACTIVATE'               : 0x0201,
-    'LOADINGSTAGE_TEST'                   : 0x0401,
+    'LOADING_STAGE_INITIALIZE'            : 0x0000,
+    'LOADING_STAGE_RESERVE'               : 0x0101,
+    'LOADING_STAGE_ACTIVATE'              : 0x0201,
+    'LOADING_STAGE_TEST'                  : 0x0401,
 
     #palettes
     'PALETTE_DOS'                           : 0,
