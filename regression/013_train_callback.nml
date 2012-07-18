@@ -106,6 +106,14 @@ switch (FEAT_TRAINS, SELF, bulk_wagon_cb_weight_switch, cargo_type_in_veh) {
 
 item(FEAT_TRAINS, bulk_wagon) {
     property {
+        // Some bogus property assignments to test handling of units
+        speed: 10 m/s;
+        speed: param[1] m/s;
+        speed: param[2] km/h;
+        speed: param[3] mph;
+        power: param[4] kW;
+    }
+    property {
         // We try to simulate the stats of the temperate grain wagon
         name: string(STR_NAME_BULK_WAGON);
         climates_available: ALL_CLIMATES;

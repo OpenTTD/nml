@@ -53,6 +53,16 @@ def check_range(value, min_value, max_value, name, pos):
     if not min_value <= value <= max_value:
         raise RangeError(value, min_value, max_value, name, pos)
 
+def greatest_common_divisor(a, b):
+    """
+    Get the greatest common divisor of two numbers
+    """
+    while b != 0:
+        t = b
+        b = a % b
+        a = t
+    return a
+
 def reverse_lookup(dic, val):
     #reverse dictionary lookup
     return [k for k, v in dic.iteritems() if v == val][0]

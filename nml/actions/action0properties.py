@@ -109,9 +109,11 @@ class Action0Property(BaseAction0Property):
 # can be applied to this property.
 #
 # 'unit_conversion' defines a conversion factor between the value entered by
-# the user and the resulting value in nfo. The entered value (possibly converted
-# to the appropriate reference unit, see 'unit_type' above) is multiplied by
-# this factor and then rounded to an integer to provide the final value.
+# the user and the resulting value in nfo. This is either an integer or a
+# rational number entered as a 2-tuple (numerator, denominator).
+# The entered value (possibly converted # to the appropriate reference unit,
+# see 'unit_type' above) is multiplied by this factor and then rounded to an
+# integer to provide the final value.
 # This parameter is not required and defaults to 1.
 #
 # 'custom_function' can be used to bypass the normal way of converting the
@@ -275,7 +277,7 @@ def vehicle_length(value, prop_num):
 properties[0x00] = {
     'track_type'                   : {'size': 1, 'num': 0x05},
     'ai_special_flag'              : {'size': 1, 'num': 0x08},
-    'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': 3.5790976, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
+    'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': (5000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
     # 09 doesn't exist
     'power'                        : {'size': 2, 'num': 0x0B, 'unit_type': 'power'},
     # 0A doesn't exist
@@ -328,7 +330,7 @@ def roadveh_speed_prop(value):
     return props
 
 properties[0x01] = {
-    'speed'                        : {'custom_function' : roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': 7.1581952, 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
+    'speed'                        : {'custom_function' : roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
     'running_cost_factor'          : {'size': 1, 'num': 0x09},
     'running_cost_base'            : {'size': 4, 'num': 0x0A},
     # 0B -0D don't exist
@@ -337,7 +339,7 @@ properties[0x01] = {
     'default_cargo_type'           : {'size': 1, 'num': 0x10},
     'cost_factor'                  : {'size': 1, 'num': 0x11},
     'sound_effect'                 : {'size': 1, 'num': 0x12},
-    'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': 0.1},
+    'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': (1, 10)},
     'weight'                       : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
     # 15 is set together with 08 (see above)
     'refittable_cargo_types'       : {'size': 4, 'num': 0x16, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
@@ -376,7 +378,7 @@ properties[0x02] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'is_refittable'                : {'size': 1, 'num': 0x09},
     'cost_factor'                  : {'size': 1, 'num': 0x0A},
-    'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': 7.1581952, 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
+    'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
     'default_cargo_type'           : {'size': 1, 'num': 0x0C},
     'cargo_capacity'               : {'size': 2, 'num': 0x0D},
     # 0E does not exist
@@ -415,7 +417,7 @@ properties[0x03] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'aircraft_type'                : {'custom_function': aircraft_type_prop},
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
-    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.279617, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
+    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': (701, 2507), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0E},
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},
@@ -694,7 +696,7 @@ properties[0x0B] = {
     'weight'                    : {'num' : 0x0F, 'size' : 1, 'unit_type' : 'weight', 'unit_conversion' : 16},
     'penalty_lowerbound'        : {'num' : 0x10, 'size' : 1},
     'single_penalty_length'     : {'num' : 0x11, 'size' : 1},
-    'price_factor'              : {'num' : 0x12, 'size' : 4, 'unit_conversion' : (1 << 21) / (10.0 * 20 * 255)}, # 10 units of cargo across 20 tiles, with time factor = 255
+    'price_factor'              : {'num' : 0x12, 'size' : 4, 'unit_conversion' : (1 << 21, 10 * 20 * 255)}, # 10 units of cargo across 20 tiles, with time factor = 255
     'station_list_colour'       : {'num' : 0x13, 'size' : 1},
     'cargo_payment_list_colour' : {'num' : 0x14, 'size' : 1},
     'is_freight'                : {'num' : 0x15, 'size' : 1},
@@ -844,7 +846,7 @@ properties[0x10] = {
     'curve_speed_multiplier'   : {'size': 1, 'num': 0x11},
     'station_graphics'         : {'size': 1, 'num': 0x12},
     'construction_cost'        : {'size': 2, 'num': 0x13},
-    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': 3.5790976},
+    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (5000, 1397)},
     'acceleration_model'       : {'size': 1, 'num': 0x15},
     'map_colour'               : {'size': 1, 'num': 0x16},
     'introduction_date'        : {'size': 4, 'num': 0x17},

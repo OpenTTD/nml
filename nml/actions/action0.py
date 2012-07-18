@@ -185,26 +185,48 @@ def parse_property_value(prop_info, value, unit):
     @return: Value to actually use (in nfo) for the property
     @rtype: L{Expression}
     """
+    # Change value to use, except when the 'nfo' unit is used
     if unit is None or unit.type != 'nfo':
         # Save the original value to test conversion against it
         org_value = value
 
-        mul = 1
-        if 'unit_conversion' in prop_info: mul = prop_info['unit_conversion']
+        # Multiply by property-specific conversion factor
+        mul, div = 1, 1
+        if 'unit_conversion' in prop_info:
+            mul = prop_info['unit_conversion']
+            if isinstance(mul, tuple):
+                mul, div = mul
+
+        # Divide by conversion factor specified by unit
         if unit is not None:
             if not 'unit_type' in prop_info or unit.type != prop_info['unit_type']:
                 raise generic.ScriptError("Invalid unit for property", value.pos)
-            mul = mul / unit.convert
-        if mul != 1:
-            if not isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
-                raise generic.ScriptError("Unit conversion specified for property, but no constant value found", value.pos)
-            value = expression.ConstantNumeric(int(value.value * mul + 0.5), value.pos)
+            unit_mul, unit_div = unit.convert, 1
+            if isinstance(unit_mul, tuple):
+                unit_mul, unit_div = unit_mul
+            mul *= unit_div
+            div *= unit_mul
 
-        if unit is not None and 'adjust_value' in prop_info:
-            value = adjust_value(value, org_value, unit, prop_info['adjust_value'])
+        # Factor out common factors
+        gcd = generic.greatest_common_divisor(mul, div)
+        mul /= gcd
+        div /= gcd
 
-    if isinstance(value, expression.ConstantFloat): # Always round floats
+        if isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
+            # Even if mul == div == 1, we have to round floats and adjust value
+            value = expression.ConstantNumeric(int(float(value.value) * mul / div + 0.5), value.pos)
+            if unit is not None and 'adjust_value' in prop_info:
+                value = adjust_value(value, org_value, unit, prop_info['adjust_value'])
+        elif mul != div:
+            # Compute (value * mul + div/2) / div
+            value = expression.BinOp(nmlop.MUL, value, expression.ConstantNumeric(mul, value.pos), value.pos)
+            value = expression.BinOp(nmlop.ADD, value, expression.ConstantNumeric(int(div / 2), value.pos), value.pos)
+            value = expression.BinOp(nmlop.DIV, value, expression.ConstantNumeric(div, value.pos), value.pos)
+
+    else:
+        # Round floats to ints
         value = expression.ConstantNumeric(int(value.value + 0.5), value.pos)
+
     return value
 
 def parse_property(prop_info, value, feature, id):
