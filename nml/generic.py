@@ -103,6 +103,15 @@ class PixelPosition(Position):
     def __str__(self):
         return '"%s" at [x: %d, y: %d]' % (self.filename, self.xpos, self.ypos)
 
+class ImageFilePosition(Position):
+    """
+    Generic (not position-dependant) error with an image file
+    """
+    def __init__(self, filename):
+        Position.__init__(self, filename, [])
+
+    def __str__(self):
+        return 'Image file "%s"' % self.filename
 
 class ScriptError(Exception):
     def __init__(self, value, pos = None):
@@ -128,7 +137,7 @@ class RangeError(ScriptError):
 
 class ImageError(ScriptError):
     def __init__(self, value, filename):
-        ScriptError.__init__(self, value, 'Image file "%s"' % filename)
+        ScriptError.__init__(self, value, ImageFilePosition(filename))
 
 class OnlyOnceError(ScriptError):
     def __init__(self, typestr, pos = None):
