@@ -671,9 +671,9 @@ callback_flag_properties = {
     0x02: {'size': 1, 'num': 0x12},
     0x03: {'size': 1, 'num': 0x14},
     0x05: {'size': 1, 'num': 0x08},
-    0x07: {'custom_function': lambda x: two_byte_property(x, 0x14, 0x1D)},
+    0x07: two_byte_property(0x14, 0x1D),
     0x09: {'size': 1, 'num': 0x0E},
-    0x0A: {'custom_function': lambda x: two_byte_property(x, 0x21, 0x22)},
+    0x0A: two_byte_property(0x21, 0x22),
     0x0B: {'size': 1, 'num': 0x1A},
     0x0F: {'size': 2, 'num': 0x15},
     0x11: {'size': 1, 'num': 0x0E},
@@ -700,11 +700,10 @@ def get_callback_flags_actions(feature, id, flags):
     act0.num_ids = 1
     assert feature in callback_flag_properties
 
-    prop = callback_flag_properties[feature]
-    if 'custom_function' in prop:
-        act0.prop_list.extend(prop['custom_function'](expression.ConstantNumeric(flags)))
-    else:
-        act0.prop_list.append(Action0Property(prop['num'], expression.ConstantNumeric(flags), prop['size']))
+    prop_info_list = callback_flag_properties[feature]
+    if not isinstance(prop_info_list, list): prop_info_list = [prop_info_list]
+    for prop_info in prop_info_list:
+        act0.prop_list.append(Action0Property(prop_info['num'], parse_property_value(prop_info, expression.ConstantNumeric(flags), None), prop_info['size']))
 
     return [act0]
 

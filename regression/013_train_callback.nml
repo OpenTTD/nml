@@ -136,7 +136,7 @@ item(FEAT_TRAINS, bulk_wagon) {
         power: 0;
         running_cost_base: RUNNING_COST_STEAM;
         cargo_capacity: 30;
-        weight: 25 ton;
+        weight: param[1] ton;
         bitmask_vehicle_info: 0;
     }
     graphics {

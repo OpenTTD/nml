@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic
-from nml.expression import ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier
+from nml import generic, nmlop
+from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier
 
 tilelayout_names = {}
 
@@ -150,12 +150,9 @@ properties = 0x12 * [None]
 # Some helper functions that are used for multiple features
 #
 
-def two_byte_property(value, low_prop, high_prop):
+def two_byte_property(low_prop, high_prop, prop_info = {}):
     """
     Decode a two byte value into two action 0 properties.
-
-    @param value: Value to encode.
-    @type  value: L{ConstantNumeric}
 
     @param low_prop: Property number for the low 8 bits of the value.
     @type  low_prop: C{int}
@@ -163,13 +160,17 @@ def two_byte_property(value, low_prop, high_prop):
     @param high_prop: Property number for the high 8 bits of the value.
     @type  high_prop: C{int}
 
-    @return: Sequence of two action 0 properties (low part, high part).
-    @rtype:  C{list} of L{Action0Property}
+    @param prop_info: Dictionary with additional property information.
+    @type prop_info: C{dict}
+
+    @return: Sequence of two dictionaries with property information (low part, high part).
+    @rtype:  C{list} of C{dict}
     """
-    value = value.reduce_constant()
-    low_byte = ConstantNumeric(value.value & 0xFF)
-    high_byte = ConstantNumeric(value.value >> 8)
-    return [Action0Property(low_prop, low_byte, 1), Action0Property(high_prop, high_byte, 1)]
+    low_byte_info = {'num': low_prop, 'size': 1, 'value_function': lambda value: BinOp(nmlop.AND, value, ConstantNumeric(0xFF, value.pos), value.pos).reduce()}
+    high_byte_info = {'num': high_prop, 'size': 1, 'value_function': lambda value: BinOp(nmlop.SHIFT_RIGHT, value, ConstantNumeric(8, value.pos), value.pos).reduce()}
+    for k, v in prop_info.iteritems():
+        low_byte_info[k] = high_byte_info[k] = v
+    return [low_byte_info, high_byte_info]
 
 def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
     """
@@ -291,7 +292,7 @@ properties[0x00] = {
     'dual_headed'                  : {'size': 1, 'num': 0x13},
     'cargo_capacity'               : {'size': 1, 'num': 0x14},
     'default_cargo_type'           : {'size': 1, 'num': 0x15},
-    'weight'                       : {'custom_function': lambda x: two_byte_property(x, 0x16, 0x24), 'unit_type': 'weight'},
+    'weight'                       : two_byte_property(0x16, 0x24, {'unit_type': 'weight'}),
     'cost_factor'                  : {'size': 1, 'num': 0x17},
     'ai_engine_rank'               : {'size': 1, 'num': 0x18},
     'engine_class'                 : {'size': 1, 'num': 0x19},
@@ -489,7 +490,7 @@ def house_available_mask(value):
 
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08 , 'first': None},
-    'building_flags'          : {'custom_function': lambda x: two_byte_property(x, 0x09, 0x19)},
+    'building_flags'          : two_byte_property(0x09, 0x19),
     'years_available'         : {'custom_function': house_available_years},  # = prop 0A, 21 and 22
     'population'              : {'size': 1, 'num': 0x0B},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C},

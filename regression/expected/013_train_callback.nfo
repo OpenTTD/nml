@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d72 
+0 * 4 \d75 
 
 1 * 54 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -204,7 +204,18 @@ FF
 09 \wx0000 
 0B \wx0000 
 
-65 * 67 00 00 \b23 01 FF \wx0074 
+// param[64] = (param[1] & 255)
+65 * 9 0D 40 \D& 01 FF \dx000000FF 
+
+// param[65] = (param[1] << -8)
+66 * 9 0D 41 \D<< 01 FF \dxFFFFFFF8 
+
+67 * 12 06 
+40 01 FF \wx003E 
+41 01 FF \wx0040 
+FF 
+
+68 * 67 00 00 \b23 01 FF \wx0074 
 06 0F 
 28 \wx0010 
 29 \wx01CB 
@@ -226,17 +237,17 @@ FF
 0B \wx0000 
 0E \dx00004C30 
 14 1E 
-16 19 
+16 00 
 24 00 
 25 00 
 
-66 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
+69 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
 
-67 * 9 00 00 \b1 01 FF \wx0074 
+70 * 9 00 00 \b1 01 FF \wx0074 
 1E 08 
 
 // Name: @action3_0
-68 * 33 02 00 FD 89 
+71 * 33 02 00 FD 89 
 10 00 \dx000000FF 
 \b2 
 \wx00FE \dx00000014 \dx00000014 	// bulk_wagon_cb_capacity_switch;
@@ -244,7 +255,7 @@ FF
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_1
-69 * 33 02 00 FF 89 
+72 * 33 02 00 FF 89 
 10 00 \dx000000FF 
 \b2 
 \wx801E \dx00000014 \dx00000014 	// return 30;
@@ -252,7 +263,7 @@ FF
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_2
-70 * 33 02 00 FD 89 
+73 * 33 02 00 FD 89 
 0C 00 \dx0000FFFF 
 \b2 
 \wx00FE \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch;
@@ -260,13 +271,13 @@ FF
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_3
-71 * 23 02 00 FC 89 
+74 * 23 02 00 FC 89 
 0C 00 \dx0000FFFF 
 \b1 
 \wx00FF \dx00000036 \dx00000036 	// @action3_1;
 \wx00FC // bulk_wagon_graphics_switch;
 
-72 * 12 03 00 01 FF \wx0074 \b1 
+75 * 12 03 00 01 FF \wx0074 \b1 
 FF \wx00FC 	// @action3_3;
 \wx00FD 	// @action3_2;
 
