@@ -229,7 +229,7 @@ def parse_property_value(prop_info, value, unit):
             value = expression.BinOp(nmlop.ADD, value, expression.ConstantNumeric(int(div / 2), value.pos), value.pos)
             value = expression.BinOp(nmlop.DIV, value, expression.ConstantNumeric(div, value.pos), value.pos)
 
-    else:
+    elif isinstance(value, expression.ConstantFloat):
         # Round floats to ints
         value = expression.ConstantNumeric(int(value.value + 0.5), value.pos)
 
