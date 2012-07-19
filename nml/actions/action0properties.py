@@ -130,6 +130,10 @@ class Action0Property(BaseAction0Property):
 # To pass extra parameters to the function, a dose of lambda calculus can be used.
 # Consult the code for examples.
 #
+# 'test_function' can be used to determine if the property should be set in the
+# first place. It takes one argument (the value) and should return True if
+# the property is to be set, False if it is to be ignored. Default is True
+#
 # 'num' is the Action0 property number of the action 0 property, as given by the
 # nfo specs. If set to -1, no action0 property will be generated. If
 # 'custom_function' is set, this value is not needed and can be left out.
@@ -324,17 +328,21 @@ properties[0x00].update(general_veh_props)
 # Feature 0x01 (Road Vehicles)
 #
 
-def roadveh_speed_prop(value):
-    value = value.reduce_constant()
-    prop08 = ConstantNumeric(min(value.value, 0xFF))
-    props = [Action0Property(0x08, prop08, 1)]
-    if value.value > 0xFF:
-        prop15 = ConstantNumeric((value.value + 3) / 4)
-        props.append(Action0Property(0x15, prop15, 1))
-    return props
+def roadveh_speed_prop(prop_info):
+    # prop 08 value is min(value, 255)
+    prop08_value = lambda value: BinOp(nmlop.MIN, value, ConstantNumeric(0xFF, value.pos), value.pos).reduce()
+    # prop 15 value is (value + 3) / 4
+    prop15_value = lambda value: BinOp(nmlop.DIV, BinOp(nmlop.ADD, value, ConstantNumeric(3, value.pos), value.pos), ConstantNumeric(4, value.pos), value.pos).reduce()
+    # prop 15 should not be set if value <= 255
+    prop15_test = lambda value: not (isinstance(value, ConstantNumeric) and value.value <= 0xFF)
+    prop08 = {'size': 1, 'num': 0x08, 'value_function': prop08_value}
+    prop15 = {'size': 1, 'num': 0x15, 'value_function': prop15_value, 'test_function': prop15_test}
+    for key in prop_info:
+        prop08[key] = prop15[key] = prop_info[key]
+    return [prop08, prop15]
 
 properties[0x01] = {
-    'speed'                        : {'custom_function' : roadveh_speed_prop, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
+    'speed'                        : roadveh_speed_prop({'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)}),
     'running_cost_factor'          : {'size': 1, 'num': 0x09},
     'running_cost_base'            : {'size': 4, 'num': 0x0A},
     # 0B -0D don't exist

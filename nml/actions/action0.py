@@ -354,6 +354,7 @@ def parse_property_block(prop_list, feature, id):
     validate_prop_info_list(prop_info_list, pos_list, feature)
 
     for prop_info, value in zip(prop_info_list, value_list):
+        if 'test_function' in prop_info and not prop_info['test_function'](value): continue
         properties, extra_actions, mods, extra_append_actions = parse_property(prop_info, value, feature, id)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
