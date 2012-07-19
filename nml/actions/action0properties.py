@@ -92,6 +92,8 @@ class Action0Property(BaseAction0Property):
 # Summary: If 'string' or 'string_literal' is set, the value should be a
 # string or literal string, else the value is a number. 'unit_type' and
 # 'unit_conversion' are used to convert user-entered values to nfo values.
+# If some more arithmetic is needed to convert the entered value into an nfo
+# value, 'value_function' can be used. For even more complicated things,
 # 'custom_function' can be used to create a special mapping of the value to nfo
 # properties, else 'num' and 'size' are used to provide a 'normal' action0.
 #
@@ -116,6 +118,11 @@ class Action0Property(BaseAction0Property):
 # see 'unit_type' above) is multiplied by this factor and then rounded to an
 # integer to provide the final value.
 # This parameter is not required and defaults to 1.
+#
+# 'value_function' can be used to alter the mapping of nml values to nfo values
+# it takes one argument (the value) and returns the new value to use
+# Both the parameter and the return value are expressions that do not have to be
+# constants
 #
 # 'custom_function' can be used to bypass the normal way of converting the
 # name / value to an Action0Property. This function is called with one argument,

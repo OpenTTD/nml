@@ -233,6 +233,10 @@ def parse_property_value(prop_info, value, unit):
         # Round floats to ints
         value = expression.ConstantNumeric(int(value.value + 0.5), value.pos)
 
+    # Apply value_function if it exists
+    if 'value_function' in prop_info:
+        value = prop_info['value_function'](value)
+
     return value
 
 def parse_property(prop_info, value, feature, id):
