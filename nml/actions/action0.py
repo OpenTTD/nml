@@ -293,9 +293,6 @@ def parse_property(prop_info, value, feature, id):
         else:
             props = []
 
-    if 'append_function' in prop_info:
-        props.extend(prop_info['append_function'](value))
-
     return (props, action_list, mods, action_list_append)
 
 def validate_prop_info_list(prop_info_list, pos_list, feature):

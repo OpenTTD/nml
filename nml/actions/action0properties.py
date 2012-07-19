@@ -94,7 +94,6 @@ class Action0Property(BaseAction0Property):
 # 'unit_conversion' are used to convert user-entered values to nfo values.
 # 'custom_function' can be used to create a special mapping of the value to nfo
 # properties, else 'num' and 'size' are used to provide a 'normal' action0.
-# 'append_function' can be used to append one or more other properties.
 #
 # 'string', if set, means that the value of the property should be a string.
 # The value of characteristic indicates the string range to use (usually 0xD0 or 0xDC)
@@ -123,11 +122,6 @@ class Action0Property(BaseAction0Property):
 # which is the value of the property. It should return a list of Action0Property.
 # To pass extra parameters to the function, a dose of lambda calculus can be used.
 # Consult the code for examples.
-#
-# 'append_function' works similarly to 'custum_function', but instead of
-# replacing the normal property generation it merely adds to it. The parameter
-# and return value are the same, but now the 'normal' action0 property is
-# generated as well.
 #
 # 'num' is the Action0 property number of the action 0 property, as given by the
 # nfo specs. If set to -1, no action0 property will be generated. If
