@@ -48,7 +48,6 @@ def vehicle_length(value):
 # Trains
 callbacks[0x00] = {
     'visual_effect_and_powered' : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'shorten_vehicle' : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'deprecate_message': "Callback 'shorten_vehicle' is deprecated, use 'length' instead. Use a return value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH) for this callback."},
     'length' : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'value_function': vehicle_length},
     'cargo_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
@@ -73,7 +72,6 @@ callbacks[0x00].update(general_vehicle_cbs)
 # Road vehicles
 callbacks[0x01] = {
     'visual_effect' : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'shorten_vehicle' : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'deprecate_message': "Callback 'shorten_vehicle' is deprecated, use 'length' instead. Use a return value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH) for this callback."},
     'length' : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'value_function': vehicle_length},
     'cargo_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},

@@ -307,7 +307,6 @@ properties[0x00] = {
     # 1E (callback flags) is not set by user
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
-    'shorten_vehicle'              : {'size': 1, 'num': 0x21, 'warning': "Property 'shorten_vehicle' is deprecated, use 'length' instead.  Use a value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH)."},
     'length'                       : {'size': 1, 'num': 0x21, 'value_function': vehicle_length},
     'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
