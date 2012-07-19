@@ -278,6 +278,9 @@ def vehicle_length(value):
         generic.check_range(value.value, 1, 8, "vehicle length", value.pos)
     return BinOp(nmlop.SUB, ConstantNumeric(8, value.pos), value, value.pos).reduce()
 
+def zero_refit_mask(prop_num):
+    # Zero the refit mask, in addition to setting some other refit property
+    return {'size': 4, 'num': prop_num, 'value_function': lambda value: ConstantNumeric(0)}
 #
 # Feature 0x00 (Trains)
 #
@@ -303,7 +306,7 @@ properties[0x00] = {
     # 1A (sort purchase list) is implemented elsewhere
     'extra_power_per_wagon'        : {'size': 2, 'num': 0x1B, 'unit_type': 'power'},
     'refit_cost'                   : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x1D, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 1D (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 1E (callback flags) is not set by user
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
@@ -314,12 +317,12 @@ properties[0x00] = {
     'bitmask_vehicle_info'         : {'size': 1, 'num': 0x25},
     'retire_early'                 : {'size': 1, 'num': 0x26},
     'misc_flags'                   : {'size': 1, 'num': 0x27},
-    'refittable_cargo_classes'     : {'size': 2, 'num': 0x28},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x29},
+    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x28}, zero_refit_mask(0x1D)],
+    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x29}, zero_refit_mask(0x1D)],
     'introduction_date'            : {'size': 4, 'num': 0x2A},
     'cargo_age_period'             : {'size': 2, 'num': 0x2B},
-    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x2C, value)},
-    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x2D, value)},
+    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x2C, value)}, zero_refit_mask(0x1D)],
+    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x2D, value)}, zero_refit_mask(0x1D)],
 }
 properties[0x00].update(general_veh_props)
 
@@ -353,22 +356,22 @@ properties[0x01] = {
     'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': (1, 10)},
     'weight'                       : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
     # 15 is set together with 08 (see above)
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x16, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 16 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 17 (callback flags) is not set by user
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x19, 'unit_conversion': 255},
     'refit_cost'                   : {'size': 1, 'num': 0x1A},
     'retire_early'                 : {'size': 1, 'num': 0x1B},
     'misc_flags'                   : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_classes'     : {'size': 2, 'num': 0x1D},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x1E},
+    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x1D}, zero_refit_mask(0x16)],
+    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x1E}, zero_refit_mask(0x16)],
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     # 20 (sort purchase list) is implemented elsewhere
     'visual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
     'length'                       : {'size': 1, 'num': 0x23, 'value_function': vehicle_length},
-    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x24, value)},
-    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x25, value)},
+    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x24, value)}, zero_refit_mask(0x16)],
+    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x25, value)}, zero_refit_mask(0x16)],
 }
 properties[0x01].update(general_veh_props)
 
@@ -393,21 +396,21 @@ properties[0x02] = {
     # 0E does not exist
     'running_cost_factor'          : {'size': 1, 'num': 0x0F},
     'sound_effect'                 : {'size': 1, 'num': 0x10},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 11 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 12 (callback flags) is not set by user
     'refit_cost'                   : {'size': 1, 'num': 0x13},
     'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'value_function': speed_fraction},
     'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'value_function': speed_fraction},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
-    'refittable_cargo_classes'     : {'size': 2, 'num': 0x18},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
+    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x18}, zero_refit_mask(0x11)],
+    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x19}, zero_refit_mask(0x11)],
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     # 1B (sort purchase list) is implemented elsewhere
     'visual_effect'                : {'size': 1, 'num': 0x1C},
     'cargo_age_period'             : {'size': 2, 'num': 0x1D},
-    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x1E, value)},
-    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x1F, value)},
+    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x1E, value)}, zero_refit_mask(0x11)],
+    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x1F, value)}, zero_refit_mask(0x11)],
 }
 properties[0x02].update(general_veh_props)
 
@@ -434,18 +437,18 @@ properties[0x03] = {
     # 10 does not exist
     'mail_capacity'                : {'size': 1, 'num': 0x11},
     'sound_effect'                 : {'size': 1, 'num': 0x12},
-    'refittable_cargo_types'       : {'size': 4, 'num': 0x13, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
+    # 13 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 14 (callback flags) is not set by user
     'refit_cost'                   : {'size': 1, 'num': 0x15},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
-    'refittable_cargo_classes'     : {'size': 2, 'num': 0x18},
-    'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
+    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x18}, zero_refit_mask(0x13)],
+    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x19}, zero_refit_mask(0x13)],
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     # 1B (sort purchase list) is implemented elsewhere
     'cargo_age_period'             : {'size': 2, 'num': 0x1C},
-    'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x1D, value)},
-    'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x1E, value)},
+    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x1D, value)}, zero_refit_mask(0x13)],
+    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x1E, value)}, zero_refit_mask(0x13)],
     'range'                        : {'size': 2, 'num': 0x1F},
 }
 properties[0x03].update(general_veh_props)
