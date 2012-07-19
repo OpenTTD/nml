@@ -273,10 +273,10 @@ def ctt_list(prop_num, value):
         raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
     return [CargotypeListProp(prop_num, [val.reduce_constant().value for val in value.values])]
 
-def vehicle_length(value, prop_num):
-    value = value.reduce_constant()
-    generic.check_range(value.value, 1, 8, "vehicle length", value.pos)
-    return [Action0Property(prop_num, ConstantNumeric(8 - value.value), 1)]
+def vehicle_length(value):
+    if isinstance(value, ConstantNumeric):
+        generic.check_range(value.value, 1, 8, "vehicle length", value.pos)
+    return BinOp(nmlop.SUB, ConstantNumeric(8, value.pos), value, value.pos).reduce()
 
 #
 # Feature 0x00 (Trains)
@@ -308,7 +308,7 @@ properties[0x00] = {
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
     'shorten_vehicle'              : {'size': 1, 'num': 0x21, 'warning': "Property 'shorten_vehicle' is deprecated, use 'length' instead.  Use a value between 1 (very short) and 8 (default length, equal to constant VEHICLE_LENGTH)."},
-    'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x21)},
+    'length'                       : {'size': 1, 'num': 0x21, 'value_function': vehicle_length},
     'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
     # 24 is high byte of 16 (weight)
@@ -367,7 +367,7 @@ properties[0x01] = {
     # 20 (sort purchase list) is implemented elsewhere
     'visual_effect'                : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
-    'length'                       : {'custom_function': lambda x: vehicle_length(x, 0x23)},
+    'length'                       : {'size': 1, 'num': 0x23, 'value_function': vehicle_length},
     'cargo_allow_refit'            : {'custom_function': lambda value: ctt_list(0x24, value)},
     'cargo_disallow_refit'         : {'custom_function': lambda value: ctt_list(0x25, value)},
 }
@@ -377,14 +377,12 @@ properties[0x01].update(general_veh_props)
 # Feature 0x02 (Ships)
 #
 
-def speed_fraction_prop(value, propnr):
+def speed_fraction(value):
     # Unit is already converted to 0 .. 255 range when we get here
-    value = value.reduce_constant()
-    if not (0 <= value.value <= 255):
+    if isinstance(value, ConstantNumeric) and not (0 <= value.value <= 255):
         # Do not use check_range to provide better error message
         raise generic.ScriptError("speed fraction must be in range 0 .. 1", value.pos)
-    value = ConstantNumeric(255 - value.value, value.pos)
-    return [Action0Property(propnr, value, 1)]
+    return BinOp(nmlop.SUB, ConstantNumeric(255, value.pos), value, value.pos).reduce()
 
 properties[0x02] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
@@ -399,8 +397,8 @@ properties[0x02] = {
     'refittable_cargo_types'       : {'size': 4, 'num': 0x11, 'warning': "Property 'refittable_cargo_types' is deprecated and will be removed. Use cargo_allow_refit / cargo_disallow_refit instead."},
     # 12 (callback flags) is not set by user
     'refit_cost'                   : {'size': 1, 'num': 0x13},
-    'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x14)},
-    'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'custom_function': lambda val: speed_fraction_prop(val, 0x15)},
+    'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'value_function': speed_fraction},
+    'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'value_function': speed_fraction},
     'retire_early'                 : {'size': 1, 'num': 0x16},
     'misc_flags'                   : {'size': 1, 'num': 0x17},
     'refittable_cargo_classes'     : {'size': 2, 'num': 0x18},
@@ -418,16 +416,17 @@ properties[0x02].update(general_veh_props)
 # Feature 0x03 (Aircraft)
 #
 
-def aircraft_type_prop(value):
-    value = value.reduce_constant()
-    if not value.value in (0, 2, 3):
+def aircraft_is_heli(value):
+    if isinstance(value, ConstantNumeric) and not value.value in (0, 2, 3):
         raise generic.ScriptError("Invalid value for aircraft_type", value.pos)
-    return [Action0Property(0x09, ConstantNumeric(value.value & 2), 1),
-            Action0Property(0x0A, ConstantNumeric(value.value & 1), 1)]
+    return BinOp(nmlop.AND, value, ConstantNumeric(2, value.pos), value.pos).reduce()
+
+def aircraft_is_large(value):
+    return BinOp(nmlop.AND, value, ConstantNumeric(1, value.pos), value.pos).reduce()
 
 properties[0x03] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
-    'aircraft_type'                : {'custom_function': aircraft_type_prop},
+    'aircraft_type'                : [{'size': 1, 'num': 0x09, 'value_function': aircraft_is_heli}, {'size': 1, 'num': 0x0A, 'value_function': aircraft_is_large}],
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
     'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': (701, 2507), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
