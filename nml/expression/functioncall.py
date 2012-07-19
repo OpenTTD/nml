@@ -45,23 +45,24 @@ class FunctionCall(Expression):
         return ret
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        params = [param.reduce(id_dicts, unknown_id_fatal = False) for param in self.params]
         if self.name.value in function_table:
             func = function_table[self.name.value]
-            val = func(self.name.value, self.params, self.pos)
+            val = func(self.name.value, params, self.pos)
             return val.reduce(id_dicts)
         else:
             #try user-defined functions
             func_ptr = self.name.reduce(id_dicts, unknown_id_fatal = False, search_func_ptr = True)
             if func_ptr != self.name: # we found something!
                 if func_ptr.type() == Type.SPRITEGROUP_REF:
-                    func_ptr.param_list = self.params
+                    func_ptr.param_list = params
                     return func_ptr
                 if func_ptr.type() != Type.FUNCTION_PTR:
                     raise generic.ScriptError("'%s' is defined, but it is not a function." % self.name.value, self.pos)
-                return func_ptr.call(self.params)
+                return func_ptr.call(params)
             if unknown_id_fatal:
                 raise generic.ScriptError("'%s' is not defined as a function." % self.name.value, self.pos)
-            return FunctionCall(self.name, self.params, self.pos)
+            return FunctionCall(self.name, params, self.pos)
 
 
 class SpecialCheck(Expression):
@@ -552,6 +553,33 @@ def builtin_vehicle_curv_info(name, args, pos):
     cur_next = BinOp(nmlop.SHIFT_LEFT, args[1], ConstantNumeric(8), pos)
     return BinOp(nmlop.OR, args[0], cur_next, pos)
 
+def builtin_format_string(name, args, pos):
+    """
+    format_string(format, ... args ..) builtin function
+
+    @return Formatted string
+    """
+    if len(args) < 1:
+        raise generic.ScriptError(name + "() must have at least one parameter", pos)
+
+    format = args[0].reduce()
+    if not isinstance(format, StringLiteral):
+        raise gneric.ScriptError(name + "() parameter 1 'format' must be a literal string", format.pos)
+
+    # Validate other args
+    format_args = []
+    for i, arg in enumerate(args[1:]):
+        arg = arg.reduce()
+        if not isinstance(arg, (StringLiteral, ConstantFloat, ConstantNumeric)):
+            raise generic.ScriptError(name + "() parameter %d is not a constant number of literal string" % (i+1), arg.pos)
+        format_args.append(arg.value)
+
+    try:
+        result = format.value % tuple(format_args)
+        return StringLiteral(result, pos)
+    except Exception, ex:
+        raise generic.ScriptError("Invalid combination of format / arguments for %s: %s" % (name, str(ex)), pos)
+
 #}
 
 function_table = {
@@ -597,4 +625,5 @@ function_table = {
     'palette_1cc' : builtin_palette_1cc,
     'palette_2cc' : builtin_palette_2cc,
     'vehicle_curv_info' : builtin_vehicle_curv_info,
+    'format_string' : builtin_format_string,
 }
