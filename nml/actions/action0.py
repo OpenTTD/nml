@@ -134,7 +134,7 @@ def create_action0(feature, id, act6, action_list):
     action0 = Action0(feature, id_val)
     return (action0, offset + size)
 
-def get_property_info(feature, name):
+def get_property_info_list(feature, name):
     """
     Find information on a single property, based on feature and name/number
 
@@ -144,7 +144,8 @@ def get_property_info(feature, name):
     @param name: Name (or number) of the property
     @type name: L{Identifier} or L{ConstantNumeric}
 
-    @return: A dictionary with property information
+    @return: A list of dictionaries with property information
+    @rtype: C{list} of C{dict}
     """
     global properties
 
@@ -155,18 +156,23 @@ def get_property_info(feature, name):
 
     if isinstance(name, expression.Identifier):
         if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value, name.pos)
-        prop_info = properties[feature][name.value]
+        prop_info_list = properties[feature][name.value]
+        if not isinstance(prop_info_list, list): prop_info_list = [prop_info_list]
     elif isinstance(name, expression.ConstantNumeric):
         for p in properties[feature]:
-            pdata = properties[feature][p]
-            if 'num' not in pdata or pdata['num'] != name.value: continue
-            prop_info = pdata
-        if prop_info is None: raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
+            prop_info_list = properties[feature][p]
+            if not isinstance(prop_info_list, list): prop_info_list = [prop_info_list]
+            # Only non-compound properties may be set by number
+            if len(prop_info_list) == 1 and 'num' in prop_info_list[0] and prop_info_list[0]['num'] == name.value:
+                break
+        else:
+            raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
     else: assert False
 
-    if 'warning' in prop_info:
-        generic.print_warning(prop_info['warning'], name.pos)
-    return prop_info
+    for prop_info in prop_info_list:
+        if 'warning' in prop_info:
+            generic.print_warning(prop_info['warning'], name.pos)
+    return prop_info_list
 
 def parse_property_value(prop_info, value, unit):
     """
@@ -335,9 +341,15 @@ def parse_property_block(prop_list, feature, id):
 
     action0, offset = create_action0(feature, id, act6, action_list)
 
-    prop_info_list = map(lambda prop: get_property_info(feature, prop.name), prop_list)
-    value_list = map(lambda prop_info, prop: parse_property_value(prop_info, prop.value, prop.unit), prop_info_list, prop_list)
-    pos_list = map(lambda prop: prop.name.pos, prop_list)
+    prop_info_list = []
+    value_list = []
+    pos_list = []
+    for prop in prop_list:
+        new_prop_info_list = get_property_info_list(feature, prop.name)
+        prop_info_list.extend(new_prop_info_list)
+        value_list.extend(parse_property_value(prop_info, prop.value, prop.unit) for prop_info in new_prop_info_list)
+        pos_list.extend(prop.name.pos for i in prop_info_list)
+
     validate_prop_info_list(prop_info_list, pos_list, feature)
 
     for prop_info, value in zip(prop_info_list, value_list):

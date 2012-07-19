@@ -84,6 +84,8 @@ class Action0Property(BaseAction0Property):
 # or C{None} if no properties are defined for that feature.
 #
 # Each property is a mapping of property name to its characteristics.
+# These characteristics are either a dictionary or a list of
+# dictionaries, the latter can be used to set multiple properties.
 # First a short summary is given, then the recognized characteristics
 # are outlined below in more detail.
 #
