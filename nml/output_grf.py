@@ -296,16 +296,16 @@ class OutputGRF(output_base.BinaryOutputBase):
         return stream, len(data_str)
 
     def wsprite_encoderegular(self, size_x, size_y, data, data_len, xoffset, yoffset, info, zoom_level):
+        # Data is already encoded as a string at this point
         chunked = info & INFO_TILE != 0
-        size = len(data) * len(data[0]) # Size * bpp
+        size = len(data)
         if chunked:
             size += 4
         self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level)
         if chunked:
             self.print_dword(data_len, False)
-        for pixel in data:
-            for c in pixel:
-                self.print_byte(ord(c), False)
+        for c in data:
+            self.print_byte(ord(c), False)
 
     def sprite_encode_tile(self, size_x, size_y, data, info, long_format = False):
         long_chunk = size_x > 256
