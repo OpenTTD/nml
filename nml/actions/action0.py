@@ -316,7 +316,10 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
     global properties
     first_warnings = [(info, pos_list[i]) for i, info in enumerate(prop_info_list) if 'first' in info and i != 0]
     for info, pos in first_warnings:
-        generic.print_warning("Property '%s' should be set before all other properties and graphics." % generic.reverse_lookup(properties[feature], info), pos)
+        for prop_name, prop_info in properties[feature].iteritems():
+            if info == prop_info or (isinstance(prop_info, list) and info in prop_info):
+                generic.print_warning("Property '%s' should be set before all other properties and graphics." % prop_name, pos)
+                break
 
 
 def parse_property_block(prop_list, feature, id):
