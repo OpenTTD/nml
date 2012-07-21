@@ -145,6 +145,7 @@ constant_numbers = {
     'CB_RESULT_COLOUR_MAPPING_ADD_CC'      : 0x4000,
 
     'CB_RESULT_AUTOREFIT'                  : 0x4000,
+    'CB_RESULT_REFIT_COST_MASK'            : 0x3FFF,
 
     'CB_RESULT_NO_SOUND'                   : 0x7EFF, # Never a valid sound id
 
