@@ -41,7 +41,7 @@ def parse_cli(argv):
 
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
-                            custom_tags="custom_tags.txt", lang_dir="lang", sprites_dir="sprites", default_lang="english.lng",
+                            custom_tags="custom_tags.txt", lang_dir="lang", default_lang="english.lng",
                             forced_palette="ANY", quiet=False, md5_filename=None)
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
@@ -59,8 +59,6 @@ def parse_cli(argv):
                         help="Load custom tags from <file> [default: %default]")
     opt_parser.add_option("-l", "--lang-dir", dest="lang_dir", metavar="<dir>",
                         help="Load language files from directory <dir> [default: %default]")
-    opt_parser.add_option("-a", "--sprites-dir", dest="sprites_dir", metavar="<dir>",
-                        help="Store 32bpp sprites in directory <dir> [default: %default]")
     opt_parser.add_option("--default-lang", dest="default_lang", metavar="<file>",
                         help="The default language is stored in <file> [default: %default]")
     opt_parser.add_option("--start-sprite", action="store", type="int", dest="start_sprite_num", metavar="<num>",
@@ -151,7 +149,7 @@ def main(argv):
             generic.print_error("Unknown output format %s" % outext)
             sys.exit(2)
 
-    ret = nml(input, input_filename, opts.debug, outputs, opts.sprites_dir, opts.start_sprite_num, opts.forced_palette, opts.md5_filename)
+    ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.forced_palette, opts.md5_filename)
 
     input.close()
     sys.exit(ret)
@@ -159,7 +157,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, input_filename, output_debug, outputfiles, sprites_dir, start_sprite_num, forced_palette, md5_filename):
+def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, forced_palette, md5_filename):
     generic.OnlyOnce.clear()
 
     try:
