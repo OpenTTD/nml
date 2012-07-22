@@ -49,14 +49,17 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.enable_cache = enable_cache
         self.data_output = []
         self.sprite_output = []
-        self.cached_sprites = {}
         self.cache_output = []
+        self.cached_sprites = {}
         self.md5 = hashlib.md5()
         # sprite_num is deliberately off-by-one because it is used as an
         # id between data and sprite section. For the sprite section an id
         # of 0 is invalid (means end of sprites), and for a non-NewGRF GRF
         # the first sprite is a real sprite.
         self.sprite_num = 1
+        # Mapping of filenames to cached image files
+        self.cached_image_files = {}
+        # used_sprite_files (set from main.py) is used to keep track of what files are used and how often
         self.read_cache()
 
     def open_file(self):
@@ -246,8 +249,45 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.cache_output = []
         self.cached_sprites[key] = (data, info, crop, False, True)
 
+    def open_image_file(self, filename):
+        """
+        Obtain a handle to an image file
+
+        @param filename: Name of the file
+        @type filename: C{unicode}
+
+        @return: Image file
+        @rtype: L{Image}
+        """
+        assert filename in self.used_sprite_files
+        if filename in self.cached_image_files:
+            im = self.cached_image_files[filename]
+        else:
+            im = Image.open(filename)
+            self.cached_image_files[filename] = im
+        self.mark_image_file_used(filename)
+        return im
+
+    def mark_image_file_used(self, filename):
+        """
+        Indicate that an image file is being used, so the internal book-keeping can be updated
+
+        @param filename: Name of the file
+        @type filename: C{unicode}
+        """
+        assert filename in self.used_sprite_files
+        self.used_sprite_files[filename] -= 1
+        if self.used_sprite_files[filename] == 0 and filename in self.cached_image_files:
+            # Delete from dictionary if it exists, then data will be freed when it goes out of scope
+            del self.cached_image_files[filename]
+
     def pre_close(self):
         output_base.BinaryOutputBase.pre_close(self)
+
+        # Verify that image file counts were correct
+        assert not self.cached_image_files, "Invalid sprite file cache"
+        # all values should be 0 at this point
+        assert not any(self.used_sprite_files.values()), "Invalid sprite file cache"
 
         #add end-of-chunks
         self._in_sprite = True
@@ -435,12 +475,14 @@ class OutputGRF(output_base.BinaryOutputBase):
             # Use cache either if files are older, of if cache entry was not present
             # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)
             if use_cache or not self.cached_sprites[cache_key][3]:
+                if filename_8bpp is not None: self.mark_image_file_used(filename_8bpp.value)
+                if filename_32bpp is not None:  self.mark_image_file_used(filename_32bpp.value)
                 self.wsprite_cache(cache_key, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.zoom_level)
                 return
 
         # Read and validate image data
         if filename_32bpp is not None:
-            im = Image.open(filename_32bpp.value)
+            im = self.open_image_file(filename_32bpp.value)
             if im.mode not in ("RGB", "RGBA"):
                 raise generic.ImageError("32bpp image is not a full colour RGB(A) image.", filename_32bpp.value)
             info_byte |= INFO_RGB
@@ -453,7 +495,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite = im.crop((x, y, x + size_x, y + size_y))
 
         if filename_8bpp is not None:
-            mask_im = Image.open(filename_8bpp.value)
+            mask_im = self.open_image_file(filename_8bpp.value)
             if mask_im.mode != "P":
                 raise generic.ImageError("8bpp image does not have a palette", filename_8bpp.value)
             im_mask_pal = palette.validate_palette(mask_im, filename_8bpp.value)

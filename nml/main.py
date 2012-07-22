@@ -216,15 +216,19 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         lang_actions.extend(action4.get_global_string_actions())
         actions = actions[:action8_index + 1] + lang_actions + actions[action8_index + 1:]
 
-    sprite_files = set()
+    # Collect all sprite files and count how often they are used
+    sprite_files = dict()
     for action in actions:
         if isinstance(action, real_sprite.RealSpriteAction):
             for sprite in action.sprite_list:
                 if sprite.is_empty: continue
                 sprite.validate_size()
-                sprite_files.add(sprite.file.value)
-                if sprite.mask_file is not None:
-                    sprite_files.add(sprite.mask_file.value)
+                for f in (sprite.file, sprite.mask_file):
+                    if f is None: continue
+                    if f.value in sprite_files: 
+                        sprite_files[f.value] += 1
+                    else:
+                        sprite_files[f.value] = 1
 
     # Check whether we can terminate sprite processing prematurely for
     #     dependency checks
@@ -273,6 +277,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         grf.set_palette_used(palette_bytes[used_palette])
     for outputfile in outputfiles:
         outputfile.palette = used_palette
+        outputfile.used_sprite_files = sprite_files.copy() # Make a copy, as it will be modified
+
     #If there are any 32bpp sprites hint to openttd that we'd like a 32bpp blitter
     if alt_sprites.any_32bpp_sprites:
         grf.set_preferred_blitter("3")
