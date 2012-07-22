@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import os, hashlib, itertools
+import os, hashlib, itertools, json
 from nml import generic, palette, output_base, lz77, grfstrings
 from nml.actions.real_sprite import palmap_w2d
 
@@ -41,22 +41,206 @@ def is_transparent(p, info):
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):
         output_base.BinaryOutputBase.__init__(self, filename)
+        self.cache_filename = self.filename + ".cache"
+        self.cache_index_filename = self.filename + ".cacheindex"
+        self.cache_time = 0
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
         self.data_output = []
         self.sprite_output = []
+        self.cached_sprites = {}
+        self.cache_output = []
         self.md5 = hashlib.md5()
         # sprite_num is deliberately off-by-one because it is used as an
         # id between data and sprite section. For the sprite section an id
         # of 0 is invalid (means end of sprites), and for a non-NewGRF GRF
         # the first sprite is a real sprite.
         self.sprite_num = 1
+        self.read_cache()
 
     def open_file(self):
         return open(self.filename, 'wb')
 
     def get_md5(self):
         return self.md5.hexdigest()
+
+    def read_cache(self):
+        """
+        Read the *.grf.cache[index] files, which cache real sprites for faster compilation
+
+        Cache file format description:
+        Format of cache index is JSON (JavaScript Object Notation), which is
+        easily readable by both humans (for debugging) and machines. Format is as follows:
+
+        A list of dictionaries, each corresponding to a sprite, with the following keys
+         - rgb_file: filename of the 32bpp sprite (string)
+         - rgb_rect: (uncropped) rectangle of the 32bpp sprite (list with 4 elements (x,y,w,h))
+         - mask_file, mask_rect: same as above, but for 8bpp sprite
+         - crop: List of 4 positive integers, indicating how much to crop if cropping is enabled 
+              Order is (left, right, top, bottom), it is not present if cropping is disabled
+         - info: Info byte of the sprite
+         - offset: Offset into the cache file for this sprite
+         - size: Length of this sprite in the cache file
+
+        Either rgb_file/rect, mask_file/rect, or both must be specified, depending on the sprite
+        The cache should contain the sprite data, but not the header (sizes/offsets and such)
+
+        For easy lookup, this information is stored in a dictionary
+        Tuples are used because these are hashable
+
+        The key is a (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)-tuple
+        The rectangles are 4-tuples, non-existent items (e.g. no rgb) are None
+        do_crop is a boolean indicating if this sprite has been cropped
+
+        The value that this key maps to is a 5-tuple, containing:
+         - the sprite data (as a string)
+         - The 'info' byte of the sprite
+         - The cropping information (see above) (None if 'do_crop' in the key is false)
+         - Whether the sprite exists in the old (loaded)cache
+         - whether the sprite is used by the current GRF
+
+        The cache file itself is simply the binary sprite data with no
+        meta-information or padding. Offsets and sizes for the various sprites
+        are in the cacheindex file.
+        """
+        if not (os.access(self.cache_filename, os.R_OK) and os.access(self.cache_index_filename, os.R_OK)):
+            # Cache files don't exist
+            return
+
+        index_file = open(self.cache_index_filename, 'r')
+        cache_file = open(self.cache_filename, 'rb')
+        cache_data = cache_file.read()
+        cache_size = len(cache_data)
+        self.cache_time = os.path.getmtime(self.cache_filename)
+
+        try:
+            # Just assert and print a generic message on errors, as the cache data should be correct
+            # Not asserting coould lead to errors later on
+            # Also, it doesn't make sense to inform the user about things he shouldn't know about and can't fix
+            sprite_index = json.load(index_file)
+            assert isinstance(sprite_index, list)
+            for sprite in sprite_index:
+                assert isinstance(sprite, dict)
+                # load RGB (32bpp) data
+                rgb_key = (None, None)
+                if 'rgb_file' in sprite and 'rgb_rect' in sprite:
+                    assert isinstance(sprite['rgb_file'], basestring)
+                    assert isinstance(sprite['rgb_rect'], list) and len(sprite['rgb_rect']) == 4
+                    assert all(isinstance(num, int) for num in sprite['rgb_rect'])
+                    rgb_key = (sprite['rgb_file'], tuple(sprite['rgb_rect']))
+
+                # load Mask (8bpp) data
+                mask_key = (None, None)
+                if 'mask_file' in sprite and 'mask_rect' in sprite:
+                    assert isinstance(sprite['mask_file'], basestring)
+                    assert isinstance(sprite['mask_rect'], list) and len(sprite['mask_rect']) == 4
+                    assert all(isinstance(num, int) for num in sprite['mask_rect'])
+                    mask_key = (sprite['mask_file'], tuple(sprite['mask_rect']))
+
+                # Compose key
+                assert any(i is not None for i in rgb_key + mask_key)
+                key = rgb_key + mask_key + ('crop' in sprite ,)
+                assert key not in self.cached_sprites
+
+                # Read size/offset from cache
+                assert 'offset' in sprite and 'size' in sprite
+                offset, size = sprite['offset'], sprite['size']
+                assert isinstance(offset, int) and isinstance(size, int)
+                assert offset >= 0 and size > 0
+                assert offset + size <= cache_size
+                data = cache_data[offset:offset+size]
+
+                # Read info / cropping data from cache
+                assert 'info' in sprite and isinstance(sprite['info'], int)
+                info = sprite['info']
+                if 'crop' in sprite:
+                    assert isinstance(sprite['crop'], list) and len(sprite['crop']) == 4
+                    assert all(isinstance(num, int) for num in sprite['crop'])
+                    crop = tuple(sprite['crop'])
+                else:
+                    crop = None
+
+                # Compose value
+                value = (data, info, crop, True, False)
+
+                self.cached_sprites[key] = value
+        except:
+            generic.print_warning(self.cache_index_filename + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
+            self.cached_sprites = {} # Clear cache
+
+        index_file.close()
+        cache_file.close()
+
+    def write_cache(self):
+        """
+        Write the cache data to the .cache[index] files.
+        Refer to L{read_cache} for a format description.
+        """
+        index_data = []
+        sprite_data = []
+        offset = 0
+
+        old_cache_valid = True
+        for key, value in self.cached_sprites.iteritems():
+            # Unpack key/value
+            rgb_file, rgb_rect, mask_file, mask_rect, do_crop = key
+            data, info, crop_rect, in_old_cache, in_use = value
+            assert do_crop == (crop_rect is not None)
+
+            # If this cache information is exactly the same as the old cache, then we don't bother writing later on
+            if not in_use:
+                old_cache_valid = False
+                continue
+            if not in_old_cache:
+                old_cache_valid = False
+
+            # Create dictionary with information
+            sprite = {}
+            if rgb_file is not None:
+                sprite['rgb_file'] = rgb_file
+                sprite['rgb_rect'] = tuple(rgb_rect)
+            if mask_file is not None:
+                sprite['mask_file'] = mask_file
+                sprite['mask_rect'] = tuple(mask_rect)
+
+            size = len(data)
+            sprite['offset'] = offset
+            sprite['size'] = size
+            sprite['info'] = info
+            if do_crop: sprite['crop'] = tuple(crop_rect)
+
+            index_data.append(sprite)
+            sprite_data.append(data)
+            offset += size
+
+        if old_cache_valid: return
+
+        index_output = json.JSONEncoder(sort_keys = True).encode(index_data)
+        cache_output = ''.join(sprite_data)
+
+        index_file = open(self.cache_index_filename, 'w')
+        index_file.write(index_output)
+        index_file.close()
+        cache_file = open(self.cache_filename, 'w')
+        cache_file.write(cache_output)
+        cache_file.close()
+
+    def update_cache(self, key, info, crop):
+        """
+        Add a sprite to the sprite cache, possibly overwriting an existing one
+
+        @param key: Cache key of the sprite
+        @type key: C{tuple}, see L{read_cache} for more info
+
+        @param info: Info byte of the sprite
+        @type info: C{int}
+
+        @param crop: How much was cropped from each side of the sprite
+        @type crop: C{tuple}, or C{None} if N/A
+        """
+        data = ''.join(self.cache_output)
+        self.cache_output = []
+        self.cached_sprites[key] = (data, info, crop, False, True)
 
     def pre_close(self):
         output_base.BinaryOutputBase.pre_close(self)
@@ -86,6 +270,10 @@ class OutputGRF(output_base.BinaryOutputBase):
             self.md5.update(c)
         for c in self.sprite_output:
             self.file.write(c)
+
+    def close(self):
+        output_base.BinaryOutputBase.close(self)
+        self.write_cache()
 
     def wb(self, byte, stream):
         if stream is None: stream = self.data_output
@@ -206,10 +394,34 @@ class OutputGRF(output_base.BinaryOutputBase):
             mask_x = sprite_info.mask_pos[0].value
             mask_y = sprite_info.mask_pos[1].value
 
+        # Check if files exist and if cache is usable
+        use_cache = True
         if filename_32bpp is not None:
-            # Open file
             if not os.path.exists(filename_32bpp.value):
                 raise generic.ImageError("File doesn't exist", filename_32bpp.value)
+            if os.path.getmtime(filename_32bpp.value) > self.cache_time:
+                use_cache = False
+
+        if filename_8bpp is not None:
+            if not os.path.exists(filename_8bpp.value):
+                raise generic.ImageError("File doesn't exist", filename_8bpp.value)
+            if os.path.getmtime(filename_8bpp.value) > self.cache_time:
+                use_cache = False
+
+        # Try finding the file in the cache
+        rgb_file, rgb_rect = (filename_32bpp.value, (x, y, size_x, size_y)) if filename_32bpp is not None else (None, None)
+        mask_file, mask_rect = (filename_8bpp.value, (mask_x, mask_y, size_x, size_y)) if filename_8bpp is not None else (None, None)
+        do_crop = self.crop_sprites and (info_byte & INFO_NOCROP == 0)
+        cache_key = (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)
+        if cache_key in self.cached_sprites:
+            # Use cache either if files are older, of if cache entry was not present
+            # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)
+            if use_cache or not self.cached_sprites[cache_key][3]:
+                self.wsprite_cache(cache_key, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.zoom_level)
+                return
+
+        # Read and validate image data
+        if filename_32bpp is not None:
             im = Image.open(filename_32bpp.value)
             if im.mode not in ("RGB", "RGBA"):
                 raise generic.ImageError("32bpp image is not a full colour RGB(A) image.", filename_32bpp.value)
@@ -223,9 +435,6 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite = im.crop((x, y, x + size_x, y + size_y))
 
         if filename_8bpp is not None:
-            # Open file
-            if not os.path.exists(filename_8bpp.value):
-                raise generic.ImageError("File doesn't exist", filename_8bpp.value)
             mask_im = Image.open(filename_8bpp.value)
             if mask_im.mode != "P":
                 raise generic.ImageError("8bpp image does not have a palette", filename_8bpp.value)
@@ -246,6 +455,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
             mask_sprite_data = self.palconvert(mask_sprite.getdata(), im_mask_pal)
 
+        # Compose pixel information (each pixel is a tuple)
         if (info_byte & INFO_ALPHA) != 0 and (info_byte & INFO_PAL) != 0:
             sprite_data = [(x[0][0], x[0][1], x[0][2], x[0][3], x[1]) for x in zip(sprite.getdata(), mask_sprite_data)]
         elif (info_byte & INFO_RGB) != 0 and (info_byte & INFO_PAL) != 0:
@@ -254,15 +464,16 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite_data = [tuple(x) for x in sprite.getdata()]
         else:
             sprite_data = [(x,) for x in mask_sprite_data]
-        self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level)
+        self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, cache_key)
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
         self.print_byte(0)
         self.end_sprite()
 
-    def wsprite_header(self, size_x, size_y, size, xoffset, yoffset, info, zoom_level):
+    def wsprite_header(self, size_x, size_y, size, xoffset, yoffset, info, zoom_level, write_cache):
         self._expected_count += size + 18
+        if write_cache: self._expected_count += size # With caching, the image data is written twice
         self.print_dword(self.sprite_num, self.sprite_output)
         self.print_dword(size + 10, self.sprite_output)
         self.print_byte(info, self.sprite_output)
@@ -286,7 +497,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
     def sprite_compress(self, data):
         # Returns a compressed data stream and the UNcompressed length
-        data_str = ''.join(chr(c) for c in itertools.chain(*data))
+        data_str = ''.join(chr(c) for c in itertools.chain.from_iterable(data))
         if self.compress_grf:
             lz = lz77.LZ77(data_str)
             stream = lz.encode()
@@ -300,9 +511,22 @@ class OutputGRF(output_base.BinaryOutputBase):
         size = len(data)
         if chunked:
             size += 4
-        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level)
+        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level, True)
         if chunked:
             self.print_dword(data_len, self.sprite_output)
+            self.print_dword(data_len, self.cache_output)
+        for c in data:
+            self.print_byte(ord(c), self.sprite_output)
+            self.print_byte(ord(c), self.cache_output)
+
+    def wsprite_cache(self, cache_key, size_x, size_y, xoffset, yoffset, zoom_level):
+        # Write a sprite from the cached data
+        data, info, crop_rect, in_old_cache, in_use = self.cached_sprites[cache_key]
+        if not in_use:
+            self.cached_sprites[cache_key] = (data, info, crop_rect, in_old_cache, True)
+
+        if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
+        self.wsprite_header(size_x, size_y, len(data), xoffset, yoffset, info, zoom_level, False)
         for c in data:
             self.print_byte(ord(c), self.sprite_output)
 
@@ -425,11 +649,13 @@ class OutputGRF(output_base.BinaryOutputBase):
             return (palmap_w2d[p] for p in sprite_data)
         return sprite_data
 
-    def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level):
+    def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, cache_key):
         assert len(sprite_data) == size_x * size_y
         if self.crop_sprites and (info & INFO_NOCROP == 0):
             sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, xoffset, yoffset, info)
             size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
+        else:
+            crop_rect = None
         assert len(sprite_data) == size_x * size_y
 
         compressed_data, data_len = self.sprite_compress(sprite_data)
@@ -442,6 +668,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 info |= INFO_TILE
                 compressed_data, data_len = tile_compressed_data, tile_data_len
         self.wsprite_encoderegular(size_x, size_y, compressed_data, data_len, xoffset, yoffset, info, zoom_level)
+        self.update_cache(cache_key, info, crop_rect)
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
