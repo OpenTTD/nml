@@ -38,7 +38,7 @@ general_vehicle_cbs = {
     'start_stop' : {'type': 'cb', 'num': 0x31},
     'every_32_days' : {'type': 'cb', 'num': 0x32},
     'sound_effect' : {'type': 'cb', 'num': 0x33, 'flag_bit': 7},
-    'refit_cost' : {'type': 'cb', 'num': 0x15E},
+    'refit_cost' : {'type': 'cb', 'num': 0x15E, 'purchase': 1},
 }
 
 # Function to convert vehicle length to the actual property value, which is (8 - length)
