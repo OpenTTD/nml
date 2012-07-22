@@ -515,7 +515,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
     def sprite_compress(self, data):
         # Returns a compressed data stream and the UNcompressed length
-        data_str = ''.join(chr(c) for c in itertools.chain.from_iterable(data))
+        data_str = ''.join(map(chr, itertools.chain.from_iterable(data)))
         if self.compress_grf:
             lz = lz77.LZ77(data_str)
             stream = lz.encode()
