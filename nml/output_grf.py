@@ -279,6 +279,20 @@ class OutputGRF(output_base.BinaryOutputBase):
         output_base.BinaryOutputBase.close(self)
         self.write_cache()
 
+    def print_data(self, data, stream):
+        """
+        Print a chunck of data in one go
+
+        @param data: Data to output
+        @type data: C{str}
+
+        @param stream: Stream to output the data to
+        @type stream: C{list}
+        """
+        if stream is None: stream = self.data_output
+        stream.append(data)
+        self._byte_count += len(data)
+
     def wb(self, byte, stream):
         if stream is None: stream = self.data_output
         stream.append(chr(byte))
@@ -519,9 +533,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         if chunked:
             self.print_dword(data_len, self.sprite_output)
             if self.enable_cache: self.print_dword(data_len, self.cache_output)
-        for c in data:
-            self.print_byte(ord(c), self.sprite_output)
-            if self.enable_cache: self.print_byte(ord(c), self.cache_output)
+        self.print_data(data, self.sprite_output)
+        if self.enable_cache: self.print_data(data, self.cache_output)
 
     def wsprite_cache(self, cache_key, size_x, size_y, xoffset, yoffset, zoom_level):
         # Write a sprite from the cached data
@@ -531,8 +544,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
         self.wsprite_header(size_x, size_y, len(data), xoffset, yoffset, info, zoom_level, False)
-        for c in data:
-            self.print_byte(ord(c), self.sprite_output)
+        self.print_data(data, self.sprite_output)
 
     def sprite_encode_tile(self, size_x, size_y, data, info, long_format = False):
         long_chunk = size_x > 256
