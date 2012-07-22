@@ -16,7 +16,7 @@ $(TEST_FILES):
 	$(_V) echo "Running test $@"
 	$(_V) mkdir -p output nml_output output2
 	$(_V) $(NMLC) --nfo output/$@.nfo --grf output/$@.grf $@.nml --nml nml_output/$@.nml && \
-$(NMLC) --nfo output2/$@.nfo --grf output2/$@.grf nml_output/$@.nml
+$(NMLC) -n --nfo output2/$@.nfo --grf output2/$@.grf nml_output/$@.nml
 	$(_V) diff -u output/$@.nfo expected/$@.nfo && diff -u output/$@.grf expected/$@.grf && \
 diff -u output2/$@.nfo expected/$@.nfo && diff -u output2/$@.grf expected/$@.grf
 

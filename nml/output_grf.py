@@ -39,13 +39,14 @@ def is_transparent(p, info):
     return False
 
 class OutputGRF(output_base.BinaryOutputBase):
-    def __init__(self, filename, compress_grf, crop_sprites):
+    def __init__(self, filename, compress_grf, crop_sprites, enable_cache):
         output_base.BinaryOutputBase.__init__(self, filename)
         self.cache_filename = self.filename + ".cache"
         self.cache_index_filename = self.filename + ".cacheindex"
         self.cache_time = 0
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
+        self.enable_cache = enable_cache
         self.data_output = []
         self.sprite_output = []
         self.cached_sprites = {}
@@ -103,6 +104,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         meta-information or padding. Offsets and sizes for the various sprites
         are in the cacheindex file.
         """
+        if not self.enable_cache: return
         if not (os.access(self.cache_filename, os.R_OK) and os.access(self.cache_index_filename, os.R_OK)):
             # Cache files don't exist
             return
@@ -176,6 +178,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         Write the cache data to the .cache[index] files.
         Refer to L{read_cache} for a format description.
         """
+        if not self.enable_cache: return
         index_data = []
         sprite_data = []
         offset = 0
@@ -238,6 +241,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         @param crop: How much was cropped from each side of the sprite
         @type crop: C{tuple}, or C{None} if N/A
         """
+        if not self.enable_cache: return
         data = ''.join(self.cache_output)
         self.cache_output = []
         self.cached_sprites[key] = (data, info, crop, False, True)
@@ -511,13 +515,13 @@ class OutputGRF(output_base.BinaryOutputBase):
         size = len(data)
         if chunked:
             size += 4
-        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level, True)
+        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level, self.enable_cache)
         if chunked:
             self.print_dword(data_len, self.sprite_output)
-            self.print_dword(data_len, self.cache_output)
+            if self.enable_cache: self.print_dword(data_len, self.cache_output)
         for c in data:
             self.print_byte(ord(c), self.sprite_output)
-            self.print_byte(ord(c), self.cache_output)
+            if self.enable_cache: self.print_byte(ord(c), self.cache_output)
 
     def wsprite_cache(self, cache_key, size_x, size_y, xoffset, yoffset, zoom_level):
         # Write a sprite from the cached data

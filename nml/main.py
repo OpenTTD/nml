@@ -67,6 +67,8 @@ def parse_cli(argv):
                         help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DOS', 'WIN', 'ANY'")
     opt_parser.add_option("--quiet", action="store_true", dest="quiet",
                         help="Disable all warnings. Errors will be printed normally.")
+    opt_parser.add_option("-n", "--no-cache", action="store_true", dest="no_cache",
+                        help="Disable caching of sprites in .cache[index] files, which may reduce compilation time.")
     
     opts, args = opt_parser.parse_args(argv)
     
@@ -134,14 +136,14 @@ def main(argv):
         if not opts.outputfile_given and not outputs:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
-    if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop))
+    if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop, not opts.no_cache))
     if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename, opts.start_sprite_num))
     if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
 
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
-        if outext == '.grf': outputs.append(output_grf.OutputGRF(output, opts.compress, opts.crop))
+        if outext == '.grf': outputs.append(output_grf.OutputGRF(output, opts.compress, opts.crop, not opts.no_cache))
         elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output, opts.start_sprite_num))
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         elif outext == '.dep': outputs.append(output_dep.OutputDEP(output, opts.grf_filename))
