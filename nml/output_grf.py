@@ -383,41 +383,53 @@ class OutputGRF(output_base.BinaryOutputBase):
             return self.sprite_encode_tile(size_x, size_y, data, info, True)
         return output
 
+    def recompute_offsets(self, size_x, size_y, xoffset, yoffset, crop_rect):
+        # Recompute sizes and offsets after cropping a sprite
+        left, right, top, bottom = crop_rect
+        size_x -= left + right
+        size_y -= top + bottom
+        xoffset += left
+        yoffset += top
+        return size_x, size_y, xoffset, yoffset
+
     def crop_sprite(self, data, size_x, size_y, xoffset, yoffset, info):
+        left, right, top, bottom = 0, 0, 0, 0
         #Crop the top of the sprite
         while size_y > 1 and all(is_transparent(p, info) for p in data[0 : size_x]):
             data = data[size_x:]
+            top += 1
             size_y -= 1
-            yoffset += 1
 
         #Crop the bottom of the sprite
         while size_y > 1 and all(is_transparent(p, info) for p in data[-size_x:]):
             data = data[:-size_x]
+            bottom += 1
             size_y -= 1
 
         #Crop the left of the sprite
         while size_x > 1 and all(is_transparent(p, info) for p in data[::size_x]):
             del data[::size_x]
+            left += 1
             size_x -= 1
-            xoffset += 1
 
         #Crop the right of the sprite
         while size_x > 1 and all(is_transparent(p, info) for p in data[size_x-1::size_x]):
             del data[size_x-1::size_x]
+            right += 1
             size_x -= 1
 
-        return (data, size_x, size_y, xoffset, yoffset)
+        return (data, (left, right, top, bottom))
 
     def palconvert(self, sprite_data, orig_pal):
         if orig_pal == "WIN" and self.palette == "DOS":
             return (palmap_w2d[p] for p in sprite_data)
         return sprite_data
-        
 
     def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level):
         assert len(sprite_data) == size_x * size_y
         if self.crop_sprites and (info & INFO_NOCROP == 0):
-            sprite_data, size_x, size_y, xoffset, yoffset = self.crop_sprite(sprite_data, size_x, size_y, xoffset, yoffset, info)
+            sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, xoffset, yoffset, info)
+            size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
         assert len(sprite_data) == size_x * size_y
 
         compressed_data, data_len = self.sprite_compress(sprite_data)
