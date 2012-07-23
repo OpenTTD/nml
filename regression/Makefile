@@ -6,7 +6,7 @@ _E ?= @echo
 _SE ?= echo
 
 TEST_FILES = $(basename $(shell ls *.nml))
-NMLC ?= ../nmlc -s
+NMLC ?= ../nmlc -s -c
 
 .PHONY: $(TEST_FILES) clean
 
