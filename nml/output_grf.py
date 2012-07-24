@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import os, hashlib, itertools, json
+import array, hashlib, itertools, json, os
 from nml import generic, palette, output_base, lz77, grfstrings
 from nml.actions.real_sprite import palmap_w2d
 
@@ -47,9 +47,9 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
         self.enable_cache = enable_cache
-        self.data_output = []
-        self.sprite_output = []
-        self.cache_output = []
+        self.data_output = array.array('B')
+        self.sprite_output = array.array('B')
+        self.cache_output = array.array('B')
         self.cached_sprites = {}
         self.md5 = hashlib.md5()
         # sprite_num is deliberately off-by-one because it is used as an
@@ -114,8 +114,10 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         index_file = open(self.cache_index_filename, 'r')
         cache_file = open(self.cache_filename, 'rb')
-        cache_data = cache_file.read()
-        cache_size = len(cache_data)
+        cache_data = array.array('B')
+        cache_size = os.fstat(cache_file.fileno()).st_size
+        cache_data.fromfile(cache_file, cache_size)
+        assert cache_size == len(cache_data)
         self.cache_time = os.path.getmtime(self.cache_filename)
 
         try:
@@ -170,6 +172,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
                 self.cached_sprites[key] = value
         except:
+            raise
             generic.print_warning(self.cache_index_filename + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
             self.cached_sprites = {} # Clear cache
 
@@ -183,7 +186,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         """
         if not self.enable_cache: return
         index_data = []
-        sprite_data = []
+        sprite_data = array.array('B')
         offset = 0
 
         old_cache_valid = True
@@ -216,19 +219,18 @@ class OutputGRF(output_base.BinaryOutputBase):
             if do_crop: sprite['crop'] = tuple(crop_rect)
 
             index_data.append(sprite)
-            sprite_data.append(data)
+            sprite_data.extend(data)
             offset += size
 
         if old_cache_valid: return
 
         index_output = json.JSONEncoder(sort_keys = True).encode(index_data)
-        cache_output = ''.join(sprite_data)
 
         index_file = open(self.cache_index_filename, 'w')
         index_file.write(index_output)
         index_file.close()
         cache_file = open(self.cache_filename, 'w')
-        cache_file.write(cache_output)
+        sprite_data.tofile(cache_file)
         cache_file.close()
 
     def update_cache(self, key, info, crop):
@@ -245,9 +247,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         @type crop: C{tuple}, or C{None} if N/A
         """
         if not self.enable_cache: return
-        data = ''.join(self.cache_output)
-        self.cache_output = []
-        self.cached_sprites[key] = (data, info, crop, False, True)
+        self.cached_sprites[key] = (self.cache_output, info, crop, False, True)
+        self.cache_output = array.array('B')
 
     def open_image_file(self, filename):
         """
@@ -296,24 +297,23 @@ class OutputGRF(output_base.BinaryOutputBase):
         self._in_sprite = False
 
         #add header
-        header = ['\x00', '\x00', 'G', 'R', 'F', '\x82', '\x0D', '\x0A', '\x1A', '\x0A']
+        header = array.array('B', [0x00, 0x00, ord('G'), ord('R'), ord('F'), 0x82, 0x0D, 0x0A, 0x1A, 0x0A])
         size = len(self.data_output) + 1
-        header.append(chr(size & 0xFF))
-        header.append(chr((size >> 8) & 0xFF))
-        header.append(chr((size >> 16) & 0xFF))
-        header.append(chr(size >> 24))
-        header.append('\x00') #no compression
-        
-        for c in header:
-            self.file.write(c)
-            self.md5.update(c)
+        header.append(size & 0xFF)
+        header.append((size >> 8) & 0xFF)
+        header.append((size >> 16) & 0xFF)
+        header.append(size >> 24)
+        header.append(0) #no compression
+
+        header_str = header.tostring()
+        self.file.write(header_str)
+        self.md5.update(header_str)
 
         #add data section, and then the sprite section
-        for c in self.data_output:
-            self.file.write(c)
-            self.md5.update(c)
-        for c in self.sprite_output:
-            self.file.write(c)
+        data_str = self.data_output.tostring()
+        self.file.write(data_str)
+        self.md5.update(data_str)
+        self.file.write(self.sprite_output.tostring())
 
     def close(self):
         output_base.BinaryOutputBase.close(self)
@@ -324,18 +324,18 @@ class OutputGRF(output_base.BinaryOutputBase):
         Print a chunck of data in one go
 
         @param data: Data to output
-        @type data: C{str}
+        @type data: C{array}
 
         @param stream: Stream to output the data to
-        @type stream: C{list}
+        @type stream: C{array}
         """
         if stream is None: stream = self.data_output
-        stream.append(data)
+        stream.extend(data)
         self._byte_count += len(data)
 
     def wb(self, byte, stream):
         if stream is None: stream = self.data_output
-        stream.append(chr(byte))
+        stream.append(byte)
 
     def print_byte(self, value, stream = None):
         value = self.prepare_byte(value)
@@ -545,28 +545,25 @@ class OutputGRF(output_base.BinaryOutputBase):
 
     def fakecompress(self, data):
         i = 0
-        output = ""
-        while i < len(data):
-            l = min(len(data) - i, 127)
-            output += chr(l)
-            while l > 0:
-                output += data[i]
-                i += 1
-                l -= 1
+        output = array.array('B')
+        length = len(data)
+        while i < length:
+            n = min(length - i, 127)
+            output.append(n)
+            output.extend(data[i:i+n])
+            i += n
         return output
 
     def sprite_compress(self, data):
-        # Returns a compressed data stream and the UNcompressed length
-        data_str = ''.join(map(chr, itertools.chain.from_iterable(data)))
+        data_array = array.array('B', itertools.chain.from_iterable(data))
         if self.compress_grf:
-            lz = lz77.LZ77(data_str)
+            lz = lz77.LZ77(data_array)
             stream = lz.encode()
         else:
-            stream = self.fakecompress(data_str)
-        return stream, len(data_str)
+            stream = self.fakecompress(data_array)
+        return stream
 
     def wsprite_encoderegular(self, size_x, size_y, data, data_len, xoffset, yoffset, info, zoom_level):
-        # Data is already encoded as a string at this point
         chunked = info & INFO_TILE != 0
         size = len(data)
         if chunked:
@@ -716,15 +713,17 @@ class OutputGRF(output_base.BinaryOutputBase):
             crop_rect = None
         assert len(sprite_data) == size_x * size_y
 
-        compressed_data, data_len = self.sprite_compress(sprite_data)
+        compressed_data = self.sprite_compress(sprite_data)
+        data_len = len(sprite_data) #UNcompressed length
         # Try tile compression, and see if it results in a smaller file size
         tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info)
         if tile_data is not None:
-            tile_compressed_data, tile_data_len = self.sprite_compress(tile_data)
+            tile_compressed_data = self.sprite_compress(tile_data)
             # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
             if len(tile_compressed_data) + 4 < len(compressed_data):
                 info |= INFO_TILE
-                compressed_data, data_len = tile_compressed_data, tile_data_len
+                compressed_data = tile_compressed_data
+                data_len = len(tile_data)
         self.wsprite_encoderegular(size_x, size_y, compressed_data, data_len, xoffset, yoffset, info, zoom_level)
         self.update_cache(cache_key, info, crop_rect)
 

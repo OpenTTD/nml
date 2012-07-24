@@ -199,3 +199,4 @@ class BinaryOutputBase(OutputBase):
         self._in_sprite = False
         self.newline()
         assert self._expected_count == self._byte_count, "Expected %d bytes to be written to sprite, got %d" % (self._expected_count, self._byte_count)
+

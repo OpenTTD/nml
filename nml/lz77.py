@@ -13,11 +13,12 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import array
 
 class LZ77(object):
     def __init__(self, data):
         self.position = 0
-        self.stream = data
+        self.stream = data.tostring()
 
     def encode(self):
         output = ""
@@ -55,5 +56,5 @@ class LZ77(object):
         if len(literal_bytes) > 0:
             output += chr(len(literal_bytes))
             output += literal_bytes
-        return output
+        return array.array('B', output)
 
