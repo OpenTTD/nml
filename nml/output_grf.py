@@ -29,14 +29,24 @@ INFO_PAL    = 4
 INFO_TILE   = 8
 INFO_NOCROP = 0x40
 
-def is_transparent(p, info):
-    if (info & INFO_PAL) != 0:
-        if (info & INFO_ALPHA) != 0:
-            return p[-2] == 0
-        return p[-1] == 0
-    if (info & INFO_ALPHA) != 0:
-        return p[-1] == 0
-    return False
+def has_transparency(info):
+    return (info & (INFO_ALPHA | INFO_PAL)) != 0
+
+def transparency_offset(info):
+    """
+    Determine which byte within a pixel should be 0 for a pixel to be transparent
+    """
+    assert has_transparency(info)
+    # There is an alpha or palette component, or both, else no transparency at all
+    # Pixel is transparent if either:
+    # - alpha channel present and 0
+    # - palette present and 0, and alpha not present
+    # In either case, the pixel is transparent,
+    # if byte 3 (with RGB present) or byte 0 (without RGB) is 0
+    if (info & INFO_RGB) != 0:
+        return 3
+    else:
+        return 0
 
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename, compress_grf, crop_sprites, enable_cache):
@@ -594,6 +604,9 @@ class OutputGRF(output_base.BinaryOutputBase):
         # chunk format is used. If the sprite is more than 65536 bytes,
         # then the offsets might not fit and the long format method is
         # used. The latter is enabled via recursion if it's needed.
+        if not has_transparency(info):
+            return None
+        trans_offset = transparency_offset(info)
         max_chunk_len = 0x7fff if long_chunk else 0x7f
         data_output = []
         offsets = size_y * [0]
@@ -609,7 +622,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             x1 = 0
             while True:
                 # Skip transparent pixels
-                while x1 < size_x and is_transparent(row_data[x1], info):
+                while x1 < size_x and row_data[x1][trans_offset] == 0:
                     x1 += 1
                 if x1 == size_x:
                     # End-of-line reached
@@ -618,9 +631,9 @@ class OutputGRF(output_base.BinaryOutputBase):
                 # Grab as many non-transparent pixels as possible, but not without x2-x1 going out of bounds
                 x2 = x1 + 1
                 while x2 - x1 < max_chunk_len and (
-                        (x2 < size_x and not is_transparent(row_data[x2], info)) or
-                        (x2 + 1 < size_x and not is_transparent(row_data[x2 + 1], info)) or
-                        (x2 + 2 < size_x and not is_transparent(row_data[x2 + 2], info))):
+                        (x2 < size_x and row_data[x2][trans_offset] != 0) or
+                        (x2 + 1 < size_x and row_data[x2 + 1][trans_offset] != 0) or
+                        (x2 + 2 < size_x and row_data[x2 + 2][trans_offset] != 0)):
                     x2 += 1
                 line_parts.append((x1, x2))
                 x1 = x2
@@ -673,26 +686,30 @@ class OutputGRF(output_base.BinaryOutputBase):
 
     def crop_sprite(self, data, size_x, size_y, xoffset, yoffset, info):
         left, right, top, bottom = 0, 0, 0, 0
+        if not has_transparency(info):
+            return (data, (left, right, top, bottom))
+
+        trans_offset =  transparency_offset(info)
         #Crop the top of the sprite
-        while size_y > 1 and all(is_transparent(p, info) for p in data[0 : size_x]):
+        while size_y > 1 and all(p[trans_offset] == 0 for p in data[0 : size_x]):
             data = data[size_x:]
             top += 1
             size_y -= 1
 
         #Crop the bottom of the sprite
-        while size_y > 1 and all(is_transparent(p, info) for p in data[-size_x:]):
+        while size_y > 1 and all(p[trans_offset] == 0 for p in data[-size_x:]):
             data = data[:-size_x]
             bottom += 1
             size_y -= 1
 
         #Crop the left of the sprite
-        while size_x > 1 and all(is_transparent(p, info) for p in data[::size_x]):
+        while size_x > 1 and all(p[trans_offset] == 0 for p in data[::size_x]):
             del data[::size_x]
             left += 1
             size_x -= 1
 
         #Crop the right of the sprite
-        while size_x > 1 and all(is_transparent(p, info) for p in data[size_x-1::size_x]):
+        while size_x > 1 and all(p[trans_offset] == 0 for p in data[size_x-1::size_x]):
             del data[size_x-1::size_x]
             right += 1
             size_x -= 1
