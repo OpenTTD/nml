@@ -29,6 +29,13 @@ INFO_PAL    = 4
 INFO_TILE   = 8
 INFO_NOCROP = 0x40
 
+def get_bpp(info):
+    bpp = 0
+    if (info & INFO_RGB) != 0: bpp += 3
+    if (info & INFO_ALPHA) != 0: bpp += 1
+    if (info & INFO_PAL) != 0: bpp += 1
+    return bpp
+
 def has_transparency(info):
     return (info & (INFO_ALPHA | INFO_PAL)) != 0
 
@@ -107,7 +114,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         do_crop is a boolean indicating if this sprite has been cropped
 
         The value that this key maps to is a 5-tuple, containing:
-         - the sprite data (as a string)
+         - the sprite data (as a byte array)
          - The 'info' byte of the sprite
          - The cropping information (see above) (None if 'do_crop' in the key is false)
          - Whether the sprite exists in the old (loaded)cache
@@ -565,12 +572,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         return output
 
     def sprite_compress(self, data):
-        data_array = array.array('B', itertools.chain.from_iterable(data))
         if self.compress_grf:
-            lz = lz77.LZ77(data_array)
+            lz = lz77.LZ77(data)
             stream = lz.encode()
         else:
-            stream = self.fakecompress(data_array)
+            stream = self.fakecompress(data)
         return stream
 
     def wsprite_encoderegular(self, size_x, size_y, data, data_len, xoffset, yoffset, info, zoom_level):
@@ -595,7 +601,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.wsprite_header(size_x, size_y, len(data), xoffset, yoffset, info, zoom_level, False)
         self.print_data(data, self.sprite_output)
 
-    def sprite_encode_tile(self, size_x, size_y, data, info, long_format = False):
+    def sprite_encode_tile(self, size_x, size_y, data, info, bpp, long_format = False):
         long_chunk = size_x > 256
 
         # There are basically four different encoding configurations here,
@@ -608,32 +614,37 @@ class OutputGRF(output_base.BinaryOutputBase):
             return None
         trans_offset = transparency_offset(info)
         max_chunk_len = 0x7fff if long_chunk else 0x7f
-        data_output = []
-        offsets = size_y * [0]
-        total_length = (4 if long_format else 2) * size_y
-        bpp = len(data[0])
+        line_offset_size = 4 if long_format else 2 # Whether to use 2 or 4 bytes in the list of line offsets
+        output = array.array('B', [0] * (line_offset_size * size_y))
 
         for y in range(size_y):
-            offsets[y] = total_length
-            row_data = data[y*size_x : (y+1)*size_x]
-            assert size_x == len(row_data)
+            # Write offset in the correct place, in little-endian format
+            offset = len(output)
+            output[y*line_offset_size] = offset & 0xFF
+            output[y*line_offset_size + 1] = (offset >> 8) & 0xFF
+            if long_format:
+                output[y*line_offset_size + 2] = (offset >> 16) & 0xFF
+                output[y*line_offset_size + 3] = (offset >> 24) & 0xFF
+
+            line_start = y*size_x*bpp
 
             line_parts = []
             x1 = 0
             while True:
                 # Skip transparent pixels
-                while x1 < size_x and row_data[x1][trans_offset] == 0:
+                while x1 < size_x and data[line_start + x1*bpp + trans_offset] == 0:
                     x1 += 1
                 if x1 == size_x:
                     # End-of-line reached
                     break
 
                 # Grab as many non-transparent pixels as possible, but not without x2-x1 going out of bounds
+                # Only stop the chunck when encountering 3 consectutive transparent pixels
                 x2 = x1 + 1
                 while x2 - x1 < max_chunk_len and (
-                        (x2 < size_x and row_data[x2][trans_offset] != 0) or
-                        (x2 + 1 < size_x and row_data[x2 + 1][trans_offset] != 0) or
-                        (x2 + 2 < size_x and row_data[x2 + 2][trans_offset] != 0)):
+-                        (x2 < size_x and data[line_start + x2*bpp + trans_offset] != 0) or
+-                        (x2 + 1 < size_x and data[line_start + (x2+1)*bpp + trans_offset] != 0) or
+-                        (x2 + 2 < size_x and data[line_start + (x2+2)*bpp + trans_offset] != 0)):
                     x2 += 1
                 line_parts.append((x1, x2))
                 x1 = x2
@@ -641,11 +652,9 @@ class OutputGRF(output_base.BinaryOutputBase):
             if len(line_parts) == 0:
                 # Completely transparant line
                 if long_chunk:
-                    data_output.append((0, 0x80, 0, 0))
-                    total_length += 4
+                    output.extend((0, 0x80, 0, 0))
                 else:
-                    data_output.append((0x80, 0))
-                    total_length += 2
+                    output.extend((0x80, 0))
                 continue
 
             for idx, part in enumerate(line_parts):
@@ -653,26 +662,17 @@ class OutputGRF(output_base.BinaryOutputBase):
                 last_mask = 0x80 if idx == len(line_parts) - 1 else 0
                 chunk_len = x2 - x1
                 if long_chunk:
-                    data_output.append((chunk_len & 0xFF,
+                    output.extend((chunk_len & 0xFF,
                                        (chunk_len >> 8) | last_mask,
                                        x1 & 0xFF,
                                        x1 >> 8))
-                    total_length += 4
                 else:
-                    data_output.append((chunk_len | last_mask, x1))
-                    total_length += 2
-                data_output.extend(row_data[x1 : x2])
-                total_length += bpp * (x2 - x1)
- 
-        output = []
-        for offset in offsets:
-            output.append([offset & 0xFF, (offset >> 8) & 0xFF])
-            if long_format:
-                output.append([(offset >> 16) & 0xFF, (offset >> 24) & 0xFF])
-        output += data_output
-        if total_length > 65535 and not long_format:
+                    output.extend((chunk_len | last_mask, x1))
+                output.extend(data[line_start + x1*bpp : line_start + x2*bpp])
+
+        if len(output) > 65535 and not long_format:
             # Recurse into the long format if that's possible.
-            return self.sprite_encode_tile(size_x, size_y, data, info, True)
+            return self.sprite_encode_tile(size_x, size_y, data, info, bpp, True)
         return output
 
     def recompute_offsets(self, size_x, size_y, xoffset, yoffset, crop_rect):
@@ -684,35 +684,47 @@ class OutputGRF(output_base.BinaryOutputBase):
         yoffset += top
         return size_x, size_y, xoffset, yoffset
 
-    def crop_sprite(self, data, size_x, size_y, xoffset, yoffset, info):
+    def crop_sprite(self, data, size_x, size_y, info, bpp):
         left, right, top, bottom = 0, 0, 0, 0
         if not has_transparency(info):
             return (data, (left, right, top, bottom))
 
         trans_offset =  transparency_offset(info)
+        line_size = size_x * bpp # size (no. of bytes) of a scan line
+        data_size = len(data)
+
         #Crop the top of the sprite
-        while size_y > 1 and all(p[trans_offset] == 0 for p in data[0 : size_x]):
-            data = data[size_x:]
+        while size_y > 1 and not any(data[line_size * top + trans_offset : line_size * (top+1) : bpp]):
             top += 1
             size_y -= 1
 
         #Crop the bottom of the sprite
-        while size_y > 1 and all(p[trans_offset] == 0 for p in data[-size_x:]):
-            data = data[:-size_x]
+        while size_y > 1 and not any(data[data_size - line_size * (bottom+1) + trans_offset : data_size - line_size * bottom : bpp]):
+            # Don't use negative indexing, it breaks for the last line (where you'd need index 0)
             bottom += 1
             size_y -= 1
 
+        #Modify data by removing top/bottom
+        data = data[line_size * top : data_size - line_size * bottom]
+
         #Crop the left of the sprite
-        while size_x > 1 and all(p[trans_offset] == 0 for p in data[::size_x]):
-            del data[::size_x]
+        while size_x > 1 and not any(data[left * bpp + trans_offset : : line_size]):
             left += 1
             size_x -= 1
 
         #Crop the right of the sprite
-        while size_x > 1 and all(p[trans_offset] == 0 for p in data[size_x-1::size_x]):
-            del data[size_x-1::size_x]
+        while size_x > 1 and not any(data[line_size - (right+1) * bpp + trans_offset : : line_size]):
             right += 1
             size_x -= 1
+
+        #Removing left/right data is not easily done by slicing
+        #Best to create a new array
+        if left + right > 0:
+            new_data = array.array('B')
+            for y in xrange(0, size_y):
+                a = data[y*line_size + left*bpp : (y+1)*line_size - right*bpp]
+                new_data.extend(a)
+            data = new_data
 
         return (data, (left, right, top, bottom))
 
@@ -722,18 +734,20 @@ class OutputGRF(output_base.BinaryOutputBase):
         return sprite_data
 
     def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, cache_key):
-        assert len(sprite_data) == size_x * size_y
+        sprite_data = array.array('B', itertools.chain.from_iterable(sprite_data))
+        bpp = get_bpp(info)
+        assert len(sprite_data) == size_x * size_y * bpp
         if self.crop_sprites and (info & INFO_NOCROP == 0):
-            sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, xoffset, yoffset, info)
+            sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, info, bpp)
             size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
         else:
             crop_rect = None
-        assert len(sprite_data) == size_x * size_y
+        assert len(sprite_data) == size_x * size_y * bpp
 
         compressed_data = self.sprite_compress(sprite_data)
         data_len = len(sprite_data) #UNcompressed length
         # Try tile compression, and see if it results in a smaller file size
-        tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info)
+        tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info, bpp)
         if tile_data is not None:
             tile_compressed_data = self.sprite_compress(tile_data)
             # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
