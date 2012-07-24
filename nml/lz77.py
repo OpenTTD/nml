@@ -17,44 +17,45 @@ import array
 
 class LZ77(object):
     def __init__(self, data):
-        self.position = 0
         self.stream = data.tostring()
 
     def encode(self):
-        output = ""
-        literal_bytes = ""
-        while self.position < len(self.stream):
+        position = 0
+        output = array.array('B')
+        literal_bytes = array.array('B')
+        stream_len = len(self.stream)
+
+        while position < stream_len:
             overlap_len = 0
+            start_pos =  max(0, position - (1 << 11) + 1)
             # Loop through the lookahead buffer.
-            for i in range(3, min(len(self.stream) - self.position + 1, 16)):
+            for i in xrange(3, min(stream_len - position + 1, 16)):
                 # Set pattern to find the longest match.
-                pattern = self.stream[self.position:self.position+i]
+                pattern = self.stream[position:position+i]
                 # Find the pattern match in the window.
-                start_pos = max(0, self.position - (1 << 11) + 1)
-                result = self.stream.find(pattern, start_pos, self.position)
+                result = self.stream.find(pattern, start_pos, position)
                 # If match failed, we've found the longest.
                 if result < 0: break
-                p = self.position - result
+                p = position - result
                 overlap_len = i
             if overlap_len > 0:
                 if len(literal_bytes) > 0:
-                    output += chr(len(literal_bytes))
-                    output += literal_bytes
-                    literal_bytes = ""
+                    output.append(len(literal_bytes))
+                    output.extend(literal_bytes)
+                    literal_bytes = array.array('B')
                 val = ((-overlap_len) << 3) & 0xFF | (p >> 8)
-                if val < 0: val += 256
-                output += chr(val)
-                output += chr(p & 0xFF)
-                self.position += overlap_len
+                output.append(val)
+                output.append(p & 0xFF)
+                position += overlap_len
             else:
-                literal_bytes += self.stream[self.position]
+                literal_bytes.append(ord(self.stream[position]))
                 if len(literal_bytes) == 0x80:
-                    output += chr(0)
-                    output += literal_bytes
-                    literal_bytes = ""
-                self.position += 1
+                    output.append(0)
+                    output.extend(literal_bytes)
+                    literal_bytes = array.array('B')
+                position += 1
         if len(literal_bytes) > 0:
-            output += chr(len(literal_bytes))
-            output += literal_bytes
-        return array.array('B', output)
+            output.append(len(literal_bytes))
+            output.extend(literal_bytes)
+        return output
 
