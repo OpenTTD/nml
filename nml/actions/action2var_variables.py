@@ -45,8 +45,6 @@ def default_60xvar(name, args, pos, info):
     """
     if len(args) != 1:
         raise generic.ScriptError("'%s'() requires one argument, encountered %d" % (name, len(args)), pos)
-    if isinstance(args[0], expression.ConstantNumeric):
-        generic.check_range(args[0].value, 0, 255, "Argument of '%s'" % name, args[0].pos)
     return (args[0], [])
 
 def signextend(var, info):
@@ -263,8 +261,6 @@ varact2vars_industries = {
 def industry_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
         raise generic.ScriptError("'%s'() requires between 1 and 2 argument(s), encountered %d" % (name, len(args)), pos)
-    if isinstance(args[0], expression.ConstantNumeric):
-        generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
     extra_params = [(0x100, grfid)]
@@ -275,8 +271,6 @@ def industry_count(name, args, pos, info):
 def industry_layout_count(name, args, pos, info):
     if len(args) < 2 or len(args) > 3:
         raise generic.ScriptError("'%s'() requires between 2 and 3 argument(s), encountered %d" % (name, len(args)), pos)
-    if isinstance(args[0], expression.ConstantNumeric):
-        generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 2 else args[2]
 
@@ -288,14 +282,12 @@ def industry_layout_count(name, args, pos, info):
 def industry_town_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
         raise generic.ScriptError("'%s'() requires between 1 and 2 argument(s), encountered %d" % (name, len(args)), pos)
-    if isinstance(args[0], expression.ConstantNumeric):
-        generic.check_range(args[0].value, 0, 255, "First argument of '%s'" % name, args[0].pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
 
     extra_params = []
     extra_params.append( (0x100, grfid) )
-    extra_params.append( (0x101, expression.ConstantNumeric(0x0100).reduce()) )
+    extra_params.append( (0x101, expression.ConstantNumeric(0x0100)) )
     return (args[0], extra_params)
 
 varact2vars60x_industries = {

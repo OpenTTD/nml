@@ -645,7 +645,7 @@ def parse_60x_var(name, args, pos, info):
         # Default function to extract parameters
         param, extra_params = action2var_variables.default_60xvar(name, args, pos, info)
 
-    if isinstance(param, expression.ConstantNumeric):
+    if isinstance(param, expression.ConstantNumeric) and (0 <= param.value <= 255):
         var = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), \
                 expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
 
