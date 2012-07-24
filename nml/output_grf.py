@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import array, hashlib, itertools, json, os
 from nml import generic, palette, output_base, lz77, grfstrings
-from nml.actions.real_sprite import palmap_w2d
+from nml.actions.real_sprite import translate_w2d
 
 try:
     import Image
@@ -530,17 +530,25 @@ class OutputGRF(output_base.BinaryOutputBase):
                 image_pos = generic.PixelPosition(filename_8bpp.value, x, y)
                 generic.print_warning("%s: %i of %i pixels (%i%%) are pure white" % (str(image_pos), white_pixels, pixels, white_pixels * 100 / pixels), filename_8bpp.pos)
 
-            mask_sprite_data = self.palconvert(mask_sprite.getdata(), im_mask_pal)
+            mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)
 
-        # Compose pixel information (each pixel is a tuple)
-        if (info_byte & INFO_ALPHA) != 0 and (info_byte & INFO_PAL) != 0:
-            sprite_data = [(x[0][0], x[0][1], x[0][2], x[0][3], x[1]) for x in zip(sprite.getdata(), mask_sprite_data)]
-        elif (info_byte & INFO_RGB) != 0 and (info_byte & INFO_PAL) != 0:
-            sprite_data = [(x[0][0], x[0][1], x[0][2], x[1]) for x in zip(sprite.getdata(), mask_sprite_data)]
+        # Compose pixel information in an array of bytes
+        sprite_data = array.array('B')
+        if (info_byte & INFO_RGB) != 0 and (info_byte & INFO_PAL) != 0:
+            mask_data = array.array('B', mask_sprite_data) # Convert to numeric
+            rgb_data = array.array('B', sprite.tostring())
+            if (info_byte & INFO_ALPHA) != 0:
+                for i in xrange(len(mask_sprite_data)):
+                    sprite_data.extend(rgb_data[4*i:4*(i+1)])
+                    sprite_data.append(mask_data[i])
+            else:
+                for i in xrange(len(mask_sprite_data)):
+                    sprite_data.extend(rgb_data[3*i:3*(i+1)])
+                    sprite_data.append(mask_data[i])
         elif (info_byte & INFO_RGB) != 0:
-            sprite_data = [tuple(x) for x in sprite.getdata()]
+            sprite_data.fromstring(sprite.tostring())
         else:
-            sprite_data = [(x,) for x in mask_sprite_data]
+            sprite_data.fromstring(mask_sprite_data)
         self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, cache_key)
 
     def print_empty_realsprite(self):
@@ -728,13 +736,13 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         return (data, (left, right, top, bottom))
 
-    def palconvert(self, sprite_data, orig_pal):
+    def palconvert(self, sprite_str, orig_pal):
         if orig_pal == "WIN" and self.palette == "DOS":
-            return (palmap_w2d[p] for p in sprite_data)
-        return sprite_data
+            return sprite_str.translate(translate_w2d)
+        else:
+            return sprite_str
 
     def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, cache_key):
-        sprite_data = array.array('B', itertools.chain.from_iterable(sprite_data))
         bpp = get_bpp(info)
         assert len(sprite_data) == size_x * size_y * bpp
         if self.crop_sprites and (info & INFO_NOCROP == 0):

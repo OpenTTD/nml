@@ -88,6 +88,9 @@ palmap_w2d = [
         220, 221, 222, 223, 224, 225, 226, 255, # 248..255
 ]
 
+translate_w2d = ''.join(map(chr, palmap_w2d))
+translate_d2w = ''.join(map(chr, palmap_d2w))
+
 def convert_palette(pal):
     ret = 256 * [0]
     for idx, colour in enumerate(pal):
