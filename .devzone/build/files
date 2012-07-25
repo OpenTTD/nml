@@ -4,4 +4,3 @@ R;%{RPMBUILDDIR}/RPMS/noarch/nml-*.noarch.rpm
 %{BUILD}/docs/changelog.txt
 %{BUILD}/docs/readme.txt
 %{BUILD}/regression/output/*.grf
-%{BUILD}/regression/output2/*.grf
