@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import array, hashlib, itertools, json, os
+import array, hashlib, itertools, json, os, sys
 from nml import generic, palette, output_base, lz77, grfstrings
 from nml.actions.real_sprite import translate_w2d
 
@@ -695,65 +695,65 @@ class OutputGRF(output_base.BinaryOutputBase):
     def crop_sprite(self, data, size_x, size_y, info, bpp):
         left, right, top, bottom = 0, 0, 0, 0
         if not has_transparency(info):
-            print "Info byte %d does not have transparency, aborting" % info
+            print >> sys.stderr, "Info byte %d does not have transparency, aborting" % info
             return (data, (left, right, top, bottom))
 
         trans_offset =  transparency_offset(info)
-        print "Info byte %d does have transparency, trans_offset=%d." % (info, trans_offset)
+        print >> sys.stderr, "Info byte %d does have transparency, trans_offset=%d." % (info, trans_offset)
         line_size = size_x * bpp # size (no. of bytes) of a scan line
         data_size = len(data)
-        print "Image size %d*%d, data size = %d, line size = %d." % (size_x, size_y, data_size, line_size)
-        print "Raw image data:", data
+        print >> sys.stderr, "Image size %d*%d, data size = %d, line size = %d." % (size_x, size_y, data_size, line_size)
+        print >> sys.stderr, "Raw image data:", data
 
         #Crop the top of the sprite
-        print "TOP"
+        print >> sys.stderr, "TOP"
         while size_y > 1 and not any(data[line_size * top + trans_offset : line_size * (top+1) : bpp]):
-            print "Cropping line data[%d:%d:%d] = %s" % (line_size * top + trans_offset , line_size * (top+1) , bpp , data[line_size * top + trans_offset : line_size * (top+1) : bpp])
+            print >> sys.stderr, "Cropping line data[%d:%d:%d] = %s" % (line_size * top + trans_offset , line_size * (top+1) , bpp , data[line_size * top + trans_offset : line_size * (top+1) : bpp])
             top += 1
             size_y -= 1
-        print "Stopped cropping at line data[%d:%d:%d] = %s" % (line_size * top + trans_offset , line_size * (top+1) , bpp , data[line_size * top + trans_offset : line_size * (top+1) : bpp])
+        print >> sys.stderr, "Stopped cropping at line data[%d:%d:%d] = %s" % (line_size * top + trans_offset , line_size * (top+1) , bpp , data[line_size * top + trans_offset : line_size * (top+1) : bpp])
 
-        print "BOTTOM"
+        print >> sys.stderr, "BOTTOM"
         #Crop the bottom of the sprite
         while size_y > 1 and not any(data[data_size - line_size * (bottom+1) + trans_offset : data_size - line_size * bottom : bpp]):
-            print "Cropping line data[%d:%d:%d] = %s" % (data_size - line_size * (bottom+1) + trans_offset , data_size - line_size * bottom , bpp, data[data_size - line_size * (bottom+1) + trans_offset : data_size - line_size * bottom : bpp])
+            print >> sys.stderr, "Cropping line data[%d:%d:%d] = %s" % (data_size - line_size * (bottom+1) + trans_offset , data_size - line_size * bottom , bpp, data[data_size - line_size * (bottom+1) + trans_offset : data_size - line_size * bottom : bpp])
             # Don't use negative indexing, it breaks for the last line (where you'd need index 0)
             bottom += 1
             size_y -= 1
-        print "Stopped cropping at line data[%d:%d:%d] = %s" % (data_size - line_size * (bottom+1) + trans_offset , data_size - line_size * bottom , bpp, data[data_size - line_size * (bottom+1) + trans_offset : data_size - line_size * bottom : bpp])
+        print >> sys.stderr, "Stopped cropping at line data[%d:%d:%d] = %s" % (data_size - line_size * (bottom+1) + trans_offset , data_size - line_size * bottom , bpp, data[data_size - line_size * (bottom+1) + trans_offset : data_size - line_size * bottom : bpp])
 
         #Modify data by removing top/bottom
-        print "REMOVE TOP/BOTTOM DATA"
+        print >> sys.stderr, "REMOVE TOP/BOTTOM DATA"
         data = data[line_size * top : data_size - line_size * bottom]
-        print "New data (size=%d):" % len(data), data
+        print >> sys.stderr, "New data (size=%d):" % len(data), data
 
         #Crop the left of the sprite
-        print "LEFT"
+        print >> sys.stderr, "LEFT"
         while size_x > 1 and not any(data[left * bpp + trans_offset : : line_size]):
-            print "Cropping line data[%d::%d] = %s" % (left * bpp + trans_offset , line_size, data[left * bpp + trans_offset : : line_size])
+            print >> sys.stderr, "Cropping line data[%d::%d] = %s" % (left * bpp + trans_offset , line_size, data[left * bpp + trans_offset : : line_size])
             left += 1
             size_x -= 1
-        print "Stopped cropping line data[%d::%d] = %s" % (left * bpp + trans_offset , line_size, data[left * bpp + trans_offset : : line_size])
+        print >> sys.stderr, "Stopped cropping line data[%d::%d] = %s" % (left * bpp + trans_offset , line_size, data[left * bpp + trans_offset : : line_size])
 
         #Crop the right of the sprite
-        print "RIGHT"
+        print >> sys.stderr, "RIGHT"
         while size_x > 1 and not any(data[line_size - (right+1) * bpp + trans_offset : : line_size]):
-            print "Cropping line data[%d::%d] = %s" % (line_size - (right+1) * bpp + trans_offset , line_size, data[line_size - (right+1) * bpp + trans_offset : : line_size])
+            print >> sys.stderr, "Cropping line data[%d::%d] = %s" % (line_size - (right+1) * bpp + trans_offset , line_size, data[line_size - (right+1) * bpp + trans_offset : : line_size])
             right += 1
             size_x -= 1
-        print "Stopped cropping line data[%d::%d] = %s" % (line_size - (right+1) * bpp + trans_offset , line_size, data[line_size - (right+1) * bpp + trans_offset : : line_size])
+        print >> sys.stderr, "Stopped cropping line data[%d::%d] = %s" % (line_size - (right+1) * bpp + trans_offset , line_size, data[line_size - (right+1) * bpp + trans_offset : : line_size])
 
         #Removing left/right data is not easily done by slicing
         #Best to create a new array
         if left + right > 0:
-            print "REMOVE LEFT/RIGHT DATA"
+            print >> sys.stderr, "REMOVE LEFT/RIGHT DATA"
             new_data = array.array('B')
             for y in xrange(0, size_y):
                 a = data[y*line_size + left*bpp : (y+1)*line_size - right*bpp]
                 new_data.extend(a)
             data = new_data
-            print "New data (size=%d):" % len(data), data
-        print "Final cropping rect: (left=%d, right=%d, top=%d, bottom=%d)" % (left, right, top, bottom)
+            print >> sys.stderr, "New data (size=%d):" % len(data), data
+        print >> sys.stderr, "Final cropping rect: (left=%d, right=%d, top=%d, bottom=%d)" % (left, right, top, bottom)
 
         return (data, (left, right, top, bottom))
 
@@ -767,7 +767,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         bpp = get_bpp(info)
         assert len(sprite_data) == size_x * size_y * bpp
         if self.crop_sprites and (info & INFO_NOCROP == 0):
-            print "----- Cropping sprite with key: ", cache_key
+            print >> sys.stderr, "----- Cropping sprite with key: ", cache_key
             sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, info, bpp)
             size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
         else:
