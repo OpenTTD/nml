@@ -126,6 +126,43 @@ def get_tmp_parameter(expr):
     actions = parse_actionD(ParameterAssignment(expression.Parameter(expression.ConstantNumeric(param)), expr))
     return (param, actions)
 
+def write_action_value(expr, action_list, act6, offset, size):
+    """
+    Write a single numeric value that is part of an action
+    Possibly use action6 and/or actionD if needed
+
+    @param expr: Expression to write
+    @type expr: L{Expression}
+
+    @param action_list: Action list to append any extra actions to
+    @type action_list: C{list} of L{BaseAction}
+
+    @param act6: Action6 to append any modifications to
+    @type act6: L{Action6}
+
+    @param offset: Offset to use for the action 6 (if applicable)
+    @type offset: C{int}
+
+    @param size: Size to use for the action 6 (if applicable)
+    @type size: C{int}
+
+    @return: 2-tuple containing -
+        - the value to be used when writing the action (0 if overwritten by action 6)
+        - the offset just past this numeric value (=offset + size)
+    @rtype: C{tuple} of (L{ConstantNumeric}, C{int})
+    """
+    if isinstance(expr, expression.ConstantNumeric):
+        result = expr
+    elif isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric):
+        act6.modify_bytes(expr.num.value, size, offset)
+        result = expression.ConstantNumeric(0)
+    else:
+        tmp_param, tmp_param_actions = get_tmp_parameter(expr)
+        action_list.extend(tmp_param_actions)
+        act6.modify_bytes(tmp_param, size, offset)
+        result = expression.ConstantNumeric(0)
+    return result, offset + size
+
 def parse_ternary_op(assignment):
     assert isinstance(assignment.value, expression.TernaryOp)
     actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr2))
