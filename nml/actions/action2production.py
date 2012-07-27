@@ -75,17 +75,10 @@ def get_production_actions(produce):
     varact2parser = action2var.Varaction2Parser(0x0A)
     if all(map(lambda x: x.supported_by_actionD(False), produce.param_list)):
         version = 0
+        offset = 1
         for i, param in enumerate(produce.param_list):
-            if isinstance(param, expression.ConstantNumeric):
-                result_list.append(param.value)
-            else:
-                if isinstance(param, expression.Parameter) and isinstance(param.num, expression.ConstantNumeric):
-                    param_num = param.num.value
-                else:
-                    param_num, tmp_param_actions = actionD.get_tmp_parameter(param)
-                    action_list.extend(tmp_param_actions)
-                act6.modify_bytes(param_num, 2 if i < 5 else 1, 1 + 2 * i)
-                result_list.append(0)
+            result, offset = actionD.write_action_value(param, action_list, act6, offset, 2 if i < 5 else 1)
+            result_list.append(result.value)
     else:
         version = 1
         for i, param in enumerate(produce.param_list):

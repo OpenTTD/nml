@@ -164,7 +164,7 @@ def get_string_action4s(feature, string_range, string, id = None):
             id_val = id.value
         id_val = id_val | (string_range << 8)
     else:
-        # Not a string range, so we must have an idea
+        # Not a string range, so we must have an id
         assert id is not None
         size = 3 if feature <= 3 else 1
         if isinstance(id, expression.ConstantNumeric):

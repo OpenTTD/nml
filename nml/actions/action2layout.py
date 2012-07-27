@@ -431,21 +431,14 @@ def get_layout_action2s(spritelayout, feature):
 
     offset = 4
     sprite_num = ground_sprite.get_sprite_number()
-    if not isinstance(sprite_num, expression.ConstantNumeric):
-        param, extra_actions = actionD.get_tmp_parameter(sprite_num)
-        actions.extend(extra_actions)
-        act6.modify_bytes(param, 4, offset)
-    offset += 4
+    sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
     offset += ground_sprite.get_registers_size()
 
     for sprite in building_sprites:
         sprite_num = sprite.get_sprite_number()
-        if not isinstance(sprite_num, expression.ConstantNumeric):
-            param, extra_actions = actionD.get_tmp_parameter(sprite_num)
-            actions.extend(extra_actions)
-            act6.modify_bytes(param, 4, offset)
+        sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
         offset += sprite.get_registers_size()
-        offset += 7 if sprite.type == Action2LayoutSpriteType.CHILD else 10
+        offset += 3 if sprite.type == Action2LayoutSpriteType.CHILD else 6
 
     if len(act6.modifications) > 0:
         actions.append(act6)

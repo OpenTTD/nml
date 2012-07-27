@@ -71,16 +71,7 @@ def parse_error_block(error):
     action_list = []
     act6 = action6.Action6()
 
-    if isinstance(error.severity, expression.ConstantNumeric):
-        severity = error.severity
-    elif isinstance(error.severity, expression.Parameter) and isinstance(error.severity.num, expression.ConstantNumeric):
-        act6.modify_bytes(error.severity.num.value, 1, 1)
-        severity = expression.ConstantNumeric(0)
-    else:
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(error.severity)
-        action_list.extend(tmp_param_actions)
-        act6.modify_bytes(tmp_param, 1, 1)
-        severity = expression.ConstantNumeric(0)
+    severity = actionD.write_action_value(error.severity, action_list, act6, 1, 1)[0]
 
     langs = [0x7F]
     if isinstance(error.msg, expression.String):

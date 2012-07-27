@@ -26,6 +26,9 @@ class Action3(base_action.BaseAction):
     @ivar id: Item ID of the item that this action3 represents.
     @type id: C{int}
 
+    @ivar is_livery_override: Whether this action 3 is a livery override
+    @type is_livery_override: C{bool}
+
     @ivar cid_mappings: List of mappings that map cargo IDs to Action2s.
     @type cid_mappings: C{list} of C{tuple}: (C{int}, L{Expression} before prepare_output, C{int} afterwards, C{str})
 
@@ -35,9 +38,10 @@ class Action3(base_action.BaseAction):
     @ivar references: All Action2s that are referenced by this Action3.
     @type references: C{list} of L{Action2Reference}
     """
-    def __init__(self, feature, id):
+    def __init__(self, feature, id, is_livery_override):
         self.feature = feature
         self.id = id
+        self.is_livery_override = is_livery_override
         self.cid_mappings = []
         self.references = []
 
@@ -189,19 +193,13 @@ def create_cb_choice_varaction2(feature, var_num, and_mask, mapping, default):
     return create_intermediate_varaction2(feature, varact2parser, mapping, default)
 
 def create_action3(feature, id, action_list, act6, is_livery_override):
-    if isinstance(id, expression.ConstantNumeric):
-        act3 = Action3(feature, id.value)
-    else:
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
-        # Vehicles use an extended byte
-        size = 2 if feature <= 3 else 1
-        offset = 4 if feature <= 3 else 3
-        act6.modify_bytes(tmp_param, size, offset)
-        action_list.extend(tmp_param_actions)
-        act3 = Action3(feature, 0)
+    # Vehicles use an extended byte
+    size = 2 if feature <= 3 else 1
+    offset = 4 if feature <= 3 else 3
 
-    act3.is_livery_override = is_livery_override
-    return act3
+    id, offset = actionD.write_action_value(id, action_list, act6, offset, size)
+    return Action3(feature, id.value, is_livery_override)
+
 
 def parse_graphics_block(graphics_block, feature, id, is_livery_override = False):
     action6.free_parameters.save()

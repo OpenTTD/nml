@@ -121,18 +121,10 @@ def create_action0(feature, id, act6, action_list):
         offset = 4
         size = 1
 
-    id_val = 0
-    if isinstance(id, expression.ConstantNumeric):
-        id_val = id.value
-    elif isinstance(id, expression.Parameter) and isinstance(id.num, expression.ConstantNumeric):
-        act6.modify_bytes(id.num.value, size, offset)
-    else:
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
-        act6.modify_bytes(tmp_param, size, offset)
-        action_list.extend(tmp_param_actions)
+    id, offset = actionD.write_action_value(id, action_list, act6, offset, size)
 
-    action0 = Action0(feature, id_val)
-    return (action0, offset + size)
+    action0 = Action0(feature, id.value)
+    return (action0, offset)
 
 def get_property_info_list(feature, name):
     """

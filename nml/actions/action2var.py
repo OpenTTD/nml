@@ -684,22 +684,11 @@ def parse_minmax(value, unit_str, action_list, act6, offset):
                 - Whether the resulting range may need a sanity check
     @rtype: C{tuple} of (L{ConstantNumeric} or L{SpriteGroupRef}), C{bool}
     """
-    check_range = True
     if unit_str is not None:
         raise generic.ScriptError("Using a unit is in switch-ranges is not (temporarily) not supported", value.pos)
-    elif isinstance(value, expression.ConstantNumeric):
-        result = value
-    elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
-        act6.modify_bytes(value.num.value, 4, offset)
-        result = expression.ConstantNumeric(0)
-        check_range = False
-    else:
-        tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
-        action_list.extend(tmp_param_actions)
-        act6.modify_bytes(tmp_param, 4, offset)
-        result = expression.ConstantNumeric(0)
-        check_range = False
-    return (result, check_range)
+    result, offset = actionD.write_action_value(value, action_list, act6, offset, 4)
+    check_range = isinstance(value, expression.ConstantNumeric)
+    return (result, offset, check_range)
 
 return_action_id = 0
 
@@ -997,10 +986,8 @@ def parse_varaction2(switch_block):
         comment += range_comment
         offset += 2 # size of result
 
-        range_min, check_min = parse_minmax(r.min, r.unit, action_list, act6, offset)
-        offset += 4
-        range_max, check_max = parse_minmax(r.max, r.unit, action_list, act6, offset)
-        offset += 4
+        range_min, offset, check_min = parse_minmax(r.min, r.unit, action_list, act6, offset)
+        range_max, offset, check_max = parse_minmax(r.max, r.unit, action_list, act6, offset)
 
         range_overlap = False
         if check_min and check_max:

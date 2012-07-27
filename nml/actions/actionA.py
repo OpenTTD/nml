@@ -45,25 +45,18 @@ def parse_actionA(replaces):
     @param replaces: Replace-block to parse.
     @type  replaces: L{ReplaceSprite}
     """
-    real_sprite_list = real_sprite.parse_sprite_data(replaces)
     action_list = []
+    action6.free_parameters.save()
+    act6 = action6.Action6()
 
-    if isinstance(replaces.start_id, expression.ConstantNumeric):
-        sprite_num = replaces.start_id.value
-    else:
-        action6.free_parameters.save()
-        if isinstance(replaces.start_id, expression.Parameter) and isinstance(replaces.start_id.num, expression.ConstantNumeric):
-            param_num = replaces.start_id.num.value
-        else:
-            param_num, tmp_param_actions = actionD.get_tmp_parameter(replaces.start_id)
-            action_list.extend(tmp_param_actions)
-        act6 = action6.Action6()
-        act6.modify_bytes(param_num, 2, 3)
+    real_sprite_list = real_sprite.parse_sprite_data(replaces)
+    sprite_num, offset = actionD.write_action_value(replaces.start_id, action_list, act6, 3, 2)
+
+    if len(act6.modifications) > 0:
         action_list.append(act6)
-        sprite_num = 0
-        action6.free_parameters.restore()
-        
-    action_list.append(ActionA([(len(real_sprite_list), sprite_num)]))
+    action6.free_parameters.restore()
+
+    action_list.append(ActionA([(len(real_sprite_list), sprite_num.value)]))
     action_list.extend(real_sprite_list)
 
     return action_list
