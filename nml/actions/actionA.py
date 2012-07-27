@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression
+from nml import expression, nmlop
 from nml.actions import base_action, real_sprite, actionD, action6
 
 class ActionA(base_action.BaseAction):
@@ -50,13 +50,29 @@ def parse_actionA(replaces):
     act6 = action6.Action6()
 
     real_sprite_list = real_sprite.parse_sprite_data(replaces)
-    sprite_num, offset = actionD.write_action_value(replaces.start_id, action_list, act6, 3, 2)
+    block_list = []
+    total_sprites = len(real_sprite_list)
+    offset = 2 # Skip 0A and <num-sets>
+    sprite_offset = 0 # Number of sprites already covered by previous [<num-sprites> <first-sprite>]-pairs
+
+    while total_sprites > 0:
+        this_block = min(total_sprites, 255) # number of sprites in this block
+        total_sprites -= this_block
+        offset += 1 # Skip <num-sprites>
+
+        first_sprite = replaces.start_id # number of first sprite
+        if sprite_offset != 0:
+            first_sprite = expression.BinOp(nmlop.ADD, first_sprite, expression.ConstantNumeric(sprite_offset, first_sprite.pos), first_sprite.pos).reduce()
+        first_sprite, offset = actionD.write_action_value(first_sprite, action_list, act6, offset, 2)
+        block_list.append( (this_block, first_sprite.value) )
+
+        sprite_offset += this_block # increase first-sprite for next block
 
     if len(act6.modifications) > 0:
         action_list.append(act6)
     action6.free_parameters.restore()
 
-    action_list.append(ActionA([(len(real_sprite_list), sprite_num.value)]))
+    action_list.append(ActionA(block_list))
     action_list.extend(real_sprite_list)
 
     return action_list
