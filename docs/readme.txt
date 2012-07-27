@@ -101,9 +101,6 @@ Options:
   -l <dir>, --lang-dir=<dir>
                         Load language files from directory <dir> [default:
                         lang]
-  -a <dir>, --sprites-dir=<dir>
-                        Store 32bpp sprites in directory <dir> [default:
-                        sprites]
   --default-lang=<file>
                         The default language is stored in <file> [default:
                         english.lng]
@@ -113,6 +110,9 @@ Options:
   -p <palette>, --palette=<palette>
                         Force nml to use the palette <pal> [default: ANY].
                         Valid values are 'DOS', 'WIN', 'ANY'
+  --quiet               Disable all warnings. Errors will be printed normally.
+  -n, --no-cache        Disable caching of sprites in .cache[index] files,
+                        which may reduce compilation time.
 
 
 6) Known issues:
