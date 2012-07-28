@@ -246,7 +246,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         index_file = open(self.cache_index_filename, 'w')
         index_file.write(index_output)
         index_file.close()
-        cache_file = open(self.cache_filename, 'w')
+        cache_file = open(self.cache_filename, 'wb')
         sprite_data.tofile(cache_file)
         cache_file.close()
 
