@@ -171,8 +171,23 @@ varact2vars_aircraft = {
 }
 varact2vars_aircraft.update(varact2vars_vehicles)
 
+def signed_byte_parameter(name, args, pos, info):
+    # Convert to a signed byte by AND-ing with 0xFF
+    if len(args) != 1:
+        raise generic.ScriptError("%s() requires one argument, encountered %d" % (name, len(args)), pos)
+    if isinstance(args[0], expression.ConstantNumeric):
+    
+        generic.check_range(args[0].value, -128, 127, "parameter of %s()" % name, pos)
+    ret = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xFF, pos), pos).reduce()
+    return (ret, [])
+
 varact2vars60x_vehicles = {
-    'count_veh_id': {'var': 0x60, 'start': 0, 'size': 8},
+    'count_veh_id'        : {'var': 0x60, 'start':  0, 'size': 8},
+    'other_veh_curv_info' : {'var': 0x62, 'start':  0, 'size': 4, 'param_function':signed_byte_parameter, 'value_function':signextend},
+    'other_veh_is_hidden' : {'var': 0x62, 'start':  7, 'size': 1, 'param_function':signed_byte_parameter},
+    'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':signextend},
+    'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':signextend},
+    'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':signextend},
 }
 
 varact2vars_canals = {
