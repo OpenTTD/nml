@@ -118,6 +118,7 @@ callbacks[0x03] = {
     'purchase_mail_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
     'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x1C},
     'range' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_range'},
+    'purchase_range' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
     'rotor' : {'type': 'override'},
 }
 callbacks[0x03].update(general_vehicle_cbs)
