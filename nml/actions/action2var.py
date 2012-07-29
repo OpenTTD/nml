@@ -632,15 +632,15 @@ class Varaction2Parser(object):
 
 def parse_var(info, pos):
     res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), expression.ConstantNumeric((1 << info['size']) - 1), None, pos)
-    if 'function' in info:
-        return info['function'](res, info)
+    if 'value_function' in info:
+        return info['value_function'](res, info)
     return res
 
 
 def parse_60x_var(name, args, pos, info):
-    if 'function' in info:
+    if 'param_function' in info:
         # Special function to extract parameters if there is more than one
-        param, extra_params = info['function'](name, args, pos, info)
+        param, extra_params = info['param_function'](name, args, pos, info)
     else:
         # Default function to extract parameters
         param, extra_params = action2var_variables.default_60xvar(name, args, pos, info)
