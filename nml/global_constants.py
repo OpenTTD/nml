@@ -478,6 +478,11 @@ constant_numbers = {
     'PLAYERTYPE_HUMAN_IN_AI'             : 2,
     'PLAYERTYPE_AI_IN_HUMAN'             : 3,
 
+    # search criteria for house var 0x65
+    'SEARCH_HOUSE_BY_TYPE'               : 0,
+    'SEARCH_HOUSE_BY_CLASS'              : 1,
+    'SEARCH_HOUSE_BY_GRFID'              : 2,
+
     #build types (industry var 0xB3)
     'BUILDTYPE_UNKNOWN'                  : 0,
     'BUILDTYPE_GAMEPLAY'                 : 1,

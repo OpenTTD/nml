@@ -196,16 +196,21 @@ varact2vars_canals = {
     'random_bits'  : {'var': 0x83, 'start': 0, 'size': 8},
 }
 
-
-varact2vars_industrytiles = {
-    'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
-    'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
-    'town_zone': {'var': 0x42, 'start': 0, 'size': 3},
-    'relative_x': {'var': 0x43, 'start': 0, 'size': 8},
-    'relative_y': {'var': 0x43, 'start': 8, 'size': 8},
-    'relative_pos': {'var': 0x43, 'start': 0, 'size': 16},
-    'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
-    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
+varact2vars_houses = {
+    'construction_state'    : {'var': 0x40, 'start':  0, 'size':  2},
+    'pseudo_random_bits'    : {'var': 0x40, 'start':  2, 'size':  2},
+    'age'                   : {'var': 0x41, 'start':  0, 'size':  8},
+    'town_zone'             : {'var': 0x42, 'start':  0, 'size':  8},
+    'terrain_type'          : {'var': 0x43, 'start':  0, 'size':  8},
+    'same_house_count_town' : {'var': 0x44, 'start':  0, 'size':  8},
+    'same_house_count_map'  : {'var': 0x44, 'start':  8, 'size':  8},
+    'same_class_count_town' : {'var': 0x44, 'start': 16, 'size':  8},
+    'same_class_count_map'  : {'var': 0x44, 'start': 24, 'size':  8},
+    'generating_town'       : {'var': 0x45, 'start':  0, 'size':  1},
+    'animation_frame'       : {'var': 0x46, 'start':  0, 'size':  8},
+    'x_coordinate'          : {'var': 0x47, 'start':  0, 'size': 16},
+    'y_coordinate'          : {'var': 0x47, 'start': 16, 'size': 16},
+    'random_bits'           : {'var': 0x5F, 'start':  8, 'size':  8},
 }
 
 def tile_offset(name, args, pos, info, min, max):
@@ -228,6 +233,76 @@ def signed_tile_offset(name, args, pos, info):
 
 def unsigned_tile_offset(name, args, pos, info):
     return tile_offset(name, args, pos, info, 0, 15)
+
+def cargo_accepted_nearby(name, args, pos, info):
+    # cargo_accepted_nearby(cargo[, xoffset, yoffset])
+    if len(args) not in (1, 3):
+        raise generic.ScriptError("%s() requires 1 or 3 arguments, encountered %d" % (name, len(args)), pos)
+
+    if len(args) > 1:
+        offsets = args[1:3]
+        for i, offs in enumerate(offsets[:]):
+            if isinstance(offs, expression.ConstantNumeric):
+                generic.check_range(offs.value, -128, 127, "%s-parameter %d '%soffset'" % (name, i + 1, "x" if i == 0 else "y"), pos)
+            offsets[i] = expression.BinOp(nmlop.AND, offs, expression.ConstantNumeric(0xFF, pos), pos).reduce()
+        # Register 0x100 should be set to xoffset | (yoffset << 8)
+        reg100 = expression.BinOp(nmlop.OR, expression.BinOp(nmlop.MUL, offsets[1], expression.ConstantNumeric(256, pos), pos), offsets[0], pos).reduce()
+    else:
+        reg100 = expression.ConstantNumeric(0, pos)
+
+    return (args[0], [(0x100, reg100)])
+
+def nearest_house_matching_criterion(name, args, pos, info):
+    # nearest_house_matching_criterion(radius, criterion)
+    # parameter is radius | (criterion << 6)
+    if len(args) != 2:
+        raise generic.ScriptError("%s() requires 2 arguments, encountered %d" % (name, len(args)), pos)
+    if isinstance(args[0], expression.ConstantNumeric):
+        generic.check_range(args[0].value, 1, 63, "%s()-parameter 1 'radius'" % name, pos)
+    if isinstance(args[1], expression.ConstantNumeric) and args[1].value not in (0, 1, 2):
+        raise generic.ScriptError("Invalid value for %s()-parameter 2 'criterion'" % name, pos)
+
+    radius = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0x3F, pos), pos)
+    criterion = expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0x03, pos), pos)
+    criterion = expression.BinOp(nmlop.MUL, criterion, expression.ConstantNumeric(0x40, pos), pos)
+    retval = expression.BinOp(nmlop.OR, criterion, radius, pos).reduce()
+    return (retval, [])
+
+varact2vars60x_houses = {
+    'old_house_count_town'               : {'var': 0x60, 'start':  0, 'size':  8},
+    'old_house_count_map'                : {'var': 0x60, 'start':  8, 'size':  8},
+    'other_house_count_town'             : {'var': 0x61, 'start':  0, 'size':  8},
+    'other_house_count_map'              : {'var': 0x61, 'start':  8, 'size':  8},
+    'other_class_count_town'             : {'var': 0x61, 'start': 16, 'size':  8},
+    'other_class_count_map'              : {'var': 0x61, 'start': 24, 'size':  8},
+    'nearby_tile_slope'                  : {'var': 0x62, 'start':  0, 'size':  5, 'param_function': signed_tile_offset},
+    'nearby_tile_is_water'               : {'var': 0x62, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_terrain_type'           : {'var': 0x62, 'start': 10, 'size':  3, 'param_function': signed_tile_offset},
+    'nearby_tile_water_class'            : {'var': 0x62, 'start': 13, 'size':  2, 'param_function': signed_tile_offset},
+    'nearby_tile_height'                 : {'var': 0x62, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
+    'nearby_tile_class'                  : {'var': 0x62, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
+    'nearby_tile_animation_frame'        : {'var': 0x63, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
+    'cargo_accepted_nearby_ever'         : {'var': 0x64, 'start':  0, 'size':  1, 'param_function': cargo_accepted_nearby},
+    'cargo_accepted_nearby_last_month'   : {'var': 0x64, 'start':  1, 'size':  1, 'param_function': cargo_accepted_nearby},
+    'cargo_accepted_nearby_this_month'   : {'var': 0x64, 'start':  2, 'size':  1, 'param_function': cargo_accepted_nearby},
+    'cargo_accepted_nearby_last_bigtick' : {'var': 0x64, 'start':  3, 'size':  1, 'param_function': cargo_accepted_nearby},
+    'cargo_accepted_nearby_watched'      : {'var': 0x64, 'start':  4, 'size':  1, 'param_function': cargo_accepted_nearby},
+    'nearest_house_matching_criterion'   : {'var': 0x65, 'start':  0, 'size':  8, 'param_function': nearest_house_matching_criterion},
+    'nearby_tile_house_id'               : {'var': 0x66, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
+    'nearby_tile_house_class'            : {'var': 0x66, 'start': 16, 'size': 16, 'param_function': signed_tile_offset},
+    'nearby_tile_house_grfid'            : {'var': 0x67, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+}
+
+varact2vars_industrytiles = {
+    'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
+    'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
+    'town_zone': {'var': 0x42, 'start': 0, 'size': 3},
+    'relative_x': {'var': 0x43, 'start': 0, 'size': 8},
+    'relative_y': {'var': 0x43, 'start': 8, 'size': 8},
+    'relative_pos': {'var': 0x43, 'start': 0, 'size': 16},
+    'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
+    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
+}
 
 varact2vars60x_industrytiles = {
     'nearby_tile_slope'            : {'var': 0x60, 'start':  0, 'size':  5, 'param_function': signed_tile_offset},
@@ -426,6 +501,8 @@ varact2vars60x[0x02] = varact2vars60x_vehicles
 varact2vars[0x03] = varact2vars_aircraft
 varact2vars60x[0x03] = varact2vars60x_vehicles
 varact2vars[0x05] = varact2vars_canals
+varact2vars[0x07] = varact2vars_houses
+varact2vars60x[0x07] = varact2vars60x_houses
 varact2vars[0x09] = varact2vars_industrytiles
 varact2vars60x[0x09] = varact2vars60x_industrytiles
 varact2vars[0x0A] = varact2vars_industries
