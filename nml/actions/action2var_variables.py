@@ -288,8 +288,8 @@ varact2vars60x_houses = {
     'cargo_accepted_nearby_last_bigtick' : {'var': 0x64, 'start':  3, 'size':  1, 'param_function': cargo_accepted_nearby},
     'cargo_accepted_nearby_watched'      : {'var': 0x64, 'start':  4, 'size':  1, 'param_function': cargo_accepted_nearby},
     'nearest_house_matching_criterion'   : {'var': 0x65, 'start':  0, 'size':  8, 'param_function': nearest_house_matching_criterion},
-    'nearby_tile_house_id'               : {'var': 0x66, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
-    'nearby_tile_house_class'            : {'var': 0x66, 'start': 16, 'size': 16, 'param_function': signed_tile_offset},
+    'nearby_tile_house_id'               : {'var': 0x66, 'start':  0, 'size': 16, 'param_function': signed_tile_offset, 'value_function': signextend},
+    'nearby_tile_house_class'            : {'var': 0x66, 'start': 16, 'size': 16, 'param_function': signed_tile_offset, 'value_function': signextend},
     'nearby_tile_house_grfid'            : {'var': 0x67, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
 }
 
