@@ -702,8 +702,7 @@ properties[0x0B] = {
     'number'                    : {'num' : 0x08, 'size' : 1},
     'type_name'                 : {'num' : 0x09, 'size' : 2, 'string' : 0xDC},
     'unit_name'                 : {'num' : 0x0A, 'size' : 2, 'string' : 0xDC},
-    'single_unit_text'          : {'num' : 0x0B, 'size' : 2, 'string' : 0xDC},
-    'multiple_units_text'       : {'num' : 0x0C, 'size' : 2, 'string' : 0xDC},
+    # Properties 0B, 0C are not used by OpenTTD
     'type_abbreviation'         : {'num' : 0x0D, 'size' : 2, 'string' : 0xDC},
     'sprite'                    : {'num' : 0x0E, 'size' : 2},
     'weight'                    : {'num' : 0x0F, 'size' : 1, 'unit_type' : 'weight', 'unit_conversion' : 16},
