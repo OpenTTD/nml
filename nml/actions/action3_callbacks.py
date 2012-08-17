@@ -27,18 +27,18 @@ callbacks = 0x12 * [{}]
 
 # Callbacks common to all vehicle types
 general_vehicle_cbs = {
-    'default' : {'type': 'cargo', 'num': None},
-    'purchase' : {'type': 'cargo', 'num': 0xFF},
-    'random_trigger' : {'type': 'cb', 'num': 0x01}, # Almost undocumented, but really neccesary!
-    'loading_speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x07},
-    'cargo_subtype_text' : {'type': 'cb', 'num': 0x19, 'flag_bit': 5},
-    'additional_text' : {'type': 'cb', 'num': 0x23, 'purchase': 2},
-    'colour_mapping' : {'type': 'cb', 'num': 0x2D, 'flag_bit':6, 'purchase': 'purchase_colour_mapping'},
+    'default'                 : {'type': 'cargo', 'num': None},
+    'purchase'                : {'type': 'cargo', 'num': 0xFF},
+    'random_trigger'          : {'type': 'cb', 'num': 0x01}, # Almost undocumented, but really neccesary!
+    'loading_speed'           : {'type': 'cb', 'num': 0x36, 'var10': 0x07},
+    'cargo_subtype_text'      : {'type': 'cb', 'num': 0x19, 'flag_bit': 5},
+    'additional_text'         : {'type': 'cb', 'num': 0x23, 'purchase': 2},
+    'colour_mapping'          : {'type': 'cb', 'num': 0x2D, 'flag_bit':6, 'purchase': 'purchase_colour_mapping'},
     'purchase_colour_mapping' : {'type': 'cb', 'num': 0x2D, 'flag_bit':6, 'purchase': 2},
-    'start_stop' : {'type': 'cb', 'num': 0x31},
-    'every_32_days' : {'type': 'cb', 'num': 0x32},
-    'sound_effect' : {'type': 'cb', 'num': 0x33, 'flag_bit': 7},
-    'refit_cost' : {'type': 'cb', 'num': 0x15E, 'purchase': 1},
+    'start_stop'              : {'type': 'cb', 'num': 0x31},
+    'every_32_days'           : {'type': 'cb', 'num': 0x32},
+    'sound_effect'            : {'type': 'cb', 'num': 0x33, 'flag_bit': 7},
+    'refit_cost'              : {'type': 'cb', 'num': 0x15E, 'purchase': 1},
 }
 
 # Function to convert vehicle length to the actual property value, which is (8 - length)
@@ -47,79 +47,83 @@ def vehicle_length(value):
 
 # Trains
 callbacks[0x00] = {
-    'visual_effect_and_powered' : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'length' : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'value_function': vehicle_length},
-    'cargo_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
-    'purchase_cargo_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
-    'articulated_part' : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'purchase': 1}, # Don't add separate purchase CB here
-    'can_attach_wagon' : {'type': 'cb', 'num': 0x1D},
-    'speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_speed'},
-    'purchase_speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
-    'power' : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 'purchase_power'},
-    'purchase_power' : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
-    'running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_running_cost_factor'},
-    'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
-    'weight' : {'type': 'cb', 'num': 0x36, 'var10': 0x16, 'purchase': 'purchase_weight'},
-    'purchase_weight' : {'type': 'cb', 'num': 0x36, 'var10': 0x16, 'purchase': 2},
-    'cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x17, 'purchase': 2},
-    'tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_tractive_effort_coefficient'},
+    'visual_effect_and_powered'            : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'value_function': vehicle_length},
+    'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+                                               {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
+    'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
+    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'purchase': 1}, # Don't add separate purchase CB here
+    'can_attach_wagon'                     : {'type': 'cb', 'num': 0x1D},
+    'speed'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_speed'},
+    'purchase_speed'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
+    'power'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 'purchase_power'},
+    'purchase_power'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
+    'running_cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_running_cost_factor'},
+    'purchase_running_cost_factor'         : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
+    'weight'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x16, 'purchase': 'purchase_weight'},
+    'purchase_weight'                      : {'type': 'cb', 'num': 0x36, 'var10': 0x16, 'purchase': 2},
+    'cost_factor'                          : {'type': 'cb', 'num': 0x36, 'var10': 0x17, 'purchase': 2},
+    'tractive_effort_coefficient'          : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_tractive_effort_coefficient'},
     'purchase_tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
-    'bitmask_vehicle_info' : {'type': 'cb', 'num': 0x36, 'var10': 0x25},
-    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x28},
+    'bitmask_vehicle_info'                 : {'type': 'cb', 'num': 0x36, 'var10': 0x25},
+    'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x28},
 }
 callbacks[0x00].update(general_vehicle_cbs)
 
 # Road vehicles
 callbacks[0x01] = {
-    'visual_effect' : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'length' : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'value_function': vehicle_length},
-    'cargo_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
-    'purchase_cargo_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
-    'articulated_part' : {'type': 'cb', 'num': 0x16, 'flag_bit': 4,  'purchase': 1}, # Don't add separate purchase CB here
-    'running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_running_cost_factor'},
-    'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
-    'cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
-    'power' : {'type': 'cb', 'num': 0x36, 'var10': 0x13, 'purchase': 'purchase_power'},
-    'purchase_power' : {'type': 'cb', 'num': 0x36, 'var10': 0x13, 'purchase': 2},
-    'weight' : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_weight'},
-    'purchase_weight' : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
-    'speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x15, 'purchase': 'purchase_speed'},
-    'purchase_speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x15, 'purchase': 2},
-    'tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x18, 'purchase': 'purchase_tractive_effort_coefficient'},
+    'visual_effect'                        : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'value_function': vehicle_length},
+    'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+                                               {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
+    'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
+    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4,  'purchase': 1}, # Don't add separate purchase CB here
+    'running_cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_running_cost_factor'},
+    'purchase_running_cost_factor'         : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
+    'cost_factor'                          : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
+    'power'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x13, 'purchase': 'purchase_power'},
+    'purchase_power'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x13, 'purchase': 2},
+    'weight'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_weight'},
+    'purchase_weight'                      : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
+    'speed'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x15, 'purchase': 'purchase_speed'},
+    'purchase_speed'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x15, 'purchase': 2},
+    'tractive_effort_coefficient'          : {'type': 'cb', 'num': 0x36, 'var10': 0x18, 'purchase': 'purchase_tractive_effort_coefficient'},
     'purchase_tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x18, 'purchase': 2},
-    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x22},
+    'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x22},
 }
 callbacks[0x01].update(general_vehicle_cbs)
 
 # Ships
 callbacks[0x02] = {
-    'visual_effect' : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'cargo_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_cargo_capacity'}],
-    'purchase_cargo_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
-    'cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0A, 'purchase': 2},
-    'speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 'purchase_speed'},
-    'purchase_speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
-    'running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_running_cost_factor'},
+    'visual_effect'                : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'cargo_capacity'               : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+                                       {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_cargo_capacity'}],
+    'purchase_cargo_capacity'      : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
+    'cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0A, 'purchase': 2},
+    'speed'                        : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 'purchase_speed'},
+    'purchase_speed'               : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
+    'running_cost_factor'          : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_running_cost_factor'},
     'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
-    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x1D},
+    'cargo_age_period'             : {'type': 'cb', 'num': 0x36, 'var10': 0x1D},
 }
 callbacks[0x02].update(general_vehicle_cbs)
 
 # Aircraft
 callbacks[0x03] = {
-    'passenger_capacity' : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3}, {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_passenger_capacity'}],
-    'purchase_passenger_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
-    'cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
-    'speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 'purchase_speed'},
-    'purchase_speed' : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 2},
-    'running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 'purchase_running_cost_factor'},
+    'passenger_capacity'           : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+                                       {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_passenger_capacity'}],
+    'purchase_passenger_capacity'  : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
+    'cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
+    'speed'                        : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 'purchase_speed'},
+    'purchase_speed'               : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 2},
+    'running_cost_factor'          : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 'purchase_running_cost_factor'},
     'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 2},
-    'mail_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 'purchase_mail_capacity'},
-    'purchase_mail_capacity' : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
-    'cargo_age_period' : {'type': 'cb', 'num': 0x36, 'var10': 0x1C},
-    'range' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_range'},
-    'purchase_range' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
-    'rotor' : {'type': 'override'},
+    'mail_capacity'                : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 'purchase_mail_capacity'},
+    'purchase_mail_capacity'       : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
+    'cargo_age_period'             : {'type': 'cb', 'num': 0x36, 'var10': 0x1C},
+    'range'                        : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_range'},
+    'purchase_range'               : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
+    'rotor'                        : {'type': 'override'},
 }
 callbacks[0x03].update(general_vehicle_cbs)
 
@@ -128,7 +132,7 @@ callbacks[0x03].update(general_vehicle_cbs)
 # Canals
 callbacks[0x05] = {
     'sprite_offset' : {'type': 'cb', 'num': 0x147, 'flag_bit': 0},
-    'default' : {'type': 'cargo', 'num': None},
+    'default'       : {'type': 'cargo', 'num': None},
 }
 
 # Bridges (0x06) have no action3
@@ -173,21 +177,21 @@ callbacks[0x09] = {
 # Industries
 callbacks[0x0A] = {
     'construction_probability' : {'type': 'cb', 'num': 0x22,  'flag_bit': 0},
-    'produce_cargo_arrival' : {'type': 'cb', 'num': 0x00,  'flag_bit': 1, 'var18': 0},
-    'produce_256_ticks'     : {'type': 'cb', 'num': 0x00,  'flag_bit': 2, 'var18': 1},
-    'location_check'        : {'type': 'cb', 'num': 0x28,  'flag_bit': 3}, # We need a way to access all those special variables
-    'random_prod_change'    : {'type': 'cb', 'num': 0x29,  'flag_bit': 4},
-    'monthly_prod_change'   : {'type': 'cb', 'num': 0x35,  'flag_bit': 5},
-    'cargo_subtype_display' : {'type': 'cb', 'num': 0x37,  'flag_bit': 6},
-    'extra_text_fund'       : {'type': 'cb', 'num': 0x38,  'flag_bit': 7},
-    'extra_text_industry'   : {'type': 'cb', 'num': 0x3A,  'flag_bit': 8},
-    'control_special'       : {'type': 'cb', 'num': 0x3B,  'flag_bit': 9},
-    'stop_accept_cargo'     : {'type': 'cb', 'num': 0x3D,  'flag_bit': 10},
-    'colour'                : {'type': 'cb', 'num': 0x14A, 'flag_bit': 11},
-    'cargo_input'           : {'type': 'cb', 'num': 0x14B, 'flag_bit': 12},
-    'cargo_output'          : {'type': 'cb', 'num': 0x14C, 'flag_bit': 13},
-    'build_prod_change'     : {'type': 'cb', 'num': 0x15F, 'flag_bit': 14},
-    'default'               : {'type': 'cargo', 'num': None},
+    'produce_cargo_arrival'    : {'type': 'cb', 'num': 0x00,  'flag_bit': 1, 'var18': 0},
+    'produce_256_ticks'        : {'type': 'cb', 'num': 0x00,  'flag_bit': 2, 'var18': 1},
+    'location_check'           : {'type': 'cb', 'num': 0x28,  'flag_bit': 3}, # We need a way to access all those special variables
+    'random_prod_change'       : {'type': 'cb', 'num': 0x29,  'flag_bit': 4},
+    'monthly_prod_change'      : {'type': 'cb', 'num': 0x35,  'flag_bit': 5},
+    'cargo_subtype_display'    : {'type': 'cb', 'num': 0x37,  'flag_bit': 6},
+    'extra_text_fund'          : {'type': 'cb', 'num': 0x38,  'flag_bit': 7},
+    'extra_text_industry'      : {'type': 'cb', 'num': 0x3A,  'flag_bit': 8},
+    'control_special'          : {'type': 'cb', 'num': 0x3B,  'flag_bit': 9},
+    'stop_accept_cargo'        : {'type': 'cb', 'num': 0x3D,  'flag_bit': 10},
+    'colour'                   : {'type': 'cb', 'num': 0x14A, 'flag_bit': 11},
+    'cargo_input'              : {'type': 'cb', 'num': 0x14B, 'flag_bit': 12},
+    'cargo_output'             : {'type': 'cb', 'num': 0x14C, 'flag_bit': 13},
+    'build_prod_change'        : {'type': 'cb', 'num': 0x15F, 'flag_bit': 14},
+    'default'                  : {'type': 'cargo', 'num': None},
 }
 
 # Cargos
