@@ -80,6 +80,13 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.read_cache()
 
     def open_file(self):
+        # Remove / unlink the file, most useful for linux systems
+        # See also issue #4165
+        # If the file happens to be in use or non-existant, ignore
+        try:
+            os.unlink(self.filename)
+        except Exception:
+            pass
         return open(self.filename, 'wb')
 
     def get_md5(self):
