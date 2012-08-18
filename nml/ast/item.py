@@ -42,6 +42,9 @@ class Item(base_statement.BaseStatementList):
             raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
         self.id = params[2].reduce_constant(global_constants.const_list) if len(params) == 3 else None
+        if isinstance(self.id, expression.ConstantNumeric) and self.id.value == -1:
+            self.id = None # id == -1 means default
+
         self.name = params[1] if len(params) >= 2 else None
 
     def register_names(self):
