@@ -21,6 +21,14 @@ from nml.ast import general
 # Features that use an extended byte as ID (vehicles, sounds)
 action0_extended_byte_id = [0, 1, 2, 3, 0x0C]
 
+# Number of tiles for various house sizes
+house_sizes = {
+    0 : 1, # 1x1
+    2 : 2, # 2x1
+    3 : 2, # 1x2
+    4 : 4, # 2x2
+}
+
 def adjust_value(value, org_value, unit, ottd_convert_func):
     """
     Make sure that the property value written to the NewGRF will match exactly

@@ -288,6 +288,12 @@ constant_numbers = {
     'HOUSE_ACCEPT_FOOD'             : 0x10, # 0x80 / 8
     'HOUSE_ACCEPT_FIZZY_DRINKS'     : 0x10, # 0x80 / 8
 
+    # house sizes
+    'HOUSE_SIZE_1X1'                : 0,
+    'HOUSE_SIZE_2X1'                : 2,
+    'HOUSE_SIZE_1X2'                : 3,
+    'HOUSE_SIZE_2X2'                : 4,
+
     #town zones
     'TOWNZONE_EDGE'                 : 0,
     'TOWNZONE_OUTSKIRT'             : 1,

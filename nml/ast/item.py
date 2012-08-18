@@ -30,22 +30,31 @@ class Item(base_statement.BaseStatementList):
     @type name: L{Identifier} or C{None} if N/A.
 
     @ivar id: Numeric ID of the item
-    @type id: C{int}
+    @type id: L{ConstantNumeric} or C{None} if N/A
+
+    @ivar size: Size, used by houses only
+    @type size: L{ConstantNumeric} or C{None} if N/A
     """
     def __init__(self, params, body, pos):
         base_statement.BaseStatementList.__init__(self, "item-block", pos, base_statement.BaseStatementList.LIST_TYPE_ITEM, body)
-        if len(params) >= 1:
-            self.feature = general.parse_feature(params[0])
-        else:
-            raise generic.ScriptError("Item block requires at least one parameter, got 0", self.pos)
-        if len(params) > 3:
-            raise generic.ScriptError("Item block requires at most 3 parameters, found %d" % len(params), self.pos)
 
-        self.id = params[2].reduce_constant(global_constants.const_list) if len(params) == 3 else None
+        if not (1 <= len(params) <= 4):
+            raise generic.ScriptError("Item block requires between 1 and 4 parameters, found %d." % len(params), self.pos)
+        self.feature = general.parse_feature(params[0])
+        self.name = params[1] if len(params) >= 2 else None
+
+        self.id = params[2].reduce_constant(global_constants.const_list) if len(params) >= 3 else None
         if isinstance(self.id, expression.ConstantNumeric) and self.id.value == -1:
             self.id = None # id == -1 means default
 
-        self.name = params[1] if len(params) >= 2 else None
+        if len(params) >= 4:
+            if self.feature.value != 0x07:
+                raise generic.ScriptError("item-block parameter 4 'size' may only be set for houses", params[3].pos)
+            self.size = params[3].reduce_constant(global_constants.const_list)
+            if self.size.value not in action0.house_sizes.keys():
+                raise generic.ScriptError("item-block parameter 4 'size' does not have a valid value", self.size.pos)
+        else:
+            self.size = None
 
     def register_names(self):
         if self.name:
