@@ -89,11 +89,28 @@ class Action0(base_action.BaseAction):
             prop.write(file)
         file.end_sprite()
 
-first_free_id = [116, 88, 11, 41] + 0x0E * [0]
+# First ID that may freely be used
+first_usable_id = [116, 88, 11, 41] + 0x0E * [0]
+
+# Maintain sets of used IDs for each feature
+# Dictionary value is irrelevant, except for houses
+# where it is used to keep track of the size
+used_ids = [dict() for _ in range(0, 0x12)]
+
+def mark_id_used(feature, id):
+    used_ids[feature][id] = None
+
+def id_is_used(feature, id):
+    return id in used_ids[feature]
 
 def get_free_id(feature):
-    first_free_id[feature] += 1
-    return first_free_id[feature] - 1
+    id = first_usable_id[feature]
+    while id_is_used(feature, id):
+        id += 1
+    mark_id_used(feature, id)
+    return id
+
+
 
 def create_action0(feature, id, act6, action_list):
     """

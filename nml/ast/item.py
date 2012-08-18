@@ -56,6 +56,8 @@ class Item(base_statement.BaseStatementList):
 
         if self.id is None:
             self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
+        else:
+            action0.mark_id_used(self.feature.value, self.id.value)
         if self.name is not None:
             global_constants.item_names[self.name.value] = self
         base_statement.BaseStatementList.register_names(self)
