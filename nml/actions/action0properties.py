@@ -176,13 +176,10 @@ def two_byte_property(low_prop, high_prop, prop_info = {}):
         low_byte_info[k] = high_byte_info[k] = v
     return [low_byte_info, high_byte_info]
 
-def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
+def animation_info(value, loop_bit=8, max_frame=253):
     """
     Convert animation info array of two elements to an animation info property.
     The first is 0/1, and defines whether or not the animation loops. The second is the number of frames, at most 253 frames.
-
-    @param prop_num: Property number.
-    @type  prop_num: C{int}
 
     @param value: Array of animation info.
     @type  value: C{Array}
@@ -193,11 +190,8 @@ def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
     @param max_frame: Max frames possible.
     @type  max_frame: C{int}
 
-    @param prop_size: Property size in bytes.
-    @type  prop_size: C{int}
-
-    @return: Animation property.
-    @rtype:  C{list} of L{Action0Property}
+    @return: Value to use for animation property.
+    @rtype:  L{Expression}
     """
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("animation_info must be an array with exactly 2 constant values", value.pos)
@@ -208,11 +202,11 @@ def animation_info(prop_num, value, loop_bit=8, max_frame=253, prop_size=2):
     if frames < 1 or frames > max_frame:
         raise generic.ScriptError("Second field of the animation_info array must be between 1 and " + str(max_frame), value.values[1].pos)
 
-    return [Action0Property(prop_num, ConstantNumeric((looping << loop_bit) + frames - 1), prop_size)]
+    return ConstantNumeric((looping << loop_bit) + frames - 1)
 
-def cargo_list(value, max_num_cargos, prop_num, prop_size):
+def cargo_list(value, max_num_cargos):
     """
-    Encode an array of cargo types in a single property. If less than the maximum
+    Encode an array of cargo types in a single property value. If less than the maximum
     number of cargos are given the rest is filled up with 0xFF (=invalid cargo).
 
     @param value: Array of cargo types.
@@ -229,12 +223,17 @@ def cargo_list(value, max_num_cargos, prop_num, prop_size):
     """
     if not isinstance(value, Array) or len(value.values) > max_num_cargos:
         raise generic.ScriptError("Cargo list must be an array with no more than %d values" % max_num_cargos, value.pos)
-    cargoes = [val.reduce_constant().value for val in value.values] + [0xFF for _ in range(prop_size)]
-    val = 0
-    for i in range(prop_size):
-        val = val | (cargoes[i] << (i * 8))
+    cargoes = value.values + [ConstantNumeric(0xFF, value.pos) for _ in range(max_num_cargos - len(value.values))]
 
-    return [Action0Property(prop_num, ConstantNumeric(val), prop_size)]
+    ret = None
+    for i, cargo in enumerate(cargoes):
+        byte = BinOp(nmlop.AND, cargo, ConstantNumeric(0xFF, cargo.pos), cargo.pos)
+        if i == 0:
+            ret = byte
+        else:
+            byte = BinOp(nmlop.SHIFT_LEFT, byte, ConstantNumeric(i * 8, cargo.pos), cargo.pos)
+            ret = BinOp(nmlop.OR, ret, byte, cargo.pos)
+    return ret.reduce()
 
 #
 # General vehicle properties that apply to feature 0x00 .. 0x03
@@ -549,11 +548,11 @@ properties[0x07] = {
     'random_colours'          : {'size': 4, 'num': 0x17, 'value_function': house_random_colours},
     'probability'             : {'size': 1, 'num': 0x18, 'unit_conversion': 16},
     # prop 19 is the high byte of prop 09
-    'animation_info'          : {'custom_function': lambda value: animation_info(0x1A, value, 7, 128, 1)},
+    'animation_info'          : {'size': 2, 'num': 0x1A, 'value_function': lambda value: animation_info(value, 7, 128)},
     'animation_speed'         : {'size': 1, 'num': 0x1B},
     'building_class'          : {'size': 1, 'num': 0x1C},
     # prop 1D (callback flags 2) is not set by user
-    'accepted_cargos'         : {'custom_function': lambda value: cargo_list(value, 3, 0x1E, 4)},
+    'accepted_cargos'         : {'size': 4, 'num': 0x1E, 'value_function': lambda value: cargo_list(value, 3)},
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
     'watched_cargo_types'     : {'custom_function': lambda value: ctt_list(0x20, value)}
     # prop 21 -22 see above (years_available, prop 0A)
@@ -589,7 +588,7 @@ properties[0x09] = {
     'accepted_cargos'    : {'custom_function': industrytile_cargos}, # = prop 0A - 0C
     'land_shape_flags'   : {'size': 1, 'num': 0x0D},
     # prop 0E (callback flags) is not set by user
-    'animation_info'     : {'custom_function': lambda value: animation_info(0x0F, value)},
+    'animation_info'     : {'size': 2, 'num': 0x0F, 'value_function': animation_info},
     'animation_speed'    : {'size': 1, 'num': 0x10},
     'animation_triggers' : {'size': 1, 'num': 0x11},
     'special_flags'      : {'size': 1, 'num': 0x12},
@@ -706,8 +705,8 @@ properties[0x0A] = {
     'prod_increase_msg'      : {'size': 2, 'num': 0x0D, 'string': 0xDC},
     'prod_decrease_msg'      : {'size': 2, 'num': 0x0E, 'string': 0xDC},
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
-    'prod_cargo_types'       : {'custom_function': lambda value: cargo_list(value, 2, 0x10, 2)},
-    'accept_cargo_types'     : {'custom_function': lambda value: cargo_list(value, 3, 0x11, 4)},
+    'prod_cargo_types'       : {'size': 2, 'num': 0x10, 'value_function': lambda value: cargo_list(value, 2)},
+    'accept_cargo_types'     : {'size': 4, 'num': 0x11, 'value_function': lambda value: cargo_list(value, 3)},
     'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12,13
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
@@ -843,7 +842,7 @@ properties[0x0F] = {
     'introduction_date'      : {'size': 4, 'num': 0x0E},
     'end_of_life_date'       : {'size': 4, 'num': 0x0F},
     'object_flags'           : {'size': 2, 'num': 0x10},
-    'animation_info'         : {'custom_function': lambda value: animation_info(0x11, value)},
+    'animation_info'         : {'size': 2, 'num': 0x11, 'value_function': animation_info},
     'animation_speed'        : {'size': 1, 'num': 0x12},
     'animation_triggers'     : {'size': 2, 'num': 0x13},
     'remove_cost_multiplier' : {'size': 1, 'num': 0x14},
@@ -912,7 +911,7 @@ properties[0x11] = {
     'override'           : {'size': 1, 'num': 0x09},
     # 0A - 0D don't exist (yet?)
     # 0E (callback flags) is not set by user
-    'animation_info'     : {'custom_function': lambda value: animation_info(0x0F, value)},
+    'animation_info'     : {'size': 2, 'num': 0x0F, 'value_function': animation_info},
     'animation_speed'    : {'size': 1, 'num': 0x10},
     'animation_triggers' : {'size': 1, 'num': 0x11},
 }
