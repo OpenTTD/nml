@@ -470,37 +470,70 @@ properties[0x05] = {
 # Feature 0x07 (Houses)
 #
 
-def house_available_years(value):
+def house_prop_0A(value):
+    # User sets an array [min_year, max_year] as property value
+    # House property 0A is set to ((max_year - 1920) << 8) | (min_year - 1920)
+    # With both bytes clamped to the 0 .. 255 range
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
-    min_year = value.values[0].reduce_constant().value
-    max_year = value.values[1].reduce_constant().value
-    min_year_safe = min(max(min_year - 1920, 0), 255)
-    max_year_safe = min(max(max_year - 1920, 0), 255)
-    return [Action0Property(0x0A, ConstantNumeric(max_year_safe << 8 | min_year_safe), 2),
-            Action0Property(0x21, ConstantNumeric(min_year), 2),
-            Action0Property(0x22, ConstantNumeric(max_year), 2)]
+
+    min_year = BinOp(nmlop.SUB, value.values[0], ConstantNumeric(1920, value.pos), value.pos)
+    min_year = BinOp(nmlop.MAX, min_year, ConstantNumeric(0, value.pos), value.pos)
+    min_year = BinOp(nmlop.MIN, min_year, ConstantNumeric(255, value.pos), value.pos)
+
+    max_year = BinOp(nmlop.SUB, value.values[1], ConstantNumeric(1920, value.pos), value.pos)
+    max_year = BinOp(nmlop.MAX, max_year, ConstantNumeric(0, value.pos), value.pos)
+    max_year = BinOp(nmlop.MIN, max_year, ConstantNumeric(255, value.pos), value.pos)
+    max_year = BinOp(nmlop.SHIFT_LEFT, max_year, ConstantNumeric(8, value.pos), value.pos)
+
+    return BinOp(nmlop.OR, max_year, min_year, value.pos).reduce()
+
+def house_prop_21_22(value, index):
+    # Take one of the values from the years_available array
+    if not isinstance(value, Array) or len(value.values) != 2:
+        raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
+    return value.values[index]
 
 def house_random_colours(value):
+    # User sets array with 4 values (range 0..15)
+    # Output is a dword, each byte being a value from the array
     if not isinstance(value, Array) or len(value.values) != 4:
         raise generic.ScriptError("Random colours must be an array with exactly four values", value.pos)
-    colours = [val.reduce_constant().value for val in value.values]
-    for colour in colours:
-        if colour < 0 or colour > 15:
-            raise generic.ScriptError("Random house colours must be a value between 0 and 15", value.pos)
+
+    ret = None
+    for i, colour in enumerate(value.values):
+        if isinstance(colour, ConstantNumeric):
+            generic.check_range(colour.value, 0, 15, "Random house colours", colour.pos)
+        byte = BinOp(nmlop.AND, colour, ConstantNumeric(0xFF, colour.pos), colour.pos)
+        if i == 0:
+            ret = byte
+        else:
+            byte = BinOp(nmlop.SHIFT_LEFT, byte, ConstantNumeric(i * 8, colour.pos), colour.pos)
+            ret = BinOp(nmlop.OR, ret, byte, colour.pos)
+    return ret.reduce()
+
     return [Action0Property(0x17, ConstantNumeric(colours[0] << 24 | colours[1] << 16 | colours[2] << 8 | colours[3]), 4)]
 
 def house_available_mask(value):
+    # User sets [town_zones, climates] array
+    # Which is mapped to (town_zones | (climates & 0x800) | ((climates & 0xF) << 12))
     if not isinstance(value, Array) or len(value.values) != 2:
-        raise generic.ScriptError("availability_mask must be an array with exactly 2 values", value.pos)
-    town_zones = value.values[0].reduce_constant().value
-    climates = value.values[1].reduce_constant().value
-    return [Action0Property(0x13, ConstantNumeric(town_zones | (climates & 0x800) | ((climates & 0x0F) << 12)), 2)]
+        raise generic.ScriptError("availability_mask must be an array with exactly 2 values", value.pos)\
+
+    climates = BinOp(nmlop.AND, value.values[1], ConstantNumeric(0xF, value.pos), value.pos)
+    climates = BinOp(nmlop.SHIFT_LEFT, climates, ConstantNumeric(12, value.pos), value.pos)
+    above_snow = BinOp(nmlop.AND, value.values[1], ConstantNumeric(0x800, value.pos), value.pos)
+
+    ret = BinOp(nmlop.OR, climates, value.values[0], value.pos)
+    ret = BinOp(nmlop.OR, ret, above_snow, value.pos)
+    return ret.reduce()
 
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08 , 'first': None},
     'building_flags'          : two_byte_property(0x09, 0x19),
-    'years_available'         : {'custom_function': house_available_years},  # = prop 0A, 21 and 22
+    'years_available'         : [{'size': 2, 'num': 0x0A, 'value_function': house_prop_0A}, 
+                                 {'size': 2, 'num': 0x21, 'value_function': lambda value: house_prop_21_22(value, 0)},
+                                 {'size': 2, 'num': 0x22, 'value_function': lambda value: house_prop_21_22(value, 1)}],
     'population'              : {'size': 1, 'num': 0x0B},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C},
     'pax_acceptance'          : {'size': 1, 'num': 0x0D, 'unit_conversion': 8},
@@ -509,11 +542,11 @@ properties[0x07] = {
     'local_authority_impact'  : {'size': 2, 'num': 0x10},
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
-    'availability_mask'       : {'custom_function': house_available_mask}, # = prop 13
+    'availability_mask'       : {'size': 2, 'num': 0x13, 'value_function': house_available_mask},
     # prop 14 (callback flags 1) is not set by user
     'override'                : {'size': 1, 'num': 0x15},
     'refresh_multiplier'      : {'size': 1, 'num': 0x16},
-    'random_colours'          : {'custom_function': house_random_colours}, # = prop 17
+    'random_colours'          : {'size': 4, 'num': 0x17, 'value_function': house_random_colours},
     'probability'             : {'size': 1, 'num': 0x18, 'unit_conversion': 16},
     # prop 19 is the high byte of prop 09
     'animation_info'          : {'custom_function': lambda value: animation_info(0x1A, value, 7, 128, 1)},
