@@ -81,7 +81,11 @@ class Action0(base_action.BaseAction):
 
     def write(self, file):
         size = 7 if self.feature in action0_extended_byte_id else 5
-        for prop in self.prop_list: size += prop.get_size()
+        for prop in self.prop_list:
+            assert isinstance(prop, BaseAction0Property), type(prop)
+            if isinstance(prop, Action0Property):
+                assert len(prop.values) == self.num_ids
+            size += prop.get_size()
         file.start_sprite(size)
         file.print_bytex(0)
         file.print_bytex(self.feature)
@@ -339,7 +343,7 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
                 break
 
 
-def parse_property_block(prop_list, feature, id):
+def parse_property_block(prop_list, feature, id, size):
     """
     Parse a property block to an action0 (with possibly various other actions)
 
@@ -352,6 +356,9 @@ def parse_property_block(prop_list, feature, id):
     @param id: ID of the associated item
     @type id: L{Expression}
 
+    @param size: Size (for houses only)
+    @type size: L{ConstantNumeric} or C{None}
+
     @return: List of resulting actions
     @rtype: C{list} of L{BaseAction}
     """
@@ -361,6 +368,7 @@ def parse_property_block(prop_list, feature, id):
     act6 = action6.Action6()
 
     action0, offset = create_action0(feature, id, act6, action_list)
+    action0.num_ids = house_sizes[size.value] if size is not None else 1
 
     prop_info_list = []
     value_list = []

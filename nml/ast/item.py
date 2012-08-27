@@ -19,6 +19,7 @@ from nml.actions import action0, action2, action2var, action3
 
 item_feature = None
 item_id = None
+item_size = None
 
 class Item(base_statement.BaseStatementList):
     """
@@ -75,9 +76,10 @@ class Item(base_statement.BaseStatementList):
         base_statement.BaseStatementList.register_names(self)
 
     def pre_process(self):
-        global item_feature, item_id
+        global item_feature, item_id, item_size
         item_id = self.id
         item_feature = self.feature.value
+        item_size = self.size
         base_statement.BaseStatementList.pre_process(self)
 
     def debug_print(self, indentation):
@@ -85,9 +87,10 @@ class Item(base_statement.BaseStatementList):
         base_statement.BaseStatementList.debug_print(self, indentation + 2)
 
     def get_action_list(self):
-        global item_feature, item_id
+        global item_feature, item_id, item_size
         item_id = self.id
         item_feature = self.feature.value
+        item_size = self.size
         return base_statement.BaseStatementList.get_action_list(self)
 
     def __str__(self):
@@ -169,7 +172,7 @@ class PropertyBlock(base_statement.BaseStatement):
             prop.debug_print(indentation + 2)
 
     def get_action_list(self):
-        return action0.parse_property_block(self.prop_list, item_feature, item_id)
+        return action0.parse_property_block(self.prop_list, item_feature, item_id, item_size)
 
     def __str__(self):
         ret = 'property {\n'

@@ -252,7 +252,7 @@ general_veh_props = {
 def ottd_display_speed(value, divisor, unit):
     return (value.value / divisor * 10 / 16 * unit.ottd_mul) >> unit.ottd_shift
 
-class CargotypeListProp(object):
+class CargotypeListProp(BaseAction0Property):
     def __init__(self, prop_num, data):
         self.prop_num = prop_num
         self.data = data
@@ -566,7 +566,7 @@ properties[0x09] = {
 # Feature 0x0A (Industries)
 #
 
-class IndustryLayoutProp(object):
+class IndustryLayoutProp(BaseAction0Property):
     def __init__(self, layout_list):
         self.layout_list = layout_list
 
@@ -605,7 +605,7 @@ def industry_prod_multiplier(value):
         props.append(Action0Property(0x12 + i, val, 1))
     return props
 
-class RandomSoundsProp(object):
+class RandomSoundsProp(BaseAction0Property):
     def __init__(self, sound_list):
         self.sound_list = sound_list
 
@@ -624,7 +624,7 @@ def random_sounds(value):
         raise generic.ScriptError("random_sound_effects must be an array with sounds effects", value.pos)
     return [RandomSoundsProp(value.values)]
 
-class ConflictingTypesProp(object):
+class ConflictingTypesProp(BaseAction0Property):
     def __init__(self, types_list):
         self.types_list = types_list
         assert len(self.types_list) == 3
@@ -735,7 +735,7 @@ def airport_years(value):
     max_year = value.values[1].reduce_constant()
     return [Action0Property(0x0C, ConstantNumeric(max_year.value << 16 | min_year.value), 4)]
 
-class AirportLayoutProp(object):
+class AirportLayoutProp(BaseAction0Property):
     def __init__(self, layout_list):
         self.layout_list = layout_list
 
@@ -823,7 +823,7 @@ properties[0x0F] = {
 # Feature 0x10 (Rail Types)
 #
 
-class RailtypeListProp(object):
+class RailtypeListProp(BaseAction0Property):
     def __init__(self, prop_num, railtype_list):
         self.prop_num = prop_num
         self.railtype_list = railtype_list
