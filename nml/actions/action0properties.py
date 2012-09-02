@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import itertools
 from nml import generic, nmlop
 from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier
 
@@ -578,9 +579,22 @@ def house_available_mask(value):
     ret = BinOp(nmlop.OR, ret, above_snow, value.pos)
     return ret.reduce()
 
+# List of valid IDs of old house types
+old_houses = {
+0 : set(), # 1x1, see below
+2 : set([74, 76, 87]), # 2x1
+3 : set([7, 66, 68, 99]), # 1x2
+4 : set([20, 32, 40]), # 2x2
+}
+# All houses not part of a multitile-house, are 1x1 houses
+old_houses[0] = set(range(110)).difference( house + i for house in (itertools.chain(*old_houses.values())) for i in range(4 if house in old_houses[4] else 2) )
+
 def mt_house_old_id(value, num_ids, size_bit):
     # For substitute / override properties
     # Set value for tile i (0 .. 3) to (value + i)
+    # Also validate that the size of the old house matches
+    if isinstance(value, ConstantNumeric) and not value.value in old_houses[size_bit]:
+        raise generic.ScriptError("Substitute / override house type must have the same size as the newly defined house.", value.pos)
     ret = [value]
     for i in range(1, num_ids):
         ret.append(BinOp(nmlop.ADD, value, ConstantNumeric(i, value.pos), value.pos).reduce())
