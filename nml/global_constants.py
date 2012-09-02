@@ -270,11 +270,7 @@ constant_numbers = {
     'CB_RANDOM_TRIGGER'        : 0x01,
 
     #house flags
-    'HOUSE_FLAG_SIZE_1x1'           : 0,
     'HOUSE_FLAG_NOT_SLOPED'         : 1,
-    'HOUSE_FLAG_SIZE_2x1'           : 2,
-    'HOUSE_FLAG_SIZE_1x2'           : 3,
-    'HOUSE_FLAG_SIZE_2x2'           : 4,
     'HOUSE_FLAG_ANIMATE'            : 5,
     'HOUSE_FLAG_CHURCH'             : 6,
     'HOUSE_FLAG_STADIUM'            : 7,

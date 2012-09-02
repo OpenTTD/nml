@@ -589,6 +589,8 @@ def mt_house_old_id(value, num_ids, size_bit):
 def mt_house_prop09(value, num_ids, size_bit):
     # Only bit 5 should be set for additional tiles
     # Additionally, correctly set the size bit (0, 2, 3 or 4) for the first tile
+    if isinstance(value, ConstantNumeric) and (value.value & 0x1D) != 0:
+        raise generic.ScriptError("Invalid bits set in house property 'building_flags'.", value.pos)
     ret = [BinOp(nmlop.OR, value, ConstantNumeric(1 << size_bit, value.pos), value.pos).reduce()]
     for i in range(1, num_ids):
         ret.append(BinOp(nmlop.AND, value, ConstantNumeric(1 << 5, value.pos), value.pos).reduce())
