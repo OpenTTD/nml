@@ -253,24 +253,34 @@ def ottd_display_speed(value, divisor, unit):
 
 class CargotypeListProp(BaseAction0Property):
     def __init__(self, prop_num, data):
+        # data is a list, each element belongs to an item ID
+        # Each element in the list is a list of cargo types
         self.prop_num = prop_num
         self.data = data
 
     def write(self, file):
         file.print_bytex(self.prop_num)
-        file.print_byte(len(self.data))
-        for i, data_val in enumerate(self.data):
-            if i % 8 == 0: file.newline()
-            file.print_bytex(data_val)
-        file.newline()
+        for elem in self.data:
+            file.print_byte(len(elem))
+            for i, val in enumerate(elem):
+                if i % 8 == 0: file.newline()
+                file.print_bytex(val)
+            file.newline()
 
     def get_size(self):
-        return len(self.data) + 2
+        total_len = 1 # Prop number
+        for elem in self.data:
+            # For each item ID to set, make space for all values + 1 for the length
+            total_len += len(elem) + 1
+        return total_len
 
-def ctt_list(prop_num, value):
-    if not isinstance(value, Array):
-        raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
-    return [CargotypeListProp(prop_num, [val.reduce_constant().value for val in value.values])]
+def ctt_list(prop_num, *values):
+    # values may have multiple entries, if more than one item ID is set (e.g. multitile houses)
+    # Each value is an expression.Array of cargo types
+    for value in values:
+        if not isinstance(value, Array):
+            raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
+    return [CargotypeListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
 
 def vehicle_length(value):
     if isinstance(value, ConstantNumeric):
@@ -554,7 +564,7 @@ properties[0x07] = {
     # prop 1D (callback flags 2) is not set by user
     'accepted_cargos'         : {'size': 4, 'num': 0x1E, 'value_function': lambda value: cargo_list(value, 3)},
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
-    'watched_cargo_types'     : {'custom_function': lambda value: ctt_list(0x20, value)}
+    'watched_cargo_types'     : {'custom_function': lambda *values: ctt_list(0x20, *values)}
     # prop 21 -22 see above (years_available, prop 0A)
 }
 
