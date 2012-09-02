@@ -125,14 +125,16 @@ class Action0Property(BaseAction0Property):
 # constants
 #
 # 'custom_function' can be used to bypass the normal way of converting the
-# name / value to an Action0Property. This function is called with one argument,
-# which is the value of the property. It should return a list of Action0Property.
+# name / value to an Action0Property. This function is normally called with one
+# argument, which is the value of the property. For houses, there may be multiple
+# values, passed as a vararg-list. It should return a list of Action0Property.
 # To pass extra parameters to the function, a dose of lambda calculus can be used.
 # Consult the code for examples.
 #
 # 'test_function' can be used to determine if the property should be set in the
-# first place. It takes one argument (the value) and should return True if
-# the property is to be set, False if it is to be ignored. Default is True
+# first place. It normally takes one argument (the value) and should return True
+# if the property is to be set, False if it is to be ignored. Default is True
+# For houses, there may be multiple values, passed as a vararg-list.
 #
 # 'num' is the Action0 property number of the action 0 property, as given by the
 # nfo specs. If set to -1, no action0 property will be generated. If

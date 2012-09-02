@@ -195,7 +195,7 @@ def get_property_info_list(feature, name):
             generic.print_warning(prop_info['warning'], name.pos)
     return prop_info_list
 
-def parse_property_value(prop_info, value, unit):
+def parse_property_value(prop_info, value, unit = None, num_ids = 1):
     """
     Parse a single property value / unit
     To determine the value that is to be used in nfo
@@ -209,7 +209,10 @@ def parse_property_value(prop_info, value, unit):
     @param unit: Unit of the property value (e.g. km/h)
     @type unit: L{Unit} or C{None}
 
-    @return: Value to actually use (in nfo) for the property
+    @param num_ids: Number of consecutive item IDs this property value applies to
+    @type num_ids: C{int}
+
+    @return: List of values to actually use (in nfo) for the property
     @rtype: L{Expression}
     """
     # Change value to use, except when the 'nfo' unit is used
@@ -258,17 +261,17 @@ def parse_property_value(prop_info, value, unit):
     if 'value_function' in prop_info:
         value = prop_info['value_function'](value)
 
-    return value
+    return num_ids * [value]
 
-def parse_property(prop_info, value, feature, id):
+def parse_property(prop_info, value_list, feature, id):
     """
     Parse a single property
 
     @param prop_info: A dictionary with property information
     @type prop_info: C{dict}
 
-    @param value: Value of the property, with unit conversion applied
-    @type value: L{Expression}
+    @param value_list: List of values for the property, with unit conversion applied
+    @type value_list: C{list} of L{Expression}
 
     @param feature: Feature of the associated item
     @type feature: C{int}
@@ -288,33 +291,43 @@ def parse_property(prop_info, value, feature, id):
     mods = []
 
     if 'custom_function' in prop_info:
-        props = prop_info['custom_function'](value)
-    elif 'string_literal' in prop_info and (isinstance(value, expression.StringLiteral) or prop_info['string_literal'] != 4):
-        # Parse non-string exprssions just like integers. User will have to take care of proper value.
-        # This can be used to set a label (=string of length 4) to the value of a parameter.
-        if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop_info['num'], value.pos)
-        if len(value.value) != prop_info['string_literal']:
-            raise generic.ScriptError("Value for property %d must be of length %d" % (prop_info['num'], prop_info['string_literal']), value.pos)
-        props = [Action0Property(prop_info['num'], value, prop_info['size'])]
+        props = prop_info['custom_function'](*value_list)
     else:
-        if isinstance(value, expression.ConstantNumeric):
-            pass
-        elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
-            mods.append((value.num.value, prop_info['size'], 1))
-            value = expression.ConstantNumeric(0)
-        elif isinstance(value, expression.String):
-            if not 'string' in prop_info: raise generic.ScriptError("String used as value for non-string property: " + str(prop_info['num']), value.pos)
-            string_range = prop_info['string']
-            stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
-            value = expression.ConstantNumeric(stringid)
-            action_list_append.extend(string_actions)
-        else:
-            tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
-            mods.append((tmp_param, prop_info['size'], 1))
-            action_list.extend(tmp_param_actions)
-            value = expression.ConstantNumeric(0)
+        # First process each element in the value_list
+        final_values = []
+        for i, value in enumerate(value_list):
+            if 'string_literal' in prop_info and (isinstance(value, expression.StringLiteral) or prop_info['string_literal'] != 4):
+                # Parse non-string exprssions just like integers. User will have to take care of proper value.
+                # This can be used to set a label (=string of length 4) to the value of a parameter.
+                if not isinstance(value, expression.StringLiteral): raise generic.ScriptError("Value for property %d must be a string literal" % prop_info['num'], value.pos)
+                if len(value.value) != prop_info['string_literal']:
+                    raise generic.ScriptError("Value for property %d must be of length %d" % (prop_info['num'], prop_info['string_literal']), value.pos)
+
+            elif isinstance(value, expression.ConstantNumeric):
+                pass
+
+            elif isinstance(value, expression.Parameter) and isinstance(value.num, expression.ConstantNumeric):
+                mods.append( (value.num.value, prop_info['size'], i * prop_info['size'] + 1) )
+                value = expression.ConstantNumeric(0)
+
+            elif isinstance(value, expression.String):
+                if not 'string' in prop_info: raise generic.ScriptError("String used as value for non-string property: " + str(prop_info['num']), value.pos)
+                string_range = prop_info['string']
+                stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
+                value = expression.ConstantNumeric(stringid)
+                action_list_append.extend(string_actions)
+
+            else:
+                tmp_param, tmp_param_actions = actionD.get_tmp_parameter(value)
+                mods.append((tmp_param, prop_info['size'], i * prop_info['size'] + 1))
+                action_list.extend(tmp_param_actions)
+                value = expression.ConstantNumeric(0)
+
+            final_values.append(value)
+
+        # Now, write a single Action0 Property with all of these values
         if prop_info['num'] != -1:
-            props = [Action0Property(prop_info['num'], value, prop_info['size'])]
+            props = [Action0Property(prop_info['num'], final_values, prop_info['size'])]
         else:
             props = []
 
@@ -371,19 +384,19 @@ def parse_property_block(prop_list, feature, id, size):
     action0.num_ids = house_sizes[size.value] if size is not None else 1
 
     prop_info_list = []
-    value_list = []
+    value_list_list = []
     pos_list = []
     for prop in prop_list:
         new_prop_info_list = get_property_info_list(feature, prop.name)
         prop_info_list.extend(new_prop_info_list)
-        value_list.extend(parse_property_value(prop_info, prop.value, prop.unit) for prop_info in new_prop_info_list)
+        value_list_list.extend(parse_property_value(prop_info, prop.value, prop.unit, action0.num_ids) for prop_info in new_prop_info_list)
         pos_list.extend(prop.name.pos for i in prop_info_list)
 
     validate_prop_info_list(prop_info_list, pos_list, feature)
 
-    for prop_info, value in zip(prop_info_list, value_list):
-        if 'test_function' in prop_info and not prop_info['test_function'](value): continue
-        properties, extra_actions, mods, extra_append_actions = parse_property(prop_info, value, feature, id)
+    for prop_info, value_list in zip(prop_info_list, value_list_list):
+        if 'test_function' in prop_info and not prop_info['test_function'](*value_list): continue
+        properties, extra_actions, mods, extra_append_actions = parse_property(prop_info, value_list, feature, id)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:
@@ -732,7 +745,7 @@ def get_callback_flags_actions(feature, id, flags):
     prop_info_list = callback_flag_properties[feature]
     if not isinstance(prop_info_list, list): prop_info_list = [prop_info_list]
     for prop_info in prop_info_list:
-        act0.prop_list.append(Action0Property(prop_info['num'], parse_property_value(prop_info, expression.ConstantNumeric(flags), None), prop_info['size']))
+        act0.prop_list.append(Action0Property(prop_info['num'], parse_property_value(prop_info, expression.ConstantNumeric(flags)), prop_info['size']))
 
     return [act0]
 
