@@ -508,6 +508,42 @@ def house_prop_21_22(value, index):
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
     return value.values[index]
 
+def house_acceptance(value, index):
+    if not isinstance(value, Array) or len(value.values) > 3:
+        raise generic.ScriptError("accepted_cargos must be an array with no more than 3 values", value.pos)
+
+    if index < len(value.values):
+        cargo_amount_pair = value.values[index]
+        if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
+            raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
+        return cargo_amount_pair.values[1]
+    else:
+        return ConstantNumeric(0, value.pos)
+
+def house_accepted_cargo_types(value):
+    if not isinstance(value, Array) or len(value.values) > 3:
+        raise generic.ScriptError("accepted_cargos must be an array with no more than 3 values", value.pos)
+
+    cargoes = []
+    for i in range(3):
+        if i < len(value.values):
+            cargo_amount_pair = value.values[i]
+            if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
+                raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
+            cargoes.append(cargo_amount_pair.values[0])
+        else:
+            cargoes.append(ConstantNumeric(0xFF, value.pos))
+
+    ret = None
+    for i, cargo in enumerate(cargoes):
+        byte = BinOp(nmlop.AND, cargo, ConstantNumeric(0xFF, cargo.pos), cargo.pos)
+        if i == 0:
+            ret = byte
+        else:
+            byte = BinOp(nmlop.SHIFT_LEFT, byte, ConstantNumeric(i * 8, cargo.pos), cargo.pos)
+            ret = BinOp(nmlop.OR, ret, byte, cargo.pos)
+    return ret.reduce()
+
 def house_random_colours(value):
     # User sets array with 4 values (range 0..15)
     # Output is a dword, each byte being a value from the array
@@ -584,9 +620,10 @@ properties[0x07] = {
                                  {'size': 2, 'num': 0x22, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 1)}],
     'population'              : {'size': 1, 'num': 0x0B, 'multitile_function': mt_house_zero},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C, 'multitile_function': mt_house_zero},
-    'pax_acceptance'          : {'size': 1, 'num': 0x0D, 'multitile_function': mt_house_same, 'unit_conversion': 8},
-    'mail_acceptance'         : {'size': 1, 'num': 0x0E, 'multitile_function': mt_house_same, 'unit_conversion': 8},
-    'cargo_acceptance'        : {'size': 1, 'num': 0x0F, 'multitile_function': mt_house_same, 'unit_conversion': 8},
+    'accepted_cargos'         : [{'size': 1, 'num': 0x0D, 'multitile_function': mt_house_same, 'value_function': lambda value: house_acceptance(value, 0)},
+                                 {'size': 1, 'num': 0x0E, 'multitile_function': mt_house_same, 'value_function': lambda value: house_acceptance(value, 1)},
+                                 {'size': 1, 'num': 0x0F, 'multitile_function': mt_house_same, 'value_function': lambda value: house_acceptance(value, 2)},
+                                 {'size': 4, 'num': 0x1E, 'multitile_function': mt_house_same, 'value_function': house_accepted_cargo_types}],
     'local_authority_impact'  : {'size': 2, 'num': 0x10, 'multitile_function': mt_house_same},
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11, 'multitile_function': mt_house_same},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC, 'multitile_function': mt_house_same},
@@ -601,7 +638,6 @@ properties[0x07] = {
     'animation_speed'         : {'size': 1, 'num': 0x1B, 'multitile_function': mt_house_same},
     'building_class'          : {'size': 1, 'num': 0x1C, 'multitile_function': mt_house_class},
     # prop 1D (callback flags 2) is not set by user
-    'accepted_cargos'         : {'size': 4, 'num': 0x1E, 'multitile_function': mt_house_same, 'value_function': lambda value: cargo_list(value, 3)},
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F, 'multitile_function': mt_house_zero},
     'watched_cargo_types'     : {'multitile_function': mt_house_same, 'custom_function': lambda *values: ctt_list(0x20, *values)}
     # prop 21 -22 see above (years_available, prop 0A)
