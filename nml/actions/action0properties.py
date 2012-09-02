@@ -156,7 +156,7 @@ properties = 0x12 * [None]
 # Some helper functions that are used for multiple features
 #
 
-def two_byte_property(low_prop, high_prop, prop_info = {}):
+def two_byte_property(low_prop, high_prop, low_prop_info = {}, high_prop_info = {}):
     """
     Decode a two byte value into two action 0 properties.
 
@@ -166,16 +166,19 @@ def two_byte_property(low_prop, high_prop, prop_info = {}):
     @param high_prop: Property number for the high 8 bits of the value.
     @type  high_prop: C{int}
 
-    @param prop_info: Dictionary with additional property information.
-    @type prop_info: C{dict}
+    @param low_prop_info: Dictionary with additional property information for the low byte.
+    @type low_prop_info: C{dict}
+
+    @param high_prop_info: Dictionary with additional property information for the low byte.
+    @type high_prop_info: C{dict}
 
     @return: Sequence of two dictionaries with property information (low part, high part).
     @rtype:  C{list} of C{dict}
     """
     low_byte_info = {'num': low_prop, 'size': 1, 'value_function': lambda value: BinOp(nmlop.AND, value, ConstantNumeric(0xFF, value.pos), value.pos).reduce()}
     high_byte_info = {'num': high_prop, 'size': 1, 'value_function': lambda value: BinOp(nmlop.SHIFT_RIGHT, value, ConstantNumeric(8, value.pos), value.pos).reduce()}
-    for k, v in prop_info.iteritems():
-        low_byte_info[k] = high_byte_info[k] = v
+    low_byte_info.update(low_prop_info)
+    high_byte_info.update(high_prop_info)
     return [low_byte_info, high_byte_info]
 
 def animation_info(value, loop_bit=8, max_frame=253):
@@ -310,7 +313,7 @@ properties[0x00] = {
     'dual_headed'                  : {'size': 1, 'num': 0x13},
     'cargo_capacity'               : {'size': 1, 'num': 0x14},
     'default_cargo_type'           : {'size': 1, 'num': 0x15},
-    'weight'                       : two_byte_property(0x16, 0x24, {'unit_type': 'weight'}),
+    'weight'                       : two_byte_property(0x16, 0x24, {'unit_type': 'weight'}, {'unit_type': 'weight'}),
     'cost_factor'                  : {'size': 1, 'num': 0x17},
     'ai_engine_rank'               : {'size': 1, 'num': 0x18},
     'engine_class'                 : {'size': 1, 'num': 0x19},
@@ -539,34 +542,68 @@ def house_available_mask(value):
     ret = BinOp(nmlop.OR, ret, above_snow, value.pos)
     return ret.reduce()
 
+def mt_house_old_id(value, num_ids, size_bit):
+    # For substitute / override properties
+    # Set value for tile i (0 .. 3) to (value + i)
+    ret = [value]
+    for i in range(1, num_ids):
+        ret.append(BinOp(nmlop.ADD, value, ConstantNumeric(i, value.pos), value.pos).reduce())
+    return ret
+
+def mt_house_prop09(value, num_ids, size_bit):
+    # Only bit 5 should be set for additional tiles
+    # Additionally, correctly set the size bit (0, 2, 3 or 4) for the first tile
+    ret = [BinOp(nmlop.OR, value, ConstantNumeric(1 << size_bit, value.pos), value.pos).reduce()]
+    for i in range(1, num_ids):
+        ret.append(BinOp(nmlop.AND, value, ConstantNumeric(1 << 5, value.pos), value.pos).reduce())
+    return ret
+
+def mt_house_mask(mask, value, num_ids, size_bit):
+    # Mask out the bits not present in the 'mask' parameter for additional tiles
+    ret = [value]
+    for i in range(1, num_ids):
+        ret.append(BinOp(nmlop.AND, value, ConstantNumeric(mask, value.pos), value.pos).reduce())
+    return ret
+
+def mt_house_zero(value, num_ids, size_bit):
+    return [value] + (num_ids - 1) * [ConstantNumeric(0, value.pos)]
+
+def mt_house_same(value, num_ids, size_bit):
+    # Set to the same value for all tiles
+    return num_ids * [value]
+
+def mt_house_class(value, num_ids, size_bit):
+    # Set class to 0xFF for additional tiles
+    return [value] + (num_ids - 1) * [ConstantNumeric(0xFF, value.pos)]
+
 properties[0x07] = {
-    'substitute'              : {'size': 1, 'num': 0x08 , 'first': None},
-    'building_flags'          : two_byte_property(0x09, 0x19),
-    'years_available'         : [{'size': 2, 'num': 0x0A, 'value_function': house_prop_0A}, 
-                                 {'size': 2, 'num': 0x21, 'value_function': lambda value: house_prop_21_22(value, 0)},
-                                 {'size': 2, 'num': 0x22, 'value_function': lambda value: house_prop_21_22(value, 1)}],
-    'population'              : {'size': 1, 'num': 0x0B},
-    'mail_multiplier'         : {'size': 1, 'num': 0x0C},
-    'pax_acceptance'          : {'size': 1, 'num': 0x0D, 'unit_conversion': 8},
-    'mail_acceptance'         : {'size': 1, 'num': 0x0E, 'unit_conversion': 8},
-    'cargo_acceptance'        : {'size': 1, 'num': 0x0F, 'unit_conversion': 8},
-    'local_authority_impact'  : {'size': 2, 'num': 0x10},
-    'removal_cost_multiplier' : {'size': 1, 'num': 0x11},
-    'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC},
-    'availability_mask'       : {'size': 2, 'num': 0x13, 'value_function': house_available_mask},
+    'substitute'              : {'size': 1, 'num': 0x08, 'multitile_function': mt_house_old_id, 'first': None},
+    'building_flags'          : two_byte_property(0x09, 0x19, {'multitile_function': mt_house_prop09}, {'multitile_function': lambda *args: mt_house_mask(0xFE, *args)}),
+    'years_available'         : [{'size': 2, 'num': 0x0A, 'multitile_function': mt_house_zero, 'value_function': house_prop_0A}, 
+                                 {'size': 2, 'num': 0x21, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 0)},
+                                 {'size': 2, 'num': 0x22, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 1)}],
+    'population'              : {'size': 1, 'num': 0x0B, 'multitile_function': mt_house_zero},
+    'mail_multiplier'         : {'size': 1, 'num': 0x0C, 'multitile_function': mt_house_zero},
+    'pax_acceptance'          : {'size': 1, 'num': 0x0D, 'multitile_function': mt_house_same, 'unit_conversion': 8},
+    'mail_acceptance'         : {'size': 1, 'num': 0x0E, 'multitile_function': mt_house_same, 'unit_conversion': 8},
+    'cargo_acceptance'        : {'size': 1, 'num': 0x0F, 'multitile_function': mt_house_same, 'unit_conversion': 8},
+    'local_authority_impact'  : {'size': 2, 'num': 0x10, 'multitile_function': mt_house_same},
+    'removal_cost_multiplier' : {'size': 1, 'num': 0x11, 'multitile_function': mt_house_same},
+    'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC, 'multitile_function': mt_house_same},
+    'availability_mask'       : {'size': 2, 'num': 0x13, 'multitile_function': mt_house_zero, 'value_function': house_available_mask},
     # prop 14 (callback flags 1) is not set by user
-    'override'                : {'size': 1, 'num': 0x15},
-    'refresh_multiplier'      : {'size': 1, 'num': 0x16},
-    'random_colours'          : {'size': 4, 'num': 0x17, 'value_function': house_random_colours},
-    'probability'             : {'size': 1, 'num': 0x18, 'unit_conversion': 16},
+    'override'                : {'size': 1, 'num': 0x15, 'multitile_function': mt_house_old_id},
+    'refresh_multiplier'      : {'size': 1, 'num': 0x16, 'multitile_function': mt_house_same},
+    'random_colours'          : {'size': 4, 'num': 0x17, 'multitile_function': mt_house_same, 'value_function': house_random_colours},
+    'probability'             : {'size': 1, 'num': 0x18, 'multitile_function': mt_house_zero, 'unit_conversion': 16},
     # prop 19 is the high byte of prop 09
-    'animation_info'          : {'size': 2, 'num': 0x1A, 'value_function': lambda value: animation_info(value, 7, 128)},
-    'animation_speed'         : {'size': 1, 'num': 0x1B},
-    'building_class'          : {'size': 1, 'num': 0x1C},
+    'animation_info'          : {'size': 2, 'num': 0x1A, 'multitile_function': mt_house_same, 'value_function': lambda value: animation_info(value, 7, 128)},
+    'animation_speed'         : {'size': 1, 'num': 0x1B, 'multitile_function': mt_house_same},
+    'building_class'          : {'size': 1, 'num': 0x1C, 'multitile_function': mt_house_class},
     # prop 1D (callback flags 2) is not set by user
-    'accepted_cargos'         : {'size': 4, 'num': 0x1E, 'value_function': lambda value: cargo_list(value, 3)},
-    'minimum_lifetime'        : {'size': 1, 'num': 0x1F},
-    'watched_cargo_types'     : {'custom_function': lambda *values: ctt_list(0x20, *values)}
+    'accepted_cargos'         : {'size': 4, 'num': 0x1E, 'multitile_function': mt_house_same, 'value_function': lambda value: cargo_list(value, 3)},
+    'minimum_lifetime'        : {'size': 1, 'num': 0x1F, 'multitile_function': mt_house_zero},
+    'watched_cargo_types'     : {'multitile_function': mt_house_same, 'custom_function': lambda *values: ctt_list(0x20, *values)}
     # prop 21 -22 see above (years_available, prop 0A)
 }
 

@@ -195,7 +195,7 @@ def get_property_info_list(feature, name):
             generic.print_warning(prop_info['warning'], name.pos)
     return prop_info_list
 
-def parse_property_value(prop_info, value, unit = None, num_ids = 1):
+def parse_property_value(prop_info, value, unit = None, size_bit = None):
     """
     Parse a single property value / unit
     To determine the value that is to be used in nfo
@@ -209,8 +209,9 @@ def parse_property_value(prop_info, value, unit = None, num_ids = 1):
     @param unit: Unit of the property value (e.g. km/h)
     @type unit: L{Unit} or C{None}
 
-    @param num_ids: Number of consecutive item IDs this property value applies to
-    @type num_ids: C{int}
+    @param size_bit: Bit that indicates the size of a multitile house
+                     Set iff the item is a house
+    @type size_bit: C{int} or C{None}
 
     @return: List of values to actually use (in nfo) for the property
     @rtype: L{Expression}
@@ -261,7 +262,15 @@ def parse_property_value(prop_info, value, unit = None, num_ids = 1):
     if 'value_function' in prop_info:
         value = prop_info['value_function'](value)
 
-    return num_ids * [value]
+    # Make multitile houses work
+    if size_bit is not None:
+        num_ids = house_sizes[size_bit]
+        assert 'multitile_function' in prop_info
+        ret = prop_info['multitile_function'](value, num_ids, size_bit)
+        assert len(ret) == num_ids
+        return ret
+    else:
+        return [value]
 
 def parse_property(prop_info, value_list, feature, id):
     """
@@ -381,7 +390,12 @@ def parse_property_block(prop_list, feature, id, size):
     act6 = action6.Action6()
 
     action0, offset = create_action0(feature, id, act6, action_list)
-    action0.num_ids = house_sizes[size.value] if size is not None else 1
+    if feature == 0x07:
+        size_bit = size.value if size is not None else 0
+        action0.num_ids = house_sizes[size_bit]
+    else:
+        size_bit = None
+        action0.num_ids = 1
 
     prop_info_list = []
     value_list_list = []
@@ -389,7 +403,7 @@ def parse_property_block(prop_list, feature, id, size):
     for prop in prop_list:
         new_prop_info_list = get_property_info_list(feature, prop.name)
         prop_info_list.extend(new_prop_info_list)
-        value_list_list.extend(parse_property_value(prop_info, prop.value, prop.unit, action0.num_ids) for prop_info in new_prop_info_list)
+        value_list_list.extend(parse_property_value(prop_info, prop.value, prop.unit, size_bit) for prop_info in new_prop_info_list)
         pos_list.extend(prop.name.pos for i in prop_info_list)
 
     validate_prop_info_list(prop_info_list, pos_list, feature)
