@@ -105,21 +105,41 @@ class Action0(base_action.BaseAction):
 first_usable_id = [116, 88, 11, 41] + 0x0E * [0]
 
 # Maintain sets of used IDs for each feature
-# Dictionary value is irrelevant, except for houses
-# where it is used to keep track of the size
+# Dictionary value is the item size (# of consecutive ids occupied)
+# Which is normally 1, one of (1,2,4) for the first house tile
+# And None for other house tiles
 used_ids = [dict() for _ in range(0, 0x12)]
 
-def mark_id_used(feature, id):
-    used_ids[feature][id] = None
+def mark_id_used(feature, id, num_ids):
+    used_ids[feature][id] = num_ids
+    for i in range(id + 1, id + num_ids):
+        used_ids[feature][i] = None
 
-def id_is_used(feature, id):
-    return id in used_ids[feature]
+def id_is_used(feature, id, num_ids):
+    return any(i in used_ids[feature] for i in range(id, id + num_ids))
 
-def get_free_id(feature):
+def check_id_range(feature, id, num_ids, pos):
+    # All IDs free: no problem
+    if (not id_is_used(feature, id, num_ids)): return
+    if id in used_ids[feature]:
+        # ID already defined, but with the same size: OK
+        if used_ids[feature][id] == num_ids: return
+        elif used_ids[feature][id] is not None:
+            # ID already defined with a different size: error
+            raise generic.ScriptError("Item with ID %d has already been defined, but with a different size." % id, pos)
+        else:
+            # ID already defined as part of a multi-tile house
+            raise generic.ScriptError("Item ID %d has already used as part of a multi-tile house." % id, pos)
+    else:
+        # First item id free -> any of the additional tile ids must be blocked
+        assert any(i in used_ids[feature] for i in range(id + 1, id + num_ids))
+        raise generic.ScriptError("This multi-tile house requires that item IDs %d..%d are free, but they are not." % (id, id + num_ids - 1), pos)
+
+def get_free_id(feature, num_ids):
     id = first_usable_id[feature]
-    while id_is_used(feature, id):
+    while id_is_used(feature, id, num_ids):
         id += 1
-    mark_id_used(feature, id)
+    mark_id_used(feature, id, num_ids)
     return id
 
 

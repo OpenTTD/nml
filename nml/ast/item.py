@@ -67,10 +67,13 @@ class Item(base_statement.BaseStatementList):
                     raise generic.ScriptError("Duplicate item with name '%s'. This item has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, existing_id.value, self.id.value), self.pos)
                 self.id = existing_id
 
+        # We may have to reserve multiple item IDs for houses
+        num_ids = action0.house_sizes[self.size.value] if self.size is not None else 1
         if self.id is None:
-            self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value))
+            self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value, num_ids))
         else:
-            action0.mark_id_used(self.feature.value, self.id.value)
+            action0.check_id_range(self.feature.value, self.id.value, num_ids, self.id.pos)
+            action0.mark_id_used(self.feature.value, self.id.value, num_ids)
         if self.name is not None:
             global_constants.item_names[self.name.value] = self
         base_statement.BaseStatementList.register_names(self)
