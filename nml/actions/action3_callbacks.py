@@ -139,15 +139,15 @@ callbacks[0x05] = {
 
 # Houses
 callbacks[0x07] = {
-    'random_trigger'         : {'type': 'cb', 'num': 0x01},
-    'construction_check'     : {'type': 'cb', 'num':  0x17, 'flag_bit':  0},
+    'random_trigger'         : {'type': 'cb', 'num':  0x01},
+    'construction_check'     : {'type': 'cb', 'num':  0x17, 'flag_bit':  0, 'tiles': 'n'},
     'anim_next_frame'        : {'type': 'cb', 'num':  0x1A, 'flag_bit':  1},
     'anim_control'           : {'type': 'cb', 'num':  0x1B, 'flag_bit':  2},
     'construction_anim'      : {'type': 'cb', 'num':  0x1C, 'flag_bit':  3},
     'colour'                 : {'type': 'cb', 'num':  0x1E, 'flag_bit':  4},
     'cargo_amount_accept'    : {'type': 'cb', 'num':  0x1F, 'flag_bit':  5},
     'anim_speed'             : {'type': 'cb', 'num':  0x20, 'flag_bit':  6},
-    'destruction'            : {'type': 'cb', 'num':  0x21, 'flag_bit':  7},
+    'destruction'            : {'type': 'cb', 'num':  0x21, 'flag_bit':  7, 'tiles': 'n'},
     'cargo_type_accept'      : {'type': 'cb', 'num':  0x2A, 'flag_bit':  8},
     'cargo_production'       : {'type': 'cb', 'num':  0x2E, 'flag_bit':  9},
     'protection'             : {'type': 'cb', 'num': 0x143, 'flag_bit': 10},
@@ -155,6 +155,10 @@ callbacks[0x07] = {
     'name'                   : {'type': 'cb', 'num': 0x14D},
     'foundations'            : {'type': 'cb', 'num': 0x14E, 'flag_bit': 11},
     'autoslope'              : {'type': 'cb', 'num': 0x14F, 'flag_bit': 12},
+    'graphics_north'         : {'type': 'cb', 'num':  0x00, 'tiles': 'n'},
+    'graphics_east'          : {'type': 'cb', 'num':  0x00, 'tiles': 'e'},
+    'graphics_south'         : {'type': 'cb', 'num':  0x00, 'tiles': 's'},
+    'graphics_west'          : {'type': 'cb', 'num':  0x00, 'tiles': 'w'},
     'default'                : {'type': 'cargo', 'num': None},
 }
 
