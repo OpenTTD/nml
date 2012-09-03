@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic, expression, global_constants
+from nml import generic, expression, global_constants, nmlop
 from nml.actions import base_action, action0, action2, action2real, action2var, action3_callbacks, action6, actionD
 
 class Action3(base_action.BaseAction):
@@ -200,10 +200,49 @@ def create_action3(feature, id, action_list, act6, is_livery_override):
     id, offset = actionD.write_action_value(id, action_list, act6, offset, size)
     return Action3(feature, id.value, is_livery_override)
 
+house_tiles = {
+    0 : 'n', # 1x1
+    2 : 'nw', # 2x1
+    3 : 'ne', # 1x2
+    4 : 'news', # 2x2
+}
 
-def parse_graphics_block(graphics_block, feature, id, is_livery_override = False):
+def parse_graphics_block(graphics_block, feature, id, size, is_livery_override = False):
+    """
+    Parse a graphics block (or livery override) into a list of actions, mainly action3
+
+    @param graphics_block: Graphics-block to parse
+    @type graphics_block: L{GraphicsBlock}
+
+    @param feature: Feature of the associated item
+    @type feature: C{int}
+
+    @param id: ID of the associated item
+    @type id: L{Expression}
+
+    @param size: Size of the associated item (relevant for houses only)
+    @type size: L{ConstantNumeric} or C{None}
+
+    @param is_livery_override: Whether this is a livery override instead of a normal graphics block
+    @type is_livery_override: C{bool}
+
+    @return: The resulting list of actions
+    @rtype: L{BaseAction}
+    """
+    action_list = action2real.create_spriteset_actions(graphics_block)
+    if feature == 0x07:
+        # Multitile houses need more work
+        size_bit = size.value if size is not None else 0
+        for i, tile in enumerate(house_tiles[size_bit]):
+            tile_id = id if i == 0 else expression.BinOp(nmlop.ADD, id, expression.ConstantNumeric(i, id.pos), id.pos).reduce()
+            action_list.extend(parse_graphics_block_single_id(graphics_block, feature, tile_id, is_livery_override, tile))
+    else:
+        action_list.extend(parse_graphics_block_single_id(graphics_block, feature, id, is_livery_override, None))
+    return action_list
+
+def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_override, house_tile):
     action6.free_parameters.save()
-    prepend_action_list = action2real.create_spriteset_actions(graphics_block)
+    prepend_action_list = []
     action_list = []
     act6 = action6.Action6()
     act3 = create_action3(feature, id, action_list, act6, is_livery_override)
@@ -230,6 +269,9 @@ def parse_graphics_block(graphics_block, feature, id, is_livery_override = False
                 for info in info_list:
                     if 'deprecate_message' in info:
                         generic.print_warning(info['deprecate_message'], cargo_id.pos)
+                    if house_tile is not None and 'tiles' in info and house_tile not in info['tiles']:
+                        continue
+
                     if info['type'] == 'cargo':
                         # Not a callback, but an alias for a certain cargo type
                         if info['num'] in cargo_gfx:
