@@ -50,9 +50,10 @@ class Action2(base_action.BaseAction):
         self.id = None
         self.references = []
         #0x00 - 0x7F: available to user
-        #0x80 - 0xFF: used by NML
+        #0x80 - 0xFE: used by NML
+        #0xFF: Used for some house variables
         #0x100 - 0x10F: Special meaning (used for some CB results)
-        self.tmp_locations = list(range(0x80, 0x100))
+        self.tmp_locations = list(range(0x80, 0xFF))
 
     def prepare_output(self, sprite_num):
         free_references(self)

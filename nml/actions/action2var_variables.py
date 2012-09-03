@@ -196,6 +196,17 @@ varact2vars_canals = {
     'random_bits'  : {'var': 0x83, 'start': 0, 'size': 8},
 }
 
+def house_same_class(var, info):
+    # Just using var 44 fails for non-north house tiles, as these have no class
+    # Therefore work around it using var 61
+    # Load ID of the north tile from register FF bits 24..31, and use that as param for var 61
+    north_tile = expression.Variable(expression.ConstantNumeric(0x7D), expression.ConstantNumeric(24), 
+                                     expression.ConstantNumeric(0xFF), expression.ConstantNumeric(0xFF), var.pos)
+    var61 = expression.Variable(expression.ConstantNumeric(0x7B), expression.ConstantNumeric(info['start']), 
+                                     expression.ConstantNumeric((1 << info['size']) - 1), expression.ConstantNumeric(0x61), var.pos)
+    return expression.BinOp(nmlop.VAL2, north_tile, var61, var.pos)
+    
+
 varact2vars_houses = {
     'construction_state'    : {'var': 0x40, 'start':  0, 'size':  2},
     'pseudo_random_bits'    : {'var': 0x40, 'start':  2, 'size':  2},
@@ -204,13 +215,18 @@ varact2vars_houses = {
     'terrain_type'          : {'var': 0x43, 'start':  0, 'size':  8},
     'same_house_count_town' : {'var': 0x44, 'start':  0, 'size':  8},
     'same_house_count_map'  : {'var': 0x44, 'start':  8, 'size':  8},
-    'same_class_count_town' : {'var': 0x44, 'start': 16, 'size':  8},
-    'same_class_count_map'  : {'var': 0x44, 'start': 24, 'size':  8},
+    'same_class_count_town' : {'var': 0xFF, 'start': 16, 'size':  8, 'value_function': house_same_class}, # 'var' is unused
+    'same_class_count_map'  : {'var': 0xFF, 'start': 24, 'size':  8, 'value_function': house_same_class}, # 'var' is unused
     'generating_town'       : {'var': 0x45, 'start':  0, 'size':  1},
     'animation_frame'       : {'var': 0x46, 'start':  0, 'size':  8},
     'x_coordinate'          : {'var': 0x47, 'start':  0, 'size': 16},
     'y_coordinate'          : {'var': 0x47, 'start': 16, 'size': 16},
     'random_bits'           : {'var': 0x5F, 'start':  8, 'size':  8},
+    'relative_x'            : {'var': 0x7D, 'start':  0, 'size':  8, 'param': 0xFF},
+    'relative_y'            : {'var': 0x7D, 'start':  8, 'size':  8, 'param': 0xFF},
+    'relative_pos'          : {'var': 0x7D, 'start':  0, 'size': 16, 'param': 0xFF},
+    'house_tile'            : {'var': 0x7D, 'start': 16, 'size':  8, 'param': 0xFF},
+    'house_type_id'         : {'var': 0x7D, 'start': 24, 'size':  8, 'param': 0xFF},
 }
 
 def tile_offset(name, args, pos, info, min, max):

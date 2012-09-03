@@ -166,18 +166,15 @@ def create_proc_call_varaction2(feature, proc, ret_value_function):
     comment = result.name.value + ';'
     return (action_list, result, comment)
 
-def create_cb_choice_varaction2(feature, var_num, and_mask, mapping, default):
+def create_cb_choice_varaction2(feature, expr, mapping, default):
     """
     Create a varaction2 that maps callback numbers to various sprite groups
 
     @param feature: Feature of the varaction2
     @type feature: C{int}
 
-    @param var_num: Number of the variable to evaluate
-    @type var_num: C{int}
-
-    @param and_mask: And-mask to use for the variable
-    @type and_mask: C{int}
+    @param expr: Expression to evaluate
+    @type expr: L{Expression}
 
     @param mapping: Mapping of various values to sprite groups, with a possible extra function to apply to the return value
     @type mapping: C{dict} that maps C{int} to C{tuple} of (L{SpriteGroupRef}, C{function}, or C{None})
@@ -189,7 +186,7 @@ def create_cb_choice_varaction2(feature, var_num, and_mask, mapping, default):
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
     varact2parser = action2var.Varaction2Parser(feature)
-    varact2parser.parse_expr(expression.Variable(expression.ConstantNumeric(var_num), mask = expression.ConstantNumeric(and_mask)))
+    varact2parser.parse_expr(expr)
     return create_intermediate_varaction2(feature, varact2parser, mapping, default)
 
 def create_action3(feature, id, action_list, act6, is_livery_override):
@@ -235,12 +232,12 @@ def parse_graphics_block(graphics_block, feature, id, size, is_livery_override =
         size_bit = size.value if size is not None else 0
         for i, tile in enumerate(house_tiles[size_bit]):
             tile_id = id if i == 0 else expression.BinOp(nmlop.ADD, id, expression.ConstantNumeric(i, id.pos), id.pos).reduce()
-            action_list.extend(parse_graphics_block_single_id(graphics_block, feature, tile_id, is_livery_override, tile))
+            action_list.extend(parse_graphics_block_single_id(graphics_block, feature, tile_id, is_livery_override, tile, id))
     else:
-        action_list.extend(parse_graphics_block_single_id(graphics_block, feature, id, is_livery_override, None))
+        action_list.extend(parse_graphics_block_single_id(graphics_block, feature, id, is_livery_override))
     return action_list
 
-def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_override, house_tile):
+def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_override, house_tile = None, house_north_tile_id = None):
     action6.free_parameters.save()
     prepend_action_list = []
     action_list = []
@@ -301,7 +298,8 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
             raise generic.ScriptError("Default graphics are defined twice.", graphics_block.default_graphics.pos)
         cargo_gfx[None] = graphics_block.default_graphics
 
-    if len(callbacks) != 0:
+    # An in-between varaction2 is always needed for houses
+    if len(callbacks) != 0 or feature == 0x07:
         cb_flags = 0
         # Determine the default value
         if None not in cargo_gfx:
@@ -350,29 +348,49 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
 
         # Handle CB 36
         if len(cb36_mapping) != 0:
-            actions, cb36_ref = create_cb_choice_varaction2(feature, 0x10, 0xFF, cb36_mapping, default_val)
+            expr = expression.Variable(expression.ConstantNumeric(0x10), mask = expression.ConstantNumeric(0xFF))
+            actions, cb36_ref = create_cb_choice_varaction2(feature, expr, cb36_mapping, default_val)
             prepend_action_list.extend(actions)
             cb_mapping[0x36] = (cb36_ref, None)
         if len(cb36_buy_mapping) != 0:
-            actions, cb36_ref = create_cb_choice_varaction2(feature, 0x10, 0xFF, cb36_buy_mapping, default_val)
+            expr = expression.Variable(expression.ConstantNumeric(0x10), mask = expression.ConstantNumeric(0xFF))
+            actions, cb36_ref = create_cb_choice_varaction2(feature, expr, cb36_buy_mapping, default_val)
             prepend_action_list.extend(actions)
             cb_buy_mapping[0x36] = (cb36_ref, None)
         if len(prod_cb_mapping) != 0:
-            actions, cb_ref = create_cb_choice_varaction2(feature, 0x18, 0xFF, prod_cb_mapping, default_val)
+            expr = expression.Variable(expression.ConstantNumeric(0x18), mask = expression.ConstantNumeric(0xFF))
+            actions, cb_ref = create_cb_choice_varaction2(feature, expr, prod_cb_mapping, default_val)
             prepend_action_list.extend(actions)
             cb_mapping[0x00] = (cb_ref, None)
 
         for cargo in sorted(cargo_gfx):
             mapping = cb_buy_mapping if cargo == 0xFF else cb_mapping
-            if len(mapping) == 0:
+            if len(mapping) == 0 and feature != 0x07:
                 # No callbacks here, so move along
+                # Except for houses, where we need to store some stuff in a register
                 continue
             if cargo_gfx[cargo] != default_val:
                 # There are cargo-specific graphics, be sure to handle those
                 # Unhandled callbacks should chain to the default, though
                 mapping = mapping.copy()
                 mapping[0x00] = (cargo_gfx[cargo], None)
-            actions, cb_ref = create_cb_choice_varaction2(feature, 0x0C, 0xFFFF, mapping, default_val)
+
+            expr = expression.Variable(expression.ConstantNumeric(0x0C), mask = expression.ConstantNumeric(0xFFFF))
+            if feature == 0x07:
+                # Store relative x/y, item id (of the north tile) and house tile (HOUSE_TILE_XX constant) in register FF
+                # Format: 0xIIHHYYXX: II: item ID, HH: house tile, YY: relative y, XX: relative x
+                lowbytes_dict = {
+                    'n' : 0x000000,
+                    'e' : 0x010100,
+                    'w' : 0x020001,
+                    's' : 0x030101,
+                }
+                lowbytes = expression.ConstantNumeric(lowbytes_dict[house_tile])
+                highbyte = expression.BinOp(nmlop.SHIFT_LEFT, house_north_tile_id, expression.ConstantNumeric(24))
+                register_FF = expression.BinOp(nmlop.OR, lowbytes, highbyte, lowbytes.pos).reduce()
+                register_FF = expression.BinOp(nmlop.STO_TMP, register_FF, expression.ConstantNumeric(0xFF))
+                expr = expression.BinOp(nmlop.VAL2, register_FF, expr, register_FF.pos)
+            actions, cb_ref = create_cb_choice_varaction2(feature, expr, mapping, default_val)
             prepend_action_list.extend(actions)
             cargo_gfx[cargo] = cb_ref
 

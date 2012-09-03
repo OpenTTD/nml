@@ -290,6 +290,12 @@ constant_numbers = {
     'HOUSE_SIZE_1X2'                : 3,
     'HOUSE_SIZE_2X2'                : 4,
 
+    # house tiles
+    'HOUSE_TILE_NORTH'              : 0,
+    'HOUSE_TILE_EAST'               : 1,
+    'HOUSE_TILE_WEST'               : 2,
+    'HOUSE_TILE_NORTH'              : 3,
+
     #town zones
     'TOWNZONE_EDGE'                 : 0,
     'TOWNZONE_OUTSKIRT'             : 1,
