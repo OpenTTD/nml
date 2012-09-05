@@ -650,7 +650,7 @@ properties[0x07] = {
     'random_colours'          : {'size': 4, 'num': 0x17, 'multitile_function': mt_house_same, 'value_function': house_random_colours},
     'probability'             : {'size': 1, 'num': 0x18, 'multitile_function': mt_house_zero, 'unit_conversion': 16},
     # prop 19 is the high byte of prop 09
-    'animation_info'          : {'size': 2, 'num': 0x1A, 'multitile_function': mt_house_same, 'value_function': lambda value: animation_info(value, 7, 128)},
+    'animation_info'          : {'size': 1, 'num': 0x1A, 'multitile_function': mt_house_same, 'value_function': lambda value: animation_info(value, 7, 128)},
     'animation_speed'         : {'size': 1, 'num': 0x1B, 'multitile_function': mt_house_same},
     'building_class'          : {'size': 1, 'num': 0x1C, 'multitile_function': mt_house_class},
     # prop 1D (callback flags 2) is not set by user
