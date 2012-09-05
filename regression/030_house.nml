@@ -1,5 +1,7 @@
 /*
  * This NewGRF adds the FIRS Brewery as a 2x2 town building
+ * Original graphics by FooBar and andythenorth
+ *
  * It accepts grain (as well as some/pax) mail.
  * Whenever grain is accepted, a smoke plume rises above the building.
  * The Brewery has a very high probability to appear, but special checks
