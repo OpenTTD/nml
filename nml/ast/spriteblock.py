@@ -222,7 +222,8 @@ class SpriteLayout(spritelayout_base_class):
             layout_sprite.debug_print(indentation + 4)
 
     def __str__(self):
-        return 'spritelayout %s {\n%s\n}\n' % (str(self.name), '\n'.join([str(x) for x in self.layout_sprite_list]))
+        params = "" if not self.param_list else "(%s)" % ", ".join([str(x) for x in self.param_list])
+        return 'spritelayout %s%s {\n%s\n}\n' % (str(self.name), params, '\n'.join([str(x) for x in self.layout_sprite_list]))
 
     def get_action_list(self):
         action_list = []

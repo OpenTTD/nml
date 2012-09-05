@@ -100,8 +100,10 @@ class Item(base_statement.BaseStatementList):
         ret = 'item(%d' % self.feature.value
         if self.name is not None:
             ret += ', %s' % str(self.name)
-        if self.id is not None:
-            ret += ', %s' % str(self.id)
+        ret += ', %s' % (str(self.id) if self.id is not None else "-1")
+        if self.size is not None:
+            sizes =["1X1", None, "2X1", "1X2", "2X2"]
+            ret += ', HOUSE_SIZE_%s' % sizes[self.size.value]
         ret += ') {\n'
         ret += base_statement.BaseStatementList.__str__(self)
         ret += '}\n'
