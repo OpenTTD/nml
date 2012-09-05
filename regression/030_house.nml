@@ -1,0 +1,165 @@
+/*
+ * This NewGRF adds the FIRS Brewery as a 2x2 town building
+ * It accepts grain (as well as some/pax) mail.
+ * Whenever grain is accepted, a smoke plume rises above the building.
+ * The Brewery has a very high probability to appear, but special checks
+ * make sure that only 1 appears per town.
+ */
+
+/* Make our NewGRF visible to OpenTTD */
+grf {
+    grfid: "NML\30";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+/* Add a cargo translation table */
+cargotable {
+    PASS, MAIL, GRAI, WHEA
+}
+
+/* Sprite templates for both ground and building sprites */
+template tmpl_ground_tile(x, y, filename) {
+ [x, y, 64, 31, -31, 0, filename]
+}
+
+template tmpl_building_sprite(x, y, h, dy, filename) {
+    [x, y, 64, h, -31, dy, NOCROP, filename]
+}
+
+/* Spriteset containing all ground sprites */
+spriteset(brewery_spriteset_ground) {
+    tmpl_ground_tile( 10, 10, "groundtiles.png") //bare
+    tmpl_ground_tile(150, 10, "groundtiles.png") //stones
+    tmpl_ground_tile(220, 10, "groundtiles.png") //snowed
+    [] /* pad with empty sprites, as all spritesets have to have the same no. of sprites (=6) */
+    []
+    []
+}
+
+spriteset(brewery_spriteset_building) {
+    tmpl_building_sprite( 10, 60, 91, -60, "brewery.png") // tile with chimney
+    tmpl_building_sprite( 80, 60, 91, -60, "brewery.png") // left part of large building
+    tmpl_building_sprite(150, 60, 91, -60, "brewery.png") // right part of large building
+    tmpl_building_sprite( 10, 60, 91, -60, "brewery_snow.png") // idem, with snow
+    tmpl_building_sprite( 80, 60, 91, -60, "brewery_snow.png")
+    tmpl_building_sprite(150, 60, 91, -60, "brewery_snow.png")
+}
+
+/* Generic sprite layout that is used for all tiles of the building. Parmaeters:
+ * - building_sprite: offset in the brewery_spriteset_building spriteset to use. -1 to skip building sprite.
+ * - with_smoke: Show smoke above the tile (also depends on animation state) */
+spritelayout brewery_sprite_layout(building_sprite, with_smoke) { 
+    /* First: Draw the normal ground sprite as a base layer */
+    ground {
+        sprite: GROUNDSPRITE_NORMAL;
+    }
+    /* Now draw our own ground sprite
+     * Below the snowline, it is either a bare land sprite (construction state 0) or stones (construction state 1..3)
+     * Above the snowline, it is always a snowed sprite */
+    childsprite {
+        sprite: brewery_spriteset_ground((terrain_type == TILETYPE_SNOW) ? 2 : min(construction_state, 1));
+        always_draw: 1; // Draw this sprite even in transparent mode
+    }
+    /* Now draw the building sprite, assuming the building is fully constructed */
+    building { 
+        sprite: brewery_spriteset_building((terrain_type == TILETYPE_SNOW) * 3 + building_sprite); 
+        /* Enable recolouring for the flag on top, it will get a random colour */
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+        zextent: 48;
+        hide_sprite: building_sprite == -1 || construction_state != 3;
+    }
+    building { 
+        /* 3079 .. 3083 are steam smoke sprites
+         * Draw one of them, assuming the animation frame != 0 */
+        sprite: 3079 + (animation_frame - 1) / 4;
+        xoffset: 8;
+        yoffset: 0; 
+        zoffset: 55 + (animation_frame - 1); 
+        xextent: 11;
+        zextent: 7;
+        hide_sprite: !with_smoke || animation_frame == 0;
+    }
+}
+
+switch(FEAT_HOUSES, SELF, brewery_layout_1, house_tile) {
+    HOUSE_TILE_NORTH: brewery_sprite_layout(2, 0);
+    HOUSE_TILE_WEST:  brewery_sprite_layout(1, 0);
+    HOUSE_TILE_EAST:  brewery_sprite_layout(-1, 0); // empty tile
+    brewery_sprite_layout(0, 1); //south, building with chimney
+}
+
+switch(FEAT_HOUSES, SELF, brewery_layout_2, house_tile) {
+    HOUSE_TILE_NORTH: brewery_sprite_layout(-1, 0); // empty tile
+    HOUSE_TILE_WEST:  brewery_sprite_layout(0, 1); // building with chimney
+    HOUSE_TILE_EAST:  brewery_sprite_layout(2, 0);
+    brewery_sprite_layout(1, 0); //south
+}
+
+/* Randomly choose a graphics layout */
+switch(FEAT_HOUSES, SELF, brewery_choose_layout, random_bits & 1) {
+    0 : brewery_layout_1;
+    brewery_layout_2;
+}
+
+/* Stop the animation in frame 0, else continue normally
+ * We choose frame 0 as 'stop' frame (no smoke visible) so there is no smoke
+ * during / after construction */
+switch(FEAT_HOUSES, SELF, brewery_next_frame, animation_frame) {
+    0 : return CB_RESULT_STOP_ANIMATION;
+    return CB_RESULT_NEXT_FRAME;
+}
+
+/* When grain / wheat is accepted, start the animation if:
+ * - The animation is currently stopped (frame 0)
+ * - The house tile actually contains smoke. This saves CPU time
+ * Else, do nothing */
+switch(FEAT_HOUSES, SELF, brewery_cargo_accepted, house_tile == ((random_bits & 1) ? HOUSE_TILE_WEST : HOUSE_TILE_SOUTH)) {
+    // only animate the tile that has the chimney with smoke
+    1 : return (animation_frame == 0) ? 1 : CB_RESULT_DO_NOTHING;
+    return CB_RESULT_DO_NOTHING;
+}
+
+/* Only allow construction of a brewery if there isn't already one in the same town */
+switch(FEAT_HOUSES, SELF, brewery_check_location, same_house_count_town) {
+    0 : 1;
+    0;
+}
+
+/* Only enable the brewery if there is a grain or wheat cargo type */
+if (cargotype_available("GRAI") || cargotype_available("WHEA")) {
+    item(FEAT_HOUSES, item_brewery, -1, HOUSE_SIZE_2X2) {
+        property {
+            substitute: 40; // use 2x2 shopping mall as fallback
+            name: string(STR_BREWERY_NAME);
+            /* do not replace (override) any original house type */
+            building_flags: bitmask(HOUSE_FLAG_ANIMATE);
+            population: 100;
+            mail_multiplier: 25;
+            accepted_cargos: [[cargotype_available("GRAI") ? GRAI : WHEA, 8], [PASS, 2], [MAIL, 1]];
+            local_authority_impact: 200;
+            removal_cost_multiplier: 250;
+            probability: 15; // high probability for testing purposes
+            years_available: [1940, 2050];
+            minimum_lifetime: 20;
+            availability_mask: [bitmask(TOWNZONE_EDGE, TOWNZONE_OUTSKIRT, TOWNZONE_OUTER_SUBURB),
+                                bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, ABOVE_SNOWLINE)];
+            random_colours: [COLOUR_RED, COLOUR_BLUE, COLOUR_GREEN, COLOUR_YELLOW];
+            refresh_multiplier: 0;
+            animation_info: [ANIMATION_LOOPING, 21]; // 'stop' frame + 20 normal frames. Auto-loop back to frame 0
+            animation_speed: 2;
+            /* no building class set, it's pointless */
+            watched_cargo_types: [GRAI, WHEA];
+        }
+
+        graphics {
+            default: brewery_choose_layout;
+            anim_next_frame: brewery_next_frame;
+            watched_cargo_accepted: brewery_cargo_accepted;
+            construction_check: brewery_check_location;
+        }
+    }
+}
