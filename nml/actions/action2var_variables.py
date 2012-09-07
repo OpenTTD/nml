@@ -346,6 +346,8 @@ varact2vars_industries = {
     'random_bits' : {'var': 0x5F, 'start': 8, 'size': 16},
     'produced_cargo_waiting_1' : {'var': 0x8A, 'start': 0, 'size': 16},
     'produced_cargo_waiting_2' : {'var': 0x8C, 'start': 0, 'size': 16},
+    'production_rate_1' : {'var': 0x8E, 'start': 0, 'size': 8},
+    'production_rate_2' : {'var': 0x8F, 'start': 0, 'size': 8},
     'production_level' : {'var': 0x93, 'start': 0, 'size': 8},
     'produced_this_month_1' : {'var': 0x94, 'start': 0, 'size': 16},
     'produced_this_month_2' : {'var': 0x96, 'start': 0, 'size': 16},
