@@ -92,7 +92,7 @@ switch (FEAT_TRAINS, SELF, bulk_wagon_cb_capacity_switch, cargo_type_in_veh) {
     MAIZ: return 25;
     RSGR: return 20;
     WHEA: return 25;
-    CB_FAILED; // return capacity set in properties (30)
+    // no default: instead fail CB and use capacity set in properties (30)
 }
 
 switch (FEAT_TRAINS, SELF, bulk_wagon_cb_weight_switch, cargo_type_in_veh) {
@@ -100,7 +100,7 @@ switch (FEAT_TRAINS, SELF, bulk_wagon_cb_weight_switch, cargo_type_in_veh) {
     FRUT: return 18;
     FRVG: return 18;
     RSGR: return 18;
-    CB_FAILED; // return weight set in properties (25t)
+    // no default: instead fail CB and use weight set in properties (25t)
 }
 
 

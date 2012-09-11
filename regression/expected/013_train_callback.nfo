@@ -142,7 +142,7 @@ FF
 \wx8019 \dx0000001B \dx0000001B 	// 27 .. 27: return 25;
 \wx8014 \dx0000001A \dx0000001A 	// 26 .. 26: return 20;
 \wx8019 \dx00000020 \dx00000020 	// 32 .. 32: return 25;
-\wx00FD // default: @CB_FAILED00;
+\wx00FD // No default specified -> fail callback
 
 // Name: bulk_wagon_cb_weight_switch
 50 * 53 02 00 FD 89 
@@ -152,7 +152,7 @@ FF
 \wx8012 \dx0000000C \dx0000000C 	// 12 .. 12: return 18;
 \wx8012 \dx0000000D \dx0000000D 	// 13 .. 13: return 18;
 \wx8012 \dx0000001A \dx0000001A 	// 26 .. 26: return 18;
-\wx00FD // default: @CB_FAILED00;
+\wx00FD // No default specified -> fail callback
 
 // param[66] = (param[1] * 5000)
 51 * 9 0D 42 \D* 01 FF \dx00001388 

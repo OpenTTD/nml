@@ -51,7 +51,7 @@ class Switch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
-            if isinstance(result.value, expression.SpriteGroupRef):
+            if result is not None and isinstance(result.value, expression.SpriteGroupRef):
                 all_refs.append(result.value)
         return all_refs
 
@@ -81,29 +81,37 @@ class SwitchBody(object):
     @type ranges: C{list} of L{SwitchRange}
 
     @ivar default: Default result to use if no range matches
-    @type default: L{SwitchValue}
+    @type default: L{SwitchValue} or C{None} if N/A
     """
     def __init__(self, ranges, default):
         self.ranges = ranges
         self.default = default
 
     def reduce_expressions(self, var_feature):
-        if self.default.value is not None:
+        for r in self.ranges[:]:
+            if r.min is r.max and isinstance(r.min, expression.Identifier) and r.min.value == 'default':
+                if self.default is not None:
+                    raise generic.ScriptError("Switch-block has more than one default, which is impossible.", r.result.pos)
+                self.default = r.result
+                self.ranges.remove(r)
+            else:
+                r.reduce_expressions(var_feature)
+        if self.default is not None and self.default.value is not None:
             self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_feature)
-        for r in self.ranges:
-            r.reduce_expressions(var_feature)
+
 
     def debug_print(self, indentation):
         for r in self.ranges:
             r.debug_print(indentation)
-        print indentation*' ' + 'Default:'
-        self.default.debug_print(indentation + 2)
+        if self.default is not None:
+            print indentation*' ' + 'Default:'
+            self.default.debug_print(indentation + 2)
 
     def __str__(self):
         ret = ''
         for r in self.ranges :
             ret += '\t%s\n' % str(r)
-        ret += '\t%s\n' % str(self.default)
+        if self.default is not None: ret += '\t%s\n' % str(self.default)
         return ret
 
 class SwitchRange(object):

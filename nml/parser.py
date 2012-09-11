@@ -385,8 +385,9 @@ class NMLParser(object):
         t[0] = switch.Switch(t[3], t[6], t.lineno(1))
 
     def p_switch_body(self, t):
-        'switch_body : switch_ranges switch_value'
-        t[0] = switch.SwitchBody(t[1], t[2])
+        '''switch_body : switch_ranges switch_value
+                       | switch_ranges'''
+        t[0] = switch.SwitchBody(t[1], t[2] if len(t) == 3 else None)
 
     def p_switch_ranges(self, t):
         '''switch_ranges :
@@ -404,9 +405,9 @@ class NMLParser(object):
         '''switch_value : RETURN expression SEMICOLON
                         | RETURN SEMICOLON
                         | expression SEMICOLON'''
-        if len(t) == 4: t[0] = switch.SwitchValue(t[2], True, t.lineno(2))
+        if len(t) == 4: t[0] = switch.SwitchValue(t[2], True, t[2].pos)
         elif t[1] == 'return': t[0] = switch.SwitchValue(None, True, t.lineno(1))
-        else: t[0] = switch.SwitchValue(t[1], False, t.lineno(1))
+        else: t[0] = switch.SwitchValue(t[1], False, t[1].pos)
 
     def p_random_switch(self, t):
         'random_switch : RANDOMSWITCH LPAREN expression_list RPAREN LBRACE random_body RBRACE'
