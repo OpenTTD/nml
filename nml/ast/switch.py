@@ -51,8 +51,8 @@ class Switch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
-            if isinstance(result, expression.SpriteGroupRef):
-                all_refs.append(result)
+            if isinstance(result.value, expression.SpriteGroupRef):
+                all_refs.append(result.value)
         return all_refs
 
     def debug_print(self, indentation):
@@ -81,15 +81,15 @@ class SwitchBody(object):
     @type ranges: C{list} of L{SwitchRange}
 
     @ivar default: Default result to use if no range matches
-    @type default: L{SpriteGroupRef}, L{Expression} or C{None} (before pre-processing only), depending on the type of result.
+    @type default: L{SwitchValue}
     """
     def __init__(self, ranges, default):
         self.ranges = ranges
         self.default = default
 
     def reduce_expressions(self, var_feature):
-        if self.default is not None:
-            self.default = action2var.reduce_varaction2_expr(self.default, var_feature)
+        if self.default.value is not None:
+            self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_feature)
         for r in self.ranges:
             r.reduce_expressions(var_feature)
 
@@ -97,21 +97,13 @@ class SwitchBody(object):
         for r in self.ranges:
             r.debug_print(indentation)
         print indentation*' ' + 'Default:'
-        if self.default is not None:
-            self.default.debug_print(indentation + 2)
-        else:
-            print (indentation+2)*' ' + 'Return computed value'
+        self.default.debug_print(indentation + 2)
 
     def __str__(self):
         ret = ''
-        for r in self.ranges:
+        for r in self.ranges :
             ret += '\t%s\n' % str(r)
-        if self.default is None:
-            ret += '\treturn;\n'
-        elif isinstance(self.default, expression.SpriteGroupRef):
-            ret += '\t%s;\n' % str(self.default)
-        else:
-            ret += '\treturn %s;\n' % str(self.default)
+        ret += '\t%s\n' % str(self.default)
         return ret
 
 class SwitchRange(object):
@@ -124,8 +116,8 @@ class SwitchRange(object):
     def reduce_expressions(self, var_feature):
         self.min = self.min.reduce(global_constants.const_list)
         self.max = self.max.reduce(global_constants.const_list)
-        if self.result is not None:
-            self.result = action2var.reduce_varaction2_expr(self.result, var_feature)
+        if self.result.value is not None:
+            self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Min:'
@@ -133,22 +125,48 @@ class SwitchRange(object):
         print indentation*' ' + 'Max:'
         self.max.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        if self.result is not None:
-            self.result.debug_print(indentation + 2)
-        else:
-            print (indentation+2)*' ' + 'Return computed value'
+        self.result.debug_print(indentation + 2)
 
     def __str__(self):
         ret = str(self.min)
         if not isinstance(self.min, expression.ConstantNumeric) or not isinstance(self.max, expression.ConstantNumeric) or self.max.value != self.min.value:
             ret += '..' + str(self.max)
-        if self.result is None:
-            ret += ': return;'
-        elif isinstance(self.result, expression.SpriteGroupRef):
-            ret += ': %s;' % str(self.result)
-        else:
-            ret += ': return %s;' % str(self.result)
+        ret += ': %s' % str(self.result)
         return ret
+
+class SwitchValue(object):
+    """
+    Class representing a single returned value or sprite group in a switch-block
+    Also used for random-switch and graphics blocks
+
+    @ivar value: Value to return
+    @type value: L{Expression} or C{None}
+
+    @ivar is_return: Whether the return keyword was present
+    @type is_return: C{bool}
+
+    @ivar pos: Position information
+    @type pos: L{Position}
+    """
+    def __init__(self, value, is_return, pos):
+        self.value = value
+        self.is_return = is_return
+        self.pos = pos
+
+    def debug_print(self, indentation):
+        if self.value is None:
+            assert self.is_return
+            print indentation*' ' + 'Return computed value'
+        else:
+            print indentation*' ' + ('Return value:' if self.is_return else 'Go to block:')
+            self.value.debug_print(indentation + 2)
+
+    def __str__(self):
+        if self.value is None:
+            assert self.is_return
+            return 'return;'
+        else:
+            return ('return %s;' if self.is_return else '%s;') % str(self.value)
 
 class RandomSwitch(switch_base_class):
     def __init__(self, param_list, choices, pos):
@@ -225,8 +243,8 @@ class RandomSwitch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for choice in self.choices:
-            if isinstance(choice.result, expression.SpriteGroupRef):
-                all_refs.append(choice.result)
+            if isinstance(choice.result.value, expression.SpriteGroupRef):
+                all_refs.append(choice.result.value)
         return all_refs
 
     def debug_print(self, indentation):
@@ -271,19 +289,19 @@ class RandomChoice(object):
     @type probability: L{Expression}
 
     @ivar result: Result of this choice, either another action2 or a return value
-    @type result: L{SpriteGroupRef} or L{Expression}
+    @type result: L{SwitchValue}
     """
     def __init__ (self, probability, result):
         self.probability = probability
-        if result is None:
-            raise generic.ScriptError("Returning the computed value is not possible in a random_switch, as there is no computed value.", self.probability.pos)
+        if result.value is None:
+            raise generic.ScriptError("Returning the computed value is not possible in a random_switch, as there is no computed value.", result.pos)
         self.result = result
 
     def reduce_expressions(self, var_feature):
         self.probability = self.probability.reduce_constant(global_constants.const_list)
         if self.probability.value <= 0:
             raise generic.ScriptError("Random probability must be higher than 0", self.probability.pos)
-        self.result = action2var.reduce_varaction2_expr(self.result, var_feature)
+        self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Probability:'
@@ -292,10 +310,5 @@ class RandomChoice(object):
         self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        ret = str(self.probability)
-        if isinstance(self.result, expression.SpriteGroupRef):
-            ret += ': %s;' % str(self.result)
-        else:
-            ret += ': return %s;' % str(self.result)
-        return ret
+        return '%s: %s' % (str(self.probability), str(self.result))
 

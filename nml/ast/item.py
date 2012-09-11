@@ -211,7 +211,7 @@ class LiveryOverride(base_statement.BaseStatement):
         ret = 'livery_override(%s) {\n' % str(self.wagon_id)
         for graphics in self.graphics_block.graphics_list:
             ret += "\t%s\n" % str(graphics)
-        if self.graphics_block.default_graphics is not None: ret += '\t%s;\n' % str(self.graphics_block.default_graphics)
+        if self.graphics_block.default_graphics is not None: ret += '\t%s\n' % str(self.graphics_block.default_graphics)
         ret += '}\n'
         return ret
 
@@ -227,7 +227,9 @@ class GraphicsBlock(graphics_base_class):
         for graphics_def in self.graphics_list:
             graphics_def.reduce_expressions(item_feature)
         if self.default_graphics is not None:
-            self.default_graphics = action2var.reduce_varaction2_expr(self.default_graphics, item_feature)
+            if self.default_graphics.value is None:
+                raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.result.pos)
+            self.default_graphics.value = action2var.reduce_varaction2_expr(self.default_graphics.value, item_feature)
 
         # initialize base class and pre_process it as well (in that order)
         self.initialize(None, item_feature)
@@ -235,9 +237,9 @@ class GraphicsBlock(graphics_base_class):
 
     def collect_references(self):
         all_refs = []
-        for result in [g.result for g in self.graphics_list] + [self.default_graphics]:
-            if isinstance(result, expression.SpriteGroupRef): # Default may be None
-                all_refs.append(result)
+        for result in [g.result for g in self.graphics_list] + ([self.default_graphics] if self.default_graphics is not None else []):
+            if isinstance(result.value, expression.SpriteGroupRef):
+                all_refs.append(result.value)
         return all_refs
 
     def debug_print(self, indentation):
@@ -257,7 +259,7 @@ class GraphicsBlock(graphics_base_class):
         ret = 'graphics {\n'
         for graphics in self.graphics_list:
             ret += "\t%s\n" % str(graphics)
-        if self.default_graphics is not None: ret += '\t%s;\n' % str(self.default_graphics)
+        if self.default_graphics is not None: ret += '\t%s\n' % str(self.default_graphics)
         ret += '}\n'
         return ret
 
@@ -269,24 +271,16 @@ class GraphicsDefinition(object):
 
     def reduce_expressions(self, var_feature):
         # Do not reduce cargo-id (yet)
-        if self.result is None:
-            raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.cargo_id.pos)
-        self.result = action2var.reduce_varaction2_expr(self.result, var_feature)
+        if self.result.value is None:
+            raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.result.pos)
+        self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Cargo ID:'
         self.cargo_id.debug_print(indentation + 2)
         print indentation*' ' + 'Result:'
-        if self.result is not None:
-            self.result.debug_print(indentation + 2)
+        self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        ret = str(self.cargo_id)
-        if self.result is None:
-            ret += ': return;'
-        elif isinstance(self.result, expression.SpriteGroupRef):
-            ret += ': %s;' % str(self.result)
-        else:
-            ret += ': return %s;' % str(self.result)
-        return ret
+        return '%s: %s' % (str(self.cargo_id), str(self.result))
 

@@ -972,7 +972,7 @@ def parse_varaction2(switch_block):
     offset += parser.var_list_size + 1 # +1 for the byte num-ranges
 
     none_result = None
-    if any(map(lambda x: x is None, [r.result for r in switch_block.body.ranges] + [switch_block.body.default])):
+    if any(map(lambda x: x.value is None, [r.result for r in switch_block.body.ranges] + [switch_block.body.default])):
         # Computed result is returned in at least one result
         if len(switch_block.body.ranges) == 0:
             # There is only a default, which is 'return computed result', so we're fine
@@ -987,7 +987,7 @@ def parse_varaction2(switch_block):
     for r in switch_block.body.ranges:
         comment = str(r.min) + " .. " + str(r.max) + ": "
 
-        range_result, range_comment = parse_result(r.result, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
+        range_result, range_comment = parse_result(r.result.value, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
         comment += range_comment
         offset += 2 # size of result
 
@@ -1015,16 +1015,16 @@ def parse_varaction2(switch_block):
         if not range_overlap:
             varaction2.ranges.append(VarAction2Range(range_min, range_max, range_result, comment))
 
-    if len(switch_block.body.ranges) == 0 and switch_block.body.default is not None:
+    if len(switch_block.body.ranges) == 0 and switch_block.body.default.value is not None:
         # Computed result is not returned, but there are no ranges
         # Add one range, to avoid the nvar == 0 bear trap
         offset += 10
         varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(1), expression.ConstantNumeric(0),
                 expression.ConstantNumeric(0), "Bogus range to avoid nvar == 0"))
 
-    default, default_comment = parse_result(switch_block.body.default, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
+    default, default_comment = parse_result(switch_block.body.default.value, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
     varaction2.default_result = default
-    varaction2.default_comment = 'Return computed value' if switch_block.body.default is None else 'default: ' + default_comment
+    varaction2.default_comment = 'Return computed value' if switch_block.body.default.value is None else 'default: ' + default_comment
 
 
 

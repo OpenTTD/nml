@@ -273,12 +273,12 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
                         # Not a callback, but an alias for a certain cargo type
                         if info['num'] in cargo_gfx:
                             raise generic.ScriptError("Graphics for '%s' are defined multiple times." % cb_name, cargo_id.pos)
-                        cargo_gfx[info['num']] = graphics.result
+                        cargo_gfx[info['num']] = graphics.result.value
                     elif info['type'] == 'cb':
-                        callbacks.append( (info, graphics.result) )
+                        callbacks.append( (info, graphics.result.value) )
                     elif info['type'] == 'override':
                         assert livery_override is None
-                        livery_override = graphics.result
+                        livery_override = graphics.result.value
                     else:
                         assert False
                 continue
@@ -289,14 +289,14 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
         if feature >= 5: raise generic.ScriptError("Associating graphics with a specific cargo is possible only for vehicles and stations.", cargo_id.pos)
         if cargo_id.value in cargo_gfx:
              raise generic.ScriptError("Graphics for cargo %d are defined multiple times." % cargo_id.value, cargo_id.pos)
-        cargo_gfx[cargo_id.value] = graphics.result
+        cargo_gfx[cargo_id.value] = graphics.result.value
 
     if graphics_block.default_graphics is not None:
         if 'default' not in action3_callbacks.callbacks[feature]:
             raise generic.ScriptError("Default graphics may not be defined for this feature (0x%02X)." % feature, graphics_block.default_graphics.pos)
         if None in cargo_gfx:
             raise generic.ScriptError("Default graphics are defined twice.", graphics_block.default_graphics.pos)
-        cargo_gfx[None] = graphics_block.default_graphics
+        cargo_gfx[None] = graphics_block.default_graphics.value
 
     # An in-between varaction2 is always needed for houses
     if len(callbacks) != 0 or feature == 0x07:

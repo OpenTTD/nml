@@ -331,15 +331,16 @@ class NMLParser(object):
 
     def p_graphics_list(self, t):
         '''graphics_list : graphics_assignment_list
-                         | graphics_assignment_list expression SEMICOLON
-                         | expression SEMICOLON'''
+                         | graphics_assignment_list switch_value
+                         | switch_value'''
         # Save graphics block as a tuple, we need to add position info later
         if len(t) == 2:
-            t[0] = (t[1], None)
-        elif len(t) == 4:
-            t[0] = (t[1], t[2])
+            if isinstance(t[1], list):
+                t[0] = (t[1], None)
+            else:
+                t[0] = ([], t[1])
         else:
-            t[0] = ([], t[1])
+            t[0] = (t[1], t[2])
 
     def p_graphics_assignment(self, t):
         'graphics_assignment : expression COLON switch_value'
@@ -403,9 +404,9 @@ class NMLParser(object):
         '''switch_value : RETURN expression SEMICOLON
                         | RETURN SEMICOLON
                         | expression SEMICOLON'''
-        if len(t) == 4: t[0] = t[2]
-        elif t[1] == 'return': t[0] = None
-        else: t[0] = t[1]
+        if len(t) == 4: t[0] = switch.SwitchValue(t[2], True, t.lineno(2))
+        elif t[1] == 'return': t[0] = switch.SwitchValue(None, True, t.lineno(1))
+        else: t[0] = switch.SwitchValue(t[1], False, t.lineno(1))
 
     def p_random_switch(self, t):
         'random_switch : RANDOMSWITCH LPAREN expression_list RPAREN LBRACE random_body RBRACE'
