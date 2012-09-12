@@ -929,6 +929,22 @@ class Language(object):
             self.cases[case] = idx + 1
             self.case_map[case] = []
 
+    def handle_map_case(self, data, pos):
+        """
+        Handle a 'map_case' pragma.
+
+        @param data: Data of the pragma.
+        @type  data: C{unicode}
+        """
+        if self.cases is None:
+            raise generic.ScriptError("##map_case is not allowed before ##case", pos)
+        cases = data[1].split()
+        if len(cases) != 2:
+            raise generic.ScriptError("Invalid ##map_case line", pos)
+        if cases[0] not in self.cases:
+            raise generic.ScriptError("Trying to map non-existing case '%s'" % cases[0], pos)
+        self.case_map[cases[0]].append(cases[1])
+
     def handle_text(self, data, pos):
         """
         Handle a text string.
@@ -999,6 +1015,7 @@ class Language(object):
                 if line[:9]  == "##plural ":     return ('plural',     line[9:])
                 if line[:9]  == "##gender ":     return ('gender',     line[9:])
                 if line[:13] == "##map_gender ": return ('map_gender', line[13:])
+                if line[:11] == "##map_case ":   return ('map_case',   line[11:])
                 if line[:7]  == "##case ":       return ('case',       line[7:])
                 raise generic.ScriptError("Invalid pragma", pos)
 
@@ -1027,6 +1044,7 @@ class Language(object):
                   'plural'     : self.handle_plural,
                   'gender'     : self.handle_gender,
                   'map_gender' : self.handle_map_gender,
+                  'map_case'   : self.handle_map_case,
                   'case'       : self.handle_case,
                   'string'     : self.handle_text }
 
