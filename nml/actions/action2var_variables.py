@@ -465,11 +465,12 @@ varact2vars60x_objects = {
 }
 
 varact2vars_railtype = {
-    'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
-    'enhanced_tunnels': {'var': 0x41, 'start': 0, 'size': 8},
-    'level_crossing_status': {'var': 0x42, 'start': 0, 'size': 8},
-    'build_date': {'var': 0x43, 'start': 0, 'size': 32},
-    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 2},
+    'terrain_type'          : {'var': 0x40, 'start': 0, 'size':  8},
+    'enhanced_tunnels'      : {'var': 0x41, 'start': 0, 'size':  8},
+    'level_crossing_status' : {'var': 0x42, 'start': 0, 'size':  8},
+    'build_date'            : {'var': 0x43, 'start': 0, 'size': 32},
+    'town_zone'             : {'var': 0x44, 'start': 0, 'size':  8},
+    'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
 
 varact2vars_airporttiles = {
