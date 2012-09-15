@@ -47,14 +47,26 @@ def default_60xvar(name, args, pos, info):
         raise generic.ScriptError("'%s'() requires one argument, encountered %d" % (name, len(args)), pos)
     return (args[0], [])
 
-def signextend(var, info):
+# Some commonly used functions that apply some modification to the raw variable value
+# To pass extra parameters, lambda calculus may be used
+
+def value_sign_extend(var, info):
     #r = (x ^ m) - m; with m being (1 << (num_bits -1))
     m = expression.ConstantNumeric(1 << (info['size'] - 1))
     return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, var, m, var.pos), m, var.pos)
 
-def muldiv(var, mul, div):
-    var = expression.BinOp(nmlop.MUL, var, expression.ConstantNumeric(mul, var.pos), var.pos)
-    return expression.BinOp(nmlop.DIV, var, expression.ConstantNumeric(div, var.pos), var.pos)
+def value_mul_div(mul, div):
+    return lambda var, info: expression.BinOp(nmlop.DIV,
+            expression.BinOp(nmlop.MUL, var, expression.ConstantNumeric(mul, var.pos), var.pos),
+            expression.ConstantNumeric(div, var.pos), var.pos)
+
+def value_add_constant(const):
+    return lambda var, info: expression.BinOp(nmlop.ADD, var, expression.ConstantNumeric(const, var.pos), var.pos)
+
+def value_equals(const):
+    return lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(const, var.pos), var.pos)
+
+# Commonly used functions to let a variable accept an (x, y)-offset as parameters
 
 def tile_offset(name, args, pos, info, min, max):
     if len(args) != 2:
@@ -96,16 +108,13 @@ varact2_globalvars = {
     'current_year' : {'var': 0x24, 'start': 0, 'size': 32},
 }
 
-def func_add_constant(const):
-    return lambda var, info: expression.BinOp(nmlop.ADD, var, expression.ConstantNumeric(const), var.pos)
-
 varact2vars_vehicles = {
     'position_in_consist' : {'var': 0x40, 'start': 0, 'size': 8},
     'position_in_consist_from_end' : {'var': 0x40, 'start': 8, 'size': 8},
-    'num_vehs_in_consist' : {'var': 0x40, 'start': 16, 'size': 8, 'value_function': func_add_constant(1)},
+    'num_vehs_in_consist' : {'var': 0x40, 'start': 16, 'size': 8, 'value_function': value_add_constant(1)},
     'position_in_vehid_chain' : {'var': 0x41, 'start': 0, 'size': 8},
     'position_in_vehid_chain_from_end' : {'var': 0x41, 'start': 8, 'size': 8},
-    'num_vehs_in_vehid_chain' : {'var': 0x41, 'start': 16, 'size': 8, 'value_function': func_add_constant(1)},
+    'num_vehs_in_vehid_chain' : {'var': 0x41, 'start': 16, 'size': 8, 'value_function': value_add_constant(1)},
     'cargo_classes_in_consist' : {'var': 0x42, 'start': 0, 'size': 8},
     'most_common_refit' : {'var': 0x42, 'start': 16, 'size': 8},
     'bitmask_consist_info' : {'var': 0x42, 'start': 24, 'size': 8},
@@ -115,9 +124,9 @@ varact2vars_vehicles = {
     'company_colour2' : {'var': 0x43, 'start': 28, 'size': 4},
     'aircraft_height' : {'var': 0x44, 'start': 8, 'size': 8},
     'airport_type' : {'var': 0x44, 'start': 0, 'size': 8},
-    'curv_info_prev_cur' : {'var': 0x45, 'start': 0, 'size': 4, 'value_function': signextend},
-    'curv_info_cur_next' : {'var': 0x45, 'start': 8, 'size': 4, 'value_function': signextend},
-    'curv_info_prev_next' : {'var': 0x45, 'start': 16, 'size': 4, 'value_function': signextend},
+    'curv_info_prev_cur' : {'var': 0x45, 'start': 0, 'size': 4, 'value_function': value_sign_extend},
+    'curv_info_cur_next' : {'var': 0x45, 'start': 8, 'size': 4, 'value_function': value_sign_extend},
+    'curv_info_prev_next' : {'var': 0x45, 'start': 16, 'size': 4, 'value_function': value_sign_extend},
     'curv_info' : {'var': 0x45, 'start': 0, 'size': 12, 'value_function': lambda var, info: expression.BinOp(nmlop.AND, var, expression.ConstantNumeric(0x0F0F, var.pos), var.pos).reduce()},
     'motion_counter' : {'var': 0x46, 'start': 8, 'size': 4},
     'cargo_type_in_veh' : {'var': 0x47, 'start': 0, 'size': 8},
@@ -144,19 +153,19 @@ varact2vars_vehicles = {
     'vehicle_is_hidden' : {'var': 0xB2, 'start': 0, 'size': 1},
     'vehicle_is_stopped' : {'var': 0xB2, 'start': 1, 'size': 1},
     'vehicle_is_crashed' : {'var': 0xB2, 'start': 7, 'size': 1},
-    'vehicle_is_broken' : {'var': 0xCB, 'start': 0, 'size': 8, 'value_function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(1, var.pos), var.pos)},
+    'vehicle_is_broken' : {'var': 0xCB, 'start': 0, 'size': 8, 'value_function': value_equals(1)},
     'date_of_last_service' : {'var': 0x4B, 'start': 0, 'size': 32},
     'breakdowns_since_last_service' : {'var': 0xCA, 'start': 0, 'size': 8},
-    'reliability' : {'var': 0xCE, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 101, 0x10000)},
+    'reliability' : {'var': 0xCE, 'start': 0, 'size': 16, 'value_function': value_mul_div(101, 0x10000)},
     'age_in_days' : {'var': 0xC0, 'start': 0, 'size': 16},
     'max_age_in_days' : {'var': 0xC2, 'start': 0, 'size': 16},
 }
 varact2vars_trains = {
     #0x4786 / 0x10000 is an approximation of 3.5790976, the conversion factor
     #for train speed
-    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
-    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
-    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x4786, 0x10000)},
+    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
+    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
+    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
 varact2vars_trains.update(varact2vars_vehicles)
@@ -164,19 +173,19 @@ varact2vars_trains.update(varact2vars_vehicles)
 varact2vars_roadvehs = {
     #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
     #for road vehicle speed
-    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
-    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
-    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
-    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 0, 'size': 8, 'value_function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(0xFE, var.pos))},
+    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
+    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
+    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
+    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 0, 'size':  8, 'value_function': value_equals(0xFE)},
 }
 varact2vars_roadvehs.update(varact2vars_vehicles)
 
 varact2vars_ships = {
     #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
     #for ship speed
-    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
-    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
-    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x23C3, 0x10000)},
+    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
+    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
+    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
 }
 varact2vars_ships.update(varact2vars_vehicles)
@@ -185,10 +194,10 @@ varact2vars_aircraft = {
     #0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
     #Note that the denominator has one less zero here!
     #for aircraft speed
-    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
-    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
-    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': lambda var, info: muldiv(var, 0x3939, 0x1000)},
-    'vehicle_is_in_depot' : {'var': 0xE6, 'start': 0, 'size': 8, 'value_function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(0, var.pos))},
+    'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x3939, 0x1000)},
+    'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x3939, 0x1000)},
+    'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x3939, 0x1000)},
+    'vehicle_is_in_depot' : {'var': 0xE6, 'start': 0, 'size':  8, 'value_function': value_equals(0)},
 }
 varact2vars_aircraft.update(varact2vars_vehicles)
 
@@ -204,11 +213,11 @@ def signed_byte_parameter(name, args, pos, info):
 
 varact2vars60x_vehicles = {
     'count_veh_id'        : {'var': 0x60, 'start':  0, 'size': 8},
-    'other_veh_curv_info' : {'var': 0x62, 'start':  0, 'size': 4, 'param_function':signed_byte_parameter, 'value_function':signextend},
+    'other_veh_curv_info' : {'var': 0x62, 'start':  0, 'size': 4, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
     'other_veh_is_hidden' : {'var': 0x62, 'start':  7, 'size': 1, 'param_function':signed_byte_parameter},
-    'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':signextend},
-    'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':signextend},
-    'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':signextend},
+    'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
+    'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
+    'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
 }
 
 # 'Base station' variables are shared between stations and airports
@@ -220,13 +229,13 @@ varact2vars_base_stations = {
     # Variables F2, F3, F6 (roadstop, airport flags) are next to useless
     # Also, their values are not the same as in TTDP / spec
     # Therefore, these are not implemented
-    'build_date'          : {'var': 0xFA, 'start': 0, 'size': 16, 'value_function': func_add_constant(701265)}
+    'build_date'          : {'var': 0xFA, 'start': 0, 'size': 16, 'value_function': value_add_constant(701265)}
 }
 
 varact2vars60x_base_stations = {
     'cargo_amount_waiting'      : {'var': 0x60, 'start': 0, 'size': 32},
     'cargo_time_since_pickup'   : {'var': 0x61, 'start': 0, 'size': 32},
-    'cargo_rating'              : {'var': 0x62, 'start': 0, 'size': 32, 'value_function': lambda var, info: muldiv(var, 101, 256)},
+    'cargo_rating'              : {'var': 0x62, 'start': 0, 'size': 32, 'value_function': value_mul_div(101, 256)},
     'cargo_time_en_route'       : {'var': 0x63, 'start': 0, 'size': 32},
     'cargo_last_vehicle_speed'  : {'var': 0x64, 'start': 0, 'size':  8},
     'cargo_last_vehicle_age'    : {'var': 0x64, 'start': 8, 'size':  8},
@@ -264,8 +273,7 @@ varact2vars60x_stations = {
     'nearby_tile_station_id'      : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_same_grf'        : {'var': 0x68, 'start':  8, 'size':  1, 'param_function': signed_tile_offset},
     'nearby_tile_other_grf'       : {'var': 0x68, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
-    'nearby_tile_original_gfx'    : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 
-            'value_function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(0, var.pos))},
+    'nearby_tile_original_gfx'    : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(0)},
     'nearby_tile_same_station'    : {'var': 0x68, 'start': 10, 'size':  1, 'param_function': signed_tile_offset},
     'nearby_tile_perpendicular'   : {'var': 0x68, 'start': 11, 'size':  1, 'param_function': signed_tile_offset},
     'nearby_tile_platform_type'   : {'var': 0x68, 'start': 12, 'size':  2, 'param_function': signed_tile_offset},
@@ -367,8 +375,8 @@ varact2vars60x_houses = {
     'cargo_accepted_nearby_last_bigtick' : {'var': 0x64, 'start':  3, 'size':  1, 'param_function': cargo_accepted_nearby},
     'cargo_accepted_nearby_watched'      : {'var': 0x64, 'start':  4, 'size':  1, 'param_function': cargo_accepted_nearby},
     'nearest_house_matching_criterion'   : {'var': 0x65, 'start':  0, 'size':  8, 'param_function': nearest_house_matching_criterion},
-    'nearby_tile_house_id'               : {'var': 0x66, 'start':  0, 'size': 16, 'param_function': signed_tile_offset, 'value_function': signextend},
-    'nearby_tile_house_class'            : {'var': 0x66, 'start': 16, 'size': 16, 'param_function': signed_tile_offset, 'value_function': signextend},
+    'nearby_tile_house_id'               : {'var': 0x66, 'start':  0, 'size': 16, 'param_function': signed_tile_offset, 'value_function': value_sign_extend},
+    'nearby_tile_house_class'            : {'var': 0x66, 'start': 16, 'size': 16, 'param_function': signed_tile_offset, 'value_function': value_sign_extend},
     'nearby_tile_house_grfid'            : {'var': 0x67, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
 }
 
@@ -416,8 +424,8 @@ varact2vars_industries = {
     'produced_this_month_2' : {'var': 0x96, 'start': 0, 'size': 16},
     'transported_this_month_1' : {'var': 0x98, 'start': 0, 'size': 16},
     'transported_this_month_2' : {'var': 0x9A, 'start': 0, 'size': 16},
-    'transported_last_month_pct_1' : {'var': 0x9C, 'start': 0, 'size': 8, 'value_function': lambda var, info: muldiv(var, 101, 256)},
-    'transported_last_month_pct_2' : {'var': 0x9D, 'start': 0, 'size': 8, 'value_function': lambda var, info: muldiv(var, 101, 256)},
+    'transported_last_month_pct_1' : {'var': 0x9C, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
+    'transported_last_month_pct_2' : {'var': 0x9D, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
     'produced_last_month_1' : {'var': 0x9E, 'start': 0, 'size': 16},
     'produced_last_month_2' : {'var': 0xA0, 'start': 0, 'size': 16},
     'transported_last_month_1' : {'var': 0xA2, 'start': 0, 'size': 16},
@@ -426,7 +434,7 @@ varact2vars_industries = {
     'colour' : {'var': 0xA8, 'start': 0, 'size': 8},
     'counter' : {'var': 0xAA, 'start': 0, 'size': 16},
     'build_type' : {'var': 0xB3, 'start': 0, 'size': 2},
-    'last_accept_date' : {'var': 0xB4, 'start':0, 'size': 16, 'value_function': func_add_constant(701265)}
+    'last_accept_date' : {'var': 0xB4, 'start':0, 'size': 16, 'value_function': value_add_constant(701265)}
 }
 
 def industry_count(name, args, pos, info):
@@ -571,8 +579,8 @@ varact2vars_towns = {
     'town_zone_3_radius_square'      : {'var': 0x9A, 'start': 0, 'size': 16},
     'town_zone_4_radius_square'      : {'var': 0x9C, 'start': 0, 'size': 16},
     'num_houses'                     : {'var': 0xB6, 'start': 0, 'size': 16},
-    'percent_transported_passengers' : {'var': 0xCA, 'start': 0, 'size': 8, 'value_function': lambda var, info: muldiv(var, 101, 256)},
-    'percent_transported_mail'       : {'var': 0xCB, 'start': 0, 'size': 8, 'value_function': lambda var, info: muldiv(var, 101, 256)},
+    'percent_transported_passengers' : {'var': 0xCA, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
+    'percent_transported_mail'       : {'var': 0xCB, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
 }
 
 
