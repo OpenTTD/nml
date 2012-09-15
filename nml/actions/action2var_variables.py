@@ -56,6 +56,27 @@ def muldiv(var, mul, div):
     var = expression.BinOp(nmlop.MUL, var, expression.ConstantNumeric(mul, var.pos), var.pos)
     return expression.BinOp(nmlop.DIV, var, expression.ConstantNumeric(div, var.pos), var.pos)
 
+def tile_offset(name, args, pos, info, min, max):
+    if len(args) != 2:
+        raise generic.ScriptError("'%s'() requires 2 arguments, encountered %d" % (name, len(args)), pos)
+    for arg in args:
+        if isinstance(arg, expression.ConstantNumeric):
+            generic.check_range(arg.value, min, max, "Argument of '%s'" % name, arg.pos)
+
+    x = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xF), args[0].pos)
+    y = expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xF), args[1].pos)
+    # Shift y left by four
+    y = expression.BinOp(nmlop.SHIFT_LEFT, y, expression.ConstantNumeric(4), y.pos)
+    param = expression.BinOp(nmlop.ADD, x, y, x.pos)
+    #Make sure to reduce the result
+    return ( param.reduce(), [] )
+
+def signed_tile_offset(name, args, pos, info):
+    return tile_offset(name, args, pos, info, -8, 7)
+
+def unsigned_tile_offset(name, args, pos, info):
+    return tile_offset(name, args, pos, info, 0, 15)
+
 varact2_globalvars = {
     'current_month' : {'var': 0x02, 'start': 0, 'size': 8},
     'current_day_of_month' : {'var': 0x02, 'start': 8, 'size': 5},
@@ -216,6 +237,43 @@ varact2vars60x_base_stations = {
     'cargo_accepted_bigtick'    : {'var': 0x69, 'start': 3, 'size':  1},
 }
 
+varact2vars_stations = {
+    'terrain_type'             : {'var': 0x42, 'start':  0, 'size': 8},
+    'track_type'               : {'var': 0x42, 'start':  8, 'size': 8},
+    'company_num'              : {'var': 0x43, 'start':  0, 'size': 8},
+    'company_type'             : {'var': 0x43, 'start': 16, 'size': 2},
+    'company_colour1'          : {'var': 0x43, 'start': 24, 'size': 4},
+    'company_colour2'          : {'var': 0x43, 'start': 28, 'size': 4},
+    'pbs_reserved'             : {'var': 0x44, 'start':  0, 'size': 1},
+    'pbs_reserved_or_disabled' : {'var': 0x44, 'start':  1, 'size': 1},
+    'pbs_enabled'              : {'var': 0x44, 'start':  2, 'size': 1},
+    'rail_continuation'        : {'var': 0x45, 'start':  0, 'size': 8},
+    'rail_present'             : {'var': 0x45, 'start':  8, 'size': 8},
+    'animation_frame'          : {'var': 0x4A, 'start':  0, 'size': 8},
+}
+varact2vars_stations.update(varact2vars_base_stations)
+
+varact2vars60x_stations = {
+    'nearby_tile_animation_frame' : {'var': 0x66, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_slope'           : {'var': 0x67, 'start':  0, 'size':  5, 'param_function': signed_tile_offset},
+    'nearby_tile_is_water'        : {'var': 0x67, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_terrain_type'    : {'var': 0x67, 'start': 10, 'size':  3, 'param_function': signed_tile_offset},
+    'nearby_tile_water_class'     : {'var': 0x67, 'start': 13, 'size':  2, 'param_function': signed_tile_offset},
+    'nearby_tile_height'          : {'var': 0x67, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
+    'nearby_tile_class'           : {'var': 0x67, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
+    'nearby_tile_station_id'      : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
+    'nearby_tile_same_grf'        : {'var': 0x68, 'start':  8, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_other_grf'       : {'var': 0x68, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_original_gfx'    : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 
+            'value_function': lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(0, var.pos))},
+    'nearby_tile_same_station'    : {'var': 0x68, 'start': 10, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_perpendicular'   : {'var': 0x68, 'start': 11, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_platform_type'   : {'var': 0x68, 'start': 12, 'size':  2, 'param_function': signed_tile_offset},
+}
+varact2vars60x_stations.update(varact2vars60x_base_stations)
+
+
+
 varact2vars_canals = {
     'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8},
     'terrain_type' : {'var': 0x81, 'start': 0, 'size': 8},
@@ -254,27 +312,6 @@ varact2vars_houses = {
     'house_tile'            : {'var': 0x7D, 'start': 16, 'size':  8, 'param': 0xFF},
     'house_type_id'         : {'var': 0x7D, 'start': 24, 'size':  8, 'param': 0xFF},
 }
-
-def tile_offset(name, args, pos, info, min, max):
-    if len(args) != 2:
-        raise generic.ScriptError("'%s'() requires 2 arguments, encountered %d" % (name, len(args)), pos)
-    for arg in args:
-        if isinstance(arg, expression.ConstantNumeric):
-            generic.check_range(arg.value, min, max, "Argument of '%s'" % name, arg.pos)
-
-    x = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xF), args[0].pos)
-    y = expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xF), args[1].pos)
-    # Shift y left by four
-    y = expression.BinOp(nmlop.SHIFT_LEFT, y, expression.ConstantNumeric(4), y.pos)
-    param = expression.BinOp(nmlop.ADD, x, y, x.pos)
-    #Make sure to reduce the result
-    return ( param.reduce(), [] )
-
-def signed_tile_offset(name, args, pos, info):
-    return tile_offset(name, args, pos, info, -8, 7)
-
-def unsigned_tile_offset(name, args, pos, info):
-    return tile_offset(name, args, pos, info, 0, 15)
 
 def cargo_accepted_nearby(name, args, pos, info):
     # cargo_accepted_nearby(cargo[, xoffset, yoffset])
@@ -547,6 +584,8 @@ varact2vars[0x02] = varact2vars_ships
 varact2vars60x[0x02] = varact2vars60x_vehicles
 varact2vars[0x03] = varact2vars_aircraft
 varact2vars60x[0x03] = varact2vars60x_vehicles
+varact2vars[0x04] = varact2vars_stations
+varact2vars60x[0x04] = varact2vars60x_stations
 varact2vars[0x05] = varact2vars_canals
 varact2vars[0x07] = varact2vars_houses
 varact2vars60x[0x07] = varact2vars60x_houses
