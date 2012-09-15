@@ -89,84 +89,98 @@ def signed_tile_offset(name, args, pos, info):
 def unsigned_tile_offset(name, args, pos, info):
     return tile_offset(name, args, pos, info, 0, 15)
 
+#
+# Global variables, usable for all features
+#
+
 varact2_globalvars = {
-    'current_month' : {'var': 0x02, 'start': 0, 'size': 8},
-    'current_day_of_month' : {'var': 0x02, 'start': 8, 'size': 5},
-    'is_leapyear' : {'var': 0x02, 'start': 15, 'size': 1},
-    'current_day_of_year' : {'var': 0x02, 'start': 16, 'size': 9},
-    'traffic_side' : {'var': 0x06, 'start': 0, 'size': 8},
-    'animation_counter' : {'var': 0x0A, 'start': 0, 'size': 16},
-    'current_callback' : {'var': 0x0C, 'start': 0, 'size': 16},
-    'extra_callback_info1' : {'var': 0x10, 'start': 0, 'size': 32},
-    'game_mode' : {'var': 0x12, 'start': 0, 'size': 8},
-    'extra_callback_info2' : {'var': 0x18, 'start': 0, 'size': 32},
-    'display_options' : {'var': 0x1B, 'start': 0, 'size': 6},
-    'last_computed_result' : {'var': 0x1C, 'start': 0, 'size': 32},
-    'snowline_height' : {'var': 0x20, 'start': 0, 'size': 8},
-    'difficulty_level' : {'var': 0x22, 'start': 0, 'size': 8},
-    'current_date' : {'var': 0x23, 'start': 0, 'size': 32},
-    'current_year' : {'var': 0x24, 'start': 0, 'size': 32},
+    'current_month'        : {'var': 0x02, 'start':  0, 'size':  8},
+    'current_day_of_month' : {'var': 0x02, 'start':  8, 'size':  5},
+    'is_leapyear'          : {'var': 0x02, 'start': 15, 'size':  1},
+    'current_day_of_year'  : {'var': 0x02, 'start': 16, 'size':  9},
+    'traffic_side'         : {'var': 0x06, 'start':  0, 'size':  8},
+    'animation_counter'    : {'var': 0x0A, 'start':  0, 'size': 16},
+    'current_callback'     : {'var': 0x0C, 'start':  0, 'size': 16},
+    'extra_callback_info1' : {'var': 0x10, 'start':  0, 'size': 32},
+    'game_mode'            : {'var': 0x12, 'start':  0, 'size':  8},
+    'extra_callback_info2' : {'var': 0x18, 'start':  0, 'size': 32},
+    'display_options'      : {'var': 0x1B, 'start':  0, 'size':  6},
+    'last_computed_result' : {'var': 0x1C, 'start':  0, 'size': 32},
+    'snowline_height'      : {'var': 0x20, 'start':  0, 'size':  8},
+    'difficulty_level'     : {'var': 0x22, 'start':  0, 'size':  8},
+    'current_date'         : {'var': 0x23, 'start':  0, 'size': 32},
+    'current_year'         : {'var': 0x24, 'start':  0, 'size': 32},
 }
 
+#
+# Vehicles (features 0x00 - 0x03)
+# A few variables have an implementation that differs per vehicle type
+# These are to be found below
+#
+
 varact2vars_vehicles = {
-    'position_in_consist' : {'var': 0x40, 'start': 0, 'size': 8},
-    'position_in_consist_from_end' : {'var': 0x40, 'start': 8, 'size': 8},
-    'num_vehs_in_consist' : {'var': 0x40, 'start': 16, 'size': 8, 'value_function': value_add_constant(1)},
-    'position_in_vehid_chain' : {'var': 0x41, 'start': 0, 'size': 8},
-    'position_in_vehid_chain_from_end' : {'var': 0x41, 'start': 8, 'size': 8},
-    'num_vehs_in_vehid_chain' : {'var': 0x41, 'start': 16, 'size': 8, 'value_function': value_add_constant(1)},
-    'cargo_classes_in_consist' : {'var': 0x42, 'start': 0, 'size': 8},
-    'most_common_refit' : {'var': 0x42, 'start': 16, 'size': 8},
-    'bitmask_consist_info' : {'var': 0x42, 'start': 24, 'size': 8},
-    'company_num' : {'var': 0x43, 'start': 0, 'size': 8},
-    'company_type' : {'var': 0x43, 'start': 16, 'size': 2},
-    'company_colour1' : {'var': 0x43, 'start': 24, 'size': 4},
-    'company_colour2' : {'var': 0x43, 'start': 28, 'size': 4},
-    'aircraft_height' : {'var': 0x44, 'start': 8, 'size': 8},
-    'airport_type' : {'var': 0x44, 'start': 0, 'size': 8},
-    'curv_info_prev_cur' : {'var': 0x45, 'start': 0, 'size': 4, 'value_function': value_sign_extend},
-    'curv_info_cur_next' : {'var': 0x45, 'start': 8, 'size': 4, 'value_function': value_sign_extend},
-    'curv_info_prev_next' : {'var': 0x45, 'start': 16, 'size': 4, 'value_function': value_sign_extend},
-    'curv_info' : {'var': 0x45, 'start': 0, 'size': 12, 'value_function': lambda var, info: expression.BinOp(nmlop.AND, var, expression.ConstantNumeric(0x0F0F, var.pos), var.pos).reduce()},
-    'motion_counter' : {'var': 0x46, 'start': 8, 'size': 4},
-    'cargo_type_in_veh' : {'var': 0x47, 'start': 0, 'size': 8},
-    'cargo_unit_weight' : {'var': 0x47, 'start': 8, 'size': 8},
-    'cargo_classes' : {'var': 0x47, 'start': 16, 'size': 16},
-    'vehicle_is_available' : {'var': 0x48, 'start': 0, 'size': 1},
-    'vehicle_is_testing' : {'var': 0x48, 'start': 1, 'size': 1},
-    'vehicle_is_offered' : {'var': 0x48, 'start': 2, 'size': 1},
-    'build_year' : {'var': 0x49, 'start': 0, 'size': 32},
-    'direction' : {'var': 0x9F, 'start': 0, 'size': 8},
-    'cargo_capacity' : {'var': 0xBA, 'start': 0, 'size': 16},
-    'cargo_count' : {'var': 0xBC, 'start': 0, 'size': 16},
-    'vehicle_type_id' : {'var': 0xC6, 'start': 0, 'size': 16},
-    'cargo_subtype' : {'var': 0xF2, 'start': 0, 'size': 8},
-    'vehicle_is_powered' : {'var': 0xFE, 'start': 5, 'size': 1},
-    'vehicle_is_not_powered' : {'var': 0xFE, 'start': 6, 'size': 1},
-    'vehicle_is_potentially_powered': {'var': 0x4A, 'start': 8, 'size': 1},
-    'vehicle_is_reversed' : {'var': 0xFE, 'start': 8, 'size': 1},
-    'built_during_preview' : {'var': 0xFE, 'start': 10, 'size': 1},
-    'current_railtype' : {'var': 0x4A, 'start': 0, 'size': 8},
-    'waiting_triggers' : {'var': 0x5F, 'start': 0, 'size': 8},
-    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
-    'grfid' : {'var': 0x25, 'start': 0, 'size': 32},
-    'vehicle_is_hidden' : {'var': 0xB2, 'start': 0, 'size': 1},
-    'vehicle_is_stopped' : {'var': 0xB2, 'start': 1, 'size': 1},
-    'vehicle_is_crashed' : {'var': 0xB2, 'start': 7, 'size': 1},
-    'vehicle_is_broken' : {'var': 0xCB, 'start': 0, 'size': 8, 'value_function': value_equals(1)},
-    'date_of_last_service' : {'var': 0x4B, 'start': 0, 'size': 32},
-    'breakdowns_since_last_service' : {'var': 0xCA, 'start': 0, 'size': 8},
-    'reliability' : {'var': 0xCE, 'start': 0, 'size': 16, 'value_function': value_mul_div(101, 0x10000)},
-    'age_in_days' : {'var': 0xC0, 'start': 0, 'size': 16},
-    'max_age_in_days' : {'var': 0xC2, 'start': 0, 'size': 16},
+    'grfid'                            : {'var': 0x25, 'start':  0, 'size': 32},
+    'position_in_consist'              : {'var': 0x40, 'start':  0, 'size':  8},
+    'position_in_consist_from_end'     : {'var': 0x40, 'start':  8, 'size':  8},
+    'num_vehs_in_consist'              : {'var': 0x40, 'start': 16, 'size':  8, 'value_function': value_add_constant(1)},
+    'position_in_vehid_chain'          : {'var': 0x41, 'start':  0, 'size':  8},
+    'position_in_vehid_chain_from_end' : {'var': 0x41, 'start':  8, 'size':  8},
+    'num_vehs_in_vehid_chain'          : {'var': 0x41, 'start': 16, 'size':  8, 'value_function': value_add_constant(1)},
+    'cargo_classes_in_consist'         : {'var': 0x42, 'start':  0, 'size':  8},
+    'most_common_refit'                : {'var': 0x42, 'start': 16, 'size':  8},
+    'bitmask_consist_info'             : {'var': 0x42, 'start': 24, 'size':  8},
+    'company_num'                      : {'var': 0x43, 'start':  0, 'size':  8},
+    'company_type'                     : {'var': 0x43, 'start': 16, 'size':  2},
+    'company_colour1'                  : {'var': 0x43, 'start': 24, 'size':  4},
+    'company_colour2'                  : {'var': 0x43, 'start': 28, 'size':  4},
+    'aircraft_height'                  : {'var': 0x44, 'start':  8, 'size':  8},
+    'airport_type'                     : {'var': 0x44, 'start':  0, 'size':  8},
+    'curv_info_prev_cur'               : {'var': 0x45, 'start':  0, 'size':  4, 'value_function': value_sign_extend},
+    'curv_info_cur_next'               : {'var': 0x45, 'start':  8, 'size':  4, 'value_function': value_sign_extend},
+    'curv_info_prev_next'              : {'var': 0x45, 'start': 16, 'size':  4, 'value_function': value_sign_extend},
+    'curv_info'                        : {'var': 0x45, 'start':  0, 'size': 12, 
+            'value_function': lambda var, info: expression.BinOp(nmlop.AND, var, expression.ConstantNumeric(0x0F0F, var.pos), var.pos).reduce()},
+    'motion_counter'                   : {'var': 0x46, 'start':  8, 'size':  4},
+    'cargo_type_in_veh'                : {'var': 0x47, 'start':  0, 'size':  8},
+    'cargo_unit_weight'                : {'var': 0x47, 'start':  8, 'size':  8},
+    'cargo_classes'                    : {'var': 0x47, 'start': 16, 'size': 16},
+    'vehicle_is_available'             : {'var': 0x48, 'start':  0, 'size':  1},
+    'vehicle_is_testing'               : {'var': 0x48, 'start':  1, 'size':  1},
+    'vehicle_is_offered'               : {'var': 0x48, 'start':  2, 'size':  1},
+    'build_year'                       : {'var': 0x49, 'start':  0, 'size': 32},
+    'current_railtype'                 : {'var': 0x4A, 'start':  0, 'size':  8},
+    'vehicle_is_potentially_powered'   : {'var': 0x4A, 'start':  8, 'size':  1},
+    'date_of_last_service'             : {'var': 0x4B, 'start':  0, 'size': 32},
+    'waiting_triggers'                 : {'var': 0x5F, 'start':  0, 'size':  8},
+    'random_bits'                      : {'var': 0x5F, 'start':  8, 'size':  8},
+    'direction'                        : {'var': 0x9F, 'start':  0, 'size':  8},
+    'vehicle_is_hidden'                : {'var': 0xB2, 'start':  0, 'size':  1},
+    'vehicle_is_stopped'               : {'var': 0xB2, 'start':  1, 'size':  1},
+    'vehicle_is_crashed'               : {'var': 0xB2, 'start':  7, 'size':  1},
+    'cargo_capacity'                   : {'var': 0xBA, 'start':  0, 'size': 16},
+    'cargo_count'                      : {'var': 0xBC, 'start':  0, 'size': 16},
+    'age_in_days'                      : {'var': 0xC0, 'start':  0, 'size': 16},
+    'max_age_in_days'                  : {'var': 0xC2, 'start':  0, 'size': 16},
+    'vehicle_type_id'                  : {'var': 0xC6, 'start':  0, 'size': 16},
+    'breakdowns_since_last_service'    : {'var': 0xCA, 'start':  0, 'size':  8},
+    'vehicle_is_broken'                : {'var': 0xCB, 'start':  0, 'size':  8, 'value_function': value_equals(1)},
+    'reliability'                      : {'var': 0xCE, 'start':  0, 'size': 16, 'value_function': value_mul_div(101, 0x10000)},
+    'cargo_subtype'                    : {'var': 0xF2, 'start':  0, 'size':  8},
+    'vehicle_is_powered'               : {'var': 0xFE, 'start':  5, 'size':  1},
+    'vehicle_is_not_powered'           : {'var': 0xFE, 'start':  6, 'size':  1},
+    'vehicle_is_reversed'              : {'var': 0xFE, 'start':  8, 'size':  1},
+    'built_during_preview'             : {'var': 0xFE, 'start': 10, 'size':  1},
 }
+
+# Vehicle-type-specific variables
+
 varact2vars_trains = {
     #0x4786 / 0x10000 is an approximation of 3.5790976, the conversion factor
     #for train speed
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
-    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
+    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size':  1},
 }
 varact2vars_trains.update(varact2vars_vehicles)
 
@@ -186,7 +200,7 @@ varact2vars_ships = {
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
-    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size': 1}
+    'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size':  1},
 }
 varact2vars_ships.update(varact2vars_vehicles)
 
@@ -220,6 +234,10 @@ varact2vars60x_vehicles = {
     'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
 }
 
+#
+# Stations (feature 0x04)
+#
+
 # 'Base station' variables are shared between stations and airports
 varact2vars_base_stations = {
     # Var 48 doesn't work with newcargos, do not use
@@ -247,6 +265,7 @@ varact2vars60x_base_stations = {
 }
 
 varact2vars_stations = {
+    # TODO: platform info (vars 40, 41, 46, 47, 49)
     'terrain_type'             : {'var': 0x42, 'start':  0, 'size': 8},
     'track_type'               : {'var': 0x42, 'start':  8, 'size': 8},
     'company_num'              : {'var': 0x43, 'start':  0, 'size': 8},
@@ -280,13 +299,24 @@ varact2vars60x_stations = {
 }
 varact2vars60x_stations.update(varact2vars60x_base_stations)
 
-
+#
+# Canals (feature 0x05)
+#
 
 varact2vars_canals = {
     'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8},
     'terrain_type' : {'var': 0x81, 'start': 0, 'size': 8},
     'random_bits'  : {'var': 0x83, 'start': 0, 'size': 8},
 }
+# Canals have no 60+X variables
+
+#
+# Bridges (feature 0x06) have no variational action2
+#
+
+#
+# Houses (feature 0x07)
+#
 
 def house_same_class(var, info):
     # Just using var 44 fails for non-north house tiles, as these have no class
@@ -380,15 +410,23 @@ varact2vars60x_houses = {
     'nearby_tile_house_grfid'            : {'var': 0x67, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
 }
 
+#
+# Global variables (feature 0x08) have no variational action2
+#
+
+#
+# Industry tiles (feature 0x09)
+#
+
 varact2vars_industrytiles = {
-    'construction_state' : {'var': 0x40, 'start': 0, 'size': 2},
-    'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
-    'town_zone': {'var': 0x42, 'start': 0, 'size': 3},
-    'relative_x': {'var': 0x43, 'start': 0, 'size': 8},
-    'relative_y': {'var': 0x43, 'start': 8, 'size': 8},
-    'relative_pos': {'var': 0x43, 'start': 0, 'size': 16},
-    'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
-    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 8},
+    'construction_state' : {'var': 0x40, 'start': 0, 'size':  2},
+    'terrain_type'       : {'var': 0x41, 'start': 0, 'size':  8},
+    'town_zone'          : {'var': 0x42, 'start': 0, 'size':  3},
+    'relative_x'         : {'var': 0x43, 'start': 0, 'size':  8},
+    'relative_y'         : {'var': 0x43, 'start': 8, 'size':  8},
+    'relative_pos'       : {'var': 0x43, 'start': 0, 'size': 16},
+    'animation_frame'    : {'var': 0x44, 'start': 0, 'size':  8},
+    'random_bits'        : {'var': 0x5F, 'start': 8, 'size':  8},
 }
 
 varact2vars60x_industrytiles = {
@@ -403,38 +441,42 @@ varact2vars60x_industrytiles = {
     'nearby_tile_industrytile_id'  : {'var': 0x62, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
 }
 
+#
+# Industries (feature 0x0A)
+#
+
 varact2vars_industries = {
-    'waiting_cargo_1' : {'var': 0x40, 'start': 0, 'size': 16},
-    'waiting_cargo_2' : {'var': 0x41, 'start': 0, 'size': 16},
-    'waiting_cargo_3' : {'var': 0x42, 'start': 0, 'size': 16},
-    'water_distance' : {'var': 0x43, 'start': 0, 'size': 32},
-    'layout_num' : {'var': 0x44, 'start': 0, 'size': 8},
+    'waiting_cargo_1'              : {'var': 0x40, 'start':  0, 'size': 16},
+    'waiting_cargo_2'              : {'var': 0x41, 'start':  0, 'size': 16},
+    'waiting_cargo_3'              : {'var': 0x42, 'start':  0, 'size': 16},
+    'water_distance'               : {'var': 0x43, 'start':  0, 'size': 32},
+    'layout_num'                   : {'var': 0x44, 'start':  0, 'size':  8},
     # bits 0 .. 16 are either useless or already covered by var A7
-    'founder_type' : {'var': 0x45, 'start': 16, 'size': 2},
-    'founder_colour1' : {'var': 0x45, 'start': 24, 'size': 4},
-    'founder_colour2' : {'var': 0x45, 'start': 28, 'size': 4},
-    'build_date' : {'var': 0x46, 'start': 0, 'size': 32},
-    'random_bits' : {'var': 0x5F, 'start': 8, 'size': 16},
-    'produced_cargo_waiting_1' : {'var': 0x8A, 'start': 0, 'size': 16},
-    'produced_cargo_waiting_2' : {'var': 0x8C, 'start': 0, 'size': 16},
-    'production_rate_1' : {'var': 0x8E, 'start': 0, 'size': 8},
-    'production_rate_2' : {'var': 0x8F, 'start': 0, 'size': 8},
-    'production_level' : {'var': 0x93, 'start': 0, 'size': 8},
-    'produced_this_month_1' : {'var': 0x94, 'start': 0, 'size': 16},
-    'produced_this_month_2' : {'var': 0x96, 'start': 0, 'size': 16},
-    'transported_this_month_1' : {'var': 0x98, 'start': 0, 'size': 16},
-    'transported_this_month_2' : {'var': 0x9A, 'start': 0, 'size': 16},
-    'transported_last_month_pct_1' : {'var': 0x9C, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
-    'transported_last_month_pct_2' : {'var': 0x9D, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
-    'produced_last_month_1' : {'var': 0x9E, 'start': 0, 'size': 16},
-    'produced_last_month_2' : {'var': 0xA0, 'start': 0, 'size': 16},
-    'transported_last_month_1' : {'var': 0xA2, 'start': 0, 'size': 16},
-    'transported_last_month_2' : {'var': 0xA4, 'start': 0, 'size': 16},
-    'founder' : {'var': 0xA7, 'start': 0, 'size': 8},
-    'colour' : {'var': 0xA8, 'start': 0, 'size': 8},
-    'counter' : {'var': 0xAA, 'start': 0, 'size': 16},
-    'build_type' : {'var': 0xB3, 'start': 0, 'size': 2},
-    'last_accept_date' : {'var': 0xB4, 'start':0, 'size': 16, 'value_function': value_add_constant(701265)}
+    'founder_type'                 : {'var': 0x45, 'start': 16, 'size':  2},
+    'founder_colour1'              : {'var': 0x45, 'start': 24, 'size':  4},
+    'founder_colour2'              : {'var': 0x45, 'start': 28, 'size':  4},
+    'build_date'                   : {'var': 0x46, 'start':  0, 'size': 32},
+    'random_bits'                  : {'var': 0x5F, 'start':  8, 'size': 16},
+    'produced_cargo_waiting_1'     : {'var': 0x8A, 'start':  0, 'size': 16},
+    'produced_cargo_waiting_2'     : {'var': 0x8C, 'start':  0, 'size': 16},
+    'production_rate_1'            : {'var': 0x8E, 'start':  0, 'size':  8},
+    'production_rate_2'            : {'var': 0x8F, 'start':  0, 'size':  8},
+    'production_level'             : {'var': 0x93, 'start':  0, 'size':  8},
+    'produced_this_month_1'        : {'var': 0x94, 'start':  0, 'size': 16},
+    'produced_this_month_2'        : {'var': 0x96, 'start':  0, 'size': 16},
+    'transported_this_month_1'     : {'var': 0x98, 'start':  0, 'size': 16},
+    'transported_this_month_2'     : {'var': 0x9A, 'start':  0, 'size': 16},
+    'transported_last_month_pct_1' : {'var': 0x9C, 'start':  0, 'size':  8, 'value_function': value_mul_div(101, 256)},
+    'transported_last_month_pct_2' : {'var': 0x9D, 'start':  0, 'size':  8, 'value_function': value_mul_div(101, 256)},
+    'produced_last_month_1'        : {'var': 0x9E, 'start':  0, 'size': 16},
+    'produced_last_month_2'        : {'var': 0xA0, 'start':  0, 'size': 16},
+    'transported_last_month_1'     : {'var': 0xA2, 'start':  0, 'size': 16},
+    'transported_last_month_2'     : {'var': 0xA4, 'start':  0, 'size': 16},
+    'founder'                      : {'var': 0xA7, 'start':  0, 'size':  8},
+    'colour'                       : {'var': 0xA8, 'start':  0, 'size':  8},
+    'counter'                      : {'var': 0xAA, 'start':  0, 'size': 16},
+    'build_type'                   : {'var': 0xB3, 'start':  0, 'size':  2},
+    'last_accept_date'             : {'var': 0xB4, 'start':  0, 'size': 16, 'value_function': value_add_constant(701265)},
 }
 
 def industry_count(name, args, pos, info):
@@ -489,11 +531,28 @@ varact2vars60x_industries = {
     'industry_town_count'          : { 'var': 0x68, 'start': 16, 'size':  8, 'param_function': industry_town_count },
 }
 
+#
+# Cargos (feature 0x0B) have no own varaction2 variables
+# Sounds (feature 0x0C) have no variational action2
+#
+
+#
+# Airports (feature 0x0D)
+#
+
 varact2vars_airports = {
     'layout' : {'var': 0x40, 'start': 0, 'size': 32},
 }
 varact2vars_airports.update(varact2vars_base_stations)
 varact2vars60x_airports = varact2vars60x_base_stations
+
+#
+# New Signals (feature 0x0E) are not implemented in OpenTTD
+#
+
+#
+# Objects (feature 0x0F)
+#
 
 varact2vars_objects = {
     'relative_x'             : {'var': 0x40, 'start': 0, 'size': 8},
@@ -537,6 +596,10 @@ varact2vars60x_objects = {
     'object_distance'              : { 'var' : 0x64, 'start':  0, 'size': 16, 'param_function': industry_count },
 }
 
+#
+# Railtypes (feature 0x10)
+#
+
 varact2vars_railtype = {
     'terrain_type'          : {'var': 0x40, 'start': 0, 'size':  8},
     'enhanced_tunnels'      : {'var': 0x41, 'start': 0, 'size':  8},
@@ -545,14 +608,19 @@ varact2vars_railtype = {
     'town_zone'             : {'var': 0x44, 'start': 0, 'size':  8},
     'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
+# Railtypes have no 60+x variables
+
+#
+# Airport tiles (feature 0x11)
+#
 
 varact2vars_airporttiles = {
-    'terrain_type' : {'var': 0x41, 'start': 0, 'size': 8},
-    'town_radius_group': {'var': 0x42, 'start': 0, 'size': 3},
-    'relative_x': {'var': 0x43, 'start': 0, 'size': 8},
-    'relative_y': {'var': 0x43, 'start': 8, 'size': 8},
-    'relative_pos': {'var': 0x43, 'start': 0, 'size': 16},
-    'animation_frame': {'var': 0x44, 'start': 0, 'size': 8},
+    'terrain_type'      : {'var': 0x41, 'start': 0, 'size':  8},
+    'town_radius_group' : {'var': 0x42, 'start': 0, 'size':  3},
+    'relative_x'        : {'var': 0x43, 'start': 0, 'size':  8},
+    'relative_y'        : {'var': 0x43, 'start': 8, 'size':  8},
+    'relative_pos'      : {'var': 0x43, 'start': 0, 'size': 16},
+    'animation_frame'   : {'var': 0x44, 'start': 0, 'size':  8},
 }
 
 varact2vars60x_airporttiles = {
@@ -566,6 +634,10 @@ varact2vars60x_airporttiles = {
     'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_airporttile_id'   : {'var': 0x62, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
 }
+
+#
+# Towns are not a true feature, but accessible via the parent scope of e.g. industries, stations
+#
 
 varact2vars_towns = {
     'is_city'                        : {'var': 0x40, 'start': 0, 'size': 1},
