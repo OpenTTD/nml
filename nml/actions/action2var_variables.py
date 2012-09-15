@@ -190,6 +190,32 @@ varact2vars60x_vehicles = {
     'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':signextend},
 }
 
+# 'Base station' variables are shared between stations and airports
+varact2vars_base_stations = {
+    # Var 48 doesn't work with newcargos, do not use
+    'had_vehicle_of_type' : {'var': 0x8A, 'start': 0, 'size': 8},
+    'facilities'          : {'var': 0xF0, 'start': 0, 'size': 8},
+    'airport_type'        : {'var': 0xF1, 'start': 0, 'size': 8},
+    # Variables F2, F3, F6 (roadstop, airport flags) are next to useless
+    # Also, their values are not the same as in TTDP / spec
+    # Therefore, these are not implemented
+    'build_date'          : {'var': 0xFA, 'start': 0, 'size': 16, 'value_function': func_add_constant(701265)}
+}
+
+varact2vars60x_base_stations = {
+    'cargo_amount_waiting'      : {'var': 0x60, 'start': 0, 'size': 32},
+    'cargo_time_since_pickup'   : {'var': 0x61, 'start': 0, 'size': 32},
+    'cargo_rating'              : {'var': 0x62, 'start': 0, 'size': 32, 'value_function': lambda var, info: muldiv(var, 101, 256)},
+    'cargo_time_en_route'       : {'var': 0x63, 'start': 0, 'size': 32},
+    'cargo_last_vehicle_speed'  : {'var': 0x64, 'start': 0, 'size':  8},
+    'cargo_last_vehicle_age'    : {'var': 0x64, 'start': 8, 'size':  8},
+    'cargo_accepted'            : {'var': 0x65, 'start': 3, 'size':  1},
+    'cargo_accepted_ever'       : {'var': 0x69, 'start': 0, 'size':  1},
+    'cargo_accepted_last_month' : {'var': 0x69, 'start': 1, 'size':  1},
+    'cargo_accepted_this_month' : {'var': 0x69, 'start': 2, 'size':  1},
+    'cargo_accepted_bigtick'    : {'var': 0x69, 'start': 3, 'size':  1},
+}
+
 varact2vars_canals = {
     'tile_height'  : {'var': 0x80, 'start': 0, 'size': 8},
     'terrain_type' : {'var': 0x81, 'start': 0, 'size': 8},
@@ -421,6 +447,8 @@ varact2vars60x_industries = {
 varact2vars_airports = {
     'layout' : {'var': 0x40, 'start': 0, 'size': 32},
 }
+varact2vars_airports.update(varact2vars_base_stations)
+varact2vars60x_airports = varact2vars60x_base_stations
 
 varact2vars_objects = {
     'relative_x'             : {'var': 0x40, 'start': 0, 'size': 8},
@@ -527,6 +555,7 @@ varact2vars60x[0x09] = varact2vars60x_industrytiles
 varact2vars[0x0A] = varact2vars_industries
 varact2vars60x[0x0A] = varact2vars60x_industries
 varact2vars[0x0D] = varact2vars_airports
+varact2vars60x[0x0D] = varact2vars60x_airports
 varact2vars[0x0F] = varact2vars_objects
 varact2vars60x[0x0F] = varact2vars60x_objects
 varact2vars[0x10] = varact2vars_railtype
