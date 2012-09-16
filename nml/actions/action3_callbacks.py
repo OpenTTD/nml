@@ -127,7 +127,10 @@ callbacks[0x03] = {
 }
 callbacks[0x03].update(general_vehicle_cbs)
 
-# Stations (0x04) are not yet implemented
+# Stations (0x04) are not yet fully implemented
+callbacks[0x04] = {
+    'default' : {'type': 'cargo', 'num': None},
+}
 
 # Canals
 callbacks[0x05] = {
