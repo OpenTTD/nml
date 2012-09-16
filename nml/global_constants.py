@@ -503,7 +503,7 @@ constant_numbers = {
     'IND_CREATION_FUND'                  : 2,
     'IND_CREATION_PROSPECT'              : 3,
 
-    #airport types (vehicle var 0x44)
+    #airport types (vehicle var 0x44, base station var airport_type)
     'AIRPORTTYPE_SMALL'                  : 0,
     'AIRPORTTYPE_LARGE'                  : 1,
     'AIRPORTTYPE_HELIPORT'               : 2,
@@ -582,6 +582,20 @@ constant_numbers = {
     'PLATFORM_SAME_STATION'                 : 0,
     'PLATFORM_SAME_SECTION'                 : 1,
     'PLATFORM_SAME_DIRECTION'               : 2,
+
+    # vehicle type (base station var 'had_vehicle_of_type')
+    'HAD_VEHICLE_OF_TYPE_TRAIN'             : 0,
+    'HAD_VEHICLE_OF_TYPE_BUS'               : 1,
+    'HAD_VEHICLE_OF_TYPE_TRUCK'             : 2,
+    'HAD_VEHICLE_OF_TYPE_AIRCRAFT'          : 3,
+    'HAD_VEHICLE_OF_TYPE_SHIP'              : 4,
+
+    # station facilities (base station var 'facilities')
+    'FACILITY_TRAIN'                        : 0
+    'FACILITY_TRUCK_STOP'                   : 1
+    'FACILITY_BUS_STOP'                     : 2
+    'FACILITY_AIRPORT'                      : 3
+    'FACILITY_DOCK'                         : 4
 
     #Random triggers
     'TRIGGER_ALL_NEEDED'                    : 7,

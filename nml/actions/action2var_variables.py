@@ -241,7 +241,8 @@ varact2vars60x_vehicles = {
 # 'Base station' variables are shared between stations and airports
 varact2vars_base_stations = {
     # Var 48 doesn't work with newcargos, do not use
-    'had_vehicle_of_type' : {'var': 0x8A, 'start': 0, 'size': 8},
+    'had_vehicle_of_type' : {'var': 0x8A, 'start': 1, 'size': 5}, # Only read bits 1-5
+    'is_waypoint'         : {'var': 0x8A, 'start': 6, 'size': 1},
     'facilities'          : {'var': 0xF0, 'start': 0, 'size': 8},
     'airport_type'        : {'var': 0xF1, 'start': 0, 'size': 8},
     # Variables F2, F3, F6 (roadstop, airport flags) are next to useless
