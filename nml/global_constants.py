@@ -578,6 +578,11 @@ constant_numbers = {
     'MAP_TYPE_RECTANGULAR'                  : 1, #bit 0 set
     'MAP_TYPE_Y_BIGGER'                     : 2, #bit 0 clear, bit 1 set
 
+    # Platform types (platform_xx station variables)
+    'PLATFORM_SAME_STATION'                 : 0,
+    'PLATFORM_SAME_SECTION'                 : 1,
+    'PLATFORM_SAME_DIRECTION'               : 2,
+
     #Random triggers
     'TRIGGER_ALL_NEEDED'                    : 7,
 

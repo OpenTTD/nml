@@ -265,7 +265,9 @@ varact2vars60x_base_stations = {
 }
 
 varact2vars_stations = {
-    # TODO: platform info (vars 40, 41, 46, 47, 49)
+    # Vars 40, 41, 46, 47, 49 are implemented as 60+x vars,
+    # except for the 'tile type' part which is always the same anyways
+    'tile_type'                : {'var': 0x40, 'start': 24, 'size': 4},
     'terrain_type'             : {'var': 0x42, 'start':  0, 'size': 8},
     'track_type'               : {'var': 0x42, 'start':  8, 'size': 8},
     'company_num'              : {'var': 0x43, 'start':  0, 'size': 8},
@@ -281,21 +283,58 @@ varact2vars_stations = {
 }
 varact2vars_stations.update(varact2vars_base_stations)
 
+# Mapping of param values for platform_xx vars to variable numbers
+mapping_platform_param = {
+    (0, False) : 0x40,
+    (1, False) : 0x41,
+    (0, True)  : 0x46,
+    (1, True)  : 0x47,
+    (2, False) : 0x49,
+}
+
+def platform_info_param(name, args, pos, info, is_middle = False):
+    if len(args) != 1:
+        raise generic.ScriptError("'%s'() requires one argument, encountered %d" % (name, len(args)), pos)
+    if (not isinstance(args[0], expression.ConstantNumeric)) or args[0].value not in (0, 1, 2):
+        raise generic.ScriptError("Invalid argument for '%s'(), must be one of PLATFORM_SAME_XXX." % name, pos)
+    if is_middle and args[0].value == 2:
+        raise generic.ScriptError("Invalid argument for '%s'(), PLATFORM_SAME_DIRECTION is not supported here." % name, pos)
+    # Temporarily store variable number in the param, this will be fixed in the value_function
+    return (expression.ConstantNumeric(mapping_platform_param[(args[0].value, is_middle)]), [])
+
+def platform_info_fix_var(var, info):
+    # Variable to use was temporarily stored in the param
+    # Fix this now
+    var.num = var.param
+    var.param = None
+    return var
+
 varact2vars60x_stations = {
-    'nearby_tile_animation_frame' : {'var': 0x66, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
-    'nearby_tile_slope'           : {'var': 0x67, 'start':  0, 'size':  5, 'param_function': signed_tile_offset},
-    'nearby_tile_is_water'        : {'var': 0x67, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
-    'nearby_tile_terrain_type'    : {'var': 0x67, 'start': 10, 'size':  3, 'param_function': signed_tile_offset},
-    'nearby_tile_water_class'     : {'var': 0x67, 'start': 13, 'size':  2, 'param_function': signed_tile_offset},
-    'nearby_tile_height'          : {'var': 0x67, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
-    'nearby_tile_class'           : {'var': 0x67, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
-    'nearby_tile_station_id'      : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
-    'nearby_tile_same_grf'        : {'var': 0x68, 'start':  8, 'size':  1, 'param_function': signed_tile_offset},
-    'nearby_tile_other_grf'       : {'var': 0x68, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
-    'nearby_tile_original_gfx'    : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(0)},
-    'nearby_tile_same_station'    : {'var': 0x68, 'start': 10, 'size':  1, 'param_function': signed_tile_offset},
-    'nearby_tile_perpendicular'   : {'var': 0x68, 'start': 11, 'size':  1, 'param_function': signed_tile_offset},
-    'nearby_tile_platform_type'   : {'var': 0x68, 'start': 12, 'size':  2, 'param_function': signed_tile_offset},
+    'nearby_tile_animation_frame'   : {'var': 0x66, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_slope'             : {'var': 0x67, 'start':  0, 'size':  5, 'param_function': signed_tile_offset},
+    'nearby_tile_is_water'          : {'var': 0x67, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_terrain_type'      : {'var': 0x67, 'start': 10, 'size':  3, 'param_function': signed_tile_offset},
+    'nearby_tile_water_class'       : {'var': 0x67, 'start': 13, 'size':  2, 'param_function': signed_tile_offset},
+    'nearby_tile_height'            : {'var': 0x67, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
+    'nearby_tile_class'             : {'var': 0x67, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
+    'nearby_tile_station_id'        : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
+    'nearby_tile_same_grf'          : {'var': 0x68, 'start':  8, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_other_grf'         : {'var': 0x68, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_original_gfx'      : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(0)},
+    'nearby_tile_same_station'      : {'var': 0x68, 'start': 10, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_perpendicular'     : {'var': 0x68, 'start': 11, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_platform_type'     : {'var': 0x68, 'start': 12, 'size':  2, 'param_function': signed_tile_offset},
+    # 'var' will be set in the value_function, depending on parameter
+    'platform_length'               : {'var': 0x00, 'start': 16, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
+    'platform_count'                : {'var': 0x00, 'start': 20, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
+    'platform_position_from_start'  : {'var': 0x00, 'start':  0, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
+    'platform_position_from_end'    : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
+    'platform_number_from_start'    : {'var': 0x00, 'start':  8, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
+    'platform_number_from_end'      : {'var': 0x00, 'start': 12, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
+    'platform_position_from_middle' : {'var': 0x00, 'start':  0, 'size':  4, 'param_function': lambda *args: platform_info_param(*args, is_middle=True), 
+                                            'value_function': lambda var, info: value_sign_extend(platform_info_fix_var(var, info), info)},
+    'platform_number_from_middle'   : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': lambda *args: platform_info_param(*args, is_middle=True), 
+                                            'value_function': lambda var, info: value_sign_extend(platform_info_fix_var(var, info), info)},
 }
 varact2vars60x_stations.update(varact2vars60x_base_stations)
 
