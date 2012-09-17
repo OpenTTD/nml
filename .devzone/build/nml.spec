@@ -38,9 +38,14 @@ A tool to compile nml files to grf or nfo files, making newgrf coding easier.
 # update to the tag, if not revision
 [ "$(echo %{version} | cut -b-1)" != "r" ] && hg up %{version}
 
-# create windows executable
+# prepare wine:
 install-nml-dot-wine
-python -c "import nml.version_info; nml.version_info.get_and_write_version()"
+
+%build
+%{__python} setup.py build
+
+# create windows executable
+#python -c "import nml.version_info; nml.version_info.get_and_write_version()"
 wine "C:\\Python27\\pythonw.exe" "C:\\Python27\\Scripts\\cxfreeze" nmlc
 cp $HOME/.wine/drive_c/windows/system32/python27.dll dist/
 mv dist nmlc-exe && mkdir dist
@@ -48,12 +53,10 @@ cd nmlc-exe
 7za a -l -tzip -mx=9 ../dist/%{name}-%{version}-windows-win32.zip *
 cd ..
 
+# build source bundle:
 %{__python} setup.py sdist
 # Add ".src" to the source archive file name:
 rename .tar.gz .src.tar.gz dist/*
-
-%build
-%{__python} setup.py build
 
 %install
 %{__python} setup.py install --skip-build --root=%{buildroot} --prefix=%{_prefix}
