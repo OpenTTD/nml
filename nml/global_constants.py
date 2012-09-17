@@ -591,11 +591,11 @@ constant_numbers = {
     'HAD_VEHICLE_OF_TYPE_SHIP'              : 4,
 
     # station facilities (base station var 'facilities')
-    'FACILITY_TRAIN'                        : 0
-    'FACILITY_TRUCK_STOP'                   : 1
-    'FACILITY_BUS_STOP'                     : 2
-    'FACILITY_AIRPORT'                      : 3
-    'FACILITY_DOCK'                         : 4
+    'FACILITY_TRAIN'                        : 0,
+    'FACILITY_TRUCK_STOP'                   : 1,
+    'FACILITY_BUS_STOP'                     : 2,
+    'FACILITY_AIRPORT'                      : 3,
+    'FACILITY_DOCK'                         : 4,
 
     #Random triggers
     'TRIGGER_ALL_NEEDED'                    : 7,
