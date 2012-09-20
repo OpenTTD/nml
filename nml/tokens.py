@@ -18,43 +18,43 @@ import ply.lex as lex
 from nml import expression, generic
 
 reserved = {
-    'grf' : 'GRF',
-    'var' : 'VARIABLE',
-    'param' : 'PARAMETER',
-    'cargotable' : 'CARGOTABLE',
-    'railtypetable' : 'RAILTYPETABLE',
-    'if' : 'IF',
-    'else' : 'ELSE',
-    'while' : 'WHILE', # reserved
-    'item' : 'ITEM', # action 0/3
-    'property' : 'PROPERTY',
-    'graphics' : 'GRAPHICS',
-    'snowline' : 'SNOWLINE',
-    'basecost' : 'BASECOST', 
-    'template' : 'TEMPLATE', #sprite template for action1
-    'spriteset' : 'SPRITESET', #action 1
-    'spritegroup' : 'SPRITEGROUP', #action 2
-    'switch' : 'SWITCH', #deterministic varaction2
-    'random_switch' : 'RANDOMSWITCH', #random action2
-    'produce' : 'PRODUCE', #production action2
-    'error' : 'ERROR', #action B
-    'disable_item' : 'DISABLE_ITEM',
-    'replace' : 'REPLACESPRITE', #action A
-    'replacenew' : 'REPLACENEWSPRITE', #action 5
-    'font_glyph' : 'FONTGLYPH', #action 12
-    'deactivate' : 'DEACTIVATE', #action E
-    'town_names' : 'TOWN_NAMES', # action F
-    'string' : 'STRING',
-    'return' : 'RETURN',
-    'livery_override' : 'LIVERYOVERRIDE',
-    'exit' : 'SKIP_ALL',
-    'tilelayout' : 'TILELAYOUT',
-    'spritelayout' : 'SPRITELAYOUT',
+    'grf' :                 'GRF',
+    'var' :                 'VARIABLE',
+    'param' :               'PARAMETER',
+    'cargotable' :          'CARGOTABLE',
+    'railtypetable' :       'RAILTYPETABLE',
+    'if' :                  'IF',
+    'else' :                'ELSE',
+    'while' :               'WHILE',            # reserved
+    'item' :                'ITEM',             # action 0/3
+    'property' :            'PROPERTY',
+    'graphics' :            'GRAPHICS',
+    'snowline' :            'SNOWLINE',
+    'basecost' :            'BASECOST',
+    'template' :            'TEMPLATE',         # sprite template for action1
+    'spriteset' :           'SPRITESET',        # action 1
+    'spritegroup' :         'SPRITEGROUP',      # action 2
+    'switch' :              'SWITCH',           # deterministic varaction2
+    'random_switch' :       'RANDOMSWITCH',     # random action2
+    'produce' :             'PRODUCE',          # production action2
+    'error' :               'ERROR',            # action B
+    'disable_item' :        'DISABLE_ITEM',
+    'replace' :             'REPLACESPRITE',    # action A
+    'replacenew' :          'REPLACENEWSPRITE', # action 5
+    'font_glyph' :          'FONTGLYPH',        # action 12
+    'deactivate' :          'DEACTIVATE',       # action E
+    'town_names' :          'TOWN_NAMES',       # action F
+    'string' :              'STRING',
+    'return' :              'RETURN',
+    'livery_override' :     'LIVERYOVERRIDE',
+    'exit' :                'SKIP_ALL',
+    'tilelayout' :          'TILELAYOUT',
+    'spritelayout' :        'SPRITELAYOUT',
     'alternative_sprites' : 'ALT_SPRITES',
-    'base_graphics' : 'BASE_GRAPHICS',
-    'recolour_sprite' : 'RECOLOUR_SPRITE',
-    'engine_override' : 'ENGINE_OVERRIDE',
-    'sort' : 'SORT_VEHICLES',
+    'base_graphics' :       'BASE_GRAPHICS',
+    'recolour_sprite' :     'RECOLOUR_SPRITE',
+    'engine_override' :     'ENGINE_OVERRIDE',
+    'sort' :                'SORT_VEHICLES',
 }
 
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')
