@@ -9,16 +9,16 @@
 
 1 * 9 0B 00 7F 02 "care" 00 
 
-// param[64] = 14
-2 * 9 0D 40 \D= FF 00 \dx0000000E 
+// param[127] = 14
+2 * 9 0D 7F \D= FF 00 \dx0000000E 
 
-// param[66] = (param[2] * 12)
-3 * 9 0D 42 \D* 02 FF \dx0000000C 
+// param[125] = (param[2] * 12)
+3 * 9 0D 7D \D* 02 FF \dx0000000C 
 
-// param[65] = (param[1] + param[66])
-4 * 5 0D 41 \D+ 01 42 
+// param[126] = (param[1] + param[125])
+4 * 5 0D 7E \D+ 01 7D 
 
-5 * 66 0B 03 1F FF "De wissels zijn bevroren, onze excuses voor het ongemak." 00 "42" 00 40 41 
+5 * 66 0B 03 1F FF "De wissels zijn bevroren, onze excuses voor het ongemak." 00 "42" 00 7F 7E 
 
-6 * 42 0B 03 7F FF "Something bad (tm) has happened." 00 "42" 00 40 41 
+6 * 42 0B 03 7F FF "Something bad (tm) has happened." 00 "42" 00 7F 7E 
 

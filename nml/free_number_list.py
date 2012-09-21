@@ -81,8 +81,8 @@ class FreeNumberList(object):
 
         @return: A unique free number.
         """
-        available = set(self.free_numbers) - self.used_numbers
-        for num in available:
+        for num in reversed(self.free_numbers):
+            if num in self.used_numbers: continue
             self.free_numbers.remove(num)
             self.used_numbers.add(num)
             return num

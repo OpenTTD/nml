@@ -16,11 +16,11 @@
 00 
 00 
 2 * 52 08 08 "NML\12" "NML regression test" 00 "A test newgrf testing NML" 00 
-// param[64] = (param[2] + 8)
-3 * 9 0D 40 \D+ 02 FF \dx00000008 
+// param[127] = (param[2] + 8)
+3 * 9 0D 7F \D+ 02 FF \dx00000008 
 
 4 * 7 06 
-40 01 FF \wx0006 
+7F 01 FF \wx0006 
 FF 
 
 5 * 7 00 08 \b1 01 01 
@@ -32,15 +32,15 @@ FF
 7 * 11 00 08 \b1 05 42 
 08 06 06 06 06 06 
 
-// param[65] = (param[1] + 9)
-8 * 9 0D 41 \D+ 01 FF \dx00000009 
+// param[126] = (param[1] + 9)
+8 * 9 0D 7E \D+ 01 FF \dx00000009 
 
 9 * 27 06 
-41 01 FF \wx0006 
-41 01 FF \wx0007 
-41 01 FF \wx0008 
-41 01 FF \wx0009 
-41 01 FF \wx000A 
+7E 01 FF \wx0006 
+7E 01 FF \wx0007 
+7E 01 FF \wx0008 
+7E 01 FF \wx0009 
+7E 01 FF \wx000A 
 FF 
 
 10 * 11 00 08 \b1 05 0F 
@@ -49,32 +49,32 @@ FF
 11 * 7 00 08 \b1 01 34 
 08 15 
 
-// param[67] = param[11]
-12 * 5 0D 43 \D= 0B 00 
+// param[124] = param[11]
+12 * 5 0D 7C \D= 0B 00 
 
 13 * 7 06 
-43 01 FF \wx0003 
+7C 01 FF \wx0003 
 FF 
 
-// param[66] = param[0]
-14 * 5 0D 42 \D= 00 00 
+// param[125] = param[0]
+14 * 5 0D 7D \D= 00 00 
 
-// param[69] = (param[11] + 1)
-15 * 9 0D 45 \D+ 0B FF \dx00000001 
+// param[122] = (param[11] + 1)
+15 * 9 0D 7A \D+ 0B FF \dx00000001 
 
 16 * 7 06 
-45 01 FF \wx0003 
+7A 01 FF \wx0003 
 FF 
 
-// param[68] = param[0]
-17 * 5 0D 44 \D= 00 00 
+// param[123] = param[0]
+17 * 5 0D 7B \D= 00 00 
 
-// param[67] = (param[68] + 8)
-18 * 9 0D 43 \D+ 44 FF \dx00000008 
+// param[124] = (param[123] + 8)
+18 * 9 0D 7C \D+ 7B FF \dx00000008 
 
 19 * 12 06 
-42 01 FF \wx0004 
-43 01 FF \wx0006 
+7D 01 FF \wx0004 
+7C 01 FF \wx0006 
 FF 
 
 20 * 7 00 08 \b1 01 00 

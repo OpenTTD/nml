@@ -98,16 +98,16 @@
 \wx00FF \wx00FF \wx00FF // (2/3) -> (3/4): bulk_wagon_coal_default_group;
 \wx00FD // (1/3) -> (1/4): bulk_wagon_coal2_group;
 
-// param[64] = (param[131] & 255)
-43 * 9 0D 40 \D& 83 FF \dx000000FF 
+// param[127] = (param[131] & 255)
+43 * 9 0D 7F \D& 83 FF \dx000000FF 
 
 44 * 7 06 
-40 04 FF \wx0006 
+7F 04 FF \wx0006 
 FF 
 
 // Name: bulk_wagon_coal_climate_switch
 45 * 23 02 00 FD 89 
-1A 00 \dx00000000 	// param[64]
+1A 00 \dx00000000 	// param[127]
 \b1 
 \wx00FE \dx00000001 \dx00000001 	// 1 .. 1: bulk_wagon_coal_arctic_group;
 \wx00FD // default: bulk_wagon_coal_default_switch;
@@ -154,47 +154,47 @@ FF
 \wx8012 \dx0000001A \dx0000001A 	// 26 .. 26: return 18;
 \wx00FD // No default specified -> fail callback
 
-// param[66] = (param[1] * 5000)
-51 * 9 0D 42 \D* 01 FF \dx00001388 
+// param[125] = (param[1] * 5000)
+51 * 9 0D 7D \D* 01 FF \dx00001388 
 
-// param[65] = (param[66] + 698)
-52 * 9 0D 41 \D+ 42 FF \dx000002BA 
+// param[126] = (param[125] + 698)
+52 * 9 0D 7E \D+ 7D FF \dx000002BA 
 
-// param[64] = (param[65] / 1397)
-53 * 9 0D 40 \D/ 41 FF \dx00000575 
+// param[127] = (param[126] / 1397)
+53 * 9 0D 7F \D/ 7E FF \dx00000575 
 
-// param[67] = (param[2] * 12500)
-54 * 9 0D 43 \D* 02 FF \dx000030D4 
+// param[124] = (param[2] * 12500)
+54 * 9 0D 7C \D* 02 FF \dx000030D4 
 
-// param[66] = (param[67] + 6286)
-55 * 9 0D 42 \D+ 43 FF \dx0000188E 
+// param[125] = (param[124] + 6286)
+55 * 9 0D 7D \D+ 7C FF \dx0000188E 
 
-// param[65] = (param[66] / 12573)
-56 * 9 0D 41 \D/ 42 FF \dx0000311D 
+// param[126] = (param[125] / 12573)
+56 * 9 0D 7E \D/ 7D FF \dx0000311D 
 
-// param[68] = (param[3] * 8)
-57 * 9 0D 44 \D* 03 FF \dx00000008 
+// param[123] = (param[3] * 8)
+57 * 9 0D 7B \D* 03 FF \dx00000008 
 
-// param[67] = (param[68] + 2)
-58 * 9 0D 43 \D+ 44 FF \dx00000002 
+// param[124] = (param[123] + 2)
+58 * 9 0D 7C \D+ 7B FF \dx00000002 
 
-// param[66] = (param[67] / 5)
-59 * 9 0D 42 \D/ 43 FF \dx00000005 
+// param[125] = (param[124] / 5)
+59 * 9 0D 7D \D/ 7C FF \dx00000005 
 
-// param[69] = (param[4] * 2965)
-60 * 9 0D 45 \D* 04 FF \dx00000B95 
+// param[122] = (param[4] * 2965)
+60 * 9 0D 7A \D* 04 FF \dx00000B95 
 
-// param[68] = (param[69] + 1105)
-61 * 9 0D 44 \D+ 45 FF \dx00000451 
+// param[123] = (param[122] + 1105)
+61 * 9 0D 7B \D+ 7A FF \dx00000451 
 
-// param[67] = (param[68] / 2211)
-62 * 9 0D 43 \D/ 44 FF \dx000008A3 
+// param[124] = (param[123] / 2211)
+62 * 9 0D 7C \D/ 7B FF \dx000008A3 
 
 63 * 22 06 
-40 02 FF \wx000B 
-41 02 FF \wx000E 
-42 02 FF \wx0011 
-43 02 FF \wx0014 
+7F 02 FF \wx000B 
+7E 02 FF \wx000E 
+7D 02 FF \wx0011 
+7C 02 FF \wx0014 
 FF 
 
 64 * 22 00 00 \b5 01 FF \wx0074 
@@ -204,15 +204,15 @@ FF
 09 \wx0000 
 0B \wx0000 
 
-// param[64] = (param[1] & 255)
-65 * 9 0D 40 \D& 01 FF \dx000000FF 
+// param[127] = (param[1] & 255)
+65 * 9 0D 7F \D& 01 FF \dx000000FF 
 
-// param[65] = (param[1] << -8)
-66 * 9 0D 41 \D<< 01 FF \dxFFFFFFF8 
+// param[126] = (param[1] << -8)
+66 * 9 0D 7E \D<< 01 FF \dxFFFFFFF8 
 
 67 * 12 06 
-40 01 FF \wx004D 
-41 01 FF \wx004F 
+7F 01 FF \wx004D 
+7E 01 FF \wx004F 
 FF 
 
 68 * 82 00 00 \b26 01 FF \wx0074 

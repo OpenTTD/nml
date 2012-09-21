@@ -23,17 +23,17 @@
 // param[5] = (param[4] & 3)
 5 * 9 0D 05 \D& 04 FF \dx00000003 
 
-// param[64] = (param[1] + param[2])
-6 * 5 0D 40 \D+ 01 02 
+// param[127] = (param[1] + param[2])
+6 * 5 0D 7F \D+ 01 02 
 
-// param[6] = (param[64] + param[3])
-7 * 5 0D 06 \D+ 40 03 
+// param[6] = (param[127] + param[3])
+7 * 5 0D 06 \D+ 7F 03 
 
-// param[64] = param[3]
-8 * 5 0D 40 \D= 03 00 
+// param[127] = param[3]
+8 * 5 0D 7F \D= 03 00 
 
 9 * 7 06 
-40 01 FF \wx0003 
+7F 01 FF \wx0003 
 FF 
 
 // param[7] = param[0]
@@ -46,12 +46,12 @@ FF
 // param[0] = 5
 12 * 9 0D 00 \D= FF 00 \dx00000005 
 
-// param[64] = param[3]
-13 * 5 0D 40 \D= 03 00 
+// param[127] = param[3]
+13 * 5 0D 7F \D= 03 00 
 
 14 * 12 06 
 00 01 FF \wx0001 
-40 01 FF \wx0003 
+7F 01 FF \wx0003 
 FF 
 
 // param[0] = param[0]

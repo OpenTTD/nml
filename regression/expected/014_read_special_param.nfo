@@ -74,15 +74,15 @@
 // param[21] = param[164]
 16 * 5 0D 15 \D= A4 00 
 
-// param[66] = param[19]
-17 * 9 0D 42 \D= 13 FE \dx0000FFFF 
+// param[125] = param[19]
+17 * 9 0D 7D \D= 13 FE \dx0000FFFF 
 
-// param[65] = (param[66] & 255)
-18 * 9 0D 41 \D& 42 FF \dx000000FF 
+// param[126] = (param[125] & 255)
+18 * 9 0D 7E \D& 7D FF \dx000000FF 
 
-// param[64] = (param[65] + 12)
-19 * 9 0D 40 \D+ 41 FF \dx0000000C 
+// param[127] = (param[126] + 12)
+19 * 9 0D 7F \D+ 7E FF \dx0000000C 
 
-// param[22] = (1 << param[64])
-20 * 9 0D 16 \D<< FF 40 \dx00000001 
+// param[22] = (1 << param[127])
+20 * 9 0D 16 \D<< FF 7F \dx00000001 
 
