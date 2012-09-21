@@ -293,11 +293,13 @@ mapping_platform_param = {
     (2, False) : 0x49,
 }
 
-def platform_info_param(name, args, pos, info, is_middle = False):
+def platform_info_param(name, args, pos, info):
     if len(args) != 1:
         raise generic.ScriptError("'%s'() requires one argument, encountered %d" % (name, len(args)), pos)
     if (not isinstance(args[0], expression.ConstantNumeric)) or args[0].value not in (0, 1, 2):
         raise generic.ScriptError("Invalid argument for '%s'(), must be one of PLATFORM_SAME_XXX." % name, pos)
+
+    is_middle = 'middle' in info and info['middle']
     if is_middle and args[0].value == 2:
         raise generic.ScriptError("Invalid argument for '%s'(), PLATFORM_SAME_DIRECTION is not supported here." % name, pos)
     # Temporarily store variable number in the param, this will be fixed in the value_function
@@ -333,9 +335,9 @@ varact2vars60x_stations = {
     'platform_position_from_end'    : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
     'platform_number_from_start'    : {'var': 0x00, 'start':  8, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
     'platform_number_from_end'      : {'var': 0x00, 'start': 12, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
-    'platform_position_from_middle' : {'var': 0x00, 'start':  0, 'size':  4, 'param_function': lambda *args: platform_info_param(*args, is_middle=True), 
+    'platform_position_from_middle' : {'var': 0x00, 'start':  0, 'size':  4, 'param_function': platform_info_param, 'middle': True, # 'middle' is used by platform_info_param
                                             'value_function': lambda var, info: value_sign_extend(platform_info_fix_var(var, info), info)},
-    'platform_number_from_middle'   : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': lambda *args: platform_info_param(*args, is_middle=True), 
+    'platform_number_from_middle'   : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': platform_info_param, 'middle': True, # 'middle' is used by platform_info_param
                                             'value_function': lambda var, info: value_sign_extend(platform_info_fix_var(var, info), info)},
 }
 varact2vars60x_stations.update(varact2vars60x_base_stations)
