@@ -40,8 +40,8 @@
 // Name: brewery_sprite_layout - feature 07
 18 * 49 02 07 FF \b67 \dx00000F8D \wx0000 
 \dxC0000000 \wx0002 \b0 \b0 80 83 
-\dx80008001 \wx0003 \b0 \b0 \b0 \b16 \b16 \b48 86 84 
-\dx00000000 \wx0023 \b8 \b0 \b0 \b11 \b16 \b7 89 87 8A 
+\dx80008001 \wx0003 \b0 \b0 \b0 \b16 \b16 \b48 85 86 
+\dx00000000 \wx0023 \b8 \b0 \b0 \b11 \b16 \b7 88 89 8A 
 
 // Name: brewery_sprite_layout@registers - feature 07
 19 * 383 02 07 FF 89 
@@ -60,37 +60,37 @@
 \2* 1A 20 \dx00000002 
 \2+ 7D 82 20 \dxFFFFFFFF 
 \2sto 1A 20 \dx00000083 
+\2r 40 20 \dx00000003 
+\2cmp 1A 20 \dx00000003 
+\2& 1A 20 \dx00000001 
+\2^ 1A 20 \dx00000001 
+\2sto 1A 20 \dx00000084 
+\2r 7D 8B 20 \dxFFFFFFFF 
+\2cmp 1A 20 \dxFFFFFFFF 
+\2& 1A 20 \dx00000001 
+\2| 7D 84 20 \dxFFFFFFFF 
+\2u< 1A 20 \dx00000001 
+\2^ 1A 20 \dx00000001 
+\2sto 1A 20 \dx00000085 
 \2r 43 20 \dx000000FF 
 \2cmp 1A 20 \dx00000004 
 \2& 1A 20 \dx00000001 
 \2* 1A 20 \dx00000003 
 \2+ 7D 8B 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000084 
-\2r 40 20 \dx00000003 
-\2cmp 1A 20 \dx00000003 
-\2& 1A 20 \dx00000001 
-\2^ 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000085 
-\2r 7D 8B 20 \dxFFFFFFFF 
-\2cmp 1A 20 \dxFFFFFFFF 
-\2& 1A 20 \dx00000001 
-\2| 7D 85 20 \dxFFFFFFFF 
-\2u< 1A 20 \dx00000001 
-\2^ 1A 20 \dx00000001 
 \2sto 1A 20 \dx00000086 
-\2r 46 60 \dx000000FF \dxFFFFFFFF \dx00000004 
-\2+ 1A 20 \dx00000C07 
-\2sto 1A 20 \dx00000087 
 \2r 46 20 \dx000000FF 
 \2cmp 1A 20 \dx00000000 
 \2& 1A 20 \dx00000001 
 \2u< 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000088 
+\2sto 1A 20 \dx00000087 
 \2r 7D 8C 20 \dxFFFFFFFF 
 \2u< 1A 20 \dx00000001 
 \2^ 1A 20 \dx00000001 
-\2| 7D 88 20 \dxFFFFFFFF 
+\2| 7D 87 20 \dxFFFFFFFF 
 \2^ 1A 20 \dx00000001 
+\2sto 1A 20 \dx00000088 
+\2r 46 60 \dx000000FF \dxFFFFFFFF \dx00000004 
+\2+ 1A 20 \dx00000C07 
 \2sto 1A 20 \dx00000089 
 \2r 46 60 \dx000000FF \dx00000036 \dx00000001 
 \2sto 1A 00 \dx0000008A 

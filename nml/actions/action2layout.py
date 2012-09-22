@@ -232,7 +232,7 @@ class Action2LayoutSprite(object):
         return self.params[name]['register']
 
     def get_all_registers(self):
-        return [self.get_register(name) for name in self.params if self.get_register(name) is not None]
+        return [self.get_register(name) for name in sorted(self.params) if self.get_register(name) is not None]
 
     def create_register(self, name, value):
         if isinstance(value, expression.StorageOp) and value.name == "LOAD_TEMP" and isinstance(value.register, expression.ConstantNumeric):
