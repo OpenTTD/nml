@@ -351,6 +351,7 @@ properties[0x03] = {
     'non_refittable_cargo_classes' : {'size': 2, 'num': 0x19},
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     'cargo_age_period'             : {'size': 2, 'num': 0x1C},
+    'range'                        : {'size': 2, 'num': 0x1F},
 }
 properties[0x03].update(general_veh_props)
 
