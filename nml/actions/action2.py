@@ -60,7 +60,10 @@ class Action2(base_action.BaseAction):
         if self.num_refs == 0:
             self.id = free_action2_ids[0]
         else:
-            self.id = free_action2_ids.pop()
+            try:
+                self.id = free_action2_ids.pop()
+            except IndexError:
+                raise generic.ScriptError("Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block. Try reducing the number of such blocks.")
 
     def write_sprite_start(self, file, size):
         assert self.num_refs == 0, "Action2 reference counting has %d dangling references." % self.num_refs
