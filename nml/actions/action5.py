@@ -101,7 +101,7 @@ def parse_action5(replaces):
             raise generic.ScriptError("replacenew parameter 'offset' must be zero for sprite replacement type '%s'" % replaces.type, replaces.pos)
     elif block_type == Action5BlockType.OFFSET:
         if num_sprites + replaces.offset > num_required:
-            generic.print_warning("Exceeding the limit of %d spriets for sprite replacement type '%s', extra sprites may be ignored" % (num_required, replaces.type), replaces.pos)
+            generic.print_warning("Exceeding the limit of %d sprites for sprite replacement type '%s', extra sprites may be ignored" % (num_required, replaces.type), replaces.pos)
         if replaces.offset != 0 or num_sprites != num_required:
             offset = replaces.offset
     else:
