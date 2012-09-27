@@ -270,7 +270,7 @@ def read_extra_commands(custom_tags_file):
             name = line[:i].strip()
             value = line[i+1:]
             if name in commands:
-                generic.print_warning('Warning: overwriting existing tag "' + name + '"')
+                generic.print_warning('Overwriting existing tag "' + name + '"')
             commands[name] = {'unicode': value}
             if is_ascii_string(value):
                 commands[name]['ascii'] = value

@@ -187,13 +187,13 @@ def print_warning(msg, pos = None):
     if not do_print_warnings:
         return
     if pos:
-        print >> sys.stderr, str(pos) + ":",
+        msg = str(pos) + ": " + msg
 
-    print >> sys.stderr, msg
-    
+    print >> sys.stderr, "nmlc warning: " + msg
+
 def print_error(msg):
     """
     Output an error message to the user.
     """
-    print >> sys.stderr, msg
+    print >> sys.stderr, "nmlc ERROR: " + msg
 

@@ -311,7 +311,7 @@ def run():
         main(sys.argv[1:])
 
     except generic.ScriptError, ex:
-        generic.print_error("nmlc: %s" % str(ex))
+        generic.print_error(str(ex))
 
         if developmode: raise # Reraise exception in developmode
         sys.exit(1)
