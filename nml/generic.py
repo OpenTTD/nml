@@ -123,6 +123,16 @@ class ImageFilePosition(Position):
     def __str__(self):
         return 'Image file "%s"' % self.filename
 
+class LanguageFilePosition(Position):
+    """
+    Generic (not position-dependant) error with a language file.
+    """
+    def __init__(self, filename):
+        Position.__init__(self, filename, [])
+
+    def __str__(self):
+        return 'Language file "%s"' % self.filename
+
 class ScriptError(Exception):
     def __init__(self, value, pos = None):
         self.value = value

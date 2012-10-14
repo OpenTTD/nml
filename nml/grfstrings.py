@@ -261,19 +261,18 @@ def read_extra_commands(custom_tags_file):
     for line in codecs.open(custom_tags_file, "r", "utf-8"):
         line_no += 1
         line = line.strip()
-        if len(line) == 0 or line[0] == "#":
-            pass
-        else:
-            i = line.find(':')
-            if i == -1:
-                raise generic.ScriptError("Line has no ':' delimiter", generic.LinePosition(custom_tags_file, line_no))
-            name = line[:i].strip()
-            value = line[i+1:]
-            if name in commands:
-                generic.print_warning('Overwriting existing tag "' + name + '"')
-            commands[name] = {'unicode': value}
-            if is_ascii_string(value):
-                commands[name]['ascii'] = value
+        if len(line) == 0 or line[0] == "#": continue
+
+        i = line.find(':')
+        if i == -1:
+            raise generic.ScriptError("Line has no ':' delimiter.", generic.LinePosition(custom_tags_file, line_no))
+        name = line[:i].strip()
+        value = line[i+1:]
+        if name in commands:
+            generic.print_warning('Overwriting existing tag "' + name + '".', generic.LinePosition(custom_tags_file, line_no))
+        commands[name] = {'unicode': value}
+        if is_ascii_string(value):
+            commands[name]['ascii'] = value
 
 
 class StringCommand(object):
@@ -1077,15 +1076,16 @@ def parse_file(filename, default):
                 if default: default_lang.handle_string(line, pos)
                 lang.handle_string(line, pos)
     except UnicodeDecodeError:
+        pos = generic.LanguageFilePosition(filename)
         if default:
-            raise generic.ScriptError("The default language file (\"%s\") contains non-utf8 characters." % filename)
-        generic.print_warning("Language file \"%s\" contains non-utf8 characters. Ignoring (part of) the contents" % filename)
+            raise generic.ScriptError("The default language file contains non-utf8 characters.", pos)
+        generic.print_warning("Language file contains non-utf8 characters. Ignoring (part of) the contents.", pos)
     except generic.ScriptError, err:
         if default: raise
-        generic.print_warning("Error in language file \"%s\": %s" % (filename, err))
+        generic.print_warning(err.value, err.pos)
     else:
         if lang.langid is None:
-            generic.print_warning("Language file \"%s\" does not contain a ##grflangid pragma" % filename)
+            generic.print_warning("Language file does not contain a ##grflangid pragma", generic.LanguageFilePosition(filename))
         else:
             langs.append((lang.langid, lang))
 
