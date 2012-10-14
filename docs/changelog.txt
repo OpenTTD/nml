@@ -1,3 +1,56 @@
-Changes in 0.2.1 (2011-12-06)
+0.2.4 (2012-10-14)
+------------------------------------------------------------------------
+- Feature: Report NML line information as well as pixel position for pure white pixels. Also, report number of pixels in the sprite, instead of the whole image. (issue #4029)
+- Feature: 'signals' callback for railtypes.
+- Feature: Allow the 'nfo' unit to be used with non-constant values. (issue #3828)
+- Feature: 'build_prod_change' callback for industries to set industry production level on construction.
+- Feature: Constant CB_RESULT_REFIT_COST_MASK
+- Feature: Vehicle misc_flag VEHTYPE_FLAG_NO_BREAKDOWN_SMOKE.
+- Feature: 'current_max_speed' variable for vehicles. (issue #3979)
+- Feature: 'vehicle_is_in_depot' variable for aircraft.
+- Feature: 'range' property and callback for aircraft.
+- Feature: 'production_rate_1/2' variables for industries.
+- Feature: 'town_zone' variable for railtypes.
+- Feature: 'other_veh_(curv_info|is_hidden|x_offset|y_offset|z_offset)' variables for vehicles.
+- Fix: Provide a proper error message when running out of action2 IDs
+- Fix: A '{' at the end of a string could cause a crash
+- Fix: Backslash-escapes in strings weren't properly validated. Also remove useless \n escape. (issue #3636)
+- Fix: Provide a proper error message if a substring is missing, instead of an assertion error. (issue #3932)
+- Fix: 'refit_cost' callback may also be called from the purchase menu.
+- Fix: Allow using constants > 255 as variable parameter. (issue #4086)
+- Fix: Sprite layout register code contained an unsorted iteration over dictionary keys, resulting in possible regression failures.
+
+
+0.2.3 (2012-02-19)
+------------------------------------------------------------------------
+- Feature: Action5 for tunnel portals
+- Fix: Properly catch out-of-bounds image reads (issue #3666)
+- Fix: Character code 0xA0 (NBSP) is used for an up arrow in TTD, so
+       don't write it as ascii. Force unicode instead (issue #3643)
+
+
+0.2.2 (2012-01-29)
+------------------------------------------------------------------------
+- Feature: support for (optional) url-information in the grf-block
+- Feature: names for newly defined cargo classes: CC_POWDERIZED and CC_NEO_BULK
+- Feature: clean target to Makefile in main dir and let make clean remove regression/parsetab.py
+- Fix: don't crash when a line in custom_tags.txt is missing a colon delimiter
+- Fix: each action4 is limited to 255 strings. Write multiple actions when we have more than that
+- Fix: groff warning about manpage
+- Fix: include buildout.cfg in src distribution and prune regression/nml_output/ (issue #3490)
+- Fix: Add NML output for replacenew-block (issue #3450)
+- Fix: include nmlc script so regression runs out-of-the-box for source package
+- Fix: several files from examples/ were missing in source distributions
+- Fix: 'make install' was broken
+- Doc: add notice about ZPL in readme.txt
+
+
+0.2.1 (2011-12-18)
+------------------------------------------------------------------------
+- Feature: CB_RESULT_NO_MORE_ARTICULATED_PARTS, CB_RESULT_REVERSED_VEHICLE
+       and CB_RESULT_NO_TEXT as constants to make porting projects to
+	   NML 0.3 easier.
+- Fix: Internal error when the ID in a replace-block was not a compile-time constant
+- Fix: Crash when referencing a SpriteSetCollection in a graphics-block that was inside an if-block
 - Fix: Text files in docs/ were not included in source package
 - Doc: Add GPL v2 header to all .py files
