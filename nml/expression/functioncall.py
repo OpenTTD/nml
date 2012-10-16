@@ -45,7 +45,10 @@ class FunctionCall(Expression):
         return ret
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        # At this point we don't care about invalid arguments, they'll be handled later.
+        identifier.ignore_all_invalid_ids = True
         params = [param.reduce(id_dicts, unknown_id_fatal = False) for param in self.params]
+        identifier.ignore_all_invalid_ids = False
         if self.name.value in function_table:
             func = function_table[self.name.value]
             val = func(self.name.value, params, self.pos)
