@@ -57,7 +57,7 @@ class Not(Expression):
         expr = self.expr.reduce(id_dicts)
         if expr.type() != Type.INTEGER:
             raise generic.ScriptError("Not-operator (!) requires an integer argument.", expr.pos)
-        if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value != 0)
+        if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value == 0)
         if isinstance(expr, Not): return Boolean(expr.expr).reduce()
         if isinstance(expr, BinOp):
             if expr.op == nmlop.CMP_EQ: return BinOp(nmlop.CMP_NEQ, expr.expr1, expr.expr2)
