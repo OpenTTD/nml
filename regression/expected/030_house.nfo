@@ -44,11 +44,10 @@
 \dx00000000 \wx0023 \b8 \b0 \b0 \b11 \b16 \b7 88 89 8A 
 
 // Name: brewery_sprite_layout@registers - feature 07
-19 * 383 02 07 FF 89 
+19 * 362 02 07 FF 89 
 43 20 \dx000000FF 
 \2cmp 1A 20 \dx00000004 
 \2& 1A 20 \dx00000001 
-\2u< 1A 20 \dx00000001 
 \2sto 1A 20 \dx00000080 	// guard
 \2^ 1A 20 \dx00000001 
 \2sto 1A 20 \dx00000081 	// !guard
@@ -69,7 +68,6 @@
 \2cmp 1A 20 \dxFFFFFFFF 
 \2& 1A 20 \dx00000001 
 \2| 7D 84 20 \dxFFFFFFFF 
-\2u< 1A 20 \dx00000001 
 \2^ 1A 20 \dx00000001 
 \2sto 1A 20 \dx00000085 
 \2r 43 20 \dx000000FF 
@@ -81,7 +79,6 @@
 \2r 46 20 \dx000000FF 
 \2cmp 1A 20 \dx00000000 
 \2& 1A 20 \dx00000001 
-\2u< 1A 20 \dx00000001 
 \2sto 1A 20 \dx00000087 
 \2r 7D 8C 20 \dxFFFFFFFF 
 \2u< 1A 20 \dx00000001 
@@ -211,11 +208,10 @@
 \wx80FE // default: return 254;
 
 // Name: @return_action_0
-32 * 48 02 07 FE 89 
+32 * 41 02 07 FE 89 
 46 20 \dx000000FF 
 \2cmp 1A 20 \dx00000000 
 \2& 1A 20 \dx00000001 
-\2u< 1A 20 \dx00000001 
 \2* 1A 20 \dxFFFFFF04 	// expr1 - expr2
 \2+ 1A 00 \dx000000FD 
 \b0 

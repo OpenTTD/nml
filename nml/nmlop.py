@@ -144,6 +144,7 @@ XOR = Operator(
 CMP_EQ = Operator(
     act2_supports = True,
     actd_supports = True,
+    returns_boolean = True,
     token = '==',
     compiletime_func = operator.eq,
     validate_func = validate_func_float,
@@ -152,6 +153,7 @@ CMP_EQ = Operator(
 CMP_NEQ = Operator(
     act2_supports = True,
     actd_supports = True,
+    returns_boolean = True,
     token = '!=',
     compiletime_func = operator.ne,
     validate_func = validate_func_float,
@@ -160,6 +162,7 @@ CMP_NEQ = Operator(
 CMP_LE = Operator(
     act2_supports = True,
     actd_supports = True,
+    returns_boolean = True,
     token = '<=',
     compiletime_func = operator.le,
     validate_func = validate_func_float,
@@ -168,6 +171,7 @@ CMP_LE = Operator(
 CMP_GE = Operator(
     act2_supports = True,
     actd_supports = True,
+    returns_boolean = True,
     token = '>=',
     compiletime_func = operator.ge,
     validate_func = validate_func_float,
@@ -176,6 +180,7 @@ CMP_GE = Operator(
 CMP_LT = Operator(
     act2_supports = True,
     actd_supports = True,
+    returns_boolean = True,
     token = '<',
     compiletime_func = operator.lt,
     validate_func = validate_func_float,
@@ -184,6 +189,7 @@ CMP_LT = Operator(
 CMP_GT = Operator(
     act2_supports = True,
     actd_supports = True,
+    returns_boolean = True,
     token = '>',
     compiletime_func = operator.gt,
     validate_func = validate_func_float,
