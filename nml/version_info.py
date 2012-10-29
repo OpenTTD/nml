@@ -24,6 +24,8 @@ def get_hg_version():
     path = os.path.dirname(os.path.realpath(sys.argv[0]))
     version = ''
     if os.path.isdir(os.path.join(path,'.hg')):
+        # Define the next version released from this branch
+        next_release_version = '0.3.0'
         # we want to return to where we were. So save the old path
         version_list = (subprocess.Popen(['hg', '-R', path, 'id', '-n', '-t', '-i'], stdout=subprocess.PIPE).communicate()[0]).split()
         if version_list[1].endswith('+'):
@@ -32,13 +34,13 @@ def get_hg_version():
             modified = ''
         revision = version_list[1].rstrip('+')
         hash = version_list[0].rstrip('+')
-        # Test whether we have a tag (=release version)
-        if len(version_list) > 2 and version_list[2] != 'tip':
-            version = version_list[2]
-        else: # we have a trunk version
-            version = 'r'+revision
-        # Add modification tag and hash to the stored version info
-        version += modified + ' (' + hash + ')'
+
+        # Combine the version string
+        version += next_release_version + '.r' + revision + modified + ':' + hash
+
+        # Test whether we have a tag (=release version) and add it, if found
+        if len(version_list) > 2 and version_list[2] != 'tip' and modified == '':
+            version += ' (Released as ' + version_list[2] + ')'
     return version
 
 def get_lib_versions():
