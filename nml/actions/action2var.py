@@ -501,6 +501,8 @@ class Varaction2Parser(object):
         self.var_list.append(var)
         self.var_list_size += var.get_size()
 
+    def parse_not(self, expr):
+        self.parse_binop(expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(1)))
 
     def parse_binop(self, expr):
         if expr.op.act2_num is None: expr.supported_by_action2(True)
@@ -591,9 +593,6 @@ class Varaction2Parser(object):
         elif isinstance(expr, expression.Boolean):
             expr = expression.BinOp(nmlop.MINU, expr.expr, expression.ConstantNumeric(1))
 
-        elif isinstance(expr, expression.Not):
-            expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(1))
-
         elif isinstance(expr, expression.BinNot):
             expr = expression.BinOp(nmlop.XOR, expr.expr, expression.ConstantNumeric(0xFFFFFFFF))
 
@@ -618,6 +617,9 @@ class Varaction2Parser(object):
 
         elif isinstance(expr, expression.BinOp):
             self.parse_binop(expr)
+
+        elif isinstance(expr, expression.Not):
+            self.parse_not(expr)
 
         elif isinstance(expr, expression.String):
             self.parse_string(expr)
