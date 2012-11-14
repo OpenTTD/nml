@@ -75,7 +75,7 @@ action5_table = {
     'AQUEDUCTS' : (0x12, 8, Action5BlockType.OFFSET),
     'AUTORAIL' : (0x13, 55, Action5BlockType.OFFSET),
     'FLAGS' : (0x14, 36, Action5BlockType.OFFSET),
-    'OTTD_GUI' : (0x15, 166, Action5BlockType.OFFSET),
+    'OTTD_GUI' : (0x15, 168, Action5BlockType.OFFSET),
     'AIRPORT_PREVIEW' : (0x16, 9, Action5BlockType.OFFSET),
     'RAILTYPE_TUNNELS': (0x17, 16, Action5BlockType.OFFSET),
 }
