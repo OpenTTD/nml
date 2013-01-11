@@ -107,6 +107,7 @@ class OutputGRF(output_base.BinaryOutputBase):
          - crop: List of 4 positive integers, indicating how much to crop if cropping is enabled 
               Order is (left, right, top, bottom), it is not present if cropping is disabled
          - info: Info byte of the sprite
+         - warning: Warning about white pixels (optional)
          - offset: Offset into the cache file for this sprite
          - size: Length of this sprite in the cache file
 
@@ -120,10 +121,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         The rectangles are 4-tuples, non-existent items (e.g. no rgb) are None
         do_crop is a boolean indicating if this sprite has been cropped
 
-        The value that this key maps to is a 5-tuple, containing:
+        The value that this key maps to is a 6-tuple, containing:
          - the sprite data (as a byte array)
          - The 'info' byte of the sprite
          - The cropping information (see above) (None if 'do_crop' in the key is false)
+         - The warning that should be displayed if this sprite is used (None if N/A)
          - Whether the sprite exists in the old (loaded)cache
          - whether the sprite is used by the current GRF
 
@@ -191,12 +193,17 @@ class OutputGRF(output_base.BinaryOutputBase):
                 else:
                     crop = None
 
+                if 'warning' in sprite:
+                    assert isinstance(sprite['warning'], basestring)
+                    warning = sprite['warning']
+                else:
+                    warning = None
+
                 # Compose value
-                value = (data, info, crop, True, False)
+                value = (data, info, crop, warning, True, False)
 
                 self.cached_sprites[key] = value
         except:
-            raise
             generic.print_warning(self.cache_index_filename + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
             self.cached_sprites = {} # Clear cache
 
@@ -217,7 +224,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         for key, value in self.cached_sprites.iteritems():
             # Unpack key/value
             rgb_file, rgb_rect, mask_file, mask_rect, do_crop = key
-            data, info, crop_rect, in_old_cache, in_use = value
+            data, info, crop_rect, warning, in_old_cache, in_use = value
             assert do_crop == (crop_rect is not None)
 
             # If this cache information is exactly the same as the old cache, then we don't bother writing later on
@@ -241,6 +248,8 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite['size'] = size
             sprite['info'] = info
             if do_crop: sprite['crop'] = tuple(crop_rect)
+            if warning is not None:
+                sprite['warning'] = warning
 
             index_data.append(sprite)
             sprite_data.extend(data)
@@ -257,7 +266,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         sprite_data.tofile(cache_file)
         cache_file.close()
 
-    def update_cache(self, key, info, crop):
+    def update_cache(self, key, info, crop, warning):
         """
         Add a sprite to the sprite cache, possibly overwriting an existing one
 
@@ -269,9 +278,12 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         @param crop: How much was cropped from each side of the sprite
         @type crop: C{tuple}, or C{None} if N/A
+
+        @param warning: Warning to display (e.g. about pure white pixels) if this sprite is used
+        @type warning: C{basestring}, or C{None} if N/A
         """
         if not self.enable_cache: return
-        self.cached_sprites[key] = (self.cache_output, info, crop, False, True)
+        self.cached_sprites[key] = (self.cache_output, info, crop, warning, False, True)
         self.cache_output = array.array('B')
 
     def open_image_file(self, filename):
@@ -498,10 +510,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         if cache_key in self.cached_sprites:
             # Use cache either if files are older, of if cache entry was not present
             # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)
-            if use_cache or not self.cached_sprites[cache_key][3]:
+            if use_cache or not self.cached_sprites[cache_key][4]:
                 if filename_8bpp is not None: self.mark_image_file_used(filename_8bpp.value)
                 if filename_32bpp is not None:  self.mark_image_file_used(filename_32bpp.value)
-                self.wsprite_cache(cache_key, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, sprite_info.zoom_level)
+                self.wsprite_cache(cache_key, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value,
+                        sprite_info.zoom_level, filename_8bpp.pos if filename_8bpp is not None else None)
                 return
 
         # Read and validate image data
@@ -518,6 +531,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 raise generic.ScriptError("Read beyond bounds of image file '%s'" % filename_32bpp.value, filename_32bpp.pos)
             sprite = im.crop((x, y, x + size_x, y + size_y))
 
+        warning = None
         if filename_8bpp is not None:
             mask_im = self.open_image_file(filename_8bpp.value)
             if mask_im.mode != "P":
@@ -535,7 +549,8 @@ class OutputGRF(output_base.BinaryOutputBase):
                 white_pixels = len(filter(lambda p: p == 255, mask_sprite.getdata()))
                 pixels = size_x * size_y
                 image_pos = generic.PixelPosition(filename_8bpp.value, x, y)
-                generic.print_warning("%s: %i of %i pixels (%i%%) are pure white" % (str(image_pos), white_pixels, pixels, white_pixels * 100 / pixels), filename_8bpp.pos)
+                warning = "%s: %i of %i pixels (%i%%) are pure white" % (str(image_pos), white_pixels, pixels, white_pixels * 100 / pixels)
+                generic.print_warning(warning, filename_8bpp.pos)
 
             mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)
 
@@ -556,7 +571,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite_data.fromstring(sprite.tostring())
         else:
             sprite_data.fromstring(mask_sprite_data)
-        self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, cache_key)
+        self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, cache_key, warning)
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
@@ -606,13 +621,15 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.print_data(data, self.sprite_output)
         if self.enable_cache: self.print_data(data, self.cache_output)
 
-    def wsprite_cache(self, cache_key, size_x, size_y, xoffset, yoffset, zoom_level):
+    def wsprite_cache(self, cache_key, size_x, size_y, xoffset, yoffset, zoom_level, pos_8bpp):
         # Write a sprite from the cached data
-        data, info, crop_rect, in_old_cache, in_use = self.cached_sprites[cache_key]
+        data, info, crop_rect, warning, in_old_cache, in_use = self.cached_sprites[cache_key]
         if not in_use:
-            self.cached_sprites[cache_key] = (data, info, crop_rect, in_old_cache, True)
+            self.cached_sprites[cache_key] = (data, info, crop_rect, warning, in_old_cache, True)
 
         if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
+        if warning is not None:
+            generic.print_warning(warning + " (cached warning)", pos_8bpp)
         self.wsprite_header(size_x, size_y, len(data), xoffset, yoffset, info, zoom_level, False)
         self.print_data(data, self.sprite_output)
 
@@ -749,7 +766,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         else:
             return sprite_str
 
-    def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, cache_key):
+    def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, cache_key, warning):
         bpp = get_bpp(info)
         assert len(sprite_data) == size_x * size_y * bpp
         if self.crop_sprites and (info & INFO_NOCROP == 0):
@@ -771,7 +788,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 compressed_data = tile_compressed_data
                 data_len = len(tile_data)
         self.wsprite_encoderegular(size_x, size_y, compressed_data, data_len, xoffset, yoffset, info, zoom_level)
-        self.update_cache(cache_key, info, crop_rect)
+        self.update_cache(cache_key, info, crop_rect, warning)
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
