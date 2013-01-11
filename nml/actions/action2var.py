@@ -906,6 +906,8 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return %d;" % value.value
         result = value
+        if not(-16384 <= value.value <= 32767):
+            raise generic.ScriptError("Callback results are limited to -16384..16383 (when the result is a signed number) or 0..32767 (unsigned), encountered %d." % value.value, value.pos)
     elif isinstance(value, expression.String):
         comment = "return %s;" % str(value)
         str_id, actions = action4.get_string_action4s(0, 0xD0, value)
