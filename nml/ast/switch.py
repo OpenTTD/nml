@@ -233,7 +233,9 @@ class RandomSwitch(switch_base_class):
 
         for dep_list in (self.dependent, self.independent):
             for i, dep in enumerate(dep_list[:]):
-                dep_list[i] = dep.reduce(global_constants.const_list)
+                if dep.is_return:
+                    raise generic.ScriptError("Expected a random_switch identifier after (in)dependent, not a return.", dep.pos)
+                dep_list[i] = dep.value.reduce(global_constants.const_list)
                 # Make sure, all [in]dependencies refer to existing random switch blocks
                 if (not isinstance(dep_list[i], expression.SpriteGroupRef)) or len(dep_list[i].param_list) > 0:
                     raise generic.ScriptError("Value for (in)dependent should be an identifier", dep_list[i].pos)
