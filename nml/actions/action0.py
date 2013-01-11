@@ -18,9 +18,6 @@ from nml import generic, expression, nmlop, grfstrings
 from nml.actions import base_action, action4, action6, actionD, actionE, action7
 from nml.ast import general
 
-# Features that use an extended byte as ID (vehicles, sounds)
-action0_extended_byte_id = [0, 1, 2, 3, 0x0C]
-
 # Number of tiles for various house sizes
 house_sizes = {
     0 : 1, # 1x1
@@ -80,7 +77,7 @@ class Action0(base_action.BaseAction):
         if self.num_ids is None: self.num_ids = 1
 
     def write(self, file):
-        size = 7 if self.feature in action0_extended_byte_id else 5
+        size = 7
         for prop in self.prop_list:
             assert isinstance(prop, BaseAction0Property), type(prop)
             if isinstance(prop, Action0Property):
@@ -91,11 +88,8 @@ class Action0(base_action.BaseAction):
         file.print_bytex(self.feature)
         file.print_byte(len(self.prop_list))
         file.print_bytex(self.num_ids)
-        if self.feature in action0_extended_byte_id:
-            file.print_bytex(0xFF)
-            file.print_wordx(self.id)
-        else:
-            file.print_bytex(self.id)
+        file.print_bytex(0xFF)
+        file.print_wordx(self.id)
         file.newline()
         for prop in self.prop_list:
             prop.write(file)
@@ -103,6 +97,8 @@ class Action0(base_action.BaseAction):
 
 # First ID that may freely be used
 first_usable_id = [116, 88, 11, 41] + 0x0E * [0]
+# Maximum allowed id (houses and indtiles in principle allow up to 511, but action3 does not accept extended bytes)
+max_id = 4*[0xFFFF] + [255, 8, 15, 255, -1, 255, 63, 31, -1, 127, -1, 255, 15, 255]
 
 # Maintain sets of used IDs for each feature
 # Dictionary value is the item size (# of consecutive ids occupied)
@@ -119,6 +115,9 @@ def id_is_used(feature, id, num_ids):
     return any(i in used_ids[feature] for i in range(id, id + num_ids))
 
 def check_id_range(feature, id, num_ids, pos):
+    # Check that IDs are valid and in range
+    if id < 0 or id > max_id[feature]:
+        raise generic.ScriptError("Item ID must be in range 0..%d, encountered %d." % (max_id[feature], id), pos)
     # All IDs free: no problem
     if (not id_is_used(feature, id, num_ids)): return
     if id in used_ids[feature]:
@@ -135,10 +134,13 @@ def check_id_range(feature, id, num_ids, pos):
         assert any(i in used_ids[feature] for i in range(id + 1, id + num_ids))
         raise generic.ScriptError("This multi-tile house requires that item IDs %d..%d are free, but they are not." % (id, id + num_ids - 1), pos)
 
-def get_free_id(feature, num_ids):
+def get_free_id(feature, num_ids, pos):
     id = first_usable_id[feature]
     while id_is_used(feature, id, num_ids):
         id += 1
+    if id > max_id[feature]:
+        raise generic.ScriptError("Unable to allocate ID for item, no more free IDs available (maximum is %d)" % max_id[feature], pos)
+
     mark_id_used(feature, id, num_ids)
     return id
 
@@ -163,14 +165,7 @@ def create_action0(feature, id, act6, action_list):
     @return: A tuple of (resulting action0, offset to use for action6)
     @rtype: C{tuple} of (L{Action0}, C{int})
     """
-    if feature in action0_extended_byte_id:
-        offset = 5
-        size = 2
-    else:
-        offset = 4
-        size = 1
-
-    id, offset = actionD.write_action_value(id, action_list, act6, offset, size)
+    id, offset = actionD.write_action_value(id, action_list, act6, 5, 2)
 
     action0 = Action0(feature, id.value)
     return (action0, offset)

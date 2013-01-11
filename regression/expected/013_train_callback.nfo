@@ -16,7 +16,7 @@
 00 
 00 
 2 * 52 08 08 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00 
-3 * 206 00 08 \b1 32 00 
+3 * 208 00 08 \b1 32 FF \wx0000 
 09 "WDPR" "SCRP" "CMNT" "WOOD" "LVST" 
 "STEL" "VEHI" "BRCK" "WOOL" "BUBL" 
 "TOYS" "FZDR" "FRUT" "FRVG" "FOOD" 
@@ -28,7 +28,7 @@
 "MAIL" "BATT" "SWET" "RUBR" "FMSP" 
 "ENSP" "MNSP" "FICR" "PLAS" "PLST" 
 
-4 * 26 00 08 \b1 05 00 
+4 * 28 00 08 \b1 05 FF \wx0000 
 12 "RAIL" "ELRL" "MONO" "MGLV" "TRPD" 
 
 5 * 6 01 00 \b8 FF \wx0004 

@@ -147,7 +147,7 @@ F0 F1 F2 F3 F4 F5 00 00 00 00 00 00 00 00 00 FF
 21 * 7 03 11 01 01 \b0 
 \wx00FE 	// layout2;
 
-22 * 8 00 0F \b1 01 01 
+22 * 10 00 0F \b1 01 FF \wx0001 
 15 \wx0008 
 
 // Name: @CB_FAILED_LAYOUT0F

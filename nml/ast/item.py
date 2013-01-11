@@ -42,6 +42,8 @@ class Item(base_statement.BaseStatementList):
         if not (1 <= len(params) <= 4):
             raise generic.ScriptError("Item block requires between 1 and 4 parameters, found %d." % len(params), self.pos)
         self.feature = general.parse_feature(params[0])
+        if self.feature.value in (0x08, 0x0C, 0x0E):
+            raise generic.ScriptError("Defining item blocks for this feature is not allowed.", self.pos)
         self.name = params[1] if len(params) >= 2 else None
 
         self.id = params[2].reduce_constant(global_constants.const_list) if len(params) >= 3 else None
@@ -70,7 +72,7 @@ class Item(base_statement.BaseStatementList):
         # We may have to reserve multiple item IDs for houses
         num_ids = action0.house_sizes[self.size.value] if self.size is not None else 1
         if self.id is None:
-            self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value, num_ids))
+            self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value, num_ids, self.pos))
         else:
             action0.check_id_range(self.feature.value, self.id.value, num_ids, self.id.pos)
             action0.mark_id_used(self.feature.value, self.id.value, num_ids)

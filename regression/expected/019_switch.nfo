@@ -36,11 +36,11 @@
 \wx00FF \dx0000000D \dx0000000D 	// 13 .. 13: return_switch;
 \wx8001 // default: return string(STR_COALMINE_MONTH_11);
 
-6 * 9 00 0A \b2 01 00 
+6 * 11 00 0A \b2 01 FF \wx0000 
 08 00 
 09 00 
 
-7 * 9 00 0A \b2 01 00 
+7 * 11 00 0A \b2 01 FF \wx0000 
 21 40 
 22 03 
 
