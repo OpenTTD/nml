@@ -253,7 +253,7 @@ def parse_randomswitch(random_switch):
 
     action6.free_parameters.save()
     act6 = action6.Action6()
-    offset = 8
+    offset = 8 if count is not None else 7
 
     #divide the 'extra' probabilities in an even manner
     i = 0
