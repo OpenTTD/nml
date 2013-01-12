@@ -469,11 +469,10 @@ def get_railtypelist_action(railtype_list):
     act6 = action6.Action6()
 
     action_list = []
-    action0 = Action0(0x08, 0)
+    action0, offset = create_action0(0x08, expression.ConstantNumeric(0), act6, action_list)
     id_table = []
-    offset = 2
+    offset += 1 # Skip property number
     for railtype in railtype_list:
-        offset += 4
         if isinstance(railtype, expression.StringLiteral):
             id_table.append(railtype)
             continue
@@ -485,6 +484,7 @@ def get_railtypelist_action(railtype_list):
             action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0xFF), val))
         act6.modify_bytes(param, 4, offset)
         id_table.append(expression.StringLiteral(r"\00\00\00\00", None))
+        offset += 4
     action0.prop_list.append(IDListProp(0x12, id_table))
     action0.num_ids = len(railtype_list)
 
@@ -518,8 +518,9 @@ def get_snowlinetable_action(snowline_table):
     tmp_param_map = {} #Cache for tmp parameters
     act6 = action6.Action6()
 
-    act0 = Action0(0x08, 0)
+    act0, offset = create_action0(0x08, expression.ConstantNumeric(0), act6, action_list)
     act0.num_ids = 1
+    offset += 1 # Skip property number
 
     data_table = []
     idx = 0
@@ -533,7 +534,7 @@ def get_snowlinetable_action(snowline_table):
         if idx + 3 >= len(snowline_table):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(val)
             tmp_param_map[val] = tmp_param
-            act6.modify_bytes(tmp_param, 1, 6 + idx)
+            act6.modify_bytes(tmp_param, 1, offset + idx)
             action_list.extend(tmp_param_actions)
             data_table.append(0)
             idx += 1
@@ -555,7 +556,7 @@ def get_snowlinetable_action(snowline_table):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
             tmp_param_map[expr] = tmp_param
 
-        act6.modify_bytes(tmp_param, 4, 6 + idx)
+        act6.modify_bytes(tmp_param, 4, offset + idx)
         action_list.extend(tmp_param_actions)
         data_table.extend([0, 0, 0, 0])
         idx += 4
