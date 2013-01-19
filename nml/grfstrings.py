@@ -28,7 +28,7 @@ DEFAULT_LANGUAGE = 0x7F
 
 def validate_string(string):
     """
-    Check if a given string refers to a string that is translated in the language 
+    Check if a given string refers to a string that is translated in the language
     files and raise an error otherwise.
 
     @param string: The string to validate.
@@ -496,7 +496,7 @@ class NewGRFString(object):
                 if command_name not in commands or 'allow_case' not in commands[command_name]:
                     raise generic.ScriptError("Command \"%s\" can't have a case" % command_name, pos)
                 case_start = end + 1
-                end = case_start 
+                end = case_start
                 while end < len(string) and string[end] not in '} ': end += 1
                 case = string[case_start:end]
                 if lang.cases is None or case not in lang.cases:
@@ -717,10 +717,10 @@ class Language(object):
             12: 4,
         }
         return num_plurals[self.plural]
-        
+
     def has_plural_pragma(self):
         return self.plural is not None
-    
+
     def has_gender_pragma(self):
         return self.genders is not None
 
@@ -818,7 +818,7 @@ class Language(object):
         @param string: String object
         @type string: L{expression.String}
 
-        @param lang_id: Language ID we are actually looking for. 
+        @param lang_id: Language ID we are actually looking for.
                 This may differ from the ID of this language,
                 if the string is missing from the target language.
         @type lang_id: C{int}
@@ -876,7 +876,8 @@ class Language(object):
         if self.plural is not None:
             raise generic.ScriptError("plural form already set", pos)
         try:
-            value = int(data[1], 16)
+            # Explicitly force base 10 like in OpenTTD's lang file
+            value = int(data[1], 10)
         except ValueError:
             raise generic.ScriptError("Invalid plural form", pos)
         if value < 0 or value > NUM_PLURAL_FORMS:
@@ -910,7 +911,7 @@ class Language(object):
         genders = data[1].split()
         if len(genders) != 2:
             raise generic.ScriptError("Invalid ##map_gender line", pos)
-        if genders[0] not in self.genders: 
+        if genders[0] not in self.genders:
             raise generic.ScriptError("Trying to map non-existing gender '%s'" % genders[0], pos)
         self.gender_map[genders[0]].append(genders[1])
 
