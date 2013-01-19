@@ -138,7 +138,7 @@ varact2vars_vehicles = {
     'curv_info_prev_cur'               : {'var': 0x45, 'start':  0, 'size':  4, 'value_function': value_sign_extend},
     'curv_info_cur_next'               : {'var': 0x45, 'start':  8, 'size':  4, 'value_function': value_sign_extend},
     'curv_info_prev_next'              : {'var': 0x45, 'start': 16, 'size':  4, 'value_function': value_sign_extend},
-    'curv_info'                        : {'var': 0x45, 'start':  0, 'size': 12, 
+    'curv_info'                        : {'var': 0x45, 'start':  0, 'size': 12,
             'value_function': lambda var, info: expression.BinOp(nmlop.AND, var, expression.ConstantNumeric(0x0F0F, var.pos), var.pos).reduce()},
     'motion_counter'                   : {'var': 0x46, 'start':  8, 'size':  4},
     'cargo_type_in_veh'                : {'var': 0x47, 'start':  0, 'size':  8},
@@ -220,7 +220,7 @@ def signed_byte_parameter(name, args, pos, info):
     if len(args) != 1:
         raise generic.ScriptError("%s() requires one argument, encountered %d" % (name, len(args)), pos)
     if isinstance(args[0], expression.ConstantNumeric):
-    
+
         generic.check_range(args[0].value, -128, 127, "parameter of %s()" % name, pos)
     ret = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xFF, pos), pos).reduce()
     return (ret, [])
@@ -365,12 +365,12 @@ def house_same_class(var, info):
     # Just using var 44 fails for non-north house tiles, as these have no class
     # Therefore work around it using var 61
     # Load ID of the north tile from register FF bits 24..31, and use that as param for var 61
-    north_tile = expression.Variable(expression.ConstantNumeric(0x7D), expression.ConstantNumeric(24), 
+    north_tile = expression.Variable(expression.ConstantNumeric(0x7D), expression.ConstantNumeric(24),
                                      expression.ConstantNumeric(0xFF), expression.ConstantNumeric(0xFF), var.pos)
-    var61 = expression.Variable(expression.ConstantNumeric(0x7B), expression.ConstantNumeric(info['start']), 
+    var61 = expression.Variable(expression.ConstantNumeric(0x7B), expression.ConstantNumeric(info['start']),
                                      expression.ConstantNumeric((1 << info['size']) - 1), expression.ConstantNumeric(0x61), var.pos)
     return expression.BinOp(nmlop.VAL2, north_tile, var61, var.pos)
-    
+
 
 varact2vars_houses = {
     'construction_state'    : {'var': 0x40, 'start':  0, 'size':  2},

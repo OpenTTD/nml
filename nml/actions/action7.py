@@ -167,7 +167,7 @@ def cond_skip_actions(action_list, param, condtype, value, value_size):
 
     return actions
 
-recursive_cond_blocks = 0    
+recursive_cond_blocks = 0
 
 def parse_conditional_block(cond_list):
     global recursive_cond_blocks
@@ -199,7 +199,7 @@ def parse_conditional_block(cond_list):
         return action_list
 
     action6.free_parameters.save()
-    
+
     if len(blocks) > 1:
         # the skip all parameter is used to skip all blocks after one
         # of the conditionals was true. We can't always skip directly

@@ -634,7 +634,7 @@ class Varaction2Parser(object):
 
 def parse_var(info, pos):
     param = expression.ConstantNumeric(info['param']) if 'param' in info else None
-    res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), 
+    res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']),
                               expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
     if 'value_function' in info:
         return info['value_function'](res, info)

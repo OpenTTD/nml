@@ -6,7 +6,7 @@ grf {
     min_compatible_version: 0;
 }
 
-/* 
+/*
  * ********************************************
  * Define cargo and railtype translation tables
  * ********************************************

@@ -139,7 +139,7 @@ class SpritesetCollection(base_action.BaseAction):
                     actions.extend(real_sprite.parse_sprite_data(spriteset))
                     break
         return actions
-        
+
 """
 The collection which was previoulsy used. add_to_action1 will try to reuse this
 collection as long as possible to reduce the duplication of sprites. As soon

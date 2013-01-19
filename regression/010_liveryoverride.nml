@@ -65,7 +65,7 @@ item(FEAT_TRAINS, turbotrain, 20) {
     graphics {
         turbotrain_engine_group;
     }
-    livery_override(passenger_wagon) { 
+    livery_override(passenger_wagon) {
         turbotrain_passenger_group;
     }
 }

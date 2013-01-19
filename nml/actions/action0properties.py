@@ -631,7 +631,7 @@ def mt_house_class(value, num_ids, size_bit):
 properties[0x07] = {
     'substitute'              : {'size': 1, 'num': 0x08, 'multitile_function': mt_house_old_id, 'first': None},
     'building_flags'          : two_byte_property(0x09, 0x19, {'multitile_function': mt_house_prop09}, {'multitile_function': lambda *args: mt_house_mask(0xFE, *args)}),
-    'years_available'         : [{'size': 2, 'num': 0x0A, 'multitile_function': mt_house_zero, 'value_function': house_prop_0A}, 
+    'years_available'         : [{'size': 2, 'num': 0x0A, 'multitile_function': mt_house_zero, 'value_function': house_prop_0A},
                                  {'size': 2, 'num': 0x21, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 0)},
                                  {'size': 2, 'num': 0x22, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 1)}],
     'population'              : {'size': 1, 'num': 0x0B, 'multitile_function': mt_house_zero},

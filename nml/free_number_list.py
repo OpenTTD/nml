@@ -32,11 +32,11 @@ class FreeNumberList(object):
     @ivar used_numbers: A set with all numbers that have been used at
         some time. This is used by L{pop_unique}.
     @type used_numbers: C{set}
-    
+
     @ivar exception: Exception to be thrown when there is no number available
         when requested via pop() or pop_global().
     @type exception: C{Exception}
-    
+
     @ivar exception_unique: Exception to be thrown when there is no unique number
         available when it is requested via pop_unique().
     @type exception_unique: C{Exception}

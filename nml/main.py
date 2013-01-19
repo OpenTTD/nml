@@ -69,9 +69,9 @@ def parse_cli(argv):
                         help="Disable all warnings. Errors will be printed normally.")
     opt_parser.add_option("-n", "--no-cache", action="store_true", dest="no_cache",
                         help="Disable caching of sprites in .cache[index] files, which may reduce compilation time.")
-    
+
     opts, args = opt_parser.parse_args(argv)
-    
+
     if opts.quiet:
         generic.disable_warnings()
 
@@ -225,7 +225,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
                 sprite.validate_size()
                 for f in (sprite.file, sprite.mask_file):
                     if f is None: continue
-                    if f.value in sprite_files: 
+                    if f.value in sprite_files:
                         sprite_files[f.value] += 1
                     else:
                         sprite_files[f.value] = 1
