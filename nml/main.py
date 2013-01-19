@@ -21,7 +21,7 @@ from nml.actions import action2layout, action2var, action8, sprite_count, real_s
 from nml.ast import general, grf, alt_sprites
 
 try:
-    import Image
+    from PIL import Image
 except ImportError:
     pass
 

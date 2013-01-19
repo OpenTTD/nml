@@ -18,7 +18,7 @@ from nml import generic, palette, output_base, lz77, grfstrings
 from nml.actions.real_sprite import translate_w2d
 
 try:
-    import Image
+    from PIL import Image
 except ImportError:
     pass
 
