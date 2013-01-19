@@ -628,6 +628,7 @@ constant_numbers = {
     'TILE_CLASS_TREES'                      : 0x04,
     'TILE_CLASS_STATION'                    : 0x05,
     'TILE_CLASS_WATER'                      : 0x06,
+    'TILE_CLASS_VOID'                       : 0x07,
     'TILE_CLASS_INDUSTRY'                   : 0x08,
     'TILE_CLASS_TUNNEL_BRIDGE'              : 0x09,
     'TILE_CLASS_OBJECTS'                    : 0x0A,
