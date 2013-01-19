@@ -16,7 +16,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import expression, generic, global_constants
 from nml.actions import real_sprite
 from nml.ast import base_statement
-import os, Image
+import os
+from PIL import Image
 
 """
 List with all AltSpritesBlocks encountered in the nml file.

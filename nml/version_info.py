@@ -47,7 +47,7 @@ def get_lib_versions():
     versions = {}
     #PIL
     try:
-        import Image
+        from PIL import Image
         versions["PIL"] = Image.VERSION
     except ImportError:
         versions["PIL"] = "Not found!"
