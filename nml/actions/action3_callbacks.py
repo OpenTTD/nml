@@ -66,7 +66,7 @@ callbacks[0x00] = {
     'tractive_effort_coefficient'          : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_tractive_effort_coefficient'},
     'purchase_tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
     'bitmask_vehicle_info'                 : {'type': 'cb', 'num': 0x36, 'var10': 0x25},
-    'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x28},
+    'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x2B},
 }
 callbacks[0x00].update(general_vehicle_cbs)
 
