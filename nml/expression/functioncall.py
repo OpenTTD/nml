@@ -422,7 +422,7 @@ def builtin_sound_file(name, args, pos):
         raise generic.ScriptError("Parameter for " + name + "() must be a string literal", pos)
     volume = args[1].reduce_constant().value if len(args) >= 2 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)
-    return ConstantNumeric(action11.add_sound( (args[0].value, volume) ), pos)
+    return ConstantNumeric(action11.add_sound( (args[0].value, volume), pos), pos)
 
 def builtin_sound_import(name, args, pos):
     from nml.actions import action11
@@ -432,7 +432,7 @@ def builtin_sound_import(name, args, pos):
     sound_num = args[1].reduce_constant().value
     volume = args[2].reduce_constant().value if len(args) >= 3 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)
-    return ConstantNumeric(action11.add_sound( (grfid, sound_num, volume) ), pos)
+    return ConstantNumeric(action11.add_sound( (grfid, sound_num, volume), pos), pos)
 
 def builtin_relative_coord(name, args, pos):
     """

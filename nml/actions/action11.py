@@ -36,16 +36,17 @@ class LoadBinaryFile(base_action.BaseAction):
     '''
     <sprite-number> * <length> FF <name-len> <name> 00 <data>
     '''
-    def __init__(self, fname):
+    def __init__(self, fname, pos):
         self.fname = fname
+        self.pos = pos
         self.last = False
 
     def prepare_output(self, sprite_num):
         if not os.access(self.fname, os.R_OK):
-            raise generic.ScriptError("File does not exist.", self.fname)
+            raise generic.ScriptError("Sound file '%s' does not exist." % self.fname, self.pos)
         size = os.path.getsize(self.fname)
         if size == 0:
-            raise generic.ScriptError("Expected a sound file with non-zero length.", self.fname)
+            raise generic.ScriptError("Expected sound file '%s' to have a non-zero length." % self.fname, self.pos)
 
     def write(self, file):
         file.print_named_filedata(self.fname)
@@ -62,10 +63,14 @@ class ImportSound(base_action.BaseAction):
 
     @ivar number: Sound number to load.
     @type number: C{int}
+
+    @ivar pos: Position information
+    @type pos: L{Position}
     """
-    def __init__(self, grfid, number):
+    def __init__(self, grfid, number, pos):
         self.grfid = grfid
         self.number = number
+        self.pos = pos
         self.last = False
 
     def write(self, file):
@@ -80,10 +85,10 @@ class ImportSound(base_action.BaseAction):
 registered_sounds = {}
 SOUND_OFFSET = 73 # No of original sounds
 
-def add_sound(args):
+def add_sound(args, pos):
     if args not in registered_sounds:
-        registered_sounds[args] = len(registered_sounds)
-    return registered_sounds[args] + SOUND_OFFSET
+        registered_sounds[args] = (len(registered_sounds), pos)
+    return registered_sounds[args][0] + SOUND_OFFSET
 
 def get_sound_actions():
     """
@@ -96,13 +101,15 @@ def get_sound_actions():
     action_list.append(Action11(len(registered_sounds)))
     volume_list = []
 
-    for sound, i in sorted(registered_sounds.iteritems(), key=itemgetter(1)):
-        if len(sound) == 3:
-            action_list.append(ImportSound(sound[0], sound[1]))
+    sound_data = [(sound_id, args, pos) for args, (sound_id, pos) in registered_sounds.iteritems()]
+    # Sort on first item, i.e. sound ID
+    for i, args, pos in sorted(sound_data):
+        if len(args) == 3:
+            action_list.append(ImportSound(args[0], args[1], pos))
         else:
-            action_list.append(LoadBinaryFile(sound[0]))
-        if sound[-1] != 100:
-            volume_list.append( (i + SOUND_OFFSET, int(sound[-1] * 128 / 100)) )
+            action_list.append(LoadBinaryFile(args[0], pos))
+        if args[-1] != 100:
+            volume_list.append( (i + SOUND_OFFSET, int(args[-1] * 128 / 100)) )
 
     if volume_list:
         action_list.extend(action0.get_volume_actions(volume_list))
