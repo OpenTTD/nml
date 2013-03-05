@@ -1088,6 +1088,10 @@ def parse_file(filename, default):
         if lang.langid is None:
             generic.print_warning("Language file does not contain a ##grflangid pragma", generic.LanguageFilePosition(filename))
         else:
+            for lng in langs:
+                if lng[0] == lang.langid:
+                    msg = "Language file has the same ##grflangid (with number %d) as another language file" % lang.langid
+                    raise generic.ScriptError(msg, generic.LanguageFilePosition(filename))
             langs.append((lang.langid, lang))
 
 def read_lang_files(lang_dir, default_lang_file):
