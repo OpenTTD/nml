@@ -967,7 +967,7 @@ class Language(object):
 
             newgrf_string = NewGRFString(value, self, pos)
             if not default_lang.strings[string].match_commands(newgrf_string):
-                generic.print_warning("String commands don't match with %s", opts.default_lang, pos)
+                generic.print_warning("String commands don't match with master file %s" % opts.default_lang, pos)
                 return
 
             if case is None:
