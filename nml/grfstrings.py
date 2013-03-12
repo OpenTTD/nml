@@ -25,6 +25,7 @@ def utf8_get_size(char):
     return 4
 
 DEFAULT_LANGUAGE = 0x7F
+DEFAULT_LANGNAME = "english.lng"
 
 def validate_string(string):
     """
@@ -967,7 +968,7 @@ class Language(object):
 
             newgrf_string = NewGRFString(value, self, pos)
             if not default_lang.strings[string].match_commands(newgrf_string):
-                generic.print_warning("String commands don't match with master file %s" % opts.default_lang, pos)
+                generic.print_warning("String commands don't match with master file \"%s\"" % DEFAULT_LANGNAME, pos)
                 return
 
             if case is None:
@@ -1107,6 +1108,7 @@ def read_lang_files(lang_dir, default_lang_file):
                               fallback for other languages.
     @type  default_lang_file: C{str}
     """
+    DEFAULT_LANGNAME = default_lang_file
     if not os.path.exists(lang_dir + os.sep + default_lang_file):
         generic.print_warning("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + default_lang_file))
         return
