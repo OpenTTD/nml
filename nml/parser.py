@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, expression, tokens, nmlop, unit
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, tracktypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, tracktypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles, comment
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 
@@ -119,6 +119,7 @@ class NMLParser:
                       | snowline
                       | engine_override
                       | sort_vehicles
+                      | comment
                       | basecost'''
         t[0] = t[1]
 
@@ -718,6 +719,10 @@ class NMLParser:
     def p_sort_vehicles(self, t):
         'sort_vehicles : SORT_VEHICLES LPAREN expression_list RPAREN SEMICOLON'
         t[0] = sort_vehicles.SortVehicles(t[3], t.lineno(1))
+
+    def p_comment(self, t):
+        'comment : COMMENT LPAREN expression RPAREN SEMICOLON'
+        t[0] = comment.Comment(t[3], t.lineno(1))
 
     def p_tilelayout(self, t):
         'tilelayout : TILELAYOUT ID LBRACE tilelayout_list RBRACE'
