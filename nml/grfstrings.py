@@ -1108,6 +1108,8 @@ def read_lang_files(lang_dir, default_lang_file):
                               fallback for other languages.
     @type  default_lang_file: C{str}
     """
+    global DEFAULT_LANGNAME
+
     DEFAULT_LANGNAME = default_lang_file
     if not os.path.exists(lang_dir + os.sep + default_lang_file):
         generic.print_warning("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + default_lang_file))
