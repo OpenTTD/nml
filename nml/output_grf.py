@@ -300,7 +300,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         if filename in self.cached_image_files:
             im = self.cached_image_files[filename]
         else:
-            im = Image.open(filename)
+            im = Image.open(generic.find_file(filename))
             self.cached_image_files[filename] = im
         self.mark_image_file_used(filename)
         return im
@@ -491,15 +491,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         # Check if files exist and if cache is usable
         use_cache = True
         if filename_32bpp is not None:
-            if not os.path.exists(filename_32bpp.value):
-                raise generic.ImageError("File doesn't exist", filename_32bpp.value)
-            if os.path.getmtime(filename_32bpp.value) > self.cache_time:
+            if os.path.getmtime(generic.find_file(filename_32bpp.value)) > self.cache_time:
                 use_cache = False
 
         if filename_8bpp is not None:
-            if not os.path.exists(filename_8bpp.value):
-                raise generic.ImageError("File doesn't exist", filename_8bpp.value)
-            if os.path.getmtime(filename_8bpp.value) > self.cache_time:
+            if os.path.getmtime(generic.find_file(filename_8bpp.value)) > self.cache_time:
                 use_cache = False
 
         # Try finding the file in the cache
@@ -799,7 +795,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.print_byte(0xff, self.sprite_output)
         self.print_byte(len(name), self.sprite_output)
         self.print_string(name, force_ascii = True, final_zero = True, stream = self.sprite_output)  # ASCII filenames seems sufficient.
-        fp = open(filename, 'rb')
+        fp = open(generic.find_file(filename), 'rb')
         while True:
             data = fp.read(1024)
             if len(data) == 0: break

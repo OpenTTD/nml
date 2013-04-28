@@ -131,7 +131,7 @@ def main(argv):
     if input_filename is None:
         input = sys.stdin
     else:
-        input = codecs.open(input_filename, 'r', 'utf-8')
+        input = codecs.open(generic.find_file(input_filename), 'r', 'utf-8')
         # Only append an output grf name, if no ouput is given, also not implicitly via -M
         if not opts.outputfile_given and not outputs:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
@@ -250,10 +250,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     used_palette = forced_palette
     last_file = None
     for f in sprite_files:
-        if not os.path.exists(f):
-            raise generic.ImageError("File doesn't exist", f)
         try:
-            im = Image.open(f)
+            im = Image.open(generic.find_file(f))
         except IOError, ex:
             raise generic.ImageError(str(ex), f)
         if im.mode != "P":

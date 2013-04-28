@@ -259,7 +259,7 @@ def read_extra_commands(custom_tags_file):
         #Failed to open custom_tags.txt, ignore this
         return
     line_no = 0
-    for line in codecs.open(custom_tags_file, "r", "utf-8"):
+    for line in codecs.open(generic.find_file(custom_tags_file), "r", "utf-8"):
         line_no += 1
         line = line.strip()
         if len(line) == 0 or line[0] == "#": continue
@@ -1069,7 +1069,7 @@ def parse_file(filename, default):
     """
     lang = Language(False)
     try:
-        with codecs.open(filename, "r", "utf-8") as f:
+        with codecs.open(generic.find_file(filename), "r", "utf-8") as f:
             for idx, line in enumerate(f):
                 pos = generic.LinePosition(filename, idx + 1)
                 line = line.rstrip('\n\r').lstrip(u'\uFEFF')

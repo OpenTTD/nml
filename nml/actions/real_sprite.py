@@ -138,9 +138,7 @@ class RealSprite(object):
         to 0,0,image_width,image_height.
         """
         if self.xpos is None:
-            if not os.path.exists(self.file.value):
-                raise generic.ImageError("File doesn't exist", self.file.value)
-            im = Image.open(self.file.value)
+            im = Image.open(generic.find_file(self.file.value))
             self.xpos = expression.ConstantNumeric(0)
             self.ypos = expression.ConstantNumeric(0)
             self.xsize = expression.ConstantNumeric(im.size[0])

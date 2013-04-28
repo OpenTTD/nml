@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
 
 def truncate_int32(value):
     """
@@ -207,3 +207,55 @@ def print_error(msg):
     """
     print >> sys.stderr, "nmlc ERROR: " + msg
 
+_paths = set() # Paths already found to be correct at the system.
+
+def find_file(path):
+    """
+    Verify whether L{path} exists. If not, try to find a similar one with a
+    different case.
+
+    @param path: Path to the file to open.
+    @type  path: C{str}
+
+    @return: Path name to a file that exists at the file system.
+    @rtype:  C{str}
+    """
+    # Split the path in components (directory parts and the filename).
+    drive, path = os.path.splitdrive(os.path.normpath(path))
+    components = [] # Path stored in reverse order (filename at index[0])
+    while path != '':
+        dirpart, filepart = os.path.split(path)
+        components.append(filepart)
+        path = dirpart
+
+    # Re-build the path
+    path = drive
+    while len(components) > 0:
+        comp = components.pop()
+        newpath = os.path.join(path, comp)
+        if newpath in _paths:
+            path = newpath
+            continue
+
+        lcomp = comp.lower()
+        if path == '':
+            entries = os.listdir(os.curdir)
+        else:
+            entries = os.listdir(path)
+        matches = [entry for entry in entries if lcomp == entry.lower()]
+        if len(matches) == 0:
+            raise ScriptError("Path \"%s\" does not exist (even after case conversions)" % os.path.join(path, comp))
+        elif len(matches) > 1:
+            raise ScriptError("Path \"%s\" is not unique (case conversion gave %d solutions)" % (os.path.join(path, comp), len(matches)))
+
+        if matches[0] != comp:
+            given_path = os.path.join(path, comp)
+            real_path = os.path.join(path, matches[0])
+            print_warning("Path \"%s\" at the file system does not match path \"%s\" given in the input (case mismatch in the last component)"
+                    % (real_path, given_path))
+
+        path = os.path.join(path, matches[0])
+        if len(components) > 0:
+            _paths.add(path)
+
+    return path
