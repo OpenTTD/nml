@@ -239,9 +239,9 @@ def find_file(path):
 
         lcomp = comp.lower()
         if path == '':
-            entries = os.listdir(os.curdir)
+            entries = os.listdir(os.curdir) + [os.curdir, os.pardir]
         else:
-            entries = os.listdir(path)
+            entries = os.listdir(path) + [os.curdir, os.pardir]
         matches = [entry for entry in entries if lcomp == entry.lower()]
         if len(matches) == 0:
             raise ScriptError("Path \"%s\" does not exist (even after case conversions)" % os.path.join(path, comp))
