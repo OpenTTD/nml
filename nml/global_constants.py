@@ -519,6 +519,15 @@ constant_numbers = {
     'DIRECTION_WEST'                      : 6,
     'DIRECTION_NORTHWEST'                 : 7,
 
+    'CANAL_DIRECTION_NORTH'               : 7,
+    'CANAL_DIRECTION_NORTHEAST'           : 0,
+    'CANAL_DIRECTION_EAST'                : 4,
+    'CANAL_DIRECTION_SOUTHEAST'           : 1,
+    'CANAL_DIRECTION_SOUTH'               : 5,
+    'CANAL_DIRECTION_SOUTHWEST'           : 2,
+    'CANAL_DIRECTION_WEST'                : 6,
+    'CANAL_DIRECTION_NORTHWEST'           : 3,
+
     'CORNER_W'                            : 0,
     'CORNER_S'                            : 1,
     'CORNER_E'                            : 2,
