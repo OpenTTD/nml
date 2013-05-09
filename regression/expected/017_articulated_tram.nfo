@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d19 
+0 * 4 \d18 
 
 1 * 54 14 "C" "INFO" 
 "B" "VRSN" \w4 \dx00000000 
@@ -15,7 +15,7 @@
 "B" "BLTR" \w1 "8" 
 00 
 00 
-2 * 52 08 08 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 08 "NML\17" "NML regression test" 00 "A test newgrf testing NML" 00 
 // Name: foster_express_articulated_parts
 3 * 23 02 01 FF 89 
 10 00 \dxFFFFFFFF 
@@ -49,36 +49,34 @@
 10 FF 
 1C 01 
 
-5 * 27 04 01 7F 01 FF \wx0058 "Foster Express Tram" 00 
+5 * 25 04 01 7F 01 FF \wx0058 "Foster Turbo Tram" 00 
 
-6 * 23 04 01 1F 01 FF \wx0058 "Foster Sneltram" 00 
+6 * 6 01 01 \b1 FF \wx0008 
 
-7 * 6 01 01 \b1 FF \wx0008 
-
-8 tram_foster_express.png 8bpp 48 1 8 18 -3 -10 normal 
-9 tram_foster_express.png 8bpp 64 1 20 18 -14 -5 normal 
-10 tram_foster_express.png 8bpp 96 1 28 15 -14 -8 normal 
-11 tram_foster_express.png 8bpp 144 1 20 18 -6 -7 normal 
-12 tram_foster_express.png 8bpp 176 1 8 18 -3 -10 normal 
-13 tram_foster_express.png 8bpp 192 1 20 18 -14 -9 normal 
-14 tram_foster_express.png 8bpp 224 1 28 15 -14 -8 normal 
-15 tram_foster_express.png 8bpp 272 1 20 18 -6 -7 normal 
+7 tram_foster_express.png 8bpp 48 1 8 18 -3 -10 normal 
+8 tram_foster_express.png 8bpp 64 1 20 18 -14 -5 normal 
+9 tram_foster_express.png 8bpp 96 1 28 15 -14 -8 normal 
+10 tram_foster_express.png 8bpp 144 1 20 18 -6 -7 normal 
+11 tram_foster_express.png 8bpp 176 1 8 18 -3 -10 normal 
+12 tram_foster_express.png 8bpp 192 1 20 18 -14 -9 normal 
+13 tram_foster_express.png 8bpp 224 1 28 15 -14 -8 normal 
+14 tram_foster_express.png 8bpp 272 1 20 18 -6 -7 normal 
 
 // Name: foster_express_set - feature 01
-16 * 9 02 01 FE \b1 \b1 
+15 * 9 02 01 FE \b1 \b1 
 \w0 
 \w0 
 
-17 * 9 00 01 \b1 01 FF \wx0058 
+16 * 9 00 01 \b1 01 FF \wx0058 
 17 10 
 
 // Name: @action3_0
-18 * 23 02 01 FE 89 
+17 * 23 02 01 FE 89 
 0C 00 \dx0000FFFF 
 \b1 
 \wx00FF \dx00000016 \dx00000016 	// foster_express_articulated_parts;
 \wx00FE // foster_express_set;
 
-19 * 9 03 01 01 FF \wx0058 \b0 
+18 * 9 03 01 01 FF \wx0058 \b0 
 \wx00FE 	// @action3_0;
 

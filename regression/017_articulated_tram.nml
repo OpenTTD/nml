@@ -4,7 +4,7 @@ Code is modified in some places for testing reasons.
 */
 
 grf {
-    grfid: "test";
+    grfid: "NML\17";
     name: string(STR_REGRESSION_NAME);
     desc: string(STR_REGRESSION_DESC);
     version: 0;
@@ -33,12 +33,12 @@ switch(FEAT_ROADVEHS, SELF, foster_express_articulated_parts, extra_callback_inf
 
 item(FEAT_ROADVEHS, foster_express_tram, 88) {
     property {
-        name:                         string(STR_NAME_FOSTER_EXPRESS_TRAM);
+        name:                         string(STR_NAME_FOSTER_TURBO_TRAM);
         climates_available:           ALL_CLIMATES;
         model_life:                   40;                         // years
         vehicle_life:                 30;                         // years
         introduction_date:            date(1965,1,1);
-        reliability_decay:            1; 
+        reliability_decay:            1;
         running_cost_base:            RUNNING_COST_ROADVEH;       // Default road vehicle running cost base
         running_cost_factor:          135;
         cost_factor:                  143;
