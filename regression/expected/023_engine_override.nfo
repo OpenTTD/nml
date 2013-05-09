@@ -15,10 +15,10 @@
 "B" "BLTR" \w1 "8" 
 00 
 00 
-2 * 52 08 08 "test" "NML regression test" 00 "A test newgrf testing NML" 00 
+2 * 52 08 08 "NML\23" "NML regression test" 00 "A test newgrf testing NML" 00 
 3 * 16 00 08 \b1 01 FF \wx0000 
 11 \dx74736574 \dx44434241 
 
 4 * 16 00 08 \b1 01 FF \wx0000 
-11 \dx74736574 \dx78563412 
+11 \dx234C4D4E \dx78563412 
 

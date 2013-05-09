@@ -5,7 +5,7 @@ Code is modified in some places for testing reasons.
 
 //Add action8, so we can test the vehicle in-game
 grf {
-    grfid: "test";
+    grfid: "NML\6";
     name: string(STR_REGRESSION_NAME);
     desc: string(STR_REGRESSION_DESC);
     version: 0;

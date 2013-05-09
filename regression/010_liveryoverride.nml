@@ -1,5 +1,5 @@
 grf {
-    grfid: "test";
+    grfid: "NML\10";
     name: string(STR_REGRESSION_NAME);
     desc: string(STR_REGRESSION_DESC);
     version: 0;

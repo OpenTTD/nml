@@ -1,6 +1,6 @@
 // define the newgrf
 grf {
-    grfid: "test";
+    grfid: "NML\21";
     name: string(STR_REGRESSION_NAME);
     desc: string(STR_REGRESSION_DESC);
     version: 1;
