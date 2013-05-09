@@ -350,8 +350,8 @@ def roadveh_speed_prop(prop_info):
     prop08_value = lambda value: BinOp(nmlop.MIN, value, ConstantNumeric(0xFF, value.pos), value.pos).reduce()
     # prop 15 value is (value + 3) / 4
     prop15_value = lambda value: BinOp(nmlop.DIV, BinOp(nmlop.ADD, value, ConstantNumeric(3, value.pos), value.pos), ConstantNumeric(4, value.pos), value.pos).reduce()
-    # prop 15 should not be set if value <= 255
-    prop15_test = lambda value: not (isinstance(value, ConstantNumeric) and value.value <= 0xFF)
+    # prop 15 should not be set if value(prop08_value) <= 255. But as we test prop15 and prop15 = 0.25/prop08, test for 64:
+    prop15_test = lambda value: isinstance(value, ConstantNumeric) and value.value >= 0x40
     prop08 = {'size': 1, 'num': 0x08, 'value_function': prop08_value}
     prop15 = {'size': 1, 'num': 0x15, 'value_function': prop15_value, 'test_function': prop15_test}
     for key in prop_info:

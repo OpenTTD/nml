@@ -42,7 +42,7 @@ item(FEAT_ROADVEHS, foster_express_tram, 88) {
         running_cost_base:            RUNNING_COST_ROADVEH;       // Default road vehicle running cost base
         running_cost_factor:          135;
         cost_factor:                  143;
-        speed:                        75 km/h;
+        speed:                        317 mph;
         power:                        220 hp;
         weight:                       22 ton;
         sprite_id:                    SPRITE_ID_NEW_ROADVEH;      // We have our own sprites
