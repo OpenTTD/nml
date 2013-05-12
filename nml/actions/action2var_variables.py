@@ -609,7 +609,7 @@ varact2vars_objects = {
     'build_date'             : { 'var' : 0x42, 'start':  0, 'size': 32 },
 
     'animation_frame'        : { 'var' : 0x43, 'start':  0, 'size':  8 },
-    'company_colour'         : { 'var' : 0x43, 'start':  8, 'size':  8 },
+    'company_colour'         : { 'var' : 0x43, 'start':  0, 'size':  8 },
 
     'owner'                  : { 'var' : 0x44, 'start':  0, 'size':  8 },
 
