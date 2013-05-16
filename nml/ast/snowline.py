@@ -26,7 +26,7 @@ class Snowline(base_statement.BaseStatement):
     @type type: C{str}
 
     @ivar date_heights: Height of the snow line at given days in the year.
-    @type date_heights: C{list} of L{Assignment}
+    @type date_heights: C{list} of L{UnitAssignment}
     """
     def __init__(self, line_type, height_data, pos):
         base_statement.BaseStatement.__init__(self, "snowline-block", pos)
@@ -62,14 +62,45 @@ def compute_table(snowline):
         doy = dh.name.reduce()
         if not isinstance(doy, expression.ConstantNumeric):
             raise generic.ScriptError('Day of year is not a compile-time constant', doy.pos)
-        height = dh.value.reduce()
-        if snowline.type != 'equal' and not isinstance(height, expression.ConstantNumeric):
-            raise generic.ScriptError('Height is not a compile-time constant', height.pos)
-
         if doy.value < 1 or doy.value > 365:
             raise generic.ScriptError('Day of the year must be between 1 and 365', doy.pos)
-        if isinstance(height, expression.ConstantNumeric) and (height.value < 2 or height.value > 29):
-            raise generic.ScriptError('Height must be between 2 and 29', height.pos)
+
+        height = dh.value.reduce()
+        if isinstance(height, expression.ConstantNumeric) and height.value < 0:
+            raise generic.ScriptError('Height must be at least 0', height.pos)
+        if dh.unit is None:
+            if isinstance(height, expression.ConstantNumeric) and height.value > 255:
+                raise generic.ScriptError('Height must be at most 255', height.pos)
+        else:
+            unit = dh.unit
+            if unit.type != 'snowline':
+                raise generic.ScriptError('Expected a snowline percentage ("snow%")', height.pos)
+
+            if isinstance(height, expression.ConstantNumeric) and height.value > 100:
+                raise generic.ScriptError('Height must be at most 100 snow%', height.pos)
+
+
+            mul, div = unit.convert, 1
+            if isinstance(mul, tuple):
+                mul, div = mul
+
+            # Factor out common factors
+            gcd = generic.greatest_common_divisor(mul, div)
+            mul /= gcd
+            div /= gcd
+
+            if isinstance(height, (expression.ConstantNumeric, expression.ConstantFloat)):
+                # Even if mul == div == 1, we have to round floats and adjust value
+                height = expression.ConstantNumeric(int(float(height.value) * mul / div + 0.5), height.pos)
+            elif mul != div:
+                # Compute (value * mul + div/2) / div
+                height = expression.BinOp(nmlop.MUL, height, expression.ConstantNumeric(mul, height.pos), height.pos)
+                height = expression.BinOp(nmlop.ADD, height, expression.ConstantNumeric(int(div / 2), height.pos), height.pos)
+                height = expression.BinOp(nmlop.DIV, height, expression.ConstantNumeric(div, height.pos), height.pos)
+
+        # For 'linear' snow-line, only accept integer constants.
+        if snowline.type != 'equal' and not isinstance(height, expression.ConstantNumeric):
+            raise generic.ScriptError('Height is not a compile-time constant', height.pos)
 
         day_table[doy.value - 1] = height
 
@@ -127,7 +158,7 @@ def compute_table(snowline):
     for dy in range(365):
         today = datetime.date.fromordinal(dy + 1)
         if day_table[dy]:
-            expr = expression.BinOp(nmlop.MUL, day_table[dy], expression.ConstantNumeric(8)).reduce()
+            expr = day_table[dy].reduce()
         else:
             expr = None
         table[(today.month - 1) * 32 + today.day - 1] = expr

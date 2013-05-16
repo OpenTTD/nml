@@ -43,6 +43,31 @@ class Assignment(object):
     def __str__(self):
         return "%s: %s;" % (str(self.name), str(self.value))
 
+class UnitAssignment(Assignment):
+    """
+    Storage container where the value can have a unit.
+
+    @ivar unit: Unit of the value, or not C{None}
+    @type unit: L{Unit}
+    """
+    def __init__(self, name, value, unit, pos):
+        Assignment.__init__(self, name, value, pos)
+        self.unit = unit
+
+    def debug_print(self, indentation):
+        Assignment.debug_print(self, indentation)
+        print (indentation+2)*' ' + 'Unit:'
+        if self.unit is None:
+            print (indentation+4)*' ' + 'None'
+        else:
+            print (indentation+4)*' ' + str(self.unit)
+
+    def __str__(self):
+        if self.unit is None:
+            return Assignment.__str__(self)
+        else:
+            return "%s: %s %s;" % (str(self.name), str(self.value), self.unit.name)
+
 class Range(object):
     """
     Storage container for a range of values (inclusive). This Contains

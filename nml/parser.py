@@ -295,6 +295,17 @@ class NMLParser(object):
                                    | generic_assignment_list generic_assignment'''
         t[0] = [] if len(t) == 1 else t[1] + [t[2]]
 
+    def p_snowline_assignment(self, t):
+        '''snowline_assignment : expression COLON expression SEMICOLON
+                               | expression COLON expression UNIT SEMICOLON'''
+        unit = None if len(t) == 5 else item.Unit(t[4])
+        t[0] = assignment.UnitAssignment(t[1], t[3], unit, t.lineno(1))
+
+    def p_snowline_assignment_list(self, t):
+        '''snowline_assignment_list :
+                                    | snowline_assignment_list snowline_assignment'''
+        t[0] = [] if len(t) == 1 else t[1] + [t[2]]
+
     #
     # Item blocks
     #
@@ -593,7 +604,7 @@ class NMLParser(object):
     # Snow line
     #
     def p_snowline(self, t):
-        'snowline : SNOWLINE LPAREN ID RPAREN LBRACE generic_assignment_list RBRACE'
+        'snowline : SNOWLINE LPAREN ID RPAREN LBRACE snowline_assignment_list RBRACE'
         t[0] = snowline.Snowline(t[3], t[6], t.lineno(1))
 
     #

@@ -44,3 +44,5 @@ units['ton'] = {'type': 'weight', 'convert': 1, 'ottd_mul': 1, 'ottd_shift': 0}
 units['tons'] = {'type': 'weight', 'convert': 1, 'ottd_mul': 1, 'ottd_shift': 0}
 units['kg'] = {'type': 'weight', 'convert': 1000, 'ottd_mul': 1000, 'ottd_shift': 0}
 
+#Snowline height
+units['snow%'] = {'type': 'snowline', 'convert': (255,100), 'ottd_mul': 1, 'ottd_shift': 0}
