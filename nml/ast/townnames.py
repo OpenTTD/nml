@@ -177,14 +177,14 @@ class TownNamesPart(object):
             return [] # Trivially correct.
 
         # There are too many pieces.
-        nactf = (len(self.pieces) + 254) // 255
+        number_action_f = (len(self.pieces) + 254) // 255
         pow2 = 1
-        while pow2 < nactf: pow2 = pow2 * 2
-        if pow2 < 255: nactf = pow2
+        while pow2 < number_action_f: pow2 = pow2 * 2
+        if pow2 < 255: number_action_f = pow2
 
         heap = [] # Heap of (summed probability, subset-of-pieces)
         i = 0
-        while i < nactf:
+        while i < number_action_f:
             # Index 'i' is added to have a unique sorting when lists have equal total probabilities.
             heapq.heappush(heap, (0, i, []))
             i = i + 1
