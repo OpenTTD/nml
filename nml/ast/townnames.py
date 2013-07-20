@@ -189,24 +189,33 @@ class TownNamesPart(object):
             heapq.heappush(heap, (0, i, []))
             i = i + 1
 
+        finished_actions = []
         # Index 'idx' is added to have a unique sorting when pieces have equal probabilities.
         rev_pieces = sorted(((p.probability.value, idx, p) for idx, p in enumerate(self.pieces)), reverse = True)
         for prob, _idx, piece in rev_pieces:
-            sub = heapq.heappop(heap)
+            while True:
+                sub = heapq.heappop(heap)
+                if len(sub[2]) < 255:
+                    break
+                # If a subset already has the max number of parts, consider it finished.
+                finished_actions.append(sub)
+
             sub[2].append(piece)
             sub = (sub[0] + prob, sub[1], sub[2])
             heapq.heappush(heap, sub)
 
+        finished_actions.extend(heap)
+
         # To ensure the chances do not get messed up due to one part needing less bits for its
         # selection, all parts are forced to use the same number of bits.
-        max_prob = max(sub[0] for sub in heap)
+        max_prob = max(sub[0] for sub in finished_actions)
         num_bits = 1
         while (1 << num_bits) < max_prob:
             num_bits = num_bits + 1
 
         # Assign to action F
         actFs = []
-        for _prob, _idx, sub in heap:
+        for _prob, _idx, sub in finished_actions:
             actF_name = expression.Identifier("**townname #%d**" % townname_serial, None)
             townname_serial = townname_serial + 1
             town_part = TownNamesPart(sub, self.pos)
