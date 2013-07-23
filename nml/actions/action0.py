@@ -45,6 +45,23 @@ def adjust_value(value, org_value, unit, ottd_convert_func):
     return value
 
 class Action0(base_action.BaseAction):
+    """
+    Representation of NFO action 0. Action 0 is used to set properties on all
+    kinds of objects. It can set any number of properties on a list of
+    consecutive IDs. Each property is defined by a unique (per feature) integer.
+
+    @ivar feature: Feature number to set properties for.
+    @type feature: C{int}
+
+    @ivar id: First ID to set properties for
+    @type id: C{int}
+
+    @ivar prop_list: List of all properties that are to be set.
+    @type prop_list: C{list} of L{BaseAction0Property}
+
+    @ivar num_ids: Number of IDs to set properties for.
+    @type num_ids: C{int} or C{None}
+    """
     def __init__(self, feature, id):
         self.feature = feature
         self.id = id
@@ -282,6 +299,7 @@ def get_railtypelist_action(railtype_list):
         offset += 4
         if isinstance(railtype, expression.StringLiteral):
             id_table.append(railtype)
+            offset+=4
             continue
         param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(railtype[-1])))
         action_list.extend(extra_actions)
