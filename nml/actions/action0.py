@@ -475,6 +475,7 @@ def get_railtypelist_action(railtype_list):
     for railtype in railtype_list:
         if isinstance(railtype, expression.StringLiteral):
             id_table.append(railtype)
+            offset+=4
             continue
         param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(railtype[-1])))
         action_list.extend(extra_actions)
