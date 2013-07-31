@@ -245,19 +245,27 @@ def find_file(filepath):
             path = childpath
             continue
 
-        lcomp = comp.lower()
-        entries = os.listdir(path) + [os.curdir, os.pardir]
-        matches = [entry for entry in entries if lcomp == entry.lower()]
-        if len(matches) == 0:
-            raise ScriptError("Path \"%s\" does not exist (even after case conversions)" % os.path.join(path, comp))
-        elif len(matches) > 1:
-            raise ScriptError("Path \"%s\" is not unique (case conversion gave %d solutions)" % (os.path.join(path, comp), len(matches)))
+        if os.access(path, os.R_OK):
+            # Path is readable, compare provided path with the file system.
+            entries = os.listdir(path) + [os.curdir, os.pardir]
+            lcomp = comp.lower()
+            matches = [entry for entry in entries if lcomp == entry.lower()]
 
-        if matches[0] != comp:
-            given_path = os.path.join(path, comp)
-            real_path = os.path.join(path, matches[0])
-            print_warning("Path \"%s\" at the file system does not match path \"%s\" given in the input (case mismatch in the last component)"
-                    % (real_path, given_path))
+            if len(matches) == 0:
+                raise ScriptError("Path \"%s\" does not exist (even after case conversions)" % os.path.join(path, comp))
+            elif len(matches) > 1:
+                raise ScriptError("Path \"%s\" is not unique (case conversion gave %d solutions)" % (os.path.join(path, comp), len(matches)))
+
+            if matches[0] != comp:
+                given_path = os.path.join(path, comp)
+                real_path = os.path.join(path, matches[0])
+                print_warning("Path \"%s\" at the file system does not match path \"%s\" given in the input (case mismatch in the last component)"
+                        % (real_path, given_path))
+        elif os.access(path, os.X_OK):
+            # Path is only accessible, cannot inspect the file system.
+            matches = [comp]
+        else:
+            raise ScriptError("Path \"%s\" does not exist or is not accessible" % path)
 
         path = os.path.join(path, matches[0])
         if len(components) > 0:
