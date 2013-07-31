@@ -222,6 +222,13 @@ def find_file(filepath):
     """
     # Split the filepath in components (directory parts and the filename).
     drive, filepath = os.path.splitdrive(os.path.normpath(filepath))
+    # 'splitdrive' above does not remove the leading / of absolute Unix paths.
+    # The 'split' below splits on os.sep, which means that loop below fails for "/".
+    # To prevent that, handle the leading os.sep separately.
+    if filepath.startswith(os.sep):
+        drive = drive + os.sep
+        filepath = filepath[len(os.sep):]
+
     components = [] # Path stored in reverse order (filename at index[0])
     while filepath != '':
         filepath, filepart = os.path.split(filepath)
