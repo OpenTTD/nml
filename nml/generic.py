@@ -227,8 +227,10 @@ def find_file(filepath):
         filepath, filepart = os.path.split(filepath)
         components.append(filepart)
 
-    # Re-build the path
+    # Re-build the absolute path.
     path = drive
+    if path == '':
+        path = os.getcwd()
     while len(components) > 0:
         comp = components.pop()
         childpath = os.path.join(path, comp)
@@ -237,10 +239,7 @@ def find_file(filepath):
             continue
 
         lcomp = comp.lower()
-        if path == '':
-            entries = os.listdir(os.curdir) + [os.curdir, os.pardir]
-        else:
-            entries = os.listdir(path) + [os.curdir, os.pardir]
+        entries = os.listdir(path) + [os.curdir, os.pardir]
         matches = [entry for entry in entries if lcomp == entry.lower()]
         if len(matches) == 0:
             raise ScriptError("Path \"%s\" does not exist (even after case conversions)" % os.path.join(path, comp))
