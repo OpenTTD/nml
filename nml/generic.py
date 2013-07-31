@@ -209,32 +209,31 @@ def print_error(msg):
 
 _paths = set() # Paths already found to be correct at the system.
 
-def find_file(path):
+def find_file(filepath):
     """
-    Verify whether L{path} exists. If not, try to find a similar one with a
+    Verify whether L{filepath} exists. If not, try to find a similar one with a
     different case.
 
-    @param path: Path to the file to open.
-    @type  path: C{str}
+    @param filepath: Path to the file to open.
+    @type  filepath: C{str}
 
     @return: Path name to a file that exists at the file system.
     @rtype:  C{str}
     """
-    # Split the path in components (directory parts and the filename).
-    drive, path = os.path.splitdrive(os.path.normpath(path))
+    # Split the filepath in components (directory parts and the filename).
+    drive, filepath = os.path.splitdrive(os.path.normpath(filepath))
     components = [] # Path stored in reverse order (filename at index[0])
-    while path != '':
-        dirpart, filepart = os.path.split(path)
+    while filepath != '':
+        filepath, filepart = os.path.split(filepath)
         components.append(filepart)
-        path = dirpart
 
     # Re-build the path
     path = drive
     while len(components) > 0:
         comp = components.pop()
-        newpath = os.path.join(path, comp)
-        if newpath in _paths:
-            path = newpath
+        childpath = os.path.join(path, comp)
+        if childpath in _paths:
+            path = childpath
             continue
 
         lcomp = comp.lower()
