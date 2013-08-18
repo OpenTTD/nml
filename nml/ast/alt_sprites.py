@@ -17,7 +17,10 @@ from nml import expression, generic, global_constants
 from nml.actions import real_sprite
 from nml.ast import base_statement, sprite_container
 import os
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    import Image
 
 """
 Store if there are any 32bpp sprites,

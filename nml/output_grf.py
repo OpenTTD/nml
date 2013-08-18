@@ -20,7 +20,10 @@ from nml.actions.real_sprite import translate_w2d
 try:
     from PIL import Image
 except ImportError:
-    pass
+    try:
+        import Image
+    except ImportError:
+        pass
 
 # Some constants for the 'info' byte
 INFO_RGB    = 1
