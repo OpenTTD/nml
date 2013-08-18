@@ -17,7 +17,10 @@ from nml import generic, expression
 from nml.actions import base_action
 from nml.ast import assignment
 import os
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    import Image
 
 palmap_d2w = [
           0, 215, 216, 136,  88, 106,  32,  33, #   0..7

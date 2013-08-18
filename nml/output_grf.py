@@ -20,7 +20,10 @@ from nml.actions.real_sprite import palmap_w2d
 try:
     from PIL import Image
 except ImportError:
-    pass
+    try:
+        import Image
+    except ImportError:
+        pass
 
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename, compress_grf, crop_sprites):

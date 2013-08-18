@@ -50,7 +50,11 @@ def get_lib_versions():
         from PIL import Image
         versions["PIL"] = Image.VERSION
     except ImportError:
-        versions["PIL"] = "Not found!"
+        try:
+            import Image
+            versions["PIL"] = Image.VERSION
+        except ImportError:
+            versions["PIL"] = "Not found!"
 
     #PLY
     try:
