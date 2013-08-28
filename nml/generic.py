@@ -199,7 +199,7 @@ def print_warning(msg, pos = None):
     if pos:
         msg = str(pos) + ": " + msg
 
-    print >> sys.stderr, "nmlc warning: " + msg
+    print >> sys.stderr, "\033[33m nmlc warning: " + msg + "\033[0m "
 
 def print_error(msg):
     """
