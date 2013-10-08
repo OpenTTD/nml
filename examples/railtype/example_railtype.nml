@@ -49,7 +49,7 @@ if (!grf_order_behind("DJT\01")) {
 }
 
 /* Default ground tile template (re-use as needed) */
-template ground_tile(x, y) { [x, y, 64, 31, -31, 0, TILE] }
+template ground_tile(x, y) { [x, y, 64, 31, -31, 0] }
 
 /**********************************************
  * Track underlays (tracks + ballast):

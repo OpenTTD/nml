@@ -156,7 +156,8 @@ item(FEAT_ROADVEHS, flatbed_truck_1) {
          * But we don't want that, so disable refitting for them.
          * Scrap metal, petrol and refined products cannot be transported acc. cargo classes
          * We do want to transport those, so enable refitting for them. */
-        refittable_cargo_types: bitmask(LVST, WOOL, SCRP, FICR, PETR, RFPR);
+        cargo_allow_refit: [LVST, WOOL, SCRP, FICR, PETR, RFPR];
+        cargo_disallow_refit: []; // we allow other cargoes, if class matches
         loading_speed: 5;
         cost_factor: 108;
         running_cost_factor: 90;

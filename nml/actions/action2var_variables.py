@@ -162,6 +162,7 @@ varact2vars_vehicles = {
     'age_in_days'                      : {'var': 0xC0, 'start':  0, 'size': 16},
     'max_age_in_days'                  : {'var': 0xC2, 'start':  0, 'size': 16},
     'vehicle_type_id'                  : {'var': 0xC6, 'start':  0, 'size': 16},
+    'vehicle_is_flipped'               : {'var': 0xC8, 'start':  1, 'size':  1},
     'breakdowns_since_last_service'    : {'var': 0xCA, 'start':  0, 'size':  8},
     'vehicle_is_broken'                : {'var': 0xCB, 'start':  0, 'size':  8, 'value_function': value_equals(1)},
     'reliability'                      : {'var': 0xCE, 'start':  0, 'size': 16, 'value_function': value_mul_div(101, 0x10000)},

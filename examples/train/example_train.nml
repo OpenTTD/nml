@@ -232,7 +232,8 @@ item(FEAT_TRAINS, icm) {
         reliability_decay: 20;
         refittable_cargo_classes: bitmask(CC_PASSENGERS);
         non_refittable_cargo_classes: bitmask();
-        refittable_cargo_types: bitmask(); // refitting is done via cargo classes only, no cargoes need explicit enabling/disabling
+        cargo_allow_refit: []; // refitting is done via cargo classes only, no cargoes need explicit enabling/disabling
+        cargo_disallow_refit: []; // refitting is done via cargo classes only, no cargoes need explicit enabling/disabling
         loading_speed: 6; // It's an intercity train, loading is relatively slow
         cost_factor: 45;
         running_cost_factor: 100; // Changed by callback
