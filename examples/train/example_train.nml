@@ -254,7 +254,7 @@ item(FEAT_TRAINS, icm) {
         extra_power_per_wagon: 0 kW;
         tractive_effort_coefficient: 0.1; // Changed by callback
         air_drag_coefficient: 0.06;
-        shorten_vehicle: SHORTEN_TO_8_8;
+        length: 8;
         /* Overridden by callback to disable for non-powered wagons */
         visual_effect_and_powered: visual_effect_and_powered(VISUAL_EFFECT_ELECTRIC, 2, DISABLE_WAGON_POWER);
         extra_weight_per_wagon: 0 ton;
