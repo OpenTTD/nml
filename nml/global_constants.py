@@ -383,6 +383,7 @@ constant_numbers = {
     'OBJ_FLAG_DRAW_WATER'      : 10,
     'OBJ_FLAG_ALLOW_BRIDGE'    : 11,
     'OBJ_FLAG_RANDOM_ANIMATION': 12,
+    'OBJ_FLAG_SCALE_BY_WATER'  : 13,
 
     #object animation triggers
     'OBJ_ANIM_IS_BUILT'        : 0,
