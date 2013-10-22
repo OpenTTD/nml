@@ -600,70 +600,73 @@ STRING_ROTATE            = {'unicode': r'\UE086',    'ascii': r'\86'}
 STRING_PUSH_WORD         = {'unicode': r'\UE09A\03\20\20', 'ascii': r'\9A\03\20\20'}
 STRING_SELECT_CASE       = {'unicode': r'\UE09A\0F', 'ascii': r'\9A\0F'}
 
-# Mapping of language names to their code, borrowed from OpenTTD.
-LANG_NAMES = {'af_ZA' : 0x1b,
-              'ar_EG' : 0x14,
-              'be_BY' : 0x10,
-              'bg_BG' : 0x18,
-              'ca_ES' : 0x22,
-              'cs_CZ' : 0x15,
-              'cv_RU' : 0x0B,
-              'cy_GB' : 0x0f,
-              'da_DK' : 0x2d,
-              'de_DE' : 0x02,
-              'el_GR' : 0x1e,
-              'en_AU' : 0x3D,
-              'en_GB' : 0x01,
-              'en_US' : 0x00,
-              'eo_EO' : 0x05,
-              'es_ES' : 0x04,
-              'et_EE' : 0x34,
-              'eu_ES' : 0x21,
-              'fa_IR' : 0x62,
-              'fi_FI' : 0x35,
-              'fo_FO' : 0x12,
-              'fr_FR' : 0x03,
-              'fy_NL' : 0x32,
-              'ga_IE' : 0x08,
-              'gd_GB' : 0x13,
-              'gl_ES' : 0x31,
-              'he_IL' : 0x61,
-              'hr_HR' : 0x38,
-              'hu_HU' : 0x24,
-              'id_ID' : 0x5a,
-              'io_IO' : 0x06,
-              'is_IS' : 0x29,
-              'it_IT' : 0x27,
-              'ja_JP' : 0x39,
-              'ko_KR' : 0x3a,
-              'lb_LU' : 0x23,
-              'lt_LT' : 0x2b,
-              'lv_LV' : 0x2a,
-              'mk_MK' : 0x26,
-              'mr_IN' : 0x11,
-              'ms_MY' : 0x3c,
-              'mt_MT' : 0x09,
-              'nb_NO' : 0x2f,
-              'nl_NL' : 0x1f,
-              'nn_NO' : 0x0e,
-              'pl_PL' : 0x30,
-              'pt_BR' : 0x37,
-              'pt_PT' : 0x36,
-              'ro_RO' : 0x28,
-              'ru_RU' : 0x07,
-              'sk_SK' : 0x16,
-              'sl_SI' : 0x2c,
-              'sr_RS' : 0x0d,
-              'sv_SE' : 0x2e,
-              'ta_IN' : 0x0A,
-              'th_TH' : 0x42,
-              'tr_TR' : 0x3e,
-              'uk_UA' : 0x33,
-              'ur_PK' : 0x5c,
-              'vi_VN' : 0x54,
-              'zh_CN' : 0x56,
-              'zh_TW' : 0x0c,
-             }
+# Information about languages, borrowed from OpenTTD.
+# (isocode name, grf langid, plural number)
+LANG_INFOS = [('af_ZA', 0x1b,  0),
+              ('ar_EG', 0x14,  1),
+              ('be_BY', 0x10,  6),
+              ('bg_BG', 0x18,  0),
+              ('ca_ES', 0x22,  0),
+              ('cs_CZ', 0x15, 10),
+              ('cv_RU', 0x0b,  0),
+              ('cy_GB', 0x0f,  0),
+              ('da_DK', 0x2d,  0),
+              ('de_DE', 0x02,  0),
+              ('el_GR', 0x1e,  2),
+              ('en_AU', 0x3d,  0),
+              ('en_GB', 0x01,  0),
+              ('en_US', 0x00,  0),
+              ('eo_EO', 0x05,  0),
+              ('es_ES', 0x04,  0),
+              ('et_EE', 0x34,  0),
+              ('eu_ES', 0x21,  0),
+              ('fa_IR', 0x62,  0),
+              ('fi_FI', 0x35,  0),
+              ('fo_FO', 0x12,  0),
+              ('fr_FR', 0x03,  2),
+              ('fy_NL', 0x32,  0),
+              ('ga_IE', 0x08,  4),
+              ('gd_GB', 0x13, 13),
+              ('gl_ES', 0x31,  0),
+              ('he_IL', 0x61,  0),
+              ('hr_HR', 0x38,  6),
+              ('hu_HU', 0x24,  2),
+              ('id_ID', 0x5a,  1),
+              ('io_IO', 0x06,  0),
+              ('is_IS', 0x29,  0),
+              ('it_IT', 0x27,  0),
+              ('ja_JP', 0x39,  1),
+              ('ko_KR', 0x3a, 11),
+              ('lb_LU', 0x23,  0),
+              ('lt_LT', 0x2b,  5),
+              ('lv_LV', 0x2a,  3),
+              ('mk_MK', 0x26,  0),
+              ('mr_IN', 0x11,  0),
+              ('ms_MY', 0x3c,  0),
+              ('mt_MT', 0x09, 12),
+              ('nb_NO', 0x2f,  0),
+              ('nl_NL', 0x1f,  0),
+              ('nn_NO', 0x0e,  0),
+              ('pl_PL', 0x30,  7),
+              ('pt_BR', 0x37,  2),
+              ('pt_PT', 0x36,  0),
+              ('ro_RO', 0x28,  0),
+              ('ru_RU', 0x07,  6),
+              ('sk_SK', 0x16, 10),
+              ('sl_SI', 0x2c,  8),
+              ('sr_RS', 0x0d,  6),
+              ('sv_SE', 0x2e,  0),
+              ('ta_IN', 0x0a,  0),
+              ('th_TH', 0x42,  1),
+              ('tr_TR', 0x3e,  1),
+              ('uk_UA', 0x33,  6),
+              ('ur_PK', 0x5c,  0),
+              ('vi_VN', 0x54,  1),
+              ('zh_CN', 0x56,  1),
+              ('zh_TW', 0x0c,  1),
+            ]
+LANG_NAMES = dict((lng[0], lng[1]) for lng in LANG_INFOS)
+LANG_PLURALS = dict((lng[1], lng[2]) for lng in LANG_INFOS)
 
 class Language(object):
     """
@@ -876,6 +879,7 @@ class Language(object):
         if value < 0 or value >= 0x7F:
             raise generic.ScriptError("Invalid grflangid", pos)
         self.langid = value
+        self.check_expected_plural(None)
 
     def handle_plural(self, data, pos):
         """
@@ -894,6 +898,25 @@ class Language(object):
         if value < 0 or value > NUM_PLURAL_FORMS:
             raise generic.ScriptError("Invalid plural form", pos)
         self.plural = value
+        self.check_expected_plural(pos)
+
+    def check_expected_plural(self, pos):
+        """
+        Check whether the provided plural form of the language file
+        matches with the expected value for that language.
+
+        If not, raise an error.
+
+        @param pos: Position of the ##plural line, if position is available.
+        @type  pos: L{Position}
+        """
+        if self.plural is None or self.langid is None:
+            return
+
+        expected = LANG_PLURALS.get(self.langid)
+        if expected is not None and self.plural != expected:
+            raise generic.ScriptError(("Language with language id 0x%02x has plural form %d while " +
+                                       "the language uses plural form %d.") % (self.langid, self.plural, expected), pos)
 
 
     def handle_gender(self, data, pos):
