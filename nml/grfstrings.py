@@ -813,13 +813,13 @@ class Language(object):
                 return 3
             return 4
         if self.plural == 13:
-			if val == 1 or val == 11:
-				return 1
-			if val == 2 or val == 12:
-				return 2
-			if (val >= 3 and val <= 10) or (val >= 13 and val <=19):
-				return 3
-			return 4
+            if val == 1 or val == 11:
+                return 1
+            if val == 2 or val == 12:
+                return 2
+            if (val >= 3 and val <= 10) or (val >= 13 and val <=19):
+                return 3
+            return 4
         assert False, "Unknown plural type"
 
     def get_string(self, string, lang_id):
