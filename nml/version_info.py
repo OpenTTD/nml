@@ -21,7 +21,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import subprocess, os, sys
 
 def get_hg_version():
-    path = os.path.dirname(os.path.realpath(sys.argv[0]))
+    path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     version = ''
     if os.path.isdir(os.path.join(path,'.hg')):
         # Define the next version released from this branch
