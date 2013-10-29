@@ -214,7 +214,7 @@ general_veh_props = {
 }
 
 def ottd_display_speed(value, divisor, unit):
-    return (value.value / divisor * 10 / 16 * unit.ottd_mul) >> unit.ottd_shift
+    return int(value.value / divisor) * 10 / 16 * unit.ottd_mul >> unit.ottd_shift
 
 #
 # Feature 0x00 (Trains)
@@ -336,7 +336,7 @@ properties[0x03] = {
     'is_helicopter'                : {'size': 1, 'num': 0x09},
     'is_large'                     : {'size': 1, 'num': 0x0A},
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
-    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.279617, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
+    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': 0.279617, 'adjust_value': lambda val, unit: ottd_display_speed(val, 1 / (8 * 1.6), unit)},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0E},
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},
