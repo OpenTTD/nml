@@ -45,9 +45,14 @@ def adjust_value(value, org_value, unit, ottd_convert_func):
     """
     while ottd_convert_func(value, unit) > org_value.value:
         value = expression.ConstantNumeric(int(value.value - 1), value.pos)
+    lower_value = value
     while ottd_convert_func(value, unit) < org_value.value:
         value = expression.ConstantNumeric(int(value.value + 1), value.pos)
-    return value
+    higher_value = value
+
+    if abs(ottd_convert_func(lower_value, unit) - org_value.value) < abs(ottd_convert_func(higher_value, unit) - org_value.value):
+      return lower_value
+    return higher_value
 
 class Action0(base_action.BaseAction):
     """
