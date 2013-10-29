@@ -7,6 +7,7 @@ STR_REGRESSION_CARE            :care
 STR_ANSWER                     :42
 STR_NAME_FOSTER_EXPRESS_TRAM   :Foster Express Tram
 STR_NAME_FOSTER_TURBO_TRAM     :Foster Turbo Tram
+STR_NAME_PLANE                 :Test plane 0x14
 STR_NAME_BULK_WAGON            :NML Test bulk wagon
 STR_PARAM_NAME                 :Name of the int setting
 STR_PARAM_DESC                 :Description of a setting
