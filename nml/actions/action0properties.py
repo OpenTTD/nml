@@ -255,7 +255,7 @@ general_veh_props = {
 }
 
 def ottd_display_speed(value, divisor, unit):
-    return (value.value / divisor * 10 / 16 * unit.ottd_mul) >> unit.ottd_shift
+    return int(value.value / divisor) * 10 / 16 * unit.ottd_mul >> unit.ottd_shift
 
 class CargotypeListProp(BaseAction0Property):
     def __init__(self, prop_num, data):
@@ -445,7 +445,7 @@ properties[0x03] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'aircraft_type'                : [{'size': 1, 'num': 0x09, 'value_function': aircraft_is_heli}, {'size': 1, 'num': 0x0A, 'value_function': aircraft_is_large}],
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
-    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': (701, 2507), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
+    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': (701, 2507), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1 / (8 * 1.6), unit)},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0E},
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},
