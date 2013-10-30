@@ -390,6 +390,11 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
                 register_FF = expression.BinOp(nmlop.OR, lowbytes, highbyte, lowbytes.pos).reduce()
                 register_FF = expression.BinOp(nmlop.STO_TMP, register_FF, expression.ConstantNumeric(0xFF))
                 expr = expression.BinOp(nmlop.VAL2, register_FF, expr, register_FF.pos)
+
+                if len(mapping) == 0:
+                    # mapping must not be empty
+                    mapping[0x00] = (default_val, None)
+
             actions, cb_ref = create_cb_choice_varaction2(feature, expr, mapping, default_val)
             prepend_action_list.extend(actions)
             cargo_gfx[cargo] = cb_ref
