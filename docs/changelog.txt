@@ -1,3 +1,15 @@
+0.2.5 (tbd)
+------------------------------------------------------------------------
+- Feature: Support pillow image library as well (Toshio Kuratomi) (issue #4799)
+- Change: Modify version output to always give the version and revision, for both, releases and nightlies
+- Add: New GUI sprite in OpenTTD r24749, r25293, r25344 and r25916
+- Fix: Use the correct version_info.py file instead of the current repo's version (issue #5513)
+- Fix: Town name parts could end up with more than 255 entries.
+- Fix: Also add offset when skipping fixed rail types.
+- Fix: adjust_value had tendency to take the value higher than the wanted value
+- Fix: aircraft speed property conversion didn't do the conversion from (issue #4667)
+
+
 0.2.4 (2012-10-14)
 ------------------------------------------------------------------------
 - Feature: Report NML line information as well as pixel position for pure white pixels. Also, report number of pixels in the sprite, instead of the whole image. (issue #4029)
@@ -54,3 +66,8 @@
 - Fix: Crash when referencing a SpriteSetCollection in a graphics-block that was inside an if-block
 - Fix: Text files in docs/ were not included in source package
 - Doc: Add GPL v2 header to all .py files
+
+
+0.2.0 (2011-11-20)
+------------------------------------------------------------------------
+No changelog available for 0.2.0 and earlier.

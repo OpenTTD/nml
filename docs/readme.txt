@@ -1,5 +1,5 @@
 NML readme
-Last updated:    2012-10-14
+Last updated:    2013-10-30
 Release version: 0.2.4
 ------------------------------------------------------------------------
 
@@ -123,13 +123,15 @@ See the issue tracker at https://dev.openttdcoop.org/projects/nml/issues
 7) Credits:
 -- --------
 Active developers (in alphabetical order):
-  Jasper Reichardt (Hirundo)
+  Albert Hofkamp (Alberth)
+  Christoph Elsenhans (frosch)
   Ingo von Borstel (planetmaker)
   José Soler (Terkhen)
-  Thijs Marinussen (Yexo)
+  Remko Bijker (Rubidium)
 
 Inactive developers:
-  Albert Hofkamp (Alberth)
+  Jasper Reichardt (Hirundo)
+  Thijs Marinussen (Yexo)
 
 Special thanks to:
   Richard Barrell
