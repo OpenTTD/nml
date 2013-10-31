@@ -277,6 +277,27 @@ def read_extra_commands(custom_tags_file):
 
 
 class StringCommand(object):
+    """
+    Instantiated string command.
+
+    @ivar name: Name of the string command.
+    @type name: C{str}
+
+    @ivar case: ???
+    @type case: ???
+
+    @ivar arguments: Arguments of the instantiated command.
+    @type arguments: C{list} of ???
+
+    @ivar offset: Index to an argument of the P or G string command (ie "2" in {P 2 ...}), if available.
+    @type offset: C{int} or C{None}
+
+    @ivar str_pos: String argument index ("2" in {2:FOO..}, if available.
+    @type str_pos: C{int} or C{None}
+
+    @ivar pos: Position of the string.
+    @type pos: L{Position}
+    """
     def __init__(self, name, str_pos, pos):
         assert name in commands or name in special_commands
         self.name = name
@@ -329,9 +350,26 @@ class StringCommand(object):
             raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, self.pos)
 
     def parse_string(self, str_type, lang, wanted_lang_id, stack, static_args):
+        """
+        Convert the string command to output text.
+
+        @param str_type: Exptected type of result text, C{"unicode"} or C{"ascii"}.
+        @type  str_type: C{str}
+
+        @param lang: Language of the string.
+        @type  lang: L{Language}
+
+        @param wanted_lang_id: Language-id to use for interpreting the command (this string may be from another language, eg with missing strings).
+
+        @param stack: Stack of available arguments (list of (parameter number, size)).
+        @type  stack: C{list} of C{tuple} (C{off
+
+        @param static_args: Static command arguments.
+        """
         if self.name in commands:
             if not self.is_important_command():
                 return commands[self.name][str_type]
+            # Compute position of the argument in the stack.
             stack_pos = 0
             for (pos, size) in stack:
                 if pos == self.str_pos:
@@ -451,7 +489,34 @@ def validate_escapes(string, pos):
             i += 3
 
 class NewGRFString(object):
+    """
+    A string text in a language.
+
+    @ivar string: String text.
+    @type string: C{unicode}
+
+    @ivar cases: Mapping of cases to ...
+    @type cases: ???
+
+    @ivar components: Split string text.
+    @type components: C{list} of (C{unicode} or L{StringCommand})
+
+    @ivar pos: Position of the string text.
+    @type pos: L{Position}
+    """
     def __init__(self, string, lang, pos):
+        """
+        Construct a L{NewGRFString}, and break down the string text into text literals and string commands.
+
+        @param string: String text.
+        @type  string: C{unicode}
+
+        @param lang: Language containing this string.
+        @type  lang: L{Language}
+
+        @param pos: Position of the string text.
+        @type  pos: L{Position}
+        """
         validate_escapes(string, pos)
         self.string = string
         self.cases = {}
@@ -531,6 +596,12 @@ class NewGRFString(object):
             cmd_pos = cmd.str_pos + 1
 
     def get_type(self):
+        """
+        Get the type of string text.
+
+        @return: C{"unicode"} if Unicode is required for expressing the string text, else C{"ascii"}.
+        @rtype:  C{str}
+        """
         for comp in self.components:
             if isinstance(comp, StringCommand):
                 if comp.get_type() == 'unicode':
@@ -552,6 +623,9 @@ class NewGRFString(object):
             i += 1
 
     def parse_string(self, str_type, lang, wanted_lang_id, static_args):
+        """
+        Convert the string text to output text.
+        """
         ret = ""
         stack = [(idx, size) for idx, size in enumerate(self.get_command_sizes())]
         for comp in self.components:
@@ -562,6 +636,9 @@ class NewGRFString(object):
         return ret
 
     def get_command_sizes(self):
+        """
+        Get the size of each string parameter.
+        """
         sizes = {}
         for cmd in self.components:
             if not (isinstance(cmd, StringCommand) and cmd.is_important_command()):
