@@ -349,7 +349,7 @@ class StringCommand(object):
         elif len(self.arguments) != 0:
             raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, self.pos)
 
-    def parse_string(self, str_type, lang, wanted_lang_id, stack, static_args):
+    def parse_string(self, str_type, lang, wanted_lang_id, prev_command, stack, static_args):
         """
         Convert the string command to output text.
 
@@ -361,8 +361,11 @@ class StringCommand(object):
 
         @param wanted_lang_id: Language-id to use for interpreting the command (this string may be from another language, eg with missing strings).
 
+        @param prev_command: Argument of previous string command (parameter number, size).
+        @type  prev_command: C{tuple} or C{None}
+
         @param stack: Stack of available arguments (list of (parameter number, size)).
-        @type  stack: C{list} of C{tuple} (C{off
+        @type  stack: C{list} of C{tuple} (C{int}, C{int}) or C{None}
 
         @param static_args: Static command arguments.
         """
@@ -408,9 +411,14 @@ class StringCommand(object):
         # Create a local copy because we shouldn't modify the original
         offset = self.offset
         if offset is None:
-            if not stack:
-                raise generic.ScriptError("A plural or gender choice list {P} or {G} has to be followed by another string code or provide an offset", self.pos)
-            offset = stack[0][0]
+            if self.name == 'P':
+                if not prev_command:
+                    raise generic.ScriptError("A plural choice list {P} has to be preceded by another string code or provide an offset", self.pos)
+                offset = prev_command[0]
+            else:
+                if not stack:
+                    raise generic.ScriptError("A gender choice list {G} has to be followed by another string code or provide an offset", self.pos)
+                offset = stack[0][0]
         offset -= len(static_args)
         if self.name == 'P':
             if offset < 0:
@@ -628,9 +636,12 @@ class NewGRFString(object):
         """
         ret = ""
         stack = [(idx, size) for idx, size in enumerate(self.get_command_sizes())]
+        prev_command = None
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                ret += comp.parse_string(str_type, lang, wanted_lang_id, stack, static_args)
+                next_command = stack[0] if stack else None
+                ret += comp.parse_string(str_type, lang, wanted_lang_id, prev_command, stack, static_args)
+                prev_command = next_command
             else:
                 ret += comp
         return ret
