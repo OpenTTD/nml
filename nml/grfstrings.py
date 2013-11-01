@@ -641,7 +641,9 @@ class NewGRFString(object):
             if isinstance(comp, StringCommand):
                 next_command = stack[0] if stack else None
                 ret += comp.parse_string(str_type, lang, wanted_lang_id, prev_command, stack, static_args)
-                prev_command = next_command
+
+                if (comp.name in commands) and comp.is_important_command():
+                    prev_command = next_command
             else:
                 ret += comp
         return ret
