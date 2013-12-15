@@ -1,3 +1,122 @@
+0.3.0 (tbd)
+------------------------------------------------------------------------
+- Feature: use grf container format v2, nfo v32 and grf v8
+- Feature: Support for alternate sprites, including 32bpp
+- Feature: Support for houses
+- Feature: Configurable volume for sound effects.
+- Feature: Support pillow image library as well (Toshio Kuratomi) (issue #4799)
+- Feature: Remove the 64 kiB file size limit on sound effects.
+- Feature: Vehicles: Deprecate property 'refittable_cargo_types' (issue #3583)
+- Feature: Vehicles: Add property 'default_cargo_type' for trains, RVs and ships. (issue #3571)
+- Feature: Vehicle properties cargo_allow_refit and cargo_disallow_refit
+- Feature: Vehicles variables curvature info: 'curv_info', ' curv_info_prev_cur', 'curv_info_cur_next' and 'curv_info_prev_next' (variable 0x62).
+- Feature: Vehicles variables 'position_in_articulated_veh' and 'position_in_articulated_veh_from_end' (var 0x4D)
+- Feature: Canals variable 'dike_map' (variable 0x82)
+- Feature: Base-station variables for airports and stations.
+- Feature: Station variables
+- Feature: Objects property 'count_per_map256'
+- Feature: General variables 'base_sprite_foundations' and 'base_sprite_shores' (variables 0x15 and 0x16)
+- Feature: Cargo property 'capacity multiplier' (property 0x1D)
+- Feature: Allow outputting multiple sprites per real sprite slot. (issue #3712)
+- Feature: Labels for recolour sprites, as for real sprites.
+- Feature: use language code instead of number as argument for ##grflangid pragma in language files (issue #3960)
+- Feature: Improved error output (issue #2929, #3814, #4736, #4299, #5411, #6209).
+- Feature: Unit conversions for non-constant values. (issue #3828)
+- Feature: Builtin function format_string(format, args) (issue #4074).
+- Feature: Cache real sprites when building a GRF, to reduce compilation time.
+- Feature: Allow using 'default: foo' in switch-blocks, or omitting the default altogether (issue #4186).
+- Feature: Check for identical language IDs in the different language files (issue #4997)
+- Feature: Verify whether translations use the plural form expected by their language.
+- Feature: Consider file system paths case-insensitive at all systems (fixes #5429).
+- Change: Vehicles: 'length' property and callback for trains and RVs (replaces 'shorten_vehicle')
+- Change: Vehicles: No longer set the default cargo automatically. (issue #3571)
+- Change: Rework the RV speed property, so it works with non-constant values. (issue #3828)
+- Change: Merge aircraft properties 'is_helicopter' and 'is_large' into a single common property 'aircraft_type'. (issue #3700).
+- Change: Rename LOADINGSTAGE_XXX to LOADING_STAGE_XXX
+- Change: Canals: variable 'tile_height' now returns height in tiles
+- Change: Rename 'availability' callback to 'construction_probability'
+- Change: snowline_height is in tiles
+- Change: Output cropping debug output to stderr instead of stdout.
+- Change: Unlink .grf file before write (issue #4165).
+- Change: Let item ID -1 mean 'use default ID' (as if no ID was specified).
+- Change: Don't always set the same property value for all tiles, only do so when appropriate.
+- Change: Allocate parameters starting at 127 instead of 64. (issue #4222)
+- Change: improve optimization for expressions containing comparison operators by marking them as "return bool"
+- Change: Modify version output to always give the version and revision, for both, releases and nightlies
+- Change: delay changing not into xor with 1 to the last moment, it's not efficient when doing the computations via actionD, only for action2
+- Change: use the location of the version_info.py file instead of the current repo's version (issue #5513)
+- Feature: Maintenance cost properties for airports and railtypes
+- Feature: New base costs for property maintenance
+- Add: max_height_level variable
+- Add: a few constants for generic groundsprites in the baseset
+- Add: new constant CB_RESULT_NO_TEXT for use in cargo_subtype_(text/display)
+- Add: Alternative railtype label list (issue #3459)
+- Add: New property 'value_function' for action 0 properties.
+- Add: Command-line parameter '--no-cache' (-n) to disable caching of real sprites. Enable this parameter in the regression makefile for the NML-output to NFO/GRF compilation step.
+- Add: Command-line parameter '--quiet' to disable all warnings (issue #3106)
+- Add: Command-line parameter '--md5' to write md5sum of grf to another file (issue #3732)
+- Add: NML output for item size and sprite layout parameters.
+- Add: Language files: ##map_case pragma similar to ##map_gender
+- Add: TILE_CLASS_VOID to allow checking for map border and to have a constant when using nearby_tile_class on it
+- Add: Scripts to create syntax highlighting file for kate and notepad++
+- Add: misc object flag 'OBJ_FLAG_SCALE_BY_WATER' to influence amount of objects placed on maps
+- Add: Support for Scottish Gaelic
+- Fix: hardcoded path in .devzone/build/files caused errors with new CF (issue #3267)
+- Fix: proper error message when input nml is not utf-8 encoded (issue #3233)
+- Fix: also use the filename in error messages if it isn't preprocessed by gcc but directly supplied as input file
+- Fix: provide proper error message when running out of parameter or label numbers
+- Fix: it was not possible to use constants in the <id>-part of an item-block
+- Fix: Rename all occurences of 'base_sprites' to 'base_graphics', to avoid possible confusion such as wrong NML output.
+- Fix: Real sprite lists may contain unexpanded templates, so comparing their lengths makes no sense.
+- Fix: only reduce start_id argument to replace-block during pre-process stage (issue #3744)
+- Fix: with statement needs import from future for python 2.5
+- Fix: Fix tile compression to remove some useless (for grfv2) code and add a missing check for the chunk length. (issue #3785)
+- Fix: Sprites with long format (!= long chunks) tile compression had incorrect offsets.
+- Fix: some string industry properties didn't accept a string as value
+- Fix: do palette conversion before putting the sprite data in a tuple
+- Fix: ind. tile 'autoslope' cb num was set to 0x3B instead of 0x3C
+- Fix: compatibility with python 2.5 (issue #3998)
+- Fix: provide file/line information when detecting an error in a string even when in a later stage (issue #3898)
+- Fix: Backslash-escapes in strings weren't properly validated. Also remove useless \n escape. (issue #3636)
+- Fix: Proper handling of failed callbacks. (issue #2933)
+- Fix: Provide a proper error message if a substring is missing, instead of an assertion error (also issue #3674). (issue #3932)
+- Fix: Use translations for statically included string parameters if possible, even if the base string is not translated (issue #3642)
+- Fix: Proper error message when running out of switch registers. (issue #3082)
+- Fix: Don't use a string instead of a position object. (issue #4063)
+- Fix: We should always round floats, but not try to round everything else.
+- Fix: refit_cost callback may also be called from the purchase menu.
+- Fix: Publishing one of the generated grfs is enough. Especially if they would overwrite eachother on publishing
+- Fix: Make ActionA work for more than 255 consecutive sprites.
+- Fix: applying operator ! to a constant number didn't work (issue #4458)
+- Fix: Missing range check for callback results could cause assertions. (issue #4769)
+- Fix: Cache white pixel messages. (issue #4760)
+- Fix: Random switch interdependencies were messed up. (issue #4742)
+- Fix: Rail type and snowline table action6 offsets weren't updated when changing ID to an extended byte. (issue #4787)
+- Fix: Incorrect action 6 offset in random action 2. (issue #4730)
+- Fix: Use the same (decimal) numbering scheme for plurals in language files as OpenTTD (issue #4811)
+- Fix: cargo_age_period is property 2B, not 28. A typo caused CB36 to fail.
+- Fix: Position information for errors regarding sound file includes was missing / broken. (issue #4850)
+- Fix: Give the expected default lang file name in case it wasn't found
+- Fix: Road vehicle speed was incorrectly set for vehicles faster than 70mph (issue #5336)
+- Fix: Object variable 'company colour' returned faulty values (issue #5624)
+- Fix: Snowline code still generated GRFv7 output. (issue #5609)
+- Fix: Town name parts could end up with more than 255 entries.
+- Fix: Also add offset when skipping fixed rail types
+- Fix: Don't loop forever on / paths (issue #6209)
+- Fix: adjust_value had tendency to take the value higher than the wanted
+- Fix: aircraft speed property conversion didn't do the conversion from (issue #4667)
+- Fix: For houses without any callbacks a dummy VA2 with zero cases was created, which unintentionally returned a computed value. (issue #5294)
+- Fix: P string command shall default to the previous parameter. (issue #6503)
+- Doc: add abstract base class to docuemnt Action0Property and relatives
+- Doc: RPM build spec
+- Doc: why the default language is processed twice
+- Doc: Add some code documentation to the grfstrings.py file.
+- Remove: Ability to save 32bpp sprites as pngs, and lots of other stuff that won't be needed anymore.
+- Remove: Deprecated refittable_cargo_types property. Instead zero it upon writing a different refit property, to avoid possible conflicts with other grfs. (issue #3583).
+- Remove: Unused command-line parameter 'sprites-dir.'
+- Remove: Cargo properties single_unit_text and multiple_units_text.
+
+
 0.2.5 (tbd)
 ------------------------------------------------------------------------
 - Feature: Support pillow image library as well (Toshio Kuratomi) (issue #4799)
