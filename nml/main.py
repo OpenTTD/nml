@@ -66,8 +66,8 @@ def parse_cli(argv):
                         help="The default language is stored in <file> [default: %default]")
     opt_parser.add_option("--start-sprite", action="store", type="int", dest="start_sprite_num", metavar="<num>",
                         help="Set the first sprite number to write (do not use except when you output nfo that you want to include in other files)")
-    opt_parser.add_option("-p", "--palette", dest="forced_palette", metavar="<palette>", choices = ["DOS", "WIN", "ANY"],
-                        help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DOS', 'WIN', 'ANY'")
+    opt_parser.add_option("-p", "--palette", dest="forced_palette", metavar="<palette>", choices = ["DEFAULT", "LEGACY", "DOS", "WIN", "ANY"],
+                        help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DEFAULT', 'LEGACY', 'ANY'")
     opt_parser.add_option("--quiet", action="store_true", dest="quiet",
                         help="Disable all warnings. Errors will be printed normally.")
     opt_parser.add_option("-n", "--no-cache", action="store_true", dest="no_cache",
@@ -138,6 +138,12 @@ def main(argv):
         # Only append an output grf name, if no ouput is given, also not implicitly via -M
         if not opts.outputfile_given and not outputs:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
+
+    # Translate the 'common' palette names as used by OpenTTD to the traditional ones being within NML's code
+    if opts.forced_palette == 'DOS':
+        opts.forced_palette = 'DEFAULT'
+    elif opts.forced_palette == 'WIN':
+        opts.forced_palette = 'LEGACY'
 
     if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop, not opts.no_cache))
     if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename, opts.start_sprite_num))
@@ -261,19 +267,19 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             continue
         pal = palette.validate_palette(im, f)
 
-        if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DOS" and pal == "WIN"):
+        if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DEFAULT" and pal == "LEGACY"):
             raise generic.ImageError("Image has '%s' palette, but you forced the '%s' palette" % (pal, used_palette), f)
 
         if used_palette == "ANY":
             used_palette = pal
         elif pal != used_palette:
-            if used_palette in ("WIN", "DOS") and pal in ("WIN", "DOS"):
-                used_palette = "DOS"
+            if used_palette in ("LEGACY", "DEFAULT") and pal in ("LEGACY", "DEFAULT"):
+                used_palette = "DEFAULT"
             else:
                 raise generic.ImageError("Image has '%s' palette, but \"%s\" has the '%s' palette" % (pal, last_file, used_palette), f)
         last_file = f
 
-    palette_bytes = {"WIN": "W", "DOS": "D", "ANY": "A"}
+    palette_bytes = {"LEGACY": "W", "DEFAULT": "D", "ANY": "A"}
     if used_palette in palette_bytes:
         grf.set_palette_used(palette_bytes[used_palette])
     for outputfile in outputfiles:

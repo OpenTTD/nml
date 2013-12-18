@@ -292,7 +292,7 @@ raw_palette_data = [
 #Convert palettes to strings for fast comparision
 palette_data = [''.join([chr(c) for c in pal]) for pal in raw_palette_data]
 
-palette_name = ["DOS", "WIN", "DOS_TOYLAND", "WIN_TOYLAND"]
+palette_name = ["DEFAULT", "LEGACY", "DEFAULT_TOYLAND", "LEGACY_TOYLAND"]
 
 def validate_palette(image, filename):
     palette = image.palette.palette

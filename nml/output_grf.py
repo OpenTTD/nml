@@ -107,7 +107,7 @@ class OutputGRF(output_base.BinaryOutputBase):
          - rgb_file: filename of the 32bpp sprite (string)
          - rgb_rect: (uncropped) rectangle of the 32bpp sprite (list with 4 elements (x,y,w,h))
          - mask_file, mask_rect: same as above, but for 8bpp sprite
-         - crop: List of 4 positive integers, indicating how much to crop if cropping is enabled 
+         - crop: List of 4 positive integers, indicating how much to crop if cropping is enabled
               Order is (left, right, top, bottom), it is not present if cropping is disabled
          - info: Info byte of the sprite
          - warning: Warning about white pixels (optional)
@@ -760,7 +760,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         return (data, (left, right, top, bottom))
 
     def palconvert(self, sprite_str, orig_pal):
-        if orig_pal == "WIN" and self.palette == "DOS":
+        if orig_pal == "LEGACY" and self.palette == "DEFAULT":
             return sprite_str.translate(translate_w2d)
         else:
             return sprite_str
