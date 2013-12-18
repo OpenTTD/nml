@@ -246,9 +246,9 @@ class RecolourSpriteAction(SpriteAction):
     def write(self, file):
         file.start_sprite(257)
         file.print_bytex(0)
-        if file.palette not in ("DOS", "WIN"):
-            raise generic.ScriptError("Recolour sprites are only supported when writing to the DOS or WIN palette. If you don't have any real sprites use the commandline option -p to set a palette.")
-        colour_table = self.output_table if file.palette == "DOS" else convert_palette(self.output_table)
+        if file.palette not in ("DEFAULT", "LEGACY"):
+            raise generic.ScriptError("Recolour sprites are only supported when writing to the DEFAULT (DOS) or LEGACY (WIN) palette. If you don't have any real sprites use the commandline option -p to set a palette.")
+        colour_table = self.output_table if file.palette == "DEFAULT" else convert_palette(self.output_table)
         for idx, colour in enumerate(colour_table):
             if idx % 16 == 0:
                 file.newline()

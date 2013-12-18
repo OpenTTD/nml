@@ -563,7 +563,9 @@ constant_numbers = {
 
     #palettes
     'PALETTE_DOS'                           : 0,
+    'PALETTE_DEFAULT'                       : 0,
     'PALETTE_WIN'                           : 1,
+    'PALETTE_LEGACY'                        : 1,
 
     #game mode
     'GAMEMODE_MENU'                         : 0,
