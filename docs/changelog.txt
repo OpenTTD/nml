@@ -1,4 +1,4 @@
-0.3.0 (tbd)
+0.3.0 (2014-01-01)
 ------------------------------------------------------------------------
 - Feature: use grf container format v2, nfo v32 and grf v8
 - Feature: Support for alternate sprites, including 32bpp
@@ -117,7 +117,7 @@
 - Remove: Cargo properties single_unit_text and multiple_units_text.
 
 
-0.2.5 (tbd)
+0.2.5 (2014-01-01)
 ------------------------------------------------------------------------
 - Feature: Support pillow image library as well (Toshio Kuratomi) (issue #4799)
 - Change: Modify version output to always give the version and revision, for both, releases and nightlies
