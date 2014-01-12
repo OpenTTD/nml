@@ -206,6 +206,9 @@ commands = {
 'POWER':          {'unicode': r'\UE09A\18', 'ascii': r'\9A\18', 'size': 2},
 'VOLUME_SHORT':   {'unicode': r'\UE09A\19', 'ascii': r'\9A\19', 'size': 2},
 'WEIGHT_SHORT':   {'unicode': r'\UE09A\1A', 'ascii': r'\9A\1A', 'size': 2},
+'CARGO_LONG':     {'unicode': r'\UE09A\1B', 'ascii': r'\9A\1B', 'size': 2 * 2},
+'CARGO_SHORT':    {'unicode': r'\UE09A\1C', 'ascii': r'\9A\1C', 'size': 2 * 2},
+'CARGO_TINY':     {'unicode': r'\UE09A\1D', 'ascii': r'\9A\1D', 'size': 2 * 2},
 
 # Colors
 'BLUE':           {'unicode': r'\UE088',    'ascii': r'\88'},
