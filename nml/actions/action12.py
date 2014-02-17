@@ -51,9 +51,9 @@ def parse_action12(font_glyphs):
         else:
             base_char = font_glyphs.base_char.reduce_constant()
     except generic.ConstError:
-        raise generic.ScriptError("Parameters of font_glpyh have to be compile-time constants", font_glyphs.pos)
+        raise generic.ScriptError("Parameters of font_glyph have to be compile-time constants", font_glyphs.pos)
     if font_size.value not in font_sizes.values():
-        raise generic.ScriptError("Invalid value for parameter 'font_size' in font_glpyh, valid values are 0, 1, 2", font_size.pos)
+        raise generic.ScriptError("Invalid value for parameter 'font_size' in font_glyph, valid values are 0, 1, 2", font_size.pos)
     if not (0 <= base_char.value <= 0xFFFF):
         raise generic.ScriptError("Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF", base_char.pos)
 

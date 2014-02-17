@@ -19,8 +19,8 @@ from nml.ast import base_statement, sprite_container
 
 class FontGlyphBlock(base_statement.BaseStatement, sprite_container.SpriteContainer):
     """
-    AST class for a font_glpyh block
-    Syntax: font_glpyh(
+    AST class for a font_glyph block
+    Syntax: font_glyph(
 
     @ivar font_size: Size of the font to provide characters for (NORMAL/SMALL/LARGE/MONO)
     @type font_size: L{Expression}
@@ -35,15 +35,15 @@ class FontGlyphBlock(base_statement.BaseStatement, sprite_container.SpriteContai
     @type sprite_list: C{list} of L{RealSprite}
     """
     def __init__(self, param_list, sprite_list, name, pos):
-        base_statement.BaseStatement.__init__(self, "font_glpyh-block", pos)
-        sprite_container.SpriteContainer.__init__(self, "font_glpyh-block", name)
+        base_statement.BaseStatement.__init__(self, "font_glyph-block", pos)
+        sprite_container.SpriteContainer.__init__(self, "font_glyph-block", name)
         if not (2 <= len(param_list) <= 3):
-            raise generic.ScriptError("font_glpyh-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
+            raise generic.ScriptError("font_glyph-block requires 2 or 3 parameters, encountered " + str(len(param_list)), pos)
         self.font_size = param_list[0]
         self.base_char = param_list[1]
         self.image_file = param_list[2].reduce() if len(param_list) >= 3 else None
         if self.image_file is not None and not isinstance(self.image_file, expression.StringLiteral):
-            raise generic.ScriptError("font_glpyh-block parameter 3 'file' must be a string literal", self.image_file.pos)
+            raise generic.ScriptError("font_glyph-block parameter 3 'file' must be a string literal", self.image_file.pos)
         self.sprite_list = sprite_list
         self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
