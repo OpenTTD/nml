@@ -25,7 +25,7 @@ def get_hg_version():
     version = ''
     if os.path.isdir(os.path.join(path,'.hg')):
         # Define the next version released from this branch
-        next_release_version = '0.3.0'
+        next_release_version = '0.3.1'
         # we want to return to where we were. So save the old path
         version_list = (subprocess.Popen(['hg', '-R', path, 'id', '-n', '-t', '-i'], stdout=subprocess.PIPE).communicate()[0]).split()
         if version_list[1].endswith('+'):
