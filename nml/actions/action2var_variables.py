@@ -169,6 +169,7 @@ varact2vars_vehicles = {
     'vehicle_is_broken'                : {'var': 0xCB, 'start':  0, 'size':  8, 'value_function': value_equals(1)},
     'reliability'                      : {'var': 0xCE, 'start':  0, 'size': 16, 'value_function': value_mul_div(101, 0x10000)},
     'cargo_subtype'                    : {'var': 0xF2, 'start':  0, 'size':  8},
+    'vehicle_is_unloading'             : {'var': 0xFE, 'start':  1, 'size':  1},
     'vehicle_is_powered'               : {'var': 0xFE, 'start':  5, 'size':  1},
     'vehicle_is_not_powered'           : {'var': 0xFE, 'start':  6, 'size':  1},
     'vehicle_is_reversed'              : {'var': 0xFE, 'start':  8, 'size':  1},
