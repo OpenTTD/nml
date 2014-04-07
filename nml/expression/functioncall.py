@@ -318,7 +318,7 @@ def builtin_visual_effect_and_powered(name, args, pos):
     visual_effect(effect, offset)
     Use this to set the vehicle property visual_effect[_and_powered]
     and for the callback VEH_CB_VISUAL_EFFECT[_AND_POWERED]
-    
+
     """
     arg_len = 2 if name == 'visual_effect' else 3
     if len(args) != arg_len:
@@ -567,7 +567,7 @@ def builtin_format_string(name, args, pos):
 
     format = args[0].reduce()
     if not isinstance(format, StringLiteral):
-        raise gneric.ScriptError(name + "() parameter 1 'format' must be a literal string", format.pos)
+        raise generic.ScriptError(name + "() parameter 1 'format' must be a literal string", format.pos)
 
     # Validate other args
     format_args = []
