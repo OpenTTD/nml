@@ -33,7 +33,7 @@ class OutputBase(object):
     @ivar filename: Name of the data file.
     @type filename: C{str}
 
-    @ivar file: Output file handle, if opened.
+    @ivar file: Memory output file handle, if opened.
     @type file: C{file} or C{None}
     """
     def __init__(self, filename):
@@ -48,7 +48,7 @@ class OutputBase(object):
 
     def open_file(self):
         """
-        Construct the file handle of the output file.
+        Construct the file handle of the disk output file.
 
         @return: File handle of the opened file.
         @rtype: C{file}
@@ -64,7 +64,7 @@ class OutputBase(object):
 
     def close(self):
         """
-        Close the file, copy collected output to the real file.
+        Close the memory file, copy collected output to the real file.
         """
         self.pre_close()
 
@@ -75,7 +75,7 @@ class OutputBase(object):
 
     def skip_sprite_checks(self):
         """
-        Return wether sprites need detailed parsing.
+        Return whether sprites need detailed parsing.
         """
         return False
 
@@ -103,6 +103,17 @@ class BinaryOutputBase(OutputBase):
         assert not self._in_sprite
 
     def prepare_byte(self, value):
+        """
+        Normalize the provided value to an unsigned byte value.
+
+        @param value: Value to normalize.
+        @type  value: C{int}
+
+        @return: Normalized value (0..255).
+        @rtype:  C{int}
+
+        @precond: Must be outputting a sprite.
+        """
         assert self._in_sprite
         if -0x80 <= value < 0 : value += 0x100
         assert value >= 0 and value <= 0xFF
@@ -110,6 +121,17 @@ class BinaryOutputBase(OutputBase):
         return value
 
     def prepare_word(self, value):
+        """
+        Normalize the provided value to an unsigned word value.
+
+        @param value: Value to normalize.
+        @type  value: C{int}
+
+        @return: Normalized value (0..65535).
+        @rtype:  C{int}
+
+        @precond: Must be outputting a sprite.
+        """
         assert self._in_sprite
         if -0x8000 <= value < 0: value += 0x10000
         assert value >= 0 and value <= 0xFFFF
@@ -117,6 +139,17 @@ class BinaryOutputBase(OutputBase):
         return value
 
     def prepare_dword(self, value):
+        """
+        Normalize the provided value to an unsigned double word value.
+
+        @param value: Value to normalize.
+        @type  value: C{int}
+
+        @return: Normalized value (0..0xFFFFFFFF).
+        @rtype:  C{int}
+
+        @precond: Must be outputting a sprite.
+        """
         assert self._in_sprite
         if -0x80000000 <= value < 0: value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
@@ -124,6 +157,15 @@ class BinaryOutputBase(OutputBase):
         return value
 
     def print_varx(self, value, size):
+        """
+        Print a variable sized value.
+
+        @param value: Value to output.
+        @type  value: C{int}
+
+        @param size: Size of the output (1..4), 3 means extended byte.
+        @type  size: C{int}
+        """
         if size == 1:
             self.print_bytex(value)
         elif size == 2:
@@ -188,13 +230,24 @@ class BinaryOutputBase(OutputBase):
         raise NotImplementedError("Implement comment() in %r" % type(self))
 
 
-    def start_sprite(self, size):
+    def start_sprite(self, expected_size):
+        """
+        Note to the output stream that a sprite is about to be written.
+
+        @param expected_size: Expected size of the sprite data.
+        @type  expected_size: C{int}
+        """
         assert not self._in_sprite
         self._in_sprite = True
-        self._expected_count = size
+        self._expected_count = expected_size
         self._byte_count = 0
 
     def end_sprite(self):
+        """
+        Note to the output stream that a sprite has been written. The number of
+        bytes denoted as expected size with the L{start_sprite} call, should
+        have been written.
+        """
         assert self._in_sprite
         self._in_sprite = False
         self.newline()

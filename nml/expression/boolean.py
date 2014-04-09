@@ -17,6 +17,12 @@ from nml import generic
 from .base_expression import Type, Expression
 
 class Boolean(Expression):
+    """
+    Convert to boolean truth value.
+
+    @ivar expr: (Integer) expression to convert.
+    @type expr: C{Expression}
+    """
     def __init__(self, expr, pos = None):
         Expression.__init__(self, pos)
         self.expr = expr

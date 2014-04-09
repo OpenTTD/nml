@@ -16,6 +16,12 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from .base_expression import Type, Expression
 
 class StringLiteral(Expression):
+    """
+    String literal expression.
+
+    @ivar value: Value of the string literal.
+    @type value: C{str}
+    """
     def __init__(self, value, pos):
         Expression.__init__(self, pos)
         self.value = value

@@ -87,8 +87,18 @@ class OtherGRFParameter(Expression):
         return True
 
 def parse_string_to_dword(string):
+    """
+    Convert string literal expression of length 4 to it's equivalent 32 bit number.
+
+    @param string: Expression to convert.
+    @type  string: L{Expression}
+
+    @return: Value of the converted expression (a 32 bit integer number, little endian).
+    @rtype:  C{int}
+    """
     if not isinstance(string, StringLiteral) or grfstrings.get_string_size(string.value, False, True) != 4:
         raise generic.ScriptError("Expected a string literal of length 4", string.pos)
+
     pos = string.pos
     string = string.value
     bytes = []
@@ -103,4 +113,5 @@ def parse_string_to_dword(string):
                 i += 1
     except ValueError:
         raise generic.ScriptError("Cannot convert string to integer id", pos)
+
     return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)

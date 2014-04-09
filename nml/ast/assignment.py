@@ -77,7 +77,7 @@ class Range(object):
     @ivar min: The minimum value of this range.
     @type min: L{Expression}
 
-    @ivar max: THe maximum value of this range.
+    @ivar max: The maximum value of this range.
     @type max: L{Expression} or C{None}
     """
     def __init__(self, min, max):

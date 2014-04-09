@@ -21,7 +21,7 @@ class BaseAction(object):
         be resolved earlier).
 
         @param sprite_num: The sprite number in the nfo/grf output.
-        @type sprite_num: C{int}
+        @type  sprite_num: C{int}
         """
         pass
 
@@ -30,7 +30,7 @@ class BaseAction(object):
         Write this action to the given outputfile.
 
         @param file: The outputfile to write the data to.
-        @type file: L{BinaryOutputBase}
+        @type  file: L{BinaryOutputBase}
         """
         raise NotImplementedError('write is not implemented in %r' % type(self))
 

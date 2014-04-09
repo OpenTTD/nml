@@ -108,7 +108,7 @@ class Expression(object):
         @return: True if the value of this expression is either 0 or 1.
         """
         return False
-    
+
     def type(self):
         """
         Determine the datatype of this expression.
@@ -162,6 +162,6 @@ class ConstantFloat(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
-    
+
     def type(self):
         return Type.FLOAT

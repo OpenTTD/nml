@@ -32,7 +32,7 @@ class Action2Var(action2.Action2):
 
     @ivar ranges: List of return value ranges. Each range contains a minimum and
                   a maximum value and a return value. The list is checked in order,
-                  if the result of the computation is between the miminum and
+                  if the result of the computation is between the minimum and
                   maximum (inclusive) of one range the result of that range is
                   returned. The result can be either an integer of another
                   action2.
@@ -449,6 +449,12 @@ class Varaction2Parser(object):
         return 0
 
     def parse_variable(self, expr):
+        """
+        Parse a variable in an expression.
+
+        @param expr:
+        @type  expr: L{expression.Variable}
+        """
         if not isinstance(expr.num, expression.ConstantNumeric):
             raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
         if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
@@ -935,6 +941,7 @@ def get_feature(switch_block):
         feature = action2var_variables.varact2parent_scope[feature]
         if feature is None:
             raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(feature), switch_block.pos)
+
     return feature
 
 def reduce_varaction2_expr(expr, feature, extra_dicts = []):

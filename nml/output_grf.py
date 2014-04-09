@@ -294,10 +294,10 @@ class OutputGRF(output_base.BinaryOutputBase):
         Obtain a handle to an image file
 
         @param filename: Name of the file
-        @type filename: C{unicode}
+        @type  filename: C{unicode}
 
         @return: Image file
-        @rtype: L{Image}
+        @rtype:  L{Image}
         """
         assert filename in self.used_sprite_files
         if filename in self.cached_image_files:
@@ -313,7 +313,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         Indicate that an image file is being used, so the internal book-keeping can be updated
 
         @param filename: Name of the file
-        @type filename: C{unicode}
+        @type  filename: C{unicode}
         """
         assert filename in self.used_sprite_files
         self.used_sprite_files[filename] -= 1
@@ -459,7 +459,7 @@ class OutputGRF(output_base.BinaryOutputBase):
     def print_sprite(self, sprite_list):
         """
         @param sprite_list: List of non-empty real sprites for various bit depths / zoom levels
-        @type sprite_list: C{list} of L{RealSprite}
+        @type  sprite_list: C{list} of L{RealSprite}
         """
         self.start_sprite(0, 0xFD)
         for sprite in sprite_list:

@@ -20,10 +20,10 @@ class SpecialParameter(Expression):
     Class for handling special grf parameters.
     These can be assigned special, custom methods for reading / writing to them.
 
-    @ivar name: Name of the parameter, for debugging purposes
+    @ivar name: Name of the parameter, for debugging purposes.
     @type name: C{basestring}
 
-    @ivar info: Information about the parameter
+    @ivar info: Information about the parameter.
     @type info: C{dict}
 
     @ivar write_func: Function that will be called when the parameter is the target of an assignment

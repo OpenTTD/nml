@@ -228,7 +228,7 @@ def parse_graphics_block(graphics_block, feature, id, size, is_livery_override =
     """
     action_list = action2real.create_spriteset_actions(graphics_block)
     if feature == 0x07:
-        # Multitile houses need more work
+        # Multi-tile houses need more work
         size_bit = size.value if size is not None else 0
         for i, tile in enumerate(house_tiles[size_bit]):
             tile_id = id if i == 0 else expression.BinOp(nmlop.ADD, id, expression.ConstantNumeric(i, id.pos), id.pos).reduce()
@@ -406,6 +406,7 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
         result, comment = action2var.parse_result(cargo_gfx[cargo_id], action_list, act6, offset + 1, act3, None, 0x89)
         act3.cid_mappings.append( (cargo_id, result, comment) )
         offset += 3
+
     if None in cargo_gfx:
         result, comment = action2var.parse_result(cargo_gfx[None], action_list, act6, offset, act3, None, 0x89)
         act3.def_cid = result

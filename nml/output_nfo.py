@@ -113,7 +113,7 @@ class OutputNFO(output_base.BinaryOutputBase):
     def print_sprite(self, sprite_list):
         """
         @param sprite_list: List of non-empty real sprites for various bit depths / zoom levels
-        @type sprite_list: C{list} of L{RealSprite}
+        @type  sprite_list: C{list} of L{RealSprite}
         """
         self.start_sprite(0, True)
         for i, sprite_info in enumerate(sprite_list):

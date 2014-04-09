@@ -387,7 +387,7 @@ def get_layout_action2s(spritelayout, feature):
     param_map = (param_map, lambda value, pos: action2var.VarAction2LoadLayoutParam(value))
     spritelayout.register_map[feature] = param_registers
 
-    # Reduce all expresssions, can't do that earlier as feature is not known
+    # Reduce all expressions, can't do that earlier as feature is not known
     all_sprite_sets = []
     layout_sprite_list = [] # Create a new structure
     for layout_sprite in spritelayout.layout_sprite_list:

@@ -21,15 +21,15 @@ class FunctionPtr(Expression):
     Pointer to a function.
     If this appears inside an expression, the user has made an error.
 
-    @ivar name Identifier that has been resolved to this function pointer.
-    @type name L{Identifier}
+    @ivar name: Identifier that has been resolved to this function pointer.
+    @type name: L{Identifier}
 
-    @ivar func Function that will be called to resolve this function call. Arguments:
+    @ivar func: Function that will be called to resolve this function call. Arguments:
                     Name of the function (C{basestring})
                     List of passed arguments (C{list} of L{Expression})
                     Position information (L{Position})
                     Any extra arguments passed to the constructor of this class
-    @type func C{function}
+    @type func: C{function}
 
     @ivar extra_args List of arguments that should be passed to the function that is to be called.
     @type extra_args C{list}

@@ -112,11 +112,38 @@ max_id = 4*[0xFFFF] + [255, 8, 15, 255, -1, 255, 63, 31, -1, 127, -1, 255, 15, 2
 used_ids = [dict() for _ in range(0, 0x12)]
 
 def mark_id_used(feature, id, num_ids):
+    """
+    Mark a range of ids as used.
+
+    @param feature: Feature of the ids.
+    @type  feature: C{int}
+
+    @param id: First id to be marked.
+    @type  id: C{int}
+
+    @param num_ids: Number of ids to mark as used, starting with \a id.
+    @type  num_ids: C{int}
+    """
     used_ids[feature][id] = num_ids
     for i in range(id + 1, id + num_ids):
         used_ids[feature][i] = None
 
 def id_is_used(feature, id, num_ids):
+    """
+    Check whether any id of the \a num_ids is used, starting with \a id.
+
+    @param feature: Feature of the ids.
+    @type  feature: C{int}
+
+    @param id: Base id number.
+    @type  id: C{int}
+
+    @param num_ids: Number of ids to test, starting with \a id.
+    @type  num_ids: C{int}
+
+    @return: Whether any id in the range is used.
+    @rtype:  C{bool}
+    """
     return any(i in used_ids[feature] for i in range(id, id + num_ids))
 
 def check_id_range(feature, id, num_ids, pos):
@@ -140,6 +167,18 @@ def check_id_range(feature, id, num_ids, pos):
         raise generic.ScriptError("This multi-tile house requires that item IDs %d..%d are free, but they are not." % (id, id + num_ids - 1), pos)
 
 def get_free_id(feature, num_ids, pos):
+    """
+    Find an id to allocate a range of \a num_ids ids in a feature.
+
+    @param feature: Feature of the ids.
+    @type  feature: C{int}
+
+    @param num_ids: Number of ids to allocate.
+    @type  num_ids: C{int}
+
+    @param pos: Position information.
+    @type  pos: L{Position}
+    """
     id = first_usable_id[feature]
     while id_is_used(feature, id, num_ids):
         id += 1

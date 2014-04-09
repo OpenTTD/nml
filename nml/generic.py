@@ -56,6 +56,15 @@ def check_range(value, min_value, max_value, name, pos):
 def greatest_common_divisor(a, b):
     """
     Get the greatest common divisor of two numbers
+
+    @param a: First number.
+    @type  a: C{int}
+
+    @param b: Second number.
+    @type  b: C{int}
+
+    @return: Greatest common divisor.
+    @rtype:  C{int]
     """
     while b != 0:
         t = b
@@ -64,7 +73,18 @@ def greatest_common_divisor(a, b):
     return a
 
 def reverse_lookup(dic, val):
-    #reverse dictionary lookup
+    """
+    Perform reverse lookup of any key that has the provided value.
+
+    @param dic: Dictionary to perform reverse lookup on.
+    @type  dic: C{dict}
+
+    @param val: Value being searched.
+    @type  val: an existing value.
+
+    @return: A key such that C{dict[key] == val}.
+    @rtype:  Type of the matching key.
+    """
     return [k for k, v in dic.iteritems() if v == val][0]
 
 class Position(object):
@@ -148,6 +168,9 @@ class ScriptError(Exception):
             return ret
 
 class ConstError(ScriptError):
+    """
+    Error to denote a compile-time integer constant was expected but not found.
+    """
     def __init__(self, pos = None):
         ScriptError.__init__(self, "Expected a compile-time integer constant", pos)
 
@@ -160,7 +183,17 @@ class ImageError(ScriptError):
         ScriptError.__init__(self, value, ImageFilePosition(filename))
 
 class OnlyOnceError(ScriptError):
+    """
+    An error denoting two elements in a single grf were found, where only one is allowed.
+    """
     def __init__(self, typestr, pos = None):
+        """
+        @param typestr: Description of the type of element encountered.
+        @type  typestr: C{str}
+
+        @param pos: Position of the error, if provided.
+        @type  pos: C{None} or L{Position}
+        """
         ScriptError.__init__(self, "A grf may contain only one %s." % typestr, pos)
 
 class OnlyOnce:

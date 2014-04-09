@@ -20,6 +20,7 @@ from nml.actions import action0
 class SortVehicles(base_statement.BaseStatement):
     """
     AST-node representing a sort-vehicles block.
+
     @ivar feature: Feature of the item
     @type feature: L{ConstantNumeric}
 

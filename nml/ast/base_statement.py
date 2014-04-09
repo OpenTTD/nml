@@ -34,7 +34,7 @@ class BaseStatement(object):
 
     @pre: bs_skipable or not bs_loopable
 
-    @ivar bs_in_item: Whether the statement may be part of an item block (default: False_
+    @ivar bs_in_item: Whether the statement may be part of an item block (default: False)
     @type bs_in_item: C{bool}
 
     @ivar bs_out_item: Whether the statement may appear outside of item blocks (default: True)
