@@ -32,18 +32,18 @@ class NMLParser(object):
 
     #operator precedence (lower in the list = higher priority)
     precedence = (
-        ('left','COMMA'),
-        ('right','TERNARY_OPEN','COLON'),
-        ('left','LOGICAL_OR'),
-        ('left','LOGICAL_AND'),
-        ('left','OR'),
-        ('left','XOR'),
-        ('left','AND'),
-        ('left','COMP_EQ','COMP_NEQ','COMP_LE','COMP_GE','COMP_LT','COMP_GT'),
-        ('left','SHIFT_LEFT','SHIFT_RIGHT','SHIFTU_RIGHT'),
-        ('left','PLUS','MINUS'),
-        ('left','TIMES','DIVIDE','MODULO'),
-        ('left','LOGICAL_NOT','BINARY_NOT'),
+        ('left', 'COMMA'),
+        ('right', 'TERNARY_OPEN','COLON'),
+        ('left', 'LOGICAL_OR'),
+        ('left', 'LOGICAL_AND'),
+        ('left', 'OR'),
+        ('left', 'XOR'),
+        ('left', 'AND'),
+        ('left', 'COMP_EQ', 'COMP_NEQ', 'COMP_LE', 'COMP_GE', 'COMP_LT', 'COMP_GT'),
+        ('left', 'SHIFT_LEFT', 'SHIFT_RIGHT', 'SHIFTU_RIGHT'),
+        ('left', 'PLUS', 'MINUS'),
+        ('left', 'TIMES', 'DIVIDE', 'MODULO'),
+        ('left', 'LOGICAL_NOT', 'BINARY_NOT'),
     )
 
     def p_error(self, t):
@@ -242,11 +242,11 @@ class NMLParser(object):
 
     def p_setting_value(self, t):
         'setting_value : assignment'
-        t[0] =  t[1]
+        t[0] = t[1]
 
     def p_names_setting_value(self, t):
         'setting_value : ID COLON LBRACE name_string_list RBRACE SEMICOLON'
-        t[0] =  assignment.Assignment(t[1], t[4], t[1].pos)
+        t[0] = assignment.Assignment(t[1], t[4], t[1].pos)
 
     def p_name_string_list(self, t):
         '''name_string_list : name_string_item
