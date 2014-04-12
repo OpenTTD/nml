@@ -52,10 +52,10 @@ class ActionD(base_action.BaseAction):
         if self.data is not None: size += 4
 
         #print the statement for easier debugging
-        str1 = "param[%s]" % self.param1 if self.param1.value != 0xFF else str(self.data)
-        str2 = "param[%s]" % self.param2 if self.param2.value != 0xFF else str(self.data)
+        str1 = "param[{}]".format(self.param1) if self.param1.value != 0xFF else str(self.data)
+        str2 = "param[{}]".format(self.param2) if self.param2.value != 0xFF else str(self.data)
         str_total = self.op.to_string(str1, str2) if self.op != nmlop.ASSIGN else str1
-        file.comment("param[%s] = %s" % (self.target, str_total))
+        file.comment("param[{}] = {}".format(self.target, str_total))
 
         file.start_sprite(size)
         file.print_bytex(0x0D)
@@ -92,7 +92,7 @@ class ParameterAssignment(base_statement.BaseStatement):
         self.param = self.param.reduce(global_constants.const_list, unknown_id_fatal = False)
         if isinstance(self.param, expression.SpecialParameter):
             if not self.param.can_assign():
-                raise generic.ScriptError("Trying to assign a value to the read-only variable '%s'" % self.param.name, self.param.pos)
+                raise generic.ScriptError("Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos)
         elif isinstance(self.param, expression.Identifier):
             num = action6.free_parameters.pop_unique()
             global_constants.named_parameters[self.param.value] = num
@@ -108,7 +108,7 @@ class ParameterAssignment(base_statement.BaseStatement):
         return parse_actionD(self)
 
     def __str__(self):
-        return '%s = %s;\n' % (str(self.param), str(self.value))
+        return '{} = {};\n'.format(self.param, self.value)
 
 #prevent evaluating common sub-expressions multiple times
 def parse_subexpression(expr, action_list):

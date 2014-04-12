@@ -57,7 +57,7 @@ class SpecialParameter(Expression):
         self.is_bool = is_bool
 
     def debug_print(self, indentation):
-        print indentation*' ' + "Special parameter '%s'" % self.name
+        print indentation*' ' + "Special parameter '{}'".format(self.name)
 
     def __str__(self):
         return self.name

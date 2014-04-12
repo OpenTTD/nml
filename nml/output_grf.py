@@ -527,7 +527,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
             (im_width, im_height) = im.size
             if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
-                raise generic.ScriptError("Read beyond bounds of image file '%s'" % filename_32bpp.value, filename_32bpp.pos)
+                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), filename_32bpp.pos)
             sprite = im.crop((x, y, x + size_x, y + size_y))
 
         warning = None
@@ -540,7 +540,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
             (im_width, im_height) = mask_im.size
             if mask_x < 0 or mask_y < 0 or mask_x + size_x > im_width or mask_y + size_y > im_height:
-                raise generic.ScriptError("Read beyond bounds of image file '%s'" % filename_8bpp.value, filename_8bpp.pos)
+                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), filename_8bpp.pos)
             mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
 
             # Check for white pixels; those that cause "artefacts" when shading
@@ -548,7 +548,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             if white_pixels > 0:
                 pixels = size_x * size_y
                 image_pos = generic.PixelPosition(filename_8bpp.value, x, y)
-                warning = "%s: %i of %i pixels (%i%%) are pure white" % (str(image_pos), white_pixels, pixels, white_pixels * 100 // pixels)
+                warning = "{}: {:i} of {:i} pixels ({:i}%) are pure white".format(str(image_pos), white_pixels, pixels, white_pixels * 100 // pixels)
                 generic.print_warning(warning, filename_8bpp.pos)
 
             mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)

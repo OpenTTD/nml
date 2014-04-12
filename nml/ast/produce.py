@@ -33,7 +33,7 @@ class Produce(produce_base_class):
     def __init__(self, param_list, pos):
         base_statement.BaseStatement.__init__(self, "produce-block", pos, False, False)
         if not (6 <= len(param_list) <= 7):
-            raise generic.ScriptError("produce-block requires 6 or 7 parameters, encountered %d" % len(param_list), self.pos)
+            raise generic.ScriptError("produce-block requires 6 or 7 parameters, encountered {:d}".format(len(param_list)), self.pos)
         name = param_list[0]
         if not isinstance(name, expression.Identifier):
             raise generic.ScriptError("produce parameter 1 'name' should be an identifier.", name.pos)
@@ -51,7 +51,7 @@ class Produce(produce_base_class):
         return []
 
     def __str__(self):
-        return 'produce(%s);\n' % ', '.join(str(x) for x in [self.name] + self.param_list)
+        return 'produce({});\n'.format(', '.join(str(x) for x in [self.name] + self.param_list))
 
     def debug_print(self, indentation):
         print indentation*' ' + 'Produce, name =', str(self.name)

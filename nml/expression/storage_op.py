@@ -54,8 +54,8 @@ class StorageOp(Expression):
         arg_len = (2,) if self.info['store'] else (1,)
         if self.info['grfid']: arg_len += (arg_len[0] + 1,)
         if len(args) not in arg_len:
-            argstr = "%d" % arg_len[0] if len(arg_len) == 1 else "%d..%d" % arg_len
-            raise generic.ScriptError("%s requires %s argument(s), encountered %d" % (name, argstr, len(args)), pos)
+            argstr = "{:d}".format(arg_len[0]) if len(arg_len) == 1 else "{}..{}".format(arg_len[0], arg_len[1])
+            raise generic.ScriptError("{} requires {} argument(s), encountered {:d}".format(name, argstr, len(args)), pos)
 
         i = 0
         if self.info['store']:
@@ -90,7 +90,7 @@ class StorageOp(Expression):
         if self.value is not None: args.append(str(self.value))
         args.append(str(self.register))
         if self.grfid is not None: args.append(str(self.grfid))
-        return "%s(%s)" % (self.name, ", ".join(args))
+        return "{}({})".format(self.name, ", ".join(args))
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         args = []
@@ -104,7 +104,7 @@ class StorageOp(Expression):
         if register.type() != Type.INTEGER:
             raise generic.ScriptError("Register to access must be an integer.", register.pos)
         if isinstance(register, ConstantNumeric) and register.value > self.info['max']:
-            raise generic.ScriptError("Maximum register for %s is %d" % (self.name, self.info['max']), self.pos)
+            raise generic.ScriptError("Maximum register for {} is {:d}".format(self.name, self.info['max']), self.pos)
         args.append(register)
 
         if self.grfid is not None:
@@ -120,5 +120,5 @@ class StorageOp(Expression):
 
     def supported_by_actionD(self, raise_error):
         if raise_error:
-            raise generic.ScriptError("%s() may only be used inside switch-blocks" % self.name, self.pos)
+            raise generic.ScriptError("{}() may only be used inside switch-blocks".format(self.name), self.pos)
         return False

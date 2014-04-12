@@ -33,7 +33,7 @@ class DisableItem(base_statement.BaseStatement):
     def __init__(self, param_list, pos):
         base_statement.BaseStatement.__init__(self, "disable_item()", pos)
         if not (1 <= len(param_list) <= 3):
-            raise generic.ScriptError("disable_item() requires between 1 and 3 parameters, encountered %d." % len(param_list), pos)
+            raise generic.ScriptError("disable_item() requires between 1 and 3 parameters, encountered {:d}.".format(len(param_list)), pos)
         self.feature = general.parse_feature(param_list[0])
 
         if len(param_list) > 1:
@@ -61,7 +61,7 @@ class DisableItem(base_statement.BaseStatement):
         ret = str(self.feature)
         if self.first_id is not None: ret += ', ' + str(self.first_id)
         if self.last_id is not None: ret += ', ' + str(self.last_id)
-        return 'disable_item(%s);\n' % ret
+        return 'disable_item({});\n'.format(ret)
 
     def get_action_list(self):
         return action0.get_disable_actions(self)

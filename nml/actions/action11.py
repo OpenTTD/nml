@@ -43,10 +43,10 @@ class LoadBinaryFile(base_action.BaseAction):
 
     def prepare_output(self, sprite_num):
         if not os.access(self.fname, os.R_OK):
-            raise generic.ScriptError("Sound file '%s' does not exist." % self.fname, self.pos)
+            raise generic.ScriptError("Sound file '{}' does not exist.".format(self.fname), self.pos)
         size = os.path.getsize(self.fname)
         if size == 0:
-            raise generic.ScriptError("Expected sound file '%s' to have a non-zero length." % self.fname, self.pos)
+            raise generic.ScriptError("Expected sound file '{}' to have a non-zero length.".format(self.fname), self.pos)
 
     def write(self, file):
         file.print_named_filedata(self.fname)

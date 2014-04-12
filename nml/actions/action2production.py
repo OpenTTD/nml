@@ -105,7 +105,7 @@ def get_production_actions(produce):
         produce.set_action2(prod_action, 0x0A)
     else:
         # Create intermediate varaction2
-        varaction2 = action2var.Action2Var(0x0A, '%s@registers' % produce.name.value, 0x89)
+        varaction2 = action2var.Action2Var(0x0A, '{}@registers'.format(produce.name.value), 0x89)
         varaction2.var_list = varact2parser.var_list
         action_list.extend(varact2parser.extra_actions)
         extra_act6 = action6.Action6()

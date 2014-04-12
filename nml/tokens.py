@@ -224,7 +224,7 @@ class NMLLexer(object):
         self.increment_lines(len(t.value))
 
     def t_error(self, t):
-        print "Illegal character '%s' (character code 0x%02X) at %s, column %d" % (t.value[0], ord(t.value[0]), t.lexer.lineno, self.find_column(t))
+        print "Illegal character '{}' (character code 0x{:02X}) at {}, column {:d}".format(t.value[0], ord(t.value[0]), t.lexer.lineno, self.find_column(t))
         sys.exit(1)
 
 

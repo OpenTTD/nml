@@ -35,4 +35,4 @@ class DeactivateBlock(base_statement.BaseStatement):
         return actionE.parse_deactivate_block(self)
 
     def __str__(self):
-        return 'deactivate(%s);\n' % ', '.join([str(grfid) for grfid in self.grfid_list])
+        return 'deactivate({});\n'.format(', '.join(str(grfid) for grfid in self.grfid_list))

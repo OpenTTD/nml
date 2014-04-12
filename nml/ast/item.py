@@ -40,7 +40,7 @@ class Item(base_statement.BaseStatementList):
         base_statement.BaseStatementList.__init__(self, "item-block", pos, base_statement.BaseStatementList.LIST_TYPE_ITEM, body)
 
         if not (1 <= len(params) <= 4):
-            raise generic.ScriptError("Item block requires between 1 and 4 parameters, found %d." % len(params), self.pos)
+            raise generic.ScriptError("Item block requires between 1 and 4 parameters, found {:d}.".format(len(params)), self.pos)
         self.feature = general.parse_feature(params[0])
         if self.feature.value in (0x08, 0x0C, 0x0E):
             raise generic.ScriptError("Defining item blocks for this feature is not allowed.", self.pos)
@@ -66,7 +66,7 @@ class Item(base_statement.BaseStatementList):
             if self.name.value in global_constants.item_names:
                 existing_id = global_constants.item_names[self.name.value].id
                 if self.id is not None and existing_id.value != self.id.value:
-                    raise generic.ScriptError("Duplicate item with name '%s'. This item has already been assigned to id %d, cannot reassign to id %d" % (self.name.value, existing_id.value, self.id.value), self.pos)
+                    raise generic.ScriptError("Duplicate item with name '{}'. This item has already been assigned to id {:d}, cannot reassign to id {:d}".format(self.name.value, existing_id.value, self.id.value), self.pos)
                 self.id = existing_id
 
         # We may have to reserve multiple item IDs for houses
@@ -99,13 +99,13 @@ class Item(base_statement.BaseStatementList):
         return base_statement.BaseStatementList.get_action_list(self)
 
     def __str__(self):
-        ret = 'item(%d' % self.feature.value
+        ret = 'item({:d}'.format(self.feature.value)
         if self.name is not None:
-            ret += ', %s' % str(self.name)
-        ret += ', %s' % (str(self.id) if self.id is not None else "-1")
+            ret += ', {}'.format(self.name)
+        ret += ', {}'.format(str(self.id) if self.id is not None else "-1")
         if self.size is not None:
             sizes =["1X1", None, "2X1", "1X2", "2X2"]
-            ret += ', HOUSE_SIZE_%s' % sizes[self.size.value]
+            ret += ', HOUSE_SIZE_{}'.format(sizes[self.size.value])
         ret += ') {\n'
         ret += base_statement.BaseStatementList.__str__(self)
         ret += '}\n'
@@ -155,7 +155,7 @@ class Property(object):
 
     def __str__(self):
         unit = '' if self.unit is None else ' ' + str(self.unit)
-        return '\t%s: %s%s;' % (self.name, self.value, unit)
+        return '\t{}: {}{};'.format(self.name, self.value, unit)
 
 class PropertyBlock(base_statement.BaseStatement):
     """
@@ -184,7 +184,7 @@ class PropertyBlock(base_statement.BaseStatement):
     def __str__(self):
         ret = 'property {\n'
         for prop in self.prop_list:
-            ret += '%s\n' % str(prop)
+            ret += '{}\n'.format(prop)
         ret += '}\n'
         return ret
 
@@ -210,10 +210,11 @@ class LiveryOverride(base_statement.BaseStatement):
         return action3.parse_graphics_block(self.graphics_block, item_feature, wagon_id, item_size, True)
 
     def __str__(self):
-        ret = 'livery_override(%s) {\n' % str(self.wagon_id)
+        ret = 'livery_override({}) {{\n'.format(self.wagon_id)
         for graphics in self.graphics_block.graphics_list:
-            ret += "\t%s\n" % str(graphics)
-        if self.graphics_block.default_graphics is not None: ret += '\t%s\n' % str(self.graphics_block.default_graphics)
+            ret += "\t{}\n".format(graphics)
+        if self.graphics_block.default_graphics is not None:
+            ret += '\t{}\n'.format(self.graphics_block.default_graphics)
         ret += '}\n'
         return ret
 
@@ -260,8 +261,9 @@ class GraphicsBlock(graphics_base_class):
     def __str__(self):
         ret = 'graphics {\n'
         for graphics in self.graphics_list:
-            ret += "\t%s\n" % str(graphics)
-        if self.default_graphics is not None: ret += '\t%s\n' % str(self.default_graphics)
+            ret += "\t{}\n".format(graphics)
+        if self.default_graphics is not None:
+            ret += '\t{}\n'.format(self.default_graphics)
         ret += '}\n'
         return ret
 
@@ -284,5 +286,5 @@ class GraphicsDefinition(object):
         self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        return '%s: %s' % (str(self.cargo_id), str(self.result))
+        return '{}: {}'.format(self.cargo_id, self.result)
 

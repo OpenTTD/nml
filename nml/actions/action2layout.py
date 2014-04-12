@@ -249,9 +249,9 @@ class Action2LayoutSprite(object):
         name = name.value
 
         if not name in self.params:
-            raise generic.ScriptError("Unknown sprite parameter '%s'" % name, value.pos)
+            raise generic.ScriptError("Unknown sprite parameter '{}'".format(name), value.pos)
         if self.is_set(name):
-            raise generic.ScriptError("Sprite parameter '%s' can be set only once per sprite." % name, value.pos)
+            raise generic.ScriptError("Sprite parameter '{}' can be set only once per sprite.".format(name), value.pos)
 
         self.params[name]['value'] = self.params[name]['validator'](name, value)
         self.params[name]['is_set'] = True
@@ -347,7 +347,7 @@ class Action2LayoutSprite(object):
             else:
                 assert name in ('xextent', 'yextent', 'zextent')
                 if not isinstance(value, expression.ConstantNumeric):
-                    raise generic.ScriptError("Value of '%s' must be a compile-time constant number." % name, value.pos)
+                    raise generic.ScriptError("Value of '{}' must be a compile-time constant number.".format(name), value.pos)
                 generic.check_range(value.value, 0, 255, name, value.pos)
                 return value
         # Value must be written to a register
@@ -375,7 +375,7 @@ def get_layout_action2s(spritelayout, feature):
     actions = []
 
     if feature not in action2.features_sprite_layout:
-        raise generic.ScriptError("Sprite layouts are not supported for feature '%s'." % general.feature_name(feature))
+        raise generic.ScriptError("Sprite layouts are not supported for feature '{}'.".format(general.feature_name(feature)))
 
     # Allocate registers
     param_map = {}
@@ -406,7 +406,7 @@ def get_layout_action2s(spritelayout, feature):
     temp_registers = []
     for type, pos, param_list in layout_sprite_list:
         if type.value not in layout_sprite_types:
-            raise generic.ScriptError("Invalid sprite type '%s' encountered. Expected 'ground', 'building', or 'childsprite'." % type.value, type.pos)
+            raise generic.ScriptError("Invalid sprite type '{}' encountered. Expected 'ground', 'building', or 'childsprite'.".format(type.value), type.pos)
         sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos, [param_map])
         for name, value in param_list:
             sprite.set_param(name, value)
@@ -443,7 +443,7 @@ def get_layout_action2s(spritelayout, feature):
     if len(act6.modifications) > 0:
         actions.append(act6)
 
-    layout_action = Action2Layout(feature, spritelayout.name.value + (" - feature %02X" % feature), ground_sprite, building_sprites, param_registers)
+    layout_action = Action2Layout(feature, spritelayout.name.value + " - feature {:02X}".format(feature), ground_sprite, building_sprites, param_registers)
     actions.append(layout_action)
 
     if temp_registers:
@@ -469,7 +469,7 @@ def get_layout_action2s(spritelayout, feature):
             extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
         if len(extra_act6.modifications) > 0: actions.append(extra_act6)
 
-        varaction2 = action2var.Action2Var(feature, "%s@registers - feature %02X" % (spritelayout.name.value, feature), 0x89)
+        varaction2 = action2var.Action2Var(feature, "{}@registers - feature {:02X}".format(spritelayout.name.value, feature), 0x89)
         varaction2.var_list = varact2parser.var_list
         ref = expression.SpriteGroupRef(spritelayout.name, [], None, layout_action)
         varaction2.ranges.append(action2var.VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
@@ -501,5 +501,5 @@ def make_empty_layout_action2(feature):
     """
     ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
     ground_sprite.set_param(expression.Identifier('sprite'), expression.ConstantNumeric(0))
-    return Action2Layout(feature, "@CB_FAILED_LAYOUT%02X" % feature, ground_sprite, [], [])
+    return Action2Layout(feature, "@CB_FAILED_LAYOUT{:02X}".format(feature), ground_sprite, [], [])
 

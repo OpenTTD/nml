@@ -65,7 +65,7 @@ def parse_feature(expr):
     """
     expr = expr.reduce_constant([feature_ids])
     if expr.value not in feature_ids.values():
-        raise generic.ScriptError("Invalid feature '%02X' encountered." % expr.value, expr.pos)
+        raise generic.ScriptError("Invalid feature '{:02X}' encountered.".format(expr.value), expr.pos)
     return expr
 
 class MainScript(base_statement.BaseStatementList):

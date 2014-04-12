@@ -420,9 +420,9 @@ class Varaction2Parser(object):
         assert isinstance(expr, expression.StorageOp)
         max = 0xF if expr.info['perm'] else 0x10F
         if isinstance(expr.register, expression.ConstantNumeric) and expr.register.value > max:
-            raise generic.ScriptError("Register number must be in range 0..%d, encountered %d." % (max, expr.register.value), expr.pos)
+            raise generic.ScriptError("Register number must be in range 0..{:d}, encountered {:d}.".format(max, expr.register.value), expr.pos)
         if expr.info['perm'] and self.feature not in (0x08, 0x0A, 0x0D):
-            raise generic.ScriptError("Persistent storage is not supported for feature '%s'" % general.feature_name(self.feature), expr.pos)
+            raise generic.ScriptError("Persistent storage is not supported for feature '{}'".format(general.feature_name(self.feature)), expr.pos)
 
         if expr.info['store']:
             op = nmlop.STO_PERM if expr.info['perm'] else nmlop.STO_TMP
@@ -776,14 +776,14 @@ def get_failed_cb_result(feature, action_list, parent_action):
             # Normal action2
             act1_actions, act1_index = action1.make_cb_failure_action1(feature)
             action_list.extend(act1_actions)
-            act2 = action2real.make_simple_real_action2(feature, "@CB_FAILED_REAL%02X" % feature, act1_index)
+            act2 = action2real.make_simple_real_action2(feature, "@CB_FAILED_REAL{:02X}".format(feature), act1_index)
         action_list.append(act2)
 
         # Create varaction2, to choose between returning graphics and 0, depending on CB
         varact2parser = Varaction2Parser(feature)
         varact2parser.parse_expr(expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF)))
 
-        varaction2 = Action2Var(feature, "@CB_FAILED%02X" % feature, 0x89)
+        varaction2 = Action2Var(feature, "@CB_FAILED{:02X}".format(feature), 0x89)
         varaction2.var_list = varact2parser.var_list
 
         varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), expression.ConstantNumeric(0), "graphics callback -> return 0"))
@@ -846,7 +846,7 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
 
     global return_action_id
-    name = "@return_action_%d" % return_action_id
+    name = "@return_action_{:d}".format(return_action_id)
     varaction2 = Action2Var(parent_action.feature, name, var_range)
     return_action_id += 1
     varaction2.var_list = varact2parser.var_list
@@ -910,29 +910,32 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
         result = parse_sg_ref_result(value, action_list, parent_action, var_range)
         comment = result.name.value + ';'
     elif isinstance(value, expression.ConstantNumeric):
-        comment = "return %d;" % value.value
+        comment = "return {:d};".format(value.value)
         result = value
         if not(-16384 <= value.value <= 32767):
-            raise generic.ScriptError("Callback results are limited to -16384..16383 (when the result is a signed number) or 0..32767 (unsigned), encountered %d." % value.value, value.pos)
+            msg = "Callback results are limited to -16384..16383 (when the result is a signed number) or 0..32767 (unsigned), encountered {:d}."
+            msg = msg.format(value.value)
+            raise generic.ScriptError(msg, value.pos)
+
     elif isinstance(value, expression.String):
-        comment = "return %s;" % str(value)
+        comment = "return {};".format(str(value))
         str_id, actions = action4.get_string_action4s(0, 0xD0, value)
         action_list.extend(actions)
         result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
     elif value.supported_by_actionD(False):
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expression.BinOp(nmlop.OR, value, expression.ConstantNumeric(0x8000)).reduce())
-        comment = "return param[%d];" % tmp_param
+        comment = "return param[{:d}];".format(tmp_param)
         action_list.extend(tmp_param_actions)
         for i in range(repeat_result):
             act6.modify_bytes(tmp_param, 2, offset + 2*i)
         result = expression.ConstantNumeric(0)
     else:
         global return_action_id
-        extra_actions, result = create_return_action(value, parent_action.feature, "@return_action_%d" % return_action_id, var_range)
+        extra_actions, result = create_return_action(value, parent_action.feature, "@return_action_{:d}".format(return_action_id), var_range)
         return_action_id += 1
         action2.add_ref(result, parent_action)
         action_list.extend(extra_actions)
-        comment = "return %s" % str(value)
+        comment = "return {}".format(value)
     return (result, comment)
 
 def get_feature(switch_block):

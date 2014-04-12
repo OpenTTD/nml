@@ -50,7 +50,7 @@ class BaseCost(base_statement.BaseStatement):
                     tmp_list.sort(lambda x, y: cmp(x.name.value, y.name.value))
                     new_costs.extend(tmp_list)
                 else:
-                    raise generic.ScriptError("Unrecognized base cost identifier '%s' encountered" % cost.name.value, cost.name.pos)
+                    raise generic.ScriptError("Unrecognized base cost identifier '{}' encountered".format(cost.name.value), cost.name.pos)
             else:
                 cost.name = cost.name.reduce()
                 if isinstance(cost.name, expression.ConstantNumeric):
@@ -69,7 +69,7 @@ class BaseCost(base_statement.BaseStatement):
     def __str__(self):
         ret = "basecost {\n"
         for cost in self.costs:
-            ret += "\t%s: %s;\n" % (str(cost.name), str(cost.value))
+            ret += "\t{}: {};\n".format(cost.name, cost.value)
         ret += "}\n"
         return ret
 

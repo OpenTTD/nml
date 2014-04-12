@@ -31,7 +31,7 @@ class BaseAction0Property(object):
         @param file: The outputfile we have to write to.
         @type  file: L{SpriteOutputBase}
         """
-        raise NotImplementedError('write is not implemented in %r' % type(self))
+        raise NotImplementedError('write is not implemented in {:r}'.format(type(self)))
 
     def get_size(self):
         """
@@ -41,7 +41,7 @@ class BaseAction0Property(object):
         @return: The size of this property in bytes.
         @rtype:  C{int}
         """
-        raise NotImplementedError('get_size is not implemented in %r' % type(self))
+        raise NotImplementedError('get_size is not implemented in {:r}'.format(type(self)))
 
 class Action0Property(BaseAction0Property):
     """
@@ -228,7 +228,7 @@ def cargo_list(value, max_num_cargos):
     @type  prop_size: C{int}
     """
     if not isinstance(value, Array) or len(value.values) > max_num_cargos:
-        raise generic.ScriptError("Cargo list must be an array with no more than %d values" % max_num_cargos, value.pos)
+        raise generic.ScriptError("Cargo list must be an array with no more than {:d} values".format(max_num_cargos), value.pos)
     cargoes = value.values + [ConstantNumeric(0xFF, value.pos) for _ in range(max_num_cargos - len(value.values))]
 
     ret = None
@@ -725,7 +725,7 @@ def industry_layouts(value):
     layouts = []
     for name in value.values:
         if name.value not in tilelayout_names:
-            raise generic.ScriptError("Unknown layout name '%s'" % name.value, name.pos)
+            raise generic.ScriptError("Unknown layout name '{}'".format(name.value), name.pos)
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
@@ -895,7 +895,7 @@ def airport_layouts(value):
     layouts = []
     for name in value.values:
         if name.value not in tilelayout_names:
-            raise generic.ScriptError("Unknown layout name '%s'" % name.value, name.pos)
+            raise generic.ScriptError("Unknown layout name '{}'".format(name.value), name.pos)
         layout = tilelayout_names[name.value]
         if 'rotation' not in layout.properties:
             raise generic.ScriptError("Airport layouts must have the 'rotation' property", layout.pos)

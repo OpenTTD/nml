@@ -37,11 +37,7 @@ class FunctionCall(Expression):
             param.debug_print(indentation + 4)
 
     def __str__(self):
-        ret = ''
-        for param in self.params:
-            if ret == '': ret = str(param)
-            else: ret = '%s, %s' % (ret, str(param))
-        ret = '%s(%s)' % (self.name, ret)
+        ret = '{}({})'.format(self.name, ', '.join(str(param) for param in self.params))
         return ret
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
@@ -61,10 +57,10 @@ class FunctionCall(Expression):
                     func_ptr.param_list = params
                     return func_ptr
                 if func_ptr.type() != Type.FUNCTION_PTR:
-                    raise generic.ScriptError("'%s' is defined, but it is not a function." % self.name.value, self.pos)
+                    raise generic.ScriptError("'{}' is defined, but it is not a function.".format(self.name.value), self.pos)
                 return func_ptr.call(params)
             if unknown_id_fatal:
-                raise generic.ScriptError("'%s' is not defined as a function." % self.name.value, self.pos)
+                raise generic.ScriptError("'{}' is not defined as a function.".format(self.name.value), self.pos)
             return FunctionCall(self.name, params, self.pos)
 
 
@@ -213,7 +209,7 @@ def builtin_day_of_year(name, args, pos):
     # Mapping of month to number of days in that month.
     number_days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
     if day.value < 1 or day.value > number_days[month.value]:
-        raise generic.ScriptError('Day should be value between 1 and %d.' % number_days[month.value], day.pos)
+        raise generic.ScriptError('Day should be value between 1 and {:d}.'.format(number_days[month.value]), day.pos)
 
     return ConstantNumeric(datetime.date(1, month.value, day.value).toordinal(), pos)
 
@@ -271,7 +267,7 @@ def builtin_cargotype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), parse_string_to_dword(label), "%s(%s)" % (name, str(label)), pos = args[0].pos)
+    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
 
 def builtin_railtype_available(name, args, pos):
     """
@@ -282,7 +278,7 @@ def builtin_railtype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), "%s(%s)" % (name, str(label)), pos = args[0].pos)
+    return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
 
 def builtin_grf_status(name, args, pos):
     """
@@ -306,9 +302,9 @@ def builtin_grf_status(name, args, pos):
     else:
         assert False, "Unknown grf status function"
     if mask is None:
-        string = "%s(%s)" % (name, str(label))
+        string = "{}({})".format(name, str(labels))
     else:
-        string = "%s(%s, %s)" % (name, str(label), str(mask))
+        string = "{}({}, {})".format(name, str(labels), str(mask))
     return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), string, mask, args[0].pos)
 
 def builtin_visual_effect_and_powered(name, args, pos):
@@ -322,7 +318,7 @@ def builtin_visual_effect_and_powered(name, args, pos):
     """
     arg_len = 2 if name == 'visual_effect' else 3
     if len(args) != arg_len:
-        raise generic.ScriptError(name + "() must have %d parameters" % arg_len, pos)
+        raise generic.ScriptError(name + "() must have {:d} parameters".format(arg_len), pos)
     from nml import global_constants
     effect = args[0].reduce_constant(global_constants.const_list).value
     offset = BinOp(nmlop.ADD, args[1], ConstantNumeric(8), args[1].pos).reduce_constant().value
@@ -360,7 +356,7 @@ def builtin_reserve_sprites(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     count = args[0].reduce_constant()
-    func = lambda x: '%s(%d)' % (name, count.value)
+    func = lambda x: '{}({:d})'.format(name, count.value)
     return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, func, pos)
 
 def builtin_industry_type(name, args, pos):
@@ -444,9 +440,9 @@ def builtin_relative_coord(name, args, pos):
         raise generic.ScriptError(name + "() must have x and y coordinates as parameters", pos)
 
     if isinstance(args[0], ConstantNumeric):
-        generic.check_range(args[0].value, 0, 255, "Argument of '%s'" % name, args[0].pos)
+        generic.check_range(args[0].value, 0, 255, "Argument of '{}'".format(name), args[0].pos)
     if isinstance(args[1], ConstantNumeric):
-        generic.check_range(args[1].value, 0, 255, "Argument of '%s'" % name, args[1].pos)
+        generic.check_range(args[1].value, 0, 255, "Argument of '{}'".format(name), args[1].pos)
 
     x_coord = BinOp(nmlop.AND, args[0], ConstantNumeric(0xFF), args[0].pos)
     y_coord = BinOp(nmlop.AND, args[1], ConstantNumeric(0xFF), args[1].pos)
@@ -489,7 +485,7 @@ def builtin_slope_to_sprite_offset(name, args, pos):
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
 
     if isinstance(args[0], ConstantNumeric):
-        generic.check_range(args[0].value, 0, 15, "Argument of '%s'" % name, args[0].pos)
+        generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
 
     # step 1: ((slope >= 0) & (slope <= 14)) * slope
     # This handles all non-steep slopes
@@ -514,7 +510,7 @@ def builtin_palette_1cc(name, args, pos):
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
 
     if isinstance(args[0], ConstantNumeric):
-        generic.check_range(args[0].value, 0, 15, "Argument of '%s'" % name, args[0].pos)
+        generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
 
     return BinOp(nmlop.ADD, args[0], ConstantNumeric(775), pos)
 
@@ -529,7 +525,7 @@ def builtin_palette_2cc(name, args, pos):
 
     for i in range(0, 2):
         if isinstance(args[i], ConstantNumeric):
-            generic.check_range(args[i].value, 0, 15, "Argument of '%s'" % name, args[i].pos)
+            generic.check_range(args[i].value, 0, 15, "Argument of '{}'".format(name), args[i].pos)
 
     col2 = BinOp(nmlop.MUL, args[1], ConstantNumeric(16), pos)
     col12 = BinOp(nmlop.ADD, col2, args[0], pos)
@@ -550,7 +546,7 @@ def builtin_vehicle_curv_info(name, args, pos):
 
     for arg in args:
         if isinstance(arg, ConstantNumeric):
-            generic.check_range(arg.value, -2, 2, "Argument of '%s'" % name, arg.pos)
+            generic.check_range(arg.value, -2, 2, "Argument of '{}'".format(name), arg.pos)
 
     args = [BinOp(nmlop.AND, arg, ConstantNumeric(0xF), pos) for arg in args]
     cur_next = BinOp(nmlop.SHIFT_LEFT, args[1], ConstantNumeric(8), pos)
@@ -574,14 +570,14 @@ def builtin_format_string(name, args, pos):
     for i, arg in enumerate(args[1:]):
         arg = arg.reduce()
         if not isinstance(arg, (StringLiteral, ConstantFloat, ConstantNumeric)):
-            raise generic.ScriptError(name + "() parameter %d is not a constant number of literal string" % (i+1), arg.pos)
+            raise generic.ScriptError(name + "() parameter {:d} is not a constant number of literal string".format(i+1), arg.pos)
         format_args.append(arg.value)
 
     try:
         result = format.value % tuple(format_args)
         return StringLiteral(result, pos)
     except Exception, ex:
-        raise generic.ScriptError("Invalid combination of format / arguments for %s: %s" % (name, str(ex)), pos)
+        raise generic.ScriptError("Invalid combination of format / arguments for {}: {}".format(name, str(ex)), pos)
 
 #}
 

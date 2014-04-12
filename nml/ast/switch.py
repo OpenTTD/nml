@@ -35,7 +35,7 @@ class Switch(switch_base_class):
         if param_list[1].value in var_ranges:
             self.var_range = var_ranges[param_list[1].value]
         else:
-            raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '%s'" % param_list[1].value, param_list[1].pos)
+            raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '{}'".format(param_list[1].value), param_list[1].pos)
         if not isinstance(param_list[2], expression.Identifier):
             raise generic.ScriptError("Switch-block parameter 3 'name' must be an identifier.", param_list[2].pos)
         self.initialize(param_list[2], general.parse_feature(param_list[0]).value)
@@ -56,7 +56,7 @@ class Switch(switch_base_class):
         return all_refs
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Switch, Feature = %d, name = %s', (self.feature_set.copy().pop(), self.name.value)
+        print indentation*' ' + 'Switch, Feature = {:d}, name = {}'.format(self.feature_set.copy().pop(), self.name.value)
         print (2+indentation)*' ' + 'Expression:'
         self.expr.debug_print(indentation + 4)
         print (2+indentation)*' ' + 'Body:'
@@ -69,7 +69,7 @@ class Switch(switch_base_class):
 
     def __str__(self):
         var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
-        return 'switch(%s, %s, %s, %s) {\n%s}\n' % (str(self.feature_set.copy().pop()), var_range, str(self.name), str(self.expr), str(self.body))
+        return 'switch({}, {}, {}, {}) {{\n{}}}\n'.format(str(self.feature_set.copy().pop()), var_range, str(self.name), str(self.expr), str(self.body))
 
 
 class SwitchBody(object):
@@ -108,10 +108,9 @@ class SwitchBody(object):
             self.default.debug_print(indentation + 2)
 
     def __str__(self):
-        ret = ''
-        for r in self.ranges :
-            ret += '\t%s\n' % str(r)
-        if self.default is not None: ret += '\t%s\n' % str(self.default)
+        ret = ''.join('\t{}\n'.format(r) for r in self.ranges)
+        if self.default is not None:
+            ret += '\t{}\n'.format(str(self.default))
         return ret
 
 class SwitchRange(object):
@@ -139,7 +138,7 @@ class SwitchRange(object):
         ret = str(self.min)
         if not isinstance(self.min, expression.ConstantNumeric) or not isinstance(self.max, expression.ConstantNumeric) or self.max.value != self.min.value:
             ret += '..' + str(self.max)
-        ret += ': %s' % str(self.result)
+        ret += ': ' + str(self.result)
         return ret
 
 class SwitchValue(object):
@@ -173,14 +172,16 @@ class SwitchValue(object):
         if self.value is None:
             assert self.is_return
             return 'return;'
+        elif self.is_return:
+            return 'return {};'.format(self.value)
         else:
-            return ('return %s;' if self.is_return else '%s;') % str(self.value)
+            return '{};'.format(self.value)
 
 class RandomSwitch(switch_base_class):
     def __init__(self, param_list, choices, pos):
         base_statement.BaseStatement.__init__(self, "random_switch-block", pos, False, False)
         if not (3 <= len(param_list) <= 4):
-            raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered %d" % len(param_list), pos)
+            raise generic.ScriptError("random_switch requires 3 or 4 parameters, encountered {:d}".format(len(param_list)), pos)
         #feature
         feature = general.parse_feature(param_list[0]).value
 
@@ -241,7 +242,7 @@ class RandomSwitch(switch_base_class):
                     raise generic.ScriptError("Value for (in)dependent should be an identifier", dep_list[i].pos)
                 spritegroup = action2.resolve_spritegroup(dep_list[i].name)
                 if not isinstance(spritegroup, RandomSwitch):
-                    raise generic.ScriptError("Value of (in)dependent '%s' should refer to a random_switch." % dep_list[i].name.value, dep_list[i].pos)
+                    raise generic.ScriptError("Value of (in)dependent '{}' should refer to a random_switch.".format(dep_list[i].name.value), dep_list[i].pos)
 
         self.triggers = self.triggers.reduce_constant(global_constants.const_list)
         if not (0 <= self.triggers.value <= 255):
@@ -281,11 +282,11 @@ class RandomSwitch(switch_base_class):
         return []
 
     def __str__(self):
-        ret = 'random_switch(%s, %s, %s, %s) {\n' % (str(self.feature_set.copy().pop()), str(self.type), str(self.name), str(self.triggers))
+        ret = 'random_switch({}, {}, {}, {}) {{\n'.format(str(self.feature_set.copy().pop()), str(self.type), str(self.name), str(self.triggers))
         for dep in self.dependent:
-            ret += 'dependent: %s;\n' % str(dep)
+            ret += 'dependent: {};\n'.format(dep)
         for indep in self.independent:
-            ret += 'independent: %s;\n' % str(indep)
+            ret += 'independent: {};\n'.format(indep)
         for choice in self.choices:
             ret += str(choice) + '\n'
         ret += '}\n'
@@ -320,5 +321,5 @@ class RandomChoice(object):
         self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        return '%s: %s' % (str(self.probability), str(self.result))
+        return '{}: {}'.format(self.probability, self.result)
 

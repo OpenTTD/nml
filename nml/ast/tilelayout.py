@@ -48,7 +48,7 @@ class TileLayout(base_statement.BaseStatement):
             if isinstance(tileprop, assignment.Assignment):
                 name = tileprop.name.value
                 if name in self.properties:
-                    raise generic.ScriptError("Duplicate property %s in tile layout" % name, tileprop.name.pos)
+                    raise generic.ScriptError("Duplicate property {} in tile layout".format(name), tileprop.name.pos)
                 self.properties[name] = tileprop.value.reduce_constant(global_constants.const_list)
             else:
                 assert isinstance(tileprop, LayoutTile)
@@ -59,20 +59,20 @@ class TileLayout(base_statement.BaseStatement):
                     tile = expression.ConstantNumeric(0xFF)
                 self.tile_list.append(LayoutTile(x, y, tile))
         if self.name in action0properties.tilelayout_names:
-            raise generic.ScriptError("A tile layout with name '%s' has already been defined." % self.name, self.pos)
+            raise generic.ScriptError("A tile layout with name '{}' has already been defined.".format(self.name), self.pos)
         action0properties.tilelayout_names[self.name] = self
 
     def debug_print(self, indentation):
         print indentation*' ' + 'TileLayout'
         for tile in self.tile_list:
-            print (indentation+2)*' ' + 'At %d,%d:' % (tile.x, tile.y)
+            print((indentation+2)*' ' + 'At {:d},{:d}:'.format(tile.x, tile.y))
             tile.tiletype.debug_print(indentation + 4)
 
     def get_action_list(self):
         return []
 
     def __str__(self):
-        return 'tilelayout %s {\n\t%s\n}\n' % (self.name, '\n\t'.join(str(x) for x in self.tile_prop_list))
+        return 'tilelayout {} {{\n\t{}\n}}\n'.format(self.name, '\n\t'.join(str(x) for x in self.tile_prop_list))
 
     def get_size(self):
         size = 2
@@ -96,7 +96,7 @@ class TileLayout(base_statement.BaseStatement):
                 file.print_bytex(0xFE)
                 tile_id = global_constants.item_names[tile.tiletype.value].id
                 if not isinstance(tile_id, expression.ConstantNumeric):
-                    raise generic.ScriptError("Tile '%s' cannot be used in a tilelayout, as its ID is not a constant." % tile.tiletype.value, tile.tiletype.pos)
+                    raise generic.ScriptError("Tile '{}' cannot be used in a tilelayout, as its ID is not a constant.".format(tile.tiletype.value), tile.tiletype.pos)
                 file.print_wordx(tile_id.value)
             file.newline()
         file.print_bytex(0)
@@ -123,4 +123,4 @@ class LayoutTile(object):
         self.tiletype = tiletype
 
     def __str__(self):
-        return '%s, %s: %s;' % (self.x, self.y, self.tiletype)
+        return '{}, {}: {};'.format(self.x, self.y, self.tiletype)

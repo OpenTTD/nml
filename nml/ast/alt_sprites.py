@@ -128,9 +128,9 @@ class AltSpritesBlock(base_statement.BaseStatement):
         params = [self.name, generic.reverse_lookup(zoom_levels, self.zoom_level), generic.reverse_lookup(bit_depths, self.bit_depth)]
         if self.image_file is not None: params.append(self.image_file)
         if self.mask_file is not None: params.append(self.mask_file)
-        ret = "alternative_sprites(%s) {\n" % ", ".join([str(p) for p in params])
+        ret = "alternative_sprites({}) {{\n".format(", ".join(str(p) for p in params))
         for sprite in self.sprite_list:
-            ret += "\t%s\n" % str(sprite)
+            ret += "\t{}\n".format(sprite)
         ret += "}\n"
         return ret
 

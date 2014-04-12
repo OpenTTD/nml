@@ -139,13 +139,13 @@ class GRF(base_statement.BaseStatement):
 
     def __str__(self):
         ret = 'grf {\n'
-        ret += '\tgrfid: %s;\n' % str(self.grfid)
-        ret += '\tname: %s;\n' % str(self.name)
-        ret += '\tdesc: %s;\n' % str(self.desc)
+        ret += '\tgrfid: {};\n'.format(str(self.grfid))
+        ret += '\tname: {};\n'.format(str(self.name))
+        ret += '\tdesc: {};\n'.format(str(self.desc))
         if self.url is not None:
-            ret += '\turl: %s;\n' % str(self.url)
-        ret += '\tversion: %s;\n' % str(self.version)
-        ret += '\tmin_compatible_version: %s;\n' % str(self.min_compatible_version)
+            ret += '\turl: {};\n'.format(self.url)
+        ret += '\tversion: {};\n'.format(self.version)
+        ret += '\tmin_compatible_version: {};\n'.format(self.min_compatible_version)
         for param in self.params:
             ret += str(param)
         ret += '}\n'
@@ -170,15 +170,15 @@ class ParameterSetting(object):
             self.set_property(set_val.name.value, set_val.value)
 
     def __str__(self):
-        ret = "\t\t%s {\n" % str(self.name)
+        ret = "\t\t{} {{\n".format(self.name)
         for val in self.value_list:
             if val.name.value == 'names':
                 ret += "\t\t\tnames: {\n"
                 for name in val.value.values:
-                    ret += "\t\t\t\t%s: %s;\n" % (name.name, name.value)
+                    ret += "\t\t\t\t{}: {};\n".format(name.name, name.value)
                 ret += "\t\t\t};\n"
             else:
-                ret += "\t\t\t%s: %s;\n" % (val.name, val.value)
+                ret += "\t\t\t{}: {};\n".format(val.name, val.value)
         ret += "\t\t}\n"
         return ret
 

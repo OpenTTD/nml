@@ -1156,7 +1156,7 @@ def setting_from_info(info, pos):
 
 def item_to_id(item, pos):
     if not isinstance(item.id, expression.ConstantNumeric):
-        raise generic.ScriptError("Referencing item '%s' with a non-constant id is not possible." % item.name, pos)
+        raise generic.ScriptError("Referencing item '{}' with a non-constant id is not possible.".format(item.name), pos)
     return expression.ConstantNumeric(item.id.value, pos)
 
 def param_from_name(info, pos):

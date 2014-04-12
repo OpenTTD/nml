@@ -81,12 +81,12 @@ class Error(base_statement.BaseStatement):
                 if self.severity.value == actionB.error_severity[s]:
                     sev = s
                     break
-        res = 'error(%s, %s' % (sev, self.msg)
+        res = 'error({}, {}'.format(sev, self.msg)
         if self.data is not None:
-            res += ', %s' % self.data
+            res += ', {}'.format(self.data)
         if len(self.params) > 0:
-            res += ', %s' % self.params[0]
+            res += ', {}'.format(self.params[0])
         if len(self.params) > 1:
-            res += ', %s' % self.params[1]
+            res += ', {}'.format(self.params[1])
         res += ');\n'
         return res

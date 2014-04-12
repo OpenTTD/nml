@@ -83,7 +83,7 @@ class Action14Node(object):
 
         @return: The size (in bytes) of this node.
         """
-        raise NotImplementedError('get_size must be implemented in Action14Node-subclass %r' % type(self))
+        raise NotImplementedError('get_size must be implemented in Action14Node-subclass {:r}'.format(type(self)))
 
     def write(self, file):
         """
@@ -91,7 +91,7 @@ class Action14Node(object):
 
         @param file: The file to write the output to.
         """
-        raise NotImplementedError('write must be implemented in Action14Node-subclass %r' % type(self))
+        raise NotImplementedError('write must be implemented in Action14Node-subclass {:r}'.format(type(self)))
 
     def write_type_id(self, file):
         file.print_string(self.type_string, False, True)

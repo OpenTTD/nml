@@ -36,12 +36,12 @@ class Snowline(base_statement.BaseStatement):
         self.date_heights = height_data
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Snowline (type=%s)' % self.type
+        print(indentation*' ' + 'Snowline (type={})'.format(self.type))
         for dh in self.date_heights:
             dh.debug_print(indentation + 2)
 
     def __str__(self):
-        return 'snowline (%s) {\n\t%s\n}\n' % (str(self.type), '\n\t'.join([str(x) for x in self.date_heights]))
+        return 'snowline ({}) {{\n\t{}\n}}\n'.format(str(self.type), '\n\t'.join(str(x) for x in self.date_heights))
 
     def get_action_list(self):
         return action0.get_snowlinetable_action(compute_table(self))

@@ -50,7 +50,7 @@ class RailtypeTable(base_statement.BaseStatement):
     def debug_print(self, indentation):
         print indentation*' ' + 'Railtype table'
         for railtype in self.railtype_list:
-            print (indentation+2)*' ' + 'Railtype: %s' % str(railtype.value)
+            print (indentation+2)*' ' + 'Railtype: ' + str(railtype.value)
 
     def get_action_list(self):
         return action0.get_railtypelist_action(self.railtype_list)

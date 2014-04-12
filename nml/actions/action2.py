@@ -67,7 +67,7 @@ class Action2(base_action.BaseAction):
                 raise generic.ScriptError("Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block. Try reducing the number of such blocks.")
 
     def write_sprite_start(self, file, size):
-        assert self.num_refs == 0, "Action2 reference counting has %d dangling references." % self.num_refs
+        assert self.num_refs == 0, "Action2 reference counting has {:d} dangling references.".format(self.num_refs)
         file.comment("Name: " + self.name)
         file.start_sprite(size + 3)
         file.print_bytex(2)
@@ -230,7 +230,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             This method should not be called, because calling a method on a meta class can be troublesome.
             Instead, call initialize(..).
             """
-            raise NotImplementedError('__init__ must be implemented in ASTSpriteGroup-subclass %r, initialize(..) should be called instead' % type(self))
+            raise NotImplementedError('__init__ must be implemented in ASTSpriteGroup-subclass {:r}, initialize(..) should be called instead'.format(type(self)))
 
         def initialize(self, name = None, feature = None, num_params = 0):
             """
@@ -297,8 +297,12 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                     assert len(self.feature_set) == 1
                     for n in self._referencing_nodes:
                         if n.feature_set != self.feature_set:
-                            raise generic.ScriptError("Cannot refer to block '%s' with feature '%s', expected feature is '%s'" % \
-                                    (self.name.value, general.feature_name(self.feature_set.copy().pop()), general.feature_name(n.feature_set.difference(self.feature_set).pop())), n.pos)
+                            msg = "Cannot refer to block '{}' with feature '{}', expected feature is '{}'"
+                            msg = msg.format(self.name.value,
+                                    general.feature_name(self.feature_set.copy().pop()),
+                                    general.feature_name(n.feature_set.difference(self.feature_set).pop()))
+                            raise generic.ScriptError(msg, n.pos)
+
                 elif len(self._referencing_nodes) != 0:
                     for n in self._referencing_nodes:
                         # Add the features from all calling blocks to the set
@@ -307,7 +311,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                 if len(self._referencing_nodes) == 0:
                     # if we can be 'not used', there ought to be a way to refer to this block
                     assert self.name is not None
-                    generic.print_warning("Block '%s' is not referenced, ignoring." % self.name.value, self.pos)
+                    generic.print_warning("Block '{}' is not referenced, ignoring.".format(self.name.value), self.pos)
 
             return len(self._referencing_nodes) != 0
 
@@ -339,7 +343,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             @return: A collection containing all links to other nodes.
             @rtype: C{iterable} of L{SpriteGroupRef}
             """
-            raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass %r' % type(self))
+            raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass {:r}'.format(type(self)))
 
         def set_action2(self, action2, feature):
             """
@@ -388,17 +392,22 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             """
 
             if target_ref.name.value == "CB_FAILED": return
+
             target = resolve_spritegroup(target_ref.name)
             if target.is_spriteset():
                 assert target.num_params == 0
                 # Referencing a spriteset directly from graphics/[random]switch
                 # Passing parameters is not possible here
                 if len(target_ref.param_list) != 0:
-                    raise generic.ScriptError("Passing parameters to '%s' is only possible from a spritelayout." % target_ref.name.value, target_ref.pos)
+                    raise generic.ScriptError("Passing parameters to '{}' is only possible from a spritelayout.".format(target_ref.name.value), target_ref.pos)
+
                 self.used_sprite_sets.append(target)
             else:
                 if len(target_ref.param_list) != target.num_params:
-                    raise generic.ScriptError("'%s' expects %d parameters, encountered %d." % (target_ref.name.value, target.num_params, len(target_ref.param_list)), target_ref.pos)
+                    msg = "'{}' expects {:d} parameters, encountered {:d}."
+                    msg = msg.format(target_ref.name.value, target.num_params, len(target_ref.param_list))
+                    raise generic.ScriptError(msg, target_ref.pos)
+
                 self._referenced_nodes.add(target)
                 target._referencing_nodes.add(self)
 
@@ -435,7 +444,7 @@ def register_spritegroup(spritegroup):
     """
     name = spritegroup.name.value
     if name in spritegroup_list:
-        raise generic.ScriptError("Block with name '%s' has already been defined" % name, spritegroup.pos)
+        raise generic.ScriptError("Block with name '{}' has already been defined".format(name), spritegroup.pos)
     spritegroup_list[name] = spritegroup
     nml.global_constants.spritegroups[name] = name
 
@@ -450,6 +459,6 @@ def resolve_spritegroup(name):
     @rtype: L{ASTSpriteGroup}
     """
     if name.value not in spritegroup_list:
-        raise generic.ScriptError("Unknown identifier encountered: '%s'" % name.value, name.pos)
+        raise generic.ScriptError("Unknown identifier encountered: '{}'".format(name.value), name.pos)
     return spritegroup_list[name.value]
 

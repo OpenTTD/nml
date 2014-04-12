@@ -46,7 +46,7 @@ class FunctionPtr(Expression):
         assert False, "Function pointers should not appear inside expressions."
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        raise generic.ScriptError("'%s' is a function and should be called using the function call syntax." % str(self.name), self.name.pos)
+        raise generic.ScriptError("'{}' is a function and should be called using the function call syntax.".format(str(self.name)), self.name.pos)
 
     def type(self):
         return Type.FUNCTION_PTR

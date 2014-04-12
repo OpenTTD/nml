@@ -67,7 +67,7 @@ class Conditional(base_statement.BaseStatementList):
     def __str__(self):
         ret = ''
         if self.expr is not None:
-            ret += 'if (%s)' % str(self.expr)
+            ret += 'if ({})'.format(self.expr)
         ret += ' {\n'
         ret += base_statement.BaseStatementList.__str__(self)
         ret += '}\n'

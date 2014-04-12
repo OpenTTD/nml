@@ -113,7 +113,7 @@ class LinePosition(Position):
         self.line_start = line_start
 
     def __str__(self):
-        return '"%s", line %d' % (self.filename, self.line_start)
+        return '"{}", line {:d}'.format(self.filename, self.line_start)
 
 class PixelPosition(Position):
     """
@@ -131,7 +131,7 @@ class PixelPosition(Position):
         self.ypos = ypos
 
     def __str__(self):
-        return '"%s" at [x: %d, y: %d]' % (self.filename, self.xpos, self.ypos)
+        return '"{}" at [x: {:d}, y: {:d}]'.format(self.filename, self.xpos, self.ypos)
 
 class ImageFilePosition(Position):
     """
@@ -141,7 +141,7 @@ class ImageFilePosition(Position):
         Position.__init__(self, filename, [])
 
     def __str__(self):
-        return 'Image file "%s"' % self.filename
+        return 'Image file "{}"'.format(self.filename)
 
 class LanguageFilePosition(Position):
     """
@@ -151,7 +151,7 @@ class LanguageFilePosition(Position):
         Position.__init__(self, filename, [])
 
     def __str__(self):
-        return 'Language file "%s"' % self.filename
+        return 'Language file "{}"'.format(self.filename)
 
 class ScriptError(Exception):
     def __init__(self, value, pos = None):
@@ -194,7 +194,7 @@ class OnlyOnceError(ScriptError):
         @param pos: Position of the error, if provided.
         @type  pos: C{None} or L{Position}
         """
-        ScriptError.__init__(self, "A grf may contain only one %s." % typestr, pos)
+        ScriptError.__init__(self, "A grf may contain only one {}.".format(typestr), pos)
 
 class OnlyOnce:
     """
@@ -285,20 +285,21 @@ def find_file(filepath):
             matches = [entry for entry in entries if lcomp == entry.lower()]
 
             if len(matches) == 0:
-                raise ScriptError("Path \"%s\" does not exist (even after case conversions)" % os.path.join(path, comp))
+                raise ScriptError("Path \"{}\" does not exist (even after case conversions)".format(os.path.join(path, comp)))
             elif len(matches) > 1:
-                raise ScriptError("Path \"%s\" is not unique (case conversion gave %d solutions)" % (os.path.join(path, comp), len(matches)))
+                raise ScriptError("Path \"{}\" is not unique (case conversion gave {:d} solutions)".format(os.path.join(path, comp), len(matches)))
 
             if matches[0] != comp:
                 given_path = os.path.join(path, comp)
                 real_path = os.path.join(path, matches[0])
-                print_warning("Path \"%s\" at the file system does not match path \"%s\" given in the input (case mismatch in the last component)"
-                        % (real_path, given_path))
+                msg = "Path \"{}\" at the file system does not match path \"{}\" given in the input (case mismatch in the last component)"
+                msg = msg.format(real_path, given_path)
+                print_warning(msg)
         elif os.access(path, os.X_OK):
             # Path is only accessible, cannot inspect the file system.
             matches = [comp]
         else:
-            raise ScriptError("Path \"%s\" does not exist or is not accessible" % path)
+            raise ScriptError("Path \"{}\" does not exist or is not accessible".format(path))
 
         path = os.path.join(path, matches[0])
         if len(components) > 0:

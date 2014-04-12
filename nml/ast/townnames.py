@@ -55,9 +55,9 @@ class TownNames(base_statement.BaseStatement):
     def debug_print(self, indentation):
         if isinstance(self.name, basestring):
             name_text = "name = " + repr(self.name)
-            if self.id_number is not None: name_text += " (allocated number is 0x%x)" % self.id_number
+            if self.id_number is not None: name_text += " (allocated number is 0x{:x})".format(self.id_number)
         elif self.id_number is not None:
-            name_text = "number = 0x%x" % self.id_number
+            name_text = "number = 0x{:x}".format(self.id_number)
         else:
             name_text = "(unnamed)"
 
@@ -100,14 +100,14 @@ class TownNames(base_statement.BaseStatement):
                 raise generic.ScriptError("ID must be a number between 0 and 0x7f (inclusive)", self.pos)
 
             if self.id_number not in actionF.free_numbers:
-                raise generic.ScriptError("town names ID 0x%x is already used." % self.id_number, self.pos)
+                raise generic.ScriptError("town names ID 0x{:x} is already used.".format(self.id_number), self.pos)
             actionF.free_numbers.remove(self.id_number)
 
     def __str__(self):
         ret = 'town_names'
         if self.name is not None:
-            ret += '(%s)' % str(self.name)
-        ret += '{\n%s}\n' % ''.join(str(x) for x in self.param_list)
+            ret += '({})'.format(self.name)
+        ret += '{{\n{}}}\n'.format(''.join(str(x) for x in self.param_list))
         return ret
 
     def get_action_list(self):
@@ -158,7 +158,7 @@ class TownNamesPart(object):
         if len(self.pieces) == 0:
             raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
         if len(self.pieces) > 255:
-            raise generic.ScriptError("Too many values in a part, found %d, maximum is 255" % len(self.pieces), self.pos)
+            raise generic.ScriptError("Too many values in a part, found {:d}, maximum is 255".format(len(self.pieces)), self.pos)
 
         return actFs, self
 
@@ -216,7 +216,7 @@ class TownNamesPart(object):
         # Assign to action F
         actFs = []
         for _prob, _idx, sub in finished_actions:
-            actF_name = expression.Identifier("**townname #%d**" % townname_serial, None)
+            actF_name = expression.Identifier("**townname #{:d}**".format(townname_serial), None)
             townname_serial = townname_serial + 1
             town_part = TownNamesPart(sub, self.pos)
             town_part.set_numbits(num_bits)
@@ -266,12 +266,12 @@ class TownNamesPart(object):
 
     def debug_print(self, indentation):
         total = sum(piece.probability.value for piece in self.pieces)
-        print indentation*' ' + 'Town names part (total %d)' % total
+        print(indentation*' ' + 'Town names part (total {:d})'.format(total))
         for piece in self.pieces:
             piece.debug_print(indentation + 2, total)
 
     def __str__(self):
-        return '{\n\t%s\n}\n' % '\n\t'.join([str(piece) for piece in self.pieces])
+        return '{{\n\t{}\n}}\n'.format('\n\t'.join(str(piece) for piece in self.pieces))
 
     def get_length(self):
         size = 3 # textcount, firstbit, bitcount bytes.
@@ -311,7 +311,7 @@ class TownNamesParam(object):
         self.pos = pos
 
     def __str__(self):
-        return '%s: %s;\n' % (self.key, self.value)
+        return '{}: {};\n'.format(self.key, self.value)
 
 
 class TownNamesEntryDefinition(object):
@@ -353,11 +353,11 @@ class TownNamesEntryDefinition(object):
 
     def debug_print(self, indentation, total):
         if isinstance(self.def_number, expression.Identifier): name_text = "name '" + self.def_number.value + "'"
-        else: name_text = "number 0x%x" % self.def_number.value
-        print indentation*' ' + ('Insert town_name ID %s with probability %d/%d' % (name_text, self.probability.value, total))
+        else: name_text = "number 0x{:x}".format(self.def_number.value)
+        print indentation*' ' + ('Insert town_name ID {} with probability {:d}/{:d}'.format(name_text, self.probability.value, total))
 
     def __str__(self):
-        return 'town_names(%s, %d),' % (str(self.def_number), self.probability.value)
+        return 'town_names({}, {:d}),'.format(str(self.def_number), self.probability.value)
 
     def get_length(self):
         return 2
@@ -371,11 +371,11 @@ class TownNamesEntryDefinition(object):
         if isinstance(self.def_number, expression.Identifier):
             self.number = actionF.named_numbers.get(self.def_number.value)
             if self.number is None:
-                raise generic.ScriptError('Town names name "%s" is not defined or points to a next town_names node' % self.def_number.value, self.pos)
+                raise generic.ScriptError('Town names name "{}" is not defined or points to a next town_names node'.format(self.def_number.value), self.pos)
         else:
             self.number = self.def_number.value
             if self.number not in actionF.numbered_numbers:
-                raise generic.ScriptError('Town names number "%s" is not defined or points to a next town_names node' % self.number, self.pos)
+                raise generic.ScriptError('Town names number "{}" is not defined or points to a next town_names node'.format(self.number), self.pos)
         return self.number
 
     def write(self, file):
@@ -409,10 +409,10 @@ class TownNamesEntryText(object):
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
-        print indentation*' ' + ('Text %s with probability %d/%d' % (self.text.value, self.probability.value, total))
+        print indentation*' ' + ('Text {} with probability {:d}/{:d}'.format(self.text.value, self.probability.value, total))
 
     def __str__(self):
-        return 'text(%s, %d),' % (str(self.text), self.probability.value)
+        return 'text({}, {:d}),'.format(self.text, self.probability.value)
 
     def get_length(self):
         return 1 + grfstrings.get_string_size(self.text.value) # probability, text

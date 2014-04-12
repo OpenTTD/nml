@@ -59,14 +59,14 @@ class BaseStatement(object):
         seen_item = False
         for scope in scope_list:
             if scope.list_type == BaseStatementList.LIST_TYPE_SKIP:
-                if not self.bs_skipable: raise generic.ScriptError("%s may not appear inside a conditional block." % self.bs_name, self.pos)
+                if not self.bs_skipable: raise generic.ScriptError("{} may not appear inside a conditional block.".format(self.bs_name), self.pos)
             if scope.list_type == BaseStatementList.LIST_TYPE_LOOP:
-                if not self.bs_loopable: raise generic.ScriptError("%s may not appear inside a loop." % self.bs_name, self.pos)
+                if not self.bs_loopable: raise generic.ScriptError("{} may not appear inside a loop.".format(self.bs_name), self.pos)
             if scope.list_type == BaseStatementList.LIST_TYPE_ITEM:
                 seen_item = True
-                if not self.bs_in_item: raise generic.ScriptError("%s may not appear inside an item block." % self.bs_name, self.pos)
+                if not self.bs_in_item: raise generic.ScriptError("{} may not appear inside an item block.".format(self.bs_name), self.pos)
         if not (seen_item or self.bs_out_item):
-            raise generic.ScriptError("%s must appear inside an item block." % self.bs_name, self.pos)
+            raise generic.ScriptError("{} must appear inside an item block.".format(self.bs_name), self.pos)
 
     def register_names(self):
         """
@@ -88,7 +88,7 @@ class BaseStatement(object):
         @param indentation: Print all lines with at least C{indentation} spaces
         @type indentation: C{int}
         """
-        raise NotImplementedError('debug_print must be implemented in BaseStatement-subclass %r' % type(self))
+        raise NotImplementedError('debug_print must be implemented in BaseStatement-subclass {:r}'.format(type(self)))
 
     def get_action_list(self):
         """
@@ -97,7 +97,7 @@ class BaseStatement(object):
         @return: A list of action
         @rtype: C{list} of L{BaseAction}
         """
-        raise NotImplementedError('get_action_list must be implemented in BaseStatement-subclass %r' % type(self))
+        raise NotImplementedError('get_action_list must be implemented in BaseStatement-subclass {:r}'.format(type(self)))
 
     def __str__(self):
         """
@@ -106,7 +106,7 @@ class BaseStatement(object):
         @return: An NML string representing this action
         @rtype: C{str}
         """
-        raise NotImplementedError('__str__ must be implemented in BaseStatement-subclass %r' % type(self))
+        raise NotImplementedError('__str__ must be implemented in BaseStatement-subclass {:r}'.format(type(self)))
 
 
 class BaseStatementList(BaseStatement):

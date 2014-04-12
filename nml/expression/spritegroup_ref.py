@@ -41,15 +41,15 @@ class SpriteGroupRef(Expression):
         self.act2 = act2
 
     def debug_print(self, indentation):
-        print indentation*' ' +'Reference to: ' + str(self.name)
+        print indentation*' ' + 'Reference to: ' + str(self.name)
         if len(self.param_list) != 0:
-            print 'Parameters:'
+            print indentation*' ' + 'Parameters:'
             for p in self.param_list:
                 p.debug_print(indentation + 2)
 
     def __str__(self):
         if self.param_list:
-            return '%s(%s)' % (self.name, ', '.join(str(x) for x in self.param_list))
+            return '{}({})'.format(self.name, ', '.join(str(x) for x in self.param_list))
         return str(self.name)
 
     def get_action2_id(self, feature):
@@ -67,7 +67,7 @@ class SpriteGroupRef(Expression):
         try:
             spritegroup = action2.resolve_spritegroup(self.name)
         except generic.ScriptError:
-            assert False, "Illegal action2 reference '%s' encountered." % self.name.value
+            raise AssertionError("Illegal action2 reference '{}' encountered.".format(self.name.value))
 
         return spritegroup.get_action2(feature).id
 

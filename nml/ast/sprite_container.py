@@ -38,7 +38,7 @@ class SpriteContainer(object):
         self.sprite_data = {}
         if block_name is not None:
             if block_name.value in SpriteContainer.sprite_blocks:
-                raise generic.ScriptError("Block with name '%s' is already defined." % block_name.value, block_name.pos)
+                raise generic.ScriptError("Block with name '{}' is already defined.".format(block_name.value), block_name.pos)
             SpriteContainer.sprite_blocks[block_name.value] = self
 
     def add_sprite_data(self, sprite_list, default_file, pos, zoom_level = 0, bit_depth = 8, default_mask_file = None):
@@ -46,8 +46,10 @@ class SpriteContainer(object):
         assert bit_depth in (8, 32)
         key = (zoom_level, bit_depth)
         if key in self.sprite_data:
-            generic.print_warning("Sprites are already defined for %s '%s' for this zoom level / bit depth combination. This data will be overridden." \
-                    % (self.block_type, self.block_name.value), pos)
+            msg = ("Sprites are already defined for {} '{}' for this zoom " +
+                   "level / bit depth combination. This data will be overridden.")
+            msg = msg.format(self.block_type, self.block_name.value)
+            raise generic.print_warning(msg, pos)
         self.sprite_data[key] = (sprite_list, default_file, default_mask_file)
 
     def get_all_sprite_data(self):
@@ -61,5 +63,5 @@ class SpriteContainer(object):
     def resolve_sprite_block(cls, block_name):
         if block_name.value in cls.sprite_blocks:
             return cls.sprite_blocks[block_name.value]
-        raise generic.ScriptError("Undeclared block identifier '%s' encountered" % block_name.value, block_name.pos)
+        raise generic.ScriptError("Undeclared block identifier '{}' encountered".format(block_name.value), block_name.pos)
 

@@ -96,7 +96,7 @@ class ActionF(base_action.BaseAction):
             self.id_number = get_free_id()
             if isinstance(self.name, expression.Identifier):
                 if self.name.value in named_numbers:
-                    raise generic.ScriptError('Cannot define town name "%s", it is already in use' % self.name, self.pos)
+                    raise generic.ScriptError('Cannot define town name "{}", it is already in use'.format(self.name), self.pos)
                 named_numbers[self.name.value] = self.id_number # Add name to the set 'safe' names.
         else: numbered_numbers.add(self.id_number) # Add number to the set of 'safe' numbers.
 
@@ -112,7 +112,7 @@ class ActionF(base_action.BaseAction):
         self.free_bit = startbit
 
         if startbit > 32:
-            raise generic.ScriptError("Not enough random bits for the town name generation (%d needed, 32 available)" % startbit, self.pos)
+            raise generic.ScriptError("Not enough random bits for the town name generation ({:d} needed, 32 available)".format(startbit), self.pos)
 
         # Pull style names if needed.
         if self.style_name is not None:
@@ -121,7 +121,7 @@ class ActionF(base_action.BaseAction):
             self.style_names.append( (0x7F, grfstrings.get_translation(self.style_name)) )
             self.style_names.sort()
             if len(self.style_names) == 0:
-                raise generic.ScriptError('Style "%s" defined, but no translations found for it' % self.style_name.name.value, self.pos)
+                raise generic.ScriptError('Style "{}" defined, but no translations found for it'.format(self.style_name.name.value), self.pos)
         else: self.style_names = []
 
     # Style names

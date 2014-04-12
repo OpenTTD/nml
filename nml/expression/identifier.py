@@ -43,7 +43,7 @@ class Identifier(Expression):
         return self
 
     def supported_by_actionD(self, raise_error):
-        if raise_error: raise generic.ScriptError("Unknown identifier '%s'" % self.value, self.pos)
+        if raise_error: raise generic.ScriptError("Unknown identifier '{}'".format(self.value), self.pos)
         return False
 
     def __eq__(self, other):

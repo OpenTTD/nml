@@ -27,10 +27,10 @@ class StringLiteral(Expression):
         self.value = value
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'String literal: "%s"' % self.value
+        print indentation*' ' + 'String literal: "{}"'.format(self.value)
 
     def __str__(self):
-        return '"%s"' % self.value
+        return '"{}"'.format(self.value)
 
     def write(self, file, size):
         assert(len(self.value) == size)

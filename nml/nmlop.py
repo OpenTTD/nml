@@ -37,7 +37,7 @@ class Operator(object):
         self.validate_func = validate_func
 
     def to_string(self, expr1, expr2):
-        return '(%s %s %s)' % (expr1, self.token, expr2)
+        return '({} {} {})'.format(expr1, self.token, expr2)
 
 def unsigned_rshift(a, b):
     if a < 0:
@@ -297,15 +297,15 @@ DIVU = Operator(
 )
 
 
-MIN.to_string = lambda expr1, expr2: 'min(%s, %s)' % (expr1, expr2)
-MAX.to_string = lambda expr1, expr2: 'max(%s, %s)' % (expr1, expr2)
-STO_TMP.to_string = lambda expr1, expr2: 'STORE_TEMP(%s, %s)' % (expr1, expr2)
-STO_PERM.to_string = lambda expr1, expr2: 'STORE_PERM(%s, %s)' % (expr1, expr2)
-HASBIT.to_string = lambda expr1, expr2: 'hasbit(%s, %s)' % (expr1, expr2)
-NOTHASBIT.to_string = lambda expr1, expr2: '!hasbit(%s, %s)' % (expr1, expr2)
-VACT2_CMP.to_string = lambda expr1, expr2: 'CMP(%s, %s)' % (expr1, expr2)
-VACT2_UCMP.to_string = lambda expr1, expr2: 'UCMP(%s, %s)' % (expr1, expr2)
-ROT_RIGHT.to_string = lambda expr1, expr2: 'rotate(%s, %s)' % (expr1, expr2)
+MIN.to_string = lambda expr1, expr2: 'min({}, {})'.format(expr1, expr2)
+MAX.to_string = lambda expr1, expr2: 'max({}, {})'.format(expr1, expr2)
+STO_TMP.to_string = lambda expr1, expr2: 'STORE_TEMP({}, {})'.format(expr1, expr2)
+STO_PERM.to_string = lambda expr1, expr2: 'STORE_PERM({}, {})'.format(expr1, expr2)
+HASBIT.to_string = lambda expr1, expr2: 'hasbit({}, {})'.format(expr1, expr2)
+NOTHASBIT.to_string = lambda expr1, expr2: '!hasbit({}, {})'.format(expr1, expr2)
+VACT2_CMP.to_string = lambda expr1, expr2: 'CMP({}, {})'.format(expr1, expr2)
+VACT2_UCMP.to_string = lambda expr1, expr2: 'UCMP({}, {})'.format(expr1, expr2)
+ROT_RIGHT.to_string = lambda expr1, expr2: 'rotate({}, {})'.format(expr1, expr2)
 
 
 

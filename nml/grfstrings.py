@@ -34,7 +34,7 @@ def validate_string(string):
     @type  string: L{expression.String}
     """
     if string.name.value not in default_lang.strings:
-        raise generic.ScriptError('Unknown string "%s"' % string.name.value, string.pos)
+        raise generic.ScriptError('Unknown string "{}"'.format(string.name.value), string.pos)
 
 def is_ascii_string(string):
     """
@@ -157,7 +157,7 @@ def com_parse_comma(val, lang_id):
 
 def com_parse_hex(val, lang_id):
     val = val.reduce_constant()
-    return "0x%X" % val.value
+    return "0x{:X}".format(val.value)
 
 def com_parse_string(val, lang_id):
     import nml.expression
@@ -166,7 +166,7 @@ def com_parse_string(val, lang_id):
     if isinstance(val, nml.expression.String):
         # Check that the string exists
         if val.name.value not in default_lang.strings:
-            raise generic.ScriptError("Substring \"%s\" does not exist" % val.name.value, val.pos)
+            raise generic.ScriptError("Substring \"{}\" does not exist".format(val.name.value), val.pos)
         return get_translation(val, lang_id)
     return val.value
 
@@ -336,19 +336,19 @@ class StringCommand(object):
             if not lang.has_plural_pragma():
                 raise generic.ScriptError("Using {P} without a ##plural pragma", self.pos)
             if len(self.arguments) != lang.get_num_plurals():
-                raise generic.ScriptError("Invalid number of arguments to plural command, expected %d but got %d" % (lang.get_num_plurals(), len(self.arguments)), self.pos)
+                raise generic.ScriptError("Invalid number of arguments to plural command, expected {:d} but got {:d}".format(lang.get_num_plurals(), len(self.arguments)), self.pos)
         elif self.name == 'G':
             if not lang.has_gender_pragma():
                 raise generic.ScriptError("Using {G} without a ##gender pragma", self.pos)
             if len(self.arguments) != len(lang.genders):
-                raise generic.ScriptError("Invalid number of arguments to gender command, expected %d but got %d" % (len(lang.genders), len(self.arguments)), self.pos)
+                raise generic.ScriptError("Invalid number of arguments to gender command, expected {:d} but got {:d}".format(len(lang.genders), len(self.arguments)), self.pos)
         elif self.name == 'G=':
             if not lang.has_gender_pragma():
                 raise generic.ScriptError("Using {G=} without a ##gender pragma", self.pos)
             if len(self.arguments) != 1:
-                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected %d but got %d" % (1, len(self.arguments)), self.pos)
+                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected {:d} but got {:d}".format(1, len(self.arguments)), self.pos)
         elif len(self.arguments) != 0:
-            raise generic.ScriptError("Unexpected arguments to command \"%s\"" % self.name, self.pos)
+            raise generic.ScriptError("Unexpected arguments to command \"{}\"".format(self.name), self.pos)
 
     def parse_string(self, str_type, lang, wanted_lang_id, prev_command, stack, static_args):
         """
@@ -383,13 +383,13 @@ class StringCommand(object):
             stack.remove((self.str_pos, self_size))
             if self.str_pos < len(static_args):
                 if 'parse' not in commands[self.name]:
-                    raise generic.ScriptError("Provided a static argument for string command '%s' which is invalid" % self.name, self.pos)
+                    raise generic.ScriptError("Provided a static argument for string command '{}' which is invalid".format(self.name), self.pos)
                 # Parse commands using the wanted (not current) lang id, so translations are used if present
                 return commands[self.name]['parse'](static_args[self.str_pos], wanted_lang_id)
             prefix = u''
             suffix = u''
             if self.case:
-                prefix += STRING_SELECT_CASE[str_type] + '\\%02X' % self.case
+                prefix += STRING_SELECT_CASE[str_type] + '\\{:02X}'.format(self.case)
             if stack_pos + self_size > 8:
                 raise generic.ScriptError("Trying to read an argument from the stack without reading the arguments before", self.pos)
             if self_size == 4 and stack_pos == 4:
@@ -424,24 +424,24 @@ class StringCommand(object):
         if self.name == 'P':
             if offset < 0:
                 return self.arguments[lang.static_plural_form(static_args[offset]) - 1]
-            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + offset)
+            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\{:02X}'.format(0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type] + '\\%02X' % (idx + 1)
+                    ret += CHOICE_LIST_ITEM[str_type] + '\\{:02X}'.format(idx + 1)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
         if self.name == 'G':
             if offset < 0:
                 return self.arguments[lang.static_gender(static_args[offset]) - 1]
-            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\%02X' % (0x80 + offset)
+            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\{:02X}'.format(0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type] + '\\%02X' % (idx + 1)
+                    ret += CHOICE_LIST_ITEM[str_type] + '\\{:02X}'.format(idx + 1)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
@@ -559,30 +559,30 @@ class NewGRFString(object):
             if end < len(string) and string[end] == '=':
                 command_name += '='
             if command_name not in commands and command_name not in special_commands:
-                raise generic.ScriptError("Undefined command \"%s\"" % command_name, pos)
+                raise generic.ScriptError("Undefined command \"{}\"".format(command_name), pos)
             if command_name in commands and 'deprecated' in commands[command_name]:
-                generic.print_warning("String code '%s' has been deprecated and will be removed soon" % command_name, pos)
+                generic.print_warning("String code '{}' has been deprecated and will be removed soon".format(command_name), pos)
                 del commands[command_name]['deprecated']
             #
             command = StringCommand(command_name, cmd_pos, pos)
             if end >= len(string):
-                raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
+                raise generic.ScriptError("Missing '}' from command \"{}\"".format(string[start:]), pos)
             if string[end] == '.':
                 if command_name not in commands or 'allow_case' not in commands[command_name]:
-                    raise generic.ScriptError("Command \"%s\" can't have a case" % command_name, pos)
+                    raise generic.ScriptError("Command \"{}\" can't have a case".format(command_name), pos)
                 case_start = end + 1
                 end = case_start
                 while end < len(string) and string[end] not in '} ': end += 1
                 case = string[case_start:end]
                 if lang.cases is None or case not in lang.cases:
-                    raise generic.ScriptError("Invalid case-name \"%s\"" % case, pos)
+                    raise generic.ScriptError("Invalid case-name \"{}\"".format(case), pos)
                 command.case = lang.cases[case]
             if string[end] != '}':
                 command.argument_is_assigment = string[end] == '='
                 arg_start = end + 1
                 end = string.find('}', end + 1)
                 if end == -1 or not command.set_arguments(string[arg_start:end]):
-                    raise generic.ScriptError("Missing '}' from command \"%s\"" % string[start:], pos)
+                    raise generic.ScriptError("Missing '}' from command \"{}\"".format(string[start:]), pos)
             command.validate_arguments(lang)
             if command_name == 'G=' and self.components:
                 raise generic.ScriptError("Set-gender command {G=} must be at the start of the string", pos)
@@ -592,7 +592,7 @@ class NewGRFString(object):
         if len(self.components) > 0 and isinstance(self.components[0], StringCommand) and self.components[0].name == 'G=':
             self.gender = self.components[0].arguments[0]
             if self.gender not in lang.genders:
-                raise generic.ScriptError("Invalid gender name '%s'" % self.gender, pos)
+                raise generic.ScriptError("Invalid gender name '{}'".format(self.gender), pos)
             self.components.pop(0)
         else:
             self.gender = None
@@ -663,7 +663,7 @@ class NewGRFString(object):
         sizes_list = []
         for idx in range(len(sizes)):
             if idx not in sizes:
-                raise generic.ScriptError("String argument %d is not used" % idx, self.pos)
+                raise generic.ScriptError("String argument {:d} is not used".format(idx), self.pos)
             sizes_list.append(sizes[idx])
         return sizes_list
 
@@ -939,12 +939,12 @@ class Language(object):
         str_type = self.strings[string_id].get_type()
         parsed_string = ""
         if self.strings[string_id].gender is not None:
-            parsed_string += SET_STRING_GENDER[str_type] + '\\%02X' % self.genders[self.strings[string_id].gender]
+            parsed_string += SET_STRING_GENDER[str_type] + '\\{:02X}'.format(self.genders[self.strings[string_id].gender])
         if len(self.strings[string_id].cases) > 0:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
             for case_name, case_string in self.strings[string_id].cases.iteritems():
                 case_id = self.cases[case_name]
-                parsed_string += CHOICE_LIST_ITEM[str_type] + ('\\%02X' % case_id) + case_string.parse_string(str_type, self, lang_id, string.params)
+                parsed_string += CHOICE_LIST_ITEM[str_type] + '\\{:02X}'.format(case_id) + case_string.parse_string(str_type, self, lang_id, string.params)
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
         parsed_string += self.strings[string_id].parse_string(str_type, self, lang_id, string.params)
         if len(self.strings[string_id].cases) > 0:
@@ -966,7 +966,7 @@ class Language(object):
             try:
                 value = int(lang_text, 16)
             except ValueError:
-                raise generic.ScriptError("Invalid grflangid %r" % lang_text, pos)
+                raise generic.ScriptError("Invalid grflangid {:r}".format(lang_text), pos)
         if value < 0 or value >= 0x7F:
             raise generic.ScriptError("Invalid grflangid", pos)
         self.langid = value
@@ -1006,8 +1006,9 @@ class Language(object):
 
         expected = LANG_PLURALS.get(self.langid)
         if expected is not None and self.plural != expected:
-            raise generic.ScriptError(("Language with language id 0x%02x has plural form %d while " +
-                                       "the language uses plural form %d.") % (self.langid, self.plural, expected), pos)
+            msg = "Language with language id 0x{:02x} has plural form {:d} while the language uses plural form {:d}."
+            msg = msg.format(self.langid, self.plural, expected)
+            raise generic.ScriptError(msg, pos)
 
 
     def handle_gender(self, data, pos):
@@ -1037,7 +1038,7 @@ class Language(object):
         if len(genders) != 2:
             raise generic.ScriptError("Invalid ##map_gender line", pos)
         if genders[0] not in self.genders:
-            raise generic.ScriptError("Trying to map non-existing gender '%s'" % genders[0], pos)
+            raise generic.ScriptError("Trying to map non-existing gender '{}'".format(genders[0]), pos)
         self.gender_map[genders[0]].append(genders[1])
 
     def handle_case(self, data, pos):
@@ -1067,7 +1068,7 @@ class Language(object):
         if len(cases) != 2:
             raise generic.ScriptError("Invalid ##map_case line", pos)
         if cases[0] not in self.cases:
-            raise generic.ScriptError("Trying to map non-existing case '%s'" % cases[0], pos)
+            raise generic.ScriptError("Trying to map non-existing case '{}'".format(cases[0]), pos)
         self.case_map[cases[0]].append(cases[1])
 
     def handle_text(self, data, pos):
@@ -1080,19 +1081,19 @@ class Language(object):
         _type, string, case, value = data
 
         if string in self.strings and case is None:
-            raise generic.ScriptError("String name \"%s\" is used multiple times" % string, pos)
+            raise generic.ScriptError("String name \"{}\" is used multiple times".format(string), pos)
 
         if self.default:
             self.strings[string] = NewGRFString(value, self, pos)
             self.strings[string].remove_non_default_commands()
         else:
             if string not in default_lang.strings:
-                generic.print_warning("String name \"%s\" does not exist in master file" % string, pos)
+                generic.print_warning("String name \"{}\" does not exist in master file".format(string), pos)
                 return
 
             newgrf_string = NewGRFString(value, self, pos)
             if not default_lang.strings[string].match_commands(newgrf_string):
-                generic.print_warning("String commands don't match with master file \"%s\"" % DEFAULT_LANGNAME, pos)
+                generic.print_warning("String commands don't match with master file \"{}\"".format(DEFAULT_LANGNAME), pos)
                 return
 
             if case is None:
@@ -1102,10 +1103,10 @@ class Language(object):
                     generic.print_warning("String with case used before the base string", pos)
                     return
                 if self.cases is None or case not in self.cases:
-                    generic.print_warning("Invalid case name \"%s\"" % case, pos)
+                    generic.print_warning("Invalid case name \"{}\"".format(case), pos)
                     return
                 if case in self.strings[string].cases:
-                    raise generic.ScriptError("String name \"%s.%s\" is used multiple times" % (string, case), pos)
+                    raise generic.ScriptError("String name \"{}.{}\" is used multiple times".format(string, case), pos)
                 if newgrf_string.gender:
                     generic.print_warning("Case-strings can't set the gender, only the base string can", pos)
                     return
@@ -1215,7 +1216,7 @@ def parse_file(filename, default):
         else:
             for lng in langs:
                 if lng[0] == lang.langid:
-                    msg = "Language file has the same ##grflangid (with number %d) as another language file" % lang.langid
+                    msg = "Language file has the same ##grflangid (with number {:d}) as another language file".format(lang.langid)
                     raise generic.ScriptError(msg, generic.LanguageFilePosition(filename))
             langs.append((lang.langid, lang))
 
@@ -1236,7 +1237,7 @@ def read_lang_files(lang_dir, default_lang_file):
 
     DEFAULT_LANGNAME = default_lang_file
     if not os.path.exists(lang_dir + os.sep + default_lang_file):
-        generic.print_warning("Default language file \"%s\" doesn't exist" % (lang_dir + os.sep + default_lang_file))
+        generic.print_warning("Default language file \"{}\" doesn't exist".format(os.path.join(lang_dir, default_lang_file)))
         return
     parse_file(lang_dir + os.sep + default_lang_file, True)
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):

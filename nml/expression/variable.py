@@ -42,17 +42,17 @@ class Variable(Expression):
                 extra_param.debug_print(indentation + 4)
 
     def __str__(self):
-        num = "0x%02X" % self.num.value if isinstance(self.num, ConstantNumeric) else str(self.num)
-        ret = 'var[%s, %s, %s' % (num, str(self.shift), str(self.mask))
+        num = "0x{:02X}".format(self.num.value) if isinstance(self.num, ConstantNumeric) else str(self.num)
+        ret = 'var[{}, {}, {}'.format(num, self.shift, self.mask)
         if self.param is not None:
-            ret += ', %s' % str(self.param)
+            ret += ', {}'.format(self.param)
         ret += ']'
         if self.add is not None:
-            ret = '(%s + %s)' % (ret, self.add)
+            ret = '({} + {})'.format(ret, self.add)
         if self.div is not None:
-            ret = '(%s / %s)' % (ret, self.div)
+            ret = '({} / {})'.format(ret, self.div)
         if self.mod is not None:
-            ret = '(%s %% %s)' % (ret, self.mod)
+            ret = '({} % {})'.format(ret, self.mod)
         return ret
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):

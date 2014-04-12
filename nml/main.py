@@ -88,7 +88,7 @@ def parse_cli(argv):
     else:
         input_filename = args[0]
         if not os.access(input_filename, os.R_OK):
-            raise generic.ScriptError('Input file "%s" does not exist' % input_filename)
+            raise generic.ScriptError('Input file "{}" does not exist'.format(input_filename))
 
     return opts, input_filename
 
@@ -155,7 +155,7 @@ def main(argv):
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         elif outext == '.dep': outputs.append(output_dep.OutputDEP(output, opts.grf_filename))
         else:
-            generic.print_error("Unknown output format %s" % outext)
+            generic.print_error("Unknown output format {}".format(outext))
             sys.exit(2)
 
     ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.forced_palette, opts.md5_filename)
@@ -172,7 +172,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     try:
         script = inputfile.read()
     except UnicodeDecodeError, ex:
-        raise generic.ScriptError('Input file is not utf-8 encoded: %s' % ex)
+        raise generic.ScriptError('Input file is not utf-8 encoded: {}'.format(ex))
     # Strip a possible BOM
     script = script.lstrip(unicode(codecs.BOM_UTF8, "utf-8"))
 
@@ -266,7 +266,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         pal = palette.validate_palette(im, f)
 
         if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DEFAULT" and pal == "LEGACY"):
-            raise generic.ImageError("Image has '%s' palette, but you forced the '%s' palette" % (pal, used_palette), f)
+            raise generic.ImageError("Image has '{}' palette, but you forced the '{}' palette".format(pal, used_palette), f)
 
         if used_palette == "ANY":
             used_palette = pal
@@ -274,7 +274,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             if used_palette in ("LEGACY", "DEFAULT") and pal in ("LEGACY", "DEFAULT"):
                 used_palette = "DEFAULT"
             else:
-                raise generic.ImageError("Image has '%s' palette, but \"%s\" has the '%s' palette" % (pal, last_file, used_palette), f)
+                raise generic.ImageError("Image has '{}' palette, but \"{}\" has the '{}' palette".format(pal, last_file, used_palette), f)
         last_file = f
 
     palette_bytes = {"LEGACY": "W", "DEFAULT": "D", "ANY": "A"}
@@ -342,7 +342,7 @@ def run():
 
         # User mode: print user friendly error message.
         ex_msg = str(ex)
-        if len(ex_msg) > 0: ex_msg = '"%s"' % ex_msg
+        if len(ex_msg) > 0: ex_msg = '"{}"'.format(ex_msg)
 
         traceback = sys.exc_info()[2]
         # Walk through the traceback object until we get to the point where the exception happened.
@@ -360,13 +360,13 @@ def run():
                    'version' : version,
                    'msg' : ex_msg,
                    'cli' : sys.argv,
-                   'loc' : 'File "%s", line %d, in %s' % (filename, lineno, name) }
+                   'loc' : 'File "{}", line {:d}, in {}'.format(filename, lineno, name)}
 
         msg = "nmlc: An internal error has occurred:\n" \
-              "nmlc-version: %(version)s\n" \
-              "Error:      (%(class)s) %(msg)s.\n" \
-              "Command:    %(cli)s\n" \
-              "Location:   %(loc)s\n" % ex_data
+              "nmlc-version: {version}\n" \
+              "Error:    ({class}) {msg}.\n" \
+              "Command:  {cli}\n" \
+              "Location: {loc}\n".format(**ex_data)
 
         generic.print_error(msg)
         sys.exit(1)

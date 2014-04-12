@@ -63,9 +63,9 @@ class FontGlyphBlock(base_statement.BaseStatement, sprite_container.SpriteContai
         params = [self.font_size, self.base_char]
         if self.image_file is not None:
             params.append(self.image_file)
-        ret = "font_glyph %s(%s) {\n" % (name, ", ".join([str(param) for param in params]))
+        ret = "font_glyph {}({}) {{\n".format(name, ", ".join(str(param) for param in params))
         for sprite in self.sprite_list:
-            ret += "\t%s\n" % str(sprite)
+            ret += "\t{}\n".format(sprite)
         ret += "}\n"
         return ret
 
