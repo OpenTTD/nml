@@ -85,7 +85,9 @@ def reverse_lookup(dic, val):
     @return: A key such that C{dict[key] == val}.
     @rtype:  Type of the matching key.
     """
-    return [k for k, v in dic.iteritems() if v == val][0]
+    for k, v in dic.iteritems():
+        if v == val: return k
+    raise AssertionError("Value not found in the dictionary.")
 
 class Position(object):
     """
