@@ -983,7 +983,7 @@ def parse_varaction2(switch_block):
     offset += parser.var_list_size + 1 # +1 for the byte num-ranges
 
     none_result = None
-    if any(map(lambda x: x is not None and x.value is None, [r.result for r in switch_block.body.ranges] + [switch_block.body.default])):
+    if any(x is not None and x.value is None for x in [r.result for r in switch_block.body.ranges] + [switch_block.body.default]):
         # Computed result is returned in at least one result
         if len(switch_block.body.ranges) == 0:
             # There is only a default, which is 'return computed result', so we're fine

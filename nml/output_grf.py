@@ -544,8 +544,8 @@ class OutputGRF(output_base.BinaryOutputBase):
             mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
 
             # Check for white pixels; those that cause "artefacts" when shading
-            if 255 in mask_sprite.getdata():
-                white_pixels = len(filter(lambda p: p == 255, mask_sprite.getdata()))
+            white_pixels = sum(1 for p in mask_sprite.getdata() if p == 255)
+            if white_pixels > 0:
                 pixels = size_x * size_y
                 image_pos = generic.PixelPosition(filename_8bpp.value, x, y)
                 warning = "%s: %i of %i pixels (%i%%) are pure white" % (str(image_pos), white_pixels, pixels, white_pixels * 100 // pixels)

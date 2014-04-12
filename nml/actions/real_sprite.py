@@ -92,8 +92,8 @@ palmap_w2d = [
         220, 221, 222, 223, 224, 225, 226, 255, # 248..255
 ]
 
-translate_w2d = ''.join(map(chr, palmap_w2d))
-translate_d2w = ''.join(map(chr, palmap_d2w))
+translate_w2d = ''.join(chr(v) for v in palmap_w2d)
+translate_d2w = ''.join(chr(v) for v in palmap_d2w)
 
 def convert_palette(pal):
     ret = 256 * [0]

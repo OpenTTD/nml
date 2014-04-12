@@ -60,7 +60,7 @@ class Variable(Expression):
         shift = self.shift.reduce(id_dicts)
         mask = self.mask.reduce(id_dicts)
         param = self.param.reduce(id_dicts) if self.param is not None else None
-        if not all(map(lambda x: x.type() == Type.INTEGER, (num, shift, mask))) or \
+        if num.type() != Type.INTEGER or shift.type() != Type.INTEGER or mask.type() != Type.INTEGER or \
                 (param is not None and param.type() != Type.INTEGER):
             raise generic.ScriptError("All parts of a variable access must be integers.", self.pos)
         var = Variable(num, shift, mask, param, self.pos)

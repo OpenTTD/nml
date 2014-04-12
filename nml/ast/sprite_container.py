@@ -52,11 +52,10 @@ class SpriteContainer(object):
 
     def get_all_sprite_data(self):
         """
-        Get all sprite data as a list of 4-tuples (sprite_list, default_file, default_mask_file, zoom_level, bit_depth)
+        Get all sprite data as a list of 5-tuples (sprite_list, default_file, default_mask_file, zoom_level, bit_depth)
         Sorting makes sure that the order is consistent, and that the normal zoom, 8bpp sprites appear first
         """
-        keys = sorted(self.sprite_data)
-        return map(lambda key: (self.sprite_data[key][0], self.sprite_data[key][1], self.sprite_data[key][2], key[0], key[1]), keys)
+        return [(self.sprite_data[key][0], self.sprite_data[key][1], self.sprite_data[key][2], key[0], key[1]) for key in sorted(self.sprite_data)]
 
     @classmethod
     def resolve_sprite_block(cls, block_name):

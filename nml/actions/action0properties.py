@@ -720,7 +720,7 @@ class IndustryLayoutProp(BaseAction0Property):
         return size
 
 def industry_layouts(value):
-    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, Identifier), value.values)):
+    if not isinstance(value, Array) or not all(isinstance(x, Identifier) for x in value.values):
         raise generic.ScriptError("layouts must be an array of layout names", value.pos)
     layouts = []
     for name in value.values:
@@ -753,7 +753,7 @@ class RandomSoundsProp(BaseAction0Property):
         return len(self.sound_list) + 2
 
 def random_sounds(value):
-    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, ConstantNumeric), value.values)):
+    if not isinstance(value, Array) or not all(isinstance(x, ConstantNumeric) for x in value.values):
         raise generic.ScriptError("random_sound_effects must be an array with sounds effects", value.pos)
     return [RandomSoundsProp(value.values)]
 
@@ -890,7 +890,7 @@ class AirportLayoutProp(BaseAction0Property):
         return size
 
 def airport_layouts(value):
-    if not isinstance(value, Array) or not all(map(lambda x: isinstance(x, Identifier), value.values)):
+    if not isinstance(value, Array) or not all(isinstance(x, Identifier) for x in value.values):
         raise generic.ScriptError("layouts must be an array of layout names", value.pos)
     layouts = []
     for name in value.values:

@@ -73,7 +73,7 @@ def get_production_actions(produce):
 
     result_list = []
     varact2parser = action2var.Varaction2Parser(0x0A)
-    if all(map(lambda x: x.supported_by_actionD(False), produce.param_list)):
+    if all(x.supported_by_actionD(False) for x in produce.param_list):
         version = 0
         offset = 1
         for i, param in enumerate(produce.param_list):
