@@ -86,8 +86,8 @@ def compute_table(snowline):
 
             # Factor out common factors
             gcd = generic.greatest_common_divisor(mul, div)
-            mul /= gcd
-            div /= gcd
+            mul //= gcd
+            div //= gcd
 
             if isinstance(height, (expression.ConstantNumeric, expression.ConstantFloat)):
                 # Even if mul == div == 1, we have to round floats and adjust value

@@ -299,8 +299,8 @@ def parse_property_value(prop_info, value, unit = None, size_bit = None):
 
         # Factor out common factors
         gcd = generic.greatest_common_divisor(mul, div)
-        mul /= gcd
-        div /= gcd
+        mul //= gcd
+        div //= gcd
 
         if isinstance(value, (expression.ConstantNumeric, expression.ConstantFloat)):
             # Even if mul == div == 1, we have to round floats and adjust value

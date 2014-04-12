@@ -68,7 +68,7 @@ class Action0Property(BaseAction0Property):
                 biggest = 1 << (8 * size)
                 if val.value >= biggest:
                     raise generic.ScriptError("Action 0 property too large", val.pos)
-                elif val.value < 0 and val.value + (biggest / 2) < 0:
+                elif val.value < 0 and val.value + (biggest // 2) < 0:
                     raise generic.ScriptError("Action 0 property too small", val.pos)
 
     def write(self, file):
@@ -255,7 +255,7 @@ general_veh_props = {
 }
 
 def ottd_display_speed(value, divisor, unit):
-    return int(value.value / divisor) * 10 / 16 * unit.ottd_mul >> unit.ottd_shift
+    return int(value.value / divisor) * 10 // 16 * unit.ottd_mul >> unit.ottd_shift
 
 class CargotypeListProp(BaseAction0Property):
     def __init__(self, prop_num, data):

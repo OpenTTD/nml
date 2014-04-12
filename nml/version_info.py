@@ -36,7 +36,7 @@ def get_hg_version():
 
         # Get the date of the commit of the current NML version in days since January 1st 2000
         ctimes = (subprocess.Popen(["hg", "-R", path, "parent", "--template='{date|hgdate} {date|shortdate}\n'"], stdout=subprocess.PIPE).communicate()[0]).split()
-        ctime = (int((ctimes[0].split("'"))[1]) - 946684800) / (60 * 60 * 24)
+        ctime = (int((ctimes[0].split("'"))[1]) - 946684800) // (60 * 60 * 24)
         revision = str(ctime) # version_list[1].rstrip('+')
 
         # Combine the version string
