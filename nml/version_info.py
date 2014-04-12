@@ -53,7 +53,7 @@ def get_hg_version():
         revision = str(ctime) # version_list[1].rstrip('+')
 
         # Combine the version string
-        version += "{}.r{}{}:{} from {}".format(next_release_version, revision, modified, hash, ctimes[2].split("'", maxsplit = 1)[0])
+        version += "{}.r{}{}:{} from {}".format(next_release_version, revision, modified, hash, ctimes[2].split("'", 1)[0])
 
         # Test whether we have a tag (=release version) and add it, if found
         if len(version_list) > 2 and version_list[2] != 'tip' and modified == '':
