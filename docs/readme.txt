@@ -47,7 +47,7 @@ http://dev.openttdcoop.org/projects/nml or via IRC on the
 ---- ----------------------
 NML requires the following 3rd party packages to run:
  - python
-     Minimal version is 2.5. Python 3 is not yet supported.
+     Minimal version is 2.6. Python 3 is not yet supported.
  - python image library
      downloadable from http://www.pythonware.com/products/pil/
  - ply

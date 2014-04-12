@@ -6,8 +6,8 @@ from setuptools import setup
 
 
 version = sys.version_info
-if version[0] < 2 or (version[0] == 2 and version[1] < 5):
-    sys.exit('ERROR: Sorry, python 2.5 ... < 3.0 is required for this application.')
+if version[0] < 2 or (version[0] == 2 and version[1] < 6):
+    sys.exit('ERROR: Sorry, python 2.6 ... < 3.0 is required for this application.')
 if version[0] >= 3:
     sys.exit('WARNING: Sorry, python 3.0 or later is not yet supported. Some parts may not work.')
 

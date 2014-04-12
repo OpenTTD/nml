@@ -24,7 +24,7 @@ License:        GPL-2.0+
 Group:          Development/Tools/Building
 Url:            http://dev.openttdcoop.org/projects/nml
 Source0:        http://bundles.openttdcoop.org/nml/releases/%{version}/%{name}-%{version}.src.tar.gz
-BuildRequires:  python-devel >= 2.5
+BuildRequires:  python-devel >= 2.6
 BuildRequires:  python-setuptools
 #We need for regression test the required packages also on building:
 BuildRequires:  python-imaging
