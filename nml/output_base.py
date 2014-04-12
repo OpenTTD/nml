@@ -83,24 +83,24 @@ class BinaryOutputBase(OutputBase):
     """
     Base class for output to a binary data file.
 
-    @ivar _in_sprite: Set to true if we are currently outputting a sprite.
+    @ivar in_sprite: Set to true if we are currently outputting a sprite.
                         Outputting anything when not in a sprite causes an assert.
-    @type _in_sprite: C{bool}
+    @type in_sprite: C{bool}
 
-    @ivar _byte_count: Number of bytes written in the current sprite.
-    @type _byte_count: C{int}
+    @ivar byte_count: Number of bytes written in the current sprite.
+    @type byte_count: C{int}
 
-    @ivar _expected_count: Number of bytes expected in the current sprite.
-    @type _expected_count: C{int}
+    @ivar expected_count: Number of bytes expected in the current sprite.
+    @type expected_count: C{int}
     """
     def __init__(self, filename):
         OutputBase.__init__(self, filename)
-        self._in_sprite = False
-        self._expected_count = 0
-        self._byte_count = 0
+        self.in_sprite = False
+        self.expected_count = 0
+        self.byte_count = 0
 
     def pre_close(self):
-        assert not self._in_sprite
+        assert not self.in_sprite
 
     def prepare_byte(self, value):
         """
@@ -114,10 +114,10 @@ class BinaryOutputBase(OutputBase):
 
         @precond: Must be outputting a sprite.
         """
-        assert self._in_sprite
+        assert self.in_sprite
         if -0x80 <= value < 0 : value += 0x100
         assert value >= 0 and value <= 0xFF
-        self._byte_count += 1
+        self.byte_count += 1
         return value
 
     def prepare_word(self, value):
@@ -132,10 +132,10 @@ class BinaryOutputBase(OutputBase):
 
         @precond: Must be outputting a sprite.
         """
-        assert self._in_sprite
+        assert self.in_sprite
         if -0x8000 <= value < 0: value += 0x10000
         assert value >= 0 and value <= 0xFFFF
-        self._byte_count += 2
+        self.byte_count += 2
         return value
 
     def prepare_dword(self, value):
@@ -150,10 +150,10 @@ class BinaryOutputBase(OutputBase):
 
         @precond: Must be outputting a sprite.
         """
-        assert self._in_sprite
+        assert self.in_sprite
         if -0x80000000 <= value < 0: value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
-        self._byte_count += 4
+        self.byte_count += 4
         return value
 
     def print_varx(self, value, size):
@@ -237,10 +237,10 @@ class BinaryOutputBase(OutputBase):
         @param expected_size: Expected size of the sprite data.
         @type  expected_size: C{int}
         """
-        assert not self._in_sprite
-        self._in_sprite = True
-        self._expected_count = expected_size
-        self._byte_count = 0
+        assert not self.in_sprite
+        self.in_sprite = True
+        self.expected_count = expected_size
+        self.byte_count = 0
 
     def end_sprite(self):
         """
@@ -248,8 +248,8 @@ class BinaryOutputBase(OutputBase):
         bytes denoted as expected size with the L{start_sprite} call, should
         have been written.
         """
-        assert self._in_sprite
-        self._in_sprite = False
+        assert self.in_sprite
+        self.in_sprite = False
         self.newline()
-        assert self._expected_count == self._byte_count, "Expected %d bytes to be written to sprite, got %d" % (self._expected_count, self._byte_count)
+        assert self.expected_count == self.byte_count, "Expected %d bytes to be written to sprite, got %d" % (self.expected_count, self.byte_count)
 

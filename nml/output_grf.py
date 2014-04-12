@@ -330,10 +330,10 @@ class OutputGRF(output_base.BinaryOutputBase):
         assert not any(self.used_sprite_files.values()), "Invalid sprite file cache"
 
         #add end-of-chunks
-        self._in_sprite = True
+        self.in_sprite = True
         self.print_dword(0, self.data_output)
         self.print_dword(0, self.sprite_output)
-        self._in_sprite = False
+        self.in_sprite = False
 
         #add header
         header = array.array('B', [0x00, 0x00, ord('G'), ord('R'), ord('F'), 0x82, 0x0D, 0x0A, 0x1A, 0x0A])
@@ -370,7 +370,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         """
         if stream is None: stream = self.data_output
         stream.extend(data)
-        self._byte_count += len(data)
+        self.byte_count += len(data)
 
     def wb(self, byte, stream):
         if stream is None: stream = self.data_output
@@ -442,7 +442,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 # The compression byte (=type) is counted when in the sprite section,
                 # however since this is a sound we need to emit the sprite number as well.
                 self.print_dword(self.sprite_num, stream)
-                self._byte_count -= 3
+                self.byte_count -= 3
             self.print_dword(size, stream)
             self.print_byte(type, stream)
         elif type == 0xFD:
@@ -578,8 +578,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.end_sprite()
 
     def wsprite_header(self, size_x, size_y, size, xoffset, yoffset, info, zoom_level, write_cache):
-        self._expected_count += size + 18
-        if write_cache: self._expected_count += size # With caching, the image data is written twice
+        self.expected_count += size + 18
+        if write_cache: self.expected_count += size # With caching, the image data is written twice
         self.print_dword(self.sprite_num, self.sprite_output)
         self.print_dword(size + 10, self.sprite_output)
         self.print_byte(info, self.sprite_output)
@@ -809,7 +809,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.print_dword(4)
         self.print_byte(0xfd)
         self.print_dword(self.sprite_num)
-        self._byte_count -= 9
+        self.byte_count -= 9
         self.end_sprite()
 
     def end_sprite(self):

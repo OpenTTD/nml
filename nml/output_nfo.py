@@ -74,24 +74,24 @@ class OutputNFO(output_base.BinaryOutputBase):
         self.file.write("\\dx%08X " % value)
 
     def print_string(self, value, final_zero = True, force_ascii = False):
-        assert self._in_sprite
+        assert self.in_sprite
         self.file.write('"')
         if not grfstrings.is_ascii_string(value):
             if force_ascii:
                 raise generic.ScriptError("Expected ascii string but got a unicode string")
             self.file.write('\xC3\x9E'.decode('utf-8'))
         self.file.write(value.replace('"', '\\"'))
-        self._byte_count += grfstrings.get_string_size(value, final_zero, force_ascii)
+        self.byte_count += grfstrings.get_string_size(value, final_zero, force_ascii)
         self.file.write('" ')
         if final_zero:
             self.print_bytex(0)
             # get_string_size already includes the final 0 byte
-            # but print_bytex also increases _byte_count, so decrease
+            # but print_bytex also increases byte_count, so decrease
             # it here by one to correct it.
-            self._byte_count -= 1
+            self.byte_count -= 1
 
     def print_decimal(self, value):
-        assert self._in_sprite
+        assert self.in_sprite
         self.file.write(str(value) + " ")
 
     def newline(self, msg = "", prefix = "\t"):
