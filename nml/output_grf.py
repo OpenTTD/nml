@@ -88,7 +88,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         # If the file happens to be in use or non-existant, ignore
         try:
             os.unlink(self.filename)
-        except Exception:
+        except OSError:
             pass
         return open(self.filename, 'wb')
 
@@ -151,7 +151,7 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         try:
             # Just assert and print a generic message on errors, as the cache data should be correct
-            # Not asserting coould lead to errors later on
+            # Not asserting could lead to errors later on
             # Also, it doesn't make sense to inform the user about things he shouldn't know about and can't fix
             sprite_index = json.load(index_file)
             assert isinstance(sprite_index, list)
@@ -670,7 +670,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                     break
 
                 # Grab as many non-transparent pixels as possible, but not without x2-x1 going out of bounds
-                # Only stop the chunck when encountering 3 consectutive transparent pixels
+                # Only stop the chunk when encountering 3 consecutive transparent pixels
                 x2 = x1 + 1
                 while x2 - x1 < max_chunk_len and (
 -                        (x2 < size_x and data[line_start + x2*bpp + trans_offset] != 0) or

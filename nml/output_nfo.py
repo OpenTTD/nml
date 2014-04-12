@@ -101,7 +101,6 @@ class OutputNFO(output_base.SpriteOutputBase):
         if msg != "": msg = prefix + "// " + msg
         self.file.write(msg + "\n")
 
-
     def comment(self, msg):
         self.file.write("// " + msg + "\n")
 
