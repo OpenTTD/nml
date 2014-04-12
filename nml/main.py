@@ -299,13 +299,18 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
 
     md5 = None
     for outputfile in outputfiles:
-        if isinstance(outputfile, output_base.BinaryOutputBase):
+        if isinstance(outputfile, output_grf.OutputGRF):
             outputfile.open()
             for action in actions:
                 action.write(outputfile)
             outputfile.close()
-            if isinstance(outputfile, output_grf.OutputGRF):
-                md5 = outputfile.get_md5()
+            md5 = outputfile.get_md5()
+
+        if isinstance(outputfile, output_nfo.OutputNFO):
+            outputfile.open()
+            for action in actions:
+                action.write(outputfile)
+            outputfile.close()
 
     if md5 is not None and md5_filename is not None:
         with open(md5_filename, 'w') as f:

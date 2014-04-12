@@ -29,7 +29,7 @@ class BaseAction0Property(object):
         Write this property to the output given by file.
 
         @param file: The outputfile we have to write to.
-        @type  file: L{BinaryOutputBase}
+        @type  file: L{SpriteOutputBase}
         """
         raise NotImplementedError('write is not implemented in %r' % type(self))
 

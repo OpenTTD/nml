@@ -17,12 +17,12 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import codecs
 from nml import generic, grfstrings, output_base
 
-class OutputDEP(output_base.OutputBase):
+class OutputDEP(output_base.TextOutputBase):
     """
     Class for output to a dependency file in makefile format.
     """
     def __init__(self, filename, grf_filename):
-        output_base.OutputBase.__init__(self, filename)
+        output_base.TextOutputBase.__init__(self, filename)
         self.grf_filename = grf_filename
 
     def open_file(self):

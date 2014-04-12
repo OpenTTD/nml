@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 # -*- coding: utf-8 -*-
-import codecs
+import codecs, StringIO
 from nml import generic, grfstrings, output_base
 
 zoom_levels = {
@@ -31,10 +31,13 @@ bit_depths = {
     32 : '32bpp',
 }
 
-class OutputNFO(output_base.BinaryOutputBase):
+class OutputNFO(output_base.SpriteOutputBase):
     def __init__(self, filename, start_sprite_num):
-        output_base.BinaryOutputBase.__init__(self, filename)
+        output_base.SpriteOutputBase.__init__(self, filename)
         self.sprite_num = start_sprite_num
+
+    def open(self):
+        self.file = StringIO.StringIO()
 
     def open_file(self):
         handle = codecs.open(self.filename, 'w', 'utf-8')
@@ -103,7 +106,7 @@ class OutputNFO(output_base.BinaryOutputBase):
         self.file.write("// " + msg + "\n")
 
     def start_sprite(self, size, is_real_sprite = False):
-        output_base.BinaryOutputBase.start_sprite(self, size)
+        output_base.SpriteOutputBase.start_sprite(self, size)
         self.print_decimal(self.sprite_num)
         self.sprite_num += 1
         if not is_real_sprite:

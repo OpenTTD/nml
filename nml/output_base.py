@@ -44,7 +44,7 @@ class OutputBase(object):
         """
         Open the output file. Data gets stored in-memory.
         """
-        self.file = StringIO.StringIO()
+        raise NotImplementedError("Implement me in %s" % type(self))
 
     def open_file(self):
         """
@@ -79,9 +79,10 @@ class OutputBase(object):
         """
         return False
 
-class BinaryOutputBase(OutputBase):
+
+class SpriteOutputBase(OutputBase):
     """
-    Base class for output to a binary data file.
+    Base class for output to a sprite file.
 
     @ivar in_sprite: Set to true if we are currently outputting a sprite.
                         Outputting anything when not in a sprite causes an assert.
@@ -253,3 +254,24 @@ class BinaryOutputBase(OutputBase):
         self.newline()
         assert self.expected_count == self.byte_count, "Expected %d bytes to be written to sprite, got %d" % (self.expected_count, self.byte_count)
 
+
+class TextOutputBase(OutputBase):
+    """
+    Base class for textual output.
+    """
+    def __init__(self, filename):
+        OutputBase.__init__(self, filename)
+
+    def open(self):
+        self.file = StringIO.StringIO()
+
+
+class BinaryOutputBase(SpriteOutputBase):
+    """
+    Class for binary output.
+    """
+    def __init__(self, filename):
+        SpriteOutputBase.__init__(self, filename)
+
+    def open(self):
+        self.file = StringIO.StringIO()

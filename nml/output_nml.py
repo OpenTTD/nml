@@ -16,12 +16,12 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import codecs
 from nml import output_base
 
-class OutputNML(output_base.OutputBase):
+class OutputNML(output_base.TextOutputBase):
     """
     Class for outputting NML.
     """
     def __init__(self, filename):
-        output_base.OutputBase.__init__(self, filename)
+        output_base.TextOutputBase.__init__(self, filename)
 
     def open_file(self):
         return codecs.open(self.filename, 'w', 'utf-8')
