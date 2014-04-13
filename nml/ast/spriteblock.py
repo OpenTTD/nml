@@ -229,7 +229,7 @@ class SpriteLayout(spritelayout_base_class):
         action_list = []
         if self.prepare_act2_output():
             for feature in sorted(self.feature_set):
-                action_list.extend(action2layout.get_layout_action2s(self, feature))
+                action_list.extend(action2layout.get_layout_action2s(self, feature, self.pos))
         return action_list
 
 class LayoutSprite(object):

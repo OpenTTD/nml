@@ -369,7 +369,11 @@ class Action2LayoutSprite(object):
         self.create_register(name, value)
         return None
 
-def get_layout_action2s(spritelayout, feature):
+def get_layout_action2s(spritelayout, feature, spr_pos):
+    """
+    @param spr_pos: Position information of the sprite view.
+    @type  spr_pos: L{Position}
+    """
     ground_sprite = None
     building_sprites = []
     actions = []
@@ -421,7 +425,7 @@ def get_layout_action2s(spritelayout, feature):
     if ground_sprite is None:
         if len(building_sprites) == 0:
             #no sprites defined at all, that's not very much.
-            raise generic.ScriptError("Sprite layout requires at least one sprite", spritegroup.pos)
+            raise generic.ScriptError("Sprite layout requires at least one sprite", spr_pos)
         #set to 0 for no ground sprite
         ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
         ground_sprite.set_param(expression.Identifier('sprite'), expression.ConstantNumeric(0))
