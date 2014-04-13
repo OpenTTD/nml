@@ -567,7 +567,7 @@ def house_available_mask(value):
     # User sets [town_zones, climates] array
     # Which is mapped to (town_zones | (climates & 0x800) | ((climates & 0xF) << 12))
     if not isinstance(value, Array) or len(value.values) != 2:
-        raise generic.ScriptError("availability_mask must be an array with exactly 2 values", value.pos)\
+        raise generic.ScriptError("availability_mask must be an array with exactly 2 values", value.pos)
 
     climates = BinOp(nmlop.AND, value.values[1], ConstantNumeric(0xF, value.pos), value.pos)
     climates = BinOp(nmlop.SHIFT_LEFT, climates, ConstantNumeric(12, value.pos), value.pos)
