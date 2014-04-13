@@ -18,11 +18,41 @@ from .expression.base_expression import Type, ConstantNumeric, ConstantFloat
 from nml import generic
 
 class Operator(object):
+    """
+    Operator in an expression.
+
+    @ivar act2_supports: Whether the operator is supported by action 2.
+    @type act2_supports: C{bool}
+
+    @ivar act2_str: NFO text representation of the operator in action 2.
+    @type act2_str: C{str} or C{None}
+
+    @ivar act2_num: Numeric value of the operator in action 2.
+    @type act2_num: C{int} or C{None}
+
+    @ivar actd_supports: Whether the operator is supported by action D.
+    @type actd_supports: C{bool}
+
+    @ivar actd_str: NFO text representation of the operator in action D.
+    @type actd_str: C{str} or C{None}
+
+    @ivar actd_num: Numeric value of the operator in action D.
+    @type actd_num: C{int} or C{None}
+
+    @ivar returns_boolean: Whether the operator gives a boolean result.
+    @type returns_boolean: C{bool}
+
+    @ivar token: Infix text to use for the string representation of the operator.
+    @type token: C{None} or C{str}
+
+    @ivar prefix_text: Prefix text to use for the string representation of the operator, if available.
+    @type prefix_text: C{None} or C{str}
+    """
     def __init__(self,
             act2_supports = False, act2_str = None, act2_num = None,
             actd_supports = False, actd_str = None, actd_num = None,
             returns_boolean = False,
-            token = None,
+            token = None, prefix_text = None,
             compiletime_func = None,
             validate_func = None):
         self.act2_supports = act2_supports
@@ -33,11 +63,27 @@ class Operator(object):
         self.actd_num = actd_num
         self.returns_boolean = returns_boolean
         self.token = token
+        self.prefix_text = prefix_text
         self.compiletime_func = compiletime_func
         self.validate_func = validate_func
 
     def to_string(self, expr1, expr2):
-        return '({} {} {})'.format(expr1, self.token, expr2)
+        """
+        Convert expression to readable string form.
+
+        @param expr1: Left child expression text.
+        @type  expr1: C{str}
+
+        @param expr2: Right child expression text.
+        @type  expr2: C{str}
+
+        @return: Text representation of the operator with its child expressions.
+        @rtype:  C{str}
+        """
+        if self.prefix_text is not None:
+            return '{}({}, {})'.format(self.prefix_text, expr1, expr2)
+        else: # Infix notation.
+            return '({} {} {})'.format(expr1, self.token, expr2)
 
 def unsigned_rshift(a, b):
     if a < 0:
@@ -199,6 +245,7 @@ MIN = Operator(
     act2_supports = True, act2_str = r'\2<', act2_num = 2,
     actd_supports = True,
     compiletime_func = min,
+    prefix_text = "min",
     validate_func = validate_func_float,
 )
 
@@ -206,16 +253,19 @@ MAX = Operator(
     act2_supports = True, act2_str = r'\2>', act2_num = 3,
     actd_supports = True,
     compiletime_func = max,
+    prefix_text = "max",
     validate_func = validate_func_float,
 )
 
 STO_TMP = Operator(
     act2_supports = True, act2_str = r'\2sto', act2_num = 14,
+    prefix_text = "STORE_TEMP",
     validate_func = validate_func_rhs_positive,
 )
 
 STO_PERM = Operator(
     act2_supports = True, act2_str = r'\2psto', act2_num = 16,
+    prefix_text = "STORE_PERM",
     validate_func = validate_func_rhs_positive,
 )
 
@@ -247,6 +297,7 @@ HASBIT = Operator(
     act2_supports = True,
     actd_supports = True,
     returns_boolean = True,
+    prefix_text = "hasbit",
     compiletime_func = lambda a, b: (a & (1 << b)) != 0,
     validate_func = validate_func_rhs_positive,
 )
@@ -256,6 +307,7 @@ NOTHASBIT = Operator(
     act2_supports = True,
     actd_supports = True,
     returns_boolean = True,
+    prefix_text = "!hasbit",
     compiletime_func = lambda a, b: (a & (1 << b)) == 0,
 )
 
@@ -275,10 +327,12 @@ SHIFTU_LEFT = Operator(
 
 VACT2_CMP = Operator(
     act2_supports = True, act2_str = r'\2cmp', act2_num = 18,
+    prefix_text = "CMP",
 )
 
 VACT2_UCMP = Operator(
     act2_supports = True, act2_str = r'\2ucmp', act2_num = 19,
+    prefix_text = "UCMP",
 )
 
 MINU = Operator(
@@ -287,6 +341,7 @@ MINU = Operator(
 
 ROT_RIGHT = Operator(
     act2_supports = True, act2_str = r'\2ror', act2_num = 17,
+    prefix_text = "rotate",
     compiletime_func = unsigned_rrotate,
     validate_func = validate_func_int,
 )
@@ -295,19 +350,6 @@ DIVU = Operator(
     act2_supports = True, act2_str = r'\2u/', act2_num = 8,
     actd_supports = True, actd_str = r'\Du/', actd_num = 9,
 )
-
-
-MIN.to_string = lambda expr1, expr2: 'min({}, {})'.format(expr1, expr2)
-MAX.to_string = lambda expr1, expr2: 'max({}, {})'.format(expr1, expr2)
-STO_TMP.to_string = lambda expr1, expr2: 'STORE_TEMP({}, {})'.format(expr1, expr2)
-STO_PERM.to_string = lambda expr1, expr2: 'STORE_PERM({}, {})'.format(expr1, expr2)
-HASBIT.to_string = lambda expr1, expr2: 'hasbit({}, {})'.format(expr1, expr2)
-NOTHASBIT.to_string = lambda expr1, expr2: '!hasbit({}, {})'.format(expr1, expr2)
-VACT2_CMP.to_string = lambda expr1, expr2: 'CMP({}, {})'.format(expr1, expr2)
-VACT2_UCMP.to_string = lambda expr1, expr2: 'UCMP({}, {})'.format(expr1, expr2)
-ROT_RIGHT.to_string = lambda expr1, expr2: 'rotate({}, {})'.format(expr1, expr2)
-
-
 
 class GRMOperator(object):
     def __init__(self, op_str, op_num):
