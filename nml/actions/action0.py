@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.actions.action0properties import BaseAction0Property, Action0Property, properties, two_byte_property
 from nml import generic, expression, nmlop, grfstrings
-from nml.actions import base_action, action4, action6, actionD, actionE, action7
+from nml.actions import base_action, action4, action6, actionD, action7
 from nml.ast import general
 
 # Number of tiles for various house sizes

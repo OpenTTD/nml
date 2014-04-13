@@ -18,7 +18,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 # get_numeric_version is used only for the purpose of packet creation,
 # in all other cases use get_nml_version()
 
-import subprocess, os, sys
+import subprocess, os
 
 def get_child_output(cmd):
     """

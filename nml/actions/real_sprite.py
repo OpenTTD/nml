@@ -16,7 +16,6 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic, expression
 from nml.actions import base_action
 from nml.ast import assignment
-import os
 try:
     from PIL import Image
 except ImportError:

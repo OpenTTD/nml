@@ -17,7 +17,6 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 Action 11 support classes (sounds).
 """
 import os
-from operator import itemgetter
 from nml import generic
 from nml.actions import base_action, action0
 

@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 # -*- coding: utf-8 -*-
 import codecs
-from nml import generic, grfstrings, output_base
+from nml import output_base
 
 class OutputDEP(output_base.TextOutputBase):
     """

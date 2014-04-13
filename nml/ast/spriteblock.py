@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, global_constants
-from nml.actions import action1, action2, action2layout, action2real, real_sprite
+from nml.actions import action2, action2layout, action2real, real_sprite
 from nml.ast import base_statement, sprite_container
 
 class TemplateDeclaration(base_statement.BaseStatement):

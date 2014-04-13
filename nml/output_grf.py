@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import array, hashlib, itertools, json, os
+import array, hashlib, json, os
 from nml import generic, palette, output_base, lz77, grfstrings
 from nml.actions.real_sprite import translate_w2d
 

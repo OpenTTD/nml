@@ -14,9 +14,9 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import sys, os, codecs, optparse
-from nml import generic, grfstrings, parser, version_info, output_base, output_nml, output_nfo, output_grf, output_dep, palette
+from nml import generic, grfstrings, parser, version_info, output_nml, output_nfo, output_grf, output_dep, palette
 from nml.actions import action2layout, action2var, action8, sprite_count, real_sprite, action4, action0, action1, action11
-from nml.ast import general, grf, alt_sprites
+from nml.ast import grf, alt_sprites
 
 try:
     from PIL import Image

@@ -13,8 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, nmlop
-from nml.actions import base_action, action6, actionD
+from nml.actions import base_action
 
 class ActionE(base_action.BaseAction):
     def __init__(self, grfid_list):

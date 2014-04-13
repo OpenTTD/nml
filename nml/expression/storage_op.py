@@ -16,7 +16,6 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from .base_expression import ConstantNumeric, Expression, Type
 from .parameter import parse_string_to_dword
-from .string_literal import StringLiteral
 
 storage_op_info = {
     'STORE_PERM' : {'store': True,  'perm': True,  'grfid': False, 'max': 0x0F},

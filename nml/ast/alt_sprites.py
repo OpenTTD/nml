@@ -13,14 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, generic, global_constants
-from nml.actions import real_sprite
+from nml import expression, generic
 from nml.ast import base_statement, sprite_container
-import os
-try:
-    from PIL import Image
-except ImportError:
-    import Image
 
 """
 Store if there are any 32bpp sprites,

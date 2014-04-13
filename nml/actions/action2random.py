@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml.actions import action2, action2var, action2real, action6
-from nml import generic, expression, global_constants, nmlop
+from nml import generic, expression, nmlop
 
 class Action2Random(action2.Action2):
     def __init__(self, feature, name, type_byte, count, triggers, randbit, nrand):
