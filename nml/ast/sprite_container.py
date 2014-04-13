@@ -49,7 +49,7 @@ class SpriteContainer(object):
             msg = ("Sprites are already defined for {} '{}' for this zoom " +
                    "level / bit depth combination. This data will be overridden.")
             msg = msg.format(self.block_type, self.block_name.value)
-            raise generic.print_warning(msg, pos)
+            generic.print_warning(msg, pos)
         self.sprite_data[key] = (sprite_list, default_file, default_mask_file)
 
     def get_all_sprite_data(self):
