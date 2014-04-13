@@ -604,14 +604,14 @@ def mt_house_prop09(value, num_ids, size_bit):
     if isinstance(value, ConstantNumeric) and (value.value & 0x1D) != 0:
         raise generic.ScriptError("Invalid bits set in house property 'building_flags'.", value.pos)
     ret = [BinOp(nmlop.OR, value, ConstantNumeric(1 << size_bit, value.pos), value.pos).reduce()]
-    for i in range(1, num_ids):
+    for _i in range(1, num_ids):
         ret.append(BinOp(nmlop.AND, value, ConstantNumeric(1 << 5, value.pos), value.pos).reduce())
     return ret
 
 def mt_house_mask(mask, value, num_ids, size_bit):
     # Mask out the bits not present in the 'mask' parameter for additional tiles
     ret = [value]
-    for i in range(1, num_ids):
+    for _i in range(1, num_ids):
         ret.append(BinOp(nmlop.AND, value, ConstantNumeric(mask, value.pos), value.pos).reduce())
     return ret
 
