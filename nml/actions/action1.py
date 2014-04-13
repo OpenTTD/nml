@@ -94,7 +94,7 @@ class SpritesetCollection(base_action.BaseAction):
         for spriteset in spritesets:
             if len(real_sprite.parse_sprite_data(spriteset)) != self.num_sprites_per_spriteset:
                 return False
-        num_new_sets = len([x for x in spritesets if (x not in self.spritesets)])
+        num_new_sets = sum(1 for x in spritesets if x not in self.spritesets)
         return len(self.spritesets) + num_new_sets < 0x100
 
     def add(self, spritesets):

@@ -120,7 +120,7 @@ def main(argv):
         if depgrf_filename is None and opts.grf_filename is not None:
             depgrf_filename = opts.grf_filename
         if depgrf_filename is None and input_filename is not None:
-                depgrf_filename = filename_output_from_input(input_filename, ".grf")
+            depgrf_filename = filename_output_from_input(input_filename, ".grf")
         if depgrf_filename is None:
             raise generic.ScriptError("-M requires either a target grf file via -MT, an input filename or a valid output via --grf")
 

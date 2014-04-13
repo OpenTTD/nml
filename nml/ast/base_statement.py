@@ -155,7 +155,7 @@ class BaseStatementList(BaseStatement):
         return action_list
 
     def __str__(self):
-        res = "" 
+        res = ""
         for stmt in self.statements:
             res += '\t' + str(stmt).replace('\n', '\n\t')[0:-1]
         return res

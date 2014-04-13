@@ -24,7 +24,7 @@ class CargoTable(base_statement.BaseStatement):
         generic.OnlyOnce.enforce(self, "cargo table")
         for i, cargo in enumerate(cargo_list):
             if isinstance(cargo, expression.Identifier):
-                 self.cargo_list[i] = expression.StringLiteral(cargo.value, cargo.pos)
+                self.cargo_list[i] = expression.StringLiteral(cargo.value, cargo.pos)
             expression.parse_string_to_dword(self.cargo_list[i])
             global_constants.cargo_numbers[self.cargo_list[i].value] = i
 

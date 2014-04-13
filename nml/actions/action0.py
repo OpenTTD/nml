@@ -51,7 +51,7 @@ def adjust_value(value, org_value, unit, ottd_convert_func):
     higher_value = value
 
     if abs(ottd_convert_func(lower_value, unit) - org_value.value) < abs(ottd_convert_func(higher_value, unit) - org_value.value):
-      return lower_value
+        return lower_value
     return higher_value
 
 class Action0(base_action.BaseAction):
@@ -556,7 +556,7 @@ class ByteListProp(BaseAction0Property):
         return len(self.data) + 1
 
 def get_snowlinetable_action(snowline_table):
-    assert(len(snowline_table) == 12*32)
+    assert len(snowline_table) == 12*32
 
     action6.free_parameters.save()
     action_list = []
@@ -781,7 +781,7 @@ def parse_sort_block(feature, vehid_list):
         last = cur
         idx -= 1
     return action_list
-    
+
 callback_flag_properties = {
     0x00: {'size': 1, 'num': 0x1E},
     0x01: {'size': 1, 'num': 0x17},

@@ -33,7 +33,7 @@ def set_palette_used(pal):
 def set_preferred_blitter(blitter):
     """
     Set the preferred blitter in the action14 node, if applicable
-    
+
     @param blitter: The blitter to set
     @type blitter: C{str} of length 1
     """

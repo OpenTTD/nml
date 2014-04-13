@@ -288,7 +288,7 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
         # Raise the error only now, to let the 'unknown identifier' take precedence
         if feature >= 5: raise generic.ScriptError("Associating graphics with a specific cargo is possible only for vehicles and stations.", cargo_id.pos)
         if cargo_id.value in cargo_gfx:
-             raise generic.ScriptError("Graphics for cargo {:d} are defined multiple times.".format(cargo_id.value), cargo_id.pos)
+            raise generic.ScriptError("Graphics for cargo {:d} are defined multiple times.".format(cargo_id.value), cargo_id.pos)
         cargo_gfx[cargo_id.value] = graphics.result.value
 
     if graphics_block.default_graphics is not None:
@@ -320,7 +320,7 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
                 cb_flags |= 1 << cb_info['flag_bit']
 
             value_function = cb_info.get('value_function', None)
-            mapping_val = (gfx, value_function) 
+            mapping_val = (gfx, value_function)
 
             # See action3_callbacks for info on possible values
             purchase = cb_info.get('purchase', 0)

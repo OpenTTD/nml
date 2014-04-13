@@ -75,7 +75,7 @@ class MainScript(base_statement.BaseStatementList):
                 base_statement.BaseStatementList.LIST_TYPE_NONE, statements, False, False, False, False)
 
     def __str__(self):
-        res = "" 
+        res = ""
         for stmt in self.statements:
             res += str(stmt) + '\n'
         return res
