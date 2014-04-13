@@ -231,7 +231,7 @@ class GraphicsBlock(graphics_base_class):
             graphics_def.reduce_expressions(item_feature)
         if self.default_graphics is not None:
             if self.default_graphics.value is None:
-                raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.result.pos)
+                raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.pos)
             self.default_graphics.value = action2var.reduce_varaction2_expr(self.default_graphics.value, item_feature)
 
         # initialize base class and pre_process it as well (in that order)
