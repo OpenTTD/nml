@@ -673,15 +673,15 @@ class OutputGRF(output_base.BinaryOutputBase):
                 # Only stop the chunk when encountering 3 consecutive transparent pixels
                 x2 = x1 + 1
                 while x2 - x1 < max_chunk_len and (
--                        (x2 < size_x and data[line_start + x2*bpp + trans_offset] != 0) or
--                        (x2 + 1 < size_x and data[line_start + (x2+1)*bpp + trans_offset] != 0) or
--                        (x2 + 2 < size_x and data[line_start + (x2+2)*bpp + trans_offset] != 0)):
+                         (x2 < size_x and data[line_start + x2*bpp + trans_offset] != 0) or
+                         (x2 + 1 < size_x and data[line_start + (x2+1)*bpp + trans_offset] != 0) or
+                         (x2 + 2 < size_x and data[line_start + (x2+2)*bpp + trans_offset] != 0)):
                     x2 += 1
                 line_parts.append((x1, x2))
                 x1 = x2
 
             if len(line_parts) == 0:
-                # Completely transparant line
+                # Completely transparent line
                 if long_chunk:
                     output.extend((0, 0x80, 0, 0))
                 else:
@@ -776,7 +776,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         assert len(sprite_data) == size_x * size_y * bpp
 
         compressed_data = self.sprite_compress(sprite_data)
-        data_len = len(sprite_data) #UNcompressed length
+        data_len = len(sprite_data) # Uncompressed length.
         # Try tile compression, and see if it results in a smaller file size
         tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info, bpp)
         if tile_data is not None:
