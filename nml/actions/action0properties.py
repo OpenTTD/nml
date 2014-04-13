@@ -563,8 +563,6 @@ def house_random_colours(value):
             ret = BinOp(nmlop.OR, ret, byte, colour.pos)
     return ret.reduce()
 
-    return [Action0Property(0x17, ConstantNumeric(colours[0] << 24 | colours[1] << 16 | colours[2] << 8 | colours[3]), 4)]
-
 def house_available_mask(value):
     # User sets [town_zones, climates] array
     # Which is mapped to (town_zones | (climates & 0x800) | ((climates & 0xF) << 12))
