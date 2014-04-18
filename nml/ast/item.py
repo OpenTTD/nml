@@ -150,7 +150,7 @@ class Property(object):
         self.value = self.value.reduce(global_constants.const_list, unknown_id_fatal = False)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Property:', self.name.value
+        generic.print_dbg(indentation, 'Property:', self.name.value)
         self.value.debug_print(indentation + 2)
 
     def __str__(self):
@@ -174,7 +174,7 @@ class PropertyBlock(base_statement.BaseStatement):
             prop.pre_process()
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Property block:'
+        generic.print_dbg(indentation, 'Property block:')
         for prop in self.prop_list:
             prop.debug_print(indentation + 2)
 
@@ -199,11 +199,11 @@ class LiveryOverride(base_statement.BaseStatement):
         pass
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Liverry override, wagon id:'
+        generic.print_dbg(indentation, 'Livery override, wagon id:')
         self.wagon_id.debug_print(indentation + 2)
         for graphics in self.graphics_block.graphics_list:
             graphics.debug_print(indentation + 2)
-        print (indentation+2)*' ' + 'Default graphics:', self.graphics_block.default_graphics
+        generic.print_dbg(indentation + 2, 'Default graphics:', self.graphics_block.default_graphics)
 
     def get_action_list(self):
         wagon_id = self.wagon_id.reduce_constant([(global_constants.item_names, global_constants.item_to_id)])
@@ -246,11 +246,11 @@ class GraphicsBlock(graphics_base_class):
         return all_refs
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Graphics block:'
+        generic.print_dbg(indentation, 'Graphics block:')
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
         if self.default_graphics is not None:
-            print (indentation+2)*' ' + 'Default graphics:'
+            generic.print_dbg(indentation + 2, 'Default graphics:')
             self.default_graphics.debug_print(indentation + 4)
 
     def get_action_list(self):
@@ -280,9 +280,9 @@ class GraphicsDefinition(object):
         self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Cargo ID:'
+        generic.print_dbg(indentation, 'Cargo ID:')
         self.cargo_id.debug_print(indentation + 2)
-        print indentation*' ' + 'Result:'
+        generic.print_dbg(indentation, 'Result:')
         self.result.debug_print(indentation + 2)
 
     def __str__(self):

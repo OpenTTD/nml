@@ -60,7 +60,7 @@ class BaseGraphics(base_statement.BaseStatement, sprite_container.SpriteContaine
         if self.sprite_num is not None:
             generic.print_dbg(indentation + 2, 'Sprite number:', self.sprite_num)
 
-        generic.print_dbg(indentation+2)*' ' + 'Sprites:'
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
