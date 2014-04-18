@@ -19,6 +19,25 @@ from .string_literal import StringLiteral
 
 ignore_all_invalid_ids = False
 
+def default_id_func(x, pos):
+    """
+    Default id conversion function.
+
+    @param x: Value to convert.
+    @type  x: C{basestring}, C{int}, or C{float}
+
+    @param pos: Position of the id.
+    @type  pos: L{Position}
+
+    @return: Expression of the id.
+    @rtype:  L{Expression}
+    """
+    if isinstance(x, basestring):
+        return StringLiteral(x, pos)
+    else:
+        return ConstantNumeric(x, pos)
+
+
 class Identifier(Expression):
     def __init__(self, value, pos = None):
         Expression.__init__(self, pos)
@@ -32,18 +51,27 @@ class Identifier(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True, search_func_ptr = False):
         for id_dict in id_dicts:
-            id_d, func = (id_dict, lambda x, pos: StringLiteral(x, pos) if isinstance(x, basestring) else ConstantNumeric(x, pos)) if not isinstance(id_dict, tuple) else id_dict
+            if isinstance(id_dict, tuple):
+                id_d, func = id_dict
+            else:
+                id_d, func = id_dict, default_id_func
+
             if self.value in id_d:
                 if search_func_ptr:
                     # Do not reduce function pointers, since they have no (numerical) value
                     return func(id_d[self.value], self.pos)
                 else:
                     return func(id_d[self.value], self.pos).reduce(id_dicts)
-        if unknown_id_fatal and not ignore_all_invalid_ids: raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
+
+        if unknown_id_fatal and not ignore_all_invalid_ids:
+            raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
+
         return self
 
     def supported_by_actionD(self, raise_error):
-        if raise_error: raise generic.ScriptError("Unknown identifier '{}'".format(self.value), self.pos)
+        if raise_error:
+            raise generic.ScriptError("Unknown identifier '{}'".format(self.value), self.pos)
+
         return False
 
     def __eq__(self, other):
