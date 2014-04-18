@@ -63,9 +63,9 @@ class TileLayout(base_statement.BaseStatement):
         action0properties.tilelayout_names[self.name] = self
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'TileLayout'
+        generic.print_dbg(indentation, 'TileLayout')
         for tile in self.tile_list:
-            print((indentation+2)*' ' + 'At {:d},{:d}:'.format(tile.x, tile.y))
+            generic.print_dbg(indentation + 2, 'At {:d},{:d}:'.format(tile.x, tile.y))
             tile.tiletype.debug_print(indentation + 4)
 
     def get_action_list(self):

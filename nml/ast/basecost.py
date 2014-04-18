@@ -59,7 +59,7 @@ class BaseCost(base_statement.BaseStatement):
         self.costs = new_costs
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Base costs'
+        generic.print_dbg(indentation, 'Base costs')
         for cost in self.costs:
             cost.debug_print(indentation + 2)
 

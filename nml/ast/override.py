@@ -47,9 +47,9 @@ class EngineOverride(base_statement.BaseStatement):
         self.grfid = expression.parse_string_to_dword(self.args[-1].reduce(global_constants.const_list))
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Engine override'
-        print (indentation+2)*' ' + 'Source:', str(self.source_grfid)
-        print (indentation+2)*' ' + 'Target:', str(self.grfid)
+        generic.print_dbg(indentation, 'Engine override')
+        generic.print_dbg(indentation, 'Source:', self.source_grfid)
+        generic.print_dbg(indentation, 'Target:', self.grfid)
 
     def get_action_list(self):
         return action0.get_engine_override_action(self)

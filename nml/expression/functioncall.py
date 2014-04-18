@@ -31,9 +31,9 @@ class FunctionCall(Expression):
         self.params = params
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Call function: ' + self.name.value
+        generic.print_dbg(indentation, 'Call function: ' + self.name.value)
         for param in self.params:
-            print (indentation+2)*' ' + 'Parameter:'
+            generic.print_dbg(indentation + 2, 'Parameter:')
             param.debug_print(indentation + 4)
 
     def __str__(self):

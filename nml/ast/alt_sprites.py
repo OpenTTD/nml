@@ -105,13 +105,14 @@ class AltSpritesBlock(base_statement.BaseStatement):
         block.add_sprite_data(self.sprite_list, self.image_file, self.pos, self.zoom_level, self.bit_depth, self.mask_file)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Alternative sprites'
-        print (indentation+2)*' ' + 'Replacement for sprite:', str(self.name)
-        print (indentation+2)*' ' + 'Zoom level:', str(self.zoom_level)
-        print (indentation+2)*' ' + 'Bit depth:', str(self.bit_depth)
-        print (indentation+2)*' ' + 'Source:', self.image_file.value if self.image_file is not None else 'None'
-        print (indentation+2)*' ' + 'Mask source:', self.mask_file.value if self.mask_file is not None else 'None'
-        print (indentation+2)*' ' + 'Sprites:'
+        generic.print_dbg(indentation, 'Alternative sprites')
+        generic.print_dbg(indentation + 2, 'Replacement for sprite:', self.name)
+        generic.print_dbg(indentation + 2, 'Zoom level:', self.zoom_level)
+        generic.print_dbg(indentation + 2, 'Bit depth:', self.bit_depth)
+        generic.print_dbg(indentation + 2, 'Source:', self.image_file.value if self.image_file is not None else 'None')
+        generic.print_dbg(indentation + 2, 'Mask source:', self.mask_file.value if self.mask_file is not None else 'None')
+
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 

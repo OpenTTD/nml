@@ -48,10 +48,11 @@ class FontGlyphBlock(base_statement.BaseStatement, sprite_container.SpriteContai
         self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Load font glyphs, starting at', self.base_char
-        print (indentation+2)*' ' + 'Font size:  ', self.font_size
-        print (indentation+2)*' ' + 'Source:  ', self.image_file.value if self.image_file is not None else 'None'
-        print (indentation+2)*' ' + 'Sprites:'
+        generic.print_dbg(indentation, 'Load font glyphs, starting at', self.base_char)
+        generic.print_dbg(indentation + 2, 'Font size:  ', self.font_size)
+        generic.print_dbg(indentation + 2, 'Source:  ', self.image_file.value if self.image_file is not None else 'None')
+
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 

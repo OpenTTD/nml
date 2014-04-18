@@ -25,7 +25,7 @@ class Parameter(Expression):
             generic.print_warning("Accessing parameters out of the range 0..63 is not supported and may lead to unexpected behaviour.", pos)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Parameter:'
+        generic.print_dbg(indentation, 'Parameter:')
         self.num.debug_print(indentation + 2)
 
     def __str__(self):
@@ -62,7 +62,7 @@ class OtherGRFParameter(Expression):
         self.num = num
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'OtherGRFParameter:'
+        generic.print_dbg(indentation, 'OtherGRFParameter:')
         self.grfid.debug_print(indentation + 2)
         self.num.debug_print(indentation + 2)
 

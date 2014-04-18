@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+from nml import generic
+
 class Assignment(object):
     """
     Simple storage container for a name / value pair.
@@ -34,10 +36,11 @@ class Assignment(object):
         self.pos = pos
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Assignment'
-        print (indentation+2)*' ' + 'Name:'
+        generic.print_dbg(indentation, 'Assignment')
+        generic.print_dbg(indentation + 2, 'Name:')
         self.name.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Value:'
+
+        generic.print_dbg(indentation + 2, 'Value:')
         self.value.debug_print(indentation + 4)
 
     def __str__(self):
@@ -56,11 +59,11 @@ class UnitAssignment(Assignment):
 
     def debug_print(self, indentation):
         Assignment.debug_print(self, indentation)
-        print (indentation+2)*' ' + 'Unit:'
+        generic.print_dbg(indentation + 2, 'Unit:')
         if self.unit is None:
-            print (indentation+4)*' ' + 'None'
+            generic.print_dbg(indentation + 4, 'None')
         else:
-            print (indentation+4)*' ' + str(self.unit)
+            generic.print_dbg(indentation + 4, self.unit)
 
     def __str__(self):
         if self.unit is None:

@@ -28,7 +28,7 @@ class PatchVariable(Expression):
         self.num = num
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'PatchVariable: ' + str(self.num)
+        generic.print_dbg(indentation, 'PatchVariable:', self.num)
 
     def __str__(self):
         return "PatchVariable({:d})".format(self.num)

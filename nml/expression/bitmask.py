@@ -23,7 +23,7 @@ class BitMask(Expression):
         self.values = values
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Get bitmask:'
+        generic.print_dbg(indentation, 'Get bitmask:')
         for value in self.values:
             value.debug_print(indentation + 2)
 

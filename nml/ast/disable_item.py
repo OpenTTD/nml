@@ -49,12 +49,12 @@ class DisableItem(base_statement.BaseStatement):
             self.last_id = None
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Disable items, feature=' + str(self.feature.value)
+        generic.print_dbg(indentation*' ' + 'Disable items, feature=' + str(self.feature.value))
         if self.first_id is not None:
-            print (indentation+2)*' ' + 'First ID:'
+            generic.print_dbg(indentation + 2, 'First ID:')
             self.first_id.debug_print(indentation + 4)
         if self.last_id is not None:
-            print (indentation+2)*' ' + 'Last ID:'
+            generic.print_dbg(indentation + 2, 'Last ID:')
             self.last_id.debug_print(indentation + 4)
 
     def __str__(self):

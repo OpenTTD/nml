@@ -56,10 +56,12 @@ class Switch(switch_base_class):
         return all_refs
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Switch, Feature = {:d}, name = {}'.format(self.feature_set.copy().pop(), self.name.value)
-        print (2+indentation)*' ' + 'Expression:'
+        generic.print_dbg(indentation, 'Switch, Feature = {:d}, name = {}'.format(self.feature_set.copy().pop(), self.name.value))
+
+        generic.print_dbg(indentation + 2, 'Expression:')
         self.expr.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Body:'
+
+        generic.print_dbg(indentation + 2, 'Body:')
         self.body.debug_print(indentation + 4)
 
     def get_action_list(self):
@@ -104,7 +106,7 @@ class SwitchBody(object):
         for r in self.ranges:
             r.debug_print(indentation)
         if self.default is not None:
-            print indentation*' ' + 'Default:'
+            generic.print_dbg(indentation, 'Default:')
             self.default.debug_print(indentation + 2)
 
     def __str__(self):
@@ -127,11 +129,11 @@ class SwitchRange(object):
             self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Min:'
+        generic.print_dbg(indentation, 'Min:')
         self.min.debug_print(indentation + 2)
-        print indentation*' ' + 'Max:'
+        generic.print_dbg(indentation, 'Max:')
         self.max.debug_print(indentation + 2)
-        print indentation*' ' + 'Result:'
+        generic.print_dbg(indentation, 'Result:')
         self.result.debug_print(indentation + 2)
 
     def __str__(self):
@@ -163,9 +165,9 @@ class SwitchValue(object):
     def debug_print(self, indentation):
         if self.value is None:
             assert self.is_return
-            print indentation*' ' + 'Return computed value'
+            generic.print_dbg(indentation, 'Return computed value')
         else:
-            print indentation*' ' + ('Return value:' if self.is_return else 'Go to block:')
+            generic.print_dbg(indentation, 'Return value:' if self.is_return else 'Go to block:')
             self.value.debug_print(indentation + 2)
 
     def __str__(self):
@@ -259,20 +261,22 @@ class RandomSwitch(switch_base_class):
         return all_refs
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Random'
-        print (2+indentation)*' ' + 'Feature:', self.feature_set.copy().pop()
-        print (2+indentation)*' ' + 'Type:'
+        generic.print_dbg(indentation, 'Random')
+        generic.print_dbg(indentation + 2, 'Feature:', next(iter(self.feature_set)))
+        generic.print_dbg(indentation + 2, 'Type:')
         self.type.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Name:', self.name.value
-        print (2+indentation)*' ' + 'Triggers:'
+        generic.print_dbg(indentation + 2, 'Name:', self.name.value)
+
+        generic.print_dbg(indentation + 2, 'Triggers:')
         self.triggers.debug_print(indentation + 4)
         for dep in self.dependent:
-            print (2+indentation)*' ' + 'Dependent on:'
+            generic.print_dbg(indentation + 2, 'Dependent on:')
             dep.debug_print(indentation + 4)
         for indep in self.independent:
-            print (2+indentation)*' ' + 'Independent from:'
+            generic.print_dbg(indentation + 2, 'Independent from:')
             indep.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Choices:'
+
+        generic.print_dbg(indentation + 2, 'Choices:')
         for choice in self.choices:
             choice.debug_print(indentation + 4)
 
@@ -315,9 +319,10 @@ class RandomChoice(object):
         self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Probability:'
+        generic.print_dbg(indentation, 'Probability:')
         self.probability.debug_print(indentation + 2)
-        print indentation*' ' + 'Result:'
+
+        generic.print_dbg(indentation, 'Result:')
         self.result.debug_print(indentation + 2)
 
     def __str__(self):

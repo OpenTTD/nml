@@ -40,9 +40,9 @@ class SortVehicles(base_statement.BaseStatement):
             raise generic.ScriptError("Second parameter is not an array of one of the items in it could not be reduced to a constant number", self.pos)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sort, feature', hex(self.feature.value)
+        generic.print_dbg(indentation, 'Sort, feature', hex(self.feature.value))
         for id in self.vehid_list.values:
-            print (indentation+2)*' ' + 'Vehicle id:', id
+            generic.print_dbg(indentation + 2, 'Vehicle id:', id)
 
     def get_action_list(self):
         return action0.parse_sort_block(self.feature.value, self.vehid_list.values)

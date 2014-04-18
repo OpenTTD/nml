@@ -29,15 +29,16 @@ class Variable(Expression):
         self.extra_params = []
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Action2 variable'
+        generic.print_dbg(indentation, 'Action2 variable')
         self.num.debug_print(indentation + 2)
         if self.param is not None:
-            print (indentation+2)*' ' + 'Parameter:'
+            generic.print_dbg(indentation + 2, 'Parameter:')
             if isinstance(self.param, basestring):
-                print (indentation+4)*' ' + 'Procedure call:', self.param
+                generic.print_dbg(indentation + 4, 'Procedure call:', self.param)
             else:
                 self.param.debug_print(indentation + 4)
-            if len(self.extra_params) > 0: print (indentation+2)*' ' + 'Extra parameters:'
+            if len(self.extra_params) > 0:
+                generic.print_dbg(indentation + 2, 'Extra parameters:')
             for extra_param in self.extra_params:
                 extra_param.debug_print(indentation + 4)
 

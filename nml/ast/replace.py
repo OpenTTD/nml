@@ -52,12 +52,14 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
         self.start_id = self.start_id.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Replace sprites starting at'
-        self.start_id.debug_print(indentation+2)
-        print (indentation+2)*' ' + 'Source:', self.image_file.value if self.image_file is not None else 'None'
+        generic.print_dbg(indentation, 'Replace sprites starting at')
+        self.start_id.debug_print(indentation + 2)
+
+        generic.print_dbg(indentation + 2, 'Source:', self.image_file.value if self.image_file is not None else 'None')
         if self.block_name is not None:
-            print (indentation+2)*' ' + 'Name:', self.block_name.value
-        print (indentation+2)*' ' + 'Sprites:'
+            generic.print_dbg(indentation + 2, 'Name:', self.block_name.value)
+
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
@@ -118,12 +120,13 @@ class ReplaceNewSprite(base_statement.BaseStatement, sprite_container.SpriteCont
         self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Replace sprites for new features of type', self.type
-        print (indentation+2)*' ' + 'Offset:  ', self.offset
-        print (indentation+2)*' ' + 'Source:  ', self.image_file.value if self.image_file is not None else 'None'
+        generic.print_dbg(indentation, 'Replace sprites for new features of type', self.type)
+        generic.print_dbg(indentation + 2, 'Offset:  ', self.offset)
+        generic.print_dbg(indentation + 2, 'Source:  ', self.image_file.value if self.image_file is not None else 'None')
         if self.block_name is not None:
-            print (indentation+2)*' ' + 'Name:', self.block_name.value
-        print (indentation+2)*' ' + 'Sprites:'
+            generic.print_dbg(indentation + 2, 'Name:', self.block_name.value)
+
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 

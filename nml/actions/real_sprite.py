@@ -115,7 +115,7 @@ class RealSprite(object):
         self.ysize = None
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Real sprite, parameters:'
+        generic.print_dbg(indentation, 'Real sprite, parameters:')
         for param in self.param_list:
             param.debug_print(indentation + 2)
 
@@ -190,9 +190,9 @@ class RecolourSprite(object):
         self.label = label
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Recolour sprite, mapping:'
+        generic.print_dbg(indentation, 'Recolour sprite, mapping:')
         for assignment in self.mapping:
-            print (indentation + 2)*' ' + '{}: {};'.format(assignment.name, assignment.value)
+            generic.print_dbg(indentation + 2, '{}: {};'.format(assignment.name, assignment.value))
 
     def get_labels(self):
         labels = {}
@@ -265,8 +265,8 @@ class TemplateUsage(object):
         self.pos = pos
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Template used:', self.name.value
-        print (indentation+2)*' ' + 'Parameters:'
+        generic.print_dbg(indentation, 'Template used:', self.name.value)
+        generic.print_dbg(indentation + 2, 'Parameters:')
         for param in self.param_list:
             param.debug_print(indentation + 4)
 

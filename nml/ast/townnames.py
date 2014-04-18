@@ -61,11 +61,11 @@ class TownNames(base_statement.BaseStatement):
         else:
             name_text = "(unnamed)"
 
-        print indentation*' ' + 'Town name ' + name_text
+        generic.print_dbg(indentation, 'Town name ' + name_text)
         if self.style_name is not None:
-            print indentation*' ' + "  style name string:", self.style_name
+            generic.print_dbg(indentation, "  style name string:", self.style_name)
         for part in self.parts:
-            print indentation*' ' + "-name part:"
+            generic.print_dbg(indentation, "-name part:")
             part.debug_print(indentation + 2)
 
     def pre_process(self):
@@ -266,7 +266,7 @@ class TownNamesPart(object):
 
     def debug_print(self, indentation):
         total = sum(piece.probability.value for piece in self.pieces)
-        print(indentation*' ' + 'Town names part (total {:d})'.format(total))
+        generic.print_dbg(indentation, 'Town names part (total {:d})'.format(total))
         for piece in self.pieces:
             piece.debug_print(indentation + 2, total)
 
@@ -352,9 +352,12 @@ class TownNamesEntryDefinition(object):
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
-        if isinstance(self.def_number, expression.Identifier): name_text = "name '" + self.def_number.value + "'"
-        else: name_text = "number 0x{:x}".format(self.def_number.value)
-        print indentation*' ' + ('Insert town_name ID {} with probability {:d}/{:d}'.format(name_text, self.probability.value, total))
+        if isinstance(self.def_number, expression.Identifier):
+            name_text = "name '" + self.def_number.value + "'"
+        else:
+            name_text = "number 0x{:x}".format(self.def_number.value)
+
+        generic.print_dbg(indentation, 'Insert town_name ID {} with probability {:d}/{:d}'.format(name_text, self.probability.value, total))
 
     def __str__(self):
         return 'town_names({}, {:d}),'.format(str(self.def_number), self.probability.value)
@@ -409,7 +412,7 @@ class TownNamesEntryText(object):
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
-        print indentation*' ' + ('Text {} with probability {:d}/{:d}'.format(self.text.value, self.probability.value, total))
+        generic.print_dbg(indentation, 'Text {} with probability {:d}/{:d}'.format(self.text.value, self.probability.value, total))
 
     def __str__(self):
         return 'text({}, {:d}),'.format(self.text, self.probability.value)

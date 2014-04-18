@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import global_constants
+from nml import global_constants, generic
 from nml.actions import action7
 from nml.ast import base_statement
 
@@ -30,7 +30,7 @@ class ConditionalList(base_statement.BaseStatementList):
         return action7.parse_conditional_block(self)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Conditional'
+        generic.print_dbg(indentation, 'Conditional')
         base_statement.BaseStatementList.debug_print(self, indentation + 2)
 
     def __str__(self):
@@ -59,9 +59,10 @@ class Conditional(base_statement.BaseStatementList):
 
     def debug_print(self, indentation):
         if self.expr is not None:
-            print indentation*' ' + 'Expression:'
+            generic.print_dbg(indentation, 'Expression:')
             self.expr.debug_print(indentation + 2)
-        print indentation*' ' + 'Block:'
+
+        generic.print_dbg(indentation, 'Block:')
         base_statement.BaseStatementList.debug_print(self, indentation + 2)
 
     def __str__(self):

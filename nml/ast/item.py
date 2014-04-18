@@ -88,7 +88,7 @@ class Item(base_statement.BaseStatementList):
         base_statement.BaseStatementList.pre_process(self)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Item, feature', hex(self.feature.value)
+        generic.print_dbg(indentation, 'Item, feature', hex(self.feature.value))
         base_statement.BaseStatementList.debug_print(self, indentation + 2)
 
     def get_action_list(self):

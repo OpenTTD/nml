@@ -242,6 +242,19 @@ def print_error(msg):
     """
     print >> sys.stderr, "nmlc ERROR: " + msg
 
+def print_dbg(indent, *args):
+    """
+    Output debug text.
+
+    @param indent: Indentation to add to the output.
+    @type  indent: C{int}
+
+    @param args: Arguments to print. An additional space is printed between them.
+    @type  args: C{Tuple} of C{str}
+    """
+    print indent * ' ' + ' '.join(str(arg) for arg in args)
+
+
 _paths = set() # Paths already found to be correct at the system.
 
 def find_file(filepath):

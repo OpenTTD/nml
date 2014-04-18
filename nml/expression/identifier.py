@@ -25,7 +25,7 @@ class Identifier(Expression):
         self.value = value
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'ID: ' + self.value
+        generic.print_dbg(indentation, 'ID:', self.value)
 
     def __str__(self):
         return self.value

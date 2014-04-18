@@ -24,12 +24,12 @@ class TernaryOp(Expression):
         self.expr2 = expr2
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Ternary operator'
-        print indentation*' ' + 'Guard:'
+        generic.print_dbg(indentation, 'Ternary operator')
+        generic.print_dbg(indentation, 'Guard:')
         self.guard.debug_print(indentation + 2)
-        print indentation*' ' + 'Expression 1:'
+        generic.print_dbg(indentation, 'Expression 1:')
         self.expr1.debug_print(indentation + 2)
-        print indentation*' ' + 'Expression 2:'
+        generic.print_dbg(indentation, 'Expression 2:')
         self.expr2.debug_print(indentation + 2)
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):

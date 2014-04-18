@@ -54,14 +54,14 @@ class Produce(produce_base_class):
         return 'produce({});\n'.format(', '.join(str(x) for x in [self.name] + self.param_list))
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Produce, name =', str(self.name)
-        print (indentation+2)*' ' + 'Subtract from input:'
+        generic.print_dbg(indentation, 'Produce, name =', self.name)
+        generic.print_dbg(indentation + 2, 'Subtract from input:')
         for expr in self.param_list[0:3]:
             expr.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Add to output:'
+        generic.print_dbg(indentation + 2, 'Add to output:')
         for expr in self.param_list[3:5]:
             expr.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Again:'
+        generic.print_dbg(indentation + 2, 'Again:')
         self.param_list[5].debug_print(indentation + 4)
 
     def get_action_list(self):

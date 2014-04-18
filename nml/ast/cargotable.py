@@ -29,9 +29,9 @@ class CargoTable(base_statement.BaseStatement):
             global_constants.cargo_numbers[self.cargo_list[i].value] = i
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Cargo table'
+        generic.print_dbg(indentation, 'Cargo table')
         for cargo in self.cargo_list:
-            print (indentation+2)*' ' + 'Cargo:', cargo.value
+            generic.print_dbg(indentation, 'Cargo:', cargo.value)
 
     def get_action_list(self):
         return action0.get_cargolist_action(self.cargo_list)

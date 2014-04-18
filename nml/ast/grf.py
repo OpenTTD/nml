@@ -111,19 +111,24 @@ class GRF(base_statement.BaseStatement):
             param_num = param.num.value + 1
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'GRF'
-        print (2+indentation)*' ' + 'grfid:'
+        generic.print_dbg(indentation, 'GRF')
+        generic.print_dbg(indentation + 2, 'grfid:')
         self.grfid.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Name:'
+
+        generic.print_dbg(indentation + 2, 'Name:')
         self.name.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Description:'
+
+        generic.print_dbg(indentation + 2, 'Description:')
         self.desc.debug_print(indentation + 4)
+
         if self.url is not None:
-            print (2+indentation)*' ' + 'URL:'
+            generic.print_dbg(indentation + 2, 'URL:')
             self.url.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Version:'
+
+        generic.print_dbg(indentation + 2, 'Version:')
         self.version.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Minimal compatible version:'
+
+        generic.print_dbg(indentation + 2, 'Minimal compatible version:')
         self.min_compatible_version.debug_print(indentation + 4)
 
     def get_action_list(self):

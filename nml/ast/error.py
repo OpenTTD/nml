@@ -57,18 +57,21 @@ class Error(base_statement.BaseStatement):
         self.params = [x.reduce() for x in self.params]
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Error message'
-        print (indentation+2)*' ' + 'Message:'
+        generic.print_dbg(indentation, 'Error message')
+        generic.print_dbg(indentation + 2, 'Message:')
         self.msg.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Severity:'
+
+        generic.print_dbg(indentation + 2, 'Severity:')
         self.severity.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Data: '
+
+        generic.print_dbg(indentation, 'Data: ')
         if self.data is not None: self.data.debug_print(indentation + 4)
+
         if len(self.params) > 0:
-            print (indentation+2)*' ' + 'Param1: '
+            generic.print_dbg(indentation + 2, 'Param1: ')
             self.params[0].debug_print(indentation + 4)
         if len(self.params) > 1:
-            print (indentation+2)*' ' + 'Param2: '
+            generic.print_dbg(indentation + 2, 'Param2: ')
             self.params[1].debug_print(indentation + 4)
 
     def get_action_list(self):

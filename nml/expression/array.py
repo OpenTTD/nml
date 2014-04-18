@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+from nml import generic
 from .base_expression import Expression
 
 class Array(Expression):
@@ -21,7 +22,7 @@ class Array(Expression):
         self.values = values
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Array of values:'
+        generic.print_dbg(indentation, 'Array of values:')
         for v in self.values:
             v.debug_print(indentation + 2)
 

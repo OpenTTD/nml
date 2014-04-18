@@ -74,14 +74,14 @@ class StorageOp(Expression):
 
 
     def debug_print(self, indentation):
-        print indentation*' ' + self.name
-        print (indentation+2)*' ' + 'Register:'
+        generic.print_dbg(indentation, self.name)
+        generic.print_dbg(indentation + 2, 'Register:')
         self.register.debug_print(indentation + 4)
         if self.value is not None:
-            print (indentation+2)*' ' + 'Value:'
+            generic.print_dbg(indentation + 2, 'Value:')
             self.value.debug_print(indentation + 4)
         if self.grfid is not None:
-            print (indentation+2)*' ' + 'GRFID:'
+            generic.print_dbg(indentation + 2, 'GRFID:')
             self.grfid.debug_print(indentation + 4)
 
     def __str__(self):

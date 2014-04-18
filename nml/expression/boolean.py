@@ -28,7 +28,7 @@ class Boolean(Expression):
         self.expr = expr
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Force expression to boolean:'
+        generic.print_dbg(indentation, 'Force expression to boolean:')
         self.expr.debug_print(indentation + 2)
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):

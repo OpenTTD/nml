@@ -53,11 +53,14 @@ class BaseGraphics(base_statement.BaseStatement, sprite_container.SpriteContaine
         self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'base_graphics-block'
-        print (indentation+2)*' ' + 'Source:', self.image_file.value if self.image_file is not None else 'None'
-        if self.block_name: print (indentation+2)*' ' + 'Name:', self.block_name
-        if self.sprite_num is not None: print (indentation+2)*' ' + 'Sprite number:', str(self.sprite_num)
-        print (indentation+2)*' ' + 'Sprites:'
+        generic.print_dbg(indentation, 'base_graphics-block')
+        generic.print_dbg(indentation + 2, 'Source:', self.image_file.value if self.image_file is not None else 'None')
+        if self.block_name:
+            generic.print_dbg(indentation + 2, 'Name:', self.block_name)
+        if self.sprite_num is not None:
+            generic.print_dbg(indentation + 2, 'Sprite number:', self.sprite_num)
+
+        generic.print_dbg(indentation+2)*' ' + 'Sprites:'
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 

@@ -52,11 +52,11 @@ class TemplateDeclaration(base_statement.BaseStatement):
         return labels, offset
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Template declaration:', self.name.value
-        print (indentation+2)*' ' + 'Parameters:'
+        generic.print_dbg(indentation, 'Template declaration:', self.name.value)
+        generic.print_dbg(indentation + 2, 'Parameters:')
         for param in self.param_list:
             param.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Sprites:'
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
@@ -109,9 +109,10 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         return []
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite set:', self.name.value
-        print (indentation+2)*' ' + 'Source:  ', self.image_file.value if self.image_file is not None else 'None'
-        print (indentation+2)*' ' + 'Sprites:'
+        generic.print_dbg(indentation, 'Sprite set:', self.name.value)
+        generic.print_dbg(indentation + 2, 'Source:  ', self.image_file.value if self.image_file is not None else 'None')
+
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
@@ -144,7 +145,7 @@ class SpriteGroup(spritegroup_base_class):
         return []
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite group:', self.name.value
+        generic.print_dbg(indentation, 'Sprite group:', self.name.value)
         for spriteview in self.spriteview_list:
             spriteview.debug_print(indentation + 2)
 
@@ -178,8 +179,8 @@ class SpriteView(object):
                 raise generic.ScriptError("Spritesets referenced from a spritegroup may not have parameters.", sg_ref.pos)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite view:', self.name.value
-        print (indentation+2)*' ' + 'Sprite sets:'
+        generic.print_dbg(indentation, 'Sprite view:', self.name.value)
+        generic.print_dbg(indentation + 2, 'Sprite sets:')
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 4)
 
@@ -213,11 +214,11 @@ class SpriteLayout(spritelayout_base_class):
         return []
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Sprite layout:', self.name.value
-        print (indentation+2)*' ' + 'Parameters:'
+        generic.print_dbg(indentation, 'Sprite layout:', self.name.value)
+        generic.print_dbg(indentation + 2, 'Parameters:')
         for param in self.param_list:
             param.debug_print(indentation + 4)
-        print (indentation+2)*' ' + 'Sprites:'
+        generic.print_dbg(indentation + 2, 'Sprites:')
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 4)
 
@@ -239,7 +240,7 @@ class LayoutSprite(object):
         self.pos = pos
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Tile layout sprite of type:', self.type
+        generic.print_dbg(indentation, 'Tile layout sprite of type:', self.type)
         for layout_param in self.param_list:
             layout_param.debug_print(indentation + 2)
 

@@ -28,10 +28,10 @@ class String(Expression):
         self.params = params[1:]
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'String:'
+        generic.print_dbg(indentation, 'String:')
         self.name.debug_print(indentation + 2)
         for param in self.params:
-            print (indentation+2)*' ' + 'Parameter:'
+            generic.print_dbg(indentation + 2, 'Parameter:')
             param.debug_print(indentation + 4)
 
     def __str__(self):

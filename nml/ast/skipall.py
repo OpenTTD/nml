@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.actions import action7
 from nml.ast import base_statement
+from nml import generic
 
 class SkipAll(base_statement.BaseStatement):
     """
@@ -27,7 +28,7 @@ class SkipAll(base_statement.BaseStatement):
         return [action7.UnconditionalSkipAction(9, 0)]
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Skip all'
+        generic.print_dbg(indentation, 'Skip all')
 
     def __str__(self):
         return "exit;\n"

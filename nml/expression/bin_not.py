@@ -24,7 +24,7 @@ class BinNot(Expression):
         self.expr = expr
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Binary not:'
+        generic.print_dbg(indentation, 'Binary not:')
         self.expr.debug_print(indentation + 2)
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
@@ -50,7 +50,7 @@ class Not(Expression):
         self.expr = expr
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Logical not:'
+        generic.print_dbg(indentation, 'Logical not:')
         self.expr.debug_print(indentation + 2)
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):

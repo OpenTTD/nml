@@ -36,7 +36,7 @@ class Snowline(base_statement.BaseStatement):
         self.date_heights = height_data
 
     def debug_print(self, indentation):
-        print(indentation*' ' + 'Snowline (type={})'.format(self.type))
+        generic.print_dbg(indentation, 'Snowline (type={})'.format(self.type))
         for dh in self.date_heights:
             dh.debug_print(indentation + 2)
 

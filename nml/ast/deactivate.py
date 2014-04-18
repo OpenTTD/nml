@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.actions import actionE
 from nml.ast import base_statement
-from nml import expression
+from nml import expression, generic
 
 class DeactivateBlock(base_statement.BaseStatement):
     def __init__(self, grfid_list, pos):
@@ -27,7 +27,7 @@ class DeactivateBlock(base_statement.BaseStatement):
         self.grfid_list = [expression.parse_string_to_dword(grfid.reduce()) for grfid in self.grfid_list]
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Deactivate other newgrfs:'
+        generic.print_dbg(indentation, 'Deactivate other newgrfs:')
         for grfid in self.grfid_list:
             grfid.debug_print(indentation + 2)
 

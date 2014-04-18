@@ -100,7 +100,7 @@ class ParameterAssignment(base_statement.BaseStatement):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Parameter assignment'
+        generic.print_dbg(indentation, 'Parameter assignment')
         self.param.debug_print(indentation + 2)
         self.value.debug_print(indentation + 2)
 

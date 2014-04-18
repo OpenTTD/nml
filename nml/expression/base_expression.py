@@ -123,7 +123,7 @@ class ConstantNumeric(Expression):
         self.value = generic.truncate_int32(value)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Int:', self.value
+        generic.print_dbg(indentation, 'Int:', self.value)
 
     def write(self, file, size):
         file.print_varx(self.value, size)
@@ -155,7 +155,7 @@ class ConstantFloat(Expression):
         self.value = float(value)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Float:', self.value
+        generic.print_dbg(indentation, 'Float:', self.value)
 
     def __str__(self):
         return str(self.value)

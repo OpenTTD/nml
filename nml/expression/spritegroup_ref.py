@@ -41,9 +41,9 @@ class SpriteGroupRef(Expression):
         self.act2 = act2
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'Reference to: ' + str(self.name)
+        generic.print_dbg(indentation, 'Reference to:', self.name)
         if len(self.param_list) != 0:
-            print indentation*' ' + 'Parameters:'
+            generic.print_dbg(indentation, 'Parameters:')
             for p in self.param_list:
                 p.debug_print(indentation + 2)
 

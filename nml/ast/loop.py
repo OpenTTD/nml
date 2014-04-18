@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.actions import action7
 from nml.ast import base_statement
-from nml import global_constants
+from nml import global_constants, generic
 
 class Loop(base_statement.BaseStatementList):
     """
@@ -34,10 +34,11 @@ class Loop(base_statement.BaseStatementList):
         base_statement.BaseStatementList.pre_process(self)
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'While loop'
-        print (2+indentation)*' ' + 'Expression:'
+        generic.print_dbg(indentation, 'While loop')
+        generic.print_dbg(indentation + 2, 'Expression:')
         self.expr.debug_print(indentation + 4)
-        print (2+indentation)*' ' + 'Block:'
+
+        generic.print_dbg(indentation + 2, 'Block:')
         base_statement.BaseStatementList.debug_print(self, indentation + 4)
 
     def get_action_list(self):

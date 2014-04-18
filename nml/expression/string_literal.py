@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+from nml import generic
 from .base_expression import Type, Expression
 
 class StringLiteral(Expression):
@@ -27,7 +28,7 @@ class StringLiteral(Expression):
         self.value = value
 
     def debug_print(self, indentation):
-        print indentation*' ' + 'String literal: "{}"'.format(self.value)
+        generic.print_dbg(indentation, 'String literal: "{}"'.format(self.value))
 
     def __str__(self):
         return '"{}"'.format(self.value)
