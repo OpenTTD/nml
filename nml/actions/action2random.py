@@ -268,7 +268,7 @@ def parse_randomswitch(random_switch):
 
     #divide the 'extra' probabilities in an even manner
     i = 0
-    resulting_prob = dict(zip(random_switch.choices, [c.probability.value for c in random_switch.choices]))
+    resulting_prob = dict((c, c.probability.value) for c in random_switch.choices)
     while i < (nrand - total_prob):
         best_choice = None
         best_ratio = 0
