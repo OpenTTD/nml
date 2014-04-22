@@ -548,7 +548,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             if white_pixels > 0:
                 pixels = size_x * size_y
                 image_pos = generic.PixelPosition(filename_8bpp.value, x, y)
-                warning = "{}: {:i} of {:i} pixels ({:i}%) are pure white".format(str(image_pos), white_pixels, pixels, white_pixels * 100 // pixels)
+                warning = "{}: {:d} of {:d} pixels ({:d}%) are pure white".format(str(image_pos), white_pixels, pixels, white_pixels * 100 // pixels)
                 generic.print_warning(warning, filename_8bpp.pos)
 
             mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)
