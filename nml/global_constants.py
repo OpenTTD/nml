@@ -296,6 +296,9 @@ constant_numbers = {
     'HOUSE_TILE_WEST'               : 2,
     'HOUSE_TILE_SOUTH'              : 3,
 
+    # house callback results
+    'CB_RESULT_HOUSE_NO_MORE_PRODUCTION': 0x20FF,
+
     #town zones
     'TOWNZONE_EDGE'                 : 0,
     'TOWNZONE_OUTSKIRT'             : 1,
