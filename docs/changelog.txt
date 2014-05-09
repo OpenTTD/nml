@@ -1,3 +1,21 @@
+0.3.1 (2014-05-10)
+------------------------------------------------------------------------
+- Add: String commands CARGO_LONG, CARGO_SHORT and CARGO_TINY
+- Add: Object variable 'nearby_tile_object_view'
+- Add: Vehicle variable 'vehicle_is_unloading'
+- Add: House callback result 'CB_RESULT_HOUSE_NO_MORE_PRODUCTION'
+- Fix: Typo-fix in font_glpyh block name.
+- Fix: Error in raising an error in format_string
+- Fix: Don't catch more exception than expected, comment typo fixes, removed empty line
+- Fix: Report error from the spriteview position, instead of using a non-existing variable.
+- Fix: Do not report a position using a non-existing instance variable.
+- Fix: Don't crash on raising None after printing a warning.
+- Fix: Add also rpm spec file and syntax highlighting creation scripts to source distribution
+- Doc: Additional documentation, small fixes/improvments.
+- Change: Drop Python 2.5 support.
+
+
+
 0.3.0 (2014-01-01)
 ------------------------------------------------------------------------
 - Feature: use grf container format v2, nfo v32 and grf v8

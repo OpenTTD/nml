@@ -17,7 +17,7 @@
 
 
 Name:           nml
-Version:        0.2.3
+Version:        0.3.1
 Release:        0
 Summary:        NewGRF Meta Language
 License:        GPL-2.0+
