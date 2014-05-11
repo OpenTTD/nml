@@ -56,7 +56,7 @@ class Switch(switch_base_class):
         return all_refs
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Switch, Feature = {:d}, name = {}'.format(self.feature_set.copy().pop(), self.name.value))
+        generic.print_dbg(indentation, 'Switch, Feature = {:d}, name = {}'.format(next(iter(self.feature_set)), self.name.value))
 
         generic.print_dbg(indentation + 2, 'Expression:')
         self.expr.debug_print(indentation + 4)
@@ -71,7 +71,7 @@ class Switch(switch_base_class):
 
     def __str__(self):
         var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
-        return 'switch({}, {}, {}, {}) {{\n{}}}\n'.format(str(self.feature_set.copy().pop()), var_range, str(self.name), str(self.expr), str(self.body))
+        return 'switch({}, {}, {}, {}) {{\n{}}}\n'.format(str(next(iter(self.feature_set))), var_range, str(self.name), str(self.expr), str(self.body))
 
 
 class SwitchBody(object):
@@ -232,7 +232,7 @@ class RandomSwitch(switch_base_class):
 
     def pre_process(self):
         for choice in self.choices:
-            choice.reduce_expressions(self.feature_set.copy().pop())
+            choice.reduce_expressions(next(iter(self.feature_set)))
 
         for dep_list in (self.dependent, self.independent):
             for i, dep in enumerate(dep_list[:]):
@@ -286,7 +286,7 @@ class RandomSwitch(switch_base_class):
         return []
 
     def __str__(self):
-        ret = 'random_switch({}, {}, {}, {}) {{\n'.format(str(self.feature_set.copy().pop()), str(self.type), str(self.name), str(self.triggers))
+        ret = 'random_switch({}, {}, {}, {}) {{\n'.format(str(next(iter(self.feature_set))), str(self.type), str(self.name), str(self.triggers))
         for dep in self.dependent:
             ret += 'dependent: {};\n'.format(dep)
         for indep in self.independent:

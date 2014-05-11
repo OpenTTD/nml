@@ -939,7 +939,7 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
     return (result, comment)
 
 def get_feature(switch_block):
-    feature = switch_block.feature_set.copy().pop()
+    feature = next(iter(switch_block.feature_set))
     if switch_block.var_range == 0x8A:
         feature = action2var_variables.varact2parent_scope[feature]
         if feature is None:
@@ -970,7 +970,7 @@ def parse_varaction2(switch_block):
     act6 = action6.Action6()
     action_list = action2real.create_spriteset_actions(switch_block)
 
-    feature = switch_block.feature_set.copy().pop()
+    feature = next(iter(switch_block.feature_set))
     varaction2 = Action2Var(feature, switch_block.name.value, switch_block.var_range)
 
     expr = reduce_varaction2_expr(switch_block.expr, get_feature(switch_block))

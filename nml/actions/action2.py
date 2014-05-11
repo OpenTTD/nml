@@ -299,7 +299,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                         if n.feature_set != self.feature_set:
                             msg = "Cannot refer to block '{}' with feature '{}', expected feature is '{}'"
                             msg = msg.format(self.name.value,
-                                    general.feature_name(self.feature_set.copy().pop()),
+                                    general.feature_name(next(iter(self.feature_set))),
                                     general.feature_name(n.feature_set.difference(self.feature_set).pop()))
                             raise generic.ScriptError(msg, n.pos)
 

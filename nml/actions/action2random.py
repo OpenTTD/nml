@@ -106,7 +106,7 @@ def parse_randomswitch_type(random_switch):
     # Extract some stuff we'll often need
     type_str = random_switch.type.value
     type_pos = random_switch.type.pos
-    feature_val = random_switch.feature_set.copy().pop()
+    feature_val = next(iter(random_switch.feature_set))
 
     # Validate type name / param combination
     if type_str not in random_types[feature_val]:
@@ -243,7 +243,7 @@ def parse_randomswitch(random_switch):
     @rtype: C{list} of L{BaseAction}
     """
     action_list = action2real.create_spriteset_actions(random_switch)
-    feature = random_switch.feature_set.copy().pop()
+    feature = next(iter(random_switch.feature_set))
     type_byte, count, count_expr, start_bit, bits_available = parse_randomswitch_type(random_switch)
 
     total_prob = sum([choice.probability.value for choice in random_switch.choices])
