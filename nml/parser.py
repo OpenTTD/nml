@@ -19,6 +19,16 @@ from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 
 class NMLParser(object):
+    """
+    @ivar lexer: Scanner providing tokens.
+    @type lexer: L{NMLLexer}
+
+    @ivar tokens: Tokens of the scanner (used by PLY).
+    @type tokens: C{List} of C{str}
+
+    @ivar parser: PLY parser.
+    @type parser: L{ply.yacc}
+    """
     def __init__(self):
         self.lexer = tokens.NMLLexer()
         self.lexer.build()

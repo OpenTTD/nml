@@ -167,6 +167,27 @@ def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
 def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, forced_palette, md5_filename):
+    """
+    Compile an NML file.
+
+    @param inputfile: File handle associated with the input file.
+    @type  inputfile: C{File}
+
+    @param input_filename: Filename of the input file, C{None} if receiving from L{sys.stdin}
+    @type  input_filename: C{str} or C{None}
+
+    @param outputfiles: Output streams to write to.
+    @type  outputfiles: C{List} of L{output_base.OutputBase}
+
+    @param start_sprite_num: Number of the first sprite.
+    @type  start_sprite_num: C{int}
+
+    @param forced_palette: Palette to use for the file.
+    @type  forced_palette: C{str}
+
+    @param md5_filename: Filename to use for writing the md5 sum of the grf file. C{None} if the file should not be written.
+    @type  md5_filename: C{str} or C{None}
+    """
     generic.OnlyOnce.clear()
 
     try:

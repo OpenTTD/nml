@@ -61,6 +61,16 @@ line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')
 line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"(\s+\d+\s*)?\r?\n')
 
 class NMLLexer(object):
+    """
+    @ivar lexer: PLY scanner object.
+    @type lexer: L{ply.lex}
+
+    @ivar includes: Stack of included files.
+    @type includes: C{List} of L{generic.LinePosition}
+
+    @ivar text: Input text to scan.
+    @type text: C{str}
+    """
 
     # Tokens
     tokens = reserved.values() + [
