@@ -74,6 +74,19 @@ class BlockAllocation(object):
         """
         return self.allocated.get(addr)
 
+    def is_address_free(self, addr):
+        """
+        Is the space at the given address still available?
+        ( cheaper variant of C{self.get_last_used(addr, 1) is None} )
+
+        @param addr: Address being queried.
+        @type  addr: C{int}
+
+        @return: Whether the space at the provided address is available.
+        @rtype:  C{bool}
+        """
+        return addr not in self.allocated
+
     def get_last_used(self, addr, length):
         """
         Check whether a block of addresses is used.
@@ -185,13 +198,14 @@ def check_id_range(feature, id, num_ids, pos):
         # ID already defined with a different size: error.
         raise generic.ScriptError("Item with ID {:d} has already been defined, but with a different size.".format(id), pos)
 
-    if id in blk_alloc.allocated:
-            # ID already defined as part of a multi-tile house.
-            raise generic.ScriptError("Item ID {:d} has already used as part of a multi-tile house.".format(id), pos)
-    else:
+    if blk_alloc.is_address_free(id):
         # First item id free -> any of the additional tile ids must be blocked.
-        assert any(i in blk_alloc.allocated for i in range(id + 1, id + num_ids))
-        raise generic.ScriptError("This multi-tile house requires that item IDs {:d}..{:d} are free, but they are not.".format(id, id + num_ids - 1), pos)
+        msg = "This multi-tile house requires that item IDs {:d}..{:d} are free, but they are not."
+        msg = msg.format(id, id + num_ids - 1)
+        raise generic.ScriptError(msg, pos)
+
+    # ID already defined as part of a multi-tile house.
+    raise generic.ScriptError("Item ID {:d} has already used as part of a multi-tile house.".format(id), pos)
 
 # Number of tiles for various house sizes
 house_sizes = {
