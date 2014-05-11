@@ -37,7 +37,7 @@ class NMLParser(object):
 
     def parse(self, text, input_filename):
         self.lexer.setup(text, input_filename)
-        return self.parser.parse(text, lexer = self.lexer.lexer)
+        return self.parser.parse(None, lexer = self.lexer.lexer)
 
 
     #operator precedence (lower in the list = higher priority)

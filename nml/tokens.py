@@ -239,14 +239,27 @@ class NMLLexer(object):
 
 
 
-    def build(self, **kwargs):
-        self.lexer = lex.lex(module=self, **kwargs)
+    def build(self):
+        """
+        Initial construction of the scanner.
+        """
+        self.lexer = lex.lex(module=self)
 
 
     def setup(self, text, fname):
+        """
+        Setup scanner for scanning an input file.
+
+        @param text: Input text to scan.
+        @type  text: C{str}
+
+        @param fname: Filename associated with the input text (main input file).
+        @type  fname: C{str}
+        """
         self.includes = []
         self.text = text
         self.set_position(fname, 1)
+        self.lexer.input(text)
 
     def set_position(self, fname, line):
         """
