@@ -123,6 +123,28 @@ class BlockAllocation(object):
         for idx in xrange(addr + 1, addr + length):
             self.allocated[idx] = None
 
+    def find_unused(self, length):
+        """
+        Find an area of unused space.
+
+        @param length: Number of addresses to find.
+        @type  length: C{int}
+
+        @return: Address in the freely available address space for the new block,
+                 or C{None} if no space is available.
+        @rtype:  C{int} or C{None}
+        """
+        idx = self.first
+        last_idx = self.last - length + 1
+        while idx < last_idx:
+            last_used = self.get_last_used(idx, length)
+            if last_used is None:
+                return idx
+
+            idx = last_used + 1
+
+        return None
+
 # Available IDs for each feature.
 # Maximum allowed id (houses and indtiles in principle allow up to 511, but action3 does not accept extended bytes).
 used_ids = [
@@ -207,6 +229,30 @@ def check_id_range(feature, id, num_ids, pos):
     # ID already defined as part of a multi-tile house.
     raise generic.ScriptError("Item ID {:d} has already used as part of a multi-tile house.".format(id), pos)
 
+def get_free_id(feature, num_ids, pos):
+    """
+    Find an id to allocate a range of \a num_ids ids in a feature.
+
+    @param feature: Feature of the ids.
+    @type  feature: C{int}
+
+    @param num_ids: Number of ids to allocate.
+    @type  num_ids: C{int}
+
+    @param pos: Position information.
+    @type  pos: L{Position}
+    """
+    blk_alloc = used_ids[feature]
+
+    addr = blk_alloc.find_unused(num_ids)
+    if addr is None:
+        msg = "Unable to allocate ID for item, no more free IDs available (maximum is {:d})"
+        msg = msg.format(blk_alloc.last)
+        raise generic.ScriptError(msg, pos)
+
+    blk_alloc.mark_used(addr, num_ids)
+    return addr
+
 # Number of tiles for various house sizes
 house_sizes = {
     0 : 1, # 1x1
@@ -288,30 +334,6 @@ class Action0(base_action.BaseAction):
         for prop in self.prop_list:
             prop.write(file)
         file.end_sprite()
-
-
-def get_free_id(feature, num_ids, pos):
-    """
-    Find an id to allocate a range of \a num_ids ids in a feature.
-
-    @param feature: Feature of the ids.
-    @type  feature: C{int}
-
-    @param num_ids: Number of ids to allocate.
-    @type  num_ids: C{int}
-
-    @param pos: Position information.
-    @type  pos: L{Position}
-    """
-    id = used_ids[feature].first
-    while used_ids[feature].get_last_used(id, num_ids) is not None:
-        id += 1
-    if id > used_ids[feature].last:
-        raise generic.ScriptError("Unable to allocate ID for item, no more free IDs available (maximum is {:d})".format(used_ids[feature].last), pos)
-
-    used_ids[feature].mark_used(id, num_ids)
-    return id
-
 
 
 def create_action0(feature, id, act6, action_list):
