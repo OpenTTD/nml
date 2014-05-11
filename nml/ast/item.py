@@ -73,8 +73,7 @@ class Item(base_statement.BaseStatementList):
         num_ids = action0.house_sizes[self.size.value] if self.size is not None else 1
         if self.id is None:
             self.id = expression.ConstantNumeric(action0.get_free_id(self.feature.value, num_ids, self.pos))
-        else:
-            action0.check_id_range(self.feature.value, self.id.value, num_ids, self.id.pos)
+        elif not action0.check_id_range(self.feature.value, self.id.value, num_ids, self.id.pos):
             action0.mark_id_used(self.feature.value, self.id.value, num_ids)
         if self.name is not None:
             global_constants.item_names[self.name.value] = self

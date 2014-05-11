@@ -211,6 +211,9 @@ def check_id_range(feature, id, num_ids, pos):
 
     @param pos: Source position of the check, for reporting errors.
     @type  pos: L{Position}
+
+    @return: Whether the block was allocated already.
+    @rtype:  C{bool}
     """
     blk_alloc = used_ids[feature]
 
@@ -221,10 +224,10 @@ def check_id_range(feature, id, num_ids, pos):
         raise generic.ScriptError(msg, pos)
 
     # ID already defined, but with the same size: OK
-    if blk_alloc.get_size(id) == num_ids: return
+    if blk_alloc.get_size(id) == num_ids: return True
 
     # All IDs free: no problem.
-    if blk_alloc.get_last_used(id, num_ids) is None: return
+    if blk_alloc.get_last_used(id, num_ids) is None: return False
 
     # No space at the indicated position, report an error.
 
