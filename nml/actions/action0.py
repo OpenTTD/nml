@@ -121,6 +121,41 @@ def mark_id_used(feature, id, num_ids):
     used_ids[feature].mark_used(id, num_ids)
 
 
+def check_id_range(feature, id, num_ids, pos):
+    """
+    Check that the id is valid, and is either free or points to an already allocated block.
+
+    @param feature: Feature of the ids.
+    @type  feature: C{int}
+
+    @param id: Base id number.
+    @type  id: C{int}
+
+    @param num_ids: Number of ids to test, starting with \a id.
+    @type  num_ids: C{int}
+
+    @param pos: Source position of the check, for reporting errors.
+    @type  pos: L{Position}
+    """
+    # Check that IDs are valid and in range.
+    if id < 0 or id > used_ids[feature].last:
+        raise generic.ScriptError("Item ID must be in range 0..{:d}, encountered {:d}.".format(used_ids[feature].last, id), pos)
+    # All IDs free: no problem.
+    if used_ids[feature].get_last_used(id, num_ids) is None: return
+    if id in used_ids[feature].allocated:
+        # ID already defined, but with the same size: OK
+        if used_ids[feature].allocated[id] == num_ids: return
+        elif used_ids[feature].allocated[id] is not None:
+            # ID already defined with a different size: error.
+            raise generic.ScriptError("Item with ID {:d} has already been defined, but with a different size.".format(id), pos)
+        else:
+            # ID already defined as part of a multi-tile house.
+            raise generic.ScriptError("Item ID {:d} has already used as part of a multi-tile house.".format(id), pos)
+    else:
+        # First item id free -> any of the additional tile ids must be blocked.
+        assert any(i in used_ids[feature].allocated for i in range(id + 1, id + num_ids))
+        raise generic.ScriptError("This multi-tile house requires that item IDs {:d}..{:d} are free, but they are not.".format(id, id + num_ids - 1), pos)
+
 # Number of tiles for various house sizes
 house_sizes = {
     0 : 1, # 1x1
@@ -203,26 +238,6 @@ class Action0(base_action.BaseAction):
             prop.write(file)
         file.end_sprite()
 
-
-def check_id_range(feature, id, num_ids, pos):
-    # Check that IDs are valid and in range
-    if id < 0 or id > used_ids[feature].last:
-        raise generic.ScriptError("Item ID must be in range 0..{:d}, encountered {:d}.".format(used_ids[feature].last, id), pos)
-    # All IDs free: no problem
-    if used_ids[feature].get_last_used(id, num_ids) is None: return
-    if id in used_ids[feature].allocated:
-        # ID already defined, but with the same size: OK
-        if used_ids[feature].allocated[id] == num_ids: return
-        elif used_ids[feature].allocated[id] is not None:
-            # ID already defined with a different size: error
-            raise generic.ScriptError("Item with ID {:d} has already been defined, but with a different size.".format(id), pos)
-        else:
-            # ID already defined as part of a multi-tile house
-            raise generic.ScriptError("Item ID {:d} has already used as part of a multi-tile house.".format(id), pos)
-    else:
-        # First item id free -> any of the additional tile ids must be blocked
-        assert any(i in used_ids[feature].allocated for i in range(id + 1, id + num_ids))
-        raise generic.ScriptError("This multi-tile house requires that item IDs {:d}..{:d} are free, but they are not.".format(id, id + num_ids - 1), pos)
 
 def get_free_id(feature, num_ids, pos):
     """
