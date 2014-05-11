@@ -46,6 +46,25 @@ class BlockAllocation(object):
         self.last = last
         self.allocated = {}
 
+    def get_last_used(self, addr, length):
+        """
+        Check whether a block of addresses is used.
+
+        @param addr: First address of the block.
+        @type  addr: C{int}
+
+        @param length: Number of addresses in the block.
+        @type  length: C{int}
+
+        @return: The last used address in the block, or C{None} if all addresses are free.
+        @rtype:  C{int} or C{None}
+
+        @precond: Addresses of the range should be within the available address space.
+        """
+        for idx in xrange(addr + length - 1, addr - 1, -1):
+            if idx in self.allocated: return idx
+        return None
+
     def mark_used(self, addr, length):
         """
         Mark an area as being allocated.
@@ -185,30 +204,12 @@ class Action0(base_action.BaseAction):
         file.end_sprite()
 
 
-def id_is_used(feature, id, num_ids):
-    """
-    Check whether any id of the \a num_ids is used, starting with \a id.
-
-    @param feature: Feature of the ids.
-    @type  feature: C{int}
-
-    @param id: Base id number.
-    @type  id: C{int}
-
-    @param num_ids: Number of ids to test, starting with \a id.
-    @type  num_ids: C{int}
-
-    @return: Whether any id in the range is used.
-    @rtype:  C{bool}
-    """
-    return any(i in used_ids[feature].allocated for i in range(id, id + num_ids))
-
 def check_id_range(feature, id, num_ids, pos):
     # Check that IDs are valid and in range
     if id < 0 or id > used_ids[feature].last:
         raise generic.ScriptError("Item ID must be in range 0..{:d}, encountered {:d}.".format(used_ids[feature].last, id), pos)
     # All IDs free: no problem
-    if not id_is_used(feature, id, num_ids): return
+    if used_ids[feature].get_last_used(id, num_ids) is None: return
     if id in used_ids[feature].allocated:
         # ID already defined, but with the same size: OK
         if used_ids[feature].allocated[id] == num_ids: return
@@ -237,7 +238,7 @@ def get_free_id(feature, num_ids, pos):
     @type  pos: L{Position}
     """
     id = used_ids[feature].first
-    while id_is_used(feature, id, num_ids):
+    while used_ids[feature].get_last_used(id, num_ids) is not None:
         id += 1
     if id > used_ids[feature].last:
         raise generic.ScriptError("Unable to allocate ID for item, no more free IDs available (maximum is {:d})".format(used_ids[feature].last), pos)
