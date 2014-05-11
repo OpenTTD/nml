@@ -46,6 +46,22 @@ class BlockAllocation(object):
         self.last = last
         self.allocated = {}
 
+    def in_range(self, addr, length):
+        """
+        Does a block starting at the provided address with the given length in
+        the available address space?
+
+        @param addr: First address of the block.
+        @type  addr: C{int}
+
+        @param length: Number of addresses in the block.
+        @type  length: C{int}
+
+        @return: Whether the block fits enitrely in the available address space.
+        @rtype:  C{bool}
+        """
+        return addr >= 0 and addr + length - 1 <= self.last
+
     def get_last_used(self, addr, length):
         """
         Check whether a block of addresses is used.
@@ -140,8 +156,11 @@ def check_id_range(feature, id, num_ids, pos):
     blk_alloc = used_ids[feature]
 
     # Check that IDs are valid and in range.
-    if id < 0 or id > blk_alloc.last:
-        raise generic.ScriptError("Item ID must be in range 0..{:d}, encountered {:d}.".format(blk_alloc.last, id), pos)
+    if not blk_alloc.in_range(id, num_ids):
+        msg = "Item ID must be in range 0..{:d}, encountered {:d}..{:d}."
+        msg = msg.format(blk_alloc.last, id, id + num_ids - 1)
+        raise generic.ScriptError(msg, pos)
+
     # All IDs free: no problem.
     if blk_alloc.get_last_used(id, num_ids) is None: return
     if id in blk_alloc.allocated:
