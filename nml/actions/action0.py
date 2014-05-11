@@ -40,11 +40,16 @@ class BlockAllocation(object):
 
     @ivar allocated: Mapping of allocated blocks.
     @type allocated: C{dict} of C{int} to allocation information.
+
+    @ivar filled: Mapping of block size to smallest address that may contain free space.
+                  Serves as a cache to speed up searches.
+    @type filled: C{dict} of C{int}
     """
     def __init__(self, first, last):
         self.first = first
         self.last = last
         self.allocated = {}
+        self.filled = {}
 
     def in_range(self, addr, length):
         """
@@ -134,11 +139,18 @@ class BlockAllocation(object):
                  or C{None} if no space is available.
         @rtype:  C{int} or C{None}
         """
-        idx = self.first
+        idx = self.filled.get(length)
+        if idx is None:
+            # Never searched before with this block size.
+            # Start at the biggest offset previously discovered with a smaller block size.
+            smaller_filleds = [min_f for sz, min_f in self.filled.iteritems() if sz < length]
+            idx = self.first if len(smaller_filleds) == 0 else max(smaller_filleds)
+
         last_idx = self.last - length + 1
         while idx < last_idx:
             last_used = self.get_last_used(idx, length)
             if last_used is None:
+                self.filled[length] = idx + length
                 return idx
 
             idx = last_used + 1
