@@ -18,6 +18,57 @@ from nml import generic, expression, nmlop, grfstrings
 from nml.actions import base_action, action4, action6, actionD, action7
 from nml.ast import general
 
+class BlockAllocation(object):
+    """
+    Administration of allocated blocks of a size, in a range of addresses.
+    Blocks always start at address C{0}, but the first available freely usable
+    address may be further.
+
+    The allocation information is kept in L{allocated}. It has the following cases
+    - An address does not exist in the dictionary.
+      The address is free for use.
+    - An address exists, with an integer number as size.
+      At this address a block has been allocated with that size.
+    - An address exists, with value C{None}.
+      The address is part of an allocated block, but not the start.
+
+    @ivar first: First freely usable address.
+    @type first: C{int}
+
+    @ivar last: Last freely usable address.
+    @type last: C{int}
+
+    @ivar allocated: Mapping of allocated blocks.
+    @type allocated: C{dict} of C{int} to allocation information.
+    """
+    def __init__(self, first, last):
+        self.first = first
+        self.last = last
+        self.allocated = {}
+
+# Available IDs for each feature.
+# Maximum allowed id (houses and indtiles in principle allow up to 511, but action3 does not accept extended bytes).
+used_ids = [
+    BlockAllocation(116, 0xFFFF), # FEAT_TRAINS
+    BlockAllocation( 88, 0xFFFF), # FEAT_ROADVEHS
+    BlockAllocation( 11, 0xFFFF), # FEAT_SHIPS
+    BlockAllocation( 41, 0xFFFF), # FEAT_AIRCRAFT
+    BlockAllocation(  0,    255), # FEAT_STATIONS
+    BlockAllocation(  0,      8), # FEAT_CANALS
+    BlockAllocation(  0,     15), # FEAT_BRIDGES
+    BlockAllocation(  0,    255), # FEAT_HOUSES
+    BlockAllocation(  0,     -1), # FEAT_GLOBALVARS
+    BlockAllocation(  0,    255), # FEAT_INDUSTRYTILES
+    BlockAllocation(  0,     63), # FEAT_INDUSTRIES
+    BlockAllocation(  0,     31), # FEAT_CARGOS
+    BlockAllocation(  0,     -1), # FEAT_SOUNDEFFECTS
+    BlockAllocation(  0,    127), # FEAT_AIRPORTS
+    BlockAllocation(  0,     -1), # FEAT_SIGNALS
+    BlockAllocation(  0,    255), # FEAT_OBJECTS
+    BlockAllocation(  0,     15), # FEAT_RAILTYPES
+    BlockAllocation(  0,    255), # FEAT_AIRPORTTILES
+]
+
 # Number of tiles for various house sizes
 house_sizes = {
     0 : 1, # 1x1
@@ -100,16 +151,6 @@ class Action0(base_action.BaseAction):
             prop.write(file)
         file.end_sprite()
 
-# First ID that may freely be used
-first_usable_id = [116, 88, 11, 41] + 0x0E * [0]
-# Maximum allowed id (houses and indtiles in principle allow up to 511, but action3 does not accept extended bytes)
-max_id = 4*[0xFFFF] + [255, 8, 15, 255, -1, 255, 63, 31, -1, 127, -1, 255, 15, 255]
-
-# Maintain sets of used IDs for each feature
-# Dictionary value is the item size (# of consecutive ids occupied)
-# Which is normally 1, one of (1,2,4) for the first house tile
-# And None for other house tiles
-used_ids = [dict() for _ in range(0, 0x12)]
 
 def mark_id_used(feature, id, num_ids):
     """
@@ -124,9 +165,9 @@ def mark_id_used(feature, id, num_ids):
     @param num_ids: Number of ids to mark as used, starting with \a id.
     @type  num_ids: C{int}
     """
-    used_ids[feature][id] = num_ids
+    used_ids[feature].allocated[id] = num_ids
     for i in range(id + 1, id + num_ids):
-        used_ids[feature][i] = None
+        used_ids[feature].allocated[i] = None
 
 def id_is_used(feature, id, num_ids):
     """
@@ -144,18 +185,18 @@ def id_is_used(feature, id, num_ids):
     @return: Whether any id in the range is used.
     @rtype:  C{bool}
     """
-    return any(i in used_ids[feature] for i in range(id, id + num_ids))
+    return any(i in used_ids[feature].allocated for i in range(id, id + num_ids))
 
 def check_id_range(feature, id, num_ids, pos):
     # Check that IDs are valid and in range
-    if id < 0 or id > max_id[feature]:
-        raise generic.ScriptError("Item ID must be in range 0..{:d}, encountered {:d}.".format(max_id[feature], id), pos)
+    if id < 0 or id > used_ids[feature].last:
+        raise generic.ScriptError("Item ID must be in range 0..{:d}, encountered {:d}.".format(used_ids[feature].last, id), pos)
     # All IDs free: no problem
     if not id_is_used(feature, id, num_ids): return
-    if id in used_ids[feature]:
+    if id in used_ids[feature].allocated:
         # ID already defined, but with the same size: OK
-        if used_ids[feature][id] == num_ids: return
-        elif used_ids[feature][id] is not None:
+        if used_ids[feature].allocated[id] == num_ids: return
+        elif used_ids[feature].allocated[id] is not None:
             # ID already defined with a different size: error
             raise generic.ScriptError("Item with ID {:d} has already been defined, but with a different size.".format(id), pos)
         else:
@@ -163,7 +204,7 @@ def check_id_range(feature, id, num_ids, pos):
             raise generic.ScriptError("Item ID {:d} has already used as part of a multi-tile house.".format(id), pos)
     else:
         # First item id free -> any of the additional tile ids must be blocked
-        assert any(i in used_ids[feature] for i in range(id + 1, id + num_ids))
+        assert any(i in used_ids[feature].allocated for i in range(id + 1, id + num_ids))
         raise generic.ScriptError("This multi-tile house requires that item IDs {:d}..{:d} are free, but they are not.".format(id, id + num_ids - 1), pos)
 
 def get_free_id(feature, num_ids, pos):
@@ -179,11 +220,11 @@ def get_free_id(feature, num_ids, pos):
     @param pos: Position information.
     @type  pos: L{Position}
     """
-    id = first_usable_id[feature]
+    id = used_ids[feature].first
     while id_is_used(feature, id, num_ids):
         id += 1
-    if id > max_id[feature]:
-        raise generic.ScriptError("Unable to allocate ID for item, no more free IDs available (maximum is {:d})".format(max_id[feature]), pos)
+    if id > used_ids[feature].last:
+        raise generic.ScriptError("Unable to allocate ID for item, no more free IDs available (maximum is {:d})".format(used_ids[feature].last), pos)
 
     mark_id_used(feature, id, num_ids)
     return id
