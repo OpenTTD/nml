@@ -62,6 +62,18 @@ class BlockAllocation(object):
         """
         return addr >= 0 and addr + length - 1 <= self.last
 
+    def get_size(self, addr):
+        """
+        Get the size of the block allocated at the given address.
+
+        @param addr: Address being queried.
+        @type  addr: C{int}
+
+        @return: Size of the allocated block, if one was allocated here, else C{None}.
+        @rtype:  C{int} or C{None}
+        """
+        return self.allocated.get(addr)
+
     def get_last_used(self, addr, length):
         """
         Check whether a block of addresses is used.
@@ -161,15 +173,19 @@ def check_id_range(feature, id, num_ids, pos):
         msg = msg.format(blk_alloc.last, id, id + num_ids - 1)
         raise generic.ScriptError(msg, pos)
 
+    # ID already defined, but with the same size: OK
+    if blk_alloc.get_size(id) == num_ids: return
+
     # All IDs free: no problem.
     if blk_alloc.get_last_used(id, num_ids) is None: return
+
+    # No space at the indicated position, report an error.
+
+    if blk_alloc.get_size(id) is not None:
+        # ID already defined with a different size: error.
+        raise generic.ScriptError("Item with ID {:d} has already been defined, but with a different size.".format(id), pos)
+
     if id in blk_alloc.allocated:
-        # ID already defined, but with the same size: OK
-        if blk_alloc.allocated[id] == num_ids: return
-        elif blk_alloc.allocated[id] is not None:
-            # ID already defined with a different size: error.
-            raise generic.ScriptError("Item with ID {:d} has already been defined, but with a different size.".format(id), pos)
-        else:
             # ID already defined as part of a multi-tile house.
             raise generic.ScriptError("Item ID {:d} has already used as part of a multi-tile house.".format(id), pos)
     else:
