@@ -46,6 +46,23 @@ class BlockAllocation(object):
         self.last = last
         self.allocated = {}
 
+    def mark_used(self, addr, length):
+        """
+        Mark an area as being allocated.
+
+        @param addr: First address of the block.
+        @type  addr: C{int}
+
+        @param length: Number of addresses in the block.
+        @type  length: C{int}
+
+        @precond: Addresses of the block should be within the freely available address space.
+        @precond: No address in the block may have been allocated.
+        """
+        self.allocated[addr] = length
+        for idx in xrange(addr + 1, addr + length):
+            self.allocated[idx] = None
+
 # Available IDs for each feature.
 # Maximum allowed id (houses and indtiles in principle allow up to 511, but action3 does not accept extended bytes).
 used_ids = [
@@ -68,6 +85,22 @@ used_ids = [
     BlockAllocation(  0,     15), # FEAT_RAILTYPES
     BlockAllocation(  0,    255), # FEAT_AIRPORTTILES
 ]
+
+def mark_id_used(feature, id, num_ids):
+    """
+    Mark a range of ids as used.
+
+    @param feature: Feature of the ids.
+    @type  feature: C{int}
+
+    @param id: First id to be marked.
+    @type  id: C{int}
+
+    @param num_ids: Number of ids to mark as used, starting with \a id.
+    @type  num_ids: C{int}
+    """
+    used_ids[feature].mark_used(id, num_ids)
+
 
 # Number of tiles for various house sizes
 house_sizes = {
@@ -152,23 +185,6 @@ class Action0(base_action.BaseAction):
         file.end_sprite()
 
 
-def mark_id_used(feature, id, num_ids):
-    """
-    Mark a range of ids as used.
-
-    @param feature: Feature of the ids.
-    @type  feature: C{int}
-
-    @param id: First id to be marked.
-    @type  id: C{int}
-
-    @param num_ids: Number of ids to mark as used, starting with \a id.
-    @type  num_ids: C{int}
-    """
-    used_ids[feature].allocated[id] = num_ids
-    for i in range(id + 1, id + num_ids):
-        used_ids[feature].allocated[i] = None
-
 def id_is_used(feature, id, num_ids):
     """
     Check whether any id of the \a num_ids is used, starting with \a id.
@@ -226,7 +242,7 @@ def get_free_id(feature, num_ids, pos):
     if id > used_ids[feature].last:
         raise generic.ScriptError("Unable to allocate ID for item, no more free IDs available (maximum is {:d})".format(used_ids[feature].last), pos)
 
-    mark_id_used(feature, id, num_ids)
+    used_ids[feature].mark_used(id, num_ids)
     return id
 
 
