@@ -32,11 +32,10 @@ cd dist
 for i in `ls *.tar.gz *.zip *.rpm *.egg`; do md5sum $i > $i.md5; done
 cd ..
 
-cd contrib
-./create_kate_highlighter
-./create_notepadpp_highlighter
-cp *.xml ../dist
-cd ..
+# Create the editor files
+./gen_editor kate
+./gen_editor notepadpp
+mv *.xml dist
 
 echo "Build date: `date --rfc-3339='seconds'`" > dist/release.txt
 echo "Revision: `hg id -n`:`hg id`" >> dist/release.txt
