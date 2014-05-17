@@ -13,36 +13,109 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-
+# Available units, mapping of unit name to L{Unit} objects.
 units = {}
 
-units['nfo'] = {'type': 'nfo', 'convert': 1, 'ottd_mul': 1, 'ottd_shift': 0} #don't convert, take value literal
+def get_unit(name):
+    """
+    Get a unit by name.
 
-# Conversion factor works like this:
-# 1 reference_unit = convert other_unit
-# So nfo_value = property_value / convert * property_specific_conversion_factor
-# To avoid using fractions, rational numbers (as 2-tuples) are used instead
+    @param name: Name of the unit.
+    @type  name: C{str}
 
-# ottd_mul and ottd_shift are the values taken from OpenTTD's src/strings.cpp and
-# are used to calculate the displayed value by OpenTTD. If possible, adjust_values
-# increases or decreases the NFO value so that the desired display value is actually
-# achieved
+    @return: The requested unit.
+    @rtype:  L{Unit}
+    """
+    return units[name]
+
+
+class Unit(object):
+    def __init__(self, name, type, convert, ottd_mul, ottd_shift):
+        """
+        Unit definition.
+
+        Conversion factor works like this:
+        1 reference_unit = convert other_unit
+        So nfo_value = property_value / convert * property_specific_conversion_factor
+        To avoid using fractions, rational numbers (as 2-tuples) are used instead.
+
+        ottd_mul and ottd_shift are the values taken from OpenTTD's src/strings.cpp and
+        are used to calculate the displayed value by OpenTTD. If possible, adjust_values
+        increases or decreases the NFO value so that the desired display value is actually
+        achieved.
+
+        @ivar name: Name of the unit.
+        @type name: C{str}
+
+        @ivar type: Kind of unit.
+        @type type: C{str}
+
+        @ivar convert: Conversion factor of the unit.
+        @type convert: Either C{int} or a rational tuple (C{int}, C{int})
+
+        @ivar ottd_mul: OpenTTD multiplication factor for displaying a value of this unit.
+        @type ottd_mul: C{int}
+
+        @ivar ottd_shift: OpenTTD shift factor for displaying a value of this unit.
+        @type ottd_shift: C{int}
+        """
+        self.name = name
+        self.type = type
+        self.convert = convert
+        self.ottd_mul = ottd_mul
+        self.ottd_shift = ottd_shift
+
+    def __str__(self):
+        return self.name
+
+
+def add_unit(name, type, convert, ottd_mul, ottd_shift):
+    """
+    Construct new unit, and add it to L{units}.
+
+    @param name: Name of the unit.
+    @type  name: C{str}
+
+    @param type: Kind of unit.
+    @type  type: C{str}
+
+    @param convert: Conversion factor of the unit.
+    @type  convert: Either C{int} or a rational tuple (C{int}, C{int})
+
+    @param ottd_mul: OpenTTD multiplication factor for displaying a value of this unit.
+    @type  ottd_mul: C{int}
+
+    @param ottd_shift: OpenTTD shift factor for displaying a value of this unit.
+    @type  ottd_shift: C{int}
+    """
+    unit = Unit(name, type, convert, ottd_mul, ottd_shift)
+    units[name] = unit
+
+#          name       type     convert      mul  shift
+add_unit('nfo',        'nfo',            1,    1,  0) #don't convert, take value literal
 
 #Speed (reference: m/s)
-units['mph'] = {'type': 'speed', 'convert': (3125, 1397), 'ottd_mul': 1, 'ottd_shift': 0}
-units['km/h'] = {'type': 'speed', 'convert': (18, 5), 'ottd_mul': 103, 'ottd_shift': 6}
-units['m/s'] = {'type': 'speed', 'convert': 1, 'ottd_mul': 1831, 'ottd_shift': 12}
+#          name       type     convert      mul  shift
+add_unit(  'mph',    'speed', (3125, 1397),    1,  0)
+add_unit( 'km/h',    'speed', (  18,    5),  103,  6)
+add_unit(  'm/s',    'speed',            1, 1831, 12)
 
 #Power (reference: hpI (imperial hp))
-units['hp'] = {'type': 'power', 'convert': 1, 'ottd_mul': 1, 'ottd_shift': 0} # Default to imperial hp
-units['kW'] = {'type': 'power', 'convert': (2211, 2965), 'ottd_mul': 6109, 'ottd_shift': 13}
-units['hpM'] = {'type': 'power', 'convert': (731, 721), 'ottd_mul': 4153, 'ottd_shift': 12}
-units['hpI'] = {'type': 'power', 'convert': 1, 'ottd_mul': 1, 'ottd_shift': 0}
+
+#          name       type     convert      mul  shift
+add_unit(   'hp',    'power',            1,    1,  0) # Default to imperial hp
+add_unit(   'kW',    'power', (2211, 2965), 6109, 13)
+add_unit(  'hpM',    'power', ( 731,  721), 4153, 12)
+add_unit(  'hpI',    'power',            1,    1,  0)
 
 #Weight (reference: ton)
-units['ton'] = {'type': 'weight', 'convert': 1, 'ottd_mul': 1, 'ottd_shift': 0}
-units['tons'] = {'type': 'weight', 'convert': 1, 'ottd_mul': 1, 'ottd_shift': 0}
-units['kg'] = {'type': 'weight', 'convert': 1000, 'ottd_mul': 1000, 'ottd_shift': 0}
+
+#          name       type     convert      mul  shift
+add_unit(  'ton',   'weight',            1,    1,  0)
+add_unit( 'tons',   'weight',            1,    1,  0)
+add_unit(   'kg',   'weight',         1000, 1000,  0)
 
 #Snowline height
-units['snow%'] = {'type': 'snowline', 'convert': (255,100), 'ottd_mul': 1, 'ottd_shift': 0}
+
+#          name       type     convert      mul  shift
+add_unit('snow%', 'snowline', ( 255,  100),    1,  0)

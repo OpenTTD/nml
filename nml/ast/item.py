@@ -110,18 +110,6 @@ class Item(base_statement.BaseStatementList):
         ret += '}\n'
         return ret
 
-class Unit(object):
-    def __init__(self, name):
-        assert name in unit.units
-        self.name = name
-        self.type = unit.units[name]['type']
-        self.convert = unit.units[name]['convert']
-        self.ottd_mul = unit.units[name]['ottd_mul']
-        self.ottd_shift = unit.units[name]['ottd_shift']
-
-    def __str__(self):
-        return self.name
-
 class Property(object):
     """
     AST-node representing a single property. These are only valid

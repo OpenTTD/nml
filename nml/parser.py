@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic, expression, tokens, nmlop
+from nml import generic, expression, tokens, nmlop, unit
 from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
@@ -308,8 +308,8 @@ class NMLParser(object):
     def p_snowline_assignment(self, t):
         '''snowline_assignment : expression COLON expression SEMICOLON
                                | expression COLON expression UNIT SEMICOLON'''
-        unit = None if len(t) == 5 else item.Unit(t[4])
-        t[0] = assignment.UnitAssignment(t[1], t[3], unit, t.lineno(1))
+        unit_value = None if len(t) == 5 else unit.get_unit(t[4])
+        t[0] = assignment.UnitAssignment(t[1], t[3], unit_value, t.lineno(1))
 
     def p_snowline_assignment_list(self, t):
         '''snowline_assignment_list :
@@ -339,8 +339,8 @@ class NMLParser(object):
                                | NUMBER COLON expression SEMICOLON
                                | NUMBER COLON expression UNIT SEMICOLON'''
         name = t[1]
-        unit = None if len(t) == 5 else item.Unit(t[4])
-        t[0] = item.Property(name, t[3], unit, t.lineno(1))
+        unit_value = None if len(t) == 5 else unit.get_unit(t[4])
+        t[0] = item.Property(name, t[3], unit_value, t.lineno(1))
 
     def p_graphics_block(self, t):
         'graphics_block : GRAPHICS LBRACE graphics_list RBRACE'
