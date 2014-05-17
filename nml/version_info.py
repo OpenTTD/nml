@@ -40,7 +40,11 @@ def get_hg_version():
         # Define the next version released from this branch
         next_release_version = '0.3.1'
         # we want to return to where we were. So save the old path
-        version_list = get_child_output(['hg', '-R', path, 'id', '-n', '-t', '-i'])
+        try:
+            version_list = get_child_output(['hg', '-R', path, 'id', '-n', '-t', '-i'])
+        except OSError as e:
+            print "Mercurial checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror)
+            return version
         if version_list[1].endswith('+'):
             modified = 'M'
         else:
