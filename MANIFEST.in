@@ -1,11 +1,10 @@
 global-exclude ._*
 recursive-include docs *.html *.txt nmlc.1 nml.spec
 recursive-include regression *.nml *.lng *.grf *.nfo *.png *.pcx
-recursive-include examples *.nml *.lng *.png *.pcx
+recursive-include examples *.nml *.lng *.png
 prune regression/output
 prune regression/output2
 prune regression/nml_output
 include Makefile bootstrap.py nmlc buildout.cfg
 include regression/Makefile
 include regression/beef.wav
-recursive-include contrib create*
