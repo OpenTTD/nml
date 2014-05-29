@@ -1,4 +1,8 @@
 # Get revision data for filename
+
+# Make sure we fail on failed regression tests
+set -e
+
 BRANCH="$BRANCH-"
 if [ "$BRANCH" == "default-" ]; then BRANCH=""; fi
 REV="v`~/bin/getdays2000`"
