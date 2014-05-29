@@ -45,7 +45,7 @@ def check_range(value, min_value, max_value, name, pos):
     @type max_value: C{int}
 
     @param name: Name of the variable that is being tested.
-    @type name: C{basestring}
+    @type name: C{str}
 
     @param pos: Position information from the variable being tested.
     @type pos: L{Position}
@@ -85,7 +85,7 @@ def reverse_lookup(dic, val):
     @return: A key such that C{dict[key] == val}.
     @rtype:  Type of the matching key.
     """
-    for k, v in dic.iteritems():
+    for k, v in dic.items():
         if v == val: return k
     raise AssertionError("Value not found in the dictionary.")
 
@@ -234,13 +234,13 @@ def print_warning(msg, pos = None):
     if pos:
         msg = str(pos) + ": " + msg
 
-    print >> sys.stderr, "\033[33m nmlc warning: " + msg + "\033[0m "
+    print("\033[33m nmlc warning: " + msg + "\033[0m ", file=sys.stderr)
 
 def print_error(msg):
     """
     Output an error message to the user.
     """
-    print >> sys.stderr, "nmlc ERROR: " + msg
+    print("nmlc ERROR: " + msg, file=sys.stderr)
 
 def print_dbg(indent, *args):
     """
@@ -252,7 +252,7 @@ def print_dbg(indent, *args):
     @param args: Arguments to print. An additional space is printed between them.
     @type  args: C{Tuple} of C{str}
     """
-    print indent * ' ' + ' '.join(str(arg) for arg in args)
+    print(indent * ' ' + ' '.join(str(arg) for arg in args))
 
 
 _paths = set() # Paths already found to be correct at the system.

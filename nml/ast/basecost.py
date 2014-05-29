@@ -44,10 +44,10 @@ class BaseCost(base_statement.BaseStatement):
                 elif cost.name.value in generic_base_costs:
                     #create temporary list, so it can be sorted for efficiency
                     tmp_list = []
-                    for num, type in base_cost_table.values():
+                    for num, type in list(base_cost_table.values()):
                         if type == cost.name.value:
                             tmp_list.append(assignment.Assignment(expression.ConstantNumeric(num), cost.value, cost.name.pos))
-                    tmp_list.sort(lambda x, y: cmp(x.name.value, y.name.value))
+                    tmp_list.sort(key=lambda x: x.name.value)
                     new_costs.extend(tmp_list)
                 else:
                     raise generic.ScriptError("Unrecognized base cost identifier '{}' encountered".format(cost.name.value), cost.name.pos)

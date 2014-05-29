@@ -363,7 +363,7 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
             prepend_action_list.extend(actions)
             cb_mapping[0x00] = (cb_ref, None)
 
-        for cargo in sorted(cargo_gfx):
+        for cargo in sorted(cargo_gfx, key=lambda x: -1 if x is None else x):
             mapping = cb_buy_mapping if cargo == 0xFF else cb_mapping
             if len(mapping) == 0 and feature != 0x07:
                 # No callbacks here, so move along
@@ -401,8 +401,7 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
 
     # Make sure to sort to make the order well-defined
     offset = 7 if feature <= 3 else 5
-    for cargo_id in sorted(cargo_gfx):
-        if cargo_id is None: continue
+    for cargo_id in sorted(cg for cg in cargo_gfx if cg is not None):
         result, comment = action2var.parse_result(cargo_gfx[cargo_id], action_list, act6, offset + 1, act3, None, 0x89)
         act3.cid_mappings.append( (cargo_id, result, comment) )
         offset += 3

@@ -160,7 +160,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 # load RGB (32bpp) data
                 rgb_key = (None, None)
                 if 'rgb_file' in sprite and 'rgb_rect' in sprite:
-                    assert isinstance(sprite['rgb_file'], basestring)
+                    assert isinstance(sprite['rgb_file'], str)
                     assert isinstance(sprite['rgb_rect'], list) and len(sprite['rgb_rect']) == 4
                     assert all(isinstance(num, int) for num in sprite['rgb_rect'])
                     rgb_key = (sprite['rgb_file'], tuple(sprite['rgb_rect']))
@@ -168,7 +168,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 # load Mask (8bpp) data
                 mask_key = (None, None)
                 if 'mask_file' in sprite and 'mask_rect' in sprite:
-                    assert isinstance(sprite['mask_file'], basestring)
+                    assert isinstance(sprite['mask_file'], str)
                     assert isinstance(sprite['mask_rect'], list) and len(sprite['mask_rect']) == 4
                     assert all(isinstance(num, int) for num in sprite['mask_rect'])
                     mask_key = (sprite['mask_file'], tuple(sprite['mask_rect']))
@@ -197,7 +197,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                     crop = None
 
                 if 'warning' in sprite:
-                    assert isinstance(sprite['warning'], basestring)
+                    assert isinstance(sprite['warning'], str)
                     warning = sprite['warning']
                 else:
                     warning = None
@@ -224,7 +224,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         offset = 0
 
         old_cache_valid = True
-        for key, value in self.cached_sprites.iteritems():
+        for key, value in list(self.cached_sprites.items()):
             # Unpack key/value
             rgb_file, rgb_rect, mask_file, mask_rect, do_crop = key
             data, info, crop_rect, warning, in_old_cache, in_use = value
@@ -283,7 +283,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         @type crop: C{tuple}, or C{None} if N/A
 
         @param warning: Warning to display (e.g. about pure white pixels) if this sprite is used
-        @type warning: C{basestring}, or C{None} if N/A
+        @type warning: C{str}, or C{None} if N/A
         """
         if not self.enable_cache: return
         self.cached_sprites[key] = (self.cache_output, info, crop, warning, False, True)
@@ -294,7 +294,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         Obtain a handle to an image file
 
         @param filename: Name of the file
-        @type  filename: C{unicode}
+        @type  filename: C{str}
 
         @return: Image file
         @rtype:  L{Image}
@@ -313,7 +313,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         Indicate that an image file is being used, so the internal book-keeping can be updated
 
         @param filename: Name of the file
-        @type  filename: C{unicode}
+        @type  filename: C{str}
         """
         assert filename in self.used_sprite_files
         self.used_sprite_files[filename] -= 1
@@ -336,7 +336,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.in_sprite = False
 
         #add header
-        header = array.array('B', [0x00, 0x00, ord('G'), ord('R'), ord('F'), 0x82, 0x0D, 0x0A, 0x1A, 0x0A])
+        header = bytearray([0x00, 0x00, ord('G'), ord('R'), ord('F'), 0x82, 0x0D, 0x0A, 0x1A, 0x0A])
         size = len(self.data_output) + 1
         header.append(size & 0xFF)
         header.append((size >> 8) & 0xFF)
@@ -344,15 +344,15 @@ class OutputGRF(output_base.BinaryOutputBase):
         header.append(size >> 24)
         header.append(0) #no compression
 
-        header_str = header.tostring()
+        header_str = bytes(header)
         self.file.write(header_str)
         self.md5.update(header_str)
 
         #add data section, and then the sprite section
-        data_str = self.data_output.tostring()
+        data_str = self.data_output.tobytes()
         self.file.write(data_str)
         self.md5.update(data_str)
-        self.file.write(self.sprite_output.tostring())
+        self.file.write(self.sprite_output.tobytes())
 
     def close(self):
         output_base.BinaryOutputBase.close(self)
@@ -402,8 +402,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.print_dword(value, stream)
 
     def _print_utf8(self, char, stream = None):
-        for c in unichr(char).encode('utf8'):
-            self.print_byte(ord(c), stream)
+        for c in chr(char).encode('utf8'):
+            self.print_byte(c, stream)
 
     def print_string(self, value, final_zero = True, force_ascii = False, stream = None):
         if not grfstrings.is_ascii_string(value):
@@ -559,11 +559,11 @@ class OutputGRF(output_base.BinaryOutputBase):
             mask_data = array.array('B', mask_sprite_data) # Convert to numeric
             rgb_data = array.array('B', sprite.tostring())
             if (info_byte & INFO_ALPHA) != 0:
-                for i in xrange(len(mask_sprite_data)):
+                for i in range(len(mask_sprite_data)):
                     sprite_data.extend(rgb_data[4*i:4*(i+1)])
                     sprite_data.append(mask_data[i])
             else:
-                for i in xrange(len(mask_sprite_data)):
+                for i in range(len(mask_sprite_data)):
                     sprite_data.extend(rgb_data[3*i:3*(i+1)])
                     sprite_data.append(mask_data[i])
         elif (info_byte & INFO_RGB) != 0:
@@ -752,7 +752,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         #Best to create a new array
         if left + right > 0:
             new_data = array.array('B')
-            for y in xrange(0, size_y):
+            for y in range(0, size_y):
                 a = data[y*line_size + left*bpp : (y+1)*line_size - right*bpp]
                 new_data.extend(a)
             data = new_data
@@ -803,7 +803,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             data = fp.read(1024)
             if len(data) == 0: break
             for d in data:
-                self.print_byte(ord(d), self.sprite_output)
+                self.print_byte(d, self.sprite_output)
         fp.close()
 
         self.print_dword(4)

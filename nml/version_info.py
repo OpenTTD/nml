@@ -30,7 +30,7 @@ def get_child_output(cmd):
     @return: Generated output of the command, split on whitespace.
     @rtype:  C{list} of C{str}
     """
-    return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0].split()
+    return subprocess.check_output(cmd, universal_newlines = True).split()
 
 
 def get_hg_version():
@@ -43,7 +43,7 @@ def get_hg_version():
         try:
             version_list = get_child_output(['hg', '-R', path, 'id', '-n', '-t', '-i'])
         except OSError as e:
-            print "Mercurial checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror)
+            print("Mercurial checkout found but cannot determine its version. Error({0}): {1}").format(e.errno, e.strerror)
             return version
         if version_list[1].endswith('+'):
             modified = 'M'
@@ -103,7 +103,7 @@ def get_cli_version():
     #version string for usage in command line
     result = get_nml_version() + "\n"
     result += "Library versions encountered:\n"
-    for lib, lib_ver in get_lib_versions().iteritems():
+    for lib, lib_ver in list(get_lib_versions().items()):
         result += lib + ": " + lib_ver + "\n"
     return result[0:-1] #strip trailing newline
 
@@ -118,4 +118,4 @@ def get_and_write_version():
             f.close()
             return get_nml_version().split()[0]
         except IOError:
-            print "Version file NOT written"
+            print("Version file NOT written")

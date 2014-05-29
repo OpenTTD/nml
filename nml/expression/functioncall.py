@@ -22,7 +22,8 @@ from .parameter import parse_string_to_dword
 from .storage_op import StorageOp
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
-import identifier
+from . import identifier
+from functools import reduce
 
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):
@@ -69,7 +70,7 @@ class SpecialCheck(Expression):
     Action7/9 special check (e.g. to see whether a cargo is defined)
 
     @ivar op: Action7/9 operator to use
-    @type op: (C{int}, C{basestring})-tuple
+    @type op: (C{int}, C{str})-tuple
 
     @ivar varnum: Variable number to read
     @type varnum: C{int}
@@ -576,7 +577,7 @@ def builtin_format_string(name, args, pos):
     try:
         result = format.value % tuple(format_args)
         return StringLiteral(result, pos)
-    except Exception, ex:
+    except Exception as ex:
         raise generic.ScriptError("Invalid combination of format / arguments for {}: {}".format(name, str(ex)), pos)
 
 #}

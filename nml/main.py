@@ -192,10 +192,10 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
 
     try:
         script = inputfile.read()
-    except UnicodeDecodeError, ex:
+    except UnicodeDecodeError as ex:
         raise generic.ScriptError('Input file is not utf-8 encoded: {}'.format(ex))
     # Strip a possible BOM
-    script = script.lstrip(unicode(codecs.BOM_UTF8, "utf-8"))
+    script = script.lstrip(str(codecs.BOM_UTF8, "utf-8"))
 
     if script.strip() == "":
         generic.print_error("Empty input file")
@@ -280,7 +280,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     for f in sprite_files:
         try:
             im = Image.open(generic.find_file(f))
-        except IOError, ex:
+        except IOError as ex:
             raise generic.ImageError(str(ex), f)
         if im.mode != "P":
             continue
@@ -332,7 +332,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             outputfile.close()
 
     if md5 is not None and md5_filename is not None:
-        with open(md5_filename, 'w') as f:
+        with open(md5_filename, 'w', encoding="utf-8") as f:
             f.write(md5 + '\n')
 
     return 0
@@ -341,23 +341,23 @@ def run():
     try:
         main(sys.argv[1:])
 
-    except generic.ScriptError, ex:
+    except generic.ScriptError as ex:
         generic.print_error(str(ex))
 
         if developmode: raise # Reraise exception in developmode
         sys.exit(1)
 
-    except SystemExit, ex:
+    except SystemExit as ex:
         raise
 
-    except KeyboardInterrupt, ex:
+    except KeyboardInterrupt as ex:
         generic.print_error('Application forcibly terminated by user.')
 
         if developmode: raise # Reraise exception in developmode
 
         sys.exit(1)
 
-    except Exception, ex: # Other/internal error.
+    except Exception as ex: # Other/internal error.
 
         if developmode: raise # Reraise exception in developmode
 

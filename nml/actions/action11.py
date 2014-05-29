@@ -100,7 +100,7 @@ def get_sound_actions():
     action_list.append(Action11(len(registered_sounds)))
     volume_list = []
 
-    sound_data = [(sound_id, args, pos) for args, (sound_id, pos) in registered_sounds.iteritems()]
+    sound_data = [(sound_id, args, pos) for args, (sound_id, pos) in list(registered_sounds.items())]
     # Sort on first item, i.e. sound ID
     for i, args, pos in sorted(sound_data):
         if len(args) == 3:

@@ -20,10 +20,10 @@ from nml.actions import action0properties, action2layout, action2var_variables
 from nml.actions import action3_callbacks, action5, action12, actionB, real_sprite
 
 #Create list of blocks, functions and units
-units = set(unit.units.iterkeys())
-keywords = set(tokens.reserved.iterkeys())
-functions = set(functioncall.function_table.iterkeys())
-layouts = set(action2layout.layout_sprite_types.iterkeys())
+units = set(unit.units.keys())
+keywords = set(tokens.reserved.keys())
+functions = set(functioncall.function_table.keys())
+layouts = set(action2layout.layout_sprite_types.keys())
 
 #No easy way to get action14 stuff
 temp1 = units | keywords | functions | layouts | set(["int", "bool"])
@@ -61,7 +61,7 @@ var_tables = [
 
 variables = set()
 for d in var_tables:
-    for key in d.iterkeys():
+    for key in d.keys():
         variables.add(key)
 
 prop_tables = [
@@ -82,11 +82,11 @@ prop_tables = [
 
 properties = set()
 for d in prop_tables:
-    for key in d.iterkeys():
+    for key in d.keys():
         properties.add(key)
 
 dummy = action2layout.Action2LayoutSprite(None, None)
-layout_sprites = set(dummy.params.iterkeys())
+layout_sprites = set(dummy.params.keys())
 
 cb_tables = [
     action3_callbacks.general_vehicle_cbs,
@@ -107,7 +107,7 @@ cb_tables = [
 
 callbacks = set()
 for d in cb_tables:
-    for key in d.iterkeys():
+    for key in d.keys():
         callbacks.add(key)
 
 #No easy way to get action14 stuff
@@ -118,8 +118,8 @@ temp2 = variables | properties | layout_sprites | callbacks | act14_vars
 variables_names_table = sorted(temp2)
 
 #Create list of features
-features = set(general.feature_ids.iterkeys())
-switch_names = set(switch.var_ranges.iterkeys())
+features = set(general.feature_ids.keys())
+switch_names = set(switch.var_ranges.keys())
 
 temp3 = features | switch_names
 feature_names_table = sorted(temp3)
@@ -136,14 +136,14 @@ const_tables = [
 
 constant_names = set()
 for d in const_tables:
-    for key in d.iterkeys():
+    for key in d.keys():
         constant_names.add(key)
 
-act5_names  = set(action5.action5_table.iterkeys())
-act12_names  = set(action12.font_sizes.iterkeys())
-actB_names   = set(actionB.default_error_msg.iterkeys()) | set(actionB.error_severity.iterkeys())
-sprite_names = set(real_sprite.real_sprite_compression_flags.iterkeys())
-cost_names   = set(basecost.base_cost_table.iterkeys())  | set(basecost.generic_base_costs)
+act5_names  = set(action5.action5_table.keys())
+act12_names  = set(action12.font_sizes.keys())
+actB_names   = set(actionB.default_error_msg.keys()) | set(actionB.error_severity.keys())
+sprite_names = set(real_sprite.real_sprite_compression_flags.keys())
+cost_names   = set(basecost.base_cost_table.keys())  | set(basecost.generic_base_costs)
 
 temp4 = constant_names | act5_names | act12_names | actB_names | sprite_names | cost_names
 callback_names_table = sorted(temp4)

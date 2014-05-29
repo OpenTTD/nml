@@ -29,7 +29,7 @@ class StorageOp(Expression):
     Class for reading/writing to (temporary or permanent) storage
 
     @ivar name: Name of the called storage function
-    @type name: C{str} or C{unicode}
+    @type name: C{str}
 
     @ivar info: Dictionary containting information about the operation to perform
     @type info: C{dict}

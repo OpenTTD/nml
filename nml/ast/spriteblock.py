@@ -44,7 +44,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
         offset = 0
         for sprite in self.sprite_list:
             sprite_labels, num_sprites = sprite.get_labels()
-            for lbl, lbl_offset in sprite_labels.iteritems():
+            for lbl, lbl_offset in list(sprite_labels.items()):
                 if lbl in labels:
                     raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(lbl), self.pos)
                 labels[lbl] = lbl_offset + offset
@@ -99,7 +99,7 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         offset = 0
         for sprite in self.sprite_list:
             sprite_labels, num_sprites = sprite.get_labels()
-            for lbl, lbl_offset in sprite_labels.iteritems():
+            for lbl, lbl_offset in list(sprite_labels.items()):
                 if lbl in self.labels:
                     raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(lbl), self.pos)
                 self.labels[lbl] = lbl_offset + offset

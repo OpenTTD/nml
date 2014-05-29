@@ -25,7 +25,7 @@ class FunctionPtr(Expression):
     @type name: L{Identifier}
 
     @ivar func: Function that will be called to resolve this function call. Arguments:
-                    Name of the function (C{basestring})
+                    Name of the function (C{str})
                     List of passed arguments (C{list} of L{Expression})
                     Position information (L{Position})
                     Any extra arguments passed to the constructor of this class

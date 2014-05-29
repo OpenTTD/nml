@@ -107,7 +107,7 @@ class BlockAllocation(object):
 
         @precond: Addresses of the range should be within the available address space.
         """
-        for idx in xrange(addr + length - 1, addr - 1, -1):
+        for idx in range(addr + length - 1, addr - 1, -1):
             if idx in self.allocated: return idx
         return None
 
@@ -125,7 +125,7 @@ class BlockAllocation(object):
         @precond: No address in the block may have been allocated.
         """
         self.allocated[addr] = length
-        for idx in xrange(addr + 1, addr + length):
+        for idx in range(addr + 1, addr + length):
             self.allocated[idx] = None
 
     def find_unused(self, length):
@@ -143,7 +143,7 @@ class BlockAllocation(object):
         if idx is None:
             # Never searched before with this block size.
             # Start at the biggest offset previously discovered with a smaller block size.
-            smaller_filleds = [min_f for sz, min_f in self.filled.iteritems() if sz < length]
+            smaller_filleds = [min_f for sz, min_f in self.filled.items() if sz < length]
             idx = self.first if len(smaller_filleds) == 0 else max(smaller_filleds)
 
         last_idx = self.last - length + 1
@@ -579,7 +579,7 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
     global properties
     first_warnings = [(info, pos_list[i]) for i, info in enumerate(prop_info_list) if 'first' in info and i != 0]
     for info, pos in first_warnings:
-        for prop_name, prop_info in properties[feature].iteritems():
+        for prop_name, prop_info in list(properties[feature].items()):
             if info == prop_info or (isinstance(prop_info, list) and info in prop_info):
                 generic.print_warning("Property '{}' should be set before all other properties and graphics.".format(prop_name), pos)
                 break
@@ -829,7 +829,7 @@ class LanguageTranslationTable(BaseAction0Property):
     def __init__(self, num, name_list, extra_names):
         self.num = num
         self.mappings = []
-        for name, idx in name_list.iteritems():
+        for name, idx in list(name_list.items()):
             self.mappings.append( (idx, name) )
             if name in extra_names:
                 for extra_name in extra_names[name]:

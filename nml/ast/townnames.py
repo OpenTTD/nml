@@ -53,7 +53,7 @@ class TownNames(base_statement.BaseStatement):
         self.parts = []
 
     def debug_print(self, indentation):
-        if isinstance(self.name, basestring):
+        if isinstance(self.name, str):
             name_text = "name = " + repr(self.name)
             if self.id_number is not None: name_text += " (allocated number is 0x{:x})".format(self.id_number)
         elif self.id_number is not None:

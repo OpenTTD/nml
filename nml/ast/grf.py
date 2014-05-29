@@ -192,7 +192,7 @@ class ParameterSetting(object):
         Set a single parameter property
 
         @param name: Name of the property to be set
-        @type name: C{basestring}
+        @type name: C{str}
 
         @param value: Value of the property (note: may be an array)
         @type value: L{Expression}

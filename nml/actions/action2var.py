@@ -765,7 +765,7 @@ def get_failed_cb_result(feature, action_list, parent_action):
     else:
         # Create action2 (+ action1, if needed)
         # Import here to avoid circular imports
-        import action1, action2layout, action2production, action2real
+        from nml.actions import action1, action2layout, action2production, action2real
         if feature == 0x0A:
             # Industries -> production action2
             act2 = action2production.make_empty_production_action2()

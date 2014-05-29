@@ -42,12 +42,12 @@ def is_ascii_string(string):
     that we need unicode.
 
     @param string: The string to check.
-    @type  string: C{basestring}
+    @type  string: C{str}
 
     @return: True iff the string is ascii-only.
     @rtype:  C{bool}
     """
-    assert isinstance(string, basestring)
+    assert isinstance(string, str)
     i = 0
     while i < len(string):
         if string[i] != '\\':
@@ -68,7 +68,7 @@ def get_string_size(string, final_zero = True, force_ascii = False):
     Get the size (in bytes) of a given string.
 
     @param string: The string to check.
-    @type  string: C{basestring}
+    @type  string: C{str}
 
     @param final_zero: Whether or not to account for a zero-byte directly after the string.
     @type  final_zero: C{bool}
@@ -116,7 +116,7 @@ def get_translation(string, lang_id = DEFAULT_LANGUAGE):
     @type  lang_id: C{int}
 
     @return: Translation of the given string in the given language.
-    @rtype:  C{unicode}
+    @rtype:  C{str}
     """
     for lang_pair in langs:
         langid, lang = lang_pair
@@ -386,8 +386,8 @@ class StringCommand(object):
                     raise generic.ScriptError("Provided a static argument for string command '{}' which is invalid".format(self.name), self.pos)
                 # Parse commands using the wanted (not current) lang id, so translations are used if present
                 return commands[self.name]['parse'](static_args[self.str_pos], wanted_lang_id)
-            prefix = u''
-            suffix = u''
+            prefix = ''
+            suffix = ''
             if self.case:
                 prefix += STRING_SELECT_CASE[str_type] + '\\{:02X}'.format(self.case)
             if stack_pos + self_size > 8:
@@ -473,7 +473,7 @@ def validate_escapes(string, pos):
     When an invalid escape is encountered, an error is thrown
 
     @param string: String to validate
-    @type string: C{unicode}
+    @type string: C{str}
 
     @param pos: Position information
     @type pos: L{Position}
@@ -502,13 +502,13 @@ class NewGRFString(object):
     A string text in a language.
 
     @ivar string: String text.
-    @type string: C{unicode}
+    @type string: C{str}
 
     @ivar cases: Mapping of cases to ...
     @type cases: ???
 
     @ivar components: Split string text.
-    @type components: C{list} of (C{unicode} or L{StringCommand})
+    @type components: C{list} of (C{str} or L{StringCommand})
 
     @ivar pos: Position of the string text.
     @type pos: L{Position}
@@ -518,7 +518,7 @@ class NewGRFString(object):
         Construct a L{NewGRFString}, and break down the string text into text literals and string commands.
 
         @param string: String text.
-        @type  string: C{unicode}
+        @type  string: C{str}
 
         @param lang: Language containing this string.
         @type  lang: L{Language}
@@ -617,7 +617,7 @@ class NewGRFString(object):
                     return 'unicode'
             else:
                 if not is_ascii_string(comp): return 'unicode'
-        for case in self.cases.values():
+        for case in list(self.cases.values()):
             if case.get_type() == 'unicode':
                 return 'unicode'
         return 'ascii'
@@ -929,10 +929,10 @@ class Language(object):
         @type lang_id: C{int}
 
         @return: The created string
-        @rtype: C{basestring}
+        @rtype: C{str}
         """
         string_id = string.name.value
-        assert isinstance(string_id, basestring)
+        assert isinstance(string_id, str)
         assert string_id in self.strings
         assert lang_id == self.langid or self.langid == DEFAULT_LANGUAGE
 
@@ -942,7 +942,7 @@ class Language(object):
             parsed_string += SET_STRING_GENDER[str_type] + '\\{:02X}'.format(self.genders[self.strings[string_id].gender])
         if len(self.strings[string_id].cases) > 0:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
-            for case_name, case_string in self.strings[string_id].cases.iteritems():
+            for case_name, case_string in list(self.strings[string_id].cases.items()):
                 case_id = self.cases[case_name]
                 parsed_string += CHOICE_LIST_ITEM[str_type] + '\\{:02X}'.format(case_id) + case_string.parse_string(str_type, self, lang_id, string.params)
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
@@ -956,7 +956,7 @@ class Language(object):
         Handle a 'grflangid' pragma.
 
         @param data: Data of the pragma.
-        @type  data: C{unicode}
+        @type  data: C{str}
         """
         if self.langid is not None:
             raise generic.ScriptError("grflangid already set", pos)
@@ -977,7 +977,7 @@ class Language(object):
         Handle a 'plural' pragma.
 
         @param data: Data of the pragma.
-        @type  data: C{unicode}
+        @type  data: C{str}
         """
         if self.plural is not None:
             raise generic.ScriptError("plural form already set", pos)
@@ -1016,7 +1016,7 @@ class Language(object):
         Handle a 'gender' pragma.
 
         @param data: Data of the pragma.
-        @type  data: C{unicode}
+        @type  data: C{str}
         """
         if self.genders is not None:
             raise generic.ScriptError("Genders already defined", pos)
@@ -1030,7 +1030,7 @@ class Language(object):
         Handle a 'map_gender' pragma.
 
         @param data: Data of the pragma.
-        @type  data: C{unicode}
+        @type  data: C{str}
         """
         if self.genders is None:
             raise generic.ScriptError("##map_gender is not allowed before ##gender", pos)
@@ -1046,7 +1046,7 @@ class Language(object):
         Handle a 'case' pragma.
 
         @param data: Data of the pragma.
-        @type  data: C{unicode}
+        @type  data: C{str}
         """
         if self.cases is not None:
             raise generic.ScriptError("Cases already defined", pos)
@@ -1060,7 +1060,7 @@ class Language(object):
         Handle a 'map_case' pragma.
 
         @param data: Data of the pragma.
-        @type  data: C{unicode}
+        @type  data: C{str}
         """
         if self.cases is None:
             raise generic.ScriptError("##map_case is not allowed before ##case", pos)
@@ -1076,7 +1076,7 @@ class Language(object):
         Handle a text string.
 
         @param data: Data of the pragma.
-        @type  data: C{unicode}
+        @type  data: C{str}
         """
         _type, string, case, value = data
 
@@ -1119,7 +1119,7 @@ class Language(object):
         Scan a line of a language file.
 
         @param line: Line to scan.
-        @type  line: C{unicode}
+        @type  line: C{str}
 
         @param pos: Position information of the line.
         @type  pos: L{Position}
@@ -1197,7 +1197,7 @@ def parse_file(filename, default):
         with codecs.open(generic.find_file(filename), "r", "utf-8") as f:
             for idx, line in enumerate(f):
                 pos = generic.LinePosition(filename, idx + 1)
-                line = line.rstrip('\n\r').lstrip(u'\uFEFF')
+                line = line.rstrip('\n\r').lstrip('\uFEFF')
                 # The default language is processed twice here. Once as fallback langauge
                 # and once as normal language.
                 if default: default_lang.handle_string(line, pos)
@@ -1207,7 +1207,7 @@ def parse_file(filename, default):
         if default:
             raise generic.ScriptError("The default language file contains non-utf8 characters.", pos)
         generic.print_warning("Language file contains non-utf8 characters. Ignoring (part of) the contents.", pos)
-    except generic.ScriptError, err:
+    except generic.ScriptError as err:
         if default: raise
         generic.print_warning(err.value, err.pos)
     else:

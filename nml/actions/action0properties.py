@@ -585,7 +585,7 @@ old_houses = {
 4 : set([20, 32, 40]), # 2x2
 }
 # All houses not part of a multitile-house, are 1x1 houses
-old_houses[0] = set(range(110)).difference( house + i for house in (itertools.chain(*old_houses.values())) for i in range(4 if house in old_houses[4] else 2) )
+old_houses[0] = set(range(110)).difference( house + i for house in (itertools.chain(*list(old_houses.values()))) for i in range(4 if house in old_houses[4] else 2) )
 
 def mt_house_old_id(value, num_ids, size_bit):
     # For substitute / override properties

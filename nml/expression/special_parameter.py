@@ -22,7 +22,7 @@ class SpecialParameter(Expression):
     These can be assigned special, custom methods for reading / writing to them.
 
     @ivar name: Name of the parameter, for debugging purposes.
-    @type name: C{basestring}
+    @type name: C{str}
 
     @ivar info: Information about the parameter.
     @type info: C{dict}

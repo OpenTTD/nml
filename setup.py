@@ -1,18 +1,20 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
+try:
+      from cx_Freeze import setup, Executable
+except ImportError:
+      pass
 
 import sys, os, string, subprocess
 from setuptools import setup
-
+from PIL import Image
+import ply
 
 version = sys.version_info
-if version[0] < 2 or (version[0] == 2 and version[1] < 6):
-    sys.exit('ERROR: Sorry, python 2.6 ... < 3.0 is required for this application.')
-if version[0] >= 3:
-    sys.exit('WARNING: Sorry, python 3.0 or later is not yet supported. Some parts may not work.')
+if version[0] < 3 or (version[0] == 3 and version[1] < 2):
+    sys.exit('ERROR: Sorry, Python 3.2 or later is required for this application.')
 
-# For the purpose of the packet information we only use the numeric code
-
+# Import our version information
 from nml import version_info
 version = version_info.get_and_write_version()
 
@@ -27,15 +29,16 @@ setup(name='nml',
                      'Intended Audience :: Developers',
                      'License :: OSI Approved :: GNU General Public License (GPL)',
                      'Operating System :: OS Independent',
-                     'Programming Language :: Python',
+                     'Programming Language :: Python :: 3',
+                     'Programming Language :: Python :: 3.2',
+                     'Programming Language :: Python :: 3.3',
+                     'Programming Language :: Python :: 3.4',
                      'Topic :: Software Development :: Compilers',
                      ],
-      packages=['nml', 'nml.actions', 'nml.ast', 'nml.expression'],
       url='http://dev.openttdcoop.org/projects/nml',
       author='NML Development Team',
       author_email='nml-team@openttdcoop.org',
-      entry_points="""
-      [console_scripts]
-      nmlc = nml.main:run
-      """
-      )
+      entry_points={
+          'console_scripts': ['nmlc = nml.main:run']
+      },
+)

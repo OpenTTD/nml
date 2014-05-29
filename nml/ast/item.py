@@ -54,7 +54,7 @@ class Item(base_statement.BaseStatementList):
             if self.feature.value != 0x07:
                 raise generic.ScriptError("item-block parameter 4 'size' may only be set for houses", params[3].pos)
             self.size = params[3].reduce_constant(global_constants.const_list)
-            if self.size.value not in action0.house_sizes.keys():
+            if self.size.value not in list(action0.house_sizes.keys()):
                 raise generic.ScriptError("item-block parameter 4 'size' does not have a valid value", self.size.pos)
         else:
             self.size = None

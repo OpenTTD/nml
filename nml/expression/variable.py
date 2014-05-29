@@ -33,7 +33,7 @@ class Variable(Expression):
         self.num.debug_print(indentation + 2)
         if self.param is not None:
             generic.print_dbg(indentation + 2, 'Parameter:')
-            if isinstance(self.param, basestring):
+            if isinstance(self.param, str):
                 generic.print_dbg(indentation + 4, 'Procedure call:', self.param)
             else:
                 self.param.debug_print(indentation + 4)

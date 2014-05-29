@@ -29,7 +29,7 @@ class LZ77(object):
             overlap_len = 0
             start_pos =  max(0, position - (1 << 11) + 1)
             # Loop through the lookahead buffer.
-            for i in xrange(3, min(stream_len - position + 1, 16)):
+            for i in range(3, min(stream_len - position + 1, 16)):
                 # Set pattern to find the longest match.
                 pattern = self.stream[position:position+i]
                 # Find the pattern match in the window.
@@ -48,7 +48,7 @@ class LZ77(object):
                 output.append(p & 0xFF)
                 position += overlap_len
             else:
-                literal_bytes.append(ord(self.stream[position]))
+                literal_bytes.append(self.stream[position])
                 if len(literal_bytes) == 0x80:
                     output.append(0)
                     output.extend(literal_bytes)

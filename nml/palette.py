@@ -289,8 +289,8 @@ raw_palette_data = [
 ] #end of Windows Toyland palette
 ]
 
-#Convert palettes to strings for fast comparision
-palette_data = [''.join([chr(c) for c in pal]) for pal in raw_palette_data]
+# Convert palettes to strings for fast comparison.
+palette_data = [bytes(pal) for pal in raw_palette_data]
 
 palette_name = ["DEFAULT", "LEGACY", "DEFAULT_TOYLAND", "LEGACY_TOYLAND"]
 

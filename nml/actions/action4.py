@@ -34,7 +34,7 @@ class Action4(base_action.BaseAction):
     @type id: C{int}
 
     @ivar texts: List of strings to write
-    @type texts: C{list} of C{unicode}
+    @type texts: C{list} of C{str}
     """
     def __init__(self, feature, lang, size, id, texts):
         self.feature = feature
@@ -94,8 +94,8 @@ def get_global_string_actions():
     """
     texts = []
     actions = []
-    for string_range, strings in used_strings.iteritems():
-        for feature_name, id in strings.iteritems():
+    for string_range, strings in list(used_strings.items()):
+        for feature_name, id in list(strings.items()):
             feature, string_name = feature_name
             texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name), feature) )
             for lang_id in grfstrings.get_translations(string_name):

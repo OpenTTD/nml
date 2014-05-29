@@ -24,7 +24,7 @@ def default_id_func(x, pos):
     Default id conversion function.
 
     @param x: Value to convert.
-    @type  x: C{basestring}, C{int}, or C{float}
+    @type  x: C{str}, C{int}, or C{float}
 
     @param pos: Position of the id.
     @type  pos: L{Position}
@@ -32,7 +32,7 @@ def default_id_func(x, pos):
     @return: Expression of the id.
     @rtype:  L{Expression}
     """
-    if isinstance(x, basestring):
+    if isinstance(x, str):
         return StringLiteral(x, pos)
     else:
         return ConstantNumeric(x, pos)

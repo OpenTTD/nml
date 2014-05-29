@@ -95,7 +95,7 @@ class Action14Node(object):
 
     def write_type_id(self, file):
         file.print_string(self.type_string, False, True)
-        if isinstance(self.id, basestring):
+        if isinstance(self.id, str):
             file.print_string(self.id, False, True)
         else:
             file.print_dword(self.id)

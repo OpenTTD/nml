@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from .base_expression import Expression
 from .identifier import Identifier
 from nml import generic
+from functools import reduce
 
 class String(Expression):
     def __init__(self, params, pos):

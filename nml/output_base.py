@@ -16,7 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 """
 Abstract base classes that implements common functionality for output classes
 """
-import StringIO
+import io
 
 class OutputBase(object):
     """
@@ -263,7 +263,7 @@ class TextOutputBase(OutputBase):
         OutputBase.__init__(self, filename)
 
     def open(self):
-        self.file = StringIO.StringIO()
+        self.file = io.StringIO()
 
 
 class BinaryOutputBase(SpriteOutputBase):
@@ -274,4 +274,4 @@ class BinaryOutputBase(SpriteOutputBase):
         SpriteOutputBase.__init__(self, filename)
 
     def open(self):
-        self.file = StringIO.StringIO()
+        self.file = io.BytesIO()
