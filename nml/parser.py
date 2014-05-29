@@ -33,7 +33,7 @@ class NMLParser(object):
         self.lexer = tokens.NMLLexer()
         self.lexer.build()
         self.tokens = self.lexer.tokens
-        self.parser = yacc.yacc(debug = False, module = self)
+        self.parser = yacc.yacc(debug = False, module = self, write_tables = 0)
 
     def parse(self, text, input_filename):
         self.lexer.setup(text, input_filename)
