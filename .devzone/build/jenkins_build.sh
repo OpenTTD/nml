@@ -10,7 +10,7 @@ REV="$BRANCH$REV"
 if [ "$BUILD_TYPE" == "releases" ]; then REV="$USE_REV"; fi
 
 # Check regressions
-make -j2 regression
+make -j1 regression
 
 # Create version file
 ./setup.py --version
