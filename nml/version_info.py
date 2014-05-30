@@ -38,7 +38,7 @@ def get_hg_version():
     version = ''
     if os.path.isdir(os.path.join(path,'.hg')):
         # Define the next version released from this branch
-        next_release_version = '0.3.1'
+        next_release_version = '0.4.0'
         # we want to return to where we were. So save the old path
         try:
             version_list = get_child_output(['hg', '-R', path, 'id', '-n', '-t', '-i'])
