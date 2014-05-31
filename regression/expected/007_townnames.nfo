@@ -20,10 +20,10 @@
 01 01 00 01 01 "tiny village" 00 
 
 
-2 * 73 0F 82 
+2 * 80 0F 82 
 00 "US Stations" 00 
 1F "Test stationnnetjes" 00 
-7F "Test Stations" 00 
+7F "ÞTeßt Stätiöµſ" 00 
 00 
 01 03 0A 04 0A "MainCapital" 00 
 85 00 

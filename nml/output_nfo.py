@@ -82,7 +82,7 @@ class OutputNFO(output_base.SpriteOutputBase):
         if not grfstrings.is_ascii_string(value):
             if force_ascii:
                 raise generic.ScriptError("Expected ascii string but got a unicode string")
-            self.file.write('\xC3\x9E'.decode('utf-8'))
+            self.file.write('Þ') # b'\xC3\x9E'.decode('utf-8')
         self.file.write(value.replace('"', '\\"'))
         self.byte_count += grfstrings.get_string_size(value, final_zero, force_ascii)
         self.file.write('" ')
