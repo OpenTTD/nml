@@ -186,7 +186,7 @@ class NMLLexer(object):
         self.increment_lines(t.value.count("\n"))
 
     def t_ignore_whitespace(self, t):
-        "[ \t\r]"
+        "[ \t\r]+"
         pass
 
     def t_line_directive1(self, t):
