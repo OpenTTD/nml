@@ -122,10 +122,10 @@ varact2vars_vehicles = {
     'grfid'                            : {'var': 0x25, 'start':  0, 'size': 32},
     'position_in_consist'              : {'var': 0x40, 'start':  0, 'size':  8},
     'position_in_consist_from_end'     : {'var': 0x40, 'start':  8, 'size':  8},
-    'num_vehs_in_consist'              : {'var': 0x40, 'start': 16, 'size':  8, 'value_function': value_add_constant(1)},
+    'num_vehs_in_consist'              : {'var': 0x40, 'start': 16, 'size':  8, 'value_function': value_add_constant(1)}, # Zero-based, add 1 to make sane
     'position_in_vehid_chain'          : {'var': 0x41, 'start':  0, 'size':  8},
     'position_in_vehid_chain_from_end' : {'var': 0x41, 'start':  8, 'size':  8},
-    'num_vehs_in_vehid_chain'          : {'var': 0x41, 'start': 16, 'size':  8, 'value_function': value_add_constant(1)},
+    'num_vehs_in_vehid_chain'          : {'var': 0x41, 'start': 16, 'size':  8}, # One-based, already sane
     'cargo_classes_in_consist'         : {'var': 0x42, 'start':  0, 'size':  8},
     'most_common_refit'                : {'var': 0x42, 'start': 16, 'size':  8},
     'bitmask_consist_info'             : {'var': 0x42, 'start': 24, 'size':  8},
