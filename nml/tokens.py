@@ -58,7 +58,7 @@ reserved = {
 }
 
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')
-line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"(\s+\d+\s*)?\r?\n')
+line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"\s*((?:\d+\s*)*)\r?\n')
 
 class NMLLexer(object):
     """
@@ -191,6 +191,7 @@ class NMLLexer(object):
 
     def t_line_directive1(self, t):
         r'\#line\s+\d+\s*(\r?\n|".*"\r?\n)'
+        # See: https://gcc.gnu.org/onlinedocs/cpp/Line-Control.html
         m = line_directive1_pat.match(t.value)
         assert m is not None
         fname = self.lexer.lineno.filename if m.group(3) is None else m.group(3)
@@ -207,8 +208,9 @@ class NMLLexer(object):
         self.increment_lines(t.value.count('\n') - 1)
 
     def t_line_directive2(self, t):
-        r'\#\s+\d+\s+".*"(\s+\d+\s*)?\r?\n'
+        r'\#\s+\d+\s+".*"\s*(\d+\s*)*\r?\n'
         # Format: # lineno filename flags
+        # See: https://gcc.gnu.org/onlinedocs/cpp/Preprocessor-Output.html
         m = line_directive2_pat.match(t.value)
         assert m is not None
         line, fname, flags = m.groups()
