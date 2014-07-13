@@ -2,7 +2,7 @@
 for f in `ls -d *.txt docs docs/*.txt`; do cp -r $f dist; done
 
 # Update Jenkins' NML
-if [ "$USE_REV" == "tip" ] || [ "$BUILD_TYPE)" == "releases"  ]; then
+if [ "$USE_REV" == "tip" ] || [ "$USE_REV" = "`hg id -rtip | cut -f1 -d\ `" ] || [ "$BUILD_TYPE" == "releases"  ]; then
 echo "Updating NML on main build node"
 cd ~/bin/repos/nml-$BRANCH
 hg pull -u
