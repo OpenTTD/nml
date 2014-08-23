@@ -48,6 +48,7 @@ def vehicle_length(value):
 # Trains
 callbacks[0x00] = {
     'visual_effect_and_powered'            : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'effect_spawn_model_and_powered'       : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'value_function': vehicle_length},
     'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                                {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
@@ -67,12 +68,14 @@ callbacks[0x00] = {
     'purchase_tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
     'bitmask_vehicle_info'                 : {'type': 'cb', 'num': 0x36, 'var10': 0x25},
     'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x2B},
+    'create_effect'                        : {'type': 'cb', 'num': 0x160},
 }
 callbacks[0x00].update(general_vehicle_cbs)
 
 # Road vehicles
 callbacks[0x01] = {
     'visual_effect'                        : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'effect_spawn_model'                   : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'value_function': vehicle_length},
     'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                                {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
@@ -90,12 +93,14 @@ callbacks[0x01] = {
     'tractive_effort_coefficient'          : {'type': 'cb', 'num': 0x36, 'var10': 0x18, 'purchase': 'purchase_tractive_effort_coefficient'},
     'purchase_tractive_effort_coefficient' : {'type': 'cb', 'num': 0x36, 'var10': 0x18, 'purchase': 2},
     'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x22},
+    'create_effect'                        : {'type': 'cb', 'num': 0x160},
 }
 callbacks[0x01].update(general_vehicle_cbs)
 
 # Ships
 callbacks[0x02] = {
     'visual_effect'                : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'effect_spawn_model'           : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'cargo_capacity'               : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                        {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity'      : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
@@ -105,6 +110,7 @@ callbacks[0x02] = {
     'running_cost_factor'          : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_running_cost_factor'},
     'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
     'cargo_age_period'             : {'type': 'cb', 'num': 0x36, 'var10': 0x1D},
+    'create_effect'                : {'type': 'cb', 'num': 0x160},
 }
 callbacks[0x02].update(general_vehicle_cbs)
 

@@ -80,14 +80,31 @@ constant_numbers = {
     #vehicle length
     'VEHICLE_LENGTH' : 8,
 
-    #visual effect / wagon power
+    #visual effect
     'VISUAL_EFFECT_DEFAULT'  : 0x00,
     'VISUAL_EFFECT_STEAM'    : 0x10,
     'VISUAL_EFFECT_DIESEL'   : 0x20,
     'VISUAL_EFFECT_ELECTRIC' : 0x30,
     'VISUAL_EFFECT_DISABLE'  : 0x40,
+
+    #effect spawn model
+    'EFFECT_SPAWN_MODEL_NONE'    : 0x40,
+    'EFFECT_SPAWN_MODEL_STEAM'   : 0x41,
+    'EFFECT_SPAWN_MODEL_DIESEL'  : 0x42,
+    'EFFECT_SPAWN_MODEL_ELECTRIC': 0x43,
+
+    #visual effect / effect spawn model
     'ENABLE_WAGON_POWER'     : 0x00,
     'DISABLE_WAGON_POWER'    : 0x80,
+
+    #create_effect
+    'EFFECT_SPRITE_STEAM'                    : 0xF1,
+    'EFFECT_SPRITE_DIESEL'                   : 0xF2,
+    'EFFECT_SPRITE_ELECTRIC'                 : 0xF3,
+    'EFFECT_SPRITE_AIRCRAFT_BREAKDOWN_SMOKE' : 0xFA,
+
+    'CB_RESULT_CREATE_EFFECT_CENTER'         : 0x2000,
+    'CB_RESULT_CREATE_EFFECT_NO_ROTATION'    : 0x4000,
 
     #train misc flags
     'TRAIN_FLAG_TILT' : 0,

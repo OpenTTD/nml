@@ -332,6 +332,30 @@ def builtin_visual_effect_and_powered(name, args, pos):
         powered = 0
     return ConstantNumeric(effect | offset | powered)
 
+def builtin_create_effect(name, args, pos):
+    """
+    Builtin function:
+    create_effect(effect_sprite, l_x_offset, t_y_offset, z_offset)
+    Use this to set the values for temporary storages 100+x
+    in the callback create_effect
+
+    """
+    if len(args) != 4:
+        raise generic.ScriptError(name + "() must have 4 parameters", pos)
+    from nml import global_constants
+
+    sprite = args[0].reduce_constant(global_constants.const_list).value
+    offset1 = args[1].reduce_constant().value
+    offset2 = args[2].reduce_constant().value
+    offset3 = args[3].reduce_constant().value
+
+    generic.check_range(sprite, 0, 255, "effect_sprite in function " + name, args[0].pos)
+    generic.check_range(offset1, -128, 127, "l_x_offset in function " + name, args[1].pos)
+    generic.check_range(offset2, -128, 127, "t_y_offset in function " + name, args[2].pos)
+    generic.check_range(offset3, -128, 127, "z_offset in function " + name, args[3].pos)
+
+    return ConstantNumeric(sprite | (offset1 & 0xFF) << 8 | (offset2 & 0xFF) << 16 | (offset3 & 0xFF) << 24)
+
 def builtin_str2number(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
@@ -601,6 +625,7 @@ function_table = {
     'grf_order_behind' : builtin_grf_status,
     'visual_effect' : builtin_visual_effect_and_powered,
     'visual_effect_and_powered' : builtin_visual_effect_and_powered,
+    'create_effect' : builtin_create_effect,
     'str2number' : builtin_str2number,
     'cargotype' : builtin_cargotype,
     'railtype' : builtin_railtype,

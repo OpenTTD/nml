@@ -326,7 +326,9 @@ properties[0x00] = {
     'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
     'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
     'length'                       : {'size': 1, 'num': 0x21, 'value_function': vehicle_length},
+    # 22 has two names, to simplify docs
     'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
+    'effect_spawn_model_and_powered': {'size': 1, 'num': 0x22},
     'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
     # 24 is high byte of 16 (weight)
     'bitmask_vehicle_info'         : {'size': 1, 'num': 0x25},
@@ -382,7 +384,9 @@ properties[0x01] = {
     'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x1E}, zero_refit_mask(0x16)],
     'introduction_date'            : {'size': 4, 'num': 0x1F},
     # 20 (sort purchase list) is implemented elsewhere
+    # 21 has two names, to simplify docs
     'visual_effect'                : {'size': 1, 'num': 0x21},
+    'effect_spawn_model'           : {'size': 1, 'num': 0x21},
     'cargo_age_period'             : {'size': 2, 'num': 0x22},
     'length'                       : {'size': 1, 'num': 0x23, 'value_function': vehicle_length},
     'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x24, value)}, zero_refit_mask(0x16)],
@@ -422,7 +426,9 @@ properties[0x02] = {
     'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x19}, zero_refit_mask(0x11)],
     'introduction_date'            : {'size': 4, 'num': 0x1A},
     # 1B (sort purchase list) is implemented elsewhere
+    # 1C has two names, to simplify docs
     'visual_effect'                : {'size': 1, 'num': 0x1C},
+    'effect_spawn_model'           : {'size': 1, 'num': 0x1C},
     'cargo_age_period'             : {'size': 2, 'num': 0x1D},
     'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x1E, value)}, zero_refit_mask(0x11)],
     'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x1F, value)}, zero_refit_mask(0x11)],
