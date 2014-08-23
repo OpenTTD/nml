@@ -102,6 +102,7 @@ constant_numbers = {
     'EFFECT_SPRITE_DIESEL'                   : 0xF2,
     'EFFECT_SPRITE_ELECTRIC'                 : 0xF3,
     'EFFECT_SPRITE_AIRCRAFT_BREAKDOWN_SMOKE' : 0xFA,
+    'EFFECT_SPRITE_NONE'                     : 0xFF,
 
     'CB_RESULT_CREATE_EFFECT_CENTER'         : 0x2000,
     'CB_RESULT_CREATE_EFFECT_NO_ROTATION'    : 0x4000,
