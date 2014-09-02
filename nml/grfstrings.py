@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import os, codecs, glob
+import os, codecs, glob, re
 from nml import generic
 
 def utf8_get_size(char):
@@ -1079,6 +1079,9 @@ class Language(object):
         @type  data: C{str}
         """
         _type, string, case, value = data
+
+        if not re.match("[A-Za-z_0-9]+$", string):
+            raise generic.ScriptError("Invalid string name \"{}\"".format(string), pos)
 
         if string in self.strings and case is None:
             raise generic.ScriptError("String name \"{}\" is used multiple times".format(string), pos)
