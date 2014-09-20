@@ -27,6 +27,8 @@ class SkipAction(base_action.BaseAction):
         self.condtype = condtype
         self.value = value
         self.label = label
+        if self.condtype[0] == 0 or self.condtype[0] == 1:
+            assert self.varsize == 1
 
     def write(self, file):
         size = 5 + self.varsize

@@ -176,12 +176,13 @@ def parse_special_check(assignment):
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[0])))
 
     value = check.value
-    size = 4
     if check.mask is not None:
         value &= check.mask
         value += check.mask << 32
-        size = 8
-    actions.append(nml.actions.action7.SkipAction(9, check.varnum, size, check.op, value, 1))
+        assert check.varsize == 8
+    else:
+        assert check.varsize <= 4
+    actions.append(nml.actions.action7.SkipAction(9, check.varnum, check.varsize, check.op, value, 1))
 
     actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[1]))))
     return actions

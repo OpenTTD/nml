@@ -1136,7 +1136,7 @@ patch_variables = {
 }
 
 def config_flag_read(bit, pos):
-    return expression.SpecialCheck((0x01, r'\70'), 0x85, (0, 1), bit, "PatchFlag({})".format(bit), pos = pos)
+    return expression.SpecialCheck((0x01, r'\70'), 0x85, (0, 1), bit, "PatchFlag({})".format(bit), varsize = 1, pos = pos)
 
 def config_flag(info, pos):
     return expression.SpecialParameter(generic.reverse_lookup(config_flags, info), info, None, config_flag_read, True, pos)

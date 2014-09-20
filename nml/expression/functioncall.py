@@ -81,19 +81,23 @@ class SpecialCheck(Expression):
     @ivar value: Value to test
     @type value: C{int}
 
+    @ivar varsize: Varsize for the action7/9 check
+    @type varsize: C{int}
+
     @ivar mask: Mask to to test only certain bits of the value
     @type mask: C{int}
 
     @ivar pos: Position information
     @type pos: L{Position}
     """
-    def __init__(self, op, varnum, results, value, to_string, mask = None, pos = None):
+    def __init__(self, op, varnum, results, value, to_string, varsize = 4, mask = None, pos = None):
         Expression.__init__(self, pos)
         self.op = op
         self.varnum = varnum
         self.results = results
         self.value = value
         self.to_string = to_string
+        self.varsize = varsize;
         self.mask = mask
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
@@ -304,9 +308,11 @@ def builtin_grf_status(name, args, pos):
         assert False, "Unknown grf status function"
     if mask is None:
         string = "{}({})".format(name, str(labels))
+        varsize = 4
     else:
         string = "{}({}, {})".format(name, str(labels), str(mask))
-    return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), string, mask, args[0].pos)
+        varsize = 8
+    return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), string, varsize, mask, args[0].pos)
 
 def builtin_visual_effect_and_powered(name, args, pos):
     """
