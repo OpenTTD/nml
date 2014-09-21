@@ -78,6 +78,7 @@ action5_table = {
     'OTTD_GUI' : (0x15, 175, Action5BlockType.OFFSET),
     'AIRPORT_PREVIEW' : (0x16, 9, Action5BlockType.OFFSET),
     'RAILTYPE_TUNNELS': (0x17, 16, Action5BlockType.OFFSET),
+    'OTTD_RECOLOUR' : (0x18, 1, Action5BlockType.OFFSET),
 }
 
 def parse_action5(replaces):
