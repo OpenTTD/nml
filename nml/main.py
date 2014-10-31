@@ -355,7 +355,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         outputfile.palette = used_palette # used by RecolourSpriteAction
         if isinstance(outputfile, output_grf.OutputGRF):
             if encoder is None:
-                encoder = spriteencoder.SpriteEncoder(outputfile.filename, compress_grf, crop_sprites, enable_cache, used_palette)
+                encoder = spriteencoder.SpriteEncoder(compress_grf, crop_sprites, enable_cache, used_palette)
             outputfile.encoder = encoder
 
     generic.print_progress("Encoding sprites ...")

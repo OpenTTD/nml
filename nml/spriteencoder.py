@@ -62,9 +62,6 @@ class SpriteEncoder(object):
     """
     Algorithms for cropping and compressing sprites. That is encoding source images into GRF sprites.
 
-    @ivar filename: Filename of output GRF, used as stem for the cache files.
-    @type filename: C{str}
-
     @ivar compress_grf: Compress sprites.
     @type compress_grf: C{bool}
 
@@ -80,13 +77,12 @@ class SpriteEncoder(object):
     @ivar cached_image_files: Currently opened source image files.
     @type cached_image_files: C{dict} mapping C{str} to C{Image}
     """
-    def __init__(self, filename, compress_grf, crop_sprites, enable_cache, palette):
-        self.filename = filename
+    def __init__(self, compress_grf, crop_sprites, enable_cache, palette):
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
         self.enable_cache = enable_cache
         self.palette = palette
-        self.sprite_cache = spritecache.SpriteCache(self.filename)
+        self.sprite_cache = spritecache.SpriteCache("")
         self.cached_image_files = {}
 
     def open(self, sprite_files):
@@ -96,9 +92,6 @@ class SpriteEncoder(object):
         @param sprite_files: List of sprites per source image file.
         @type  sprite_files: C{dict} that maps (C{tuple} of C{str}) to (C{RealSprite})
         """
-        if self.enable_cache:
-            self.sprite_cache.read_cache()
-
         num_sprites = sum(len(sprite_list) for sprite_list in sprite_files.values())
 
         num_cached = 0
@@ -112,12 +105,16 @@ class SpriteEncoder(object):
 
             source_name = "_".join(src for src in sources if src is not None)
 
+            local_cache = spritecache.SpriteCache(generic.get_cache_file(sources, ""))
+            if self.enable_cache:
+                local_cache.read_cache()
+
             for sprite_info in sprite_list:
                 count_sprites += 1
                 generic.print_progress("Encoding {}/{}: {}".format(count_sprites, num_sprites, source_name))
 
                 cache_key = sprite_info.get_cache_key(self.crop_sprites)
-                cache_item = self.sprite_cache.get_item(cache_key, self.palette)
+                cache_item = local_cache.get_item(cache_key, self.palette)
 
                 in_use = False
                 in_old_cache = False
@@ -135,10 +132,17 @@ class SpriteEncoder(object):
                 # Store sprite in cache, unless already up-to-date
                 if not in_use:
                     cache_item = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
-                    self.sprite_cache.add_item(cache_key, self.palette, cache_item)
+                    local_cache.add_item(cache_key, self.palette, cache_item)
 
             # Delete all files from dictionary to free memory
             self.cached_image_files.clear()
+
+            # Only write cache if compression is enabled. Uncompressed data is not worth to be cached.
+            if self.enable_cache and self.compress_grf:
+                local_cache.write_cache()
+
+            # Transfer data to global cache for later usage
+            self.sprite_cache.cached_sprites.update(local_cache.cached_sprites)
 
         generic.clear_progress()
         generic.print_info("{} sprites, {} cached, {} duplicates, {} newly encoded".format(num_sprites, num_cached, num_dup, num_enc))
@@ -147,10 +151,7 @@ class SpriteEncoder(object):
         """
         Close the encoder, validate data, write caches, and stuff.
         """
-
-        # Only write cache if compression is enabled. Uncompressed data is not worth to be cached.
-        if self.enable_cache and self.compress_grf:
-            self.sprite_cache.write_cache()
+        pass
 
     def get(self, sprite_info):
         """
