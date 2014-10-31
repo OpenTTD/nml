@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import sys, os, codecs, optparse
-from nml import generic, grfstrings, parser, version_info, output_nml, output_nfo, output_grf, output_dep, palette
+from nml import generic, grfstrings, parser, version_info, output_nml, output_nfo, output_grf, output_dep, palette, spriteencoder
 from nml.actions import action2layout, action2var, action8, sprite_count, real_sprite, action4, action0, action1, action11
 from nml.ast import grf, alt_sprites
 
@@ -143,14 +143,14 @@ def main(argv):
     elif opts.forced_palette == 'WIN':
         opts.forced_palette = 'LEGACY'
 
-    if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename, opts.compress, opts.crop, not opts.no_cache))
+    if opts.grf_filename: outputs.append(output_grf.OutputGRF(opts.grf_filename))
     if opts.nfo_filename: outputs.append(output_nfo.OutputNFO(opts.nfo_filename, opts.start_sprite_num))
     if opts.nml_filename: outputs.append(output_nml.OutputNML(opts.nml_filename))
 
     for output in opts.outputs:
         outroot, outext = os.path.splitext(output)
         outext = outext.lower()
-        if outext == '.grf': outputs.append(output_grf.OutputGRF(output, opts.compress, opts.crop, not opts.no_cache))
+        if outext == '.grf': outputs.append(output_grf.OutputGRF(output))
         elif outext == '.nfo': outputs.append(output_nfo.OutputNFO(output, opts.start_sprite_num))
         elif outext == '.nml': outputs.append(output_nml.OutputNML(output))
         elif outext == '.dep': outputs.append(output_dep.OutputDEP(output, opts.grf_filename))
@@ -158,7 +158,7 @@ def main(argv):
             generic.print_error("Unknown output format {}".format(outext))
             sys.exit(2)
 
-    ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.forced_palette, opts.md5_filename)
+    ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.compress, opts.crop, not opts.no_cache, opts.forced_palette, opts.md5_filename)
 
     input.close()
     sys.exit(ret)
@@ -166,7 +166,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, forced_palette, md5_filename):
+def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, compress_grf, crop_sprites, enable_cache, forced_palette, md5_filename):
     """
     Compile an NML file.
 
@@ -181,6 +181,15 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
 
     @param start_sprite_num: Number of the first sprite.
     @type  start_sprite_num: C{int}
+
+    @param compress_grf: Enable GRF sprite compression.
+    @type  compress_grf: C{bool}
+
+    @param crop_sprites: Enable sprite cropping.
+    @type  crop_sprites: C{bool}
+
+    @param enable_cache: Enable sprite cache.
+    @type  enable_cache: C{bool}
 
     @param forced_palette: Palette to use for the file.
     @type  forced_palette: C{str}
@@ -302,8 +311,10 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     if used_palette in palette_bytes:
         grf.set_palette_used(palette_bytes[used_palette])
     for outputfile in outputfiles:
-        outputfile.palette = used_palette
-        outputfile.used_sprite_files = sprite_files.copy() # Make a copy, as it will be modified
+        outputfile.palette = used_palette # used by RecolourSpriteAction
+        if isinstance(outputfile, output_grf.OutputGRF):
+            outputfile.encoder = spriteencoder.SpriteEncoder(outputfile.filename, compress_grf, crop_sprites, enable_cache, used_palette)
+            outputfile.encoder.used_sprite_files = sprite_files.copy() # Make a copy, as it will be modified
 
     #If there are any 32bpp sprites hint to openttd that we'd like a 32bpp blitter
     if alt_sprites.any_32bpp_sprites:
