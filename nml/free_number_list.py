@@ -20,6 +20,12 @@ class FreeNumberList(object):
     Contains a list with numbers and functions to pop one number from the list,
     to save the current state and to restore to the previous state.
 
+    @ivar total_amount: Amount of numbers in the beginning.
+    @type total_amount: C{int}
+
+    @ivar stats: Statistics about id usage.
+    @type stats: Tuple of C{int} and L{Position} refering to the amount on location of most concurrently used ids.
+
     @ivar free_numbers: The list with currently unused numbers.
     @type free_numbers: C{list}
 
@@ -44,6 +50,8 @@ class FreeNumberList(object):
     @type exception_unique: C{str}
     """
     def __init__(self, free_numbers, exception, exception_unique):
+        self.total_amount = len(free_numbers)
+        self.stats = (0, None)
         self.free_numbers = free_numbers
         self.states = []
         self.used_numbers = set()
@@ -66,6 +74,11 @@ class FreeNumberList(object):
         num = self.free_numbers.pop()
         self.states[-1].append(num)
         self.used_numbers.add(num)
+
+        num_used = len(self.used_numbers)
+        if num_used > self.stats[0]:
+            self.stats = (num_used, pos)
+
         return num
 
     def pop_global(self, pos):
@@ -96,6 +109,11 @@ class FreeNumberList(object):
             if num in self.used_numbers: continue
             self.free_numbers.remove(num)
             self.used_numbers.add(num)
+
+            num_used = len(self.used_numbers)
+            if num_used > self.stats[0]:
+                self.stats = (num_used, pos)
+
             return num
         raise generic.ScriptError(self.exception_unique, pos)
 

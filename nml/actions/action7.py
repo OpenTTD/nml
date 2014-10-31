@@ -18,6 +18,13 @@ from nml.actions import base_action, action6, actionD, action10
 
 free_labels = free_number_list.FreeNumberList(list(range(0xFF, 0x0F, -1)), "No label available to use for large if-blocks and loops.", "No unique label available to use for large if-blocks and loops.")
 
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    if free_labels.stats[0] > 0:
+        generic.print_info("Concurrent Action10 labels: {}/{} ({})".format(free_labels.stats[0], free_labels.total_amount, str(free_labels.stats[1])))
+
 class SkipAction(base_action.BaseAction):
     def __init__(self, action_type, var, varsize, condtype, value, label):
         self.action_type = action_type

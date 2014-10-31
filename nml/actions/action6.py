@@ -18,6 +18,13 @@ from nml.actions import base_action
 
 free_parameters = free_number_list.FreeNumberList(list(range(0x40, 0x80)), "No free parameters available to use for internal computations.", "No unique free parameters available for internal computations.")
 
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    if free_parameters.stats[0] > 0:
+        generic.print_info("Concurrent ActionD registers: {}/{} ({})".format(free_parameters.stats[0], free_parameters.total_amount, str(free_parameters.stats[1])))
+
 class Action6(base_action.BaseAction):
     def __init__(self):
         self.modifications = []

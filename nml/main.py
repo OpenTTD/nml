@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import sys, os, codecs, optparse
 from nml import generic, grfstrings, parser, version_info, output_nml, output_nfo, output_grf, output_dep, palette, spriteencoder
-from nml.actions import action2layout, action2var, action8, sprite_count, real_sprite, action4, action0, action1, action2, action11, actionF
+from nml.actions import action2layout, action2var, action8, sprite_count, real_sprite, action4, action0, action1, action2, action6, action7, action11, actionF
 from nml.ast import grf, alt_sprites
 
 try:
@@ -377,8 +377,10 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     # Processing finished, print some statistics
     action0.print_stats()
     actionF.print_stats()
+    action7.print_stats()
     action1.print_stats()
     action2.print_stats()
+    action6.print_stats()
 
     generic.print_progress("Writing output ...")
 
