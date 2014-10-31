@@ -67,9 +67,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
         self.enable_cache = enable_cache
-        self.data_output = array.array('B')
-        self.sprite_output = array.array('B')
-        self.cache_output = array.array('B')
+        self.sprite_output = output_base.BinaryOutputBase(filename + ".sprite.tmp")
+        self.cache_output = output_base.BinaryOutputBase(filename + ".cache.tmp")
         self.cached_sprites = {}
         self.md5 = hashlib.md5()
         # sprite_num is deliberately off-by-one because it is used as an
@@ -269,26 +268,6 @@ class OutputGRF(output_base.BinaryOutputBase):
         sprite_data.tofile(cache_file)
         cache_file.close()
 
-    def update_cache(self, key, info, crop, warning):
-        """
-        Add a sprite to the sprite cache, possibly overwriting an existing one
-
-        @param key: Cache key of the sprite
-        @type key: C{tuple}, see L{read_cache} for more info
-
-        @param info: Info byte of the sprite
-        @type info: C{int}
-
-        @param crop: How much was cropped from each side of the sprite
-        @type crop: C{tuple}, or C{None} if N/A
-
-        @param warning: Warning to display (e.g. about pure white pixels) if this sprite is used
-        @type warning: C{str}, or C{None} if N/A
-        """
-        if not self.enable_cache: return
-        self.cached_sprites[key] = (self.cache_output, info, crop, warning, False, True)
-        self.cache_output = array.array('B')
-
     def open_image_file(self, filename):
         """
         Obtain a handle to an image file
@@ -329,13 +308,15 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         #add end-of-chunks
         self.in_sprite = True
-        self.print_dword(0, self.data_output)
-        self.print_dword(0, self.sprite_output)
+        self.print_dword(0)
         self.in_sprite = False
+        self.sprite_output.in_sprite = True
+        self.sprite_output.print_dword(0)
+        self.sprite_output.in_sprite = False
 
         #add header
         header = bytearray([0x00, 0x00, ord('G'), ord('R'), ord('F'), 0x82, 0x0D, 0x0A, 0x1A, 0x0A])
-        size = len(self.data_output) + 1
+        size = len(self.file) + 1
         header.append(size & 0xFF)
         header.append((size >> 8) & 0xFF)
         header.append((size >> 16) & 0xFF)
@@ -343,108 +324,62 @@ class OutputGRF(output_base.BinaryOutputBase):
         header.append(0) #no compression
 
         header_str = bytes(header)
-        self.file.write(header_str)
+        real_file.write(header_str)
         self.md5.update(header_str)
 
         #add data section, and then the sprite section
-        data_str = self.data_output.tobytes()
-        self.file.write(data_str)
-        self.md5.update(data_str)
-        self.file.write(self.sprite_output.tobytes())
+        real_file.write(self.file)
+        self.md5.update(self.file)
 
-        output_base.BinaryOutputBase.assemble_file(real_file)
+        real_file.write(self.sprite_output.file)
+
+    def open(self):
+        output_base.BinaryOutputBase.open(self)
+        self.sprite_output.open()
 
     def close(self):
         output_base.BinaryOutputBase.close(self)
+        self.sprite_output.discard()
         self.write_cache()
 
-    def print_data(self, data, stream):
-        """
-        Print a chunck of data in one go
-
-        @param data: Data to output
-        @type data: C{array}
-
-        @param stream: Stream to output the data to
-        @type stream: C{array}
-        """
-        if stream is None: stream = self.data_output
-        stream.extend(data)
-        self.byte_count += len(data)
-
-    def wb(self, byte, stream):
-        if stream is None: stream = self.data_output
-        stream.append(byte)
-
-    def print_byte(self, value, stream = None):
-        value = self.prepare_byte(value)
-        self.wb(value, stream)
-
-    def print_bytex(self, value, pretty_print = None, stream = None):
-        self.print_byte(value, stream)
-
-    def print_word(self, value, stream = None):
-        value = self.prepare_word(value)
-        self.wb(value & 0xFF, stream)
-        self.wb(value >> 8, stream)
-
-    def print_wordx(self, value, stream = None):
-        self.print_word(value, stream)
-
-    def print_dword(self, value, stream = None):
-        value = self.prepare_dword(value)
-        self.wb(value & 0xFF, stream)
-        self.wb((value >> 8) & 0xFF, stream)
-        self.wb((value >> 16) & 0xFF, stream)
-        self.wb(value >> 24, stream)
-
-    def print_dwordx(self, value, stream = None):
-        self.print_dword(value, stream)
-
-    def _print_utf8(self, char, stream = None):
+    def _print_utf8(self, char, stream):
         for c in chr(char).encode('utf8'):
-            self.print_byte(c, stream)
+            stream.print_byte(c)
 
     def print_string(self, value, final_zero = True, force_ascii = False, stream = None):
+        if stream is None:
+            stream = self
+
         if not grfstrings.is_ascii_string(value):
             if force_ascii:
                 raise generic.ScriptError("Expected ascii string but got a unicode string")
-            self.print_byte(0xC3, stream)
-            self.print_byte(0x9E, stream)
+            stream.print_byte(0xC3)
+            stream.print_byte(0x9E)
         i = 0
         while i < len(value):
             if value[i] == '\\':
                 if value[i+1] in ('\\', '"'):
-                    self.print_byte(ord(value[i+1]), stream)
+                    stream.print_byte(ord(value[i+1]))
                     i += 2
                 elif value[i+1] == 'U':
                     self._print_utf8(int(value[i+2:i+6], 16), stream)
                     i += 6
                 else:
-                    self.print_byte(int(value[i+1:i+3], 16), stream)
+                    stream.print_byte(int(value[i+1:i+3], 16))
                     i += 3
             else:
                 self._print_utf8(ord(value[i]), stream)
                 i += 1
-        if final_zero: self.print_byte(0, stream)
-
-    def newline(self, msg = "", prefix = "\t"):
-        pass
+        if final_zero: stream.print_byte(0)
 
     def comment(self, msg):
         pass
 
-    def start_sprite(self, size, type = 0xFF, data = True):
+    def start_sprite(self, size, type = 0xFF):
         if type == 0xFF:
             output_base.BinaryOutputBase.start_sprite(self, size + 5)
-            stream = self.data_output if data else self.sprite_output
-            if not data:
-                # The compression byte (=type) is counted when in the sprite section,
-                # however since this is a sound we need to emit the sprite number as well.
-                self.print_dword(self.sprite_num, stream)
-                self.byte_count -= 3
-            self.print_dword(size, stream)
-            self.print_byte(type, stream)
+            self.print_dword(size)
+            self.print_byte(type)
         elif type == 0xFD:
             # Real sprite, this means no data is written to the data section
             # This call is still needed to open 'output mode'
@@ -504,7 +439,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         # Try finding the file in the cache
         rgb_file, rgb_rect = (filename_32bpp.value, (x, y, size_x, size_y)) if filename_32bpp is not None else (None, None)
         mask_file, mask_rect = (filename_8bpp.value, (mask_x, mask_y, size_x, size_y)) if filename_8bpp is not None else (None, None)
-        do_crop = self.crop_sprites and (info_byte & INFO_NOCROP == 0)
+        do_crop = self.crop_sprites and ((info_byte & INFO_NOCROP) == 0)
         cache_key = (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)
         if cache_key in self.cached_sprites:
             # Use cache either if files are older, of if cache entry was not present
@@ -577,17 +512,15 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.print_byte(0)
         self.end_sprite()
 
-    def wsprite_header(self, size_x, size_y, size, xoffset, yoffset, info, zoom_level, write_cache):
-        self.expected_count += size + 18
-        if write_cache: self.expected_count += size # With caching, the image data is written twice
-        self.print_dword(self.sprite_num, self.sprite_output)
-        self.print_dword(size + 10, self.sprite_output)
-        self.print_byte(info, self.sprite_output)
-        self.print_byte(zoom_level, self.sprite_output)
-        self.print_word(size_y, self.sprite_output)
-        self.print_word(size_x, self.sprite_output)
-        self.print_word(xoffset, self.sprite_output)
-        self.print_word(yoffset, self.sprite_output)
+    def wsprite_header(self, size_x, size_y, size, xoffset, yoffset, info, zoom_level):
+        self.sprite_output.print_dword(self.sprite_num)
+        self.sprite_output.print_dword(size + 10)
+        self.sprite_output.print_byte(info)
+        self.sprite_output.print_byte(zoom_level)
+        self.sprite_output.print_word(size_y)
+        self.sprite_output.print_word(size_x)
+        self.sprite_output.print_word(xoffset)
+        self.sprite_output.print_word(yoffset)
 
     def fakecompress(self, data):
         i = 0
@@ -613,12 +546,19 @@ class OutputGRF(output_base.BinaryOutputBase):
         size = len(data)
         if chunked:
             size += 4
-        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level, self.enable_cache)
+
+        self.sprite_output.start_sprite(size + 18)
+        if self.enable_cache: self.cache_output.start_sprite(size)
+
+        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level)
         if chunked:
-            self.print_dword(data_len, self.sprite_output)
-            if self.enable_cache: self.print_dword(data_len, self.cache_output)
-        self.print_data(data, self.sprite_output)
-        if self.enable_cache: self.print_data(data, self.cache_output)
+            self.sprite_output.print_dword(data_len)
+            if self.enable_cache: self.cache_output.print_dword(data_len)
+        self.sprite_output.print_data(data)
+        if self.enable_cache: self.cache_output.print_data(data)
+
+        self.sprite_output.end_sprite()
+        if self.enable_cache: self.cache_output.end_sprite()
 
     def wsprite_cache(self, cache_key, size_x, size_y, xoffset, yoffset, zoom_level, pos_8bpp):
         # Write a sprite from the cached data
@@ -629,8 +569,11 @@ class OutputGRF(output_base.BinaryOutputBase):
         if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
         if warning is not None:
             generic.print_warning(warning + " (cached warning)", pos_8bpp)
-        self.wsprite_header(size_x, size_y, len(data), xoffset, yoffset, info, zoom_level, False)
-        self.print_data(data, self.sprite_output)
+
+        self.sprite_output.start_sprite(len(data) + 18)
+        self.wsprite_header(size_x, size_y, len(data), xoffset, yoffset, info, zoom_level)
+        self.sprite_output.print_data(data)
+        self.sprite_output.end_sprite()
 
     def sprite_encode_tile(self, size_x, size_y, data, info, bpp, long_format = False):
         long_chunk = size_x > 256
@@ -768,7 +711,7 @@ class OutputGRF(output_base.BinaryOutputBase):
     def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, cache_key, warning):
         bpp = get_bpp(info)
         assert len(sprite_data) == size_x * size_y * bpp
-        if self.crop_sprites and (info & INFO_NOCROP == 0):
+        if self.crop_sprites and ((info & INFO_NOCROP) == 0):
             sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, info, bpp)
             size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
         else:
@@ -786,30 +729,34 @@ class OutputGRF(output_base.BinaryOutputBase):
                 info |= INFO_TILE
                 compressed_data = tile_compressed_data
                 data_len = len(tile_data)
+        if self.enable_cache: self.cache_output.open()
         self.wsprite_encoderegular(size_x, size_y, compressed_data, data_len, xoffset, yoffset, info, zoom_level)
-        self.update_cache(cache_key, info, crop_rect, warning)
+        if self.enable_cache:
+            self.cached_sprites[cache_key] = (self.cache_output.file, info, crop_rect, warning, False, True)
+            self.cache_output.discard()
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
         size = os.path.getsize(filename)
-        total = 3 + len(name) + 1 + size
 
-        self.start_sprite(total, 0xff, False)
-        self.print_byte(0xff, self.sprite_output)
-        self.print_byte(len(name), self.sprite_output)
+        self.start_sprite(0, 0xfd)
+        self.sprite_output.start_sprite(8 + 3 + len(name) + 1 + size)
+
+        self.sprite_output.print_dword(self.sprite_num)
+        self.sprite_output.print_dword(3 + len(name) + 1 + size)
+        self.sprite_output.print_byte(0xff)
+        self.sprite_output.print_byte(0xff)
+        self.sprite_output.print_byte(len(name))
         self.print_string(name, force_ascii = True, final_zero = True, stream = self.sprite_output)  # ASCII filenames seems sufficient.
         fp = open(generic.find_file(filename), 'rb')
         while True:
             data = fp.read(1024)
             if len(data) == 0: break
             for d in data:
-                self.print_byte(d, self.sprite_output)
+                self.sprite_output.print_byte(d)
         fp.close()
 
-        self.print_dword(4)
-        self.print_byte(0xfd)
-        self.print_dword(self.sprite_num)
-        self.byte_count -= 9
+        self.sprite_output.end_sprite();
         self.end_sprite()
 
     def end_sprite(self):

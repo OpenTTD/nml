@@ -16,7 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 """
 Abstract base classes that implements common functionality for output classes
 """
-import io
+import array, io
 
 class OutputBase(object):
     """
@@ -65,6 +65,14 @@ class OutputBase(object):
         """
         real_file.write(self.file.getvalue())
 
+    def discard(self):
+        """
+        Close the memory file, without writing to disk.
+        """
+        if isinstance(self.file, io.IOBase):
+            self.file.close()
+        self.file = None
+
     def close(self):
         """
         Close the memory file, copy collected output to the real file.
@@ -72,7 +80,7 @@ class OutputBase(object):
         real_file = self.open_file()
         self.assemble_file(real_file)
         real_file.close()
-        self.file.close()
+        self.discard()
 
     def skip_sprite_checks(self):
         """
@@ -276,4 +284,45 @@ class BinaryOutputBase(SpriteOutputBase):
         SpriteOutputBase.__init__(self, filename)
 
     def open(self):
-        self.file = io.BytesIO()
+        self.file = array.array('B')
+
+    def newline(self, msg = "", prefix = "\t"):
+        pass
+
+    def print_data(self, data):
+        """
+        Print a chunck of data in one go
+
+        @param data: Data to output
+        @type data: C{array}
+        """
+        self.byte_count += len(data)
+        self.file.extend(data)
+
+    def wb(self, byte):
+        self.file.append(byte)
+
+    def print_byte(self, value):
+        value = self.prepare_byte(value)
+        self.wb(value)
+
+    def print_bytex(self, value, pretty_print = None):
+        self.print_byte(value)
+
+    def print_word(self, value):
+        value = self.prepare_word(value)
+        self.wb(value & 0xFF)
+        self.wb(value >> 8)
+
+    def print_wordx(self, value):
+        self.print_word(value)
+
+    def print_dword(self, value):
+        value = self.prepare_dword(value)
+        self.wb(value & 0xFF)
+        self.wb((value >> 8) & 0xFF)
+        self.wb((value >> 16) & 0xFF)
+        self.wb(value >> 24)
+
+    def print_dwordx(self, value):
+        self.print_dword(value)
