@@ -87,26 +87,46 @@ class SpriteEncoder(object):
         self.enable_cache = enable_cache
         self.palette = palette
         self.sprite_cache = spritecache.SpriteCache(self.filename)
-
-        # Mapping of filenames to cached image files
-        # used_sprite_files (set from main.py) is used to keep track of what files are used and how often
         self.cached_image_files = {}
 
-    def open(self):
+    def open(self, sprite_files):
         """
         Start the encoder, read caches, and stuff.
+
+        @param sprite_files: List of sprites per source image file.
+        @type  sprite_files: C{dict} that maps (C{tuple} of C{str}) to (C{RealSprite})
         """
         if self.enable_cache:
             self.sprite_cache.read_cache()
+
+        for sprite_list in sprite_files.values():
+            # Iterate over sprites grouped by source image file.
+            #  - Open source files only once. (speed)
+            #  - Do not keep files around for long. (memory)
+            for sprite_info in sprite_list:
+                cache_key = sprite_info.get_cache_key(self.crop_sprites)
+                cache_item = self.sprite_cache.get_item(cache_key, self.palette)
+
+                in_use = False
+                in_old_cache = False
+                if cache_item is not None:
+                    # Write a sprite from the cached data
+                    compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = cache_item
+                else:
+                    size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encode_sprite(sprite_info)
+
+                # Store sprite in cache, unless already up-to-date
+                if not in_use:
+                    cache_item = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
+                    self.sprite_cache.add_item(cache_key, self.palette, cache_item)
+
+            # Delete all files from dictionary to free memory
+            self.cached_image_files.clear()
 
     def close(self):
         """
         Close the encoder, validate data, write caches, and stuff.
         """
-        # Verify that image file counts were correct
-        assert not self.cached_image_files, "Invalid sprite file cache"
-        # all values should be 0 at this point
-        assert not any(self.used_sprite_files.values()), "Invalid sprite file cache"
 
         if self.enable_cache:
             self.sprite_cache.write_cache()
@@ -120,32 +140,19 @@ class SpriteEncoder(object):
         """
 
         # Try finding the file in the cache
-        # Use cache either if files are older, of if cache entry was not present
-        # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)
+        # open() should have put all sprites into it.
         cache_key = sprite_info.get_cache_key(self.crop_sprites)
         cache_item = self.sprite_cache.get_item(cache_key, self.palette)
 
-        in_use = False
-        in_old_cache = False
-        if cache_item is not None:
-            if sprite_info.file is not None: self.mark_image_file_used(sprite_info.file.value)
-            if sprite_info.mask_file is not None: self.mark_image_file_used(sprite_info.mask_file.value)
+        assert cache_item is not None
 
-            # Write a sprite from the cached data
-            compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = cache_item
+        compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = cache_item
 
-            size_x = sprite_info.xsize.value
-            size_y = sprite_info.ysize.value
-            xoffset = sprite_info.xrel.value
-            yoffset = sprite_info.yrel.value
-            if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
-        else:
-            size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encode_sprite(sprite_info)
-
-        # Store sprite in cache, unless already up-to-date
-        if not in_use:
-            cache_item = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
-            self.sprite_cache.add_item(cache_key, self.palette, cache_item)
+        size_x = sprite_info.xsize.value
+        size_y = sprite_info.ysize.value
+        xoffset = sprite_info.xrel.value
+        yoffset = sprite_info.yrel.value
+        if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
 
         if in_old_cache and (warning is not None):
             warning = warning + " (cached warning)"
@@ -162,27 +169,13 @@ class SpriteEncoder(object):
         @return: Image file
         @rtype:  L{Image}
         """
-        assert filename in self.used_sprite_files
         if filename in self.cached_image_files:
             im = self.cached_image_files[filename]
         else:
             im = Image.open(generic.find_file(filename))
             self.cached_image_files[filename] = im
-        self.mark_image_file_used(filename)
         return im
 
-    def mark_image_file_used(self, filename):
-        """
-        Indicate that an image file is being used, so the internal book-keeping can be updated
-
-        @param filename: Name of the file
-        @type  filename: C{str}
-        """
-        assert filename in self.used_sprite_files
-        self.used_sprite_files[filename] -= 1
-        if self.used_sprite_files[filename] == 0 and filename in self.cached_image_files:
-            # Delete from dictionary if it exists, then data will be freed when it goes out of scope
-            del self.cached_image_files[filename]
 
     def encode_sprite(self, sprite_info):
         """

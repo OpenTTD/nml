@@ -253,19 +253,24 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         lang_actions.extend(action4.get_global_string_actions())
         actions = actions[:action8_index + 1] + lang_actions + actions[action8_index + 1:]
 
-    # Collect all sprite files and count how often they are used
+    # Collect all sprite files, and put them into buckets of same image and mask files
     sprite_files = dict()
     for action in actions:
         if isinstance(action, real_sprite.RealSpriteAction):
             for sprite in action.sprite_list:
                 if sprite.is_empty: continue
                 sprite.validate_size()
-                for f in (sprite.file, sprite.mask_file):
-                    if f is None: continue
-                    if f.value in sprite_files:
-                        sprite_files[f.value] += 1
-                    else:
-                        sprite_files[f.value] = 1
+
+                file = sprite.file
+                if file is not None:
+                    file = file.value
+
+                mask_file = sprite.mask_file
+                if mask_file is not None:
+                    mask_file = mask_file.value
+
+                key = (file, mask_file)
+                sprite_files.setdefault(key, []).append(sprite)
 
     # Check whether we can terminate sprite processing prematurely for
     #     dependency checks
@@ -274,7 +279,10 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         if isinstance(outputfile, output_dep.OutputDEP):
             outputfile.open()
             for f in sprite_files:
-                outputfile.write(f)
+                if f[0] is not None:
+                    outputfile.write(f[0])
+                if f[1] is not None:
+                    outputfile.write(f[1])
             outputfile.close()
         skip_sprite_processing &= outputfile.skip_sprite_checks()
 
@@ -286,7 +294,12 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
 
     used_palette = forced_palette
     last_file = None
-    for f in sprite_files:
+    for f_pair in sprite_files:
+        # Palette is defined by mask_file, if present. Otherwise by the main file.
+        f = f_pair[1]
+        if f is None:
+            f = f_pair[0]
+
         try:
             im = Image.open(generic.find_file(f))
         except IOError as ex:
@@ -310,11 +323,17 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     palette_bytes = {"LEGACY": "W", "DEFAULT": "D", "ANY": "A"}
     if used_palette in palette_bytes:
         grf.set_palette_used(palette_bytes[used_palette])
+    encoder = None
     for outputfile in outputfiles:
         outputfile.palette = used_palette # used by RecolourSpriteAction
         if isinstance(outputfile, output_grf.OutputGRF):
-            outputfile.encoder = spriteencoder.SpriteEncoder(outputfile.filename, compress_grf, crop_sprites, enable_cache, used_palette)
-            outputfile.encoder.used_sprite_files = sprite_files.copy() # Make a copy, as it will be modified
+            if encoder is None:
+                encoder = spriteencoder.SpriteEncoder(outputfile.filename, compress_grf, crop_sprites, enable_cache, used_palette)
+            outputfile.encoder = encoder
+
+    # Read all image data, compress, and store in sprite cache
+    if encoder is not None:
+        encoder.open(sprite_files)
 
     #If there are any 32bpp sprites hint to openttd that we'd like a 32bpp blitter
     if alt_sprites.any_32bpp_sprites:
@@ -345,6 +364,9 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     if md5 is not None and md5_filename is not None:
         with open(md5_filename, 'w', encoding="utf-8") as f:
             f.write(md5 + '\n')
+
+    if encoder is not None:
+        encoder.close()
 
     return 0
 

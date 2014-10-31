@@ -72,12 +72,10 @@ class OutputGRF(output_base.BinaryOutputBase):
     def open(self):
         output_base.BinaryOutputBase.open(self)
         self.sprite_output.open()
-        self.encoder.open()
 
     def close(self):
         output_base.BinaryOutputBase.close(self)
         self.sprite_output.discard()
-        self.encoder.close()
 
     def _print_utf8(self, char, stream):
         for c in chr(char).encode('utf8'):
