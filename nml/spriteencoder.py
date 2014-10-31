@@ -97,6 +97,7 @@ class SpriteEncoder(object):
         num_cached = 0
         num_dup = 0
         num_enc = 0
+        num_orphaned = 0
         count_sprites = 0
         for sources, sprite_list in sprite_files.items():
             # Iterate over sprites grouped by source image file.
@@ -137,6 +138,8 @@ class SpriteEncoder(object):
             # Delete all files from dictionary to free memory
             self.cached_image_files.clear()
 
+            num_orphaned += local_cache.count_orphaned()
+
             # Only write cache if compression is enabled. Uncompressed data is not worth to be cached.
             if self.enable_cache and self.compress_grf:
                 local_cache.write_cache()
@@ -145,7 +148,7 @@ class SpriteEncoder(object):
             self.sprite_cache.cached_sprites.update(local_cache.cached_sprites)
 
         generic.clear_progress()
-        generic.print_info("{} sprites, {} cached, {} duplicates, {} newly encoded".format(num_sprites, num_cached, num_dup, num_enc))
+        generic.print_info("{} sprites, {} cached, {} orphaned, {} duplicates, {} newly encoded".format(num_sprites, num_cached, num_orphaned, num_dup, num_enc))
 
     def close(self):
         """

@@ -16,6 +16,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import array, json, os
 from nml import generic
 
+keep_orphaned = True
+
 class SpriteCache(object):
     """
     Cache for compressed sprites.
@@ -116,6 +118,16 @@ class SpriteCache(object):
         else:
             key = cache_key + (None, )
         self.cached_sprites[key] = item
+
+    def count_orphaned(self):
+        """
+        Count number of items in cache, which have not been used.
+
+        @return: Number of unused items.
+        @type:   C{int}
+        """
+
+        return sum(not item[5] for item in self.cached_sprites.values())
 
     def read_cache(self):
         """
@@ -233,7 +245,7 @@ class SpriteCache(object):
             assert (mask_file is None) == (mask_pal is None)
 
             # If this cache information is exactly the same as the old cache, then we don't bother writing later on
-            if not in_use:
+            if not in_use and not keep_orphaned:
                 old_cache_valid = False
                 continue
             if not in_old_cache:
