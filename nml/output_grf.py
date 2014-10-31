@@ -321,9 +321,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             # Delete from dictionary if it exists, then data will be freed when it goes out of scope
             del self.cached_image_files[filename]
 
-    def pre_close(self):
-        output_base.BinaryOutputBase.pre_close(self)
-
+    def assemble_file(self, real_file):
         # Verify that image file counts were correct
         assert not self.cached_image_files, "Invalid sprite file cache"
         # all values should be 0 at this point
@@ -353,6 +351,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.file.write(data_str)
         self.md5.update(data_str)
         self.file.write(self.sprite_output.tobytes())
+
+        output_base.BinaryOutputBase.assemble_file(real_file)
 
     def close(self):
         output_base.BinaryOutputBase.close(self)

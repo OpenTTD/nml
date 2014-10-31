@@ -27,8 +27,8 @@ class OutputBase(object):
     closed with L{close}.
 
     Derived classes should implement L{open_file} to perform the actual opening
-    of the file. L{pre_close} is called to warn them of pending closure of the
-    file.
+    of the file. L{assemble_file} is called to actually compose the output from
+    possible multiple sources.
 
     @ivar filename: Name of the data file.
     @type filename: C{str}
@@ -56,20 +56,21 @@ class OutputBase(object):
         raise NotImplementedError("Implement me in {}".format(type(self)))
 
 
-    def pre_close(self):
+    def assemble_file(self, real_file):
         """
         File is about to be closed, last chance to append data.
+
+        @param real_file: Actual output stream.
+        @type  real_file: C{io.IOBase}
         """
-        pass
+        real_file.write(self.file.getvalue())
 
     def close(self):
         """
         Close the memory file, copy collected output to the real file.
         """
-        self.pre_close()
-
         real_file = self.open_file()
-        real_file.write(self.file.getvalue())
+        self.assemble_file(real_file)
         real_file.close()
         self.file.close()
 
@@ -100,8 +101,9 @@ class SpriteOutputBase(OutputBase):
         self.expected_count = 0
         self.byte_count = 0
 
-    def pre_close(self):
+    def close(self):
         assert not self.in_sprite
+        OutputBase.close(self)
 
     def prepare_byte(self, value):
         """
