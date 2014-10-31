@@ -424,48 +424,39 @@ class OutputGRF(output_base.BinaryOutputBase):
                 use_cache = False
 
         # Try finding the file in the cache
+        # Use cache either if files are older, of if cache entry was not present
+        # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)
         cache_key = sprite_info.get_cache_key(self.crop_sprites)
-        if cache_key in self.cached_sprites:
-            # Use cache either if files are older, of if cache entry was not present
-            # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)
-            if use_cache or not self.cached_sprites[cache_key][4]:
-                if filename_8bpp is not None: self.mark_image_file_used(filename_8bpp.value)
-                if filename_32bpp is not None:  self.mark_image_file_used(filename_32bpp.value)
+        in_use = False
+        in_old_cache = False
+        if cache_key in self.cached_sprites and (use_cache or not self.cached_sprites[cache_key][4]):
+            if filename_8bpp is not None: self.mark_image_file_used(filename_8bpp.value)
+            if filename_32bpp is not None: self.mark_image_file_used(filename_32bpp.value)
 
-                # Write a sprite from the cached data
-                compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = self.cached_sprites[cache_key]
-                if not in_use:
-                    self.cached_sprites[cache_key] = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
+            # Write a sprite from the cached data
+            compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = self.cached_sprites[cache_key]
 
-                size_x = sprite_info.xsize.value
-                size_y = sprite_info.ysize.value
-                xoffset = sprite_info.xrel.value
-                yoffset = sprite_info.yrel.value
-                if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
-                if warning is not None:
-                    generic.print_warning(warning + " (cached warning)", pos_8bpp)
+            size_x = sprite_info.xsize.value
+            size_y = sprite_info.ysize.value
+            xoffset = sprite_info.xrel.value
+            yoffset = sprite_info.yrel.value
+            if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
+        else:
+            size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encode_sprite(sprite_info)
 
-                self.sprite_output.start_sprite(len(compressed_data) + 18)
-                self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)
-                self.sprite_output.print_data(compressed_data)
-                self.sprite_output.end_sprite()
-
-                return
-
-        size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encode_sprite(sprite_info)
+        # Store sprite in cache, unless already up-to-date
+        if not in_use:
+            self.cached_sprites[cache_key] = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
 
         if warning is not None:
+            if in_old_cache:
+                warning = warning + " (cached warning)"
             generic.print_warning(warning, pos_8bpp)
 
         self.sprite_output.start_sprite(len(compressed_data) + 18)
-
         self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)
-
         self.sprite_output.print_data(compressed_data)
         self.sprite_output.end_sprite()
-
-        if self.enable_cache:
-            self.cached_sprites[cache_key] = (compressed_data, info_byte, crop_rect, warning, False, True)
 
     def encode_sprite(self, sprite_info):
         """
