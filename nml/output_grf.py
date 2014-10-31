@@ -68,7 +68,6 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.crop_sprites = crop_sprites
         self.enable_cache = enable_cache
         self.sprite_output = output_base.BinaryOutputBase(filename + ".sprite.tmp")
-        self.cache_output = output_base.BinaryOutputBase(filename + ".cache.tmp")
         self.cached_sprites = {}
         self.md5 = hashlib.md5()
         # sprite_num is deliberately off-by-one because it is used as an
@@ -460,20 +459,13 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         self.sprite_output.start_sprite(len(compressed_data) + 18)
 
-        if self.enable_cache:
-            self.cache_output.open()
-            self.cache_output.start_sprite(len(compressed_data))
-
         self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)
 
         self.sprite_output.print_data(compressed_data)
         self.sprite_output.end_sprite()
 
         if self.enable_cache:
-            self.cache_output.print_data(compressed_data)
-            self.cache_output.end_sprite()
-            self.cached_sprites[cache_key] = (self.cache_output.file, info_byte, crop_rect, warning, False, True)
-            self.cache_output.discard()
+            self.cached_sprites[cache_key] = (compressed_data, info_byte, crop_rect, warning, False, True)
 
     def encode_sprite(self, sprite_info):
         """
