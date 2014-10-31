@@ -28,12 +28,23 @@ The 2nd field of type L{Position} contains a positional reference to the last sp
 """
 spritegroup_stats = (0, None)
 
+total_tmp_locations = 0x7F
+
+"""
+Statistics about temporary Action2 registers.
+The 1st field of type C{int} contains the largest number of concurrently active register ids.
+The 2nd field of type L{Position} contains a positional reference to the spritegroup.
+"""
+a2register_stats = (0, None)
+
 def print_stats():
     """
     Print statistics about used ids.
     """
     if spritegroup_stats[0] > 0:
         generic.print_info("Concurrent spritegroups: {}/{} ({})".format(spritegroup_stats[0], total_action2_ids, str(spritegroup_stats[1])))
+    if a2register_stats[0] > 0:
+        generic.print_info("Concurrent Action2 registers: {}/{} ({})".format(a2register_stats[0], total_tmp_locations, str(a2register_stats[1])))
 
 class Action2(base_action.BaseAction):
     """
@@ -72,7 +83,7 @@ class Action2(base_action.BaseAction):
         #0x80 - 0xFE: used by NML
         #0xFF: Used for some house variables
         #0x100 - 0x10F: Special meaning (used for some CB results)
-        self.tmp_locations = list(range(0x80, 0xFF))
+        self.tmp_locations = list(range(0x80, 0x80 + total_tmp_locations))
 
     def prepare_output(self, sprite_num):
         free_references(self)
@@ -122,8 +133,14 @@ class Action2(base_action.BaseAction):
                                 also for 'chained' action2s.
         @type force_recursive: C{bool}
         """
+        global a2register_stats
+
         if location in self.tmp_locations:
             self.tmp_locations.remove(location)
+            num_used = total_tmp_locations - len(self.tmp_locations)
+            if num_used > a2register_stats[0]:
+                a2register_stats = (num_used, self.pos)
+
         for act2_ref in self.references:
             if force_recursive or act2_ref.is_proc:
                 act2_ref.action2.remove_tmp_location(location, True)
