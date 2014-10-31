@@ -411,20 +411,13 @@ class OutputGRF(output_base.BinaryOutputBase):
             filename_32bpp = sprite_info.file
             filename_8bpp = sprite_info.mask_file
 
-        im, mask_im = None, None
-        im_mask_pal = None
+        # Get initial info_byte and dimensions from sprite_info.
+        # These values will be changed depending on cropping and compression.
         info_byte = sprite_info.compression.value
-
-        # Select region of image bounded by x/ypos and x/ysize
-        x = sprite_info.xpos.value
-        y = sprite_info.ypos.value
         size_x = sprite_info.xsize.value
         size_y = sprite_info.ysize.value
-        if sprite_info.bit_depth == 8 or sprite_info.mask_pos is None:
-            mask_x, mask_y = x, y
-        else:
-            mask_x = sprite_info.mask_pos[0].value
-            mask_y = sprite_info.mask_pos[1].value
+        xoffset = sprite_info.xrel.value
+        yoffset = sprite_info.yrel.value
 
         # Check if files exist and if cache is usable
         use_cache = True
@@ -444,9 +437,36 @@ class OutputGRF(output_base.BinaryOutputBase):
             if use_cache or not self.cached_sprites[cache_key][4]:
                 if filename_8bpp is not None: self.mark_image_file_used(filename_8bpp.value)
                 if filename_32bpp is not None:  self.mark_image_file_used(filename_32bpp.value)
-                self.wsprite_cache(cache_key, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value,
-                        sprite_info.zoom_level, filename_8bpp.pos if filename_8bpp is not None else None)
+
+                pos_8bpp = filename_8bpp.pos if filename_8bpp is not None else None
+
+                # Write a sprite from the cached data
+                compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = self.cached_sprites[cache_key]
+                if not in_use:
+                    self.cached_sprites[cache_key] = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
+
+                if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
+                if warning is not None:
+                    generic.print_warning(warning + " (cached warning)", pos_8bpp)
+
+                self.sprite_output.start_sprite(len(compressed_data) + 18)
+                self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)
+                self.sprite_output.print_data(compressed_data)
+                self.sprite_output.end_sprite()
+
                 return
+
+        im, mask_im = None, None
+        im_mask_pal = None
+
+        # Select region of image bounded by x/ypos and x/ysize
+        x = sprite_info.xpos.value
+        y = sprite_info.ypos.value
+        if sprite_info.bit_depth == 8 or sprite_info.mask_pos is None:
+            mask_x, mask_y = x, y
+        else:
+            mask_x = sprite_info.mask_pos[0].value
+            mask_y = sprite_info.mask_pos[1].value
 
         # Read and validate image data
         if filename_32bpp is not None:
@@ -502,7 +522,52 @@ class OutputGRF(output_base.BinaryOutputBase):
             sprite_data.fromstring(sprite.tostring())
         else:
             sprite_data.fromstring(mask_sprite_data)
-        self.wsprite(sprite_data, size_x, size_y, sprite_info.xrel.value, sprite_info.yrel.value, info_byte, sprite_info.zoom_level, cache_key, warning)
+
+        bpp = get_bpp(info_byte)
+        assert len(sprite_data) == size_x * size_y * bpp
+        if self.crop_sprites and ((info_byte & INFO_NOCROP) == 0):
+            sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, info_byte, bpp)
+            size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
+        else:
+            crop_rect = None
+        assert len(sprite_data) == size_x * size_y * bpp
+
+        compressed_data = self.sprite_compress(sprite_data)
+        data_len = len(sprite_data) # Uncompressed length.
+        # Try tile compression, and see if it results in a smaller file size
+        tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info_byte, bpp)
+        if tile_data is not None:
+            tile_compressed_data = self.sprite_compress(tile_data)
+            # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
+            if len(tile_compressed_data) + 4 < len(compressed_data):
+                info_byte |= INFO_TILE
+                compressed_data = tile_compressed_data
+                data_len = len(tile_data)
+
+        chunked = info_byte & INFO_TILE != 0
+        size = len(compressed_data)
+        if chunked:
+            size += 4
+
+        self.sprite_output.start_sprite(size + 18)
+
+        if self.enable_cache:
+            self.cache_output.open()
+            self.cache_output.start_sprite(size)
+
+        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info_byte, sprite_info.zoom_level)
+        if chunked:
+            self.sprite_output.print_dword(data_len)
+            if self.enable_cache: self.cache_output.print_dword(data_len)
+
+        self.sprite_output.print_data(compressed_data)
+        self.sprite_output.end_sprite()
+
+        if self.enable_cache:
+            self.cache_output.print_data(compressed_data)
+            self.cache_output.end_sprite()
+            self.cached_sprites[cache_key] = (self.cache_output.file, info_byte, crop_rect, warning, False, True)
+            self.cache_output.discard()
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
@@ -537,40 +602,6 @@ class OutputGRF(output_base.BinaryOutputBase):
         else:
             stream = self.fakecompress(data)
         return stream
-
-    def wsprite_encoderegular(self, size_x, size_y, data, data_len, xoffset, yoffset, info, zoom_level):
-        chunked = info & INFO_TILE != 0
-        size = len(data)
-        if chunked:
-            size += 4
-
-        self.sprite_output.start_sprite(size + 18)
-        if self.enable_cache: self.cache_output.start_sprite(size)
-
-        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info, zoom_level)
-        if chunked:
-            self.sprite_output.print_dword(data_len)
-            if self.enable_cache: self.cache_output.print_dword(data_len)
-        self.sprite_output.print_data(data)
-        if self.enable_cache: self.cache_output.print_data(data)
-
-        self.sprite_output.end_sprite()
-        if self.enable_cache: self.cache_output.end_sprite()
-
-    def wsprite_cache(self, cache_key, size_x, size_y, xoffset, yoffset, zoom_level, pos_8bpp):
-        # Write a sprite from the cached data
-        data, info, crop_rect, warning, in_old_cache, in_use = self.cached_sprites[cache_key]
-        if not in_use:
-            self.cached_sprites[cache_key] = (data, info, crop_rect, warning, in_old_cache, True)
-
-        if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
-        if warning is not None:
-            generic.print_warning(warning + " (cached warning)", pos_8bpp)
-
-        self.sprite_output.start_sprite(len(data) + 18)
-        self.wsprite_header(size_x, size_y, len(data), xoffset, yoffset, info, zoom_level)
-        self.sprite_output.print_data(data)
-        self.sprite_output.end_sprite()
 
     def sprite_encode_tile(self, size_x, size_y, data, info, bpp, long_format = False):
         long_chunk = size_x > 256
@@ -704,33 +735,6 @@ class OutputGRF(output_base.BinaryOutputBase):
             return sprite_str.translate(translate_w2d)
         else:
             return sprite_str
-
-    def wsprite(self, sprite_data, size_x, size_y, xoffset, yoffset, info, zoom_level, cache_key, warning):
-        bpp = get_bpp(info)
-        assert len(sprite_data) == size_x * size_y * bpp
-        if self.crop_sprites and ((info & INFO_NOCROP) == 0):
-            sprite_data, crop_rect = self.crop_sprite(sprite_data, size_x, size_y, info, bpp)
-            size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
-        else:
-            crop_rect = None
-        assert len(sprite_data) == size_x * size_y * bpp
-
-        compressed_data = self.sprite_compress(sprite_data)
-        data_len = len(sprite_data) # Uncompressed length.
-        # Try tile compression, and see if it results in a smaller file size
-        tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info, bpp)
-        if tile_data is not None:
-            tile_compressed_data = self.sprite_compress(tile_data)
-            # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
-            if len(tile_compressed_data) + 4 < len(compressed_data):
-                info |= INFO_TILE
-                compressed_data = tile_compressed_data
-                data_len = len(tile_data)
-        if self.enable_cache: self.cache_output.open()
-        self.wsprite_encoderegular(size_x, size_y, compressed_data, data_len, xoffset, yoffset, info, zoom_level)
-        if self.enable_cache:
-            self.cached_sprites[cache_key] = (self.cache_output.file, info, crop_rect, warning, False, True)
-            self.cache_output.discard()
 
     def print_named_filedata(self, filename):
         name = os.path.split(filename)[1]
