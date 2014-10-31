@@ -20,6 +20,20 @@ from nml.ast import base_statement
 palette_node = None
 blitter_node = None
 
+"""
+Statistics about registers used for parameters.
+The 1st field is the largest parameter register used.
+The 2nd field is the maximum amount of parameter registers available. This is where L{action6.free_parameters} begins.
+"""
+param_stats = [0, 0x40]
+
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    if param_stats[0] > 0:
+        generic.print_info("GRF parameter registers: {}/{}".format(param_stats[0], param_stats[1]))
+
 def set_palette_used(pal):
     """
     Set the used palette in the action 14 node, if applicable
@@ -105,10 +119,17 @@ class GRF(base_statement.BaseStatement):
             grfstrings.validate_string(self.url)
         self.version = self.version.reduce_constant()
         self.min_compatible_version = self.min_compatible_version.reduce_constant()
+
+        global param_stats
+
         param_num = 0
         for param in self.params:
             param.pre_process(expression.ConstantNumeric(param_num))
             param_num = param.num.value + 1
+            if param_num > param_stats[1]:
+                raise generic.ScriptError("No free parameters available. Consider assigning <num> manually and combine multiple bool parameters into a single bitmask parameter using <bit>.", self.pos)
+            if param_num > param_stats[0]:
+                param_stats[0] = param_num
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'GRF')
