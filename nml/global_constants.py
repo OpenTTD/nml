@@ -1152,6 +1152,7 @@ config_flags = {
     'signals_on_traffic_side' : 0x3B,
     'electrified_railways'    : 0x3C,
     'newhouses'               : 0x59,
+    'wagon_speed_limits'      : 0x5D,
     'newindustries'           : 0x67,
     'temperate_snowline'      : 0x6A,
     'newcargos'               : 0x6B,
