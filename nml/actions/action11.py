@@ -83,6 +83,15 @@ class ImportSound(base_action.BaseAction):
 
 registered_sounds = {}
 SOUND_OFFSET = 73 # No of original sounds
+NUM_ANIMATION_SOUNDS = 0x80 - SOUND_OFFSET # Number of custom sound ids, which can be returned by animation callbacks.
+
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    if len(registered_sounds) > 0:
+        # Currently NML does not optimise the order of sound effects. So we assume NUM_ANIMATION_SOUNDS as the maximum.
+        generic.print_info("Sound effects: {}/{}".format(len(registered_sounds), NUM_ANIMATION_SOUNDS))
 
 def add_sound(args, pos):
     if args not in registered_sounds:
