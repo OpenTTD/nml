@@ -105,6 +105,47 @@ def convert_palette(pal):
     return ret
 
 class RealSprite(object):
+    """
+    @ivar param_list: Original parameters from NML source file.
+    @type param_list: List of L{expression.Expression}, or C{None}
+
+    @ivar label: Optional label from NML source file.
+    @type label: L{expression.Identifier} or C{None}
+
+    @ivar is_empty: True, if this is an empty sprite with zero dimension.
+    @type is_empty: C{bool}
+
+    @ivar file: Filename of primary image file.
+    @type file: L{expression.StringLiteral}
+
+    @ivar xpos: X position of sprite in source image file.
+    @type xpos: L{expression.ConstantNumeric} or C{None}
+
+    @ivar ypos: Y position of sprite in source image file.
+    @type ypos: L{expression.ConstantNumeric} or C{None}
+
+    @ivar mask_file: Filename of additional mask image file.
+    @type mask_file: L{expression.StringLiteral} or C{None}
+
+    @ivar mask_pos: Position of sprite in source mask image file.
+    @type mask_pos: Pair of L{expression.ConstantNumeric}, or C{None}
+
+    @ivar xsize: X size of sprite in both source image and mask file.
+    @type xsize: L{expression.ConstantNumeric} or C{None}
+
+    @ivar ysize: Y position of sprite in both source image and mask file.
+    @type ysize: L{expression.ConstantNumeric} or C{None}
+
+    @ivar xrel: X sprite offset.
+    @type xrel: L{expression.ConstantNumeric}
+
+    @ivar yrel: Y sprite offset.
+    @type yrel: L{expression.ConstantNumeric}
+
+    @ivar compression: Compression/cropping type. Uses same integer values as in GRF output.
+    @type compression: L{expression.ConstantNumeric}
+    """
+
     def __init__(self, param_list = None, label = None):
         self.param_list = param_list
         self.label = label
