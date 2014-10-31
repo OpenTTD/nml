@@ -23,6 +23,7 @@ class RailtypeTable(base_statement.BaseStatement):
         base_statement.BaseStatement.__init__(self, "rail type table", pos, False, False)
         self.railtype_list = railtype_list
         generic.OnlyOnce.enforce(self, "rail type table")
+        global_constants.is_default_railtype_table = False
         global_constants.railtype_table.clear()
 
     def register_names(self):

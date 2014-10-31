@@ -1187,6 +1187,7 @@ def create_spritegroup_ref(info, pos):
     return expression.SpriteGroupRef(expression.Identifier(info), [], pos)
 
 cargo_numbers = {}
+is_default_railtype_table = True
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 item_names = {}
 settings = {}
@@ -1207,3 +1208,13 @@ const_list = [
     (unified_maglev_var, unified_maglev),
     (spritegroups, create_spritegroup_ref),
 ]
+
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    if len(cargo_numbers) > 0:
+        # Ids FE and FF have special meanings in Action3, so we do not consider them valid ids.
+        generic.print_info("Cargo translation table: {}/{}".format(len(cargo_numbers), 0xFE))
+    if not is_default_railtype_table:
+        generic.print_info("Railtype translation table: {}/{}".format(len(railtype_table), 0x100))
