@@ -437,10 +437,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 use_cache = False
 
         # Try finding the file in the cache
-        rgb_file, rgb_rect = (filename_32bpp.value, (x, y, size_x, size_y)) if filename_32bpp is not None else (None, None)
-        mask_file, mask_rect = (filename_8bpp.value, (mask_x, mask_y, size_x, size_y)) if filename_8bpp is not None else (None, None)
-        do_crop = self.crop_sprites and ((info_byte & INFO_NOCROP) == 0)
-        cache_key = (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)
+        cache_key = sprite_info.get_cache_key(self.crop_sprites)
         if cache_key in self.cached_sprites:
             # Use cache either if files are older, of if cache entry was not present
             # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)

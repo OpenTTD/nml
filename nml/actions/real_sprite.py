@@ -21,6 +21,8 @@ try:
 except ImportError:
     import Image
 
+INFO_NOCROP = 0x40
+
 palmap_d2w = [
           0, 215, 216, 136,  88, 106,  32,  33, #   0..7
          40, 245,  10,  11,  12,  13,  14,  15, #   8..15
@@ -199,6 +201,41 @@ class RealSprite(object):
         ret += "]"
         return ret
 
+    def get_cache_key(self, crop_sprites):
+        """
+        Assemble the sprite meta data into a key, able to identify the sprite.
+
+        @param crop_sprites: Whether to crop sprites, which allow it.
+        @type  crop_sprites: C{bool}
+
+        @return: Key
+        @rtype: C{tuple}
+        """
+        info_byte = self.compression.value
+
+        filename_8bpp = None
+        filename_32bpp = None
+        if self.bit_depth == 8:
+            filename_8bpp = self.file
+        else:
+            filename_32bpp = self.file
+            filename_8bpp = self.mask_file
+
+        x = self.xpos.value
+        y = self.ypos.value
+        size_x = self.xsize.value
+        size_y = self.ysize.value
+        if self.bit_depth == 8 or self.mask_pos is None:
+            mask_x, mask_y = x, y
+        else:
+            mask_x = self.mask_pos[0].value
+            mask_y = self.mask_pos[1].value
+
+        rgb_file, rgb_rect = (filename_32bpp.value, (x, y, size_x, size_y)) if filename_32bpp is not None else (None, None)
+        mask_file, mask_rect = (filename_8bpp.value, (mask_x, mask_y, size_x, size_y)) if filename_8bpp is not None else (None, None)
+        do_crop = crop_sprites and ((info_byte & INFO_NOCROP) == 0)
+        return (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)
+
 class SpriteAction(base_action.BaseAction):
     def __init__(self):
         self.sprite_num = None
@@ -343,7 +380,7 @@ class TemplateUsage(object):
 
 real_sprite_compression_flags = {
     'CROP'         : 0x00,
-    'NOCROP'       : 0x40,
+    'NOCROP'       : INFO_NOCROP,
 }
 
 
