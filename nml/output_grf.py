@@ -239,14 +239,16 @@ class OutputGRF(output_base.BinaryOutputBase):
         # Use cache either if files are older, of if cache entry was not present
         # in the loaded cache, and thus written by the current grf (occurs if sprites are duplicated)
         cache_key = sprite_info.get_cache_key(self.crop_sprites)
+        cache_item = self.sprite_cache.get_item(cache_key, self.palette)
+
         in_use = False
         in_old_cache = False
-        if cache_key in self.sprite_cache.cached_sprites:
+        if cache_item is not None:
             if sprite_info.file is not None: self.mark_image_file_used(sprite_info.file.value)
             if sprite_info.mask_file is not None: self.mark_image_file_used(sprite_info.mask_file.value)
 
             # Write a sprite from the cached data
-            compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = self.sprite_cache.cached_sprites[cache_key]
+            compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = cache_item
 
             size_x = sprite_info.xsize.value
             size_y = sprite_info.ysize.value
@@ -258,7 +260,8 @@ class OutputGRF(output_base.BinaryOutputBase):
 
         # Store sprite in cache, unless already up-to-date
         if not in_use:
-            self.sprite_cache.cached_sprites[cache_key] = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
+            cache_item = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
+            self.sprite_cache.add_item(cache_key, self.palette, cache_item)
 
         if warning is not None:
             if in_old_cache:
