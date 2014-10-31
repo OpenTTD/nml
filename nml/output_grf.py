@@ -411,13 +411,8 @@ class OutputGRF(output_base.BinaryOutputBase):
             filename_32bpp = sprite_info.file
             filename_8bpp = sprite_info.mask_file
 
-        # Get initial info_byte and dimensions from sprite_info.
-        # These values will be changed depending on cropping and compression.
-        info_byte = sprite_info.compression.value
-        size_x = sprite_info.xsize.value
-        size_y = sprite_info.ysize.value
-        xoffset = sprite_info.xrel.value
-        yoffset = sprite_info.yrel.value
+        # Position for warning messages
+        pos_8bpp = filename_8bpp.pos if filename_8bpp is not None else None
 
         # Check if files exist and if cache is usable
         use_cache = True
@@ -438,13 +433,15 @@ class OutputGRF(output_base.BinaryOutputBase):
                 if filename_8bpp is not None: self.mark_image_file_used(filename_8bpp.value)
                 if filename_32bpp is not None:  self.mark_image_file_used(filename_32bpp.value)
 
-                pos_8bpp = filename_8bpp.pos if filename_8bpp is not None else None
-
                 # Write a sprite from the cached data
                 compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = self.cached_sprites[cache_key]
                 if not in_use:
                     self.cached_sprites[cache_key] = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
 
+                size_x = sprite_info.xsize.value
+                size_y = sprite_info.ysize.value
+                xoffset = sprite_info.xrel.value
+                yoffset = sprite_info.yrel.value
                 if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
                 if warning is not None:
                     generic.print_warning(warning + " (cached warning)", pos_8bpp)
@@ -455,6 +452,55 @@ class OutputGRF(output_base.BinaryOutputBase):
                 self.sprite_output.end_sprite()
 
                 return
+
+        size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encode_sprite(sprite_info)
+
+        if warning is not None:
+            generic.print_warning(warning, pos_8bpp)
+
+        self.sprite_output.start_sprite(len(compressed_data) + 18)
+
+        if self.enable_cache:
+            self.cache_output.open()
+            self.cache_output.start_sprite(len(compressed_data))
+
+        self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)
+
+        self.sprite_output.print_data(compressed_data)
+        self.sprite_output.end_sprite()
+
+        if self.enable_cache:
+            self.cache_output.print_data(compressed_data)
+            self.cache_output.end_sprite()
+            self.cached_sprites[cache_key] = (self.cache_output.file, info_byte, crop_rect, warning, False, True)
+            self.cache_output.discard()
+
+    def encode_sprite(self, sprite_info):
+        """
+        Crop and compress a real sprite.
+
+        @param sprite_info: Sprite meta data
+        @type  sprite_info: C{RealSprite}
+
+        @return: size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning
+        @rtype: C{tuple}
+        """
+
+        filename_8bpp = None
+        filename_32bpp = None
+        if sprite_info.bit_depth == 8:
+            filename_8bpp = sprite_info.file
+        else:
+            filename_32bpp = sprite_info.file
+            filename_8bpp = sprite_info.mask_file
+
+        # Get initial info_byte and dimensions from sprite_info.
+        # These values will be changed depending on cropping and compression.
+        info_byte = sprite_info.compression.value
+        size_x = sprite_info.xsize.value
+        size_y = sprite_info.ysize.value
+        xoffset = sprite_info.xrel.value
+        yoffset = sprite_info.yrel.value
 
         im, mask_im = None, None
         im_mask_pal = None
@@ -501,7 +547,6 @@ class OutputGRF(output_base.BinaryOutputBase):
                 pixels = size_x * size_y
                 image_pos = generic.PixelPosition(filename_8bpp.value, x, y)
                 warning = "{}: {:d} of {:d} pixels ({:d}%) are pure white".format(str(image_pos), white_pixels, pixels, white_pixels * 100 // pixels)
-                generic.print_warning(warning, filename_8bpp.pos)
 
             mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)
 
@@ -548,22 +593,7 @@ class OutputGRF(output_base.BinaryOutputBase):
                 compressed_data.append((data_len >> 24) & 0xFF)
                 compressed_data.extend(tile_compressed_data)
 
-        self.sprite_output.start_sprite(len(compressed_data) + 18)
-
-        if self.enable_cache:
-            self.cache_output.open()
-            self.cache_output.start_sprite(len(compressed_data))
-
-        self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)
-
-        self.sprite_output.print_data(compressed_data)
-        self.sprite_output.end_sprite()
-
-        if self.enable_cache:
-            self.cache_output.print_data(compressed_data)
-            self.cache_output.end_sprite()
-            self.cached_sprites[cache_key] = (self.cache_output.file, info_byte, crop_rect, warning, False, True)
-            self.cache_output.discard()
+        return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning)
 
     def print_empty_realsprite(self):
         self.start_sprite(1)
