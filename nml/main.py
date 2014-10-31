@@ -377,6 +377,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     # Processing finished, print some statistics
     action0.print_stats()
     actionF.print_stats()
+    action1.print_stats()
 
     generic.print_progress("Writing output ...")
 

@@ -16,6 +16,12 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from nml.actions import base_action, real_sprite
 
+"""
+Maximum number of sprites per block.
+This can be increased by switching to extended Action1.
+"""
+max_sprite_block_size = 0xFF
+
 class Action1(base_action.BaseAction):
     """
     Class representing an Action1
@@ -88,14 +94,14 @@ class SpritesetCollection(base_action.BaseAction):
         @return: True iff the given spritesets can be added to this collection.
         @rtype: C{bool}
         """
-        assert len(spritesets) < 0x100
+        assert len(spritesets) <= max_sprite_block_size
         if feature != self.feature:
             return False
         for spriteset in spritesets:
             if len(real_sprite.parse_sprite_data(spriteset)) != self.num_sprites_per_spriteset:
                 return False
         num_new_sets = sum(1 for x in spritesets if x not in self.spritesets)
-        return len(self.spritesets) + num_new_sets < 0x100
+        return len(self.spritesets) + num_new_sets <= max_sprite_block_size
 
     def add(self, spritesets):
         """
@@ -141,6 +147,22 @@ class SpritesetCollection(base_action.BaseAction):
         return actions
 
 """
+Statistics about spritesets.
+The 1st field of type C{int} contains the largest block of consecutive spritesets.
+The 2nd field of type L{Position} contains a positional reference to the largest block of consecutive spritesets.
+"""
+spriteset_stats = (0, None)
+
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    if spriteset_stats[0] > 0:
+        # NML uses as many concurrent spritesets as possible to prevent sprite duplication.
+        # So, instead of the actual amount, we rather print the biggest unsplittable block, since that is what matters.
+        generic.print_info("Concurrent spritesets: {}/{} ({})".format(spriteset_stats[0], max_sprite_block_size, str(spriteset_stats[1])))
+
+"""
 The collection which was previoulsy used. add_to_action1 will try to reuse this
 collection as long as possible to reduce the duplication of sprites. As soon
 as a spriteset with a different feature or amount of sprites is added a new
@@ -159,6 +181,9 @@ def add_to_action1(spritesets, feature, pos):
     @param feature: Feature of the spritesets.
     @type feature: C{int}
 
+    @param pos: Position reference to source.
+    @type  pos: L{Position}
+
     @return: List of collections that needs to be added to the global action list.
     @rtype: C{list} of L{SpritesetCollection}.
     """
@@ -169,6 +194,10 @@ def add_to_action1(spritesets, feature, pos):
     for spriteset in spritesets:
         if setsize != len(real_sprite.parse_sprite_data(spriteset)):
             raise generic.ScriptError("Using spritesets with different sizes in a single sprite group / layout is not possible", pos)
+
+    global spriteset_stats
+    if spriteset_stats[0] < len(spritesets):
+        spriteset_stats = (len(spritesets), pos)
 
     global last_spriteset_collection
     actions = []
