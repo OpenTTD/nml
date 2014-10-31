@@ -128,7 +128,8 @@ class SpriteEncoder(object):
         Close the encoder, validate data, write caches, and stuff.
         """
 
-        if self.enable_cache:
+        # Only write cache if compression is enabled. Uncompressed data is not worth to be cached.
+        if self.enable_cache and self.compress_grf:
             self.sprite_cache.write_cache()
 
     def get(self, sprite_info):
