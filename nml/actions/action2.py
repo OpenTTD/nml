@@ -18,7 +18,22 @@ from nml.actions import base_action
 from nml.ast import base_statement, general
 import nml
 
-free_action2_ids = list(range(0, 256))
+total_action2_ids = 0x100
+free_action2_ids = list(range(0, total_action2_ids))
+
+"""
+Statistics about spritegroups.
+The 1st field of type C{int} contains the largest number of concurrently active spritegroup ids.
+The 2nd field of type L{Position} contains a positional reference to the last spritegroup of the concurrently active ones.
+"""
+spritegroup_stats = (0, None)
+
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    if spritegroup_stats[0] > 0:
+        generic.print_info("Concurrent spritegroups: {}/{} ({})".format(spritegroup_stats[0], total_action2_ids, str(spritegroup_stats[1])))
 
 class Action2(base_action.BaseAction):
     """
@@ -62,13 +77,18 @@ class Action2(base_action.BaseAction):
     def prepare_output(self, sprite_num):
         free_references(self)
 
+        global spritegroup_stats
+
         try:
             if self.num_refs == 0:
                 self.id = free_action2_ids[0]
             else:
                 self.id = free_action2_ids.pop()
+                num_used = total_action2_ids - len(free_action2_ids)
+                if num_used > spritegroup_stats[0]:
+                    spritegroup_stats = (num_used, self.pos)
         except IndexError:
-            raise generic.ScriptError("Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block. Try reducing the number of such blocks.")
+            raise generic.ScriptError("Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block. Try reducing the number of such blocks.", self.pos)
 
     def write_sprite_start(self, file, size):
         assert self.num_refs == 0, "Action2 reference counting has {:d} dangling references.".format(self.num_refs)
