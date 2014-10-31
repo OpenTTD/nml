@@ -374,6 +374,9 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         num = start_sprite_num + idx
         action.prepare_output(num)
 
+    # Processing finished, print some statistics
+    action0.print_stats()
+
     generic.print_progress("Writing output ...")
 
     md5 = None

@@ -38,6 +38,12 @@ class BlockAllocation(object):
     @ivar last: Last freely usable address.
     @type last: C{int}
 
+    @ivar name: Name for debug output.
+    @type name: C{str}
+
+    @ivar dynamic_allocation: True, if ids are allocated. False, if they refer to static entities.
+    @type dynamic_allocation: C{bool}
+
     @ivar allocated: Mapping of allocated blocks.
     @type allocated: C{dict} of C{int} to allocation information.
 
@@ -45,11 +51,31 @@ class BlockAllocation(object):
                   Serves as a cache to speed up searches.
     @type filled: C{dict} of C{int}
     """
-    def __init__(self, first, last):
+    def __init__(self, first, last, name, dynamic_allocation=True):
         self.first = first
         self.last = last
+        self.name = name
+        self.dynamic_allocation = dynamic_allocation
         self.allocated = {}
         self.filled = {}
+
+    def get_num_allocated(self):
+        """
+        Return number of allocated ids.
+        """
+        if self.dynamic_allocation:
+            return len(self.allocated)
+        else:
+            return 0
+
+    def get_max_allocated(self):
+        """
+        Return maximum number of allocateable ids.
+        """
+        if self.dynamic_allocation:
+            return self.last - self.first + 1
+        else:
+            return 0
 
     def in_range(self, addr, length):
         """
@@ -160,25 +186,34 @@ class BlockAllocation(object):
 # Available IDs for each feature.
 # Maximum allowed id (houses and indtiles in principle allow up to 511, but action3 does not accept extended bytes).
 used_ids = [
-    BlockAllocation(116, 0xFFFF), # FEAT_TRAINS
-    BlockAllocation( 88, 0xFFFF), # FEAT_ROADVEHS
-    BlockAllocation( 11, 0xFFFF), # FEAT_SHIPS
-    BlockAllocation( 41, 0xFFFF), # FEAT_AIRCRAFT
-    BlockAllocation(  0,    255), # FEAT_STATIONS
-    BlockAllocation(  0,      8), # FEAT_CANALS
-    BlockAllocation(  0,     15), # FEAT_BRIDGES
-    BlockAllocation(  0,    255), # FEAT_HOUSES
-    BlockAllocation(  0,     -1), # FEAT_GLOBALVARS
-    BlockAllocation(  0,    255), # FEAT_INDUSTRYTILES
-    BlockAllocation(  0,     63), # FEAT_INDUSTRIES
-    BlockAllocation(  0,     31), # FEAT_CARGOS
-    BlockAllocation(  0,     -1), # FEAT_SOUNDEFFECTS
-    BlockAllocation(  0,    127), # FEAT_AIRPORTS
-    BlockAllocation(  0,     -1), # FEAT_SIGNALS
-    BlockAllocation(  0,    255), # FEAT_OBJECTS
-    BlockAllocation(  0,     15), # FEAT_RAILTYPES
-    BlockAllocation(  0,    255), # FEAT_AIRPORTTILES
+    BlockAllocation(116, 0xFFFF, "Train"),
+    BlockAllocation( 88, 0xFFFF, "Road Vehicle"),
+    BlockAllocation( 11, 0xFFFF, "Ship"),
+    BlockAllocation( 41, 0xFFFF, "Aircraft"),
+    BlockAllocation(  0,    255, "Station"),
+    BlockAllocation(  0,      8, "Canal", False),
+    BlockAllocation(  0,     15, "Bridge", False),
+    BlockAllocation(  0,    255, "House"),
+    BlockAllocation(  0,     -1, "Global", False),
+    BlockAllocation(  0,    255, "Industry Tile"),
+    BlockAllocation(  0,     63, "Industry"),
+    BlockAllocation(  0,     31, "Cargo"),
+    BlockAllocation(  0,     -1, "Sound"),
+    BlockAllocation(  0,    127, "Airport"),
+    BlockAllocation(  0,     -1, "Signal", False),
+    BlockAllocation(  0,    255, "Object"),
+    BlockAllocation(  0,     15, "Railtype"),
+    BlockAllocation(  0,    255, "Airport Tile"),
 ]
+
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    for feature in used_ids:
+        used = feature.get_num_allocated()
+        if used > 0 and feature.dynamic_allocation:
+            generic.print_info("{} items: {}/{}".format(feature.name, used, feature.get_max_allocated()))
 
 def mark_id_used(feature, id, num_ids):
     """
