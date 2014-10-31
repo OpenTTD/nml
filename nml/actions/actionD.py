@@ -94,7 +94,7 @@ class ParameterAssignment(base_statement.BaseStatement):
             if not self.param.can_assign():
                 raise generic.ScriptError("Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos)
         elif isinstance(self.param, expression.Identifier):
-            num = action6.free_parameters.pop_unique()
+            num = action6.free_parameters.pop_unique(self.pos)
             global_constants.named_parameters[self.param.value] = num
         elif not isinstance(self.param, expression.Parameter):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
@@ -122,7 +122,7 @@ def parse_subexpression(expr, action_list):
 
 #returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
-    param = action6.free_parameters.pop()
+    param = action6.free_parameters.pop(expr.pos)
     actions = parse_actionD(ParameterAssignment(expression.Parameter(expression.ConstantNumeric(param)), expr))
     return (param, actions)
 

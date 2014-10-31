@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+from nml import generic
+
 class FreeNumberList(object):
     """
     Contains a list with numbers and functions to pop one number from the list,
@@ -35,11 +37,11 @@ class FreeNumberList(object):
 
     @ivar exception: Exception to be thrown when there is no number available
         when requested via pop() or pop_global().
-    @type exception: C{Exception}
+    @type exception: C{str}
 
     @ivar exception_unique: Exception to be thrown when there is no unique number
         available when it is requested via pop_unique().
-    @type exception_unique: C{Exception}
+    @type exception_unique: C{str}
     """
     def __init__(self, free_numbers, exception, exception_unique):
         self.free_numbers = free_numbers
@@ -48,36 +50,45 @@ class FreeNumberList(object):
         self.exception = exception
         self.exception_unique = exception_unique
 
-    def pop(self):
+    def pop(self, pos):
         """
         Pop a free number from the list. You have to call L{save} at least
         once before calling L{pop}.
+
+        @param pos: Positional context.
+        @type  pos: L{Position}
 
         @return: Some free number.
         """
         assert len(self.states) > 0
         if self.free_numbers == 0:
-            raise self.exception
+            raise generic.ScriptError(self.exception, pos)
         num = self.free_numbers.pop()
         self.states[-1].append(num)
         self.used_numbers.add(num)
         return num
 
-    def pop_global(self):
+    def pop_global(self, pos):
         """
         Pop a free number from the list. The number may have been used before
         and already been restored but it'll never be given out again.
 
+        @param pos: Positional context.
+        @type  pos: L{Position}
+
         @return: Some free number.
         """
         if self.free_numbers == 0:
-            raise self.exception
+            raise generic.ScriptError(self.exception, pos)
         return self.free_numbers.pop()
 
-    def pop_unique(self):
+    def pop_unique(self, pos):
         """
         Pop a free number from the list. The number has not been used before
         and will not be used again.
+
+        @param pos: Positional context.
+        @type  pos: L{Position}
 
         @return: A unique free number.
         """
@@ -86,7 +97,7 @@ class FreeNumberList(object):
             self.free_numbers.remove(num)
             self.used_numbers.add(num)
             return num
-        raise self.exception_unique
+        raise generic.ScriptError(self.exception_unique, pos)
 
     def save(self):
         """

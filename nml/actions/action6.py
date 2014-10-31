@@ -16,7 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import free_number_list, generic
 from nml.actions import base_action
 
-free_parameters = free_number_list.FreeNumberList(list(range(0x40, 0x80)), generic.ScriptError("No free paramters available to use for internal computations."), generic.ScriptError("No unique free parameters available for internal computations."))
+free_parameters = free_number_list.FreeNumberList(list(range(0x40, 0x80)), "No free parameters available to use for internal computations.", "No unique free parameters available for internal computations.")
 
 class Action6(base_action.BaseAction):
     def __init__(self):
