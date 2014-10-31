@@ -42,7 +42,7 @@ def parse_cli(argv):
 
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
-                            custom_tags="custom_tags.txt", lang_dir="lang", default_lang="english.lng",
+                            custom_tags="custom_tags.txt", lang_dir="lang", default_lang="english.lng", cache_dir=".nmlcache",
                             forced_palette="ANY", quiet=False, md5_filename=None)
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
@@ -70,11 +70,14 @@ def parse_cli(argv):
                         help="Disable all warnings. Errors will be printed normally.")
     opt_parser.add_option("-n", "--no-cache", action="store_true", dest="no_cache",
                         help="Disable caching of sprites in .cache[index] files, which may reduce compilation time.")
+    opt_parser.add_option("--cache-dir", dest="cache_dir", metavar="<dir>", help="Cache files are stored in directory <dir> [default: %default]")
 
     opts, args = opt_parser.parse_args(argv)
 
     if opts.quiet:
         generic.disable_warnings()
+
+    generic.set_cache_root_dir(opts.cache_dir)
 
     opts.outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.dep_filename or opts.outputs)
 

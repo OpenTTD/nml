@@ -376,3 +376,40 @@ def find_file(filepath):
             _paths.add(path)
 
     return path
+
+cache_root_dir = ".nmlcache"
+
+def set_cache_root_dir(dir):
+    cache_root_dir = os.path.abspath(dir)
+    os.makedirs(cache_root_dir, exist_ok=True)
+
+def get_cache_file(sources, extension):
+    """
+    Compose a filename for a cache file.
+
+    @param sources: List of source files, the cache file depends on / belongs to.
+    @type  sources: C{list} or C{tuple} of C{str} or similar.
+
+    @param extension: File extension for the cache file including leading ".".
+    @type  extension: C{str}
+
+    @return: Filename for cache file.
+    @rtype:  C{str}
+    """
+    result = ""
+
+    for part in sources:
+        if part is not None:
+            path, name = os.path.split(part)
+
+            if len(result) == 0:
+                # Make sure that the path does not leave the cache dir
+                path = os.path.normpath(path).replace(os.path.pardir, "__")
+                path = os.path.join(cache_root_dir, path)
+                os.makedirs(path, exist_ok=True)
+                result = os.path.join(path, name)
+            else:
+                # In case of multiple soure files, ignore the path component for all but the first
+                result += "_" + name
+
+    return result + extension
