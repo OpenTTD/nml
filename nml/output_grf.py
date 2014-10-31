@@ -533,7 +533,6 @@ class OutputGRF(output_base.BinaryOutputBase):
         assert len(sprite_data) == size_x * size_y * bpp
 
         compressed_data = self.sprite_compress(sprite_data)
-        data_len = len(sprite_data) # Uncompressed length.
         # Try tile compression, and see if it results in a smaller file size
         tile_data = self.sprite_encode_tile(size_x, size_y, sprite_data, info_byte, bpp)
         if tile_data is not None:
@@ -541,24 +540,21 @@ class OutputGRF(output_base.BinaryOutputBase):
             # Tile compression adds another 4 bytes for the uncompressed chunked data in the header
             if len(tile_compressed_data) + 4 < len(compressed_data):
                 info_byte |= INFO_TILE
-                compressed_data = tile_compressed_data
                 data_len = len(tile_data)
+                compressed_data = array.array('B')
+                compressed_data.append(data_len & 0xFF)
+                compressed_data.append((data_len >> 8) & 0xFF)
+                compressed_data.append((data_len >> 16) & 0xFF)
+                compressed_data.append((data_len >> 24) & 0xFF)
+                compressed_data.extend(tile_compressed_data)
 
-        chunked = info_byte & INFO_TILE != 0
-        size = len(compressed_data)
-        if chunked:
-            size += 4
-
-        self.sprite_output.start_sprite(size + 18)
+        self.sprite_output.start_sprite(len(compressed_data) + 18)
 
         if self.enable_cache:
             self.cache_output.open()
-            self.cache_output.start_sprite(size)
+            self.cache_output.start_sprite(len(compressed_data))
 
-        self.wsprite_header(size_x, size_y, size, xoffset, yoffset, info_byte, sprite_info.zoom_level)
-        if chunked:
-            self.sprite_output.print_dword(data_len)
-            if self.enable_cache: self.cache_output.print_dword(data_len)
+        self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)
 
         self.sprite_output.print_data(compressed_data)
         self.sprite_output.end_sprite()
