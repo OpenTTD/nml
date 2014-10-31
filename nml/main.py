@@ -199,6 +199,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     """
     generic.OnlyOnce.clear()
 
+    generic.print_progress("Reading ...")
+
     try:
         script = inputfile.read()
     except UnicodeDecodeError as ex:
@@ -209,9 +211,15 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     if script.strip() == "":
         generic.print_error("Empty input file")
         return 4
+
+    generic.print_progress("Init parser ...")
+
     nml_parser = parser.NMLParser()
     if input_filename is None:
         input_filename = 'input'
+
+    generic.print_progress("Parsing ...")
+
     result = nml_parser.parse(script, input_filename)
     result.validate([])
 
@@ -224,9 +232,13 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             outputfile.write(str(result))
             outputfile.close()
 
+    generic.print_progress("Preprocessing ...")
+
     result.register_names()
     result.pre_process()
     tmp_actions = result.get_action_list()
+
+    generic.print_progress("Generating actions ...")
 
     actions = []
     for action in tmp_actions:
@@ -236,12 +248,16 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             actions.append(action)
     actions.extend(action11.get_sound_actions())
 
+    generic.print_progress("Assigning Action2 registers ...")
+
     action8_index = -1
     for i in range(len(actions) - 1, -1, -1):
         if isinstance(actions[i], (action2var.Action2Var, action2layout.Action2Layout)):
             actions[i].resolve_tmp_storage()
         elif isinstance(actions[i], action8.Action8):
             action8_index = i
+
+    generic.print_progress("Generating strings ...")
 
     if action8_index != -1:
         lang_actions = []
@@ -252,6 +268,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         # Add global strings
         lang_actions.extend(action4.get_global_string_actions())
         actions = actions[:action8_index + 1] + lang_actions + actions[action8_index + 1:]
+
+    generic.print_progress("Collecting real sprites ...")
 
     # Collect all sprite files, and put them into buckets of same image and mask files
     sprite_files = dict()
@@ -272,6 +290,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
                 key = (file, mask_file)
                 sprite_files.setdefault(key, []).append(sprite)
 
+    generic.clear_progress()
+
     # Check whether we can terminate sprite processing prematurely for
     #     dependency checks
     skip_sprite_processing = True
@@ -286,11 +306,15 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             outputfile.close()
         skip_sprite_processing &= outputfile.skip_sprite_checks()
 
-    if skip_sprite_processing: return 0
+    if skip_sprite_processing:
+        generic.clear_progress()
+        return 0
 
     if not Image and len(sprite_files) > 0:
         generic.print_error("PIL (python-imaging) wasn't found, no support for using graphics")
         sys.exit(3)
+
+    generic.print_progress("Checking palette of source images ...")
 
     used_palette = forced_palette
     last_file = None
@@ -331,6 +355,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
                 encoder = spriteencoder.SpriteEncoder(outputfile.filename, compress_grf, crop_sprites, enable_cache, used_palette)
             outputfile.encoder = encoder
 
+    generic.print_progress("Encoding sprites ...")
+
     # Read all image data, compress, and store in sprite cache
     if encoder is not None:
         encoder.open(sprite_files)
@@ -339,12 +365,16 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     if alt_sprites.any_32bpp_sprites:
         grf.set_preferred_blitter("3")
 
+    generic.print_progress("Linking actions ...")
+
     if action8_index != -1:
         actions = [sprite_count.SpriteCountAction(len(actions))] + actions
 
     for idx, action in enumerate(actions):
         num = start_sprite_num + idx
         action.prepare_output(num)
+
+    generic.print_progress("Writing output ...")
 
     md5 = None
     for outputfile in outputfiles:
@@ -368,6 +398,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     if encoder is not None:
         encoder.close()
 
+    generic.clear_progress()
     return 0
 
 def run():

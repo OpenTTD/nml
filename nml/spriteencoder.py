@@ -99,11 +99,23 @@ class SpriteEncoder(object):
         if self.enable_cache:
             self.sprite_cache.read_cache()
 
-        for sprite_list in sprite_files.values():
+        num_sprites = sum(len(sprite_list) for sprite_list in sprite_files.values())
+
+        num_cached = 0
+        num_dup = 0
+        num_enc = 0
+        count_sprites = 0
+        for sources, sprite_list in sprite_files.items():
             # Iterate over sprites grouped by source image file.
             #  - Open source files only once. (speed)
             #  - Do not keep files around for long. (memory)
+
+            source_name = "_".join(src for src in sources if src is not None)
+
             for sprite_info in sprite_list:
+                count_sprites += 1
+                generic.print_progress("Encoding {}/{}: {}".format(count_sprites, num_sprites, source_name))
+
                 cache_key = sprite_info.get_cache_key(self.crop_sprites)
                 cache_item = self.sprite_cache.get_item(cache_key, self.palette)
 
@@ -112,8 +124,13 @@ class SpriteEncoder(object):
                 if cache_item is not None:
                     # Write a sprite from the cached data
                     compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = cache_item
+                    if in_use:
+                        num_dup += 1
+                    else:
+                        num_cached += 1
                 else:
                     size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encode_sprite(sprite_info)
+                    num_enc += 1
 
                 # Store sprite in cache, unless already up-to-date
                 if not in_use:
@@ -122,6 +139,9 @@ class SpriteEncoder(object):
 
             # Delete all files from dictionary to free memory
             self.cached_image_files.clear()
+
+        generic.clear_progress()
+        generic.print_info("{} sprites, {} cached, {} duplicates, {} newly encoded".format(num_sprites, num_cached, num_dup, num_enc))
 
     def close(self):
         """

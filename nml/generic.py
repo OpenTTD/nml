@@ -225,6 +225,51 @@ def disable_warnings():
     global do_print_warnings
     do_print_warnings = False
 
+def print_eol(msg):
+    """
+    Clear current line and print message without linefeed.
+    """
+    if not do_print_warnings:
+        return
+    if not os.isatty(sys.stdout.fileno()):
+        return
+
+    print("\r" + msg + "\033[K", end="")
+
+progress_message = None
+
+def hide_progress():
+    print_eol("")
+
+def show_progress():
+    global progress_message
+    if progress_message is not None:
+        print_eol(progress_message)
+
+def clear_progress():
+    global progress_message
+    progress_message = None
+    print_eol("")
+
+def print_progress(msg):
+    """
+    Output progess information to the user.
+    """
+    global progress_message
+    progress_message = msg
+    print_eol(msg)
+
+def print_info(msg):
+    """
+    Output a pure informational message to th euser.
+    """
+    if not do_print_warnings:
+        return
+
+    hide_progress()
+    print(" nmlc info: " + msg)
+    show_progress()
+
 def print_warning(msg, pos = None):
     """
     Output a warning message to the user.
@@ -234,15 +279,20 @@ def print_warning(msg, pos = None):
     if pos:
         msg = str(pos) + ": " + msg
 
-    if sys.stderr.isatty():
-        msg = "\033[33m nmlc warning: " + msg + "\033[0m "
+    msg = " nmlc warning: " + msg
 
+    if sys.stderr.isatty():
+        msg = "\033[33m" + msg + "\033[0m"
+
+    hide_progress()
     print(msg, file=sys.stderr)
+    show_progress()
 
 def print_error(msg):
     """
     Output an error message to the user.
     """
+    clear_progress()
     print("nmlc ERROR: " + msg, file=sys.stderr)
 
 def print_dbg(indent, *args):
@@ -255,7 +305,9 @@ def print_dbg(indent, *args):
     @param args: Arguments to print. An additional space is printed between them.
     @type  args: C{Tuple} of C{str}
     """
+    hide_progress()
     print(indent * ' ' + ' '.join(str(arg) for arg in args))
+    show_progress()
 
 
 _paths = set() # Paths already found to be correct at the system.
