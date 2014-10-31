@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, grfstrings
+from nml import expression, grfstrings, generic
 from nml.actions import base_action, action6, actionD
 
 class Action4(base_action.BaseAction):
@@ -73,8 +73,8 @@ string_ranges = {
     0xC4: {'random_id': False}, # Station class names
     0xC5: {'random_id': False}, # Station names
     0xC9: {'random_id': False}, # House name
-    0xD0: {'random_id': True, 'ids': list(range(0x3FF, -1, -1))}, # Misc. text ids, used for callbacks and such
-    0xDC: {'random_id': True, 'ids': list(range(0xFF, -1, -1))}, # Misc. persistent text ids, used to set properties
+    0xD0: {'random_id': True, 'total': 0x400, 'ids': list(range(0x3FF, -1, -1))}, # Misc. text ids, used for callbacks and such
+    0xDC: {'random_id': True, 'total': 0x100, 'ids': list(range(0xFF, -1, -1))}, # Misc. persistent text ids, used to set properties
 }
 
 # Mapping of string identifiers to D0xx/DCxx text ids
@@ -83,6 +83,16 @@ used_strings = {
     0xD0: {},
     0xDC: {},
 }
+
+def print_stats():
+    """
+    Print statistics about used ids.
+    """
+    for t, l in string_ranges.items():
+        if l['random_id']:
+            num_used = l['total'] - len(l['ids'])
+            if num_used > 0:
+                generic.print_info("{:02X}xx strings: {}/{}".format(t, num_used, l['total']))
 
 def get_global_string_actions():
     """

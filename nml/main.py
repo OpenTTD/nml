@@ -382,6 +382,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     action2.print_stats()
     action6.print_stats()
     grf.print_stats()
+    action4.print_stats()
 
     generic.print_progress("Writing output ...")
 
