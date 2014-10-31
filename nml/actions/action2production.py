@@ -32,8 +32,8 @@ class Action2Production(action2.Action2):
     @ivar again: Number (v0) or register (v1), production CB will be run again if nonzero.
     @type again C{int} or L{VarAction2Var}
     """
-    def __init__(self, name, version, sub_in, add_out, again):
-        action2.Action2.__init__(self, 0x0A, name)
+    def __init__(self, name, pos, version, sub_in, add_out, again):
+        action2.Action2.__init__(self, 0x0A, name, pos)
         self.version = version
         assert version == 0 or version == 1
         self.sub_in = sub_in
@@ -98,14 +98,14 @@ def get_production_actions(produce):
                 varact2parser.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
 
     if len(act6.modifications) > 0: action_list.append(act6)
-    prod_action = Action2Production(produce.name.value, version, result_list[0:3], result_list[3:5], result_list[5])
+    prod_action = Action2Production(produce.name.value, produce.pos, version, result_list[0:3], result_list[3:5], result_list[5])
     action_list.append(prod_action)
 
     if len(varact2parser.var_list) == 0:
         produce.set_action2(prod_action, 0x0A)
     else:
         # Create intermediate varaction2
-        varaction2 = action2var.Action2Var(0x0A, '{}@registers'.format(produce.name.value), 0x89)
+        varaction2 = action2var.Action2Var(0x0A, '{}@registers'.format(produce.name.value), produce.pos, 0x89)
         varaction2.var_list = varact2parser.var_list
         action_list.extend(varact2parser.extra_actions)
         extra_act6 = action6.Action6()
@@ -127,13 +127,16 @@ def get_production_actions(produce):
 
     return action_list
 
-def make_empty_production_action2():
+def make_empty_production_action2(pos):
     """
     Make an empty production action2
     For use with failed callbacks
 
+    @param pos: Positional context.
+    @type  pos: L{Position}
+
     @return: The created production action2
     @rtype: L{Action2Production}
     """
-    return Action2Production("@CB_FAILED_PROD", 0, [0, 0, 0], [0, 0], 0)
+    return Action2Production("@CB_FAILED_PROD", pos, 0, [0, 0, 0], [0, 0], 0)
 

@@ -18,8 +18,8 @@ from nml.actions import action2, action6, actionD, action1, action2var, real_spr
 from nml.ast import general
 
 class Action2Layout(action2.Action2):
-    def __init__(self, feature, name, ground_sprite, sprite_list, param_registers):
-        action2.Action2.__init__(self, feature, name)
+    def __init__(self, feature, name, pos, ground_sprite, sprite_list, param_registers):
+        action2.Action2.__init__(self, feature, name, pos)
         assert ground_sprite.type == Action2LayoutSpriteType.GROUND
         self.ground_sprite = ground_sprite
         self.sprite_list = sprite_list
@@ -447,7 +447,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     if len(act6.modifications) > 0:
         actions.append(act6)
 
-    layout_action = Action2Layout(feature, spritelayout.name.value + " - feature {:02X}".format(feature), ground_sprite, building_sprites, param_registers)
+    layout_action = Action2Layout(feature, spritelayout.name.value + " - feature {:02X}".format(feature), spritelayout.pos, ground_sprite, building_sprites, param_registers)
     actions.append(layout_action)
 
     if temp_registers:
@@ -473,7 +473,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
             extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
         if len(extra_act6.modifications) > 0: actions.append(extra_act6)
 
-        varaction2 = action2var.Action2Var(feature, "{}@registers - feature {:02X}".format(spritelayout.name.value, feature), 0x89)
+        varaction2 = action2var.Action2Var(feature, "{}@registers - feature {:02X}".format(spritelayout.name.value, feature), spritelayout.pos, 0x89)
         varaction2.var_list = varact2parser.var_list
         ref = expression.SpriteGroupRef(spritelayout.name, [], None, layout_action)
         varaction2.ranges.append(action2var.VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
@@ -492,7 +492,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     action6.free_parameters.restore()
     return actions
 
-def make_empty_layout_action2(feature):
+def make_empty_layout_action2(feature, pos):
     """
     Make an empty layout action2
     For use with failed callbacks
@@ -500,10 +500,13 @@ def make_empty_layout_action2(feature):
     @param feature: Feature of the sprite layout to create
     @type feature: C{int}
 
+    @param pos: Positional context.
+    @type  pos: L{Position}
+
     @return: The created sprite layout action2
     @rtype: L{Action2Layout}
     """
     ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
     ground_sprite.set_param(expression.Identifier('sprite'), expression.ConstantNumeric(0))
-    return Action2Layout(feature, "@CB_FAILED_LAYOUT{:02X}".format(feature), ground_sprite, [], [])
+    return Action2Layout(feature, "@CB_FAILED_LAYOUT{:02X}".format(feature), pos, ground_sprite, [], [])
 

@@ -17,8 +17,8 @@ from nml.actions import action2, action2var, action2real, action6
 from nml import generic, expression, nmlop
 
 class Action2Random(action2.Action2):
-    def __init__(self, feature, name, type_byte, count, triggers, randbit, nrand):
-        action2.Action2.__init__(self, feature, name)
+    def __init__(self, feature, name, pos, type_byte, count, triggers, randbit, nrand):
+        action2.Action2.__init__(self, feature, name, pos)
         self.type_byte = type_byte
         self.count = count
         self.triggers = triggers
@@ -259,7 +259,7 @@ def parse_randomswitch(random_switch):
 
     randbit, nrand = parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nrand)
 
-    random_action2 = Action2Random(feature, random_switch.name.value, type_byte, count, random_switch.triggers.value, randbit, nrand)
+    random_action2 = Action2Random(feature, random_switch.name.value, random_switch.pos, type_byte, count, random_switch.triggers.value, randbit, nrand)
     random_switch.random_act2 = random_action2
 
     action6.free_parameters.save()
@@ -296,7 +296,7 @@ def parse_randomswitch(random_switch):
         random_switch.set_action2(random_action2, feature)
     else:
         # Create intermediate varaction2
-        varaction2 = action2var.Action2Var(feature, '{}@registers'.format(random_switch.name.value), 0x89)
+        varaction2 = action2var.Action2Var(feature, '{}@registers'.format(random_switch.name.value), random_switch.pos, 0x89)
         varact2parser = action2var.Varaction2Parser(feature)
         varact2parser.parse_expr(count_expr)
         varaction2.var_list = varact2parser.var_list

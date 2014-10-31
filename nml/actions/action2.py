@@ -24,11 +24,14 @@ class Action2(base_action.BaseAction):
     """
     Abstract Action2 base class.
 
-    @ivar name; Name of the action2.
+    @ivar name: Name of the action2.
     @type name: C{str}
 
     @ivar feature: Action2 feature byte.
     @type feature: C{int}
+
+    @ivar pos: Position reference to source.
+    @type pos: L{Position}
 
     @ivar num_refs: Number of references to this action2.
     @type num_refs: C{int}
@@ -43,9 +46,10 @@ class Action2(base_action.BaseAction):
                          to be used in this varaction2.
     @type tmp_locations: C{list} of C{int}
     """
-    def __init__(self, feature, name):
+    def __init__(self, feature, name, pos):
         self.feature = feature
         self.name = name
+        self.pos = pos
         self.num_refs = 0
         self.id = None
         self.references = []

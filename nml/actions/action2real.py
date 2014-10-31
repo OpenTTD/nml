@@ -18,8 +18,8 @@ from nml.actions import action2, action1
 from nml.ast import general
 
 class Action2Real(action2.Action2):
-    def __init__(self, feature, name, loaded_list, loading_list):
-        action2.Action2.__init__(self, feature, name)
+    def __init__(self, feature, name, pos, loaded_list, loading_list):
+        action2.Action2.__init__(self, feature, name, pos)
         self.loaded_list = loaded_list
         self.loading_list = loading_list
 
@@ -71,11 +71,11 @@ def get_real_action2s(spritegroup, feature):
             if view.name.value == 'loading': loading_list.append(action1_index)
             else: loaded_list.append(action1_index)
 
-    actions.append(Action2Real(feature, spritegroup.name.value + " - feature {:02X}".format(feature), loaded_list, loading_list))
+    actions.append(Action2Real(feature, spritegroup.name.value + " - feature {:02X}".format(feature), spritegroup.pos, loaded_list, loading_list))
     spritegroup.set_action2(actions[-1], feature)
     return actions
 
-def make_simple_real_action2(feature, name, action1_index):
+def make_simple_real_action2(feature, name, pos, action1_index):
     """
     Make a simple real action2, referring to only 1 action1 sprite set
 
@@ -85,13 +85,16 @@ def make_simple_real_action2(feature, name, action1_index):
     @param name: Name of the action2
     @type name: C{str}
 
+    @param pos: Positional context.
+    @type  pos: L{Position}
+
     @param action1_index: Index of the action1 sprite set to use
     @type action1_index: C{int}
 
     @return: The created real action2
     @rtype: L{Action2Real}
     """
-    return Action2Real(feature, name, [action1_index], [action1_index] if feature <= 0x03 else [])
+    return Action2Real(feature, name, pos, [action1_index], [action1_index] if feature <= 0x03 else [])
 
 def create_spriteset_actions(spritegroup):
     """
@@ -112,7 +115,7 @@ def create_spriteset_actions(spritegroup):
             if spriteset.has_action2(feature): continue
             action_list.extend(action1.add_to_action1([spriteset], feature, spritegroup.pos))
 
-            real_action2 = make_simple_real_action2(feature, spriteset.name.value + " - feature {:02X}".format(feature), action1.get_action1_index(spriteset))
+            real_action2 = make_simple_real_action2(feature, spriteset.name.value + " - feature {:02X}".format(feature), spritegroup.pos, action1.get_action1_index(spriteset))
             action_list.append(real_action2)
             spriteset.set_action2(real_action2, feature)
     return action_list

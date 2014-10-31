@@ -38,8 +38,8 @@ class Action2Var(action2.Action2):
                   action2.
     @ivar ranges: C{list} of L{VarAction2Range}
     """
-    def __init__(self, feature, name, type_byte):
-        action2.Action2.__init__(self, feature, name)
+    def __init__(self, feature, name, pos, type_byte):
+        action2.Action2.__init__(self, feature, name, pos)
         self.type_byte = type_byte
         self.ranges = []
 
@@ -732,7 +732,7 @@ def create_return_action(expr, feature, name, var_range):
         extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
     if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
 
-    varaction2 = Action2Var(feature, name, var_range)
+    varaction2 = Action2Var(feature, name, expr.pos, var_range)
     varaction2.var_list = varact2parser.var_list
     varaction2.default_result = expression.ConstantNumeric(0) # Bogus result, it's the nvar == 0 that matters
     varaction2.default_comment = 'Return computed value'
@@ -743,7 +743,7 @@ def create_return_action(expr, feature, name, var_range):
 
 failed_cb_results = {}
 
-def get_failed_cb_result(feature, action_list, parent_action):
+def get_failed_cb_result(feature, action_list, parent_action, pos):
     """
     Get a sprite group reference to use for a failed callback
     The actions needed are created on first use, then cached in L{failed_cb_results}
@@ -757,6 +757,9 @@ def get_failed_cb_result(feature, action_list, parent_action):
     @param parent_action: Reference to the action of which this is a result
     @type parent_action: L{BaseAction}
 
+    @param pos: Positional context.
+    @type  pos: L{Position}
+
     @return: Sprite group reference to use
     @rtype: L{SpriteGroupRef}
     """
@@ -768,22 +771,22 @@ def get_failed_cb_result(feature, action_list, parent_action):
         from nml.actions import action1, action2layout, action2production, action2real
         if feature == 0x0A:
             # Industries -> production action2
-            act2 = action2production.make_empty_production_action2()
+            act2 = action2production.make_empty_production_action2(pos)
         elif feature in (0x07, 0x09, 0x0F, 0x11):
             # Tile layout action2
-            act2 = action2layout.make_empty_layout_action2(feature)
+            act2 = action2layout.make_empty_layout_action2(feature, pos)
         else:
             # Normal action2
             act1_actions, act1_index = action1.make_cb_failure_action1(feature)
             action_list.extend(act1_actions)
-            act2 = action2real.make_simple_real_action2(feature, "@CB_FAILED_REAL{:02X}".format(feature), act1_index)
+            act2 = action2real.make_simple_real_action2(feature, "@CB_FAILED_REAL{:02X}".format(feature), pos, act1_index)
         action_list.append(act2)
 
         # Create varaction2, to choose between returning graphics and 0, depending on CB
         varact2parser = Varaction2Parser(feature)
         varact2parser.parse_expr(expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF)))
 
-        varaction2 = Action2Var(feature, "@CB_FAILED{:02X}".format(feature), 0x89)
+        varaction2 = Action2Var(feature, "@CB_FAILED{:02X}".format(feature), pos, 0x89)
         varaction2.var_list = varact2parser.var_list
 
         varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), expression.ConstantNumeric(0), "graphics callback -> return 0"))
@@ -818,7 +821,7 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     @rtype: L{SpriteGroupRef}
     """
     if result.name.value == "CB_FAILED":
-        return get_failed_cb_result(parent_action.feature, action_list, parent_action)
+        return get_failed_cb_result(parent_action.feature, action_list, parent_action, result.pos)
 
     if len(result.param_list) == 0:
         action2.add_ref(result, parent_action)
@@ -847,7 +850,7 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
 
     global return_action_id
     name = "@return_action_{:d}".format(return_action_id)
-    varaction2 = Action2Var(parent_action.feature, name, var_range)
+    varaction2 = Action2Var(parent_action.feature, name, result.pos, var_range)
     return_action_id += 1
     varaction2.var_list = varact2parser.var_list
     ref = expression.SpriteGroupRef(result.name, [], result.pos)
@@ -971,7 +974,7 @@ def parse_varaction2(switch_block):
     action_list = action2real.create_spriteset_actions(switch_block)
 
     feature = next(iter(switch_block.feature_set))
-    varaction2 = Action2Var(feature, switch_block.name.value, switch_block.var_range)
+    varaction2 = Action2Var(feature, switch_block.name.value, switch_block.pos, switch_block.var_range)
 
     expr = reduce_varaction2_expr(switch_block.expr, get_feature(switch_block))
 

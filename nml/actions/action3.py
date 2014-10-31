@@ -78,7 +78,7 @@ class Action3(base_action.BaseAction):
 # Make sure all action2s created here get a unique name
 action2_id = 0
 
-def create_intermediate_varaction2(feature, varact2parser, mapping, default):
+def create_intermediate_varaction2(feature, varact2parser, mapping, default, pos):
     """
     Create a varaction2 based on a parsed expression and a value mapping
 
@@ -94,6 +94,9 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default):
     @param default: Default sprite group if no value matches
     @type default: L{SpriteGroupRef}
 
+    @param pos: Positional context.
+    @type  pos: L{Position}
+
     @return: A tuple containing the action list and a reference to the created action2
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
@@ -106,7 +109,7 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default):
 
     name = expression.Identifier("@action3_{:d}".format(action2_id))
     action2_id += 1
-    varaction2 = action2var.Action2Var(feature, name.value, 0x89)
+    varaction2 = action2var.Action2Var(feature, name.value, pos, 0x89)
     varaction2.var_list = varact2parser.var_list
     offset = 5 + varact2parser.var_list_size
     for proc in varact2parser.proc_call_list:
@@ -124,7 +127,7 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default):
                 if return_value.name.value == 'CB_FAILED':
                     result, comment = action2var.parse_result(return_value, action_list, act6, offset, varaction2, None, 0x89)
                 else:
-                    extra_actions, result, comment = create_proc_call_varaction2(feature, return_value, ret_value_function)
+                    extra_actions, result, comment = create_proc_call_varaction2(feature, return_value, ret_value_function, pos)
                     action_list.extend(extra_actions)
             else:
                 return_value = ret_value_function(return_value).reduce()
@@ -141,7 +144,7 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default):
     action_list.append(varaction2)
     return (action_list, return_ref)
 
-def create_proc_call_varaction2(feature, proc, ret_value_function):
+def create_proc_call_varaction2(feature, proc, ret_value_function, pos):
     """
     Create a varaction2 that executes a procedure call and applies a function on the result
 
@@ -154,6 +157,9 @@ def create_proc_call_varaction2(feature, proc, ret_value_function):
     @param ret_value_function: Function to apply on the result (L{Expression} -> L{Expression})
     @type ret_value_function: C{function}
 
+    @param pos: Positional context.
+    @type  pos: L{Position}
+
     @return: A list of extra actions, reference to the created action2 and a comment to add
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef}, C{str})
     """
@@ -162,11 +168,11 @@ def create_proc_call_varaction2(feature, proc, ret_value_function):
 
     mapping = {0xFFFF: (expression.SpriteGroupRef(expression.Identifier('CB_FAILED'), [], None), None)}
     default = ret_value_function(expression.Variable(expression.ConstantNumeric(0x1C)))
-    action_list, result = create_intermediate_varaction2(feature, varact2parser, mapping, default)
+    action_list, result = create_intermediate_varaction2(feature, varact2parser, mapping, default, pos)
     comment = result.name.value + ';'
     return (action_list, result, comment)
 
-def create_cb_choice_varaction2(feature, expr, mapping, default):
+def create_cb_choice_varaction2(feature, expr, mapping, default, pos):
     """
     Create a varaction2 that maps callback numbers to various sprite groups
 
@@ -182,12 +188,15 @@ def create_cb_choice_varaction2(feature, expr, mapping, default):
     @param default: Default sprite group if no value matches
     @type default: L{SpriteGroupRef}
 
+    @param pos: Positional context.
+    @type  pos: L{Position}
+
     @return: A tuple containing the action list and a reference to the created action2
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
     varact2parser = action2var.Varaction2Parser(feature)
     varact2parser.parse_expr(expr)
-    return create_intermediate_varaction2(feature, varact2parser, mapping, default)
+    return create_intermediate_varaction2(feature, varact2parser, mapping, default, pos)
 
 def create_action3(feature, id, action_list, act6, is_livery_override):
     # Vehicles use an extended byte
@@ -349,17 +358,17 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
         # Handle CB 36
         if len(cb36_mapping) != 0:
             expr = expression.Variable(expression.ConstantNumeric(0x10), mask = expression.ConstantNumeric(0xFF))
-            actions, cb36_ref = create_cb_choice_varaction2(feature, expr, cb36_mapping, default_val)
+            actions, cb36_ref = create_cb_choice_varaction2(feature, expr, cb36_mapping, default_val, graphics_block.pos)
             prepend_action_list.extend(actions)
             cb_mapping[0x36] = (cb36_ref, None)
         if len(cb36_buy_mapping) != 0:
             expr = expression.Variable(expression.ConstantNumeric(0x10), mask = expression.ConstantNumeric(0xFF))
-            actions, cb36_ref = create_cb_choice_varaction2(feature, expr, cb36_buy_mapping, default_val)
+            actions, cb36_ref = create_cb_choice_varaction2(feature, expr, cb36_buy_mapping, default_val, graphics_block.pos)
             prepend_action_list.extend(actions)
             cb_buy_mapping[0x36] = (cb36_ref, None)
         if len(prod_cb_mapping) != 0:
             expr = expression.Variable(expression.ConstantNumeric(0x18), mask = expression.ConstantNumeric(0xFF))
-            actions, cb_ref = create_cb_choice_varaction2(feature, expr, prod_cb_mapping, default_val)
+            actions, cb_ref = create_cb_choice_varaction2(feature, expr, prod_cb_mapping, default_val, graphics_block.pos)
             prepend_action_list.extend(actions)
             cb_mapping[0x00] = (cb_ref, None)
 
@@ -395,7 +404,7 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
                     # mapping must not be empty
                     mapping[0x00] = (default_val, None)
 
-            actions, cb_ref = create_cb_choice_varaction2(feature, expr, mapping, default_val)
+            actions, cb_ref = create_cb_choice_varaction2(feature, expr, mapping, default_val, graphics_block.pos)
             prepend_action_list.extend(actions)
             cargo_gfx[cargo] = cb_ref
 
