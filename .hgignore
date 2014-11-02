@@ -4,6 +4,7 @@
 egg
 syntax: glob
 *.pyc
+regression/.nmlcache
 regression/output/
 regression/output2/
 regression/nml_output/
