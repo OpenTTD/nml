@@ -105,7 +105,12 @@ def main(argv):
     if opts.stack: developmode = True
 
     grfstrings.read_extra_commands(opts.custom_tags)
+
+    generic.print_progress("Reading lang ...")
+
     grfstrings.read_lang_files(opts.lang_dir, opts.default_lang)
+
+    generic.clear_progress()
 
     # We have to do the dependency check first or we might later have
     #   more targets than we asked for
