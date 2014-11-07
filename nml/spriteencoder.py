@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import array
 from nml import generic, palette, lz77, spritecache
-from nml.actions.real_sprite import translate_w2d
+from nml.actions import real_sprite
 
 try:
     from PIL import Image
@@ -230,7 +230,7 @@ class SpriteEncoder(object):
 
         # Get initial info_byte and dimensions from sprite_info.
         # These values will be changed depending on cropping and compression.
-        info_byte = sprite_info.compression.value
+        info_byte = INFO_NOCROP if (sprite_info.flags.value & real_sprite.FLAG_NOCROP) != 0 else 0
         size_x = sprite_info.xsize.value
         size_y = sprite_info.ysize.value
         xoffset = sprite_info.xrel.value
@@ -474,7 +474,7 @@ class SpriteEncoder(object):
 
     def palconvert(self, sprite_str, orig_pal):
         if orig_pal == "LEGACY" and self.palette == "DEFAULT":
-            return sprite_str.translate(translate_w2d)
+            return sprite_str.translate(real_sprite.translate_w2d)
         else:
             return sprite_str
 

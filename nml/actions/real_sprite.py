@@ -21,7 +21,12 @@ try:
 except ImportError:
     import Image
 
-INFO_NOCROP = 0x40
+FLAG_NOCROP  = 0x0040
+
+real_sprite_flags = {
+    'CROP'         : 0,            # Allow cropping
+    'NOCROP'       : FLAG_NOCROP,  # Disallow cropping
+}
 
 palmap_d2w = [
           0, 215, 216, 136,  88, 106,  32,  33, #   0..7
@@ -144,8 +149,8 @@ class RealSprite(object):
     @ivar yrel: Y sprite offset.
     @type yrel: L{expression.ConstantNumeric}
 
-    @ivar compression: Compression/cropping type. Uses same integer values as in GRF output.
-    @type compression: L{expression.ConstantNumeric}
+    @ivar flags: Cropping/warning flags.
+    @type flags: L{expression.ConstantNumeric}
     """
 
     def __init__(self, param_list = None, label = None):
@@ -211,8 +216,6 @@ class RealSprite(object):
         @return: Key
         @rtype: C{tuple}
         """
-        info_byte = self.compression.value
-
         filename_8bpp = None
         filename_32bpp = None
         if self.bit_depth == 8:
@@ -233,7 +236,7 @@ class RealSprite(object):
 
         rgb_file, rgb_rect = (filename_32bpp.value, (x, y, size_x, size_y)) if filename_32bpp is not None else (None, None)
         mask_file, mask_rect = (filename_8bpp.value, (mask_x, mask_y, size_x, size_y)) if filename_8bpp is not None else (None, None)
-        do_crop = crop_sprites and ((info_byte & INFO_NOCROP) == 0)
+        do_crop = crop_sprites and ((self.flags.value & FLAG_NOCROP) == 0)
         return (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)
 
 class SpriteAction(base_action.BaseAction):
@@ -368,7 +371,7 @@ class TemplateUsage(object):
             raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(self.param_list)), self.pos)
         param_dict = {}
         for i, param in enumerate(self.param_list):
-            param = param.reduce([real_sprite_compression_flags, parameters])
+            param = param.reduce([real_sprite_flags, parameters])
             if not isinstance(param, (expression.ConstantNumeric, expression.StringLiteral)):
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
@@ -377,11 +380,6 @@ class TemplateUsage(object):
 
     def __str__(self):
         return "{}({})".format(self.name, ", ".join(str(param) for param in self.param_list))
-
-real_sprite_compression_flags = {
-    'CROP'         : 0x00,
-    'NOCROP'       : INFO_NOCROP,
-}
 
 
 def parse_real_sprite(sprite, default_file, default_mask_file, id_dict):
@@ -414,14 +412,12 @@ def parse_real_sprite(sprite, default_file, default_mask_file, id_dict):
     generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater {:d} 'yrel'".format(param_offset + 2), new_sprite.yrel.pos)
     param_offset += 2
 
-    # Next may follow any combination of (compression, filename, mask), but always in that order
-    new_sprite.compression = expression.ConstantNumeric(0)
+    # Next may follow any combination of (flags, filename, mask), but always in that order
+    new_sprite.flags = expression.ConstantNumeric(0)
     if num_param > param_offset:
         try:
-            new_sprite.compression = sprite.param_list[param_offset].reduce_constant([real_sprite_compression_flags, id_dict])
+            new_sprite.flags = sprite.param_list[param_offset].reduce_constant([real_sprite_flags, id_dict])
             param_offset += 1
-            if (new_sprite.compression.value & ~0x40) != 0:
-                raise generic.ScriptError("Real sprite compression is invalid; can only have the NOCROP bit (0x40) set, encountered " + str(new_sprite.compression.value), new_sprite.compression.pos)
         except generic.ConstError:
             pass
 

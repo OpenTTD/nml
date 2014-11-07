@@ -142,7 +142,7 @@ for d in const_tables:
 act5_names  = set(action5.action5_table.keys())
 act12_names  = set(action12.font_sizes.keys())
 actB_names   = set(actionB.default_error_msg.keys()) | set(actionB.error_severity.keys())
-sprite_names = set(real_sprite.real_sprite_compression_flags.keys())
+sprite_names = set(real_sprite.real_sprite_flags.keys())
 cost_names   = set(basecost.base_cost_table.keys())  | set(basecost.generic_base_costs)
 
 temp4 = constant_names | act5_names | act12_names | actB_names | sprite_names | cost_names

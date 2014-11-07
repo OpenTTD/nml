@@ -128,7 +128,7 @@ class OutputNFO(output_base.SpriteOutputBase):
             self.print_decimal(sprite_info.xrel.value)
             self.print_decimal(sprite_info.yrel.value)
             self.file.write(zoom_levels[sprite_info.zoom_level] + " ")
-            if (sprite_info.compression.value & 0x40) != 0:
+            if (sprite_info.flags.value & real_sprite.FLAG_NOCROP) != 0:
                 self.file.write("nocrop ")
             if sprite_info.mask_file is not None:
                 self.newline()
