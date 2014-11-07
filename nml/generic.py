@@ -222,8 +222,9 @@ class OnlyOnce:
 VERBOSITY_WARNING  = 1 # Verbosity level for warnings
 VERBOSITY_INFO     = 2 # Verbosity level for info messages
 VERBOSITY_PROGRESS = 3 # Verbosity level for progress feedback
+VERBOSITY_TIMING   = 4 # Verbosity level for timing information
 
-VERBOSITY_MAX      = 3 # Maximum verbosity level
+VERBOSITY_MAX      = 4 # Maximum verbosity level
 
 """
 Verbosity level for console output.
@@ -249,6 +250,11 @@ Current progress message.
 progress_message = None
 
 """
+Timestamp when the current processing step started.
+"""
+progress_start_time = None
+
+"""
 Timestamp of the last incremental progress update.
 """
 progress_update_time = None
@@ -263,9 +269,15 @@ def show_progress():
 
 def clear_progress():
     global progress_message
+    global progress_start_time
     global progress_update_time
     hide_progress()
+
+    if (progress_message is not None) and (verbosity_level >= VERBOSITY_TIMING):
+        print("{} {:.1f} s".format(progress_message, time.clock() - progress_start_time))
+
     progress_message = None
+    progress_start_time = None
     progress_update_time = None
 
 def print_progress(msg, incremental = False):
@@ -282,6 +294,7 @@ def print_progress(msg, incremental = False):
         return
 
     global progress_message
+    global progress_start_time
     global progress_update_time
 
     if (not incremental) and (progress_message is not None):
@@ -294,6 +307,8 @@ def print_progress(msg, incremental = False):
         if (progress_update_time is not None) and (t - progress_update_time < 1):
             return
         progress_update_time = t
+    else:
+        progress_start_time = time.clock()
 
     print_eol(msg)
 
