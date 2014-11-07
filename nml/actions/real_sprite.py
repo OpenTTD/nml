@@ -22,10 +22,19 @@ except ImportError:
     import Image
 
 FLAG_NOCROP  = 0x0040
+FLAG_NOALPHA = 0x0100
+FLAG_WHITE   = 0x0200
+FLAG_ANIM    = 0x0400
 
 real_sprite_flags = {
     'CROP'         : 0,            # Allow cropping
     'NOCROP'       : FLAG_NOCROP,  # Disallow cropping
+    'ALPHA'        : 0,            # Allow semi-transparency
+    'NOALPHA'      : FLAG_NOALPHA, # Warn about semi-transparency
+    'WHITE'        : FLAG_WHITE,   # Allow pure-white
+    'NOWHITE'      : 0,            # Warn about pure-white
+    'ANIM'         : FLAG_ANIM,    # Allow anim colours
+    'NOANIM'       : 0,            # Warn about anim colours
 }
 
 palmap_d2w = [

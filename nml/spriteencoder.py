@@ -183,11 +183,20 @@ class SpriteEncoder(object):
         warnings = []
         total = pixel_stats.get('total', 0)
         if total > 0:
+            if cache_key[0] is not None:
+                image_32_pos = generic.PixelPosition(cache_key[0], cache_key[1][0], cache_key[1][1])
+                alpha = pixel_stats.get('alpha', 0)
+                if alpha > 0 and (sprite_info.flags.value & real_sprite.FLAG_NOALPHA) != 0:
+                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are semi-transparent".format(str(image_32_pos), alpha, total, alpha * 100 // total))
+
             if cache_key[2] is not None:
                 image_8_pos = generic.PixelPosition(cache_key[2], cache_key[3][0], cache_key[3][1])
                 white = pixel_stats.get('white', 0)
-                if white > 0:
+                anim = pixel_stats.get('anim', 0)
+                if white > 0 and (sprite_info.flags.value & real_sprite.FLAG_WHITE) == 0:
                     warnings.append("{}: {:d} of {:d} pixels ({:d}%) are pure white".format(str(image_8_pos), white, total, white * 100 // total))
+                if anim > 0 and (sprite_info.flags.value & real_sprite.FLAG_ANIM) == 0:
+                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are animated".format(str(image_8_pos), anim, total, anim * 100 // total))
 
         return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings)
 
@@ -248,7 +257,7 @@ class SpriteEncoder(object):
             mask_x = sprite_info.mask_pos[0].value
             mask_y = sprite_info.mask_pos[1].value
 
-        pixel_stats = { 'total': size_x * size_y, 'white': 0 }
+        pixel_stats = { 'total': size_x * size_y, 'alpha': 0, 'white': 0, 'anim': 0 }
 
         # Read and validate image data
         if filename_32bpp is not None:
@@ -263,6 +272,10 @@ class SpriteEncoder(object):
             if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), filename_32bpp.pos)
             sprite = im.crop((x, y, x + size_x, y + size_y))
+
+            if (info_byte & INFO_ALPHA) != 0:
+                # Check for half-transparent pixels (not valid for ground sprites)
+                pixel_stats['alpha'] = sum(0x00 < p < 0xFF for p in sprite[3::4])
 
         if filename_8bpp is not None:
             mask_im = self.open_image_file(filename_8bpp.value)
@@ -280,6 +293,12 @@ class SpriteEncoder(object):
 
             # Check for white pixels; those that cause "artefacts" when shading
             pixel_stats['white'] = sum(p == 255 for p in mask_sprite_data)
+
+            # Check for palette animation colours
+            if self.palette == 'DEFAULT':
+                pixel_stats['anim'] = sum(0xE3 <= p <= 0xFE for p in mask_sprite_data)
+            else:
+                pixel_stats['anim'] = sum(0xD9 <= p <= 0xF4 for p in mask_sprite_data)
 
         # Compose pixel information in an array of bytes
         sprite_data = array.array('B')

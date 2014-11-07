@@ -48,7 +48,9 @@ class SpriteCache(object):
          - info: Info byte of the sprite
          - pixel_stats: Dictionary with statistics about pixels:
               'total': Total amount of pixels.
+              'alpha': Amount of semi-transparent pixels in 32bpp.
               'white': Amount of pure-white pixels in 8bpp.
+              'anim':  Amount of animated pixels in 8bpp.
          - offset: Offset into the cache file for this sprite
          - size: Length of this sprite in the cache file
 
