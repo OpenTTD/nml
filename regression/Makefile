@@ -8,7 +8,7 @@ _SE ?= echo
 TEST_FILES = $(basename $(shell ls *.nml))
 NMLC ?= ../nmlc
 # Note: Manually overriding NML_FLAGS may break the regression test
-NML_FLAGS ?= -s -c
+NML_FLAGS ?= -s -c --verbosity=1
 
 .PHONY: $(TEST_FILES) clean
 

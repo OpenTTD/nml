@@ -43,7 +43,7 @@ def parse_cli(argv):
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
                             custom_tags="custom_tags.txt", lang_dir="lang", default_lang="english.lng", cache_dir=".nmlcache",
-                            forced_palette="ANY", quiet=False, md5_filename=None, keep_orphaned=True)
+                            forced_palette="ANY", quiet=False, md5_filename=None, keep_orphaned=True, verbosity=generic.verbosity_level)
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
@@ -72,12 +72,11 @@ def parse_cli(argv):
                         help="Disable caching of sprites in .cache[index] files, which may reduce compilation time.")
     opt_parser.add_option("--cache-dir", dest="cache_dir", metavar="<dir>", help="Cache files are stored in directory <dir> [default: %default]")
     opt_parser.add_option("--clear-orphaned", action="store_false", dest="keep_orphaned", help="Remove unused/orphaned items from cache files.")
+    opt_parser.add_option("--verbosity", type="int", dest="verbosity", metavar="<level>", help="Set the verbosity level for informational output. [default: %default, max: {}]".format(generic.VERBOSITY_MAX))
 
     opts, args = opt_parser.parse_args(argv)
 
-    if opts.quiet:
-        generic.disable_warnings()
-
+    generic.set_verbosity(0 if opts.quiet else opts.verbosity)
     generic.set_cache_root_dir(opts.cache_dir)
     spritecache.keep_orphaned = opts.keep_orphaned
 

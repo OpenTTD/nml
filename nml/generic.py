@@ -219,18 +219,25 @@ class OnlyOnce:
     def clear(cls):
         cls.seen = {}
 
-do_print_warnings = True
+VERBOSITY_WARNING  = 1 # Verbosity level for warnings
+VERBOSITY_INFO     = 2 # Verbosity level for info messages
+VERBOSITY_PROGRESS = 3 # Verbosity level for progress feedback
 
-def disable_warnings():
-    global do_print_warnings
-    do_print_warnings = False
+VERBOSITY_MAX      = 3 # Maximum verbosity level
+
+"""
+Verbosity level for console output.
+"""
+verbosity_level = VERBOSITY_PROGRESS
+
+def set_verbosity(level):
+    global verbosity_level
+    verbosity_level = level
 
 def print_eol(msg):
     """
     Clear current line and print message without linefeed.
     """
-    if not do_print_warnings:
-        return
     if not os.isatty(sys.stdout.fileno()):
         return
 
@@ -239,22 +246,25 @@ def print_eol(msg):
 progress_message = None
 
 def hide_progress():
-    print_eol("")
+    if progress_message is not None:
+        print_eol("")
 
 def show_progress():
-    global progress_message
     if progress_message is not None:
         print_eol(progress_message)
 
 def clear_progress():
     global progress_message
+    hide_progress()
     progress_message = None
-    print_eol("")
 
 def print_progress(msg):
     """
     Output progess information to the user.
     """
+    if verbosity_level < VERBOSITY_PROGRESS:
+        return
+
     global progress_message
     progress_message = msg
     print_eol(msg)
@@ -263,7 +273,7 @@ def print_info(msg):
     """
     Output a pure informational message to th euser.
     """
-    if not do_print_warnings:
+    if verbosity_level < VERBOSITY_INFO:
         return
 
     hide_progress()
@@ -274,7 +284,7 @@ def print_warning(msg, pos = None):
     """
     Output a warning message to the user.
     """
-    if not do_print_warnings:
+    if verbosity_level < VERBOSITY_WARNING:
         return
     if pos:
         msg = str(pos) + ": " + msg
