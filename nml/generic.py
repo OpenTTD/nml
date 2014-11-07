@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 # -*- coding: utf-8 -*-
-import sys, os
+import sys, os, time
 
 def truncate_int32(value):
     """
@@ -243,7 +243,15 @@ def print_eol(msg):
 
     print("\r" + msg + "\033[K", end="")
 
+"""
+Current progress message.
+"""
 progress_message = None
+
+"""
+Timestamp of the last incremental progress update.
+"""
+progress_update_time = None
 
 def hide_progress():
     if progress_message is not None:
@@ -255,18 +263,38 @@ def show_progress():
 
 def clear_progress():
     global progress_message
+    global progress_update_time
     hide_progress()
     progress_message = None
+    progress_update_time = None
 
-def print_progress(msg):
+def print_progress(msg, incremental = False):
     """
     Output progess information to the user.
+
+    @param msg: Progress message.
+    @type  msg: C{str}
+
+    @param incremental: True if this message is updated incrementally (that is, very often).
+    @type  incremental: C{bool}
     """
     if verbosity_level < VERBOSITY_PROGRESS:
         return
 
     global progress_message
+    global progress_update_time
+
+    if (not incremental) and (progress_message is not None):
+        clear_progress()
+
     progress_message = msg
+
+    if incremental:
+        t = time.clock()
+        if (progress_update_time is not None) and (t - progress_update_time < 1):
+            return
+        progress_update_time = t
+
     print_eol(msg)
 
 def print_info(msg):

@@ -112,7 +112,7 @@ class SpriteEncoder(object):
 
             for sprite_info in sprite_list:
                 count_sprites += 1
-                generic.print_progress("Encoding {}/{}: {}".format(count_sprites, num_sprites, source_name))
+                generic.print_progress("Encoding {}/{}: {}".format(count_sprites, num_sprites, source_name), incremental = True)
 
                 cache_key = sprite_info.get_cache_key(self.crop_sprites)
                 cache_item = local_cache.get_item(cache_key, self.palette)
@@ -147,6 +147,7 @@ class SpriteEncoder(object):
             # Transfer data to global cache for later usage
             self.sprite_cache.cached_sprites.update(local_cache.cached_sprites)
 
+        generic.print_progress("Encoding ...", incremental = True)
         generic.clear_progress()
         generic.print_info("{} sprites, {} cached, {} orphaned, {} duplicates, {} newly encoded".format(num_sprites, num_cached, num_orphaned, num_dup, num_enc))
 

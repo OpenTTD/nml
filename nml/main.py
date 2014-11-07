@@ -364,8 +364,6 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
                 encoder = spriteencoder.SpriteEncoder(compress_grf, crop_sprites, enable_cache, used_palette)
             outputfile.encoder = encoder
 
-    generic.print_progress("Encoding sprites ...")
-
     # Read all image data, compress, and store in sprite cache
     if encoder is not None:
         encoder.open(sprite_files)
