@@ -46,7 +46,9 @@ class SpriteCache(object):
          - crop: List of 4 positive integers, indicating how much to crop if cropping is enabled
               Order is (left, right, top, bottom), it is not present if cropping is disabled
          - info: Info byte of the sprite
-         - warning: Warning about white pixels (optional)
+         - pixel_stats: Dictionary with statistics about pixels:
+              'total': Total amount of pixels.
+              'white': Amount of pure-white pixels in 8bpp.
          - offset: Offset into the cache file for this sprite
          - size: Length of this sprite in the cache file
 
@@ -65,7 +67,7 @@ class SpriteCache(object):
          - the sprite data (as a byte array)
          - The 'info' byte of the sprite
          - The cropping information (see above) (None if 'do_crop' in the key is false)
-         - The warning that should be displayed if this sprite is used (None if N/A)
+         - The pixel_stats dictionary with statistics.
          - Whether the sprite exists in the old (loaded)cache
          - whether the sprite is used by the current GRF
 
@@ -196,14 +198,14 @@ class SpriteCache(object):
                 else:
                     crop = None
 
-                if 'warning' in sprite:
-                    assert isinstance(sprite['warning'], str)
-                    warning = sprite['warning']
+                if 'pixel_stats' in sprite:
+                    assert isinstance(sprite['pixel_stats'], dict)
+                    pixel_stats = sprite['pixel_stats']
                 else:
-                    warning = None
+                    pixel_stats = {}
 
                 # Compose value
-                value = (data, info, crop, warning, True, False)
+                value = (data, info, crop, pixel_stats, True, False)
 
                 # Check if cache item is still valid
                 is_valid = True
@@ -240,7 +242,7 @@ class SpriteCache(object):
         for key, value in list(self.cached_sprites.items()):
             # Unpack key/value
             rgb_file, rgb_rect, mask_file, mask_rect, do_crop, mask_pal = key
-            data, info, crop_rect, warning, in_old_cache, in_use = value
+            data, info, crop_rect, pixel_stats, in_old_cache, in_use = value
             assert do_crop == (crop_rect is not None)
             assert (mask_file is None) == (mask_pal is None)
 
@@ -266,8 +268,7 @@ class SpriteCache(object):
             sprite['size'] = size
             sprite['info'] = info
             if do_crop: sprite['crop'] = tuple(crop_rect)
-            if warning is not None:
-                sprite['warning'] = warning
+            sprite['pixel_stats'] = pixel_stats
 
             index_data.append(sprite)
             sprite_data.extend(data)

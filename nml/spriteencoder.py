@@ -121,18 +121,18 @@ class SpriteEncoder(object):
                 in_old_cache = False
                 if cache_item is not None:
                     # Write a sprite from the cached data
-                    compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = cache_item
+                    compressed_data, info_byte, crop_rect, pixel_stats, in_old_cache, in_use = cache_item
                     if in_use:
                         num_dup += 1
                     else:
                         num_cached += 1
                 else:
-                    size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encode_sprite(sprite_info)
+                    size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, pixel_stats = self.encode_sprite(sprite_info)
                     num_enc += 1
 
                 # Store sprite in cache, unless already up-to-date
                 if not in_use:
-                    cache_item = (compressed_data, info_byte, crop_rect, warning, in_old_cache, True)
+                    cache_item = (compressed_data, info_byte, crop_rect, pixel_stats, in_old_cache, True)
                     local_cache.add_item(cache_key, self.palette, cache_item)
 
             # Delete all files from dictionary to free memory
@@ -172,7 +172,7 @@ class SpriteEncoder(object):
 
         assert cache_item is not None
 
-        compressed_data, info_byte, crop_rect, warning, in_old_cache, in_use = cache_item
+        compressed_data, info_byte, crop_rect, pixel_stats, in_old_cache, in_use = cache_item
 
         size_x = sprite_info.xsize.value
         size_y = sprite_info.ysize.value
@@ -180,12 +180,14 @@ class SpriteEncoder(object):
         yoffset = sprite_info.yrel.value
         if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
 
-        if in_old_cache and (warning is not None):
-            warning = warning + " (cached warning)"
-
         warnings = []
-        if warning is not None:
-            warnings.append(warning)
+        total = pixel_stats.get('total', 0)
+        if total > 0:
+            if cache_key[2] is not None:
+                image_8_pos = generic.PixelPosition(cache_key[2], cache_key[3][0], cache_key[3][1])
+                white = pixel_stats.get('white', 0)
+                if white > 0:
+                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are pure white".format(str(image_8_pos), white, total, white * 100 // total))
 
         return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings)
 
@@ -214,7 +216,7 @@ class SpriteEncoder(object):
         @param sprite_info: Sprite meta data
         @type  sprite_info: C{RealSprite}
 
-        @return: size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning
+        @return: size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, pixel_stats
         @rtype: C{tuple}
         """
 
@@ -246,6 +248,8 @@ class SpriteEncoder(object):
             mask_x = sprite_info.mask_pos[0].value
             mask_y = sprite_info.mask_pos[1].value
 
+        pixel_stats = { 'total': size_x * size_y, 'white': 0 }
+
         # Read and validate image data
         if filename_32bpp is not None:
             im = self.open_image_file(filename_32bpp.value)
@@ -260,7 +264,6 @@ class SpriteEncoder(object):
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), filename_32bpp.pos)
             sprite = im.crop((x, y, x + size_x, y + size_y))
 
-        warning = None
         if filename_8bpp is not None:
             mask_im = self.open_image_file(filename_8bpp.value)
             if mask_im.mode != "P":
@@ -273,14 +276,10 @@ class SpriteEncoder(object):
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), filename_8bpp.pos)
             mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
 
-            # Check for white pixels; those that cause "artefacts" when shading
-            white_pixels = sum(1 for p in mask_sprite.getdata() if p == 255)
-            if white_pixels > 0:
-                pixels = size_x * size_y
-                image_pos = generic.PixelPosition(filename_8bpp.value, x, y)
-                warning = "{}: {:d} of {:d} pixels ({:d}%) are pure white".format(str(image_pos), white_pixels, pixels, white_pixels * 100 // pixels)
-
             mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)
+
+            # Check for white pixels; those that cause "artefacts" when shading
+            pixel_stats['white'] = sum(p == 255 for p in mask_sprite_data)
 
         # Compose pixel information in an array of bytes
         sprite_data = array.array('B')
@@ -325,7 +324,7 @@ class SpriteEncoder(object):
                 compressed_data.append((data_len >> 24) & 0xFF)
                 compressed_data.extend(tile_compressed_data)
 
-        return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning)
+        return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, pixel_stats)
 
     def fakecompress(self, data):
         i = 0
