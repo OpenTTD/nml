@@ -146,10 +146,10 @@ class OutputGRF(output_base.BinaryOutputBase):
         elif sprite_info.file is not None:
             pos_warning = sprite_info.file.pos
 
-        size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning = self.encoder.get(sprite_info)
+        size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings = self.encoder.get(sprite_info)
 
-        if warning is not None:
-            generic.print_warning(warning, pos_warning)
+        for w in warnings:
+            generic.print_warning(w, pos_warning)
 
         self.sprite_output.start_sprite(len(compressed_data) + 18)
         self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)

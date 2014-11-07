@@ -183,7 +183,11 @@ class SpriteEncoder(object):
         if in_old_cache and (warning is not None):
             warning = warning + " (cached warning)"
 
-        return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warning)
+        warnings = []
+        if warning is not None:
+            warnings.append(warning)
+
+        return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings)
 
     def open_image_file(self, filename):
         """
