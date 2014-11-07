@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 # -*- coding: utf-8 -*-
 import codecs, io
 from nml import generic, grfstrings, output_base
+from nml.actions import real_sprite
 
 zoom_levels = {
     0 : 'normal',

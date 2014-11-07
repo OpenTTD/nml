@@ -272,10 +272,11 @@ class SpriteEncoder(object):
             if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), filename_32bpp.pos)
             sprite = im.crop((x, y, x + size_x, y + size_y))
+            rgb_sprite_data = sprite.tostring()
 
             if (info_byte & INFO_ALPHA) != 0:
                 # Check for half-transparent pixels (not valid for ground sprites)
-                pixel_stats['alpha'] = sum(0x00 < p < 0xFF for p in sprite[3::4])
+                pixel_stats['alpha'] = sum(0x00 < p < 0xFF for p in rgb_sprite_data[3::4])
 
         if filename_8bpp is not None:
             mask_im = self.open_image_file(filename_8bpp.value)
@@ -304,7 +305,7 @@ class SpriteEncoder(object):
         sprite_data = array.array('B')
         if (info_byte & INFO_RGB) != 0 and (info_byte & INFO_PAL) != 0:
             mask_data = array.array('B', mask_sprite_data) # Convert to numeric
-            rgb_data = array.array('B', sprite.tostring())
+            rgb_data = array.array('B', rgb_sprite_data)
             if (info_byte & INFO_ALPHA) != 0:
                 for i in range(len(mask_sprite_data)):
                     sprite_data.extend(rgb_data[4*i:4*(i+1)])
@@ -314,7 +315,7 @@ class SpriteEncoder(object):
                     sprite_data.extend(rgb_data[3*i:3*(i+1)])
                     sprite_data.append(mask_data[i])
         elif (info_byte & INFO_RGB) != 0:
-            sprite_data.fromstring(sprite.tostring())
+            sprite_data.fromstring(rgb_sprite_data)
         else:
             sprite_data.fromstring(mask_sprite_data)
 
