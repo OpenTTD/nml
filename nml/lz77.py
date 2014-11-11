@@ -45,6 +45,7 @@ def encode(data):
 
             p = position - result
             overlap_len = i
+            start_pos = result
 
         if overlap_len > 0:
             if len(literal_bytes) > 0:
