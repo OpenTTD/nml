@@ -1,5 +1,5 @@
 MAKE?=make
-PYTHON?=python
+PYTHON?=/usr/bin/env python3
 
 .PHONY: regression install bundle clean
 
