@@ -25,7 +25,7 @@ class CargoTable(base_statement.BaseStatement):
         for i, cargo in enumerate(cargo_list):
             if isinstance(cargo, expression.Identifier):
                 self.cargo_list[i] = expression.StringLiteral(cargo.value, cargo.pos)
-            expression.parse_string_to_dword(self.cargo_list[i])
+            expression.parse_string_to_dword(self.cargo_list[i]) # we don't care about the result, only validate the input
             global_constants.cargo_numbers[self.cargo_list[i].value] = i
 
     def debug_print(self, indentation):
