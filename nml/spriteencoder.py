@@ -359,8 +359,7 @@ class SpriteEncoder(object):
 
     def sprite_compress(self, data):
         if self.compress_grf:
-            lz = lz77.LZ77(data)
-            stream = lz.encode()
+            stream = lz77.encode(data)
         else:
             stream = self.fakecompress(data)
         return stream
