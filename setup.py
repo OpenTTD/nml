@@ -6,7 +6,7 @@ except ImportError:
       pass
 
 import sys, os, string, subprocess
-from setuptools import setup
+from setuptools import setup, Extension
 from PIL import Image
 import ply
 
@@ -41,4 +41,5 @@ setup(name='nml',
       entry_points={
           'console_scripts': ['nmlc = nml.main:run']
       },
+      ext_modules = [Extension("nml_lz77", ["nml/_lz77.c"])],
 )

@@ -149,7 +149,7 @@ class SpriteEncoder(object):
 
         generic.print_progress("Encoding ...", incremental = True)
         generic.clear_progress()
-        generic.print_info("{} sprites, {} cached, {} orphaned, {} duplicates, {} newly encoded".format(num_sprites, num_cached, num_orphaned, num_dup, num_enc))
+        generic.print_info("{} sprites, {} cached, {} orphaned, {} duplicates, {} newly encoded ({})".format(num_sprites, num_cached, num_orphaned, num_dup, num_enc, "native" if lz77.is_native else "python"))
 
     def close(self):
         """

@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import array
 
-def encode(data):
+def _encode(data):
     """
     GRF compression algorithm.
 
@@ -71,3 +71,15 @@ def encode(data):
         output.extend(literal_bytes)
 
     return output
+
+"""
+True if the encoding is provided by a native module.
+Used for verbose information.
+"""
+is_native = False
+
+try:
+    from nml_lz77 import encode
+    is_native = True
+except ImportError:
+    encode = _encode
