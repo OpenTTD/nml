@@ -43,7 +43,7 @@ def get_hg_version():
         try:
             version_list = get_child_output(['hg', '-R', path, 'id', '-n', '-t', '-i'])
         except OSError as e:
-            print("Mercurial checkout found but cannot determine its version. Error({0}): {1}").format(e.errno, e.strerror)
+            print("Mercurial checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
             return version
         if version_list[1].endswith('+'):
             modified = 'M'
