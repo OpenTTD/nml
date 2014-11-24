@@ -9,14 +9,14 @@ hg pull -u
 hg up -r$USE_REV
 make extensions
 
-echo "Updating NML on NewGRF build node"
+echo "Updating NML on unused NewGRF build node disabled!"
 # Update the default build machine (debian7, x64)
-ssh repos@build-default << ENDSSH
-cd nml-$BRANCH
-hg pull
-hg up -r${USE_REV}
-make extensions
-ENDSSH
+# ssh repos@build-default << ENDSSH
+# cd nml-$BRANCH
+# hg pull
+# hg up -r${USE_REV}
+# make extensions
+# ENDSSH
 
 else
 echo "Neither tip nor a release was built. Not updating NML"
