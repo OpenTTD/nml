@@ -249,6 +249,13 @@ class RealSprite(object):
         return (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)
 
 class SpriteAction(base_action.BaseAction):
+    """
+    @ivar sprite_num: Number of the sprite, or C{None} if not decided yet.
+    @type sprite_num: C{int} or C{None}
+
+    @ivar last: Whether this sprite action is the last of a series.
+    @type last: C{bool}
+    """
     def __init__(self):
         self.sprite_num = None
         self.last = False
