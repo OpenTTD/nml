@@ -263,14 +263,16 @@ class SpriteEncoder(object):
         if filename_32bpp is not None:
             im = self.open_image_file(filename_32bpp.value)
             if im.mode not in ("RGB", "RGBA"):
-                raise generic.ImageError("32bpp image is not a full colour RGB(A) image.", filename_32bpp.value)
+                pos = generic.build_position(sprite_info.poslist)
+                raise generic.ImageError("32bpp image is not a full colour RGB(A) image.", filename_32bpp.value, pos)
             info_byte |= INFO_RGB
             if im.mode == "RGBA":
                 info_byte |= INFO_ALPHA
 
             (im_width, im_height) = im.size
             if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
-                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), filename_32bpp.pos)
+                pos = generic.build_position(sprite_info.poslist)
+                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), pos)
             sprite = im.crop((x, y, x + size_x, y + size_y))
             rgb_sprite_data = sprite.tostring()
 
@@ -281,13 +283,15 @@ class SpriteEncoder(object):
         if filename_8bpp is not None:
             mask_im = self.open_image_file(filename_8bpp.value)
             if mask_im.mode != "P":
-                raise generic.ImageError("8bpp image does not have a palette", filename_8bpp.value)
+                pos = generic.build_position(sprite_info.poslist)
+                raise generic.ImageError("8bpp image does not have a palette", filename_8bpp.value, pos)
             im_mask_pal = palette.validate_palette(mask_im, filename_8bpp.value)
             info_byte |= INFO_PAL
 
             (im_width, im_height) = mask_im.size
             if mask_x < 0 or mask_y < 0 or mask_x + size_x > im_width or mask_y + size_y > im_height:
-                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), filename_8bpp.pos)
+                pos = generic.build_position(sprite_info.poslist)
+                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), pos)
             mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
 
             mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)
