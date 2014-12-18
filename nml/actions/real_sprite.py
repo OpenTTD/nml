@@ -189,8 +189,8 @@ class RealSprite(object):
             labels[self.label.value] = 0
         return labels, 1
 
-    def expand(self, default_file, default_mask_file, id_dict):
-        return [parse_real_sprite(self, default_file, default_mask_file, id_dict)]
+    def expand(self, default_file, default_mask_file, poslist, id_dict):
+        return [parse_real_sprite(self, default_file, default_mask_file, poslist, id_dict)]
 
     def check_sprite_size(self):
         generic.check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", self.xpos.pos)
@@ -308,7 +308,7 @@ class RecolourSprite(object):
             labels[self.label.value] = 0
         return labels, 1
 
-    def expand(self, default_file, default_mask_file, id_dict):
+    def expand(self, default_file, default_mask_file, poslist, id_dict):
         # create new struct, needed for template expansion
         new_mapping = []
         for old_assignment in self.mapping:
@@ -317,7 +317,7 @@ class RecolourSprite(object):
             to_min_value = old_assignment.value.min.reduce_constant([id_dict])
             to_max_value = None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
             new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
-        return [RecolourSprite(new_mapping)]
+        return [RecolourSprite(new_mapping, poslist = poslist)]
 
     def __str__(self):
         ret = "" if self.label is None else str(self.label) + ": "
@@ -390,7 +390,7 @@ class TemplateUsage(object):
             labels[self.label.value] = 0
         return labels, offset
 
-    def expand(self, default_file, default_mask_file, parameters):
+    def expand(self, default_file, default_mask_file, poslist, parameters):
         if self.name.value not in sprite_template_map:
             raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
         template = sprite_template_map[self.name.value]
@@ -403,13 +403,13 @@ class TemplateUsage(object):
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
 
-        return parse_sprite_list(template.sprite_list, default_file, default_mask_file, param_dict)
+        return parse_sprite_list(template.sprite_list, default_file, default_mask_file, poslist + [self.pos], param_dict)
 
     def __str__(self):
         return "{}({})".format(self.name, ", ".join(str(param) for param in self.param_list))
 
 
-def parse_real_sprite(sprite, default_file, default_mask_file, id_dict):
+def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict):
     # check the number of parameters
     num_param = len(sprite.param_list)
     if num_param == 0:
@@ -419,7 +419,7 @@ def parse_real_sprite(sprite, default_file, default_mask_file, id_dict):
         raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2..9.", sprite.param_list[0].pos)
 
     # create new sprite struct, needed for template expansion
-    new_sprite = RealSprite()
+    new_sprite = RealSprite(poslist = poslist + sprite.poslist)
 
     param_offset = 0
 
@@ -492,10 +492,10 @@ def parse_real_sprite(sprite, default_file, default_mask_file, id_dict):
 
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list, default_file, default_mask_file, parameters = {}):
+def parse_sprite_list(sprite_list, default_file, default_mask_file, poslist, parameters = {}):
     real_sprite_list = []
     for sprite in sprite_list:
-        real_sprite_list.extend(sprite.expand(default_file, default_mask_file, parameters))
+        real_sprite_list.extend(sprite.expand(default_file, default_mask_file, poslist, parameters))
     return real_sprite_list
 
 def parse_sprite_data(sprite_container):
@@ -511,8 +511,8 @@ def parse_sprite_data(sprite_container):
     first = True
 
     for sprite_data in all_sprite_data:
-        sprite_list, default_file, default_mask_file, zoom_level, bit_depth = sprite_data
-        new_sprite_list = parse_sprite_list(sprite_list, default_file, default_mask_file)
+        sprite_list, default_file, default_mask_file, pos, zoom_level, bit_depth = sprite_data
+        new_sprite_list = parse_sprite_list(sprite_list, default_file, default_mask_file, [pos])
         if not first and len(new_sprite_list) != len(action_list):
             msg = "Expected {:d} alternative sprites for {} '{}', got {:d}."
             msg = msg.format(len(action_list), sprite_container.block_type, sprite_container.block_name.value, len(new_sprite_list))
