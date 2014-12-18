@@ -139,8 +139,10 @@ class ImageFilePosition(Position):
     """
     Generic (not position-dependant) error with an image file
     """
-    def __init__(self, filename):
-        Position.__init__(self, filename, [])
+    def __init__(self, filename, pos = None):
+        poslist = []
+        if pos is not None: poslist.append(pos)
+        Position.__init__(self, filename, poslist)
 
     def __str__(self):
         return 'Image file "{}"'.format(self.filename)
@@ -181,8 +183,8 @@ class RangeError(ScriptError):
         ScriptError.__init__(self, name + " out of range " + str(min_value) + ".." + str(max_value) + ", encountered " + str(value), pos)
 
 class ImageError(ScriptError):
-    def __init__(self, value, filename):
-        ScriptError.__init__(self, value, ImageFilePosition(filename))
+    def __init__(self, value, filename, pos = None):
+        ScriptError.__init__(self, value, ImageFilePosition(filename, pos))
 
 class OnlyOnceError(ScriptError):
     """
