@@ -54,10 +54,13 @@ class SpriteContainer(object):
 
     def get_all_sprite_data(self):
         """
-        Get all sprite data as a list of 5-tuples (sprite_list, default_file, default_mask_file, zoom_level, bit_depth)
-        Sorting makes sure that the order is consistent, and that the normal zoom, 8bpp sprites appear first
+        Get all sprite data.
+        Sorting makes sure that the order is consistent, and that the normal zoom, 8bpp sprites appear first.
+
+        @return: List of 5-tuples (sprite_list, default_file, default_mask_file, zoom_level, bit_depth).
+        @rtype:  C{list} of C{tuple} of (C{list} of (L{RealSprite}, L{RecolourSprite} or L{TemplateUsage}), L{StringLiteral} or C{None}, C{int}, C{int})
         """
-        return [(self.sprite_data[key][0], self.sprite_data[key][1], self.sprite_data[key][2], key[0], key[1]) for key in sorted(self.sprite_data)]
+        return [val + key for key, val in sorted(self.sprite_data.items())]
 
     @classmethod
     def resolve_sprite_block(cls, block_name):
