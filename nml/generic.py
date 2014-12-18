@@ -89,6 +89,25 @@ def reverse_lookup(dic, val):
         if v == val: return k
     raise AssertionError("Value not found in the dictionary.")
 
+def build_position(poslist):
+    """
+    Construct a L{Position} object that takes the other positions as include list.
+
+    @param poslist: Sequence of positions to report. First entry is the innermost position,
+                    last entry is the nml statement that started it all.
+    @type  poslist: C{list} of L{Position}
+
+    @return: Position to attach to an error.
+    @rtype:  L{Position}
+    """
+    if poslist is None or len(poslist) == 0:
+        return None
+    if len(poslist) == 1:
+        return poslist[0]
+    pos = poslist[-1]
+    pos.includes = pos.includes + poslist[:-1]
+    return pos
+
 class Position(object):
     """
     Base class representing a position in a file.
