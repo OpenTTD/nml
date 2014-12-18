@@ -160,9 +160,12 @@ class RealSprite(object):
 
     @ivar flags: Cropping/warning flags.
     @type flags: L{expression.ConstantNumeric}
+
+    @ivar poslist: Position of creation of the sprite, if available.
+    @type poslist: C{list} of L{Position}
     """
 
-    def __init__(self, param_list = None, label = None):
+    def __init__(self, param_list = None, label = None, poslist = None):
         self.param_list = param_list
         self.label = label
         self.is_empty = False
@@ -170,6 +173,10 @@ class RealSprite(object):
         self.ypos = None
         self.xsize = None
         self.ysize = None
+        if poslist is None:
+            self.poslist = []
+        else:
+            self.poslist = poslist
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Real sprite, parameters:')
@@ -282,9 +289,13 @@ class RealSpriteAction(SpriteAction):
         if self.last: file.newline()
 
 class RecolourSprite(object):
-    def __init__(self, mapping, label = None):
+    def __init__(self, mapping, label = None, poslist = None):
         self.mapping = mapping
         self.label = label
+        if poslist is None:
+            self.poslist = []
+        else:
+            self.poslist = poslist
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Recolour sprite, mapping:')

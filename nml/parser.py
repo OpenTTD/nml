@@ -451,9 +451,9 @@ class NMLParser(object):
         '''real_sprite : LBRACKET expression_list RBRACKET
                        | ID COLON LBRACKET expression_list RBRACKET'''
         if len(t) == 4:
-            t[0] = real_sprite.RealSprite(t[2])
+            t[0] = real_sprite.RealSprite(param_list = t[2], poslist = [t.lineno(1)])
         else:
-            t[0] = real_sprite.RealSprite(t[4], t[1])
+            t[0] = real_sprite.RealSprite(param_list = t[4], label = t[1], poslist = [t.lineno(1)])
 
     def p_recolour_assignment_list(self, t):
         '''recolour_assignment_list :
@@ -476,9 +476,9 @@ class NMLParser(object):
         '''real_sprite : RECOLOUR_SPRITE LBRACE recolour_assignment_list RBRACE
                        | ID COLON RECOLOUR_SPRITE LBRACE recolour_assignment_list RBRACE'''
         if len(t) == 5:
-            t[0] = real_sprite.RecolourSprite(t[3])
+            t[0] = real_sprite.RecolourSprite(mapping = t[3], poslist = [t.lineno(1)])
         else:
-            t[0] = real_sprite.RecolourSprite(t[5], t[1])
+            t[0] = real_sprite.RecolourSprite(mapping = t[5], label = t[1], poslist = [t.lineno(1)])
 
     def p_template_declaration(self, t):
         'template_declaration : TEMPLATE ID LPAREN id_list RPAREN LBRACE spriteset_contents RBRACE'
