@@ -384,7 +384,11 @@ def print_dbg(indent, *args):
     show_progress()
 
 
-_paths = set() # Paths already found to be correct at the system.
+"""
+Paths already resolved to correct paths on the system.
+The key is the path as specified in the sources. The value is the validated path on the system.
+"""
+_paths = dict()
 
 def find_file(filepath):
     """
@@ -419,7 +423,7 @@ def find_file(filepath):
         comp = components.pop()
         childpath = os.path.join(path, comp)
         if childpath in _paths:
-            path = childpath
+            path = _paths[childpath]
             continue
 
         if os.access(path, os.R_OK):
@@ -447,7 +451,7 @@ def find_file(filepath):
 
         path = os.path.join(path, matches[0])
         if len(components) > 0:
-            _paths.add(path)
+            _paths[childpath] = path
 
     return path
 
