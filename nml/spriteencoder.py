@@ -94,6 +94,8 @@ class SpriteEncoder(object):
         """
         num_sprites = sum(len(sprite_list) for sprite_list in sprite_files.values())
 
+        generic.print_progress("Encoding ...")
+
         num_cached = 0
         num_dup = 0
         num_enc = 0

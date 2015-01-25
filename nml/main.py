@@ -299,8 +299,6 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
                 key = (file, mask_file)
                 sprite_files.setdefault(key, []).append(sprite)
 
-    generic.clear_progress()
-
     # Check whether we can terminate sprite processing prematurely for
     #     dependency checks
     skip_sprite_processing = True
@@ -363,6 +361,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             if encoder is None:
                 encoder = spriteencoder.SpriteEncoder(compress_grf, crop_sprites, enable_cache, used_palette)
             outputfile.encoder = encoder
+
+    generic.clear_progress()
 
     # Read all image data, compress, and store in sprite cache
     if encoder is not None:
