@@ -149,6 +149,8 @@ class SpriteCache(object):
         assert cache_size == len(cache_data)
         self.cache_time = os.path.getmtime(self.cache_filename)
 
+        source_mtime = dict()
+
         try:
             # Just assert and print a generic message on errors, as the cache data should be correct
             # Not asserting could lead to errors later on
@@ -212,11 +214,21 @@ class SpriteCache(object):
                 # Check if cache item is still valid
                 is_valid = True
                 if rgb_key[0] is not None:
-                    if os.path.getmtime(generic.find_file(rgb_key[0])) > self.cache_time:
+                    mtime = source_mtime.get(rgb_key[0])
+                    if mtime is None:
+                        mtime = os.path.getmtime(generic.find_file(rgb_key[0]))
+                        source_mtime[rgb_key[0]] = mtime
+                    
+                    if mtime > self.cache_time:
                         is_valid = False
 
                 if mask_key[0] is not None:
-                    if os.path.getmtime(generic.find_file(mask_key[0])) > self.cache_time:
+                    mtime = source_mtime.get(mask_key[0])
+                    if mtime is None:
+                        mtime = os.path.getmtime(generic.find_file(mask_key[0]))
+                        source_mtime[mask_key[0]] = mtime
+                    
+                    if mtime > self.cache_time:
                         is_valid = False
 
                 # Drop items from older spritecache format without palette entry
