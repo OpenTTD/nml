@@ -1,6 +1,6 @@
 NML readme
-Last updated:    2014-05-10
-Release version: 0.3.1
+Last updated:    2015-02-17
+Release version: 0.4.0-alpha (h7c4ffbab2006)
 ------------------------------------------------------------------------
 
 
@@ -113,6 +113,11 @@ Options:
   --quiet               Disable all warnings. Errors will be printed normally.
   -n, --no-cache        Disable caching of sprites in .cache[index] files,
                         which may reduce compilation time.
+  --cache-dir=<dir>     Cache files are stored in directory <dir> [default:
+                        .nmlcache]
+  --clear-orphaned      Remove unused/orphaned items from cache files.
+  --verbosity=<level>   Set the verbosity level for informational output.
+                        [default: 3, max: 4]
 
 
 6) Known issues:
