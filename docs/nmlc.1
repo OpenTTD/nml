@@ -1,4 +1,4 @@
-.Dd May 10, 2014
+.Dd February 17, 2015
 .Dt NMLC 1
 .Sh NAME
 .Nm NMLC
@@ -28,30 +28,46 @@ of the filename. It must be one of nfo, nml or grf.
 Write an md5sum of the resulting grf to <file>.
 .It Fl -debug | Fl d
 Print a dump of the AST to stdout.
+.It Fl -version
+Print programme's version number and exit.
 .It Fl -help | Fl h
 Print usage information.
 .It Fl -stack | Fl s
-Dump stack when an error occurs
+Dump stack when an error occurs.
+.It Fl M
+Output a rule suitable for make describing the graphics dependencies of the main grf file (requires input file or --grf)
+.It Fl -MF Ns = Ns Ar file
+When used with -M, specifies a file to write the dependencies to
+.It Fl -MT Ns = Ns Ar file
+Target of the rule emitted by dependency generation (requires -M)
 .It Fl -custom-tags Ns = Ns Ar file | Fl t Ar file
-Load custom tags from <file> [default: custom_tags.txt]
+Load custom tags from <file> [default: custom_tags.txt].
 .It Fl -lang-dir Ns = Ns Ar dir | Fl l Ar dir
-Load language files from directory <dir> [default: lang]
+Load language files from directory <dir> [default: lang].
 .It Fl -default-lang Ns = Ns Ar file
-The default language is stored in <file> [default: english.lng]
+The default language is stored in <file> [default: english.lng].
 .It Fl -sprites-dir Ns = Ns Ar dir | Fl a Ar dir
-Store 32bpp sprites in directory <dir> [default: sprites]
-.It Fl -start-sprite Ns = Ns Ar file
+Store 32bpp sprites in directory <dir> [default: sprites].
+.It Fl -start-sprite Ns = Ns Ar num
 Set the first sprite number to write (do not use except when you output
 nfo that you want to include in other files).
 .It Fl -palette Ns = Ns Ar palette | Fl p Ar palette
 Force nml to use the palette <pal> [default: ANY]. Valid values
 are 'DOS', 'WIN', 'ANY'.
+.It Fl -quiet
+Disable all warnings. Errors will be printed normally.
+.It Fl -cache-dir Ns = Ns Ar dir
+Cache files are stored in directory <dir> [default: .nmlcache].
+.It Fl -clear-orphaned
+Remove unused / orphaned items from cache files.
+.It Fl -verbosity Ns = Ns Ar level
+Set the verbosity level for informational output [default: 3, max: 4].
 .El
 .Sh SEE ALSO
 The language reference at
-.Pa http://hg.openttdcoop.org/nml/raw-file/tip/docs/index.html
+.Pa http://newgrf-specs.tt-wiki.net/wiki/NML:Main
 .Sh AUTHOR
 NML was written by Albert Hofkamp, Christoph Elsenhans, Jasper Reichardt, Ingo von Borstel,
 José Soler and Thijs Marinussen.
 .Pp
-This manual page was written by Thijs Marinussen.
+This manual page was originally written by Thijs Marinussen.
