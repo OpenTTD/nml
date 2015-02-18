@@ -1,3 +1,61 @@
+0.4.0 (2015-02-18)
+------------------------------------------------------------------------
+- Feature: [NewGRF] create_effect and effect_spawn_model
+- Feature: [NewGRF] EFFECT_SPRITE_NONE constant for create_effect callback
+- Feature: [NewGRF] support for OTTD_RECOLOUR action5 sprite(s)
+- Feature: [NewGRF] Support for Latin
+- Feature: [NewGRF] Variable to test for enabled wagon speed limits. (issue #6474)
+- Feature: Improve speed by caching position during parsing.
+- Feature: Warn about usage of animation and semi-transparent colours, and add spriteset flags to enable/disable the checks. (issue #1085)
+- Feature: Improved error position reporting with templated real sprites. Closes #7001
+- Feature: Cython acceleration module for GRF compression.
+- Change: Convert from Python2 to Python 3.2+
+- Change: At least check for isatty when using the funky colour codes in warning output (issue #5411)
+- Change: Do not store uncompressed sprites in the sprite cache.
+- Change: Use a separate spritecache file for each source image.
+- Change: Keep (possibly only temporarily) unused items in the spritecache until they are out-dated for sure.
+- Change: Reduce load on stdout by limiting incremental progress output to 1 message per second.
+- Change: Store amount of pure-white pixels in the spritecache instead of plain text warnings.
+- Change: Rewrite syntax file generators as python scripts
+- Change: [devzone] Don't run regressions in parallel to allow other tasks to run concurrently
+- Change: [devzone] Also update DevZone when we build tip but call it by its hash
+- Change: [devzone] Build the nml_lz77 extension for use by the CF
+- Add: Print progress information to interactive terminals.
+- Add: Progress output about lang files.
+- Add: Print statistics about used Action0 ids.
+- Add: Print statistics about used ActionF ids.
+- Add: Print statistics about used Spriteset ids.
+- Add: Print statistics about used Spritegroup ids.
+- Add: Print statistics about temporary Action2 registers.
+- Add: Print statistics about temporary ActionD registers and Action10 labels.
+- Add: Print statistics about GRF parameters.
+- Add: Print statistics about string ids.
+- Add: Print statistics about sound effect ids.
+- Add: Print statistics about cargo and railtype translation tables.
+- Add: Command line option to specify a cache directory.
+- Add: Command line option to set verbosity level of info output.
+- Add: Vebosity level 4 for printing CPU time on processing.
+- Add: Real sprites keep list of positions for improved error reporting with templates.
+- Add: Collect positions for real sprites through template instantiation.
+- Add: Build a position with an include stack from a list positions.
+- Fix: [NewGRF] Number of vehicles in var 41 is one-based, only var 40 is zero-based.
+- Fix: [NewGRF] Patch flags can only be accessed via action 7/9. (issue #6996)
+- Fix: [NewGRF] Action7/9 bit tests must use varsize 1.
+- Fix: Don't write parse tables. Closes #4091
+- Fix: Printing Unicode characters in NFO was broken. Also added regression check for it.
+- Fix: CPP output line directive can have several flags, which caused matching failure.
+- Fix: Validate string names for being proper identifiers
+- Fix: Add the output palette to the spritecache key. (issue #6496)
+- Fix: Encode sprites sequentially per source image file. (issue #7004)
+- Fix: No proper error message was given, if an unreferenced Spritegroup was unable to allocate an id.
+- Fix: Don't fail if there's a .hg directory but no mercurial
+- Doc: main function, and instance variables of the parser and scanner.
+- Doc: RealSprite members
+- Doc: Unused return values.
+- Doc: instance variables of SpriteAction.
+
+
+
 0.3.1 (2014-05-10)
 ------------------------------------------------------------------------
 - Add: String commands CARGO_LONG, CARGO_SHORT and CARGO_TINY
