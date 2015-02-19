@@ -2,6 +2,7 @@ global-exclude ._*
 recursive-include docs *.html *.txt nmlc.1 nml.spec
 recursive-include regression *.nml *.lng *.grf *.nfo *.png *.pcx
 recursive-include examples *.nml *.lng *.png
+recursive-include nml *.py *.c
 prune regression/output
 prune regression/output2
 prune regression/nml_output
