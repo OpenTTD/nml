@@ -1,6 +1,6 @@
 NML readme
 Last updated:    2015-02-17
-Release version: 0.4.0-alpha (h7c4ffbab2006)
+Release version: 0.4.0
 ------------------------------------------------------------------------
 
 
@@ -47,9 +47,9 @@ http://dev.openttdcoop.org/projects/nml or via IRC on the
 ---- ----------------------
 NML requires the following 3rd party packages to run:
  - python
-     Minimal version is 2.6. Python 3 is not yet supported.
+     Minimal version is 3.2. Python 2 is not supported.
  - python image library
-     downloadable from http://www.pythonware.com/products/pil/
+     For install options see https://pillow.readthedocs.org/installation.html#simple-installation
  - ply
      downloadable from http://www.dabeaz.com/ply/
 
@@ -59,6 +59,8 @@ To install NML you'll need these 3rd party packages:
  - buildout
      Only necesary if you want to use the installer. You can
      run NML without installation or manually install it.
+ - gcc (or possibly another c++ compiler)
+     Needed to compile the cython version of the lz77 module for grf encoding
 
 
 4) Installation:
