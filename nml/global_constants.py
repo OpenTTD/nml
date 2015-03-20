@@ -1060,6 +1060,7 @@ misc_grf_bits = {
     'traffic_side'                       : {'param': 0x86, 'bit': 4},
     'desert_paved_roads'                 : {'param': 0x9E, 'bit': 1},
     'train_width_32_px'                  : {'param': 0x9E, 'bit': 3},
+    'second_rocky_tileset'               : {'param': 0x9E, 'bit': 6},
 }
 
 def add_1920(expr, info):
