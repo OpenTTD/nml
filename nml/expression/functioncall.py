@@ -249,6 +249,22 @@ def builtin_hasbit(name, args, pos):
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return BinOp(nmlop.HASBIT, args[0], args[1], pos)
 
+def builtin_getbits(name, args, pos):
+    """
+    getbits(value, first, amount) builtin function.
+
+    @return Extract C{amount} bits starting at C{first} from C{value}, that is (C{value} >> C{first}) & (1 << C{amount} - 1)
+    """
+    if len(args) != 3:
+        raise generic.ScriptError(name + "() must have exactly three parameters", pos)
+
+    # getbits(value, first, amount) = (value >> first) & ((0xFFFFFFFF << amount) ^ 0xFFFFFFFF)
+    part1 = expression.BinOp(nmlop.SHIFTU_RIGHT, args[0], args[1], pos)
+    part2 = expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(0xFFFFFFFF), args[2], pos)
+    part3 = expression.BinOp(nmlop.XOR, part2, expression.ConstantNumeric(0xFFFFFFFF), pos)
+
+    return BinOp(nmlop.AND, part1, part3, pos)
+
 def builtin_version_openttd(name, args, pos):
     """
     version_openttd(major, minor, revision[, build]) builtin function.
@@ -623,6 +639,7 @@ function_table = {
     'LOAD_TEMP' : builtin_storage,
     'LOAD_PERM' : builtin_storage,
     'hasbit' : builtin_hasbit,
+    'getbits' : builtin_getbits,
     'version_openttd' : builtin_version_openttd,
     'cargotype_available' : builtin_cargotype_available,
     'railtype_available' : builtin_railtype_available,
