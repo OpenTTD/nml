@@ -298,14 +298,6 @@ class Modification(object):
         self.size = size
         self.offset = offset
 
-def pow2(expr):
-    #2**x = (1 ror (32 - x))
-    if isinstance(expr, expression.ConstantNumeric):
-        return expression.ConstantNumeric(1 << expr.value)
-    expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(32), expr)
-    expr = expression.BinOp(nmlop.ROT_RIGHT, expression.ConstantNumeric(1), expr)
-    return expr
-
 class Varaction2Parser(object):
     def __init__(self, feature):
         self.feature = feature # Depends on feature and var_range
@@ -360,22 +352,13 @@ class Varaction2Parser(object):
             expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
             expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
 
-        elif expr.op == nmlop.SHIFT_LEFT:
-            #a << b ==> a * (2**b)
-            expr = expression.BinOp(nmlop.MUL, expr.expr1, pow2(expr.expr2))
-        elif expr.op == nmlop.SHIFT_RIGHT:
-            #a >> b ==> a / (2**b)
-            expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
-        elif expr.op == nmlop.SHIFTU_RIGHT:
-            #a >>> b ==> (uint)a / (2**b)
-            expr = expression.BinOp(nmlop.DIVU, expr.expr1, pow2(expr.expr2))
         elif expr.op == nmlop.HASBIT:
             # hasbit(x, n) ==> (x >> n) & 1
-            expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
+            expr = expression.BinOp(nmlop.SHIFTU_RIGHT, expr.expr1, expr.expr2)
             expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
         elif expr.op == nmlop.NOTHASBIT:
             # !hasbit(x, n) ==> ((x >> n) & 1) ^ 1
-            expr = expression.BinOp(nmlop.DIV, expr.expr1, pow2(expr.expr2))
+            expr = expression.BinOp(nmlop.SHIFTU_RIGHT, expr.expr1, expr.expr2)
             expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric(1))
             expr = expression.BinOp(nmlop.XOR, expr, expression.ConstantNumeric(1))
 
