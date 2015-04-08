@@ -2,6 +2,9 @@
 .*buildout.*
 \.install
 egg
+~$
+\.orig$
+
 syntax: glob
 *.pyc
 *.pyd
