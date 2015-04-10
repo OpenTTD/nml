@@ -6,7 +6,7 @@ except ImportError:
       pass
 
 import sys, os, string, subprocess
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 from PIL import Image
 import ply
 
@@ -20,6 +20,7 @@ version = version_info.get_and_write_version()
 
 setup(name='nml',
       version=version,
+      packages=find_packages(),
       description='A tool to compile nml files to grf or nfo files',
       long_description = 'A tool to compile nml files to grf and / or nfo files.' \
                          'NML is a meta-language that aims to be a lot simpler to learn and use than nfo.',
