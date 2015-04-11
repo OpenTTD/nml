@@ -10,9 +10,6 @@ test: regression
 install:
 	$(PYTHON) setup.py install
 
-bundle:
-	$(PYTHON) bootstrap.py
-
 extensions:
 	$(PYTHON) setup.py build_ext --inplace
 

@@ -30,9 +30,6 @@ NML is licensed under the GNU General Public License version 2, or at
 your option, any later version. For more information, see 'license.txt'
 (GPL version 2), or later versions at <http://www.gnu.org/licenses/>.
 
-The file bootstrap.py is licensed under Zope Public License (ZPL)
-Version 2.1. See zpl-2.1.txt for more information.
-
 2) Contact:
 -- --------
 Contact can be made via the issue tracker / source repository at
