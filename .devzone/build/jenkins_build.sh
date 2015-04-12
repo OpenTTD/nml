@@ -9,6 +9,9 @@ REV="v`~/bin/getdays2000`"
 REV="$BRANCH$REV"
 if [ "$BUILD_TYPE" == "releases" ]; then REV="$USE_REV"; fi
 
+# Use the revision we're asked to build:
+hg up $USE_REV
+
 # Check regressions
 make -j1 regression
 
