@@ -1,3 +1,15 @@
+0.4.1 (2015-04-12)
+------------------------------------------------------------------------
+- Change: Try to improve packaging by applying some in-built automatisms via find_package() (oberhumer) (issue #7540)
+- Add: second_rocky_tileset
+- Add: Build-in function 'getbits'
+- Fix: Building source bundle was broken
+- Fix: Version identification for tags
+- Doc: Update readme with python version info
+- Cleanup: Remove pre-OpenTTD-1.1 wrappers for SHIFT_LEFT, SHIFT_RIGHT and SHIFTU_RIGHT.
+- Cleanup: Remove bootstrap
+
+
 0.4.0 (2015-02-18)
 ------------------------------------------------------------------------
 - Feature: [NewGRF] create_effect and effect_spawn_model
