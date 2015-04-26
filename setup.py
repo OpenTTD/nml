@@ -42,5 +42,5 @@ setup(name='nml',
       entry_points={
           'console_scripts': ['nmlc = nml.main:run']
       },
-      ext_modules = [Extension("nml_lz77", ["nml/_lz77.c"])],
+      ext_modules = [Extension("nml_lz77", ["nml/_lz77.c"], optional=True)],
 )
