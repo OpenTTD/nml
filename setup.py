@@ -7,8 +7,6 @@ except ImportError:
 
 import sys, os, string, subprocess
 from setuptools import setup, Extension, find_packages
-from PIL import Image
-import ply
 
 version = sys.version_info
 if version[0] < 3 or (version[0] == 3 and version[1] < 2):
