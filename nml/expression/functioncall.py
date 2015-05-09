@@ -420,10 +420,10 @@ def builtin_industry_type(name, args, pos):
     if type not in (0, 1):
         raise generic.ScriptError("First argument of industry_type() must be IND_TYPE_OLD or IND_TYPE_NEW", pos)
 
-    # Industry ID uses 6 bits (0 .. 5), so bit 6 is never used
+    # Industry ID uses 7 bits (0 .. 6), bit 7 is for old/new
     id = args[1].reduce_constant(global_constants.const_list).value
-    if not 0 <= id <= 63:
-        raise generic.ScriptError("Second argument 'id' of industry_type() must be in range 0..63", pos)
+    if not 0 <= id <= 127:
+        raise generic.ScriptError("Second argument 'id' of industry_type() must be in range 0..127", pos)
 
     return ConstantNumeric(type << 7 | id)
 
