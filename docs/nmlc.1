@@ -15,57 +15,57 @@ Crop extraneous transparent blue from real sprites.
 Save real sprites uncompressed to GRF files. This saves a lot of time
 during encoding but it's not recommended when creating a file for
 distribution since it makes the output file substantially bigger.
-.It Fl -grf Ns = Ns Ar file
+.It Fl \-grf Ns = Ns Ar file
 Write output in GRF format to <file>.
-.It Fl -nfo Ns = Ns Ar file
+.It Fl \-nfo Ns = Ns Ar file
 Write output in NFO format to <file>.
-.It Fl -nml Ns = Ns Ar file
+.It Fl \-nml Ns = Ns Ar file
 Write output in NML format to <file>.
-.It Fl -output Ns = Ns Ar file | Fl o Ar file
+.It Fl \-output Ns = Ns Ar file | Fl o Ar file
 Write output to <file>. The output type is detected from the extension
 of the filename. It must be one of nfo, nml or grf.
-.It Fl -md5 Ns = Ns Ar file
+.It Fl \-md5 Ns = Ns Ar file
 Write an md5sum of the resulting grf to <file>.
-.It Fl -debug | Fl d
+.It Fl \-debug | Fl d
 Print a dump of the AST to stdout.
-.It Fl -version
+.It Fl \-version
 Print programme's version number and exit.
-.It Fl -help | Fl h
+.It Fl \-help | Fl h
 Print usage information.
-.It Fl -stack | Fl s
+.It Fl \-stack | Fl s
 Dump stack when an error occurs.
 .It Fl M
-Output a rule suitable for make describing the graphics dependencies of the main grf file (requires input file or --grf)
-.It Fl -MF Ns = Ns Ar file
-When used with -M, specifies a file to write the dependencies to
-.It Fl -MT Ns = Ns Ar file
-Target of the rule emitted by dependency generation (requires -M)
-.It Fl -custom-tags Ns = Ns Ar file | Fl t Ar file
+Output a rule suitable for make describing the graphics dependencies of the main grf file (requires input file or \-\-grf)
+.It Fl \-MF Ns = Ns Ar file
+When used with \-M, specifies a file to write the dependencies to
+.It Fl \-MT Ns = Ns Ar file
+Target of the rule emitted by dependency generation (requires \-M)
+.It Fl \-custom\-tags Ns = Ns Ar file | Fl t Ar file
 Load custom tags from <file> [default: custom_tags.txt].
-.It Fl -lang-dir Ns = Ns Ar dir | Fl l Ar dir
+.It Fl \-lang-dir Ns = Ns Ar dir | Fl l Ar dir
 Load language files from directory <dir> [default: lang].
-.It Fl -default-lang Ns = Ns Ar file
+.It Fl \-default\-lang Ns = Ns Ar file
 The default language is stored in <file> [default: english.lng].
-.It Fl -sprites-dir Ns = Ns Ar dir | Fl a Ar dir
+.It Fl \-sprites\-dir Ns = Ns Ar dir | Fl a Ar dir
 Store 32bpp sprites in directory <dir> [default: sprites].
-.It Fl -start-sprite Ns = Ns Ar num
+.It Fl \-start\-sprite Ns = Ns Ar num
 Set the first sprite number to write (do not use except when you output
 nfo that you want to include in other files).
-.It Fl -palette Ns = Ns Ar palette | Fl p Ar palette
+.It Fl \-palette Ns = Ns Ar palette | Fl p Ar palette
 Force nml to use the palette <pal> [default: ANY]. Valid values
 are 'DOS', 'WIN', 'ANY'.
-.It Fl -quiet
+.It Fl \-quiet
 Disable all warnings. Errors will be printed normally.
-.It Fl -cache-dir Ns = Ns Ar dir
+.It Fl \-cache\-dir Ns = Ns Ar dir
 Cache files are stored in directory <dir> [default: .nmlcache].
-.It Fl -clear-orphaned
+.It Fl \-clear\-orphaned
 Remove unused / orphaned items from cache files.
-.It Fl -verbosity Ns = Ns Ar level
+.It Fl \-verbosity Ns = Ns Ar level
 Set the verbosity level for informational output [default: 3, max: 4].
 .El
 .Sh SEE ALSO
 The language reference at
-.Pa http://newgrf-specs.tt-wiki.net/wiki/NML:Main
+.Pa http://newgrf\-specs.tt\-wiki.net/wiki/NML:Main
 .Sh AUTHOR
 NML was written by Albert Hofkamp, Christoph Elsenhans, Jasper Reichardt, Ingo von Borstel,
 José Soler and Thijs Marinussen.
