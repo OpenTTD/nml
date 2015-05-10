@@ -869,6 +869,8 @@ class LanguageTranslationTable(BaseAction0Property):
             if name in extra_names:
                 for extra_name in extra_names[name]:
                     self.mappings.append( (idx, extra_name) )
+        # Sort to keep the output deterministic
+        self.mappings.sort()
 
     def write(self, file):
         file.print_bytex(self.num)
