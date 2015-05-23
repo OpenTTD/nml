@@ -259,9 +259,9 @@ def builtin_getbits(name, args, pos):
         raise generic.ScriptError(name + "() must have exactly three parameters", pos)
 
     # getbits(value, first, amount) = (value >> first) & ((0xFFFFFFFF << amount) ^ 0xFFFFFFFF)
-    part1 = expression.BinOp(nmlop.SHIFTU_RIGHT, args[0], args[1], pos)
-    part2 = expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(0xFFFFFFFF), args[2], pos)
-    part3 = expression.BinOp(nmlop.XOR, part2, expression.ConstantNumeric(0xFFFFFFFF), pos)
+    part1 = BinOp(nmlop.SHIFTU_RIGHT, args[0], args[1], pos)
+    part2 = BinOp(nmlop.SHIFT_LEFT, ConstantNumeric(0xFFFFFFFF), args[2], pos)
+    part3 = BinOp(nmlop.XOR, part2, ConstantNumeric(0xFFFFFFFF), pos)
 
     return BinOp(nmlop.AND, part1, part3, pos)
 
