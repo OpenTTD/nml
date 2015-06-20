@@ -566,7 +566,9 @@ class Varaction2Parser(object):
                 self.parse(expr2)
                 self.var_list.append(nmlop.VAL2)
                 self.var_list_size += 1
+            # Drop the trailing VAL2 again
             self.var_list.pop()
+            self.var_list_size -= 1
         else:
             self.parse(expr)
 
