@@ -75,7 +75,7 @@ def get_production_actions(produce):
     varact2parser = action2var.Varaction2Parser(0x0A)
     if all(x.supported_by_actionD(False) for x in produce.param_list):
         version = 0
-        offset = 1
+        offset = 4
         for i, param in enumerate(produce.param_list):
             result, offset = actionD.write_action_value(param, action_list, act6, offset, 2 if i < 5 else 1)
             result_list.append(result.value)
