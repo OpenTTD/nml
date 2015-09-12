@@ -1,3 +1,16 @@
+0.4.2 (2015-09-13)
+------------------------------------------------------------------------
+-Add: New industry type limits of OpenTTD 1.6
+-Fix: [CF] Build the version which is asked to be built instead of tip
+-Fix: Mark the cython acceleration module as optional.
+-Fix #7641: Sort gender and case translation tables deterministically (matthijs)
+-Fix #7640: Use dashes, not hyphens in manpage (matthijs)
+-Fix: getbits
+-Fix #7336: Action 6 offset was off by one for VA2 ranges when using a list of expressions in a switch.
+-Fix #7185: Incorrect Action6 offsets for Production Action2.
+-Doc: Be more verbose about MANIFEST.in and remove bootstrap from manifest as well
+
+
 0.4.1 (2015-04-12)
 ------------------------------------------------------------------------
 - Change: Try to improve packaging by applying some in-built automatisms via find_package() (oberhumer) (issue #7540)

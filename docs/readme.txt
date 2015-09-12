@@ -1,6 +1,6 @@
 NML readme
-Last updated:    2015-02-17
-Release version: 0.4.0
+Last updated:    2015-09-12
+Release version: 0.4.2
 ------------------------------------------------------------------------
 
 
@@ -130,11 +130,11 @@ Active developers (in alphabetical order):
   Albert Hofkamp (Alberth)
   Christoph Elsenhans (frosch)
   Ingo von Borstel (planetmaker)
-  José Soler (Terkhen)
   Remko Bijker (Rubidium)
 
 Inactive developers:
   Jasper Reichardt (Hirundo)
+  José Soler (Terkhen)
   Thijs Marinussen (Yexo)
 
 Special thanks to:
