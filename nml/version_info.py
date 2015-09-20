@@ -34,7 +34,7 @@ def get_child_output(cmd):
 
 
 def get_hg_version():
-    path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    path = os.path.dirname(os.path.realpath(__file__))
     version = ''
     if os.path.isdir(os.path.join(path,'.hg')):
         # we want to return to where we were. So save the old path
