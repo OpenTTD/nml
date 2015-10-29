@@ -276,7 +276,7 @@ class SpriteEncoder(object):
                 pos = generic.build_position(sprite_info.poslist)
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), pos)
             sprite = im.crop((x, y, x + size_x, y + size_y))
-            rgb_sprite_data = sprite.tostring()
+            rgb_sprite_data = sprite.tobytes()
 
             if (info_byte & INFO_ALPHA) != 0:
                 # Check for half-transparent pixels (not valid for ground sprites)
@@ -296,7 +296,7 @@ class SpriteEncoder(object):
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), pos)
             mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
 
-            mask_sprite_data = self.palconvert(mask_sprite.tostring(), im_mask_pal)
+            mask_sprite_data = self.palconvert(mask_sprite.tobytes(), im_mask_pal)
 
             # Check for white pixels; those that cause "artefacts" when shading
             pixel_stats['white'] = sum(p == 255 for p in mask_sprite_data)
@@ -321,9 +321,9 @@ class SpriteEncoder(object):
                     sprite_data.extend(rgb_data[3*i:3*(i+1)])
                     sprite_data.append(mask_data[i])
         elif (info_byte & INFO_RGB) != 0:
-            sprite_data.fromstring(rgb_sprite_data)
+            sprite_data.frombytes(rgb_sprite_data)
         else:
-            sprite_data.fromstring(mask_sprite_data)
+            sprite_data.frombytes(mask_sprite_data)
 
         bpp = get_bpp(info_byte)
         assert len(sprite_data) == size_x * size_y * bpp
