@@ -816,7 +816,8 @@ properties[0x0A] = {
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
     'conflicting_ind_types'  : {'custom_function': industry_conflicting_types}, # = prop 16
-    'prob_random'            : {'size': 1, 'num': 0x17},
+    'prob_random'            : {'size': 1, 'num': 0x17}, # Obsolete, ambiguous name, use 'prob_map_gen' instead
+    'prob_map_gen'           : {'size': 1, 'num': 0x17},
     'prob_in_game'           : {'size': 1, 'num': 0x18},
     'map_colour'             : {'size': 1, 'num': 0x19},
     'spec_flags'             : {'size': 4, 'num': 0x1A},
