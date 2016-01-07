@@ -1,6 +1,12 @@
+0.4.4 (2016-01-07)
+------------------------------------------------------------------------
+- Fix/Revert: Stripping one path level is not enough
+
+
 0.4.3 (2016-01-07)
 ------------------------------------------------------------------------
 - Add: prob_map_gen as alternative name for the mapgen industry probability property
+- Fix: Stripping one path level is enough
 - Fix: Compatibility with newer versions of pillow.
 - Fix: Vehicle 'sort' function caused internal error when an empty list was passed.
 - Fix: motion_counter is 24 bits, not 4.
