@@ -1,3 +1,12 @@
+0.4.3 (2016-01-07)
+------------------------------------------------------------------------
+- Add: prob_map_gen as alternative name for the mapgen industry probability property
+- Fix: Stripping one path level is enough
+- Fix: Compatibility with newer versions of pillow.
+- Fix: Vehicle 'sort' function caused internal error when an empty list was passed.
+- Fix: motion_counter is 24 bits, not 4.
+
+
 0.4.2 (2015-09-13)
 ------------------------------------------------------------------------
 -Add: New industry type limits of OpenTTD 1.6
