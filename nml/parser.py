@@ -673,6 +673,24 @@ class NMLParser(object):
         if len(t) == 2: t[0] = t[1]
         else: t[0] = assignment.Assignment(t[1], t[4], t[1].pos)
 
+    def p_roadtypetable(self, t):
+        '''roadtype : ROADTYPETABLE LBRACE roadtypetable_list RBRACE
+                    | ROADTYPETABLE LBRACE roadtypetable_list COMMA RBRACE'''
+        t[0] = roadtypetable.RoadtypeTable(t[3], t.lineno(1))
+
+    def p_roadtypetable_list(self, t):
+        '''roadtypetable_list : roadtypetable_item
+                              | roadtypetable_list COMMA roadtypetable_item'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[3]]
+
+    def p_roadtypetable_item(self, t):
+        '''roadtypetable_item : ID
+                              | STRING_LITERAL
+                              | ID COLON LBRACKET expression_list RBRACKET'''
+        if len(t) == 2: t[0] = t[1]
+        else: t[0] = assignment.Assignment(t[1], t[4], t[1].pos)
+
     def p_basecost(self, t):
         'basecost : BASECOST LBRACE generic_assignment_list RBRACE'
         t[0] = basecost.BaseCost(t[3], t.lineno(1))

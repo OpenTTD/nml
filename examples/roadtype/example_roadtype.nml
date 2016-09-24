@@ -50,7 +50,7 @@ template tmpl_underlay_diagonal() {
     ground_tile(300,  0)
 }
 
-template tmpl_underlay_railtypes() {
+template tmpl_underlay_roadtypes() {
     tmpl_underlay_straight()
     tmpl_underlay_diagonal()
     tmpl_underlay_slope()
@@ -67,7 +67,7 @@ template tmpl_underlay_railtypes() {
 }
 /* Spriteset containing all underlays */
 spriteset(track_underlays, "gfx/rails_overlays.png") {
-    tmpl_underlay_railtypes()
+    tmpl_underlay_roadtypes()
 }
 
 /**********************************************
@@ -75,7 +75,7 @@ spriteset(track_underlays, "gfx/rails_overlays.png") {
  **********************************************/
 
 /* Template for overlays; 2x straight track, 4x diagonal track, 4x slope */
-template tmpl_overlay_railtypes() {
+template tmpl_overlay_roadtypes() {
     [  0,155, 40,21, -19,  5]
     [ 50,155, 40,21, -19,  5]
 
@@ -91,7 +91,7 @@ template tmpl_overlay_railtypes() {
 }
 /* Spriteset for overlays */
 spriteset(track_overlays, "gfx/rails_overlays.png") {
- tmpl_overlay_railtypes()
+ tmpl_overlay_roadtypes()
 }
 
 /**********************************************
@@ -121,11 +121,8 @@ template tmpl_depot() {
     [118, 63, 64, 47,  -9, -31]
 }
 
-/* Depots have differing sprites for normal and e-rail */
-spriteset(depot_normal_rail, "gfx/depot_normal.png") {
-    tmpl_depot()
-}
-spriteset(depot_electric_rail, "gfx/depot_electric.png") {
+/* Depots */
+spriteset(depot_normal_road, "gfx/depot_normal.png") {
     tmpl_depot()
 }
 
@@ -192,9 +189,9 @@ item(FEAT_ROADTYPES, road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
-        label: "ROAD"; // Let this railtype replace the default normal rails
-        compatible_railtype_list: ["ROAD"];
-        powered_railtype_list: ["ROAD"];
+        label: "ROAD"; // Let this roadtype replace the default normal roads
+        compatible_roadtype_list: ["ROAD"];
+        powered_roadtype_list: ["ROAD"];
     }
 
     /* Associate graphics with this roadtype */
@@ -202,7 +199,7 @@ item(FEAT_ROADTYPES, road) {
         track_overlay: track_overlays;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
-        depots: depot_normal_rail;
+        depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
         gui: gui_normal;
         /* Caternary is not not implemented here, use the default */

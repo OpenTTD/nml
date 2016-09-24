@@ -151,7 +151,7 @@ class Action0Property(BaseAction0Property):
 #
 # 'first' (value doesn't matter) if the property should be set first (generally a substitute type)
 
-properties = 0x12 * [None]
+properties = 0x13 * [None]
 
 #
 # Some helper functions that are used for multiple features
