@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, expression, tokens, nmlop, unit
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, roadtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 

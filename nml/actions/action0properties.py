@@ -1083,3 +1083,54 @@ properties[0x11] = {
     'animation_speed'    : {'size': 1, 'num': 0x10},
     'animation_triggers' : {'size': 1, 'num': 0x11},
 }
+
+#
+# Feature 0x12 (Road Types)
+#
+
+class RoadtypeListProp(BaseAction0Property):
+    def __init__(self, prop_num, roadtype_list):
+        self.prop_num = prop_num
+        self.roadtype_list = roadtype_list
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        file.print_byte(len(self.roadtype_list))
+        for roadtype in self.roadtype_list:
+            roadtype.write(file, 4)
+        file.newline()
+
+    def get_size(self):
+        return len(self.roadtype_list) * 4 + 2
+
+def roadtype_list(value, prop_num):
+    if not isinstance(value, Array):
+        raise generic.ScriptError("Roadtype list must be an array of literal strings", value.pos)
+    for val in value.values:
+        if not isinstance(val, StringLiteral): raise generic.ScriptError("Roadtype list must be an array of literal strings", val.pos)
+    return [RoadtypeListProp(prop_num, value.values)]
+
+properties[0x12] = {
+    'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
+    'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
+    'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
+    'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
+    'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
+    'new_engine_text'          : {'size': 2, 'num': 0x0D, 'string': 0xDC},
+    'compatible_roadtype_list' : {'custom_function': lambda x: roadtype_list(x, 0x0E)},
+    'powered_roadtype_list'    : {'custom_function': lambda x: roadtype_list(x, 0x0F)},
+    'roadtype_flags'           : {'size': 1, 'num': 0x10},
+    'curve_speed_multiplier'   : {'size': 1, 'num': 0x11},
+    'station_graphics'         : {'size': 1, 'num': 0x12},
+    'construction_cost'        : {'size': 2, 'num': 0x13},
+    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (5000, 1397)},
+    'acceleration_model'       : {'size': 1, 'num': 0x15},
+    'map_colour'               : {'size': 1, 'num': 0x16},
+    'introduction_date'        : {'size': 4, 'num': 0x17},
+    'requires_roadtype_list'   : {'custom_function': lambda x: roadtype_list(x, 0x18)},
+    'introduces_roadtype_list' : {'custom_function': lambda x: roadtype_list(x, 0x19)},
+    'sort_order'               : {'size': 1, 'num': 0x1A},
+    'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
+    'maintenance_cost'         : {'size': 2, 'num': 0x1C},
+    'alternative_roadtype_list': {'custom_function': lambda x: roadtype_list(x, 0x1D)},
+}

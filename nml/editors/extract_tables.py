@@ -55,6 +55,7 @@ var_tables = [
     action2var_variables.varact2vars_objects,
     action2var_variables.varact2vars60x_objects,
     action2var_variables.varact2vars_railtype,
+    action2var_variables.varact2vars_roadtype,
     action2var_variables.varact2vars_airporttiles,
     action2var_variables.varact2vars60x_airporttiles,
     action2var_variables.varact2vars_towns]
@@ -78,7 +79,8 @@ prop_tables = [
     action0properties.properties[0x0D],
     action0properties.properties[0x0F],
     action0properties.properties[0x10],
-    action0properties.properties[0x11]]
+    action0properties.properties[0x11],
+    action0properties.properties[0x12]]
 
 properties = set()
 for d in prop_tables:
@@ -103,7 +105,8 @@ cb_tables = [
     action3_callbacks.callbacks[0x0D],
     action3_callbacks.callbacks[0x0F],
     action3_callbacks.callbacks[0x10],
-    action3_callbacks.callbacks[0x11]]
+    action3_callbacks.callbacks[0x11],
+    action3_callbacks.callbacks[0x12]]
 
 callbacks = set()
 for d in cb_tables:
@@ -132,7 +135,8 @@ const_tables = [
     global_constants.patch_variables,
     global_constants.config_flags,
     global_constants.unified_maglev_var,
-    global_constants.railtype_table]
+    global_constants.railtype_table,
+    global_constants.roadtype_table]
 
 constant_names = set()
 for d in const_tables:

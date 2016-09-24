@@ -1,0 +1,210 @@
+/*
+ * This file is aimed to provide an example on how to code a roadtype in NML.
+ * To keep the code readable, not every property or variable is documented in
+ * detail, refer to the object-specific reference in the documentation.
+ *
+
+/**********************************************
+ * Header, containing some general stuff:
+ **********************************************/
+
+ /*
+ * First, define a grf block. This defines some basic properties of the grf,
+ * which are required for the grf to be valid and loadable.
+ */
+grf {
+    /* This grf is part of NML, therefore "NML" is chosen as the first three
+     * characters of the GRFID. It is the fifth real grf defined as part of
+     * NML, therefore the last character is set to 4. Successive grfs will
+     * have 5, 6, etc. there, to make sure each example grf has a unique GRFID.
+     */
+    grfid : "NML\04";
+    name : string(STR_GRF_NAME);
+    desc : string(STR_GRF_DESCRIPTION);
+    version : 0; // must be numeric
+    min_compatible_version : 0;
+}
+
+/* Default ground tile template (re-use as needed) */
+template ground_tile(x, y) { [x, y, 64, 31, -31, 0] }
+
+/**********************************************
+ * Road underlays (tracks + ballast):
+ **********************************************/
+/* Underlays (single track bits with ballast)\
+ * Used for bridge surfaces also, therefore the template is split */
+template tmpl_underlay_straight() {
+    ground_tile(75, 0)
+    ground_tile( 0, 0)
+}
+template tmpl_underlay_slope() {
+    [ 75, 40, 64,39, -31, -8]
+    [150, 40, 64,23, -31,  0]
+    [225, 40, 64,23, -31,  0]
+    [300, 40, 64,39, -30, -9]
+}
+template tmpl_underlay_diagonal() {
+    ground_tile(150,  0)
+    ground_tile(225,  0)
+    ground_tile(  0, 40)
+    ground_tile(300,  0)
+}
+
+template tmpl_underlay_railtypes() {
+    tmpl_underlay_straight()
+    tmpl_underlay_diagonal()
+    tmpl_underlay_slope()
+
+    /* X-crossing */
+    ground_tile(0, 120)
+
+    /* underlay for crossings w/o tracks */
+    ground_tile(  0, 80)
+    ground_tile(225, 80)
+    ground_tile(150, 80)
+    ground_tile( 75, 80)
+    ground_tile(300, 80)
+}
+/* Spriteset containing all underlays */
+spriteset(track_underlays, "gfx/rails_overlays.png") {
+    tmpl_underlay_railtypes()
+}
+
+/**********************************************
+ * Track overlays (tracks without ballast):
+ **********************************************/
+
+/* Template for overlays; 2x straight track, 4x diagonal track, 4x slope */
+template tmpl_overlay_railtypes() {
+    [  0,155, 40,21, -19,  5]
+    [ 50,155, 40,21, -19,  5]
+
+    [100,155, 40, 7, -19,  4]
+    [150,155, 40, 7, -21, 20]
+    [200,155, 12,19,  11,  6]
+    [250,155, 12,19, -21,  6]
+
+    [  0,195, 64,39, -33, -8]
+    [ 75,195, 64,23, -31,  0]
+    [150,195, 64,23, -31,  0]
+    [225,195, 64,39, -32, -9]
+}
+/* Spriteset for overlays */
+spriteset(track_overlays, "gfx/rails_overlays.png") {
+ tmpl_overlay_railtypes()
+}
+
+/**********************************************
+ * Tracks in tunnels:
+ **********************************************/
+/* Template for tunnel track overlays */
+template tmpl_tunnel_tracks() {
+    ground_tile(75,  0)
+    ground_tile( 0,  0)
+    ground_tile(75, 50)
+    ground_tile( 0, 50)
+}
+spriteset(tunnel_overlays, "gfx/tunnel_track.png") {
+    tmpl_tunnel_tracks()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+/* Template for depot sprites */
+template tmpl_depot() {
+    [200, 10, 16,  8,  17,   7]
+    [118,  8, 64, 47,  -9, -31]
+    [  0, 10, 16,  8, -31,   7]
+    [ 37,  8, 64, 47, -53, -31]
+    [ 37, 63, 64, 47, -53, -31]
+    [118, 63, 64, 47,  -9, -31]
+}
+
+/* Depots have differing sprites for normal and e-rail */
+spriteset(depot_normal_rail, "gfx/depot_normal.png") {
+    tmpl_depot()
+}
+spriteset(depot_electric_rail, "gfx/depot_electric.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Bridge surface, uses the same sprites as track underlays, but in a different order */
+template tmpl_bridges_underlay() {
+    tmpl_underlay_straight()
+    tmpl_underlay_slope()
+    tmpl_underlay_diagonal()
+}
+/* Spriteset for bridge surfaces */
+spriteset(bridge_underlay, "gfx/rails_overlays.png") {
+    tmpl_bridges_underlay()
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Template for a single icon sprite */
+template tmpl_gui_icon(x, y) {
+    [x, y, 20, 20, 0, 0]
+}
+
+/* Template for a single cursor sprite */
+template tmpl_gui_cursor(x, y) {
+    [x, y, 32, 32, 0, 0]
+}
+/* Template for all the GUI sprites (8 icons + 8 cursors) */
+template tmpl_gui() {
+    tmpl_gui_icon(  0, 0)
+    tmpl_gui_icon( 25, 0)
+    tmpl_gui_icon( 50, 0)
+    tmpl_gui_icon( 75, 0)
+    tmpl_gui_icon(100, 0)
+    tmpl_gui_icon(125, 0)
+    tmpl_gui_icon(150, 0)
+    tmpl_gui_icon(175, 0)
+
+    tmpl_gui_cursor(200, 0)
+    tmpl_gui_cursor(250, 0)
+    tmpl_gui_cursor(300, 0)
+    tmpl_gui_cursor(350, 0)
+    tmpl_gui_cursor(400, 0)
+    tmpl_gui_cursor(450, 0)
+    tmpl_gui_cursor(500, 0)
+    tmpl_gui_cursor(550, 0)
+}
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal, "gfx/gui_rail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Roadtype definitions:
+ **********************************************/
+
+/* Define the normal roads */
+item(FEAT_ROADTYPES, road) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        label: "ROAD"; // Let this railtype replace the default normal rails
+        compatible_railtype_list: ["ROAD"];
+        powered_railtype_list: ["ROAD"];
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_rail;
+        bridge_surfaces: bridge_underlay;
+        gui: gui_normal;
+        /* Caternary is not not implemented here, use the default */
+    }
+}

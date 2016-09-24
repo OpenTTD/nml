@@ -23,6 +23,7 @@ reserved = {
     'param' :               'PARAMETER',
     'cargotable' :          'CARGOTABLE',
     'railtypetable' :       'RAILTYPETABLE',
+    'roadtypetable' :       'ROADTYPETABLE',
     'if' :                  'IF',
     'else' :                'ELSE',
     'while' :               'WHILE',            # reserved

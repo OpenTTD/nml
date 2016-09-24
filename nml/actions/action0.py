@@ -204,6 +204,7 @@ used_ids = [
     BlockAllocation(  0,    255, "Object"),
     BlockAllocation(  0,     63, "Railtype"),
     BlockAllocation(  0,    255, "Airport Tile"),
+    BlockAllocation(  0,     15, "Roadtype"),
 ]
 
 def print_stats():
@@ -728,6 +729,37 @@ def get_railtypelist_action(railtype_list):
         offset += 4
     action0.prop_list.append(IDListProp(0x12, id_table))
     action0.num_ids = len(railtype_list)
+
+    if len(act6.modifications) > 0: action_list.append(act6)
+
+    action_list.append(action0)
+    action6.free_parameters.restore()
+    return action_list
+
+def get_roadtypelist_action(roadtype_list):
+    action6.free_parameters.save()
+    act6 = action6.Action6()
+
+    action_list = []
+    action0, offset = create_action0(0x08, expression.ConstantNumeric(0), act6, action_list)
+    id_table = []
+    offset += 1 # Skip property number
+    for roadtype in roadtype_list:
+        if isinstance(roadtype, expression.StringLiteral):
+            id_table.append(roadtype)
+            offset+=4
+            continue
+        param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(roadtype[-1])))
+        action_list.extend(extra_actions)
+        for idx in range(len(roadtype)-2, -1, -1):
+            val = expression.ConstantNumeric(expression.parse_string_to_dword(roadtype[idx]))
+            action_list.append(action7.SkipAction(0x09, 0x00, 4, (0x0D, None), val.value, 1))
+            action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0xFF), val))
+        act6.modify_bytes(param, 4, offset)
+        id_table.append(expression.StringLiteral(r"\00\00\00\00", None))
+        offset += 4
+    action0.prop_list.append(IDListProp(0x12, id_table))
+    action0.num_ids = len(roadtype_list)
 
     if len(act6.modifications) > 0: action_list.append(act6)
 
