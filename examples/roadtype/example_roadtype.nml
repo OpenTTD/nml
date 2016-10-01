@@ -189,6 +189,7 @@ item(FEAT_ROADTYPES, road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
+        name: string(STR_ROAD_NAME);
         label: "ROAD"; // Let this roadtype replace the default normal roads
         compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
