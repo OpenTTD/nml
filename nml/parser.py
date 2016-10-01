@@ -88,6 +88,7 @@ class NMLParser(object):
                       | town_names
                       | cargotable
                       | railtype
+                      | roadtype
                       | grf_block
                       | param_assignment
                       | skip_all
