@@ -433,6 +433,10 @@ constant_numbers = {
     'RAILTYPE_FLAG_ALLOW_90DEG'       : 4,
     'RAILTYPE_FLAG_DISALLOW_90DEG'    : 5,
 
+    #roadtype flags
+    'ROADTYPE_FLAG_CATENARY'          : 0,
+    'ROADTYPE_FLAG_NO_LEVEL_CROSSING' : 1,
+
     #type of default station graphics used for a railtype
     'RAILTYPE_STATION_NORMAL'   : 0,
     'RAILTYPE_STATION_MONORAIL' : 1,
