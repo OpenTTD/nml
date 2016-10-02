@@ -203,6 +203,7 @@ item(FEAT_ROADTYPES, road) {
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
         gui: gui_normal;
-        /* Caternary is not not implemented here, use the default */
+        /* Catenary is not not implemented here, use the default */
     }
 }
+
