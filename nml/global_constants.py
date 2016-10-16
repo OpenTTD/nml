@@ -114,22 +114,26 @@ constant_numbers = {
     'TRAIN_FLAG_FLIP' : 3,
     'TRAIN_FLAG_AUTOREFIT': 4,
     'TRAIN_FLAG_NO_BREAKDOWN_SMOKE': 6,
+    'TRAIN_FLAG_SPRITE_STACK': 7,
 
     #roadveh misc flags
     'ROADVEH_FLAG_TRAM' : 0,
     'ROADVEH_FLAG_2CC'  : 1,
     'ROADVEH_FLAG_AUTOREFIT': 4,
     'ROADVEH_FLAG_NO_BREAKDOWN_SMOKE': 6,
+    'ROADVEH_FLAG_SPRITE_STACK': 7,
 
     #ship misc flags
     'SHIP_FLAG_2CC'  : 1,
     'SHIP_FLAG_AUTOREFIT': 4,
     'SHIP_FLAG_NO_BREAKDOWN_SMOKE': 6,
+    'SHIP_FLAG_SPRITE_STACK': 7,
 
     #aircrafts misc flags
     'AIRCRAFT_FLAG_2CC'  : 1,
     'AIRCRAFT_FLAG_AUTOREFIT': 4,
     'AIRCRAFT_FLAG_NO_BREAKDOWN_SMOKE': 6,
+    'AIRCRAFT_FLAG_SPRITE_STACK': 7,
 
     #for those, who can't tell the difference between a train and an aircraft:
     'VEHICLE_FLAG_2CC' : 1,
