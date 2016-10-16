@@ -176,6 +176,9 @@ constant_numbers = {
 
     'CB_RESULT_NO_SOUND'                   : 0x7EFF, # Never a valid sound id
 
+    # Callback results in registers
+    'CB_FLAG_MORE_SPRITES'                 : 0x80000000,
+
     # 1-based, not 0-based
     'SOUND_EVENT_START'                    : 1,
     'SOUND_EVENT_TUNNEL'                   : 2,
@@ -721,6 +724,7 @@ constant_numbers = {
     'PALETTE_TILE_RED_PULSATING'            : 771,
     'PALETTE_SEL_TILE_RED'                  : 772,
     'PALETTE_SEL_TILE_BLUE'                 : 773,
+    'PALETTE_IDENTITY'                      : 775,
     'PALETTE_CC_FIRST'                      : 775,
     'PALETTE_CC_DARK_BLUE'                  : 775, # = first
     'PALETTE_CC_PALE_GREEN'                 : 776,
