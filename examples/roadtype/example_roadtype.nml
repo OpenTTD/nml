@@ -189,10 +189,66 @@ item(FEAT_ROADTYPES, road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
-        name: string(STR_ROAD_NAME);
+        name: string(STR_NAME_ROAD);
         label: "ROAD"; // Let this roadtype replace the default normal roads
         compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+
+/* Define the normal roads */
+item(FEAT_ROADTYPES, wolf_road) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_WOLF_ROAD);
+        label: "WOLF"; // Let this roadtype replace the default normal roads
+        compatible_roadtype_list: ["ROAD"];
+        powered_roadtype_list: ["ROAD"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_WOLF_ROAD);
+        menu_text: string(STR_MENU_TEXT_WOLF_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_WOLF_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_WOLF_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_WOLF_ROAD);
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+
+/* Define the normal roads */
+item(FEAT_ROADTYPES, cat_tram) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_CAT_TRAM);
+        label: "TRAM"; // Let this roadtype replace the default tram
+        compatible_roadtype_list: ["TRAM"];
+        powered_roadtype_list: ["TRAM"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_CAT_TRAM);
+        menu_text: string(STR_MENU_TEXT_CAT_TRAM);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_CAT_TRAM);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_CAT_TRAM);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_CAT_TRAM);
     }
 
     /* Associate graphics with this roadtype */
