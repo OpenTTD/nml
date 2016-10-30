@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, expression, tokens, nmlop, unit
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, roadtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, roadtypetable, tramtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 
@@ -89,6 +89,7 @@ class NMLParser(object):
                       | cargotable
                       | railtype
                       | roadtype
+                      | tramtype
                       | grf_block
                       | param_assignment
                       | skip_all
@@ -687,6 +688,24 @@ class NMLParser(object):
 
     def p_roadtypetable_item(self, t):
         '''roadtypetable_item : ID
+                              | STRING_LITERAL
+                              | ID COLON LBRACKET expression_list RBRACKET'''
+        if len(t) == 2: t[0] = t[1]
+        else: t[0] = assignment.Assignment(t[1], t[4], t[1].pos)
+
+    def p_tramtypetable(self, t):
+        '''tramtype : TRAMTYPETABLE LBRACE tramtypetable_list RBRACE
+                    | TRAMTYPETABLE LBRACE tramtypetable_list COMMA RBRACE'''
+        t[0] = tramtypetable.TramtypeTable(t[3], t.lineno(1))
+
+    def p_tramtypetable_list(self, t):
+        '''tramtypetable_list : tramtypetable_item
+                              | tramtypetable_list COMMA tramtypetable_item'''
+        if len(t) == 2: t[0] = [t[1]]
+        else: t[0] = t[1] + [t[3]]
+
+    def p_tramtypetable_item(self, t):
+        '''tramtypetable_item : ID
                               | STRING_LITERAL
                               | ID COLON LBRACKET expression_list RBRACKET'''
         if len(t) == 2: t[0] = t[1]

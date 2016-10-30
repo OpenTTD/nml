@@ -36,6 +36,7 @@ feature_ids = {
     'FEAT_RAILTYPES': 0x10,
     'FEAT_AIRPORTTILES': 0x11,
     'FEAT_ROADTYPES': 0x12,
+    'FEAT_TRAMTYPES': 0x13,
 }
 
 def feature_name(feature):

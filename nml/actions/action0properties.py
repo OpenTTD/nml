@@ -151,7 +151,7 @@ class Action0Property(BaseAction0Property):
 #
 # 'first' (value doesn't matter) if the property should be set first (generally a substitute type)
 
-properties = 0x13 * [None]
+properties = 0x14 * [None]
 
 #
 # Some helper functions that are used for multiple features
@@ -1133,4 +1133,55 @@ properties[0x12] = {
     'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
     'maintenance_cost'         : {'size': 2, 'num': 0x1C},
     'alternative_roadtype_list': {'custom_function': lambda x: roadtype_list(x, 0x1D)},
+}
+
+#
+# Feature 0x13 (Tram Types)
+#
+
+class TramtypeListProp(BaseAction0Property):
+    def __init__(self, prop_num, tramtype_list):
+        self.prop_num = prop_num
+        self.tramtype_list = tramtype_list
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        file.print_byte(len(self.tramtype_list))
+        for tramtype in self.tramtype_list:
+            tramtype.write(file, 4)
+        file.newline()
+
+    def get_size(self):
+        return len(self.tramtype_list) * 4 + 2
+
+def tramtype_list(value, prop_num):
+    if not isinstance(value, Array):
+        raise generic.ScriptError("Tramtype list must be an array of literal strings", value.pos)
+    for val in value.values:
+        if not isinstance(val, StringLiteral): raise generic.ScriptError("Tramtype list must be an array of literal strings", val.pos)
+    return [TramtypeListProp(prop_num, value.values)]
+
+properties[0x13] = {
+    'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
+    'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
+    'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
+    'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
+    'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
+    'new_engine_text'          : {'size': 2, 'num': 0x0D, 'string': 0xDC},
+    'compatible_tramtype_list' : {'custom_function': lambda x: tramtype_list(x, 0x0E)},
+    'powered_tramtype_list'    : {'custom_function': lambda x: tramtype_list(x, 0x0F)},
+    'tramtype_flags'           : {'size': 1, 'num': 0x10},
+    'curve_speed_multiplier'   : {'size': 1, 'num': 0x11},
+    'station_graphics'         : {'size': 1, 'num': 0x12},
+    'construction_cost'        : {'size': 2, 'num': 0x13},
+    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (5000, 1397)},
+    'acceleration_model'       : {'size': 1, 'num': 0x15},
+    'map_colour'               : {'size': 1, 'num': 0x16},
+    'introduction_date'        : {'size': 4, 'num': 0x17},
+    'requires_tramtype_list'   : {'custom_function': lambda x: tramtype_list(x, 0x18)},
+    'introduces_tramtype_list' : {'custom_function': lambda x: tramtype_list(x, 0x19)},
+    'sort_order'               : {'size': 1, 'num': 0x1A},
+    'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
+    'maintenance_cost'         : {'size': 2, 'num': 0x1C},
+    'alternative_tramtype_list': {'custom_function': lambda x: tramtype_list(x, 0x1D)},
 }

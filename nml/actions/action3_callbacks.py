@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, nmlop
 
-callbacks = 0x13 * [{}]
+callbacks = 0x14 * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -278,6 +278,21 @@ callbacks[0x11] = {
 
 # Roadtypes
 callbacks[0x12] = {
+    # No default here, it makes no sense
+    'gui'             : {'type': 'cargo', 'num': 0x00},
+    'track_overlay'   : {'type': 'cargo', 'num': 0x01},
+    'underlay'        : {'type': 'cargo', 'num': 0x02},
+    'tunnels'         : {'type': 'cargo', 'num': 0x03},
+    'catenary_wire'   : {'type': 'cargo', 'num': 0x04},
+    'catenary_pylons' : {'type': 'cargo', 'num': 0x05},
+    'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
+    'level_crossings' : {'type': 'cargo', 'num': 0x07},
+    'depots'          : {'type': 'cargo', 'num': 0x08},
+    'tunnel_overlay'  : {'type': 'cargo', 'num': 0x0A},
+}
+
+# Tramtypes
+callbacks[0x13] = {
     # No default here, it makes no sense
     'gui'             : {'type': 'cargo', 'num': 0x00},
     'track_overlay'   : {'type': 'cargo', 'num': 0x01},

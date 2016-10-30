@@ -56,6 +56,7 @@ var_tables = [
     action2var_variables.varact2vars60x_objects,
     action2var_variables.varact2vars_railtype,
     action2var_variables.varact2vars_roadtype,
+    action2var_variables.varact2vars_tramtype,
     action2var_variables.varact2vars_airporttiles,
     action2var_variables.varact2vars60x_airporttiles,
     action2var_variables.varact2vars_towns]
@@ -136,7 +137,8 @@ const_tables = [
     global_constants.config_flags,
     global_constants.unified_maglev_var,
     global_constants.railtype_table,
-    global_constants.roadtype_table]
+    global_constants.roadtype_table,
+    global_constants.tramtype_table]
 
 constant_names = set()
 for d in const_tables:
