@@ -85,7 +85,7 @@ template tmpl_underlay_roadtypes() {
     ground_tile(300, 80)
 }
 /* Spriteset containing all underlays */
-spriteset(track_underlays, "gfx/road_underlays.png") {
+spriteset(track_underlays, "gfx/roads_red.png") {
     tmpl_underlay_roadtypes()
 }
 
@@ -118,7 +118,11 @@ template tmpl_overlay_roadtypes() {
     [225, 200, 64, 31, -31, 0]
 }
 /* Spriteset for overlays */
-spriteset(track_overlays, "gfx/road_underlays.png") {
+spriteset(road_overlays_red, "gfx/roads_red.png") {
+    tmpl_overlay_roadtypes()
+}
+/* Spriteset for overlays */
+spriteset(road_overlays_blue, "gfx/roads_blue.png") {
     tmpl_overlay_roadtypes()
 }
 
@@ -165,7 +169,7 @@ template tmpl_bridges_underlay() {
     tmpl_underlay_junctions()
 }
 /* Spriteset for bridge surfaces */
-spriteset(bridge_underlay, "gfx/road_underlays.png") {
+spriteset(bridge_underlay, "gfx/roads_red.png") {
     tmpl_bridges_underlay()
 }
 
@@ -224,7 +228,7 @@ item(FEAT_ROADTYPES, road) {
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: track_overlays;
+        track_overlay: road_overlays_red;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
@@ -251,7 +255,7 @@ item(FEAT_ROADTYPES, wolf_road) {
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: track_overlays;
+        track_overlay: road_overlays_blue;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
@@ -278,7 +282,7 @@ item(FEAT_ROADTYPES, north_road) {
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: track_overlays;
+        track_overlay: road_overlays_red;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
@@ -303,7 +307,7 @@ item(FEAT_TRAMTYPES, tram) {
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: track_overlays;
+        track_overlay: road_overlays_red;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
@@ -330,7 +334,7 @@ item(FEAT_TRAMTYPES, cat_tram) {
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: track_overlays;
+        track_overlay: road_overlays_red;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
@@ -357,7 +361,7 @@ item(FEAT_TRAMTYPES, dog_tram) {
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: track_overlays;
+        track_overlay: road_overlays_red;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
