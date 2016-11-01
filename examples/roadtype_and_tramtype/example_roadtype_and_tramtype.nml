@@ -125,6 +125,10 @@ spriteset(road_overlays_red, "gfx/roads_red.png") {
 spriteset(road_overlays_blue, "gfx/roads_blue.png") {
     tmpl_overlay_roadtypes()
 }
+/* Spriteset for overlays */
+spriteset(road_overlays_yellow, "gfx/roads_yellow.png") {
+    tmpl_overlay_roadtypes()
+}
 
 /**********************************************
  * Tracks in tunnels:
@@ -224,6 +228,25 @@ item(FEAT_ROADTYPES, road) {
         label: "ROAD"; // Let this roadtype replace the default normal roads
         compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
+        sort_order: 7; // !! 7 is default place for normal rail; can't seem to over-ride this for road eh?
+    }
+}
+
+item(FEAT_ROADTYPES, red_road) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_RED_ROAD);
+        label: "REDR";
+        compatible_roadtype_list: ["ROAD"];
+        powered_roadtype_list: ["ROAD"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_RED_ROAD);
+        menu_text: string(STR_MENU_TEXT_RED_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_RED_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_RED_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_RED_ROAD);
+        roadtype_flags: bitmask(ROADTYPE_FLAG_CATENARY);
+        sort_order: 101;
     }
 
     /* Associate graphics with this roadtype */
@@ -238,19 +261,20 @@ item(FEAT_ROADTYPES, road) {
     }
 }
 
-item(FEAT_ROADTYPES, wolf_road) {
+item(FEAT_ROADTYPES, blue_road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
-        name: string(STR_NAME_WOLF_ROAD);
-        label: "WOLF";
+        name: string(STR_NAME_BLUE_ROAD);
+        label: "BLUE";
         compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
-        toolbar_caption: string(STR_TOOLBAR_CAPTION_WOLF_ROAD);
-        menu_text: string(STR_MENU_TEXT_WOLF_ROAD);
-        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_WOLF_ROAD);
-        autoreplace_text: string(STR_AUTOREPLACE_TEXT_WOLF_ROAD);
-        new_engine_text: string(STR_NEW_ENGINE_TEXT_WOLF_ROAD);
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_BLUE_ROAD);
+        menu_text: string(STR_MENU_TEXT_BLUE_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_BLUE_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_BLUE_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_BLUE_ROAD);
+        sort_order: 99;
     }
 
     /* Associate graphics with this roadtype */
@@ -265,24 +289,25 @@ item(FEAT_ROADTYPES, wolf_road) {
     }
 }
 
-item(FEAT_ROADTYPES, north_road) {
+item(FEAT_ROADTYPES, yellow_road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
-        name: string(STR_NAME_NORTH_ROAD);
-        label: "NRTH";
+        name: string(STR_NAME_YELLOW_ROAD);
+        label: "YELL";
         compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
-        toolbar_caption: string(STR_TOOLBAR_CAPTION_NORTH_ROAD);
-        menu_text: string(STR_MENU_TEXT_NORTH_ROAD);
-        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_NORTH_ROAD);
-        autoreplace_text: string(STR_AUTOREPLACE_TEXT_NORTH_ROAD);
-        new_engine_text: string(STR_NEW_ENGINE_TEXT_NORTH_ROAD);
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_YELLOW_ROAD);
+        menu_text: string(STR_MENU_TEXT_YELLOW_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_YELLOW_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_YELLOW_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_YELLOW_ROAD);
+        sort_order: 100;
     }
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: road_overlays_red;
+        track_overlay: road_overlays_yellow;
         underlay: track_underlays;
         tunnels: tunnel_overlays;
         depots: depot_normal_road;

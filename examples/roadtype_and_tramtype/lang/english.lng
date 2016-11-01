@@ -4,19 +4,26 @@ STR_GRF_DESCRIPTION                                             :{ORANGE}NML Exa
 
 STR_NAME_ROAD                                                   :Default Road
 
-STR_NAME_WOLF_ROAD                                              :(Name 0x1B) Wolf Road
-STR_TOOLBAR_CAPTION_WOLF_ROAD                                   :(Toolbar Caption 0x09) Wolf Road
-STR_MENU_TEXT_WOLF_ROAD                                         :(Menu Text 0x0A) Wolf Road
-STR_BUILD_WINDOW_CAPTION_WOLF_ROAD                              :(Build Window Caption 0x0B) Wolf Road
-STR_AUTOREPLACE_TEXT_WOLF_ROAD                                  :(Autoreplace Text 0x0C) Wolf Road
-STR_NEW_ENGINE_TEXT_WOLF_ROAD                                   :(New Engine Text 0x0D) Wolf Road
+STR_NAME_RED_ROAD                                               :(Name 0x1B) Red Electric Road
+STR_TOOLBAR_CAPTION_RED_ROAD                                    :(Toolbar Caption 0x09) Red Electric Road
+STR_MENU_TEXT_RED_ROAD                                          :(Menu Text 0x0A) Red Electric Road
+STR_BUILD_WINDOW_CAPTION_RED_ROAD                               :(Build Window Caption 0x0B) Red Electric Road
+STR_AUTOREPLACE_TEXT_RED_ROAD                                   :(Autoreplace Text 0x0C) Red Electric Road
+STR_NEW_ENGINE_TEXT_RED_ROAD                                    :(New Engine Text 0x0D) red Electric Road
 
-STR_NAME_NORTH_ROAD                                             :(Name 0x1B) North Road
-STR_TOOLBAR_CAPTION_NORTH_ROAD                                  :(Toolbar Caption 0x09) North Road
-STR_MENU_TEXT_NORTH_ROAD                                        :(Menu Text 0x0A) North Road
-STR_BUILD_WINDOW_CAPTION_NORTH_ROAD                             :(Build Window Caption 0x0B) North Road
-STR_AUTOREPLACE_TEXT_NORTH_ROAD                                 :(Autoreplace Text 0x0C) North Road
-STR_NEW_ENGINE_TEXT_NORTH_ROAD                                  :(New Engine Text 0x0D) North Road
+STR_NAME_BLUE_ROAD                                              :(Name 0x1B) Blue Road
+STR_TOOLBAR_CAPTION_BLUE_ROAD                                   :(Toolbar Caption 0x09) Blue Road
+STR_MENU_TEXT_BLUE_ROAD                                         :(Menu Text 0x0A) Blue Road
+STR_BUILD_WINDOW_CAPTION_BLUE_ROAD                              :(Build Window Caption 0x0B) Blue Road
+STR_AUTOREPLACE_TEXT_BLUE_ROAD                                  :(Autoreplace Text 0x0C) Blue Road
+STR_NEW_ENGINE_TEXT_BLUE_ROAD                                   :(New Engine Text 0x0D) Blue Road
+
+STR_NAME_YELLOW_ROAD                                            :(Name 0x1B) Yellow Road
+STR_TOOLBAR_CAPTION_YELLOW_ROAD                                 :(Toolbar Caption 0x09) Yellow Road
+STR_MENU_TEXT_YELLOW_ROAD                                       :(Menu Text 0x0A) Yellow Road
+STR_BUILD_WINDOW_CAPTION_YELLOW_ROAD                            :(Build Window Caption 0x0B) Yellow Road
+STR_AUTOREPLACE_TEXT_YELLOW_ROAD                                :(Autoreplace Text 0x0C) Yellow Road
+STR_NEW_ENGINE_TEXT_YELLOW_ROAD                                 :(New Engine Text 0x0D) Yellow Road
 
 STR_NAME_TRAM                                                   :Default Tram
 
