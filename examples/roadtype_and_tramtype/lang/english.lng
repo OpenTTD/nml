@@ -1,15 +1,24 @@
 ##grflangid 0x01
-STR_GRF_NAME                                                    :NML Example NewGRF: Roadtype
-STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Roadtype{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}Original graphics by {SILVER}Irwe, {BLACK}coding by {SILVER}andythenorth.{}{BLACK}This NewGRF defines a graphical replacement for normal roads
+STR_GRF_NAME                                                    :NML Example NewGRF: Roadtype and Tramtype
+STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Roadtype and Tramtype{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}Original graphics by {SILVER}Irwe, {BLACK}coding by {SILVER}andythenorth.
 
 STR_NAME_ROAD                                                   :Default Road
 
-STR_NAME_WOLF_ROAD                                              :(Name 0x1B) Wolf Cat Road
-STR_TOOLBAR_CAPTION_WOLF_ROAD                                   :(Toolbar Caption 0x09) Wolf Cat Road
-STR_MENU_TEXT_WOLF_ROAD                                         :(Menu Text 0x0A) Wolf Cat Road
-STR_BUILD_WINDOW_CAPTION_WOLF_ROAD                              :(Build Window Caption 0x0B) Wolf Cat Road
-STR_AUTOREPLACE_TEXT_WOLF_ROAD                                  :(Autoreplace Text 0x0C) Wolf Cat Road
-STR_NEW_ENGINE_TEXT_WOLF_ROAD                                   :(New Engine Text 0x0D) Wolf Cat Road
+STR_NAME_WOLF_ROAD                                              :(Name 0x1B) Wolf Road
+STR_TOOLBAR_CAPTION_WOLF_ROAD                                   :(Toolbar Caption 0x09) Wolf Road
+STR_MENU_TEXT_WOLF_ROAD                                         :(Menu Text 0x0A) Wolf Road
+STR_BUILD_WINDOW_CAPTION_WOLF_ROAD                              :(Build Window Caption 0x0B) Wolf Road
+STR_AUTOREPLACE_TEXT_WOLF_ROAD                                  :(Autoreplace Text 0x0C) Wolf Road
+STR_NEW_ENGINE_TEXT_WOLF_ROAD                                   :(New Engine Text 0x0D) Wolf Road
+
+STR_NAME_NORTH_ROAD                                             :(Name 0x1B) North Road
+STR_TOOLBAR_CAPTION_NORTH_ROAD                                  :(Toolbar Caption 0x09) North Road
+STR_MENU_TEXT_NORTH_ROAD                                        :(Menu Text 0x0A) North Road
+STR_BUILD_WINDOW_CAPTION_NORTH_ROAD                             :(Build Window Caption 0x0B) North Road
+STR_AUTOREPLACE_TEXT_NORTH_ROAD                                 :(Autoreplace Text 0x0C) North Road
+STR_NEW_ENGINE_TEXT_NORTH_ROAD                                  :(New Engine Text 0x0D) North Road
+
+STR_NAME_TRAM                                                   :Default Tram
 
 STR_NAME_CAT_TRAM                                               :(Name 0x1B) Cat Tram
 STR_TOOLBAR_CAPTION_CAT_TRAM                                    :(Toolbar Caption 0x09) Cat Tram
@@ -17,3 +26,10 @@ STR_MENU_TEXT_CAT_TRAM                                          :(Menu Text 0x0A
 STR_BUILD_WINDOW_CAPTION_CAT_TRAM                               :(Build Window Caption 0x0B) Cat Tram
 STR_AUTOREPLACE_TEXT_CAT_TRAM                                   :(Autoreplace Text 0x0C) Cat Tram
 STR_NEW_ENGINE_TEXT_CAT_TRAM                                    :(New Engine Text 0x0D) Cat Tram
+
+STR_NAME_DOG_TRAM                                               :(Name 0x1B) Dog Tram
+STR_TOOLBAR_CAPTION_DOG_TRAM                                    :(Toolbar Caption 0x09) Dog Tram
+STR_MENU_TEXT_DOG_TRAM                                          :(Menu Text 0x0A) Dog Tram
+STR_BUILD_WINDOW_CAPTION_DOG_TRAM                               :(Build Window Caption 0x0B) Dog Tram
+STR_AUTOREPLACE_TEXT_DOG_TRAM                                   :(Autoreplace Text 0x0C) Dog Tram
+STR_NEW_ENGINE_TEXT_DOG_TRAM                                    :(New Engine Text 0x0D) Dog Tram

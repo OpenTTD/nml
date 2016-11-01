@@ -31,29 +31,48 @@ template ground_tile(x, y) { [x, y, 64, 31, -31, 0] }
 /**********************************************
  * Road underlays (tracks + ballast):
  **********************************************/
-/* Underlays (single track bits with ballast)\
- * Used for bridge surfaces also, therefore the template is split */
+/* Template for underlays; 2x straight road, 5x junctions, 4x corners, 4x slope, 4x half-tile road */
+
+/* Used for bridge surfaces also, therefore the template is split */
 template tmpl_underlay_straight() {
-    ground_tile(75, 0)
     ground_tile( 0, 0)
+    ground_tile(75, 0)
 }
-template tmpl_underlay_slope() {
-    [ 75, 40, 64,39, -31, -8]
-    [150, 40, 64,23, -31,  0]
-    [225, 40, 64,23, -31,  0]
-    [300, 40, 64,39, -30, -9]
+template tmpl_underlay_junctions() {
+    ground_tile(150, 0)
+    ground_tile(225, 0)
+    ground_tile(300, 0)
+    ground_tile(375, 0)
+    ground_tile(450, 0)
 }
-template tmpl_underlay_diagonal() {
-    ground_tile(150,  0)
-    ground_tile(225,  0)
+template tmpl_underlay_corners() {
     ground_tile(  0, 40)
-    ground_tile(300,  0)
+    ground_tile( 75, 40)
+    ground_tile(150, 40)
+    ground_tile(225, 40)
 }
+
+template tmpl_underlay_slope() {
+    [300, 40, 64, 39, -31, -8]
+    [375, 40, 64, 23, -31, 0]
+    [450, 40, 64, 23, -31, 0]
+    [525, 40, 64, 39, -31, -8]
+}
+
+template tmpl_underlay_half_tiles() {
+    ground_tile(  0, 80)
+    ground_tile( 75, 80)
+    ground_tile(150, 80)
+    ground_tile(225, 80)
+}
+
 
 template tmpl_underlay_roadtypes() {
     tmpl_underlay_straight()
-    tmpl_underlay_diagonal()
+    tmpl_underlay_junctions()
+    tmpl_underlay_corners()
     tmpl_underlay_slope()
+    tmpl_underlay_half_tiles()
 
     /* X-crossing */
     ground_tile(0, 120)
@@ -66,32 +85,41 @@ template tmpl_underlay_roadtypes() {
     ground_tile(300, 80)
 }
 /* Spriteset containing all underlays */
-spriteset(track_underlays, "gfx/rails_overlays.png") {
+spriteset(track_underlays, "gfx/road_underlays.png") {
     tmpl_underlay_roadtypes()
 }
 
 /**********************************************
  * Track overlays (tracks without ballast):
  **********************************************/
-
-/* Template for overlays; 2x straight track, 4x diagonal track, 4x slope */
 template tmpl_overlay_roadtypes() {
-    [  0,155, 40,21, -19,  5]
-    [ 50,155, 40,21, -19,  5]
+    [ 0, 120, 64, 31, -31, 0]
+    [75, 120, 64, 31, -31, 0]
 
-    [100,155, 40, 7, -19,  4]
-    [150,155, 40, 7, -21, 20]
-    [200,155, 12,19,  11,  6]
-    [250,155, 12,19, -21,  6]
+    [150, 120, 64, 31, -31, 0]
+    [225, 120, 64, 31, -31, 0]
+    [300, 120, 64, 31, -31, 0]
+    [375, 120, 64, 31, -31, 0]
+    [450, 120, 64, 31, -31, 0]
 
-    [  0,195, 64,39, -33, -8]
-    [ 75,195, 64,23, -31,  0]
-    [150,195, 64,23, -31,  0]
-    [225,195, 64,39, -32, -9]
+    [  0, 160, 64, 31, -31, 0]
+    [ 75, 160, 64, 31, -31, 0]
+    [150, 160, 64, 31, -31, 0]
+    [225, 160, 64, 31, -31, 0]
+
+    [300, 160, 64, 39, -31, -8]
+    [375, 160, 64, 21, -31, 0]
+    [450, 160, 64, 21, -31, 0]
+    [525, 160, 64, 39, -31, -8]
+
+    [  0, 200, 64, 31, -31, 0]
+    [ 75, 200, 64, 31, -31, 0]
+    [150, 200, 64, 31, -31, 0]
+    [225, 200, 64, 31, -31, 0]
 }
 /* Spriteset for overlays */
-spriteset(track_overlays, "gfx/rails_overlays.png") {
- tmpl_overlay_roadtypes()
+spriteset(track_overlays, "gfx/road_underlays.png") {
+    tmpl_overlay_roadtypes()
 }
 
 /**********************************************
@@ -134,10 +162,10 @@ spriteset(depot_normal_road, "gfx/depot_normal.png") {
 template tmpl_bridges_underlay() {
     tmpl_underlay_straight()
     tmpl_underlay_slope()
-    tmpl_underlay_diagonal()
+    tmpl_underlay_junctions()
 }
 /* Spriteset for bridge surfaces */
-spriteset(bridge_underlay, "gfx/rails_overlays.png") {
+spriteset(bridge_underlay, "gfx/road_underlays.png") {
     tmpl_bridges_underlay()
 }
 
@@ -184,7 +212,6 @@ spriteset(gui_normal, "gfx/gui_rail.png") {
  * Roadtype definitions:
  **********************************************/
 
-/* Define the normal roads */
 item(FEAT_ROADTYPES, road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
@@ -202,18 +229,17 @@ item(FEAT_ROADTYPES, road) {
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
-        gui: gui_normal;
+        // gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
 }
 
-/* Define the normal roads */
 item(FEAT_ROADTYPES, wolf_road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_WOLF_ROAD);
-        label: "WOLF"; // Let this roadtype replace the default normal roads
+        label: "WOLF";
         compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_WOLF_ROAD);
@@ -230,18 +256,69 @@ item(FEAT_ROADTYPES, wolf_road) {
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
+        // gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+
+item(FEAT_ROADTYPES, north_road) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_NORTH_ROAD);
+        label: "NRTH";
+        compatible_roadtype_list: ["ROAD"];
+        powered_roadtype_list: ["ROAD"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_NORTH_ROAD);
+        menu_text: string(STR_MENU_TEXT_NORTH_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_NORTH_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_NORTH_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_NORTH_ROAD);
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        // gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+/**********************************************
+ * Tramtype definitions:
+ **********************************************/
+
+item(FEAT_TRAMTYPES, tram) {
+    /* Set only the most essential properties,
+     * Few compatible tramtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_TRAM);
+        label: "TRAM"; // Let this roadtype replace the default tram
+        compatible_tramtype_list: ["TRAM"];
+        powered_tramtype_list: ["TRAM"];
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
         gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
 }
 
-/* Define the normal roads */
 item(FEAT_TRAMTYPES, cat_tram) {
     /* Set only the most essential properties,
      * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_CAT_TRAM);
-        label: "TRAM"; // Let this roadtype replace the default tram
+        label: "CATS";
         compatible_tramtype_list: ["TRAM"];
         powered_tramtype_list: ["TRAM"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_CAT_TRAM);
@@ -262,4 +339,33 @@ item(FEAT_TRAMTYPES, cat_tram) {
         /* Catenary is not not implemented here, use the default */
     }
 }
+
+item(FEAT_TRAMTYPES, dog_tram) {
+    /* Set only the most essential properties,
+     * Few compatible tramtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_DOG_TRAM);
+        label: "DOGS";
+        compatible_tramtype_list: ["TRAM"];
+        powered_tramtype_list: ["TRAM"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_DOG_TRAM);
+        menu_text: string(STR_MENU_TEXT_DOG_TRAM);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_DOG_TRAM);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_DOG_TRAM);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_DOG_TRAM);
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: track_overlays;
+        underlay: track_underlays;
+        tunnels: tunnel_overlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+
+
 
