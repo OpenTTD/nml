@@ -220,18 +220,6 @@ spriteset(gui_normal, "gfx/gui_rail.png") {
  * Roadtype definitions:
  **********************************************/
 
-item(FEAT_ROADTYPES, road) {
-    /* Set only the most essential properties,
-     * Few compatible roadtypes are defined as there are no other sets out there yet */
-    property {
-        name: string(STR_NAME_ROAD);
-        label: "ROAD"; // Let this roadtype replace the default normal roads
-        compatible_roadtype_list: ["ROAD"];
-        powered_roadtype_list: ["ROAD"];
-        sort_order: 7; // !! 7 is default place for normal rail; can't seem to over-ride this for road eh?
-    }
-}
-
 item(FEAT_ROADTYPES, red_road) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
@@ -319,27 +307,6 @@ item(FEAT_ROADTYPES, yellow_road) {
 /**********************************************
  * Tramtype definitions:
  **********************************************/
-
-item(FEAT_TRAMTYPES, tram) {
-    /* Set only the most essential properties,
-     * Few compatible tramtypes are defined as there are no other sets out there yet */
-    property {
-        name: string(STR_NAME_TRAM);
-        label: "TRAM"; // Let this roadtype replace the default tram
-        compatible_tramtype_list: ["TRAM"];
-        powered_tramtype_list: ["TRAM"];
-    }
-
-    /* Associate graphics with this roadtype */
-    graphics {
-        track_overlay: road_overlays_red;
-        underlay: track_underlays;
-        tunnels: tunnel_overlays;
-        depots: depot_normal_road;
-        bridge_surfaces: bridge_underlay;
-        /* Catenary is not not implemented here, use the default */
-    }
-}
 
 item(FEAT_TRAMTYPES, electric_tram) {
     /* Set only the most essential properties,
