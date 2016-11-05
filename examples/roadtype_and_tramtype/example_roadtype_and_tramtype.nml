@@ -342,19 +342,20 @@ item(FEAT_TRAMTYPES, tram) {
     }
 }
 
-item(FEAT_TRAMTYPES, cat_tram) {
+item(FEAT_TRAMTYPES, electric_tram) {
     /* Set only the most essential properties,
      * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
-        name: string(STR_NAME_CAT_TRAM);
-        label: "CATS";
+        name: string(STR_NAME_ELECTRIC_TRAM);
+        label: "ELTM";
         compatible_tramtype_list: ["TRAM"];
         powered_tramtype_list: ["TRAM"];
-        toolbar_caption: string(STR_TOOLBAR_CAPTION_CAT_TRAM);
-        menu_text: string(STR_MENU_TEXT_CAT_TRAM);
-        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_CAT_TRAM);
-        autoreplace_text: string(STR_AUTOREPLACE_TEXT_CAT_TRAM);
-        new_engine_text: string(STR_NEW_ENGINE_TEXT_CAT_TRAM);
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_ELECTRIC_TRAM);
+        menu_text: string(STR_MENU_TEXT_ELECTRIC_TRAM);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_ELECTRIC_TRAM);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_ELECTRIC_TRAM);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_ELECTRIC_TRAM);
+        tramtype_flags: bitmask(TRAMTYPE_FLAG_CATENARY);
     }
 
     /* Associate graphics with this roadtype */
@@ -369,19 +370,19 @@ item(FEAT_TRAMTYPES, cat_tram) {
     }
 }
 
-item(FEAT_TRAMTYPES, dog_tram) {
+item(FEAT_TRAMTYPES, green_tram) {
     /* Set only the most essential properties,
      * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
-        name: string(STR_NAME_DOG_TRAM);
-        label: "DOGS";
+        name: string(STR_NAME_GREEN_TRAM);
+        label: "GRTM";
         compatible_tramtype_list: ["TRAM"];
         powered_tramtype_list: ["TRAM"];
-        toolbar_caption: string(STR_TOOLBAR_CAPTION_DOG_TRAM);
-        menu_text: string(STR_MENU_TEXT_DOG_TRAM);
-        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_DOG_TRAM);
-        autoreplace_text: string(STR_AUTOREPLACE_TEXT_DOG_TRAM);
-        new_engine_text: string(STR_NEW_ENGINE_TEXT_DOG_TRAM);
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_GREEN_TRAM);
+        menu_text: string(STR_MENU_TEXT_GREEN_TRAM);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_GREEN_TRAM);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_GREEN_TRAM);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_GREEN_TRAM);
     }
 
     /* Associate graphics with this roadtype */

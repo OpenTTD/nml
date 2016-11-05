@@ -27,16 +27,16 @@ STR_NEW_ENGINE_TEXT_YELLOW_ROAD                                 :(New Engine Tex
 
 STR_NAME_TRAM                                                   :Default Tram
 
-STR_NAME_CAT_TRAM                                               :(Name 0x1B) Cat Tram
-STR_TOOLBAR_CAPTION_CAT_TRAM                                    :(Toolbar Caption 0x09) Cat Tram
-STR_MENU_TEXT_CAT_TRAM                                          :(Menu Text 0x0A) Cat Tram
-STR_BUILD_WINDOW_CAPTION_CAT_TRAM                               :(Build Window Caption 0x0B) Cat Tram
-STR_AUTOREPLACE_TEXT_CAT_TRAM                                   :(Autoreplace Text 0x0C) Cat Tram
-STR_NEW_ENGINE_TEXT_CAT_TRAM                                    :(New Engine Text 0x0D) Cat Tram
+STR_NAME_ELECTRIC_TRAM                                          :(Name 0x1B) Electric Tram
+STR_TOOLBAR_CAPTION_ELECTRIC_TRAM                               :(Toolbar Caption 0x09) Electric Tram
+STR_MENU_TEXT_ELECTRIC_TRAM                                     :(Menu Text 0x0A) Electric Tram
+STR_BUILD_WINDOW_CAPTION_ELECTRIC_TRAM                          :(Build Window Caption 0x0B) Electric Tram
+STR_AUTOREPLACE_TEXT_ELECTRIC_TRAM                              :(Autoreplace Text 0x0C) Electric Tram
+STR_NEW_ENGINE_TEXT_ELECTRIC_TRAM                               :(New Engine Text 0x0D) Electric Tram
 
-STR_NAME_DOG_TRAM                                               :(Name 0x1B) Dog Tram
-STR_TOOLBAR_CAPTION_DOG_TRAM                                    :(Toolbar Caption 0x09) Dog Tram
-STR_MENU_TEXT_DOG_TRAM                                          :(Menu Text 0x0A) Dog Tram
-STR_BUILD_WINDOW_CAPTION_DOG_TRAM                               :(Build Window Caption 0x0B) Dog Tram
-STR_AUTOREPLACE_TEXT_DOG_TRAM                                   :(Autoreplace Text 0x0C) Dog Tram
-STR_NEW_ENGINE_TEXT_DOG_TRAM                                    :(New Engine Text 0x0D) Dog Tram
+STR_NAME_GREEN_TRAM                                             :(Name 0x1B) Green Tram
+STR_TOOLBAR_CAPTION_GREEN_TRAM                                  :(Toolbar Caption 0x09) Green Tram
+STR_MENU_TEXT_GREEN_TRAM                                        :(Menu Text 0x0A) Green Tram
+STR_BUILD_WINDOW_CAPTION_GREEN_TRAM                             :(Build Window Caption 0x0B) Green Tram
+STR_AUTOREPLACE_TEXT_GREEN_TRAM                                 :(Autoreplace Text 0x0C) Green Tram
+STR_NEW_ENGINE_TEXT_GREEN_TRAM                                  :(New Engine Text 0x0D) Green Tram
