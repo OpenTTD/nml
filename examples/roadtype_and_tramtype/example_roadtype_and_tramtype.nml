@@ -337,7 +337,6 @@ item(FEAT_TRAMTYPES, tram) {
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
-        gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
 }
@@ -365,7 +364,6 @@ item(FEAT_TRAMTYPES, electric_tram) {
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
-        gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
 }
@@ -392,7 +390,6 @@ item(FEAT_TRAMTYPES, green_tram) {
         tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
-        gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
 }
