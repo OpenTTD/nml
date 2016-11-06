@@ -282,13 +282,10 @@ callbacks[0x12] = {
     'gui'             : {'type': 'cargo', 'num': 0x00},
     'track_overlay'   : {'type': 'cargo', 'num': 0x01},
     'underlay'        : {'type': 'cargo', 'num': 0x02},
-    'tunnels'         : {'type': 'cargo', 'num': 0x03},
-    'catenary_wire'   : {'type': 'cargo', 'num': 0x04},
-    'catenary_pylons' : {'type': 'cargo', 'num': 0x05},
+    'catenary_front'  : {'type': 'cargo', 'num': 0x04},
+    'catenary_back'   : {'type': 'cargo', 'num': 0x05},
     'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
-    'level_crossings' : {'type': 'cargo', 'num': 0x07},
     'depots'          : {'type': 'cargo', 'num': 0x08},
-    'tunnel_overlay'  : {'type': 'cargo', 'num': 0x0A},
 }
 
 # Tramtypes
@@ -297,11 +294,8 @@ callbacks[0x13] = {
     'gui'             : {'type': 'cargo', 'num': 0x00},
     'track_overlay'   : {'type': 'cargo', 'num': 0x01},
     'underlay'        : {'type': 'cargo', 'num': 0x02},
-    'tunnels'         : {'type': 'cargo', 'num': 0x03},
-    'catenary_wire'   : {'type': 'cargo', 'num': 0x04},
-    'catenary_pylons' : {'type': 'cargo', 'num': 0x05},
+    'catenary_front'  : {'type': 'cargo', 'num': 0x04},
+    'catenary_back'   : {'type': 'cargo', 'num': 0x05},
     'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
-    'level_crossings' : {'type': 'cargo', 'num': 0x07},
     'depots'          : {'type': 'cargo', 'num': 0x08},
-    'tunnel_overlay'  : {'type': 'cargo', 'num': 0x0A},
 }

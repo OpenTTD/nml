@@ -131,20 +131,6 @@ spriteset(road_overlays_yellow, "gfx/roads_yellow.png") {
 }
 
 /**********************************************
- * Tracks in tunnels:
- **********************************************/
-/* Template for tunnel track overlays */
-template tmpl_tunnel_tracks() {
-    ground_tile(75,  0)
-    ground_tile( 0,  0)
-    ground_tile(75, 50)
-    ground_tile( 0, 50)
-}
-spriteset(tunnel_overlays, "gfx/tunnel_track.png") {
-    tmpl_tunnel_tracks()
-}
-
-/**********************************************
  * Depots:
  **********************************************/
 /* Template for depot sprites */
@@ -241,7 +227,6 @@ item(FEAT_ROADTYPES, red_road, 5) {
     graphics {
         track_overlay: road_overlays_red;
         underlay: track_underlays;
-        tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
         // gui: gui_normal;
@@ -269,7 +254,6 @@ item(FEAT_ROADTYPES, blue_road, 6) {
     graphics {
         track_overlay: road_overlays_blue;
         underlay: track_underlays;
-        tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
         // gui: gui_normal;
@@ -297,7 +281,6 @@ item(FEAT_ROADTYPES, yellow_road, 7) {
     graphics {
         track_overlay: road_overlays_yellow;
         underlay: track_underlays;
-        tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
         // gui: gui_normal;
@@ -328,7 +311,6 @@ item(FEAT_TRAMTYPES, electric_tram, 8) {
     graphics {
         track_overlay: road_overlays_red;
         underlay: track_underlays;
-        tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
         /* Catenary is not not implemented here, use the default */
@@ -354,7 +336,6 @@ item(FEAT_TRAMTYPES, green_tram, 9) {
     graphics {
         track_overlay: road_overlays_red;
         underlay: track_underlays;
-        tunnels: tunnel_overlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
         /* Catenary is not not implemented here, use the default */
