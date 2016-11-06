@@ -1216,6 +1216,8 @@ is_default_railtype_table = True
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
 is_default_roadtype_table = True
 roadtype_table = {'ROAD': 0}
+is_default_tramtype_table = True
+tramtype_table = {'TRAM': 0}
 item_names = {}
 settings = {}
 named_parameters = {}
@@ -1247,3 +1249,5 @@ def print_stats():
         generic.print_info("Railtype translation table: {}/{}".format(len(railtype_table), 0x100))
     if not is_default_roadtype_table:
         generic.print_info("Roadtype translation table: {}/{}".format(len(roadtype_table), 0x100))
+    if not is_default_tramtype_table:
+        generic.print_info("Tramtype translation table: {}/{}".format(len(tramtype_table), 0x100))

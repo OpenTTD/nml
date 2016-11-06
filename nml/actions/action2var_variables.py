@@ -756,4 +756,5 @@ varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
 varact2vars60x[0x11] = varact2vars60x_airporttiles
 varact2vars[0x12] = varact2vars_roadtype
-varact2vars[0x13] = varact2vars_towns
+varact2vars[0x13] = varact2vars_tramtype
+varact2vars[0x14] = varact2vars_towns
