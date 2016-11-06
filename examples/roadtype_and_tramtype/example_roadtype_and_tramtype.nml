@@ -220,7 +220,7 @@ spriteset(gui_normal, "gfx/gui_rail.png") {
  * Roadtype definitions:
  **********************************************/
 
-item(FEAT_ROADTYPES, red_road) {
+item(FEAT_ROADTYPES, red_road, 5) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
@@ -249,7 +249,7 @@ item(FEAT_ROADTYPES, red_road) {
     }
 }
 
-item(FEAT_ROADTYPES, blue_road) {
+item(FEAT_ROADTYPES, blue_road, 6) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
@@ -277,7 +277,7 @@ item(FEAT_ROADTYPES, blue_road) {
     }
 }
 
-item(FEAT_ROADTYPES, yellow_road) {
+item(FEAT_ROADTYPES, yellow_road, 7) {
     /* Set only the most essential properties,
      * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
@@ -308,7 +308,7 @@ item(FEAT_ROADTYPES, yellow_road) {
  * Tramtype definitions:
  **********************************************/
 
-item(FEAT_TRAMTYPES, electric_tram) {
+item(FEAT_TRAMTYPES, electric_tram, 8) {
     /* Set only the most essential properties,
      * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
@@ -335,7 +335,7 @@ item(FEAT_TRAMTYPES, electric_tram) {
     }
 }
 
-item(FEAT_TRAMTYPES, green_tram) {
+item(FEAT_TRAMTYPES, green_tram, 9) {
     /* Set only the most essential properties,
      * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
