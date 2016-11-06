@@ -129,6 +129,10 @@ spriteset(road_overlays_blue, "gfx/roads_blue.png") {
 spriteset(road_overlays_yellow, "gfx/roads_yellow.png") {
     tmpl_overlay_roadtypes()
 }
+/* Spriteset for overlays */
+spriteset(tram_overlays_green, "gfx/tram_green.png") {
+    tmpl_overlay_roadtypes()
+}
 
 /**********************************************
  * Depots:
@@ -306,15 +310,6 @@ item(FEAT_TRAMTYPES, electric_tram, 8) {
         new_engine_text: string(STR_NEW_ENGINE_TEXT_ELECTRIC_TRAM);
         tramtype_flags: bitmask(TRAMTYPE_FLAG_CATENARY);
     }
-
-    /* Associate graphics with this roadtype */
-    graphics {
-        track_overlay: road_overlays_red;
-        underlay: track_underlays;
-        depots: depot_normal_road;
-        bridge_surfaces: bridge_underlay;
-        /* Catenary is not not implemented here, use the default */
-    }
 }
 
 item(FEAT_TRAMTYPES, green_tram, 9) {
@@ -334,7 +329,7 @@ item(FEAT_TRAMTYPES, green_tram, 9) {
 
     /* Associate graphics with this roadtype */
     graphics {
-        track_overlay: road_overlays_red;
+        track_overlay: tram_overlays_green;
         underlay: track_underlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
