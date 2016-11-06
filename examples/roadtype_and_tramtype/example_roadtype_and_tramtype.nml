@@ -251,6 +251,7 @@ item(FEAT_ROADTYPES, blue_road, 6) {
         build_window_caption: string(STR_BUILD_WINDOW_CAPTION_BLUE_ROAD);
         autoreplace_text: string(STR_AUTOREPLACE_TEXT_BLUE_ROAD);
         new_engine_text: string(STR_NEW_ENGINE_TEXT_BLUE_ROAD);
+        roadtype_flags: 0;
         sort_order: 99;
     }
 
@@ -278,6 +279,7 @@ item(FEAT_ROADTYPES, yellow_road, 7) {
         build_window_caption: string(STR_BUILD_WINDOW_CAPTION_YELLOW_ROAD);
         autoreplace_text: string(STR_AUTOREPLACE_TEXT_YELLOW_ROAD);
         new_engine_text: string(STR_NEW_ENGINE_TEXT_YELLOW_ROAD);
+        roadtype_flags: 0;
         sort_order: 100;
     }
 
@@ -325,6 +327,7 @@ item(FEAT_TRAMTYPES, green_tram, 9) {
         build_window_caption: string(STR_BUILD_WINDOW_CAPTION_GREEN_TRAM);
         autoreplace_text: string(STR_AUTOREPLACE_TEXT_GREEN_TRAM);
         new_engine_text: string(STR_NEW_ENGINE_TEXT_GREEN_TRAM);
+        tramtype_flags: 0;
     }
 
     /* Associate graphics with this roadtype */
