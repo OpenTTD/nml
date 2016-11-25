@@ -286,6 +286,7 @@ callbacks[0x12] = {
     'catenary_back'   : {'type': 'cargo', 'num': 0x05},
     'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
     'depots'          : {'type': 'cargo', 'num': 0x08},
+    'roadstops'       : {'type': 'cargo', 'num': 0x0A},
 }
 
 # Tramtypes

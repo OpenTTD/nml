@@ -207,6 +207,27 @@ spriteset(gui_normal, "gfx/gui_rail.png") {
 }
 
 /**********************************************
+ * Roadstop sprites:
+ **********************************************/
+
+template tmpl_underlay_roadstop() {
+    ground_tile(  0, 120)
+    ground_tile( 75, 120)
+    ground_tile(150, 120)
+    ground_tile(225, 120)
+}
+
+spriteset(roadstop_underlay_red, "gfx/roads_red.png") {
+    tmpl_underlay_roadstop()
+}
+spriteset(roadstop_underlay_blue, "gfx/roads_blue.png") {
+    tmpl_underlay_roadstop()
+}
+spriteset(roadstop_underlay_yellow, "gfx/roads_yellow.png") {
+    tmpl_underlay_roadstop()
+}
+
+/**********************************************
  * Roadtype definitions:
  **********************************************/
 
@@ -233,6 +254,7 @@ item(FEAT_ROADTYPES, red_road, 5) {
         underlay: track_underlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
+        roadstops: roadstop_underlay_red;
         // gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
@@ -261,6 +283,7 @@ item(FEAT_ROADTYPES, blue_road, 6) {
         underlay: track_underlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
+        roadstops: roadstop_underlay_blue;
         // gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
@@ -289,6 +312,7 @@ item(FEAT_ROADTYPES, yellow_road, 7) {
         underlay: track_underlays;
         depots: depot_normal_road;
         bridge_surfaces: bridge_underlay;
+        roadstops: roadstop_underlay_yellow;
         // gui: gui_normal;
         /* Catenary is not not implemented here, use the default */
     }
