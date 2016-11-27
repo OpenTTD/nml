@@ -237,7 +237,6 @@ item(FEAT_ROADTYPES, red_road, 5) {
     property {
         name: string(STR_NAME_RED_ROAD);
         label: "REDR";
-        compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_RED_ROAD);
         menu_text: string(STR_MENU_TEXT_RED_ROAD);
@@ -266,7 +265,6 @@ item(FEAT_ROADTYPES, blue_road, 6) {
     property {
         name: string(STR_NAME_BLUE_ROAD);
         label: "BLUE";
-        compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_BLUE_ROAD);
         menu_text: string(STR_MENU_TEXT_BLUE_ROAD);
@@ -295,7 +293,6 @@ item(FEAT_ROADTYPES, yellow_road, 7) {
     property {
         name: string(STR_NAME_YELLOW_ROAD);
         label: "YELL";
-        compatible_roadtype_list: ["ROAD"];
         powered_roadtype_list: ["ROAD"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_YELLOW_ROAD);
         menu_text: string(STR_MENU_TEXT_YELLOW_ROAD);
@@ -327,7 +324,6 @@ item(FEAT_TRAMTYPES, electric_tram, 8) {
     property {
         name: string(STR_NAME_ELECTRIC_TRAM);
         label: "ELTM";
-        compatible_tramtype_list: ["TRAM"];
         powered_tramtype_list: ["TRAM"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_ELECTRIC_TRAM);
         menu_text: string(STR_MENU_TEXT_ELECTRIC_TRAM);
@@ -344,7 +340,6 @@ item(FEAT_TRAMTYPES, green_tram, 9) {
     property {
         name: string(STR_NAME_GREEN_TRAM);
         label: "GRTM";
-        compatible_tramtype_list: ["TRAM"];
         powered_tramtype_list: ["TRAM"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_GREEN_TRAM);
         menu_text: string(STR_MENU_TEXT_GREEN_TRAM);
