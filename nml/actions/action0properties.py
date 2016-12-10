@@ -364,6 +364,7 @@ def roadveh_speed_prop(prop_info):
     return [prop08, prop15]
 
 properties[0x01] = {
+    'road_type'                    : {'size': 1, 'num': 0x05},
     'speed'                        : roadveh_speed_prop({'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)}),
     'running_cost_factor'          : {'size': 1, 'num': 0x09},
     'running_cost_base'            : {'size': 4, 'num': 0x0A},
