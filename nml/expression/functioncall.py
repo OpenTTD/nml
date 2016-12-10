@@ -294,7 +294,7 @@ def builtin_cargotype_available(name, args, pos):
 
 def builtin_railtype_available(name, args, pos):
     """
-    railtype_available(cargo_label) builtin function.
+    railtype_available(railtype_label) builtin function.
 
     @return 1 if the railtype label is available, 0 otherwise.
     """
@@ -302,6 +302,28 @@ def builtin_railtype_available(name, args, pos):
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
     return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+
+def builtin_roadtype_available(name, args, pos):
+    """
+    roadtype_available(roadtype_label) builtin function.
+
+    @return 1 if the roadtype label is available, 0 otherwise.
+    """
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
+    label = args[0].reduce()
+    return SpecialCheck((0x0F, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+
+def builtin_tramtype_available(name, args, pos):
+    """
+    tramtype_available(tramtype_label) builtin function.
+
+    @return 1 if the roadtype label is available, 0 otherwise.
+    """
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
+    label = args[0].reduce()
+    return SpecialCheck((0x11, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
 
 def builtin_grf_status(name, args, pos):
     """
@@ -661,6 +683,8 @@ function_table = {
     'version_openttd' : builtin_version_openttd,
     'cargotype_available' : builtin_cargotype_available,
     'railtype_available' : builtin_railtype_available,
+    'roadtype_available' : builtin_roadtype_available,
+    'tramtype_available' : builtin_tramtype_available,
     'grf_current_status' : builtin_grf_status,
     'grf_future_status' : builtin_grf_status,
     'grf_order_behind' : builtin_grf_status,
