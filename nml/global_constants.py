@@ -1231,6 +1231,8 @@ const_list = [
     (named_parameters, param_from_name),
     cargo_numbers,
     railtype_table,
+    roadtype_table,
+    tramtype_table,
     (item_names, item_to_id),
     (settings, setting_from_info),
     (config_flags, config_flag),
