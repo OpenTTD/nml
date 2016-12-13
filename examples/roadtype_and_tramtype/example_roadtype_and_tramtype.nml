@@ -237,7 +237,7 @@ item(FEAT_ROADTYPES, red_road, 5) {
     property {
         name: string(STR_NAME_RED_ROAD);
         label: "REDR";
-        powered_roadtype_list: ["ROAD"];
+        powered_roadtype_list: ["BLUE", "REDR", "ROAD"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_RED_ROAD);
         menu_text: string(STR_MENU_TEXT_RED_ROAD);
         build_window_caption: string(STR_BUILD_WINDOW_CAPTION_RED_ROAD);
