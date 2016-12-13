@@ -251,6 +251,57 @@ item(FEAT_ROADVEHS, flatbed_truck_3) {
         /* Properties common to all vehicle types */
         name: string(STR_NAME_FLATBED_TRUCK_3);
         climates_available: bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPICAL);
+        road_type: YELL;
+        introduction_date: date(1926,01,01);
+        model_life: 65;
+        /* retire_early not set, use default retirement behaviour */
+        vehicle_life: 15;
+        reliability_decay: 20;
+        refittable_cargo_classes: bitmask(CC_PIECE_GOODS, CC_EXPRESS);
+        non_refittable_cargo_classes: bitmask(CC_PASSENGERS, CC_REFRIGERATED);
+        /* Livestock, wool and fibre crops can be transported acc. cargo classes
+         * But we don't want that, so disable refitting for them.
+         * Scrap metal, petrol and refined products cannot be transported acc. cargo classes
+         * We do want to transport those, so enable refitting for them. */
+        cargo_allow_refit: [LVST, WOOL, SCRP, FICR, PETR, RFPR];
+        cargo_disallow_refit: []; // we allow other cargoes, if class matches
+        loading_speed: 5;
+        cost_factor: 108;
+        running_cost_factor: 90;
+        /* cargo_age_period is left at default */
+
+        /* RV-specific properties */
+        sprite_id: SPRITE_ID_NEW_ROADVEH;
+        speed: 48 km/h;
+        misc_flags: bitmask(ROADVEH_FLAG_2CC);
+        refit_cost: 0; // Refitting is free
+        /* callback_flags are not set, no need to manually enable callbacks */
+        running_cost_base: RUNNING_COST_ROADVEH;
+        power: 120 hp;
+        weight: 9.5 ton;
+        /* TE and air drag coefficient is left at default */
+        cargo_capacity: 20; // Changed by callback
+        sound_effect: SOUND_BUS_START_PULL_AWAY;
+        /* Visual effect is left at default (no effect) */
+    }
+
+    /* Define graphics for various cargo types, as well as the capacity callback */
+    graphics {
+        cargo_capacity: flatbed_truck_1_capacity_switch;
+        PAPR: flatbed_truck_1_paper;
+        STEL: flatbed_truck_1_steel;
+        COPR: flatbed_truck_1_copper;
+        WOOD: flatbed_truck_1_wood;
+        default: flatbed_truck_1_goods; // Default to Goods.
+    }
+}
+
+/* Define the road vehicle */
+item(FEAT_ROADVEHS, flatbed_truck_4) {
+    property {
+        /* Properties common to all vehicle types */
+        name: string(STR_NAME_FLATBED_TRUCK_4);
+        climates_available: bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPICAL);
         road_type: RED_TEST;
         introduction_date: date(1926,01,01);
         model_life: 65;
