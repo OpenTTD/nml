@@ -70,8 +70,9 @@ cargotable {
 }
 
 roadtypetable {
- 	ROAD, BLUE, YELL, RED_TEST: [RED_, BLUE, ROAD]
- }
+    ROAD, BLUE, YELL,
+    RED_TEST: [RED_, REDR, ROAD]
+}
 
 /* Sprite template for a truck */
 template tmpl_truck(x) {
