@@ -324,7 +324,7 @@ item(FEAT_TRAMTYPES, electric_tram, 8) {
     property {
         name: string(STR_NAME_ELECTRIC_TRAM);
         label: "ELTM";
-        powered_tramtype_list: ["TRAM"];
+        powered_tramtype_list: [];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_ELECTRIC_TRAM);
         menu_text: string(STR_MENU_TEXT_ELECTRIC_TRAM);
         build_window_caption: string(STR_BUILD_WINDOW_CAPTION_ELECTRIC_TRAM);
