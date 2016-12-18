@@ -323,7 +323,7 @@ item(FEAT_TRAMTYPES, electric_tram, 8) {
      * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_ELECTRIC_TRAM);
-        label: "ELTM";
+        label: "ELTR";
         powered_tramtype_list: [];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_ELECTRIC_TRAM);
         menu_text: string(STR_MENU_TEXT_ELECTRIC_TRAM);
@@ -339,7 +339,7 @@ item(FEAT_TRAMTYPES, green_tram, 9) {
      * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_GREEN_TRAM);
-        label: "GRTM";
+        label: "GRTR";
         powered_tramtype_list: ["TRAM"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_GREEN_TRAM);
         menu_text: string(STR_MENU_TEXT_GREEN_TRAM);
