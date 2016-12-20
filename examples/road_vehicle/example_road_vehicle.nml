@@ -70,7 +70,7 @@ cargotable {
 }
 
 roadtypetable {
-    ROAD, BLUE, YELL,
+    ROAD, ELRD, YELL,
     RED_TEST: [RED_, REDR, ROAD]
 }
 
@@ -201,7 +201,7 @@ item(FEAT_ROADVEHS, flatbed_truck_2) {
         /* Properties common to all vehicle types */
         name: string(STR_NAME_FLATBED_TRUCK_2);
         climates_available: bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPICAL);
-        road_type: BLUE;
+        road_type: ELRD;
         introduction_date: date(1926,01,01);
         model_life: 65;
         /* retire_early not set, use default retirement behaviour */

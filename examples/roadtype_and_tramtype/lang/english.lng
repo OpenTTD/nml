@@ -2,8 +2,6 @@
 STR_GRF_NAME                                                    :NML Example NewGRF: Roadtype and Tramtype
 STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Roadtype and Tramtype{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}Original graphics by {SILVER}Irwe, {BLACK}coding by {SILVER}andythenorth.
 
-STR_NAME_ROAD                                                   :Default Road
-
 STR_NAME_RED_ROAD                                               :(Name 0x1B) Red Electric Road
 STR_TOOLBAR_CAPTION_RED_ROAD                                    :(Toolbar Caption 0x09) Red Electric Road
 STR_MENU_TEXT_RED_ROAD                                          :(Menu Text 0x0A) Red Electric Road
@@ -24,15 +22,6 @@ STR_MENU_TEXT_YELLOW_ROAD                                       :(Menu Text 0x0A
 STR_BUILD_WINDOW_CAPTION_YELLOW_ROAD                            :(Build Window Caption 0x0B) Yellow Road
 STR_AUTOREPLACE_TEXT_YELLOW_ROAD                                :(Autoreplace Text 0x0C) Yellow Road
 STR_NEW_ENGINE_TEXT_YELLOW_ROAD                                 :(New Engine Text 0x0D) Yellow Road
-
-STR_NAME_TRAM                                                   :Default Tram
-
-STR_NAME_ELECTRIC_TRAM                                          :(Name 0x1B) Electric Tram
-STR_TOOLBAR_CAPTION_ELECTRIC_TRAM                               :(Toolbar Caption 0x09) Electric Tram
-STR_MENU_TEXT_ELECTRIC_TRAM                                     :(Menu Text 0x0A) Electric Tram
-STR_BUILD_WINDOW_CAPTION_ELECTRIC_TRAM                          :(Build Window Caption 0x0B) Electric Tram
-STR_AUTOREPLACE_TEXT_ELECTRIC_TRAM                              :(Autoreplace Text 0x0C) Electric Tram
-STR_NEW_ENGINE_TEXT_ELECTRIC_TRAM                               :(New Engine Text 0x0D) Electric Tram
 
 STR_NAME_GREEN_TRAM                                             :(Name 0x1B) Green Tram
 STR_TOOLBAR_CAPTION_GREEN_TRAM                                  :(Toolbar Caption 0x09) Green Tram

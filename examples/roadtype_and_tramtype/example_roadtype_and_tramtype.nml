@@ -237,7 +237,7 @@ item(FEAT_ROADTYPES, red_road, 5) {
     property {
         name: string(STR_NAME_RED_ROAD);
         label: "REDR";
-        powered_roadtype_list: ["BLUE", "REDR", "ROAD"];
+        powered_roadtype_list: ["BLUE", "REDR", "ROAD", "ELRD"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_RED_ROAD);
         menu_text: string(STR_MENU_TEXT_RED_ROAD);
         build_window_caption: string(STR_BUILD_WINDOW_CAPTION_RED_ROAD);
@@ -317,22 +317,6 @@ item(FEAT_ROADTYPES, yellow_road, 7) {
 /**********************************************
  * Tramtype definitions:
  **********************************************/
-
-item(FEAT_TRAMTYPES, electric_tram, 8) {
-    /* Set only the most essential properties,
-     * Few compatible tramtypes are defined as there are no other sets out there yet */
-    property {
-        name: string(STR_NAME_ELECTRIC_TRAM);
-        label: "ELTR";
-        powered_tramtype_list: [];
-        toolbar_caption: string(STR_TOOLBAR_CAPTION_ELECTRIC_TRAM);
-        menu_text: string(STR_MENU_TEXT_ELECTRIC_TRAM);
-        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_ELECTRIC_TRAM);
-        autoreplace_text: string(STR_AUTOREPLACE_TEXT_ELECTRIC_TRAM);
-        new_engine_text: string(STR_NEW_ENGINE_TEXT_ELECTRIC_TRAM);
-        tramtype_flags: bitmask(TRAMTYPE_FLAG_CATENARY);
-    }
-}
 
 item(FEAT_TRAMTYPES, green_tram, 9) {
     /* Set only the most essential properties,
