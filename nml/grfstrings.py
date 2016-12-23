@@ -207,6 +207,7 @@ commands = {
 'CARGO_LONG':     {'unicode': r'\UE09A\1B', 'ascii': r'\9A\1B', 'size': 2 * 2},
 'CARGO_SHORT':    {'unicode': r'\UE09A\1C', 'ascii': r'\9A\1C', 'size': 2 * 2},
 'CARGO_TINY':     {'unicode': r'\UE09A\1D', 'ascii': r'\9A\1D', 'size': 2 * 2},
+'CARGO_NAME':     {'unicode': r'\UE09A\1E', 'ascii': r'\9A\1E', 'size': 2},
 
 # Colors
 'BLUE':           {'unicode': r'\UE088',    'ascii': r'\88'},
