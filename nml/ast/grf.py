@@ -86,7 +86,6 @@ class GRF(base_statement.BaseStatement):
         self.version = None
         self.min_compatible_version = None
         self.params = []
-        generic.OnlyOnce.enforce(self, "GRF-block")
         for assignment in alist:
             if isinstance(assignment, ParameterDescription):
                 self.params.append(assignment)
@@ -97,6 +96,9 @@ class GRF(base_statement.BaseStatement):
             elif assignment.name.value == "version": self.version = assignment.value
             elif assignment.name.value == "min_compatible_version": self.min_compatible_version = assignment.value
             else: raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
+
+    def register_names(self):
+        generic.OnlyOnce.enforce(self, "GRF-block")
 
     def pre_process(self):
         if None in (self.name, self.desc, self.grfid, self.version, self.min_compatible_version):

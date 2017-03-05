@@ -22,11 +22,11 @@ class RailtypeTable(base_statement.BaseStatement):
     def __init__(self, railtype_list, pos):
         base_statement.BaseStatement.__init__(self, "rail type table", pos, False, False)
         self.railtype_list = railtype_list
+
+    def register_names(self):
         generic.OnlyOnce.enforce(self, "rail type table")
         global_constants.is_default_railtype_table = False
         global_constants.railtype_table.clear()
-
-    def register_names(self):
         for i, railtype in enumerate(self.railtype_list):
             if isinstance(railtype, assignment.Assignment):
                 name = railtype.name

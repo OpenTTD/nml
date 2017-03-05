@@ -21,8 +21,10 @@ class CargoTable(base_statement.BaseStatement):
     def __init__(self, cargo_list, pos):
         base_statement.BaseStatement.__init__(self, "cargo table", pos, False, False)
         self.cargo_list = cargo_list
+
+    def register_names(self):
         generic.OnlyOnce.enforce(self, "cargo table")
-        for i, cargo in enumerate(cargo_list):
+        for i, cargo in enumerate(self.cargo_list):
             if isinstance(cargo, expression.Identifier):
                 self.cargo_list[i] = expression.StringLiteral(cargo.value, cargo.pos)
             expression.parse_string_to_dword(self.cargo_list[i]) # we don't care about the result, only validate the input
