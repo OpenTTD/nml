@@ -73,8 +73,10 @@ string_ranges = {
     0xC4: {'random_id': False}, # Station class names
     0xC5: {'random_id': False}, # Station names
     0xC9: {'random_id': False}, # House name
-    0xD0: {'random_id': True, 'total': 0x400, 'ids': list(range(0x3FF, -1, -1))}, # Misc. text ids, used for callbacks and such
-    0xDC: {'random_id': True, 'total': 0x100, 'ids': list(range(0xFF, -1, -1))}, # Misc. persistent text ids, used to set properties
+    # Misc. text ids, used for callbacks and such
+    0xD0: {'random_id': True, 'total': 0x400, 'ids': list(range(0xD3FF, 0xCFFF, -1))},
+    # Misc. persistent text ids, used to set properties
+    0xDC: {'random_id': True, 'total': 0x100, 'ids': list(range(0xDCFF, 0xDBFF, -1))},
 }
 
 # Mapping of string identifiers to D0xx/DCxx text ids
@@ -107,9 +109,9 @@ def get_global_string_actions():
     for string_range, strings in list(used_strings.items()):
         for feature_name, id in list(strings.items()):
             feature, string_name = feature_name
-            texts.append( (0x7F, (string_range << 8) | id, grfstrings.get_translation(string_name), feature) )
+            texts.append( (0x7F, id, grfstrings.get_translation(string_name), feature) )
             for lang_id in grfstrings.get_translations(string_name):
-                texts.append( (lang_id, (string_range << 8) | id, grfstrings.get_translation(string_name, lang_id), feature) )
+                texts.append( (lang_id, id, grfstrings.get_translation(string_name, lang_id), feature) )
 
     last_lang = -1
     last_id = -1
@@ -171,8 +173,7 @@ def get_string_action4s(feature, string_range, string, id = None):
             # ID must be supplied
             assert id is not None
             assert isinstance(id, expression.ConstantNumeric)
-            id_val = id.value
-        id_val = id_val | (string_range << 8)
+            id_val = id.value | (string_range << 8)
     else:
         # Not a string range, so we must have an id
         assert id is not None
