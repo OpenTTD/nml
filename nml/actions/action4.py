@@ -75,8 +75,8 @@ string_ranges = {
     0xC9: {'random_id': False}, # House name
     # Misc. text ids, used for callbacks and such
     0xD0: {'random_id': True, 'total': 0x400, 'ids': list(range(0xD3FF, 0xCFFF, -1))},
-    # Misc. persistent text ids, used to set properties
-    0xDC: {'random_id': True, 'total': 0x800, 'ids': list(range(0xDCFF, 0xDBFF, -1)) + list(range(0xDFFF, 0xDCFF, -1)) + list(range(0xDBFF, 0xD7FF, -1))},
+    # Misc. persistent text ids, used to set properties. Use Ids DC00..DCFF first to keep compatibility with older versions of OTTD.
+    0xDC: {'random_id': True, 'total': 0x800, 'ids': list(range(0xDBFF, 0xD7FF, -1)) + list(range(0xDFFF, 0xDBFF, -1))},
 }
 
 # Mapping of string identifiers to D0xx/DCxx text ids
