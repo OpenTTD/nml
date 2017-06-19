@@ -69,7 +69,7 @@ class FreeNumberList(object):
         @return: Some free number.
         """
         assert len(self.states) > 0
-        if self.free_numbers == 0:
+        if len(self.free_numbers) == 0:
             raise generic.ScriptError(self.exception, pos)
         num = self.free_numbers.pop()
         self.states[-1].append(num)
@@ -91,7 +91,7 @@ class FreeNumberList(object):
 
         @return: Some free number.
         """
-        if self.free_numbers == 0:
+        if len(self.free_numbers) == 0:
             raise generic.ScriptError(self.exception, pos)
         return self.free_numbers.pop()
 
