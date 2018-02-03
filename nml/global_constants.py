@@ -436,10 +436,12 @@ constant_numbers = {
     #roadtype flags
     'ROADTYPE_FLAG_CATENARY'          : 0,
     'ROADTYPE_FLAG_NO_LEVEL_CROSSING' : 1,
+    'ROADTYPE_FLAG_NO_HOUSES'         : 2,
 
     #tramtype flags
     'TRAMTYPE_FLAG_CATENARY'          : 0,
     'TRAMTYPE_FLAG_NO_LEVEL_CROSSING' : 1,
+    'TRAMTYPE_FLAG_ALLOW_HOUSES'      : 2,
 
     #type of default station graphics used for a railtype
     'RAILTYPE_STATION_NORMAL'   : 0,
