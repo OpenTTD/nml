@@ -127,7 +127,8 @@ varact2vars_vehicles = {
     'position_in_vehid_chain_from_end' : {'var': 0x41, 'start':  8, 'size':  8},
     'num_vehs_in_vehid_chain'          : {'var': 0x41, 'start': 16, 'size':  8}, # One-based, already sane
     'cargo_classes_in_consist'         : {'var': 0x42, 'start':  0, 'size':  8},
-    'most_common_refit'                : {'var': 0x42, 'start': 16, 'size':  8},
+    'most_common_cargo_type'           : {'var': 0x42, 'start':  8, 'size':  8},
+    'most_common_cargo_subtype'        : {'var': 0x42, 'start': 16, 'size':  8},
     'bitmask_consist_info'             : {'var': 0x42, 'start': 24, 'size':  8},
     'company_num'                      : {'var': 0x43, 'start':  0, 'size':  8},
     'company_type'                     : {'var': 0x43, 'start': 16, 'size':  2},
