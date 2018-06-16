@@ -31,7 +31,7 @@ class BaseAction0Property(object):
         @param file: The outputfile we have to write to.
         @type  file: L{SpriteOutputBase}
         """
-        raise NotImplementedError('write is not implemented in {:r}'.format(type(self)))
+        raise NotImplementedError('write is not implemented in {!r}'.format(type(self)))
 
     def get_size(self):
         """
@@ -41,7 +41,7 @@ class BaseAction0Property(object):
         @return: The size of this property in bytes.
         @rtype:  C{int}
         """
-        raise NotImplementedError('get_size is not implemented in {:r}'.format(type(self)))
+        raise NotImplementedError('get_size is not implemented in {!r}'.format(type(self)))
 
 class Action0Property(BaseAction0Property):
     """

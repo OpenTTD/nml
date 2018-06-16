@@ -968,7 +968,7 @@ class Language(object):
             try:
                 value = int(lang_text, 16)
             except ValueError:
-                raise generic.ScriptError("Invalid grflangid {:r}".format(lang_text), pos)
+                raise generic.ScriptError("Invalid grflangid {!r}".format(lang_text), pos)
         if value < 0 or value >= 0x7F:
             raise generic.ScriptError("Invalid grflangid", pos)
         self.langid = value

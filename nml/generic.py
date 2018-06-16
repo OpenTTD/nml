@@ -64,7 +64,7 @@ def greatest_common_divisor(a, b):
     @type  b: C{int}
 
     @return: Greatest common divisor.
-    @rtype:  C{int]
+    @rtype:  C{int}
     """
     while b != 0:
         t = b

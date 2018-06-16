@@ -271,7 +271,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             This method should not be called, because calling a method on a meta class can be troublesome.
             Instead, call initialize(..).
             """
-            raise NotImplementedError('__init__ must be implemented in ASTSpriteGroup-subclass {:r}, initialize(..) should be called instead'.format(type(self)))
+            raise NotImplementedError('__init__ must be implemented in ASTSpriteGroup-subclass {!r}, initialize(..) should be called instead'.format(type(self)))
 
         def initialize(self, name = None, feature = None, num_params = 0):
             """
@@ -384,7 +384,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             @return: A collection containing all links to other nodes.
             @rtype: C{iterable} of L{SpriteGroupRef}
             """
-            raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass {:r}'.format(type(self)))
+            raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass {!r}'.format(type(self)))
 
         def set_action2(self, action2, feature):
             """

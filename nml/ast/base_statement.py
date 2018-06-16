@@ -88,7 +88,7 @@ class BaseStatement(object):
         @param indentation: Print all lines with at least C{indentation} spaces
         @type indentation: C{int}
         """
-        raise NotImplementedError('debug_print must be implemented in BaseStatement-subclass {:r}'.format(type(self)))
+        raise NotImplementedError('debug_print must be implemented in BaseStatement-subclass {!r}'.format(type(self)))
 
     def get_action_list(self):
         """
@@ -97,7 +97,7 @@ class BaseStatement(object):
         @return: A list of action
         @rtype: C{list} of L{BaseAction}
         """
-        raise NotImplementedError('get_action_list must be implemented in BaseStatement-subclass {:r}'.format(type(self)))
+        raise NotImplementedError('get_action_list must be implemented in BaseStatement-subclass {!r}'.format(type(self)))
 
     def __str__(self):
         """
@@ -106,7 +106,7 @@ class BaseStatement(object):
         @return: An NML string representing this action
         @rtype: C{str}
         """
-        raise NotImplementedError('__str__ must be implemented in BaseStatement-subclass {:r}'.format(type(self)))
+        raise NotImplementedError('__str__ must be implemented in BaseStatement-subclass {!r}'.format(type(self)))
 
 
 class BaseStatementList(BaseStatement):
