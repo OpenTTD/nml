@@ -1,3 +1,21 @@
+0.4.5 (2018-06-30)
+------------------------------------------------------------------------
+- Feature: increase cargo ID range from 32 to 64, to support 64 cargos in OpenTTD 11ab3c4ea2f6a6d29efda8c9ba2af04194621ea7
+- Change: Support more DCxx strings for OpenTTD r27769.
+- Add: Properties for vehicle sprite stack.
+- Add: CB_FLAG_MORE_SPRITES, PALETTE_IDENTITY
+- Add: String command 9A 1E CARGO_NAME.
+- Add: CB_RESULT_IND_NO_TEXT_NO_AMOUNT
+- Codechange: Store textids without offset in string_ranges
+- Fix: String encoding with cases was non-deterministic and resulted in differing md5sums for the NewGRF.
+- Fix: Rearrange order of string id assignment to keep compatibility.
+- Fix: When some IDs depleted, an internal NML error was raised instead of the intended error message.
+- Fix: most_common_refit was reading the wrong bits in var 42; read the write bits and rename it to most_common_cargo_type
+       as it's more accurate; also add most_common_cargo_subtype which also reads var 42 and was previously missing
+- Fix: Switch from :r format code to !r conversion flag to avoid crashes.
+- Update: Changelog
+
+
 0.4.4 (2016-01-07)
 ------------------------------------------------------------------------
 - Fix/Revert: Stripping one path level is not enough
