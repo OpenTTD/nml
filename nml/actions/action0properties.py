@@ -751,7 +751,7 @@ def industry_prod_multiplier(value):
             props.append(Action0Property(0x12 + i, val, 1))
         return props
     else:
-        return [ByteListProp(0x27, [value.values])]
+        return [ByteListProp(0x27, [[i.reduce_constant().value for i in value.values]])]
 
 class RandomSoundsProp(BaseAction0Property):
     def __init__(self, sound_list):
@@ -799,6 +799,50 @@ def industry_conflicting_types(value):
         types_list.append(ConstantNumeric(0xFF))
     return [ConflictingTypesProp(types_list)]
 
+class IndustryInputMultiplierProp(BaseAction0Property):
+    def __init__(self, prop_num, data):
+        self.prop_num = prop_num
+        self.data = data
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        file.print_byte(len(self.data))
+        for in_slot, out_slot, mul in self.data:
+            file.print_bytex(in_slot)
+            file.print_bytex(out_slot)
+            file.print_word(mul)
+            file.newline()
+
+    def get_size(self):
+        return len(self.data) * 4 + 1 + 1
+
+def industry_input_multiplier_ext(value):
+    if not isinstance(value, Array) or len(value.values) % 3 != 0:
+        raise generic.ScriptError("Input multiplier must be an array with a multiple of 3 values", value.pos)
+    multipliers = []
+    max_in, max_out = 0, 0
+    for i in range(len(value.values) // 3):
+        in_slot, out_slot, mul = value.values[i*3:i*3+3]
+        if not (isinstance(in_slot, ConstantNumeric) and isinstance(out_slot, ConstantNumeric) and isinstance(mul, (ConstantNumeric, ConstantFloat))):
+            raise generic.ScriptError("Expected a compile-time constant (triplets of int/int/float)", value.pos)
+        generic.check_range(in_slot.value, 0, 16, "input_multiplier slot", in_slot.pos)
+        generic.check_range(out_slot.value, 0, 16, "input_multiplier slot", out_slot.pos)
+        generic.check_range(mul.value, 0, 256, "input_multiplier value", mul.pos)
+        max_in, max_out = max(max_in, in_slot.value), max(max_out, out_slot.value)
+        multipliers = multipliers + [(in_slot.value, out_slot.value, int(mul.value * 256))]
+    if max_in < 3 and max_out < 2:
+        # old properties
+        tbl = [[0, 0], [0, 0], [0, 0]]
+        for in_slot, out_slot, mul in multipliers:
+            tbl[in_slot][out_slot] = mul
+        return [
+            Action0Property(0x1C + in_slot, ConstantNumeric(tbl[in_slot][0] | (tbl[in_slot][1] << 16)), 4)
+            for in_slot in range(max_in + 1)
+        ]
+    else:
+        # new property
+        return [IndustryInputMultiplierProp(0x28, multipliers)]
+
 def industry_input_multiplier(value, prop_num):
     if not isinstance(value, Array) or len(value.values) > 2:
         raise generic.ScriptError("Input multiplier must be an array of up to two values", value.pos)
@@ -833,6 +877,7 @@ properties[0x0A] = {
     'map_colour'             : {'size': 1, 'num': 0x19},
     'spec_flags'             : {'size': 4, 'num': 0x1A},
     'new_ind_msg'            : {'size': 2, 'num': 0x1B, 'string': 0xDC},
+    'input_multiplier'       : {'custom_function': industry_input_multiplier_ext},
     'input_multiplier_1'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1C)},
     'input_multiplier_2'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1D)},
     'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E)},
