@@ -733,6 +733,14 @@ def industry_layouts(value):
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
+def industry_cargo_types(org_prop, ext_prop, org_max, value):
+    if not isinstance(value, Array) or len(value.values) > 16:
+        raise generic.ScriptError("Cargo types list must be an array of up to 16 values", value.pos)
+    if len(value.values) <= org_max:
+        return [Action0Property(org_prop, cargo_list(value, org_max), [1, 1, 2, 4, 4][org_max])]
+    else:
+        return ctt_list(ext_prop, value)
+
 def industry_prod_multiplier(value):
     if not isinstance(value, Array) or len(value.values) > 2:
         raise generic.ScriptError("Prod multiplier must be an array of up to two values", value.pos)
@@ -810,8 +818,8 @@ properties[0x0A] = {
     'prod_increase_msg'      : {'size': 2, 'num': 0x0D, 'string': 0xDC},
     'prod_decrease_msg'      : {'size': 2, 'num': 0x0E, 'string': 0xDC},
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
-    'prod_cargo_types'       : {'size': 2, 'num': 0x10, 'value_function': lambda value: cargo_list(value, 2)},
-    'accept_cargo_types'     : {'size': 4, 'num': 0x11, 'value_function': lambda value: cargo_list(value, 3)},
+    'prod_cargo_types'       : {'custom_function': lambda value: industry_cargo_types(0x10, 0x25, 2, value)},
+    'accept_cargo_types'     : {'custom_function': lambda value: industry_cargo_types(0x11, 0x26, 3, value)},
     'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12,13
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
