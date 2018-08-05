@@ -257,7 +257,7 @@ general_veh_props = {
 def ottd_display_speed(value, divisor, unit):
     return int(value.value / divisor) * 10 // 16 * unit.ottd_mul >> unit.ottd_shift
 
-class CargotypeListProp(BaseAction0Property):
+class ByteListProp(BaseAction0Property):
     def __init__(self, prop_num, data):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
@@ -286,7 +286,7 @@ def ctt_list(prop_num, *values):
     for value in values:
         if not isinstance(value, Array):
             raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
-    return [CargotypeListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
+    return [ByteListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
 
 def vehicle_length(value):
     if isinstance(value, ConstantNumeric):
