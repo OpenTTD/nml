@@ -334,6 +334,7 @@ constant_numbers = {
 
     #industry tile special flags
     'INDTILE_FLAG_RANDOM_ANIMATION'   : 0,
+    'INDTILE_FLAG_ACCEPT_ALL'         : 1,
 
     'CB_RESULT_IND_PROD_NO_CHANGE'      : 0x00,
     'CB_RESULT_IND_PROD_HALF'           : 0x01,
