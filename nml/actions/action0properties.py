@@ -742,13 +742,16 @@ def industry_cargo_types(org_prop, ext_prop, org_max, value):
         return ctt_list(ext_prop, value)
 
 def industry_prod_multiplier(value):
-    if not isinstance(value, Array) or len(value.values) > 2:
-        raise generic.ScriptError("Prod multiplier must be an array of up to two values", value.pos)
-    props = []
-    for i in range(0, 2):
-        val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
-        props.append(Action0Property(0x12 + i, val, 1))
-    return props
+    if not isinstance(value, Array) or len(value.values) > 16:
+        raise generic.ScriptError("Prod multiplier must be an array of up to 16 values", value.pos)
+    if len(value.values) <= 2:
+        props = []
+        for i in range(0, 2):
+            val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
+            props.append(Action0Property(0x12 + i, val, 1))
+        return props
+    else:
+        return [ByteListProp(0x27, [value.values])]
 
 class RandomSoundsProp(BaseAction0Property):
     def __init__(self, sound_list):
@@ -820,7 +823,7 @@ properties[0x0A] = {
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
     'prod_cargo_types'       : {'custom_function': lambda value: industry_cargo_types(0x10, 0x25, 2, value)},
     'accept_cargo_types'     : {'custom_function': lambda value: industry_cargo_types(0x11, 0x26, 3, value)},
-    'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12,13
+    'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12+13, or 27
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
     'conflicting_ind_types'  : {'custom_function': industry_conflicting_types}, # = prop 16
