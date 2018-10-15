@@ -20,17 +20,29 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import subprocess, os
 
-def get_child_output(cmd):
+try:
+    from subprocess import DEVNULL  # Python 3.3+
+except ImportError:
+    DEVNULL = open(os.devnull, 'wb')
+
+
+def get_child_output(cmd, env=None, stderr=None):
     """
     Run a child process, and collect the generated output.
 
     @param cmd: Command to execute.
     @type  cmd: C{list} of C{str}
 
+    @param env: Environment
+    @type  env: C{dict}
+
+    @param stderr: Pipe destination for stderr
+    @type  stderr: file object
+
     @return: Generated output of the command, split on whitespace.
     @rtype:  C{list} of C{str}
     """
-    return subprocess.check_output(cmd, universal_newlines = True).split()
+    return subprocess.check_output(cmd, universal_newlines = True, env=env, stderr=stderr).split()
 
 
 def get_hg_version():
@@ -66,6 +78,49 @@ def get_hg_version():
             version = "v{}{}:{} from {}".format(cversion, modified, hash, ctimes[2].split("'", 1)[0])
     return version
 
+def get_git_version():
+    # method adopted shamelessly from OpenTTD's findversion.sh
+    path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    version = ''
+    env = dict(os.environ, LC_ALL='C')
+    if os.path.isdir(os.path.join(path,'.git')):
+        # Refresh the index to make sure file stat info is in sync
+        try:
+            get_child_output(["git", "-C", path, "update-index", "--refresh"], env=env)
+        except:
+            pass
+
+        # Look for modifications
+        try:
+            modified  = (len(get_child_output(["git", "-C", path, "diff-index", "HEAD"], env=env)) > 0)
+            changeset = get_child_output(["git", "-C", path, "rev-parse", "--verify", "HEAD"], env=env)[0][:8]
+            isodate   = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
+            branch    = get_child_output(["git", "-C", path, "symbolic-ref", "-q", "HEAD"], env=env)[0].split('/')[-1]
+        except OSError as e:
+            print("Git checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
+            return version
+
+        # We may fail to find a tag - but that is fine
+        tag = []
+        try:
+            # pipe stderr to /dev/null or it will show in the console
+            tag = get_child_output(["git", "-C", path, "name-rev", "--name-only", "--tags", "--no-undefined", "HEAD"], env=env, stderr=DEVNULL)[0]
+        except (OSError, subprocess.CalledProcessError):
+            pass
+
+        # Compose the actual version string
+        if len(tag) > 0:
+            version = tag[0]
+        elif branch == "master":
+            version = isodate + "-g" + changeset
+        else:
+            version = isodate + "-" + branch + "-g" + changeset
+
+        if modified:
+            version += "M"
+
+    return version
+
 def get_lib_versions():
     versions = {}
     #PIL
@@ -90,7 +145,7 @@ def get_lib_versions():
 
 def get_nml_version():
     # first try whether we find an nml repository. Use that version, if available
-    version = get_hg_version()
+    version = get_git_version()
     if version:
         return version
     # no repository was found. Return the version which was saved upon built
