@@ -96,7 +96,7 @@ def get_git_version():
             changeset = get_child_output(["git", "-C", path, "rev-parse", "--verify", "HEAD"], env=env)[0][:8]
             isodate   = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
             branch    = get_child_output(["git", "-C", path, "symbolic-ref", "-q", "HEAD"], env=env)[0].split('/')[-1]
-        except OSError as e:
+        except (OSError, subprocess.CalledProcessError) as e:
             print("Git checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
             return version
 
