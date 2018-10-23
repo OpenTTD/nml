@@ -95,10 +95,18 @@ def get_git_version():
             modified  = (len(get_child_output(["git", "-C", path, "diff-index", "HEAD"], env=env)) > 0)
             changeset = get_child_output(["git", "-C", path, "rev-parse", "--verify", "HEAD"], env=env)[0][:8]
             isodate   = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
-            branch    = get_child_output(["git", "-C", path, "symbolic-ref", "-q", "HEAD"], env=env)[0].split('/')[-1]
-        except (OSError, subprocess.CalledProcessError) as e:
+        except OSError as e:
             print("Git checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
             return version
+        except subprocess.CalledProcessError as e:
+            print("Git checkout found but cannot determine its version. Error: ", e)
+            return version
+        # A detached head will make the command fail, but it's uncritical
+        # Treat it like branch 'master'.
+        try:
+            branch = get_child_output(["git", "-C", path, "symbolic-ref", "-q", "HEAD"], env=env)[0].split('/')[-1]
+        except subprocess.CalledProcessError:
+            branch = "master"
 
         # We may fail to find a tag - but that is fine
         tag = []
