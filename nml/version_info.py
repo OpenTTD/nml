@@ -184,3 +184,6 @@ def get_and_write_version():
             return version.split()[0]
         except IOError:
             print("Version file NOT written")
+
+if __name__ == '__main__':
+    print(get_git_version())
