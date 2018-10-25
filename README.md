@@ -1,24 +1,5 @@
-NML readme
-Last updated:    2016-01-07
-Release version: 0.4.3
-------------------------------------------------------------------------
+# NML NewGRF meta language
 
-
-Table of Contents:
-------------------
-1) About
-2) Contact
-3) Dependencies
-3.1) Required dependencies
-3.2) Optional dependencies
-4) Installation
-5) Usage
-6) Known issues
-7) Credits
-
-
-1) About:
--- ------
 NML is a a python-based compiler, capable of compiling NML files (along
 with their associated language, sound and graphic files) into grf
 and / or nfo files.
@@ -30,17 +11,31 @@ NML is licensed under the GNU General Public License version 2, or at
 your option, any later version. For more information, see 'license.txt'
 (GPL version 2), or later versions at <http://www.gnu.org/licenses/>.
 
-2) Contact:
+Last updated:    2018-10-15
+Release version: 0.4.5
+
+## 1) Table of Contents:
+
+2) Contact
+3) Dependencies
+3.1) Required dependencies
+3.2) Optional dependencies
+4) Installation
+5) Usage
+6) Known issues
+7) Credits
+
+## 2) Contact:
 -- --------
 Contact can be made via the issue tracker / source repository at
 http://dev.openttdcoop.org/projects/nml or via IRC on the
-#openttdcoop.devzone channel on OFTC.
+\#openttd channel on OFTC.
 
 
-3) Dependencies:
+## 3) Dependencies:
 -- -------------
 
-3.1) Required dependencies:
+### 3.1) Required dependencies:
 ---- ----------------------
 NML requires the following 3rd party packages to run:
  - python
@@ -50,7 +45,7 @@ NML requires the following 3rd party packages to run:
  - ply
      downloadable from http://www.dabeaz.com/ply/
 
-3.2) Optional dependencies:
+### 3.2) Optional dependencies:
 ---- ----------------------
 To install NML you'll need these 3rd party packages:
  - buildout
@@ -60,16 +55,20 @@ To install NML you'll need these 3rd party packages:
      Needed to compile the cython version of the lz77 module for grf encoding
 
 
-4) Installation:
+## 4) Installation:
 -- -------------
-NML uses buildout for packaging / installation. To install NML run:
+The easiest way to install NML is by using pip:
+pip3 install nml
+
+NML uses buildout for packaging / installation. In order to install NML from
+a source checkout run:
 python setup.py install
 
 If you want to install the package manually copy 'nmlc' to any directory
 in your path and the directory 'nml' to any directory in your python path.
 
 
-5) Usage:
+## 5) Usage:
 -- ------
 Usage: nmlc [options] <filename>
 Where <filename> is the nml file to parse
@@ -119,12 +118,12 @@ Options:
                         [default: 3, max: 4]
 
 
-6) Known issues:
+## 6) Known issues:
 -- -------------
 See the issue tracker at https://dev.openttdcoop.org/projects/nml/issues
 
 
-7) Credits:
+## 7) Credits:
 -- --------
 Active developers (in alphabetical order):
   Albert Hofkamp (Alberth)
