@@ -10,12 +10,12 @@ else
     git checkout $BRANCH
 fi
 
-VSTRING = $(python3 nml/version_info.py)
-HASH = echo "$VSTRING" | cut -d\; -f1
-BRANCH = echo "$VSTRING" | cut -d\; -f2
-TAG = echo "$VSTRING" | cut -d\; -f3
-MODIFIED = echo "$VSTRING" | cut -d\; -f4
-DATE = echo "$VSTRING" | cut -d\; -f5
+VSTRING= $(python3 nml/version_info.py)
+HASH= echo "$VSTRING" | cut -d\; -f1
+BRANCH= echo "$VSTRING" | cut -d\; -f2
+TAG= echo "$VSTRING" | cut -d\; -f3
+MODIFIED= echo "$VSTRING" | cut -d\; -f4
+DATE= echo "$VSTRING" | cut -d\; -f5
 
 # Check regressions
 make -j1 regression
