@@ -16,6 +16,7 @@ BRANCH="$(echo $VSTRING | cut -d\; -f2)"
 TAG="$(echo $VSTRING | cut -d\; -f3)"
 MODIFIED="$(echo $VSTRING | cut -d\; -f4)"
 DATE="$(echo $VSTRING | cut -d\; -f5)"
+REV="$(echo $VSTRING | cut -d\; -f6)"
 
 # Check regressions
 make -j1 regression

@@ -130,7 +130,7 @@ def get_git_version(detailed = False):
             version += "M"
 
         if detailed:
-            version = changeset + ";" + branch + ";" + str_tag + ";" + str(modified) + ";" + isodate
+            version = changeset + ";" + branch + ";" + str_tag + ";" + str(modified) + ";" + isodate + ";" + version
 
     return version
 
