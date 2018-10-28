@@ -60,5 +60,5 @@ mv *.xml dist
 echo "Build date: $DATE"        > dist/release.txt
 echo "Revision: $BRANCH-$HASH" >> dist/release.txt
 echo "Tag: $TAG"               >> dist/release.txt
-echo "Modified: $MODIFIED"     >> dist/release.txt"
+echo "Modified: $MODIFIED"     >> dist/release.txt
 
