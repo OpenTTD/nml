@@ -78,7 +78,7 @@ def get_hg_version():
             version = "v{}{}:{} from {}".format(cversion, modified, hash, ctimes[2].split("'", 1)[0])
     return version
 
-def get_git_version():
+def get_git_version(detailed = False):
     # method adopted shamelessly from OpenTTD's findversion.sh
     path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     version = ''
@@ -117,8 +117,10 @@ def get_git_version():
             pass
 
         # Compose the actual version string
+        str_tag = ""
         if len(tag) > 0:
             version = tag[0]
+            str_tag = tag[0]
         elif branch == "master":
             version = isodate + "-g" + changeset
         else:
@@ -126,6 +128,9 @@ def get_git_version():
 
         if modified:
             version += "M"
+
+        if detailed:
+            version = changeset + ";" + branch + ";" + str_tag + ";" + str(modified) + ";" + isodate + ";" + version
 
     return version
 
@@ -186,4 +191,4 @@ def get_and_write_version():
             print("Version file NOT written")
 
 if __name__ == '__main__':
-    print(get_git_version())
+    print(get_git_version(detailed=True))
