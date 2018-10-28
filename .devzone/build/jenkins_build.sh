@@ -3,14 +3,19 @@
 # Make sure we fail on failed regression tests
 set -e
 
-BRANCH="$BRANCH-"
-if [ "$BRANCH" == "default-" ]; then BRANCH=""; fi
-REV="v`~/bin/getdays2000`"
-REV="$BRANCH$REV"
-if [ "$BUILD_TYPE" == "releases" ]; then REV="$USE_REV"; fi
-
 # Use the revision we're asked to build:
-hg up $USE_REV
+if [ "USE_REV" != "HEAD" ]; then
+    git checkout $USE_REV
+else
+    git checkout $BRANCH
+fi
+
+VSTRING = $(python3 nml/version_info.py)
+HASH = echo "$VSTRING" | cut -d\; -f1
+BRANCH = echo "$VSTRING" | cut -d\; -f2
+TAG = echo "$VSTRING" | cut -d\; -f3
+MODIFIED = echo "$VSTRING" | cut -d\; -f4
+DATE = echo "$VSTRING" | cut -d\; -f5
 
 # Check regressions
 make -j1 regression
@@ -52,6 +57,8 @@ cd ..
 ./gen_editor notepadpp
 mv *.xml dist
 
-echo "Build date: `date --rfc-3339='seconds'`" > dist/release.txt
-echo "Revision: `hg id -n`:`hg id`" >> dist/release.txt
+echo "Build date: $DATE"        > dist/release.txt
+echo "Revision: $BRANCH-$HASH" >> dist/release.txt
+echo "Tag: $TAG"               >> dist/release.txt
+echo "Modified: $MODIFIED"     >> dist/release.txt"
 
