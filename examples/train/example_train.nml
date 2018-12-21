@@ -317,6 +317,10 @@ if (version_openttd(1,2,0,22713) < openttd_version) {
 
 /* ------------------ Cargo Wagons Example ------------------ */
 
+/* This example does not feature complete handling of cargo sprites.
+   There are no loaded/loading states, and there is only one type of cargo used.
+   It's purely to demonstrate how to use the sprite stack
+*/
 
 spriteset (set_cargo_wagon,        "cargo_wagons.png") { tmpl_vehicle_4_views(0)    }
 spriteset (set_cargo_wagon_load,   "cargo_wagons.png") { tmpl_vehicle_4_views(1)    }
