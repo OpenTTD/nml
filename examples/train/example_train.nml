@@ -319,6 +319,16 @@ if (version_openttd(1,2,0,22713) < openttd_version) {
 
 
 spriteset (set_cargo_wagon,        "cargo_wagons.png") { tmpl_vehicle_4_views(0)    }
+spriteset (set_cargo_wagon_load,   "cargo_wagons.png") { tmpl_vehicle_4_views(1)    }
+
+switch (FEAT_TRAINS, SELF, cargo_wagon_switch_vehicle, STORE_TEMP(CB_FLAG_MORE_SPRITES | PALETTE_USE_DEFAULT, 0x100)) {
+    return set_cargo_wagon;
+}
+
+switch (FEAT_TRAINS, SELF, cargo_wagon_switch_graphics, getbits(extra_callback_info1, 8, 8)) {
+    0: return cargo_wagon_switch_vehicle;
+    return set_cargo_wagon_load;
+}
 
 item(FEAT_TRAINS, cargo_wagon_1) {
     property {
@@ -328,13 +338,13 @@ item(FEAT_TRAINS, cargo_wagon_1) {
         model_life: VEHICLE_NEVER_EXPIRES;
         refittable_cargo_classes: bitmask(CC_PIECE_GOODS);
         sprite_id: SPRITE_ID_NEW_TRAIN;
-        misc_flags: bitmask();
+        misc_flags: bitmask(TRAIN_FLAG_SPRITE_STACK);
         cargo_capacity: 40;
         weight: 20 ton;
         power: 0hp;
     }
     graphics {
-        default: set_cargo_wagon;
-        purchase: set_cargo_wagon;
+        default: cargo_wagon_switch_graphics;
+        purchase: cargo_wagon_switch_graphics;
     }
 }
