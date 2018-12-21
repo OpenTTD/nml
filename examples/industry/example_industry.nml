@@ -41,7 +41,12 @@ item(FEAT_INDUSTRIES, factory) {
         override: INDUSTRYTYPE_TEMPERATE_FACTORY;
         accept_cargo_types: [1, 3, 4, 7]; // prop 25 (tested working)
         prod_cargo_types: [2, 5, 9, 10];  // prop 26 (tested working)
-        /* input_multiplier: [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1]]; */ // prop 28 (not working)
+        input_multiplier: [               // prop 28 (not working)
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1]
+        ];
     }
 }
 

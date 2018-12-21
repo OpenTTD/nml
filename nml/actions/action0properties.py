@@ -806,42 +806,48 @@ class IndustryInputMultiplierProp(BaseAction0Property):
 
     def write(self, file):
         file.print_bytex(self.prop_num)
-        file.print_byte(len(self.data))
-        for in_slot, out_slot, mul in self.data:
-            file.print_bytex(in_slot)
-            file.print_bytex(out_slot)
-            file.print_word(mul)
+        if len(self.data) == 0:
+            file.print_byte(0)
+            file.print_byte(0)
+        else:
+            file.print_byte(len(self.data))
+            file.print_byte(len(self.data[0])) # assume all sub-arrays are equal length
             file.newline()
+            for out_muls in self.data:
+                for mul in out_muls:
+                    file.print_wordx(mul)
+                file.newline()
 
     def get_size(self):
-        return len(self.data) * 4 + 1 + 1
+        if len(self.data) == 0:
+            return 3
+        else:
+            return 3 + len(self.data) * len(self.data[0]) * 2
 
 def industry_input_multiplier_ext(value):
-    if not isinstance(value, Array) or len(value.values) % 3 != 0:
-        raise generic.ScriptError("Input multiplier must be an array with a multiple of 3 values", value.pos)
-    multipliers = []
-    max_in, max_out = 0, 0
-    for i in range(len(value.values) // 3):
-        in_slot, out_slot, mul = value.values[i*3:i*3+3]
-        if not (isinstance(in_slot, ConstantNumeric) and isinstance(out_slot, ConstantNumeric) and isinstance(mul, (ConstantNumeric, ConstantFloat))):
-            raise generic.ScriptError("Expected a compile-time constant (triplets of int/int/float)", value.pos)
-        generic.check_range(in_slot.value, 0, 16, "input_multiplier slot", in_slot.pos)
-        generic.check_range(out_slot.value, 0, 16, "input_multiplier slot", out_slot.pos)
-        generic.check_range(mul.value, 0, 256, "input_multiplier value", mul.pos)
-        max_in, max_out = max(max_in, in_slot.value), max(max_out, out_slot.value)
-        multipliers = multipliers + [(in_slot.value, out_slot.value, int(mul.value * 256))]
-    if max_in < 3 and max_out < 2:
-        # old properties
-        tbl = [[0, 0], [0, 0], [0, 0]]
-        for in_slot, out_slot, mul in multipliers:
-            tbl[in_slot][out_slot] = mul
-        return [
-            Action0Property(0x1C + in_slot, ConstantNumeric(tbl[in_slot][0] | (tbl[in_slot][1] << 16)), 4)
-            for in_slot in range(max_in + 1)
+    if not isinstance(value, Array):
+        raise generic.ScriptError("Input multiplier must be an array of arrays of floats", value.pos)
+    if len(value.values) > 16:
+        raise generic.ScriptError("Input multiplier must have at most 16 sub-arrays", value.pos)
+    max_in, max_out = len(value.values), 0
+    for item in value.values:
+        if not isinstance(item, Array):
+            raise generic.ScriptError("Input multiplier must be an array of arrays of floats", item.pos)
+        if len(item.values) > 16:
+            raise generic.ScriptError("Input multiplier must have at most 16 sub-arrays", item.pos)
+        max_out = max(max_out, len(item.values))
+        for multiplier in item.values:
+            if not isinstance(multiplier, (ConstantNumeric, ConstantFloat)):
+                raise generic.ScriptError("Input multiplier must be an array of arrays of floats", multiplier.pos)
+            generic.check_range(multiplier.value, 0, 256, "input_multiplier value", multiplier.pos)
+    multipliers = [
+        [
+            (0 if output_index >= len(input_row.values) else input_row.values[output_index].value * 256)
+            for output_index in range(max_out)
         ]
-    else:
-        # new property
-        return [IndustryInputMultiplierProp(0x28, multipliers)]
+        for input_row in value.values
+    ]
+    return [IndustryInputMultiplierProp(0x28, multipliers)]
 
 def industry_input_multiplier(value, prop_num):
     if not isinstance(value, Array) or len(value.values) > 2:
