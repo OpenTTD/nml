@@ -187,7 +187,7 @@ switch(FEAT_TRAINS, SELF, sw_icm_shorten_3_part_vehicle, position_in_consist % 4
     return SHORTEN_TO_8_8;
 }
 
-switch(FEAT_TRAINS, SELF, sw_icm_shorten_vehicle, cargo_subtype) {
+switch(FEAT_TRAINS, SELF, sw_icm_length, cargo_subtype) {
     0: sw_icm_shorten_3_part_vehicle;
     return SHORTEN_TO_8_8; // 4-part vehicle needs no shortening
 }
@@ -282,7 +282,7 @@ item(FEAT_TRAINS, icm) {
         visual_effect_and_powered: return (position_in_consist % 4 == 0) ?
                                         visual_effect_and_powered(VISUAL_EFFECT_ELECTRIC, 2, DISABLE_WAGON_POWER) :
                                         visual_effect_and_powered(VISUAL_EFFECT_DISABLE, 0, DISABLE_WAGON_POWER);
-        shorten_vehicle: sw_icm_shorten_vehicle;
+        length: sw_icm_length;
         /* Only the front vehicle has power */
         purchase_power: return int(1260 / 0.7457); // kW
         power: sw_icm_power;
