@@ -329,9 +329,13 @@ switch (FEAT_TRAINS, SELF, cargo_wagon_switch_vehicle, STORE_TEMP(CB_FLAG_MORE_S
     return set_cargo_wagon;
 }
 
+switch (FEAT_TRAINS, SELF, cargo_wagon_switch_load, STORE_TEMP(PALETTE_USE_DEFAULT, 0x100)) {
+    return set_cargo_wagon_load;
+}
+
 switch (FEAT_TRAINS, SELF, cargo_wagon_switch_graphics, getbits(extra_callback_info1, 8, 8)) {
     0: return cargo_wagon_switch_vehicle;
-    return set_cargo_wagon_load;
+    return cargo_wagon_switch_load;
 }
 
 item(FEAT_TRAINS, cargo_wagon_1) {
