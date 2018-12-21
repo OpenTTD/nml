@@ -1,19 +1,25 @@
 /*
- * This file is aimed to provide an example on how to code a vehicle in NML
- * In this case a train is coded, other vehicle types work in a similar fashion.
+ * This file is aimed to provide an example on how to code vehicles in NML
+ * In the first case a train is coded, other vehicle types work in a similar fashion.
+ * The second case provides examples for using the sprite stack
+ * https://newgrf-specs.tt-wiki.net/wiki/NML:Vehicles#Composing_vehicles_from_multiple_sprites
+ *
  * To keep the code readable, not every property or variable is documented in
  * detail, refer to the vehicle-specific reference in the documentation.
- * The coded vehicle is quite complex, in order to show the various possibilities.
+ * The coded vehicles are quite complex, in order to show the various possibilities.
  * For a more simple example, refer to the example road vehicle.
  *
- * The vehicle coded here is a Dutch EMU, the ICM 'Koploper'
+ * The first vehicle coded here is a Dutch EMU, the ICM 'Koploper'
  * Graphics are by Purno, the original NFO code is written by DJNekkid
  * As in real life, you can choose between a 3- and 4-part variant,
  * to be selected via refitting. This adds some complexity, which
  * provided the needed excuse to implement a lot of callbacks :)
  *
+ * The second vehicle coded shows how to use the sprite stack to draw a vehicle
+ * using multiple layers of sprites.
+ *
  * Apart from this file, you will also need the following
- * - Graphics, found in icm.png (in the same folder)
+ * - Graphics, found in icm.png and cargo_wagon.png (in the same folder)
  * - Language files, to be placed in the 'lang' folder.
  *      Currently english.lng and dutch.lng are supplied.
  */
@@ -101,6 +107,8 @@ template tmpl_vehicle_8_views(num, reversed) {
 template tmpl_vehicle_single(num, xsize, ysize, xrel, yrel) {
     [1, 1 + 32 * num, xsize, ysize, xrel, yrel]
 }
+
+/* ------------------ ICM EMU Train Example ------------------ */
 
 /* Define the spritesets, these allow referring to these sprites later on */
 spriteset (set_icm_front_lighted, "icm.png") { tmpl_vehicle_8_views(0, 0) }
@@ -305,4 +313,28 @@ if (version_openttd(1,2,0,22713) < openttd_version) {
 			cargo_age_period: 185; // default value
 		}
 	}
+}
+
+/* ------------------ Cargo Wagons Example ------------------ */
+
+
+spriteset (set_cargo_wagon,        "cargo_wagons.png") { tmpl_vehicle_4_views(0)    }
+
+item(FEAT_TRAINS, cargo_wagon_1) {
+    property {
+        name: string(STR_CARGO_WAGON_1_NAME);
+        climates_available: ALL_CLIMATES;
+        introduction_date: date(1900, 1, 1);
+        model_life: VEHICLE_NEVER_EXPIRES;
+        refittable_cargo_classes: bitmask(CC_PIECE_GOODS);
+        sprite_id: SPRITE_ID_NEW_TRAIN;
+        misc_flags: bitmask();
+        cargo_capacity: 40;
+        weight: 20 ton;
+        power: 0hp;
+    }
+    graphics {
+        default: set_cargo_wagon;
+        purchase: set_cargo_wagon;
+    }
 }
