@@ -6,9 +6,12 @@ STR_PARAM_COLOUR_SCHEME_DESC                                    :Select the type
 STR_PARAM_COLOUR_SCHEME_1CC                                     :One company colour
 STR_PARAM_COLOUR_SCHEME_2CC                                     :Two company colours
 STR_PARAM_COLOUR_SCHEME_REAL                                    :Real-world colours
+
 STR_ICM_NAME                                                    :ICM 'Koploper' (Electric)
 STR_ICM_ADDITIONAL_TEXT                                         :Choose between 3- and 4-part EMU via refit{}Stated values are for the 3-part variant, the 4-part version has 33% more capacity and 50% more power and running cost.
 STR_ICM_SUBTYPE_3_PART                                          : (3 parts)
 STR_ICM_SUBTYPE_4_PART                                          : (4 parts)
 STR_ICM_CANNOT_START                                            :... train too long (max. 4 coupled EMUs).
 STR_ICM_CANNOT_ATTACH_OTHER                                     :... ICM may not be attached to other types of trains.
+
+STR_CARGO_WAGON_1_NAME                                          :Cargo Wagon
