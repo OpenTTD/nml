@@ -55,6 +55,9 @@ item(FEAT_INDUSTRIES, factory) {
             [0.5, 0, 0, 0.5]  // 4th input cargo produces each of first and fourth output cargo in half the input amount (2 in => 1 of first and 1 of fourth out)
         ];
     }
+    graphics {
+        extra_text_industry: string(STR_INDUSTRY_EXTRA_TEXT);
+    }
 }
 
 item(FEAT_INDUSTRYTILES, factory_tile_1) {
