@@ -560,6 +560,10 @@ def industry_town_count(name, args, pos, info):
     extra_params.append( (0x101, expression.ConstantNumeric(0x0100)) )
     return (args[0], extra_params)
 
+def industry_cargotype(name, args, pos, info):
+    from nml.expression.functioncall import builtin_cargotype
+    return (builtin_cargotype(name, args, pos), [])
+
 varact2vars60x_industries = {
     'nearby_tile_industry_tile_id' : {'var': 0x60, 'start':  0, 'size': 16, 'param_function': unsigned_tile_offset},
     'nearby_tile_random_bits'      : {'var': 0x61, 'start':  0, 'size':  8, 'param_function': unsigned_tile_offset},
@@ -578,6 +582,13 @@ varact2vars60x_industries = {
     'industry_layout_count'        : {'var': 0x68, 'start': 16, 'size':  8, 'param_function': industry_layout_count},
     'industry_layout_distance'     : {'var': 0x68, 'start':  0, 'size': 16, 'param_function': industry_layout_count},
     'industry_town_count'          : {'var': 0x68, 'start': 16, 'size':  8, 'param_function': industry_town_count},
+    'produced_cargo_waiting'       : {'var': 0x69, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'this_month_production'        : {'var': 0x6A, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'this_month_transported'       : {'var': 0x6B, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'last_month_production'        : {'var': 0x6C, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'last_month_transported'       : {'var': 0x6D, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'last_cargo_accepted_at'       : {'var': 0x6E, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'incoming_cargo_waiting'       : {'var': 0x6F, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
 }
 
 #
