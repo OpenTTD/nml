@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 from nml import generic, nmlop
-from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier
+from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier, ProduceCargo, AcceptCargo
 
 tilelayout_names = {}
 
@@ -862,6 +862,54 @@ def industry_input_multiplier(value, prop_num):
     mul2 = int(val2.value * 256)
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
+def industry_cargo_types_struct(value):
+    if not isinstance(value, Array) or not all(isinstance(item, (ProduceCargo, AcceptCargo)) for item in value.values):
+        raise generic.ScriptError("Cargo types definition must be an array produce_cargo() and accept_cargo() expressions", value.pos)
+
+    # collect all the cargo types involved
+    input_cargos = []
+    output_cargos = []
+    for item in value.values:
+        # use "if not in: append" idiom rather than sets to preserve ordering of cargotypes between NML and NFO
+        if isinstance(item, ProduceCargo):
+            if item.cargotype not in output_cargos: output_cargos.append(item.cargotype)
+        elif isinstance(item, AcceptCargo):
+            if item.cargotype not in input_cargos: input_cargos.append(item.cargotype)
+            for outitem in item.outputs:
+                assert isinstance(outitem, ProduceCargo)
+                if outitem.cargotype not in output_cargos: output_cargos.append(outitem.cargotype)
+        else:
+            assert False
+
+    if len(input_cargos) > 16:
+        raise generic.ScriptError("Cargo types definition contains more than 16 different accept_cargo() cargotypes", value.pos)
+    if len(output_cargos) > 16:
+        raise generic.ScriptError("Cargo types definition contains more than 16 different produce_cargo() cargotypes", value.pos)
+
+    # prepare lists for the remaining output properties
+    prod_multipliers = [0 for cargo in output_cargos]
+    has_prodmult = False
+    input_multipliers = [ [0 for outcargo in output_cargos] for incargo in input_cargos ]
+    has_inpmult = False
+
+    # populate prod_multipliers and input_multipliers
+    for item in value.values:
+        if isinstance(item, ProduceCargo):
+            prod_multipliers[output_cargos.index(item.cargotype)] = int(item.factor)
+            if item.factor > 0: has_prodmult = True
+        elif isinstance(item, AcceptCargo):
+            row = input_multipliers[input_cargos.index(item.cargotype)]
+            for outitem in item.outputs:
+                row[output_cargos.index(outitem.cargotype)] = int(outitem.factor * 256)
+                if outitem.factor > 0: has_inpmult = True
+
+    return [
+        ByteListProp(0x25, [output_cargos]),
+        ByteListProp(0x26, [input_cargos]),
+        ByteListProp(0x27, [prod_multipliers]),
+        IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else [])
+    ]
+
 properties[0x0A] = {
     'substitute'             : {'size': 1, 'num': 0x08, 'first': None},
     'override'               : {'size': 1, 'num': 0x09},
@@ -874,6 +922,7 @@ properties[0x0A] = {
     'prod_cargo_types'       : {'custom_function': lambda value: industry_cargo_types(0x10, 0x25, 2, value)},
     'accept_cargo_types'     : {'custom_function': lambda value: industry_cargo_types(0x11, 0x26, 3, value)},
     'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12+13, or 27
+    'cargo_types'            : {'custom_function': industry_cargo_types_struct}, # = prop 25+26+27+28 combined in one structure
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
     'conflicting_ind_types'  : {'custom_function': industry_conflicting_types}, # = prop 16

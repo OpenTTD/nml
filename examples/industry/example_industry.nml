@@ -44,15 +44,11 @@ item(FEAT_INDUSTRIES, factory) {
     property {
         substitute: INDUSTRYTYPE_TEMPERATE_FACTORY;
         override: INDUSTRYTYPE_TEMPERATE_FACTORY;
-        accept_cargo_types: [cargotype("COAL"), cargotype("OIL_"),
-                             cargotype("IORE"), cargotype("GRAI")]; // prop 25 (tested working)
-        prod_cargo_types: [cargotype("MAIL"), cargotype("GOOD"),
-                           cargotype("STEL"), cargotype("VALU")];  // prop 26 (tested working)
-        input_multiplier: [               // prop 28 (tested working)
-            [1  , 1, 1, 1  ], // 1st input cargo produces one of each output
-            [1  , 1, 0, 0  ], // 2nd input cargo produces only first two outputs
-            [0  , 0, 4, 0  ], // 3rd input cargo produces third output four times the input amount
-            [0.5, 0, 0, 0.5]  // 4th input cargo produces each of first and fourth output cargo in half the input amount (2 in => 1 of first and 1 of fourth out)
+        cargo_types: [
+            accept_cargo("COAL", [produce_cargo("MAIL", 1), produce_cargo("GOOD", 1), produce_cargo("STEL", 1), produce_cargo("VALU", 1)]),
+            accept_cargo("OIL_"),
+            accept_cargo("IORE", produce_cargo("STEL", 4)),
+            accept_cargo("GRAI", [produce_cargo("MAIL", 0.5), produce_cargo("VALU", 0.5)])
         ];
     }
     graphics {
@@ -96,8 +92,11 @@ item(FEAT_INDUSTRIES, farm) {
     property {
         substitute: INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM;
         override: INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM;
-        prod_cargo_types: [cargotype("LVST"), cargotype("GRAI"), cargotype("WOOD")];
-        prod_multiplier: [8, 12, 4]; // prop 27 (tested working)
+        cargo_types: [
+            produce_cargo("LVST", 8),
+            produce_cargo("GRAI", 12),
+            produce_cargo("WOOD", 4),
+        ];
     }
 }
 
