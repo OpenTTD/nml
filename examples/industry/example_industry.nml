@@ -32,6 +32,11 @@ grf {
 }
 
 
+/* this example assumes we're just matching to the default temperate cargos, this wouldn't be the usual case */
+cargotable {
+ 	PASS, COAL, MAIL, OIL_, LVST, GOOD, GRAI, WOOD, IORE, STEL, VALU
+}
+
 /*
 * This example extends the cargos accepted and produce by the default temperate factory.
 */
@@ -39,8 +44,10 @@ item(FEAT_INDUSTRIES, factory) {
     property {
         substitute: INDUSTRYTYPE_TEMPERATE_FACTORY;
         override: INDUSTRYTYPE_TEMPERATE_FACTORY;
-        accept_cargo_types: [1, 3, 4, 7]; // prop 25 (tested working)
-        prod_cargo_types: [2, 5, 9, 10];  // prop 26 (tested working)
+        accept_cargo_types: [cargotype("COAL"), cargotype("OIL_"),
+                             cargotype("IORE"), cargotype("GRAI")]; // prop 25 (tested working)
+        prod_cargo_types: [cargotype("MAIL"), cargotype("GOOD"),
+                           cargotype("STEL"), cargotype("VALU")];  // prop 26 (tested working)
         input_multiplier: [               // prop 28 (tested working)
             [1  , 1, 1, 1  ], // 1st input cargo produces one of each output
             [1  , 1, 0, 0  ], // 2nd input cargo produces only first two outputs
@@ -86,7 +93,7 @@ item(FEAT_INDUSTRIES, farm) {
     property {
         substitute: INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM;
         override: INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM;
-        prod_cargo_types: [4, 6, 7];
+        prod_cargo_types: [cargotype("LVST"), cargotype("GRAI"), cargotype("WOOD")];
         prod_multiplier: [8, 12, 4]; // prop 27 (tested working)
     }
 }
