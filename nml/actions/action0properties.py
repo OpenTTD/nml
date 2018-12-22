@@ -733,25 +733,14 @@ def industry_layouts(value):
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
-def industry_cargo_types(org_prop, ext_prop, org_max, value):
-    if not isinstance(value, Array) or len(value.values) > 16:
-        raise generic.ScriptError("Cargo types list must be an array of up to 16 values", value.pos)
-    if len(value.values) <= org_max:
-        return [Action0Property(org_prop, cargo_list(value, org_max), [1, 1, 2, 4, 4][org_max])]
-    else:
-        return ctt_list(ext_prop, value)
-
 def industry_prod_multiplier(value):
-    if not isinstance(value, Array) or len(value.values) > 16:
-        raise generic.ScriptError("Prod multiplier must be an array of up to 16 values", value.pos)
-    if len(value.values) <= 2:
-        props = []
-        for i in range(0, 2):
-            val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
-            props.append(Action0Property(0x12 + i, val, 1))
-        return props
-    else:
-        return [ByteListProp(0x27, [[i.reduce_constant().value for i in value.values]])]
+    if not isinstance(value, Array) or len(value.values) > 2:
+        raise generic.ScriptError("Prod multiplier must be an array of up to two values", value.pos)
+    props = []
+    for i in range(0, 2):
+        val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
+        props.append(Action0Property(0x12 + i, val, 1))
+    return props
 
 class RandomSoundsProp(BaseAction0Property):
     def __init__(self, sound_list):
@@ -824,31 +813,6 @@ class IndustryInputMultiplierProp(BaseAction0Property):
         else:
             return 3 + len(self.data) * len(self.data[0]) * 2
 
-def industry_input_multiplier_ext(value):
-    if not isinstance(value, Array):
-        raise generic.ScriptError("Input multiplier must be an array of arrays of floats", value.pos)
-    if len(value.values) > 16:
-        raise generic.ScriptError("Input multiplier must have at most 16 sub-arrays", value.pos)
-    max_in, max_out = len(value.values), 0
-    for item in value.values:
-        if not isinstance(item, Array):
-            raise generic.ScriptError("Input multiplier must be an array of arrays of floats", item.pos)
-        if len(item.values) > 16:
-            raise generic.ScriptError("Input multiplier must have at most 16 sub-arrays", item.pos)
-        max_out = max(max_out, len(item.values))
-        for multiplier in item.values:
-            if not isinstance(multiplier, (ConstantNumeric, ConstantFloat)):
-                raise generic.ScriptError("Input multiplier must be an array of arrays of floats", multiplier.pos)
-            generic.check_range(multiplier.value, 0, 256, "input_multiplier value", multiplier.pos)
-    multipliers = [
-        [
-            (0 if output_index >= len(input_row.values) else int(input_row.values[output_index].value * 256))
-            for output_index in range(max_out)
-        ]
-        for input_row in value.values
-    ]
-    return [IndustryInputMultiplierProp(0x28, multipliers)]
-
 def industry_input_multiplier(value, prop_num):
     if not isinstance(value, Array) or len(value.values) > 2:
         raise generic.ScriptError("Input multiplier must be an array of up to two values", value.pos)
@@ -862,7 +826,7 @@ def industry_input_multiplier(value, prop_num):
     mul2 = int(val2.value * 256)
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
-def industry_cargo_types_struct(value):
+def industry_cargo_types(value):
     if not isinstance(value, Array) or not all(isinstance(item, (ProduceCargo, AcceptCargo)) for item in value.values):
         raise generic.ScriptError("Cargo types definition must be an array produce_cargo() and accept_cargo() expressions", value.pos)
 
@@ -919,10 +883,10 @@ properties[0x0A] = {
     'prod_increase_msg'      : {'size': 2, 'num': 0x0D, 'string': 0xDC},
     'prod_decrease_msg'      : {'size': 2, 'num': 0x0E, 'string': 0xDC},
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
-    'prod_cargo_types'       : {'custom_function': lambda value: industry_cargo_types(0x10, 0x25, 2, value)},
-    'accept_cargo_types'     : {'custom_function': lambda value: industry_cargo_types(0x11, 0x26, 3, value)},
-    'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12+13, or 27
-    'cargo_types'            : {'custom_function': industry_cargo_types_struct}, # = prop 25+26+27+28 combined in one structure
+    'prod_cargo_types'       : {'size': 2, 'num': 0x10, 'value_function': lambda value: cargo_list(value, 2)},
+    'accept_cargo_types'     : {'size': 4, 'num': 0x11, 'value_function': lambda value: cargo_list(value, 3)},
+    'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12,13
+    'cargo_types'            : {'custom_function': industry_cargo_types}, # = prop 25+26+27+28 combined in one structure
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
     'conflicting_ind_types'  : {'custom_function': industry_conflicting_types}, # = prop 16
@@ -932,7 +896,6 @@ properties[0x0A] = {
     'map_colour'             : {'size': 1, 'num': 0x19},
     'spec_flags'             : {'size': 4, 'num': 0x1A},
     'new_ind_msg'            : {'size': 2, 'num': 0x1B, 'string': 0xDC},
-    'input_multiplier'       : {'custom_function': industry_input_multiplier_ext},
     'input_multiplier_1'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1C)},
     'input_multiplier_2'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1D)},
     'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E)},
