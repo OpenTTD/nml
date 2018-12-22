@@ -44,6 +44,12 @@ produce(test_produce3, [], [], 0)
 /*
 * This example extends the cargos accepted and produce by the default temperate factory.
 */
+
+switch(FEAT_INDUSTRIES, SELF, extra_text_switch,
+        [STORE_TEMP(this_month_production("MAIL"), 256)]) {
+	return string(STR_INDUSTRY_EXTRA_TEXT);
+}
+
 item(FEAT_INDUSTRIES, factory) {
     property {
         substitute: INDUSTRYTYPE_TEMPERATE_FACTORY;
@@ -56,8 +62,8 @@ item(FEAT_INDUSTRIES, factory) {
         ];
     }
     graphics {
-        extra_text_industry: string(STR_INDUSTRY_EXTRA_TEXT);
  		produce_cargo_arrival: test_produce1;
+        extra_text_industry: extra_text_switch;
     }
 }
 
