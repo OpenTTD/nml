@@ -842,7 +842,7 @@ def industry_input_multiplier_ext(value):
             generic.check_range(multiplier.value, 0, 256, "input_multiplier value", multiplier.pos)
     multipliers = [
         [
-            (0 if output_index >= len(input_row.values) else input_row.values[output_index].value * 256)
+            (0 if output_index >= len(input_row.values) else int(input_row.values[output_index].value * 256))
             for output_index in range(max_out)
         ]
         for input_row in value.values
