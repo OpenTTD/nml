@@ -28,7 +28,7 @@ Release version: 0.4.5
 ## 2) Contact:
 -- --------
 Contact can be made via the issue tracker / source repository at
-http://dev.openttdcoop.org/projects/nml or via IRC on the
+https://github.com/OpenTTD/nml or via IRC on the
 \#openttd channel on OFTC.
 
 
@@ -48,9 +48,6 @@ NML requires the following 3rd party packages to run:
 ### 3.2) Optional dependencies:
 ---- ----------------------
 To install NML you'll need these 3rd party packages:
- - buildout
-     Only necesary if you want to use the installer. You can
-     run NML without installation or manually install it.
  - gcc (or possibly another c++ compiler)
      Needed to compile the cython version of the lz77 module for grf encoding
 
@@ -60,8 +57,7 @@ To install NML you'll need these 3rd party packages:
 The easiest way to install NML is by using pip:
 pip3 install nml
 
-NML uses buildout for packaging / installation. In order to install NML from
-a source checkout run:
+In order to install NML from a source checkout run:
 python setup.py install
 
 If you want to install the package manually copy 'nmlc' to any directory
@@ -135,7 +131,3 @@ Inactive developers:
   Jasper Reichardt (Hirundo)
   José Soler (Terkhen)
   Thijs Marinussen (Yexo)
-
-Special thanks to:
-  Richard Barrell
-    For writing the buildout script needed to install NML.
