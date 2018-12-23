@@ -257,7 +257,10 @@ general_veh_props = {
 def ottd_display_speed(value, divisor, unit):
     return int(value.value / divisor) * 10 // 16 * unit.ottd_mul >> unit.ottd_shift
 
-class ByteListProp(BaseAction0Property):
+class VariableByteListProp(BaseAction0Property):
+    """
+    Property value that is a variable-length list of bytes, the list length is written before the data.
+    """
     def __init__(self, prop_num, data):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
@@ -286,7 +289,7 @@ def ctt_list(prop_num, *values):
     for value in values:
         if not isinstance(value, Array):
             raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
-    return [ByteListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
+    return [VariableByteListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
 
 def vehicle_length(value):
     if isinstance(value, ConstantNumeric):
@@ -868,9 +871,9 @@ def industry_cargo_types(value):
                 if outitem.factor > 0: has_inpmult = True
 
     return [
-        ByteListProp(0x25, [output_cargos]),
-        ByteListProp(0x26, [input_cargos]),
-        ByteListProp(0x27, [prod_multipliers]),
+        VariableByteListProp(0x25, [output_cargos]),
+        VariableByteListProp(0x26, [input_cargos]),
+        VariableByteListProp(0x27, [prod_multipliers]),
         IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else [])
     ]
 
