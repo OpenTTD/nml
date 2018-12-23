@@ -34,7 +34,7 @@ setup(name='nml',
                      'Programming Language :: Python :: 3.4',
                      'Topic :: Software Development :: Compilers',
                      ],
-      url='http://dev.openttdcoop.org/projects/nml',
+      url='https://github.com/OpenTTD/nml/',
       author='NML Development Team',
       author_email='nml-team@openttdcoop.org',
       entry_points={
