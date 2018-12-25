@@ -429,50 +429,21 @@ def builtin_industry_type(name, args, pos):
 
     return ConstantNumeric(type << 7 | id)
 
-def builtin_accept_cargo(name, args, pos):
-    """
-    accept_cargo(cargolabel, [production_list]) builtin function
-
-    Only useful in cargo type lists for industry definitions.
-    """
-    if len(args) not in (1, 2):
-        raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
+def builtin_cargoexpr(name, args, pos):
+    if len(args) < 1:
+        raise generic.ScriptError(name + "() must have 1 or more parameters", pos)
 
     from nml import global_constants
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
         raise generic.ScriptError("First argument of " + name + "() must be a string literal that is also in your cargo table", pos)
     cargotype = global_constants.cargo_numbers[args[0].value]
 
-    if len(args) == 2:
-        if isinstance(args[1], ProduceCargo):
-            production_list = [args[1]]
-        elif isinstance(args[1], Array) and all(isinstance(item, ProduceCargo) for item in args[1].values):
-            production_list = args[1].values
-        else:
-            raise generic.ScriptError("Second argument of " + name + "() must be an array of produce_cargo() expressions", pos)
+    if name == 'produce_cargo':
+        return ProduceCargo(cargotype, args[1:], pos)
+    elif name == 'accept_cargo':
+        return AcceptCargo(cargotype, args[1:], pos)
     else:
-        production_list = []
-
-    return AcceptCargo(cargotype, production_list, pos)
-
-def builtin_produce_cargo(name, args, pos):
-    """
-    produce_cargo(cargolabel, factor) builtin function
-
-    Only useful in cargo type lists for industry definitions.
-    """
-    if len(args) != 2:
-        raise generic.ScriptError(name + "() must have 2 parameters", pos)
-
-    from nml import global_constants
-    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
-        raise generic.ScriptError("First argument of " + name + "() must be a string literal that is also in your cargo table", pos)
-    cargotype = global_constants.cargo_numbers[args[0].value]
-
-    if not isinstance(args[1], (ConstantNumeric, ConstantFloat)):
-        raise generic.ScriptError("Second argument of " + name + "() must be a constant", pos)
-
-    return ProduceCargo(cargotype, args[1].value, pos)
+        assert False
 
 def builtin_trigonometric(name, args, pos):
     if len(args) != 1:
@@ -701,8 +672,8 @@ function_table = {
     'railtype' : builtin_railtype,
     'reserve_sprites' : builtin_reserve_sprites,
     'industry_type' : builtin_industry_type,
-    'accept_cargo': builtin_accept_cargo,
-    'produce_cargo': builtin_produce_cargo,
+    'accept_cargo': builtin_cargoexpr,
+    'produce_cargo': builtin_cargoexpr,
     'int' : builtin_int,
     'abs' : builtin_abs,
     'acos' : builtin_trigonometric,

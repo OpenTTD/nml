@@ -13,40 +13,39 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic
+from nml import generic, global_constants
 from .base_expression import Expression
 
-class ProduceCargo(Expression):
-    def __init__(self, cargotype, factor, pos):
+class CargoExpression(Expression):
+    def __init__(self, cargotype, value, pos):
         Expression.__init__(self, pos)
+        assert isinstance(value, list)
         self.cargotype = cargotype
-        self.factor = factor
+        self.value = value
+
+    def cargolabel(self):
+        for label, number in global_constants.cargo_numbers.items():
+            if number == self.cargotype:
+                return label
+        assert False, "Cargo expression with unregistered cargotype at " + str(self.pos)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Produce cargo ' + self.cargotype + " * " + self.factor)
-
-    def __str__(self):
-        return 'produce_cargo(' + self.cargotype + ', ' + self.factor + ')'
-
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        return self
-
-class AcceptCargo(Expression):
-    def __init__(self, cargotype, outputs, pos):
-        Expression.__init__(self, pos)
-        self.cargotype = cargotype
-        self.outputs = outputs
-
-    def debug_print(self, indentation):
-        if len(self.outputs) == 0:
-            generic.print_dbg(indentation, 'Accept cargo ' + self.cargotype + ' and produce nothing')
+        if self.value is None:
+            generic.print_dbg(indentation, '{0} cargo {1}'.format(self._debugname, self.cargolabel()))
         else:
-            generic.print_dbg(indentation, 'Accept cargo ' + self.cargotype + ' and produce:')
-            for output in self.outputs:
-                output.debug_print(indentation + 2)
+            generic.print_dbg(indentation, '{0} cargo {1} with result:'.format(self._debugname, self.cargolabel()))
+            self.value.debug_print(indentation + 2)
 
     def __str__(self):
-        return 'accept_cargo(' + self.cargotype + ', [' + ', '.join(str(o) for o in self.outputs) + '])'
+        return '{0}({1}, {2})'.format(self._fnname, self.cargolabel(), str(self.value))
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
+
+class AcceptCargo(CargoExpression):
+    _fnname = 'accept_cargo'
+    _debugname = 'Accept'
+
+class ProduceCargo(CargoExpression):
+    _fnname = 'produce_cargo'
+    _debugname = 'Produce'

@@ -45,10 +45,10 @@ item(FEAT_INDUSTRIES, factory) {
         substitute: INDUSTRYTYPE_TEMPERATE_FACTORY;
         override: INDUSTRYTYPE_TEMPERATE_FACTORY;
         cargo_types: [
-            accept_cargo("COAL", [produce_cargo("MAIL", 1), produce_cargo("GOOD", 1), produce_cargo("STEL", 1), produce_cargo("VALU", 1)]),
+            accept_cargo("COAL", produce_cargo("MAIL", 1), produce_cargo("GOOD", 1), produce_cargo("STEL", 1), produce_cargo("VALU", 1)),
             accept_cargo("OIL_"),
             accept_cargo("IORE", produce_cargo("STEL", 4)),
-            accept_cargo("GRAI", [produce_cargo("MAIL", 0.5), produce_cargo("VALU", 0.5)])
+            accept_cargo("GRAI", produce_cargo("MAIL", 0.5), produce_cargo("VALU", 0.5))
         ];
     }
     graphics {

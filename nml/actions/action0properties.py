@@ -830,21 +830,35 @@ def industry_input_multiplier(value, prop_num):
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
 def industry_cargo_types(value):
-    if not isinstance(value, Array) or not all(isinstance(item, (ProduceCargo, AcceptCargo)) for item in value.values):
+    if isinstance(value, Array):
+        cargo_types = value.values
+    else:
+        cargo_types = [value]
+    if not all(isinstance(item, (ProduceCargo, AcceptCargo)) for item in value.values):
         raise generic.ScriptError("Cargo types definition must be an array produce_cargo() and accept_cargo() expressions", value.pos)
 
     # collect all the cargo types involved
     input_cargos = []
     output_cargos = []
-    for item in value.values:
+    def check_produce(prd):
+        if len(prd.value) != 1:
+            raise generic.ScriptError("Cargo types produce_cargo() expressions require 2 arguments", prd.pos)
+        if not isinstance(prd.value[0], (ConstantNumeric, ConstantFloat)):
+            raise generic.ScriptError("Cargo types produce_cargo() expressions must have numeric constant values", prd.pos)
+        if prd.cargotype not in output_cargos: output_cargos.append(prd.cargotype)
+    def check_accept(acp):
+        if item.cargotype not in input_cargos: input_cargos.append(item.cargotype)
+        for outitem in item.value:
+            if isinstance(outitem, ProduceCargo):
+                check_produce(outitem)
+            else:
+                raise generic.ScriptError("Cargo types accept_cargo() expressions must only contain produce_cargo() expressions", outitem.pos)
+    for item in cargo_types:
         # use "if not in: append" idiom rather than sets to preserve ordering of cargotypes between NML and NFO
         if isinstance(item, ProduceCargo):
-            if item.cargotype not in output_cargos: output_cargos.append(item.cargotype)
+            check_produce(item)
         elif isinstance(item, AcceptCargo):
-            if item.cargotype not in input_cargos: input_cargos.append(item.cargotype)
-            for outitem in item.outputs:
-                assert isinstance(outitem, ProduceCargo)
-                if outitem.cargotype not in output_cargos: output_cargos.append(outitem.cargotype)
+            check_accept(item)
         else:
             assert False
 
@@ -855,20 +869,18 @@ def industry_cargo_types(value):
 
     # prepare lists for the remaining output properties
     prod_multipliers = [0 for cargo in output_cargos]
-    has_prodmult = False
     input_multipliers = [ [0 for outcargo in output_cargos] for incargo in input_cargos ]
     has_inpmult = False
 
     # populate prod_multipliers and input_multipliers
-    for item in value.values:
+    for item in cargo_types:
         if isinstance(item, ProduceCargo):
-            prod_multipliers[output_cargos.index(item.cargotype)] = int(item.factor)
-            if item.factor > 0: has_prodmult = True
+            prod_multipliers[output_cargos.index(item.cargotype)] = int(item.value[0].value)
         elif isinstance(item, AcceptCargo):
             row = input_multipliers[input_cargos.index(item.cargotype)]
-            for outitem in item.outputs:
-                row[output_cargos.index(outitem.cargotype)] = int(outitem.factor * 256)
-                if outitem.factor > 0: has_inpmult = True
+            for outitem in item.value:
+                row[output_cargos.index(outitem.cargotype)] = int(outitem.value[0].value * 256)
+                if outitem.value[0].value > 0: has_inpmult = True
 
     return [
         VariableByteListProp(0x25, [output_cargos]),
