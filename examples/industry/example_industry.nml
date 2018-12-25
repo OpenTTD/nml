@@ -100,3 +100,6 @@ item(FEAT_INDUSTRIES, farm) {
     }
 }
 
+produce(test_produce1, [COAL: 5; IORE: 7;], [STEL: 5;], 1)
+produce(test_produce2, [COAL: 5; IORE: 7;], [STEL: 5;])
+produce(test_produce3, [], [], 0)

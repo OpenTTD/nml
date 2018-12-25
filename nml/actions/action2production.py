@@ -127,6 +127,15 @@ def get_production_actions(produce):
 
     return action_list
 
+def get_production_v2_actions(produce):
+    """
+    Get the action list that implements the given produce-block in nfo.
+
+    @param produce: Produce-block to parse.
+    @type produce: L{Produce2}
+    """
+    return []
+
 def make_empty_production_action2(pos):
     """
     Make an empty production action2
