@@ -37,6 +37,10 @@ cargotable {
  	PASS, COAL, MAIL, OIL_, LVST, GOOD, GRAI, WOOD, IORE, STEL, VALU
 }
 
+produce(test_produce1, [COAL: STORE_TEMP(5, 0); IORE: STORE_TEMP(7, 1);], [STEL: 5;], 1)
+produce(test_produce2, [COAL: 5; IORE: 7;], [STEL: 5;])
+produce(test_produce3, [], [], 0)
+
 /*
 * This example extends the cargos accepted and produce by the default temperate factory.
 */
@@ -53,6 +57,7 @@ item(FEAT_INDUSTRIES, factory) {
     }
     graphics {
         extra_text_industry: string(STR_INDUSTRY_EXTRA_TEXT);
+ 		produce_cargo_arrival: test_produce1;
     }
 }
 
@@ -99,7 +104,3 @@ item(FEAT_INDUSTRIES, farm) {
         ];
     }
 }
-
-produce(test_produce1, [COAL: 5; IORE: 7;], [STEL: 5;], 1)
-produce(test_produce2, [COAL: 5; IORE: 7;], [STEL: 5;])
-produce(test_produce3, [], [], 0)
