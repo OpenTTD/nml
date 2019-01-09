@@ -2,7 +2,7 @@
 for f in `ls -d *.txt docs docs/*.txt`; do cp -r $f dist; done
 
 # Update Jenkins' NML
-if [ "$USE_REV" == "HEAD" ] || [ "$BUILD_TYPE" == "releases"  ]; then
+if [ "$USE_REV" == "HEAD" ] || [ "$BUILD_TYPE" == "releases"  ] || [ "USE_REV" == "origin/master" ]; then
     echo "Updating NML-$BRANCH on main build node"
 
     if [ ! -d "~/bin/repos/nml-$BRANCH" ]; then
