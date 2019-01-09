@@ -50,7 +50,7 @@ python3 setup.py bdist_egg
 python3 setup.py sdist
 
 cd dist
-for i in `ls *.tar.gz *.zip *.rpm *.egg`; do md5sum $i > $i.md5; done
+for i in *.tar.gz *.zip *.rpm *.egg; do md5sum $i > $i.md5; done
 cd ..
 
 # Create the editor files
