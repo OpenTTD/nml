@@ -8,13 +8,13 @@ The documentation about the language can be found on
 http://newgrf-specs.tt-wiki.net/wiki/NML:Main
 
 NML is licensed under the GNU General Public License version 2, or at
-your option, any later version. For more information, see 'license.txt'
-(GPL version 2), or later versions at <http://www.gnu.org/licenses/>.
+your option, any later version. For more information, see [LICENSE](https://github.com/OpenTTD/nml/LICENSE)
+(GPL version 2), or later versions at http://www.gnu.org/licenses/.
 
 Last updated:    2018-10-15
 Release version: 0.4.5
 
-## 1) Table of Contents:
+## 1) Table of Contents
 
 2) Contact
 3) Dependencies
@@ -25,52 +25,56 @@ Release version: 0.4.5
 6) Known issues
 7) Credits
 
-## 2) Contact:
+## 2) Contact
 
-Contact can be made via the issue tracker / source repository at
-https://github.com/OpenTTD/nml or via IRC on the
-\#openttd channel on OFTC.
+Contact can be made via the [issue tracker / source repository](https://github.com/OpenTTD/nml) or via IRC on the \#openttd channel on OFTC.
 
+## 3) Dependencies
 
-## 3) Dependencies:
-
-
-### 3.1) Required dependencies:
+### 3.1) Required dependencies
 
 NML requires the following 3rd party packages to run:
- - python
-     Minimal version is 3.2. Python 2 is not supported.
- - python image library
-     For install options see https://pillow.readthedocs.org/installation.html#simple-installation
- - ply
-     downloadable from http://www.dabeaz.com/ply/
 
-### 3.2) Optional dependencies:
+- `python`
+  Minimal version is 3.2. Python 2 is not supported.
+- `python image library`
+  For install options see https://pillow.readthedocs.org/installation.html#simple-installation
+- `ply`
+  Downloadable from http://www.dabeaz.com/ply/
+
+### 3.2) Optional dependencies
 
 To install NML you'll need these 3rd party packages:
- - gcc (or possibly another c++ compiler)
-     Needed to compile the cython version of the lz77 module for grf encoding
 
+- gcc (or possibly another c++ compiler).
+  Needed to compile the cython version of the lz77 module for grf encoding.
 
-## 4) Installation:
+## 4) Installation
 
 The easiest way to install NML is by using pip:
+
+```bash
 pip3 install nml
+```
 
 In order to install NML from a source checkout run:
+
+```bash
 python setup.py install
+```
 
 If you want to install the package manually copy 'nmlc' to any directory
 in your path and the directory 'nml' to any directory in your python path.
 
+## 5) Usage
 
-## 5) Usage:
+Usage: nmlc [options] `<filename>`.
 
-Usage: nmlc [options] <filename>
-Where <filename> is the nml file to parse
+Where `<filename>` is the nml file to parse.
 
 Options:
 
+```
     --version             show program's version number and exit
     -h, --help            show this help message and exit
     -d, --debug           write the AST to stdout
@@ -113,22 +117,23 @@ Options:
     --clear-orphaned      Remove unused/orphaned items from cache files.
     --verbosity=<level>   Set the verbosity level for informational output.
                           [default: 3, max: 4]
+```
 
+## 6) Known issues
 
-## 6) Known issues:
+See the [issue tracker](https://dev.openttdcoop.org/projects/nml/issues).
 
-See the issue tracker at https://dev.openttdcoop.org/projects/nml/issues
-
-
-## 7) Credits:
+## 7) Credits
 
 Active developers (in alphabetical order):
-  Albert Hofkamp (Alberth)
-  Christoph Elsenhans (frosch)
-  Ingo von Borstel (planetmaker)
-  Remko Bijker (Rubidium)
+
+- Albert Hofkamp (Alberth)
+- Christoph Elsenhans (frosch)
+- Ingo von Borstel (planetmaker)
+- Remko Bijker (Rubidium)
 
 Inactive developers:
-  Jasper Reichardt (Hirundo)
-  José Soler (Terkhen)
-  Thijs Marinussen (Yexo)
+
+- Jasper Reichardt (Hirundo)
+- José Soler (Terkhen)
+- Thijs Marinussen (Yexo)
