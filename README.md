@@ -8,7 +8,7 @@ The documentation about the language can be found on
 http://newgrf-specs.tt-wiki.net/wiki/NML:Main
 
 NML is licensed under the GNU General Public License version 2, or at
-your option, any later version. For more information, see [LICENSE](https://github.com/OpenTTD/nml/LICENSE)
+your option, any later version. For more information, see [LICENSE](https://github.com/OpenTTD/nml/blob/master/LICENSE)
 (GPL version 2), or later versions at http://www.gnu.org/licenses/.
 
 Last updated:    2018-10-15
