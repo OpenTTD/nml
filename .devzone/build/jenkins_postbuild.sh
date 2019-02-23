@@ -1,5 +1,5 @@
 
-for f in $(ls -d *.txt docs docs/*.txt); do cp -r $f dist; done
+for f in $(ls -d README.md LICENSE *.txt docs docs/*.txt); do cp -r $f dist; done
 
 # Update Jenkins' NML
 if [ "$USE_REV" == "HEAD" ] || [ "$BUILD_TYPE" == "releases"  ] || [ "USE_REV" == "origin/master" ]; then
