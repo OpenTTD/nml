@@ -2,6 +2,7 @@ global-exclude ._*
 
 # Include documentation
 recursive-include docs *.html *.txt nmlc.1 nml.spec
+include LICENSE
 
 # Include regression tests
 recursive-include regression *.nml *.lng *.grf *.nfo *.png *.pcx
