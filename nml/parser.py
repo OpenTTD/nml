@@ -440,17 +440,13 @@ class NMLParser(object):
         if len(t) == 1: t[0] = []
         else: t[0] = t[1] + [switch.RandomChoice(t[2], t[4])]
 
-    def p_produce(self, t):
-        'produce : PRODUCE LPAREN expression_list RPAREN SEMICOLON'
-        t[0] = produce.Produce(t[3], t.lineno(1))
-
     def p_produce_cargo_list(self, t):
         '''produce_cargo_list : LBRACKET RBRACKET
                               | LBRACKET setting_value_list RBRACKET'''
         if len(t) == 3: t[0] = []
         else: t[0] = t[2]
 
-    def p_produce2(self, t):
+    def p_produce(self, t):
         '''produce : PRODUCE LPAREN ID COMMA produce_cargo_list COMMA produce_cargo_list COMMA expression RPAREN
                    | PRODUCE LPAREN ID COMMA produce_cargo_list COMMA produce_cargo_list RPAREN'''
         if len(t) == 11:
