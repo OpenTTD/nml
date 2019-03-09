@@ -264,6 +264,7 @@ callbacks[0x10] = {
     'fences'          : {'type': 'cargo', 'num': 0x09},
     'tunnel_overlay'  : {'type': 'cargo', 'num': 0x0A},
     'signals'         : {'type': 'cargo', 'num': 0x0B},
+    'precombined'     : {'type': 'cargo', 'num': 0x0C},
 }
 
 # Airport tiles
