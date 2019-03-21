@@ -76,7 +76,7 @@ random_types = {
     0x06 : {},
     0x07 : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits':  8, 'triggers': True}},
     0x08 : {},
-    0x09 : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits':  8, 'triggers': True}, 'PARENT': {'type': 0x83, 'first_bit': 0, 'num_bits': 16, 'triggers': True}},
+    0x09 : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits':  8, 'triggers': True}, 'PARENT': {'type': 0x83, 'param': 0, 'first_bit': 0, 'num_bits': 16, 'triggers': True}},
     0x0A : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits': 16, 'triggers': False}},
     0x0B : {},
     0x0C : {},
@@ -84,7 +84,7 @@ random_types = {
     0x0E : {},
     0x0F : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits':  8, 'triggers': False}},
     0x10 : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits':  2, 'triggers': False}},
-    0x11 : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits': 16, 'triggers': False}, 'TILE': {'type': 0x80, 'first_bit': 16, 'num_bits': 4, 'triggers': False}},
+    0x11 : {'SELF': {'type': 0x80, 'param': 0, 'first_bit': 0, 'num_bits': 16, 'triggers': False}, 'TILE': {'type': 0x80, 'param': 0, 'first_bit': 16, 'num_bits': 4, 'triggers': False}},
 }
 
 
