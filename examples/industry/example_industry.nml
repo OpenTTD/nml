@@ -1,0 +1,112 @@
+/*
+ * This file is aimed to provide an example on how to code a basic industry in NML.
+ * To keep the code readable, not every property or variable is documented in
+ * detail, refer to the object-specific reference in the documentation.
+ *
+ * This version shows only how to modify a built-in industry.
+ *
+ * Apart from this file, you will also need the following
+ * - Language files, to be placed in the 'lang' folder.
+ *      Currently english.lng is supplied.
+ */
+
+/**********************************************
+ * Header, containing some general stuff:
+ **********************************************/
+
+ /*
+ * First, define a grf block. This defines some basic properties of the grf,
+ * which are required for the grf to be valid and loadable.
+ */
+grf {
+    /* This grf is part of NML, therefore "NML" is chosen as the first three
+     * characters of the GRFID. It is the third real grf defined as part of
+     * NML, therefore the last character is set to 2. Successive grfs will
+     * have 3, 4, etc. there, to make sure each example grf has a unique GRFID.
+     */
+    grfid : "NML\04";
+    name : string(STR_GRF_NAME);
+    desc : string(STR_GRF_DESCRIPTION);
+    version : 0; // must be numeric
+    min_compatible_version : 0;
+}
+
+
+/* this example assumes we're just matching to the default temperate cargos, this wouldn't be the usual case */
+cargotable {
+ 	PASS, COAL, MAIL, OIL_, LVST, GOOD, GRAI, WOOD, IORE, STEL, VALU
+}
+
+produce(test_produce1, [COAL: STORE_TEMP(5, 0); IORE: STORE_TEMP(7, 1);], [STEL: 5;], 1)
+produce(test_produce2, [COAL: 5; IORE: 7;], [STEL: 5;])
+produce(test_produce3, [], [], 0)
+
+/*
+* This example extends the cargos accepted and produce by the default temperate factory.
+*/
+
+switch(FEAT_INDUSTRIES, SELF, extra_text_switch,
+        [STORE_TEMP(this_month_production("MAIL"), 256)]) {
+	return string(STR_INDUSTRY_EXTRA_TEXT);
+}
+
+item(FEAT_INDUSTRIES, factory) {
+    property {
+        substitute: INDUSTRYTYPE_TEMPERATE_FACTORY;
+        override: INDUSTRYTYPE_TEMPERATE_FACTORY;
+        cargo_types: [
+            accept_cargo("COAL", produce_cargo("MAIL", 1), produce_cargo("GOOD", 1), produce_cargo("STEL", 1), produce_cargo("VALU", 1)),
+            accept_cargo("OIL_"),
+            accept_cargo("IORE", produce_cargo("STEL", 4)),
+            accept_cargo("GRAI", produce_cargo("MAIL", 0.5), produce_cargo("VALU", 0.5))
+        ];
+    }
+    graphics {
+ 		produce_cargo_arrival: test_produce1;
+        extra_text_industry: extra_text_switch;
+    }
+}
+
+item(FEAT_INDUSTRYTILES, factory_tile_1) {
+    property {
+        substitute:        39;
+        override:          39;
+        special_flags: bitmask(INDTILE_FLAG_ACCEPT_ALL);
+    }
+}
+item(FEAT_INDUSTRYTILES, factory_tile_2) {
+    property {
+        substitute:        40;
+        override:          40;
+        special_flags: bitmask(INDTILE_FLAG_ACCEPT_ALL);
+    }
+}
+item(FEAT_INDUSTRYTILES, factory_tile_3) {
+    property {
+        substitute:        41;
+        override:          41;
+        special_flags: bitmask(INDTILE_FLAG_ACCEPT_ALL);
+    }
+}
+item(FEAT_INDUSTRYTILES, factory_tile_4) {
+    property {
+        substitute:        42;
+        override:          42;
+        special_flags: bitmask(INDTILE_FLAG_ACCEPT_ALL);
+    }
+}
+
+/*
+* This example causes the default farm to produce livestock, grain, and wood.
+*/
+item(FEAT_INDUSTRIES, farm) {
+    property {
+        substitute: INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM;
+        override: INDUSTRYTYPE_TEMPERATE_ARCTIC_FARM;
+        cargo_types: [
+            produce_cargo("LVST", 8),
+            produce_cargo("GRAI", 12),
+            produce_cargo("WOOD", 4),
+        ];
+    }
+}
