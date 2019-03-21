@@ -35,14 +35,14 @@ mkdir -p build
 #   or other means. The resulting nmlc.exe would not include the required
 #   submodules and would not work while the modules were installed using
 #   easy_install!
-wine "C:\\Python33\\pythonw.exe" "C:\\Python33\\Scripts\\cxfreeze" nmlc
-cp $HOME/.wine/drive_c/windows/system32/python33.dll dist/
-wine "C:\\Python33\\pythonw.exe" setup.py build -c mingw32
-cp build/lib.win32-3.3/*.pyd dist/
-mv dist nmlc-exe && mkdir dist
-cd nmlc-exe
-zip ../dist/nml-$REV-windows-win32.zip *
-cd ..
+# wine "C:\\Python33\\pythonw.exe" "C:\\Python33\\Scripts\\cxfreeze" nmlc
+# cp $HOME/.wine/drive_c/windows/system32/python33.dll dist/
+# wine "C:\\Python33\\pythonw.exe" setup.py build -c mingw32
+# cp build/lib.win32-3.3/*.pyd dist/
+# mv dist nmlc-exe && mkdir dist
+# cd nmlc-exe
+# zip ../dist/nml-$REV-windows-win32.zip *
+# cd ..
 
 # Use easy_install to create packages
 python3 setup.py bdist
