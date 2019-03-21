@@ -334,6 +334,7 @@ constant_numbers = {
 
     #industry tile special flags
     'INDTILE_FLAG_RANDOM_ANIMATION'   : 0,
+    'INDTILE_FLAG_ACCEPT_ALL'         : 1,
 
     'CB_RESULT_IND_PROD_NO_CHANGE'      : 0x00,
     'CB_RESULT_IND_PROD_HALF'           : 0x01,
@@ -390,6 +391,7 @@ constant_numbers = {
     'IND_FLAG_RANDOM_BITS_IN_PRODUCTION_CALLBACK'      : 15,
     'IND_FLAG_DO_NOT_FORCE_INSTANCE_AT_MAP_GENERATION' : 16,
     'IND_FLAG_ALLOW_CLOSING_LAST_INSTANCE'             : 17,
+    'IND_FLAG_LONG_CARGO_TYPE_LISTS'                   : 18,
 
     #flags for builtin function industry_type(..)
     'IND_TYPE_OLD'             : 0,

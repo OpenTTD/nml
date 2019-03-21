@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 from nml import generic, nmlop
-from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier
+from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier, ProduceCargo, AcceptCargo
 
 tilelayout_names = {}
 
@@ -257,7 +257,10 @@ general_veh_props = {
 def ottd_display_speed(value, divisor, unit):
     return int(value.value / divisor) * 10 // 16 * unit.ottd_mul >> unit.ottd_shift
 
-class CargotypeListProp(BaseAction0Property):
+class VariableByteListProp(BaseAction0Property):
+    """
+    Property value that is a variable-length list of bytes, the list length is written before the data.
+    """
     def __init__(self, prop_num, data):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
@@ -286,7 +289,7 @@ def ctt_list(prop_num, *values):
     for value in values:
         if not isinstance(value, Array):
             raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
-    return [CargotypeListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
+    return [VariableByteListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
 
 def vehicle_length(value):
     if isinstance(value, ConstantNumeric):
@@ -733,15 +736,6 @@ def industry_layouts(value):
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
-def industry_prod_multiplier(value):
-    if not isinstance(value, Array) or len(value.values) > 2:
-        raise generic.ScriptError("Prod multiplier must be an array of up to two values", value.pos)
-    props = []
-    for i in range(0, 2):
-        val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
-        props.append(Action0Property(0x12 + i, val, 1))
-    return props
-
 class RandomSoundsProp(BaseAction0Property):
     def __init__(self, sound_list):
         self.sound_list = sound_list
@@ -788,18 +782,90 @@ def industry_conflicting_types(value):
         types_list.append(ConstantNumeric(0xFF))
     return [ConflictingTypesProp(types_list)]
 
-def industry_input_multiplier(value, prop_num):
-    if not isinstance(value, Array) or len(value.values) > 2:
-        raise generic.ScriptError("Input multiplier must be an array of up to two values", value.pos)
-    val1 = value.values[0].reduce() if len(value.values) > 0 else ConstantNumeric(0)
-    val2 = value.values[1].reduce() if len(value.values) > 1 else ConstantNumeric(0)
-    if not isinstance(val1, (ConstantNumeric, ConstantFloat)) or not isinstance(val2, (ConstantNumeric, ConstantFloat)):
-        raise generic.ScriptError("Expected a compile-time constant", value.pos)
-    generic.check_range(val1.value, 0, 256, "input_multiplier", val1.pos)
-    generic.check_range(val2.value, 0, 256, "input_multiplier", val2.pos)
-    mul1 = int(val1.value * 256)
-    mul2 = int(val2.value * 256)
-    return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
+class IndustryInputMultiplierProp(BaseAction0Property):
+    def __init__(self, prop_num, data):
+        self.prop_num = prop_num
+        self.data = data
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        if len(self.data) == 0:
+            file.print_byte(0)
+            file.print_byte(0)
+        else:
+            file.print_byte(len(self.data))
+            file.print_byte(len(self.data[0])) # assume all sub-arrays are equal length
+            file.newline()
+            for out_muls in self.data:
+                for mul in out_muls:
+                    file.print_wordx(mul)
+                file.newline()
+
+    def get_size(self):
+        if len(self.data) == 0:
+            return 3
+        else:
+            return 3 + len(self.data) * len(self.data[0]) * 2
+
+def industry_cargo_types(value):
+    if isinstance(value, Array):
+        cargo_types = value.values
+    else:
+        cargo_types = [value]
+    if not all(isinstance(item, (ProduceCargo, AcceptCargo)) for item in value.values):
+        raise generic.ScriptError("Cargo types definition must be an array produce_cargo() and accept_cargo() expressions", value.pos)
+
+    # collect all the cargo types involved
+    input_cargos = []
+    output_cargos = []
+    def check_produce(prd):
+        if len(prd.value) != 1:
+            raise generic.ScriptError("Cargo types produce_cargo() expressions require 2 arguments", prd.pos)
+        if not isinstance(prd.value[0], (ConstantNumeric, ConstantFloat)):
+            raise generic.ScriptError("Cargo types produce_cargo() expressions must have numeric constant values", prd.pos)
+        if prd.cargotype not in output_cargos: output_cargos.append(prd.cargotype)
+    def check_accept(acp):
+        if item.cargotype not in input_cargos: input_cargos.append(item.cargotype)
+        for outitem in item.value:
+            if isinstance(outitem, ProduceCargo):
+                check_produce(outitem)
+            else:
+                raise generic.ScriptError("Cargo types accept_cargo() expressions must only contain produce_cargo() expressions", outitem.pos)
+    for item in cargo_types:
+        # use "if not in: append" idiom rather than sets to preserve ordering of cargotypes between NML and NFO
+        if isinstance(item, ProduceCargo):
+            check_produce(item)
+        elif isinstance(item, AcceptCargo):
+            check_accept(item)
+        else:
+            assert False
+
+    if len(input_cargos) > 16:
+        raise generic.ScriptError("Cargo types definition contains more than 16 different accept_cargo() cargotypes", value.pos)
+    if len(output_cargos) > 16:
+        raise generic.ScriptError("Cargo types definition contains more than 16 different produce_cargo() cargotypes", value.pos)
+
+    # prepare lists for the remaining output properties
+    prod_multipliers = [0 for cargo in output_cargos]
+    input_multipliers = [ [0 for outcargo in output_cargos] for incargo in input_cargos ]
+    has_inpmult = False
+
+    # populate prod_multipliers and input_multipliers
+    for item in cargo_types:
+        if isinstance(item, ProduceCargo):
+            prod_multipliers[output_cargos.index(item.cargotype)] = int(item.value[0].value)
+        elif isinstance(item, AcceptCargo):
+            row = input_multipliers[input_cargos.index(item.cargotype)]
+            for outitem in item.value:
+                row[output_cargos.index(outitem.cargotype)] = int(outitem.value[0].value * 256)
+                if outitem.value[0].value > 0: has_inpmult = True
+
+    return [
+        VariableByteListProp(0x25, [output_cargos]),
+        VariableByteListProp(0x26, [input_cargos]),
+        VariableByteListProp(0x27, [prod_multipliers]),
+        IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else [])
+    ]
 
 properties[0x0A] = {
     'substitute'             : {'size': 1, 'num': 0x08, 'first': None},
@@ -810,9 +876,7 @@ properties[0x0A] = {
     'prod_increase_msg'      : {'size': 2, 'num': 0x0D, 'string': 0xDC},
     'prod_decrease_msg'      : {'size': 2, 'num': 0x0E, 'string': 0xDC},
     'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
-    'prod_cargo_types'       : {'size': 2, 'num': 0x10, 'value_function': lambda value: cargo_list(value, 2)},
-    'accept_cargo_types'     : {'size': 4, 'num': 0x11, 'value_function': lambda value: cargo_list(value, 3)},
-    'prod_multiplier'        : {'custom_function': industry_prod_multiplier}, # = prop 12,13
+    'cargo_types'            : {'custom_function': industry_cargo_types}, # = prop 25+26+27+28 combined in one structure
     'min_cargo_distr'        : {'size': 1, 'num': 0x14},
     'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
     'conflicting_ind_types'  : {'custom_function': industry_conflicting_types}, # = prop 16
@@ -822,9 +886,6 @@ properties[0x0A] = {
     'map_colour'             : {'size': 1, 'num': 0x19},
     'spec_flags'             : {'size': 4, 'num': 0x1A},
     'new_ind_msg'            : {'size': 2, 'num': 0x1B, 'string': 0xDC},
-    'input_multiplier_1'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1C)},
-    'input_multiplier_2'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1D)},
-    'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E)},
     'name'                   : {'size': 2, 'num': 0x1F, 'string': 0xDC},
     'prospect_chance'        : {'size': 4, 'num': 0x20, 'unit_conversion': 0xFFFFFFFF},
     # prop 21, 22 (callback flags) are not set by user

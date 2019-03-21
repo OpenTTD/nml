@@ -21,6 +21,7 @@ from .bin_not import BinNot, Not
 from .binop import BinOp
 from .bitmask import BitMask
 from .boolean import Boolean
+from .cargo import ProduceCargo, AcceptCargo
 from .functioncall import FunctionCall, SpecialCheck, GRMOp
 from .functionptr import FunctionPtr
 from .identifier import Identifier
