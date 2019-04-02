@@ -11,7 +11,7 @@ NML is licensed under the GNU General Public License version 2, or at
 your option, any later version. For more information, see [LICENSE](https://github.com/OpenTTD/nml/blob/master/LICENSE)
 (GPL version 2), or later versions at http://www.gnu.org/licenses/.
 
-Last updated:    2018-10-15
+Last updated:    2019-04-02
 Release version: 0.4.5
 
 ## 1) Table of Contents
@@ -36,7 +36,7 @@ Contact can be made via the [issue tracker / source repository](https://github.c
 NML requires the following 3rd party packages to run:
 
 - `python`
-  Minimal version is 3.2. Python 2 is not supported.
+  Minimal version is 3.5. Python 2 is not supported.
 - `python image library`
   For install options see https://pillow.readthedocs.org/installation.html#simple-installation
 - `ply`
