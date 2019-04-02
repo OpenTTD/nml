@@ -404,7 +404,7 @@ class Varaction2Parser(object):
         max = 0xF if expr.info['perm'] else 0x10F
         if isinstance(expr.register, expression.ConstantNumeric) and expr.register.value > max:
             raise generic.ScriptError("Register number must be in range 0..{:d}, encountered {:d}.".format(max, expr.register.value), expr.pos)
-        if expr.info['perm'] and self.feature not in (0x08, 0x0A, 0x0D):
+        if expr.info['perm'] and self.feature not in (0x08, 0x0A, 0x0D, 0x12):
             raise generic.ScriptError("Persistent storage is not supported for feature '{}'".format(general.feature_name(self.feature)), expr.pos)
 
         if expr.info['store']:
@@ -414,7 +414,7 @@ class Varaction2Parser(object):
             var_num = 0x7C if expr.info['perm'] else 0x7D
             ret = expression.Variable(expression.ConstantNumeric(var_num), param=expr.register, pos=expr.pos)
 
-        if expr.info['perm'] and self.feature == 0x08:
+        if expr.info['perm'] and (self.feature == 0x08 or self.feature == 0x12):
             # store grfid in register 0x100 for town persistent storage
             grfid = expression.ConstantNumeric(0xFFFFFFFF if expr.grfid is None else expression.parse_string_to_dword(expr.grfid))
             store_op = expression.BinOp(nmlop.STO_TMP, grfid, expression.ConstantNumeric(0x100), expr.pos)

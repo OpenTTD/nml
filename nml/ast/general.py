@@ -35,6 +35,7 @@ feature_ids = {
     'FEAT_OBJECTS': 0x0F,
     'FEAT_RAILTYPES': 0x10,
     'FEAT_AIRPORTTILES': 0x11,
+    'FEAT_GENERIC_PARENT': 0x12, # Always the last item in this list
 }
 
 def feature_name(feature):
