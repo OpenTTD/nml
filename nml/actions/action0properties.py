@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import itertools
 from nml import generic, nmlop
 from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier, ProduceCargo, AcceptCargo
+from nml.ast.general import feature_ids as fids
 
 tilelayout_names = {}
 
@@ -151,7 +152,7 @@ class Action0Property(BaseAction0Property):
 #
 # 'first' (value doesn't matter) if the property should be set first (generally a substitute type)
 
-properties = 0x12 * [None]
+properties = len(fids) * [None]
 
 #
 # Some helper functions that are used for multiple features
@@ -303,7 +304,7 @@ def zero_refit_mask(prop_num):
 # Feature 0x00 (Trains)
 #
 
-properties[0x00] = {
+properties[fids['FEAT_TRAINS']] = {
     'track_type'                   : {'size': 1, 'num': 0x05},
     'ai_special_flag'              : {'size': 1, 'num': 0x08},
     'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': (5000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
@@ -344,7 +345,7 @@ properties[0x00] = {
     'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x2C, value)}, zero_refit_mask(0x1D)],
     'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x2D, value)}, zero_refit_mask(0x1D)],
 }
-properties[0x00].update(general_veh_props)
+properties[fids['FEAT_TRAINS']].update(general_veh_props)
 
 #
 # Feature 0x01 (Road Vehicles)
@@ -363,7 +364,7 @@ def roadveh_speed_prop(prop_info):
         prop08[key] = prop15[key] = prop_info[key]
     return [prop08, prop15]
 
-properties[0x01] = {
+properties[fids['FEAT_ROADVEHS']] = {
     'speed'                        : roadveh_speed_prop({'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)}),
     'running_cost_factor'          : {'size': 1, 'num': 0x09},
     'running_cost_base'            : {'size': 4, 'num': 0x0A},
@@ -395,7 +396,7 @@ properties[0x01] = {
     'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x24, value)}, zero_refit_mask(0x16)],
     'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x25, value)}, zero_refit_mask(0x16)],
 }
-properties[0x01].update(general_veh_props)
+properties[fids['FEAT_ROADVEHS']].update(general_veh_props)
 
 #
 # Feature 0x02 (Ships)
@@ -408,7 +409,7 @@ def speed_fraction(value):
         raise generic.ScriptError("speed fraction must be in range 0 .. 1", value.pos)
     return BinOp(nmlop.SUB, ConstantNumeric(255, value.pos), value, value.pos).reduce()
 
-properties[0x02] = {
+properties[fids['FEAT_SHIPS']] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'is_refittable'                : {'size': 1, 'num': 0x09},
     'cost_factor'                  : {'size': 1, 'num': 0x0A},
@@ -436,7 +437,7 @@ properties[0x02] = {
     'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x1E, value)}, zero_refit_mask(0x11)],
     'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x1F, value)}, zero_refit_mask(0x11)],
 }
-properties[0x02].update(general_veh_props)
+properties[fids['FEAT_SHIPS']].update(general_veh_props)
 
 #
 # Feature 0x03 (Aircraft)
@@ -450,7 +451,7 @@ def aircraft_is_heli(value):
 def aircraft_is_large(value):
     return BinOp(nmlop.AND, value, ConstantNumeric(1, value.pos), value.pos).reduce()
 
-properties[0x03] = {
+properties[fids['FEAT_AIRCRAFT']] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'aircraft_type'                : [{'size': 1, 'num': 0x09, 'value_function': aircraft_is_heli}, {'size': 1, 'num': 0x0A, 'value_function': aircraft_is_large}],
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
@@ -475,7 +476,7 @@ properties[0x03] = {
     'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x1E, value)}, zero_refit_mask(0x13)],
     'range'                        : {'size': 2, 'num': 0x1F},
 }
-properties[0x03].update(general_veh_props)
+properties[fids['FEAT_AIRCRAFT']].update(general_veh_props)
 
 # TODO: Feature 0x04
 
@@ -483,7 +484,7 @@ properties[0x03].update(general_veh_props)
 # Feature 0x05 (Canals)
 #
 
-properties[0x05] = {
+properties[fids['FEAT_CANALS']] = {
     # 08 (callback flags) not set by user
     'graphic_flags'  : {'size': 1, 'num': 0x09},
 }
@@ -635,7 +636,7 @@ def mt_house_class(value, num_ids, size_bit):
     # Set class to 0xFF for additional tiles
     return [value] + (num_ids - 1) * [ConstantNumeric(0xFF, value.pos)]
 
-properties[0x07] = {
+properties[fids['FEAT_HOUSES']] = {
     'substitute'              : {'size': 1, 'num': 0x08, 'multitile_function': mt_house_old_id, 'first': None},
     'building_flags'          : two_byte_property(0x09, 0x19, {'multitile_function': mt_house_prop09}, {'multitile_function': lambda *args: mt_house_mask(0xFE, *args)}),
     'years_available'         : [{'size': 2, 'num': 0x0A, 'multitile_function': mt_house_zero, 'value_function': house_prop_0A},
@@ -690,7 +691,7 @@ def industrytile_cargos(value):
         prop_num += 1
     return props
 
-properties[0x09] = {
+properties[fids['FEAT_INDUSTRYTILES']] = {
     'substitute'         : {'size': 1, 'num': 0x08, 'first': None},
     'override'           : {'size': 1, 'num': 0x09},
     'accepted_cargos'    : {'custom_function': industrytile_cargos}, # = prop 0A - 0C
@@ -867,7 +868,7 @@ def industry_cargo_types(value):
         IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else [])
     ]
 
-properties[0x0A] = {
+properties[fids['FEAT_INDUSTRIES']] = {
     'substitute'             : {'size': 1, 'num': 0x08, 'first': None},
     'override'               : {'size': 1, 'num': 0x09},
     'layouts'                : {'custom_function': industry_layouts}, # = prop 0A
@@ -897,7 +898,7 @@ properties[0x0A] = {
 # Feature 0x0B (Cargos)
 #
 
-properties[0x0B] = {
+properties[fids['FEAT_CARGOS']] = {
     'number'                    : {'num' : 0x08, 'size' : 1},
     'type_name'                 : {'num' : 0x09, 'size' : 2, 'string' : 0xDC},
     'unit_name'                 : {'num' : 0x0A, 'size' : 2, 'string' : 0xDC},
@@ -970,7 +971,7 @@ def airport_layouts(value):
         layouts.append(layout)
     return [AirportLayoutProp(layouts)]
 
-properties[0x0D] = {
+properties[fids['FEAT_AIRPORTS']] = {
     'override'         : {'size': 1, 'num': 0x08, 'first':None},
     # 09 does not exist
     'layouts'          : {'custom_function': airport_layouts}, # = prop 0A
@@ -998,7 +999,7 @@ def object_size(value):
         raise generic.ScriptError("The size of an object must be at least 1x1 and at most 15x15 tiles", value.pos)
     return [Action0Property(0x0C, ConstantNumeric(sizey.value << 4 | sizex.value), 1)]
 
-properties[0x0F] = {
+properties[fids['FEAT_OBJECTS']] = {
     'class'                  : {'size': 4, 'num': 0x08, 'first': None, 'string_literal': 4},
     # strings might be according to specs be either 0xD0 or 0xD4
     'classname'              : {'size': 2, 'num': 0x09, 'string': 0xD0},
@@ -1045,7 +1046,7 @@ def railtype_list(value, prop_num):
         if not isinstance(val, StringLiteral): raise generic.ScriptError("Railtype list must be an array of literal strings", val.pos)
     return [RailtypeListProp(prop_num, value.values)]
 
-properties[0x10] = {
+properties[fids['FEAT_RAILTYPES']] = {
     'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
     'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
     'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
@@ -1074,7 +1075,7 @@ properties[0x10] = {
 # Feature 0x11 (Airport Tiles)
 #
 
-properties[0x11] = {
+properties[fids['FEAT_AIRPORTTILES']] = {
     'substitute'         : {'size': 1, 'num': 0x08, 'first': None},
     'override'           : {'size': 1, 'num': 0x09},
     # 0A - 0D don't exist (yet?)

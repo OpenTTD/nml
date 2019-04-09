@@ -14,8 +14,9 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, nmlop
+from nml.ast.general import feature_ids as fids
 
-callbacks = 0x12 * [{}]
+callbacks = len(fids) * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -46,7 +47,7 @@ def vehicle_length(value):
     return expression.BinOp(nmlop.SUB, expression.ConstantNumeric(8, value.pos), value, value.pos)
 
 # Trains
-callbacks[0x00] = {
+callbacks[fids['FEAT_TRAINS']] = {
     'visual_effect_and_powered'            : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'effect_spawn_model_and_powered'       : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'value_function': vehicle_length},
@@ -70,10 +71,10 @@ callbacks[0x00] = {
     'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x2B},
     'create_effect'                        : {'type': 'cb', 'num': 0x160},
 }
-callbacks[0x00].update(general_vehicle_cbs)
+callbacks[fids['FEAT_TRAINS']].update(general_vehicle_cbs)
 
 # Road vehicles
-callbacks[0x01] = {
+callbacks[fids['FEAT_ROADVEHS']] = {
     'visual_effect'                        : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'effect_spawn_model'                   : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'value_function': vehicle_length},
@@ -95,10 +96,10 @@ callbacks[0x01] = {
     'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x22},
     'create_effect'                        : {'type': 'cb', 'num': 0x160},
 }
-callbacks[0x01].update(general_vehicle_cbs)
+callbacks[fids['FEAT_ROADVEHS']].update(general_vehicle_cbs)
 
 # Ships
-callbacks[0x02] = {
+callbacks[fids['FEAT_SHIPS']] = {
     'visual_effect'                : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'effect_spawn_model'           : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'cargo_capacity'               : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
@@ -112,10 +113,10 @@ callbacks[0x02] = {
     'cargo_age_period'             : {'type': 'cb', 'num': 0x36, 'var10': 0x1D},
     'create_effect'                : {'type': 'cb', 'num': 0x160},
 }
-callbacks[0x02].update(general_vehicle_cbs)
+callbacks[fids['FEAT_SHIPS']].update(general_vehicle_cbs)
 
 # Aircraft
-callbacks[0x03] = {
+callbacks[fids['FEAT_AIRCRAFT']] = {
     'passenger_capacity'           : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                        {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_passenger_capacity'}],
     'purchase_passenger_capacity'  : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
@@ -131,15 +132,15 @@ callbacks[0x03] = {
     'purchase_range'               : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
     'rotor'                        : {'type': 'override'},
 }
-callbacks[0x03].update(general_vehicle_cbs)
+callbacks[fids['FEAT_AIRCRAFT']].update(general_vehicle_cbs)
 
 # Stations (0x04) are not yet fully implemented
-callbacks[0x04] = {
+callbacks[fids['FEAT_STATIONS']] = {
     'default' : {'type': 'cargo', 'num': None},
 }
 
 # Canals
-callbacks[0x05] = {
+callbacks[fids['FEAT_CANALS']] = {
     'sprite_offset' : {'type': 'cb', 'num': 0x147, 'flag_bit': 0},
     'default'       : {'type': 'cargo', 'num': None},
 }
@@ -147,7 +148,7 @@ callbacks[0x05] = {
 # Bridges (0x06) have no action3
 
 # Houses
-callbacks[0x07] = {
+callbacks[fids['FEAT_HOUSES']] = {
     'random_trigger'         : {'type': 'cb', 'num':  0x01},
     'construction_check'     : {'type': 'cb', 'num':  0x17, 'flag_bit':  0, 'tiles': 'n'},
     'anim_next_frame'        : {'type': 'cb', 'num':  0x1A, 'flag_bit':  1},
@@ -174,7 +175,7 @@ callbacks[0x07] = {
 # General variables (0x08) have no action3
 
 # Industry tiles
-callbacks[0x09] = {
+callbacks[fids['FEAT_INDUSTRYTILES']] = {
     'random_trigger'      : {'type': 'cb', 'num': 0x01},
     'anim_control'        : {'type': 'cb', 'num': 0x25},
     'anim_next_frame'     : {'type': 'cb', 'num': 0x26, 'flag_bit': 0},
@@ -188,7 +189,7 @@ callbacks[0x09] = {
 }
 
 # Industries
-callbacks[0x0A] = {
+callbacks[fids['FEAT_INDUSTRIES']] = {
     'construction_probability' : {'type': 'cb', 'num': 0x22,  'flag_bit': 0},
     'produce_cargo_arrival'    : {'type': 'cb', 'num': 0x00,  'flag_bit': 1, 'var18': 0},
     'produce_256_ticks'        : {'type': 'cb', 'num': 0x00,  'flag_bit': 2, 'var18': 1},
@@ -219,7 +220,7 @@ def cargo_profit_value(value):
     value = expression.BinOp(nmlop.MUL, value, expression.ConstantNumeric(329), value.pos)
     return expression.BinOp(nmlop.DIV, value, expression.ConstantNumeric(256), value.pos)
 
-callbacks[0x0B] = {
+callbacks[fids['FEAT_CARGOS']] = {
     'profit'         : {'type': 'cb', 'num':  0x39, 'flag_bit': 0, 'value_function': cargo_profit_value},
     'station_rating' : {'type': 'cb', 'num': 0x145, 'flag_bit': 1},
     'default'        : {'type': 'cargo', 'num': None},
@@ -228,7 +229,7 @@ callbacks[0x0B] = {
 # Sound effects (0x0C) have no item-specific action3
 
 # Airports
-callbacks[0x0D] = {
+callbacks[fids['FEAT_AIRPORTS']] = {
     'additional_text' : {'type': 'cb', 'num': 0x155},
     'layout_name'     : {'type': 'cb', 'num': 0x156},
     'default'         : {'type': 'cargo', 'num': None},
@@ -237,7 +238,7 @@ callbacks[0x0D] = {
 # New signals (0x0E) have no item-specific action3
 
 # Objects
-callbacks[0x0F] = {
+callbacks[fids['FEAT_OBJECTS']] = {
     'tile_check'      : {'type': 'cb', 'num': 0x157, 'flag_bit': 0, 'purchase': 2},
     'anim_next_frame' : {'type': 'cb', 'num': 0x158, 'flag_bit': 1},
     'anim_control'    : {'type': 'cb', 'num': 0x159},
@@ -250,7 +251,7 @@ callbacks[0x0F] = {
 }
 
 # Railtypes
-callbacks[0x10] = {
+callbacks[fids['FEAT_RAILTYPES']] = {
     # No default here, it makes no sense
     'gui'             : {'type': 'cargo', 'num': 0x00},
     'track_overlay'   : {'type': 'cargo', 'num': 0x01},
@@ -268,10 +269,12 @@ callbacks[0x10] = {
 }
 
 # Airport tiles
-callbacks[0x11] = {
+callbacks[fids['FEAT_AIRPORTTILES']] = {
     'foundations'     : {'type': 'cb', 'num': 0x150, 'flag_bit': 5},
     'anim_control'    : {'type': 'cb', 'num': 0x152},
     'anim_next_frame' : {'type': 'cb', 'num': 0x153, 'flag_bit': 0},
     'anim_speed'      : {'type': 'cb', 'num': 0x154, 'flag_bit': 1},
     'default'         : {'type': 'cargo', 'num': None},
 }
+
+# Generic parent has no action3

@@ -14,12 +14,33 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, nmlop, generic
+from nml.ast.general import feature_ids as feature
 
-# Use feature 0x12 for towns (accessible via station/house/industry parent scope)
-varact2vars = 0x13 * [{}]
-varact2vars60x = 0x13 * [{}]
-# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12
-varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x12, None, 0x12, 0x12, None, 0x0A, 0x12, None, None, None, None, 0x12, None, None, None]
+varact2vars = len(feature) * [{}]
+varact2vars60x = len(feature) * [{}]
+# feature number:  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12
+#                  0x00, 0x01, 0x02, 0x03, 0x12, None, 0x12, 0x12, None, 0x0A, 0x12, None, None, None, None, 0x12, None, None, None]
+varact2parent_scope = [
+        feature['FEAT_TRAINS'],             # 0x00 Trains
+        feature['FEAT_ROADVEHS'],           # 0x01 Road vehicles
+        feature['FEAT_SHIPS'],              # 0x02 Ships
+        feature['FEAT_AIRCRAFT'],           # 0x03 Aircraft
+        feature['FEAT_GENERIC_PARENT'],     # 0x04 Stations
+        None,                               # 0x05 Canals
+        feature['FEAT_GENERIC_PARENT'],     # 0x06 Bridges
+        feature['FEAT_GENERIC_PARENT'],     # 0x07 Houses
+        None,                               # 0x08 Global variables
+        feature['FEAT_INDUSTRIES'],         # 0x09 Industry Tiles
+        feature['FEAT_GENERIC_PARENT'],     # 0x0A Industries
+        None,                               # 0x0B Cargoes
+        None,                               # 0x0C Sound effects
+        None,                               # 0x0D Airports
+        None,                               # 0x0E Signals
+        feature['FEAT_GENERIC_PARENT'],     # 0x0F Objects
+        None,                               # 0x10 Railtypes
+        None,                               # 0x11 Airport Tiles
+        None,                               # 0x12 "Towns" (must always be last)
+        ]
 
 def default_60xvar(name, args, pos, info):
     """
@@ -702,28 +723,28 @@ varact2vars_towns = {
 }
 
 
-varact2vars[0x00] = varact2vars_trains
-varact2vars60x[0x00] = varact2vars60x_vehicles
-varact2vars[0x01] = varact2vars_roadvehs
-varact2vars60x[0x01] = varact2vars60x_vehicles
-varact2vars[0x02] = varact2vars_ships
-varact2vars60x[0x02] = varact2vars60x_vehicles
-varact2vars[0x03] = varact2vars_aircraft
-varact2vars60x[0x03] = varact2vars60x_vehicles
-varact2vars[0x04] = varact2vars_stations
-varact2vars60x[0x04] = varact2vars60x_stations
-varact2vars[0x05] = varact2vars_canals
-varact2vars[0x07] = varact2vars_houses
-varact2vars60x[0x07] = varact2vars60x_houses
-varact2vars[0x09] = varact2vars_industrytiles
-varact2vars60x[0x09] = varact2vars60x_industrytiles
-varact2vars[0x0A] = varact2vars_industries
-varact2vars60x[0x0A] = varact2vars60x_industries
-varact2vars[0x0D] = varact2vars_airports
-varact2vars60x[0x0D] = varact2vars60x_airports
-varact2vars[0x0F] = varact2vars_objects
-varact2vars60x[0x0F] = varact2vars60x_objects
-varact2vars[0x10] = varact2vars_railtype
-varact2vars[0x11] = varact2vars_airporttiles
-varact2vars60x[0x11] = varact2vars60x_airporttiles
-varact2vars[0x12] = varact2vars_towns
+varact2vars[feature['FEAT_TRAINS']] = varact2vars_trains
+varact2vars60x[feature['FEAT_TRAINS']] = varact2vars60x_vehicles
+varact2vars[feature['FEAT_ROADVEHS']] = varact2vars_roadvehs
+varact2vars60x[feature['FEAT_ROADVEHS']] = varact2vars60x_vehicles
+varact2vars[feature['FEAT_SHIPS']] = varact2vars_ships
+varact2vars60x[feature['FEAT_SHIPS']] = varact2vars60x_vehicles
+varact2vars[feature['FEAT_AIRCRAFT']] = varact2vars_aircraft
+varact2vars60x[feature['FEAT_AIRCRAFT']] = varact2vars60x_vehicles
+varact2vars[feature['FEAT_AIRCRAFT']] = varact2vars_stations
+varact2vars60x[feature['FEAT_STATIONS']] = varact2vars60x_stations
+varact2vars[feature['FEAT_CANALS']] = varact2vars_canals
+varact2vars[feature['FEAT_HOUSES']] = varact2vars_houses
+varact2vars60x[feature['FEAT_HOUSES']] = varact2vars60x_houses
+varact2vars[feature['FEAT_INDUSTRYTILES']] = varact2vars_industrytiles
+varact2vars60x[feature['FEAT_INDUSTRYTILES']] = varact2vars60x_industrytiles
+varact2vars[feature['FEAT_INDUSTRIES']] = varact2vars_industries
+varact2vars60x[feature['FEAT_INDUSTRIES']] = varact2vars60x_industries
+varact2vars[feature['FEAT_AIRPORTS']] = varact2vars_airports
+varact2vars60x[feature['FEAT_AIRPORTS']] = varact2vars60x_airports
+varact2vars[feature['FEAT_OBJECTS']] = varact2vars_objects
+varact2vars60x[feature['FEAT_OBJECTS']] = varact2vars60x_objects
+varact2vars[feature['FEAT_RAILTYPES']] = varact2vars_railtype
+varact2vars[feature['FEAT_AIRPORTTILES']] = varact2vars_airporttiles
+varact2vars60x[feature['FEAT_AIRPORTTILES']] = varact2vars60x_airporttiles
+varact2vars[feature['FEAT_GENERIC_PARENT']] = varact2vars_towns
