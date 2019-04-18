@@ -437,11 +437,15 @@ constant_numbers = {
     'ROADTYPE_FLAG_CATENARY'          : 0,
     'ROADTYPE_FLAG_NO_LEVEL_CROSSING' : 1,
     'ROADTYPE_FLAG_NO_HOUSES'         : 2,
+    'ROADTYPE_FLAG_HIDDEN'            : 3,
+    'ROADTYPE_FLAG_TOWN_BUILD'        : 4,
 
     #tramtype flags
     'TRAMTYPE_FLAG_CATENARY'          : 0,
     'TRAMTYPE_FLAG_NO_LEVEL_CROSSING' : 1,
-    'TRAMTYPE_FLAG_ALLOW_HOUSES'      : 2,
+    'TRAMTYPE_FLAG_NO_HOUSES'         : 2,
+    'TRAMTYPE_FLAG_HIDDEN'            : 3,
+    'TRAMTYPE_FLAG_TOWN_BUILD'        : 4,
 
     #type of default station graphics used for a railtype
     'RAILTYPE_STATION_NORMAL'   : 0,
