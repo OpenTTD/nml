@@ -228,8 +228,8 @@ commands = {
 'DKBLUE':         {'unicode': r'\UE097',    'ascii': r'\97'},
 'BLACK':          {'unicode': r'\UE098',    'ascii': r'\98'},
 
-'PUSH_COLOUR':    {'unicode', r'\UE09A\1F', 'ascii': r'\9A\1F'},
-'POP_COLOUR':     {'unicode', r'\UE09A\20', 'ascii': r'\9A\20'},
+'PUSH_COLOUR':    {'unicode': r'\UE09A\1F', 'ascii': r'\9A\1F'},
+'POP_COLOUR':     {'unicode': r'\UE09A\20', 'ascii': r'\9A\20'},
 
 # Deprecated string codes
 'DWORD_S':        {'unicode': r'\UE07B',    'ascii': r'\7B', 'deprecated': True, 'size': 4},
