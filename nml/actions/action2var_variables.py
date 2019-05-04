@@ -98,7 +98,7 @@ varact2_globalvars = {
     'current_day_of_month' : {'var': 0x02, 'start':  8, 'size':  5},
     'is_leapyear'          : {'var': 0x02, 'start': 15, 'size':  1},
     'current_day_of_year'  : {'var': 0x02, 'start': 16, 'size':  9},
-    'traffic_side'         : {'var': 0x06, 'start':  0, 'size':  8},
+    'traffic_side'         : {'var': 0x06, 'start':  4, 'size':  1},
     'animation_counter'    : {'var': 0x0A, 'start':  0, 'size': 16},
     'current_callback'     : {'var': 0x0C, 'start':  0, 'size': 16},
     'extra_callback_info1' : {'var': 0x10, 'start':  0, 'size': 32},
