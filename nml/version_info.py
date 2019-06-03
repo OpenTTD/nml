@@ -139,11 +139,11 @@ def get_lib_versions():
     #PIL
     try:
         from PIL import Image
-        versions["PIL"] = Image.VERSION
+        versions["PIL"] = Image.PILLOW_VERSION
     except ImportError:
         try:
             import Image
-            versions["PIL"] = Image.VERSION
+            versions["PIL"] = Image.PILLOW_VERSION
         except ImportError:
             versions["PIL"] = "Not found!"
 
