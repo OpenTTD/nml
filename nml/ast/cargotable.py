@@ -28,7 +28,10 @@ class CargoTable(base_statement.BaseStatement):
             if isinstance(cargo, expression.Identifier):
                 self.cargo_list[i] = expression.StringLiteral(cargo.value, cargo.pos)
             expression.parse_string_to_dword(self.cargo_list[i]) # we don't care about the result, only validate the input
-            global_constants.cargo_numbers[self.cargo_list[i].value] = i
+            if self.cargo_list[i].value in global_constants.cargo_numbers:
+                generic.print_warning("Duplicate entry in cargo table: {}".format(self.cargo_list[i].value), cargo.pos)
+            else:
+                global_constants.cargo_numbers[self.cargo_list[i].value] = i
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Cargo table')
