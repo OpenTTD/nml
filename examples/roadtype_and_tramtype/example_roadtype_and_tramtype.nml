@@ -1,0 +1,347 @@
+/*
+ * This file is aimed to provide an example on how to code a roadtype in NML.
+ * To keep the code readable, not every property or variable is documented in
+ * detail, refer to the object-specific reference in the documentation.
+ *
+
+/**********************************************
+ * Header, containing some general stuff:
+ **********************************************/
+
+ /*
+ * First, define a grf block. This defines some basic properties of the grf,
+ * which are required for the grf to be valid and loadable.
+ */
+grf {
+    /* This grf is part of NML, therefore "NML" is chosen as the first three
+     * characters of the GRFID. It is the fifth real grf defined as part of
+     * NML, therefore the last character is set to 4. Successive grfs will
+     * have 5, 6, etc. there, to make sure each example grf has a unique GRFID.
+     */
+    grfid : "NML\04";
+    name : string(STR_GRF_NAME);
+    desc : string(STR_GRF_DESCRIPTION);
+    version : 0; // must be numeric
+    min_compatible_version : 0;
+}
+
+/* Default ground tile template (re-use as needed) */
+template ground_tile(x, y) { [x, y, 64, 31, -31, 0] }
+
+/**********************************************
+ * Road underlays (tracks + ballast):
+ **********************************************/
+/* Template for underlays; 2x straight road, 5x junctions, 4x corners, 4x slope, 4x half-tile road */
+
+/* Used for bridge surfaces also, therefore the template is split */
+template tmpl_underlay_straight() {
+    ground_tile( 0, 0)
+    ground_tile(75, 0)
+}
+template tmpl_underlay_junctions() {
+    ground_tile(150, 0)
+    ground_tile(225, 0)
+    ground_tile(300, 0)
+    ground_tile(375, 0)
+    ground_tile(450, 0)
+}
+template tmpl_underlay_corners() {
+    ground_tile(  0, 40)
+    ground_tile( 75, 40)
+    ground_tile(150, 40)
+    ground_tile(225, 40)
+}
+
+template tmpl_underlay_slope() {
+    [300, 40, 64, 39, -31, -8]
+    [375, 40, 64, 23, -31, 0]
+    [450, 40, 64, 23, -31, 0]
+    [525, 40, 64, 39, -31, -8]
+}
+
+template tmpl_underlay_half_tiles() {
+    ground_tile(  0, 80)
+    ground_tile( 75, 80)
+    ground_tile(150, 80)
+    ground_tile(225, 80)
+}
+
+
+template tmpl_underlay_roadtypes() {
+    tmpl_underlay_straight()
+    tmpl_underlay_junctions()
+    tmpl_underlay_corners()
+    tmpl_underlay_slope()
+    tmpl_underlay_half_tiles()
+
+    /* X-crossing */
+    ground_tile(0, 120)
+
+    /* underlay for crossings w/o tracks */
+    ground_tile(  0, 80)
+    ground_tile(225, 80)
+    ground_tile(150, 80)
+    ground_tile( 75, 80)
+    ground_tile(300, 80)
+}
+/* Spriteset containing all underlays */
+spriteset(track_underlays, "gfx/roads_underlay.png") {
+    tmpl_underlay_roadtypes()
+}
+
+/**********************************************
+ * Track overlays (tracks without ballast):
+ **********************************************/
+template tmpl_overlay_roadtypes() {
+    [ 0, 0, 64, 31, -31, 0]
+    [75, 0, 64, 31, -31, 0]
+
+    [150, 0, 64, 31, -31, 0]
+    [225, 0, 64, 31, -31, 0]
+    [300, 0, 64, 31, -31, 0]
+    [375, 0, 64, 31, -31, 0]
+    [450, 0, 64, 31, -31, 0]
+
+    [  0, 40, 64, 31, -31, 0]
+    [ 75, 40, 64, 31, -31, 0]
+    [150, 40, 64, 31, -31, 0]
+    [225, 40, 64, 31, -31, 0]
+
+    [300, 40, 64, 39, -31, -8]
+    [375, 40, 64, 21, -31, 0]
+    [450, 40, 64, 21, -31, 0]
+    [525, 40, 64, 39, -31, -8]
+
+    [  0, 80, 64, 31, -31, 0]
+    [ 75, 80, 64, 31, -31, 0]
+    [150, 80, 64, 31, -31, 0]
+    [225, 80, 64, 31, -31, 0]
+}
+/* Spriteset for overlays */
+spriteset(road_overlays_red, "gfx/roads_red.png") {
+    tmpl_overlay_roadtypes()
+}
+/* Spriteset for overlays */
+spriteset(road_overlays_blue, "gfx/roads_blue.png") {
+    tmpl_overlay_roadtypes()
+}
+/* Spriteset for overlays */
+spriteset(road_overlays_yellow, "gfx/roads_yellow.png") {
+    tmpl_overlay_roadtypes()
+}
+/* Spriteset for overlays */
+spriteset(tram_overlays_green, "gfx/tram_green.png") {
+    tmpl_overlay_roadtypes()
+}
+
+/**********************************************
+ * Depots:
+ **********************************************/
+/* Template for depot sprites */
+template tmpl_depot() {
+    [200, 10, 16,  8,  17,   7+4]
+    [118,  8, 64, 47,  -9+8, -31]
+    [  0, 10, 16,  8, -31,   7+4]
+    [ 37,  8, 64, 47, -53-8, -31]
+    [ 37, 63, 64, 47, -53-8, -31]
+    [118, 63, 64, 47,  -9+8, -31]
+}
+
+/* Depots */
+spriteset(depot_normal_road, "gfx/depot_normal.png") {
+    tmpl_depot()
+}
+
+
+/**********************************************
+ * Bridge surfaces:
+ **********************************************/
+/* Bridge surface, uses the same sprites as track underlays, but in a different order */
+template tmpl_bridges_underlay() {
+    tmpl_underlay_straight()
+    tmpl_underlay_slope()
+    tmpl_underlay_junctions()
+}
+/* Spriteset for bridge surfaces */
+spriteset(bridge_underlay, "gfx/roads_red.png") {
+    tmpl_bridges_underlay()
+}
+
+/**********************************************
+ * GUI sprites:
+ **********************************************/
+
+/* Template for a single icon sprite */
+template tmpl_gui_icon(x, y) {
+    [x, y, 20, 20, 0, 0]
+}
+
+/* Template for a single cursor sprite */
+template tmpl_gui_cursor(x, y) {
+    [x, y, 32, 32, 0, 0]
+}
+/* Template for all the GUI sprites (8 icons + 8 cursors) */
+template tmpl_gui() {
+    tmpl_gui_icon(  0, 0)
+    tmpl_gui_icon( 25, 0)
+    tmpl_gui_icon( 50, 0)
+    tmpl_gui_icon( 75, 0)
+    tmpl_gui_icon(100, 0)
+    tmpl_gui_icon(125, 0)
+    tmpl_gui_icon(150, 0)
+    tmpl_gui_icon(175, 0)
+
+    tmpl_gui_cursor(200, 0)
+    tmpl_gui_cursor(250, 0)
+    tmpl_gui_cursor(300, 0)
+    tmpl_gui_cursor(350, 0)
+    tmpl_gui_cursor(400, 0)
+    tmpl_gui_cursor(450, 0)
+    tmpl_gui_cursor(500, 0)
+    tmpl_gui_cursor(550, 0)
+}
+
+/* Spritesets for the normal and electric GUI */
+spriteset(gui_normal, "gfx/gui_rail.png") {
+    tmpl_gui()
+}
+
+/**********************************************
+ * Roadstop sprites:
+ **********************************************/
+
+template tmpl_underlay_roadstop() {
+    ground_tile(  0, 120)
+    ground_tile( 75, 120)
+    ground_tile(150, 120)
+    ground_tile(225, 120)
+}
+
+spriteset(roadstop_underlay_red, "gfx/roads_red.png") {
+    tmpl_underlay_roadstop()
+}
+spriteset(roadstop_underlay_blue, "gfx/roads_blue.png") {
+    tmpl_underlay_roadstop()
+}
+spriteset(roadstop_underlay_yellow, "gfx/roads_yellow.png") {
+    tmpl_underlay_roadstop()
+}
+
+/**********************************************
+ * Roadtype definitions:
+ **********************************************/
+
+item(FEAT_ROADTYPES, red_road, 5) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_RED_ROAD);
+        label: "REDR";
+        powered_roadtype_list: ["BLUE", "REDR", "ROAD", "ELRD"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_RED_ROAD);
+        menu_text: string(STR_MENU_TEXT_RED_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_RED_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_RED_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_RED_ROAD);
+        roadtype_flags: bitmask(ROADTYPE_FLAG_CATENARY);
+        sort_order: 101;
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: road_overlays_red;
+        underlay: track_underlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        roadstops: roadstop_underlay_red;
+        // gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+
+item(FEAT_ROADTYPES, blue_road, 6) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_BLUE_ROAD);
+        label: "BLUE";
+        powered_roadtype_list: ["ROAD"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_BLUE_ROAD);
+        menu_text: string(STR_MENU_TEXT_BLUE_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_BLUE_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_BLUE_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_BLUE_ROAD);
+        roadtype_flags: 0;
+        sort_order: 99;
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: road_overlays_blue;
+        underlay: track_underlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        roadstops: roadstop_underlay_blue;
+        // gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+
+item(FEAT_ROADTYPES, yellow_road, 7) {
+    /* Set only the most essential properties,
+     * Few compatible roadtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_YELLOW_ROAD);
+        label: "YELL";
+        powered_roadtype_list: ["ROAD"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_YELLOW_ROAD);
+        menu_text: string(STR_MENU_TEXT_YELLOW_ROAD);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_YELLOW_ROAD);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_YELLOW_ROAD);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_YELLOW_ROAD);
+        roadtype_flags: 0;
+        sort_order: 100;
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: road_overlays_yellow;
+        underlay: track_underlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        roadstops: roadstop_underlay_yellow;
+        // gui: gui_normal;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+/**********************************************
+ * Tramtype definitions:
+ **********************************************/
+
+item(FEAT_TRAMTYPES, green_tram, 9) {
+    /* Set only the most essential properties,
+     * Few compatible tramtypes are defined as there are no other sets out there yet */
+    property {
+        name: string(STR_NAME_GREEN_TRAM);
+        label: "GRTR";
+        powered_tramtype_list: ["TRAM"];
+        toolbar_caption: string(STR_TOOLBAR_CAPTION_GREEN_TRAM);
+        menu_text: string(STR_MENU_TEXT_GREEN_TRAM);
+        build_window_caption: string(STR_BUILD_WINDOW_CAPTION_GREEN_TRAM);
+        autoreplace_text: string(STR_AUTOREPLACE_TEXT_GREEN_TRAM);
+        new_engine_text: string(STR_NEW_ENGINE_TEXT_GREEN_TRAM);
+        tramtype_flags: 0;
+    }
+
+    /* Associate graphics with this roadtype */
+    graphics {
+        track_overlay: tram_overlays_green;
+        underlay: track_underlays;
+        depots: depot_normal_road;
+        bridge_surfaces: bridge_underlay;
+        /* Catenary is not not implemented here, use the default */
+    }
+}
+
+
+

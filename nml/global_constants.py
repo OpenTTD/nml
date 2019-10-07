@@ -433,6 +433,20 @@ constant_numbers = {
     'RAILTYPE_FLAG_ALLOW_90DEG'       : 4,
     'RAILTYPE_FLAG_DISALLOW_90DEG'    : 5,
 
+    #roadtype flags
+    'ROADTYPE_FLAG_CATENARY'          : 0,
+    'ROADTYPE_FLAG_NO_LEVEL_CROSSING' : 1,
+    'ROADTYPE_FLAG_NO_HOUSES'         : 2,
+    'ROADTYPE_FLAG_HIDDEN'            : 3,
+    'ROADTYPE_FLAG_TOWN_BUILD'        : 4,
+
+    #tramtype flags
+    'TRAMTYPE_FLAG_CATENARY'          : 0,
+    'TRAMTYPE_FLAG_NO_LEVEL_CROSSING' : 1,
+    'TRAMTYPE_FLAG_NO_HOUSES'         : 2,
+    'TRAMTYPE_FLAG_HIDDEN'            : 3,
+    'TRAMTYPE_FLAG_TOWN_BUILD'        : 4,
+
     #type of default station graphics used for a railtype
     'RAILTYPE_STATION_NORMAL'   : 0,
     'RAILTYPE_STATION_MONORAIL' : 1,
@@ -1204,8 +1218,19 @@ def create_spritegroup_ref(info, pos):
     return expression.SpriteGroupRef(expression.Identifier(info), [], pos)
 
 cargo_numbers = {}
+
 is_default_railtype_table = True
+# if no railtype_table is provided, OpenTTD assumes these 4 railtypes
 railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
+
+is_default_roadtype_table = True
+# if no roadtype_table is provided, OpenTTD sets all vehicles to ROAD
+roadtype_table = {'ROAD': 0}
+
+is_default_tramtype_table = True
+# if no tramtype_table is provided, OpenTTD sets all vehicles to ELRL
+tramtype_table = {'ELRL': 0}
+
 item_names = {}
 settings = {}
 named_parameters = {}
@@ -1219,6 +1244,8 @@ const_list = [
     (named_parameters, param_from_name),
     cargo_numbers,
     railtype_table,
+    roadtype_table,
+    tramtype_table,
     (item_names, item_to_id),
     (settings, setting_from_info),
     (config_flags, config_flag),
@@ -1235,3 +1262,7 @@ def print_stats():
         generic.print_info("Cargo translation table: {}/{}".format(len(cargo_numbers), 0xFE))
     if not is_default_railtype_table:
         generic.print_info("Railtype translation table: {}/{}".format(len(railtype_table), 0x100))
+    if not is_default_roadtype_table:
+        generic.print_info("Roadtype translation table: {}/{}".format(len(roadtype_table), 0x100))
+    if not is_default_tramtype_table:
+        generic.print_info("Tramtype translation table: {}/{}".format(len(tramtype_table), 0x100))

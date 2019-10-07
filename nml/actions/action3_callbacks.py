@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, nmlop
 
-callbacks = 0x12 * [{}]
+callbacks = 0x14 * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -274,4 +274,29 @@ callbacks[0x11] = {
     'anim_next_frame' : {'type': 'cb', 'num': 0x153, 'flag_bit': 0},
     'anim_speed'      : {'type': 'cb', 'num': 0x154, 'flag_bit': 1},
     'default'         : {'type': 'cargo', 'num': None},
+}
+
+# Roadtypes
+callbacks[0x12] = {
+    # No default here, it makes no sense
+    'gui'             : {'type': 'cargo', 'num': 0x00},
+    'track_overlay'   : {'type': 'cargo', 'num': 0x01},
+    'underlay'        : {'type': 'cargo', 'num': 0x02},
+    'catenary_front'  : {'type': 'cargo', 'num': 0x04},
+    'catenary_back'   : {'type': 'cargo', 'num': 0x05},
+    'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
+    'depots'          : {'type': 'cargo', 'num': 0x08},
+    'roadstops'       : {'type': 'cargo', 'num': 0x0A},
+}
+
+# Tramtypes
+callbacks[0x13] = {
+    # No default here, it makes no sense
+    'gui'             : {'type': 'cargo', 'num': 0x00},
+    'track_overlay'   : {'type': 'cargo', 'num': 0x01},
+    'underlay'        : {'type': 'cargo', 'num': 0x02},
+    'catenary_front'  : {'type': 'cargo', 'num': 0x04},
+    'catenary_back'   : {'type': 'cargo', 'num': 0x05},
+    'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
+    'depots'          : {'type': 'cargo', 'num': 0x08},
 }

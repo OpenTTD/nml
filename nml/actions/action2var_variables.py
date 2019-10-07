@@ -15,11 +15,11 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, nmlop, generic
 
-# Use feature 0x12 for towns (accessible via station/house/industry parent scope)
-varact2vars = 0x13 * [{}]
-varact2vars60x = 0x13 * [{}]
-# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12
-varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x12, None, 0x12, 0x12, None, 0x0A, 0x12, None, None, None, None, 0x12, None, None, None]
+# Use feature 0x14 for towns (accessible via station/house/industry parent scope)
+varact2vars = 0x15 * [{}]
+varact2vars60x = 0x15 * [{}]
+# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13
+varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x14, None, 0x14, 0x14, None, 0x0A, 0x14, None, None, None, None, 0x14, None, None, None, None]
 
 def default_60xvar(name, args, pos, info):
     """
@@ -149,7 +149,6 @@ varact2vars_vehicles = {
     'vehicle_is_testing'               : {'var': 0x48, 'start':  1, 'size':  1},
     'vehicle_is_offered'               : {'var': 0x48, 'start':  2, 'size':  1},
     'build_year'                       : {'var': 0x49, 'start':  0, 'size': 32},
-    'current_railtype'                 : {'var': 0x4A, 'start':  0, 'size':  8},
     'vehicle_is_potentially_powered'   : {'var': 0x4A, 'start':  8, 'size':  1},
     'date_of_last_service'             : {'var': 0x4B, 'start':  0, 'size': 32},
     'position_in_articulated_veh'          : {'var': 0x4D, 'start':  0, 'size':  8},
@@ -184,6 +183,7 @@ varact2vars_trains = {
     #for train speed
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
+    'current_railtype'    : {'var': 0x4A, 'start':  0, 'size':  8},
     'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size':  1},
 }
@@ -194,6 +194,8 @@ varact2vars_roadvehs = {
     #for road vehicle speed
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
+    'current_roadtype'    : {'var': 0x4A, 'start':  0, 'size':  8},
+    'current_tramtype'    : {'var': 0x4A, 'start':  0, 'size':  8},
     'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 0, 'size':  8, 'value_function': value_equals(0xFE)},
 }
@@ -682,6 +684,35 @@ varact2vars60x_airporttiles = {
 }
 
 #
+# Roadtypes (feature 0x12)
+#
+
+varact2vars_roadtype = {
+    'terrain_type'          : {'var': 0x40, 'start': 0, 'size':  8},
+    'enhanced_tunnels'      : {'var': 0x41, 'start': 0, 'size':  8},
+    'level_crossing_status' : {'var': 0x42, 'start': 0, 'size':  8},
+    'build_date'            : {'var': 0x43, 'start': 0, 'size': 32},
+    'town_zone'             : {'var': 0x44, 'start': 0, 'size':  8},
+    'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
+}
+# Roadtypes have no 60+x variables
+
+#
+# Tramtypes (feature 0x13)
+#
+
+varact2vars_tramtype = {
+    'terrain_type'          : {'var': 0x40, 'start': 0, 'size':  8},
+    'enhanced_tunnels'      : {'var': 0x41, 'start': 0, 'size':  8},
+    'level_crossing_status' : {'var': 0x42, 'start': 0, 'size':  8},
+    'build_date'            : {'var': 0x43, 'start': 0, 'size': 32},
+    'town_zone'             : {'var': 0x44, 'start': 0, 'size':  8},
+    'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
+}
+# Tramtypes have no 60+x variables
+
+
+#
 # Towns are not a true feature, but accessible via the parent scope of e.g. industries, stations
 #
 
@@ -726,4 +757,6 @@ varact2vars60x[0x0F] = varact2vars60x_objects
 varact2vars[0x10] = varact2vars_railtype
 varact2vars[0x11] = varact2vars_airporttiles
 varact2vars60x[0x11] = varact2vars60x_airporttiles
-varact2vars[0x12] = varact2vars_towns
+varact2vars[0x12] = varact2vars_roadtype
+varact2vars[0x13] = varact2vars_tramtype
+varact2vars[0x14] = varact2vars_towns
