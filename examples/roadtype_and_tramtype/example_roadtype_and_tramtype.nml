@@ -1,8 +1,8 @@
 /*
- * This file is aimed to provide an example on how to code a roadtype in NML.
+ * This file is aimed to provide an example on how to code roadtypes and tramtypes in NML.
  * To keep the code readable, not every property or variable is documented in
  * detail, refer to the object-specific reference in the documentation.
- *
+ */
 
 /**********************************************
  * Header, containing some general stuff:
@@ -51,39 +51,26 @@ template tmpl_underlay_corners() {
     ground_tile(150, 40)
     ground_tile(225, 40)
 }
-
 template tmpl_underlay_slope() {
     [300, 40, 64, 39, -31, -8]
     [375, 40, 64, 23, -31, 0]
     [450, 40, 64, 23, -31, 0]
     [525, 40, 64, 39, -31, -8]
 }
-
 template tmpl_underlay_half_tiles() {
     ground_tile(  0, 80)
     ground_tile( 75, 80)
     ground_tile(150, 80)
     ground_tile(225, 80)
 }
-
-
 template tmpl_underlay_roadtypes() {
     tmpl_underlay_straight()
     tmpl_underlay_junctions()
     tmpl_underlay_corners()
     tmpl_underlay_slope()
     tmpl_underlay_half_tiles()
-
-    /* X-crossing */
-    ground_tile(0, 120)
-
-    /* underlay for crossings w/o tracks */
-    ground_tile(  0, 80)
-    ground_tile(225, 80)
-    ground_tile(150, 80)
-    ground_tile( 75, 80)
-    ground_tile(300, 80)
 }
+
 /* Spriteset containing all underlays */
 spriteset(track_underlays, "gfx/roads_underlay.png") {
     tmpl_underlay_roadtypes()
@@ -231,9 +218,10 @@ spriteset(roadstop_underlay_yellow, "gfx/roads_yellow.png") {
  * Roadtype definitions:
  **********************************************/
 
+/* Note that roadtypes only show in OpenTTD if compatible vehicles are available.
+   examples/road_vehicle provides some vehicles for these roadtypes */
+
 item(FEAT_ROADTYPES, red_road, 5) {
-    /* Set only the most essential properties,
-     * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_RED_ROAD);
         label: "REDR";
@@ -260,8 +248,6 @@ item(FEAT_ROADTYPES, red_road, 5) {
 }
 
 item(FEAT_ROADTYPES, blue_road, 6) {
-    /* Set only the most essential properties,
-     * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_BLUE_ROAD);
         label: "BLUE";
@@ -288,8 +274,6 @@ item(FEAT_ROADTYPES, blue_road, 6) {
 }
 
 item(FEAT_ROADTYPES, yellow_road, 7) {
-    /* Set only the most essential properties,
-     * Few compatible roadtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_YELLOW_ROAD);
         label: "YELL";
@@ -319,8 +303,6 @@ item(FEAT_ROADTYPES, yellow_road, 7) {
  **********************************************/
 
 item(FEAT_TRAMTYPES, green_tram, 9) {
-    /* Set only the most essential properties,
-     * Few compatible tramtypes are defined as there are no other sets out there yet */
     property {
         name: string(STR_NAME_GREEN_TRAM);
         label: "GRTR";
