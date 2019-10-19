@@ -38,7 +38,7 @@ NML requires the following 3rd party packages to run:
 - `python`
   Minimal version is 3.2. Python 2 is not supported.
 - `python image library`
-  For install options see https://pillow.readthedocs.org/installation.html#simple-installation
+  For install options see https://pillow.readthedocs.io/en/stable/installation.html
   Minimal version is 5.2. Older versions are not supported.
 - `ply`
   Downloadable from http://www.dabeaz.com/ply/
