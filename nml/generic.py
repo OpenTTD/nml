@@ -295,7 +295,7 @@ def clear_progress():
     hide_progress()
 
     if (progress_message is not None) and (verbosity_level >= VERBOSITY_TIMING):
-        print("{} {:.1f} s".format(progress_message, time.clock() - progress_start_time))
+        print("{} {:.1f} s".format(progress_message, time.process_time() - progress_start_time))
 
     progress_message = None
     progress_start_time = None
@@ -324,12 +324,12 @@ def print_progress(msg, incremental = False):
     progress_message = msg
 
     if incremental:
-        t = time.clock()
+        t = time.process_time()
         if (progress_update_time is not None) and (t - progress_update_time < 1):
             return
         progress_update_time = t
     else:
-        progress_start_time = time.clock()
+        progress_start_time = time.process_time()
 
     print_eol(msg)
 
