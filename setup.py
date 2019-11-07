@@ -2,20 +2,9 @@
 
 import os
 
-from setuptools import Extension, find_packages
-# Use cx_Freeze on Windows only, to generate an actual executable
-if os.name == 'nt':
-    from cx_Freeze import setup, Executable
-else:
-    from setuptools import setup
-
+from setuptools import setup, Extension, find_packages
 from nml import version_info
 NML_VERSION = version_info.get_and_write_version()
-
-if os.name == 'nt':
-    EXE_PARAM = {'executables': [Executable('nmlc')]}
-else:
-    EXE_PARAM = {'scripts': ['nmlc']}
 
 setup(
     name='nml',
@@ -41,7 +30,7 @@ setup(
     url='https://github.com/OpenTTD/nml',
     author='NML Development Team',
     author_email='nml-team@openttdcoop.org',
-    **EXE_PARAM,
+    scripts=['nmlc'],
     ext_modules=[Extension("nml_lz77", ["nml/_lz77.c"], optional=True)],
     python_requires='>=3.5',
 )
