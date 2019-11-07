@@ -30,7 +30,9 @@ setup(
     url='https://github.com/OpenTTD/nml',
     author='NML Development Team',
     author_email='nml-team@openttdcoop.org',
-    scripts=['nmlc'],
+    entry_points={
+        'console_scripts': ['nmlc = nml.main:run']
+    },
     ext_modules=[Extension("nml_lz77", ["nml/_lz77.c"], optional=True)],
     python_requires='>=3.5',
 )
