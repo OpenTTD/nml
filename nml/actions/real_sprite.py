@@ -16,10 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic, expression
 from nml.actions import base_action
 from nml.ast import assignment
-try:
-    from PIL import Image
-except ImportError:
-    import Image
+from PIL import Image
 
 FLAG_NOCROP  = 0x0040
 FLAG_NOALPHA = 0x0100

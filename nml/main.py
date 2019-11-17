@@ -21,10 +21,7 @@ from nml.ast import grf, alt_sprites
 try:
     from PIL import Image
 except ImportError:
-    try:
-        import Image
-    except ImportError:
-        pass
+    pass
 
 developmode = False # Give 'nice' error message instead of a stack dump.
 
