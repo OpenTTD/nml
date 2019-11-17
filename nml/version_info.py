@@ -138,20 +138,10 @@ def get_lib_versions():
     versions = {}
     #PIL
     try:
-        from PIL import Image
-        try:
-            versions["PIL"] = Image.__version__
-        except AttributeError:
-            versions["PIL"] = Image.PILLOW_VERSION
+        import PIL
+        versions["PIL"] = PIL.__version__
     except ImportError:
-        try:
-            import Image
-            try:
-                versions["PIL"] = Image.__version__
-            except AttributeError:
-                versions["PIL"] = Image.PILLOW_VERSION
-        except ImportError:
-            versions["PIL"] = "Not found!"
+        versions["PIL"] = "Not found!"
 
     #PLY
     try:
