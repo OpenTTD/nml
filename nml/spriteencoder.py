@@ -20,10 +20,7 @@ from nml.actions import real_sprite
 try:
     from PIL import Image
 except ImportError:
-    try:
-        import Image
-    except ImportError:
-        pass
+    pass
 
 # Some constants for the 'info' byte
 INFO_RGB    = 1
