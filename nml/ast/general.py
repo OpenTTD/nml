@@ -50,7 +50,7 @@ def feature_name(feature):
     @return: String with feature as used in nml files.
     @rtype: C{str}
     """
-    for name, num in list(feature_ids.items()):
+    for name, num in feature_ids.items():
         if num == feature:
             return name
     assert False, "Invalid feature number"
@@ -66,7 +66,7 @@ def parse_feature(expr):
     @rtype: L{ConstantNumeric}
     """
     expr = expr.reduce_constant([feature_ids])
-    if expr.value not in list(feature_ids.values()):
+    if expr.value not in feature_ids.values():
         raise generic.ScriptError("Invalid feature '{:02X}' encountered.".format(expr.value), expr.pos)
     return expr
 

@@ -253,7 +253,7 @@ class SpriteCache:
         offset = 0
 
         old_cache_valid = True
-        for key, value in list(self.cached_sprites.items()):
+        for key, value in self.cached_sprites.items():
             # Unpack key/value
             rgb_file, rgb_rect, mask_file, mask_rect, do_crop, mask_pal = key
             data, info, crop_rect, pixel_stats, in_old_cache, in_use = value

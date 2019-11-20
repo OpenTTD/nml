@@ -616,7 +616,7 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
     global properties
     first_warnings = [(info, pos_list[i]) for i, info in enumerate(prop_info_list) if 'first' in info and i != 0]
     for info, pos in first_warnings:
-        for prop_name, prop_info in list(properties[feature].items()):
+        for prop_name, prop_info in properties[feature].items():
             if info == prop_info or (isinstance(prop_info, list) and info in prop_info):
                 generic.print_warning("Property '{}' should be set before all other properties and graphics.".format(prop_name), pos)
                 break
@@ -928,7 +928,7 @@ class LanguageTranslationTable(BaseAction0Property):
     def __init__(self, num, name_list, extra_names):
         self.num = num
         self.mappings = []
-        for name, idx in list(name_list.items()):
+        for name, idx in name_list.items():
             self.mappings.append( (idx, name) )
             if name in extra_names:
                 for extra_name in extra_names[name]:

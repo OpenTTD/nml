@@ -620,7 +620,7 @@ class NewGRFString:
                     return 'unicode'
             else:
                 if not is_ascii_string(comp): return 'unicode'
-        for case in list(self.cases.values()):
+        for case in self.cases.values():
             if case.get_type() == 'unicode':
                 return 'unicode'
         return 'ascii'
