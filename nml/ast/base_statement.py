@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
-class BaseStatement(object):
+class BaseStatement:
     """
     Base class for a statement (AST node) in NML.
     Note: All instance variables (except 'pos') are prefixed with "bs_" to avoid naming conflicts

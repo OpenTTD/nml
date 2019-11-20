@@ -114,7 +114,7 @@ class TownNames(base_statement.BaseStatement):
         return self.actFs + [actionF.ActionF(self.name, self.id_number, self.style_name, self.parts, self.pos)]
 
 
-class TownNamesPart(object):
+class TownNamesPart:
     """
     A class containing a town name part.
 
@@ -299,7 +299,7 @@ class TownNamesPart(object):
             file.newline()
 
 
-class TownNamesParam(object):
+class TownNamesParam:
     """
     Class containing a parameter of a town name.
     Currently known key/values:
@@ -314,7 +314,7 @@ class TownNamesParam(object):
         return '{}: {};\n'.format(self.key, self.value)
 
 
-class TownNamesEntryDefinition(object):
+class TownNamesEntryDefinition:
     """
     An entry in a part referring to a non-final town name, with a given probability.
 
@@ -385,7 +385,7 @@ class TownNamesEntryDefinition(object):
         file.print_bytex(self.probability.value | 0x80)
         file.print_bytex(self.number)
 
-class TownNamesEntryText(object):
+class TownNamesEntryText:
     """
     An entry in a part, a text-string with a given probability.
 

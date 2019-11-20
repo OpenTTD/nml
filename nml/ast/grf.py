@@ -179,7 +179,7 @@ class GRF(base_statement.BaseStatement):
         ret += '}\n'
         return ret
 
-class ParameterSetting(object):
+class ParameterSetting:
     def __init__(self, name, value_list):
         self.name = name
         self.value_list = value_list
@@ -263,7 +263,7 @@ class ParameterSetting(object):
         else:
             raise generic.ScriptError("Unknown setting-property " + name, value.pos)
 
-class ParameterDescription(object):
+class ParameterDescription:
     def __init__(self, setting_list, num = None, pos = None):
         self.setting_list = setting_list
         self.num = num

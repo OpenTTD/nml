@@ -104,7 +104,7 @@ class TileLayout(base_statement.BaseStatement):
         file.newline()
 
 
-class LayoutTile(object):
+class LayoutTile:
     """
     Single tile that is part of a L{TileLayout}.
 

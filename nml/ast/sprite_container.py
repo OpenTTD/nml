@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
-class SpriteContainer(object):
+class SpriteContainer:
     """
     Base class for all AST Nodes that contain real sprites
     Note that this does not inherit from BaseStatement,

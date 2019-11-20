@@ -18,7 +18,7 @@ Abstract base classes that implements common functionality for output classes
 """
 import array, io
 
-class OutputBase(object):
+class OutputBase:
     """
     Base class for output to a data file.
 

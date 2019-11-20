@@ -110,7 +110,7 @@ class Item(base_statement.BaseStatementList):
         ret += '}\n'
         return ret
 
-class Property(object):
+class Property:
     """
     AST-node representing a single property. These are only valid
     insde a PropertyBlock.
@@ -254,7 +254,7 @@ class GraphicsBlock(graphics_base_class):
         ret += '}\n'
         return ret
 
-class GraphicsDefinition(object):
+class GraphicsDefinition:
     def __init__(self, cargo_id, result, unit = None):
         self.cargo_id = cargo_id
         self.result = result

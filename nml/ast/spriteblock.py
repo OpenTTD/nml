@@ -163,7 +163,7 @@ class SpriteGroup(spritegroup_base_class):
         ret += "}\n"
         return ret
 
-class SpriteView(object):
+class SpriteView:
     def __init__(self, name, spriteset_list, pos):
         self.name = name
         self.spriteset_list = spriteset_list
@@ -233,7 +233,7 @@ class SpriteLayout(spritelayout_base_class):
                 action_list.extend(action2layout.get_layout_action2s(self, feature, self.pos))
         return action_list
 
-class LayoutSprite(object):
+class LayoutSprite:
     def __init__(self, ls_type, param_list, pos):
         self.type = ls_type
         self.param_list = param_list

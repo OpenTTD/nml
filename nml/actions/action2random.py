@@ -51,7 +51,7 @@ class Action2Random(action2.Action2):
             file.comment(choice.comment)
         file.end_sprite()
 
-class RandomAction2Choice(object):
+class RandomAction2Choice:
     def __init__(self, result, prob, comment):
         self.result = result
         self.prob = prob

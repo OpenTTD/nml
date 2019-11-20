@@ -81,7 +81,7 @@ class Action2Layout(action2.Action2):
         file.end_sprite()
 
 
-class Action2LayoutSpriteType(object):
+class Action2LayoutSpriteType:
     GROUND   = 0
     BUILDING = 1
     CHILD    = 2
@@ -93,7 +93,7 @@ layout_sprite_types = {
     'childsprite' : Action2LayoutSpriteType.CHILD,
 }
 
-class Action2LayoutSprite(object):
+class Action2LayoutSprite:
     def __init__(self, feature, type, pos = None, extra_dicts = []):
         self.feature = feature
         self.type = type

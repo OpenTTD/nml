@@ -18,7 +18,7 @@ from nml import generic
 
 keep_orphaned = True
 
-class SpriteCache(object):
+class SpriteCache:
     """
     Cache for compressed sprites.
 

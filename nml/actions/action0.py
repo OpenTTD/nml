@@ -18,7 +18,7 @@ from nml import generic, expression, nmlop, grfstrings
 from nml.actions import base_action, action4, action6, actionD, action7
 from nml.ast import general
 
-class BlockAllocation(object):
+class BlockAllocation:
     """
     Administration of allocated blocks of a size, in a range of addresses.
     Blocks always start at address C{0}, but the first available freely usable

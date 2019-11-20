@@ -72,7 +72,7 @@ def get_actions(root):
 
     return action_list
 
-class Action14Node(object):
+class Action14Node:
     def __init__(self, type_string, id):
         self.type_string = type_string
         self.id = id

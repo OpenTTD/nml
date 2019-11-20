@@ -74,7 +74,7 @@ class Switch(switch_base_class):
         return 'switch({}, {}, {}, {}) {{\n{}}}\n'.format(str(next(iter(self.feature_set))), var_range, str(self.name), str(self.expr), str(self.body))
 
 
-class SwitchBody(object):
+class SwitchBody:
     """
     AST-node representing the body of a switch block
     This contains the various ranges as well as the default value
@@ -115,7 +115,7 @@ class SwitchBody(object):
             ret += '\t{}\n'.format(str(self.default))
         return ret
 
-class SwitchRange(object):
+class SwitchRange:
     def __init__(self, min, max, result, unit = None):
         self.min = min
         self.max = max
@@ -143,7 +143,7 @@ class SwitchRange(object):
         ret += ': ' + str(self.result)
         return ret
 
-class SwitchValue(object):
+class SwitchValue:
     """
     Class representing a single returned value or sprite group in a switch-block
     Also used for random-switch and graphics blocks
@@ -296,7 +296,7 @@ class RandomSwitch(switch_base_class):
         ret += '}\n'
         return ret
 
-class RandomChoice(object):
+class RandomChoice:
     """
     Class to hold one of the possible choices in a random_switch
 

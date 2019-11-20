@@ -62,7 +62,7 @@ reserved = {
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')
 line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"\s*((?:\d+\s*)*)\r?\n')
 
-class NMLLexer(object):
+class NMLLexer:
     """
     @ivar lexer: PLY scanner object.
     @type lexer: L{ply.lex}

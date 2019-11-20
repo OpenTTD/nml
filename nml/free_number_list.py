@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
-class FreeNumberList(object):
+class FreeNumberList:
     """
     Contains a list with numbers and functions to pop one number from the list,
     to save the current state and to restore to the previous state.
