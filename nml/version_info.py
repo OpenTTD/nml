@@ -179,7 +179,7 @@ def get_cli_version():
     #version string for usage in command line
     result = get_nml_version() + "\n"
     result += "Library versions encountered:\n"
-    for lib, lib_ver in list(get_lib_versions().items()):
+    for lib, lib_ver in get_lib_versions().items():
         result += lib + ": " + lib_ver + "\n"
     return result[0:-1] #strip trailing newline
 

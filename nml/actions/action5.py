@@ -46,7 +46,7 @@ class Action5(base_action.BaseAction):
         #To be on the safe side, don't allow skipping with Action7 at all
         return False
 
-class Action5BlockType(object):
+class Action5BlockType:
     FIXED  = 0, #fixed number of sprites
     ANY    = 1, #any number of sprites
     OFFSET = 2, #flexible number of sprites, offset may be set

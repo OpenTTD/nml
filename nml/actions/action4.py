@@ -106,8 +106,8 @@ def get_global_string_actions():
     """
     texts = []
     actions = []
-    for string_range, strings in list(used_strings.items()):
-        for feature_name, id in list(strings.items()):
+    for string_range, strings in used_strings.items():
+        for feature_name, id in strings.items():
             feature, string_name = feature_name
             texts.append( (0x7F, id, grfstrings.get_translation(string_name), feature) )
             for lang_id in grfstrings.get_translations(string_name):

@@ -103,7 +103,7 @@ class Action2Var(action2.Action2):
         file.comment(self.default_comment)
         file.end_sprite()
 
-class VarAction2Var(object):
+class VarAction2Var:
     """
     Represents a variable for use in a (advanced) variational action2.
 
@@ -237,7 +237,7 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
 
 # Temporary load and store classes used for spritelayout parameters
 # Register is allocated in a separate entity
-class VarAction2LayoutParam(object):
+class VarAction2LayoutParam:
     def __init__(self):
         self.register = None
         self.store_vars = []
@@ -285,20 +285,20 @@ class VarAction2StoreLayoutParam(VarAction2Var):
     def get_size(self):
         return 6
 
-class VarAction2Range(object):
+class VarAction2Range:
     def __init__(self, min, max, result, comment):
         self.min = min
         self.max = max
         self.result = result
         self.comment = comment
 
-class Modification(object):
+class Modification:
     def __init__(self, param, size, offset):
         self.param = param
         self.size = size
         self.offset = offset
 
-class Varaction2Parser(object):
+class Varaction2Parser:
     def __init__(self, feature):
         self.feature = feature # Depends on feature and var_range
         self.extra_actions = []

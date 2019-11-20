@@ -58,7 +58,7 @@ def transparency_offset(info):
     else:
         return 0
 
-class SpriteEncoder(object):
+class SpriteEncoder:
     """
     Algorithms for cropping and compressing sprites. That is encoding source images into GRF sprites.
 

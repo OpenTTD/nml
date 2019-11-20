@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
-class Assignment(object):
+class Assignment:
     """
     Simple storage container for a name / value pair.
     This class does not enforce any type information.
@@ -71,7 +71,7 @@ class UnitAssignment(Assignment):
         else:
             return "{}: {} {};".format(self.name, self.value, self.unit.name)
 
-class Range(object):
+class Range:
     """
     Storage container for a range of values (inclusive). This Contains
     a minimum value and optionally also a maximum value. If the maximum

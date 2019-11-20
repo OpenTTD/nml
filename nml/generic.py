@@ -108,7 +108,7 @@ def build_position(poslist):
     pos.includes = pos.includes + poslist[:-1]
     return pos
 
-class Position(object):
+class Position:
     """
     Base class representing a position in a file.
 

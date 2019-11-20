@@ -54,7 +54,7 @@ class Item(base_statement.BaseStatementList):
             if self.feature.value != 0x07:
                 raise generic.ScriptError("item-block parameter 4 'size' may only be set for houses", params[3].pos)
             self.size = params[3].reduce_constant(global_constants.const_list)
-            if self.size.value not in list(action0.house_sizes.keys()):
+            if self.size.value not in action0.house_sizes:
                 raise generic.ScriptError("item-block parameter 4 'size' does not have a valid value", self.size.pos)
         else:
             self.size = None
@@ -110,7 +110,7 @@ class Item(base_statement.BaseStatementList):
         ret += '}\n'
         return ret
 
-class Property(object):
+class Property:
     """
     AST-node representing a single property. These are only valid
     insde a PropertyBlock.
@@ -254,7 +254,7 @@ class GraphicsBlock(graphics_base_class):
         ret += '}\n'
         return ret
 
-class GraphicsDefinition(object):
+class GraphicsDefinition:
     def __init__(self, cargo_id, result, unit = None):
         self.cargo_id = cargo_id
         self.result = result

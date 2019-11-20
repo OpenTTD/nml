@@ -17,7 +17,7 @@ import operator
 from .expression.base_expression import Type, ConstantNumeric, ConstantFloat
 from nml import generic
 
-class Operator(object):
+class Operator:
     """
     Operator in an expression.
 
@@ -351,7 +351,7 @@ DIVU = Operator(
     actd_supports = True, actd_str = r'\Du/', actd_num = 9,
 )
 
-class GRMOperator(object):
+class GRMOperator:
     def __init__(self, op_str, op_num):
         self.op_str = op_str
         self.op_num = op_num

@@ -18,7 +18,7 @@ from nml.ast import assignment, basecost, cargotable, conditional, deactivate, d
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 
-class NMLParser(object):
+class NMLParser:
     """
     @ivar lexer: Scanner providing tokens.
     @type lexer: L{NMLLexer}

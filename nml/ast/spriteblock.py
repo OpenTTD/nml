@@ -44,7 +44,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
         offset = 0
         for sprite in self.sprite_list:
             sprite_labels, num_sprites = sprite.get_labels()
-            for lbl, lbl_offset in list(sprite_labels.items()):
+            for lbl, lbl_offset in sprite_labels.items():
                 if lbl in labels:
                     raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(lbl), self.pos)
                 labels[lbl] = lbl_offset + offset
@@ -99,7 +99,7 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         offset = 0
         for sprite in self.sprite_list:
             sprite_labels, num_sprites = sprite.get_labels()
-            for lbl, lbl_offset in list(sprite_labels.items()):
+            for lbl, lbl_offset in sprite_labels.items():
                 if lbl in self.labels:
                     raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(lbl), self.pos)
                 self.labels[lbl] = lbl_offset + offset
@@ -163,7 +163,7 @@ class SpriteGroup(spritegroup_base_class):
         ret += "}\n"
         return ret
 
-class SpriteView(object):
+class SpriteView:
     def __init__(self, name, spriteset_list, pos):
         self.name = name
         self.spriteset_list = spriteset_list
@@ -233,7 +233,7 @@ class SpriteLayout(spritelayout_base_class):
                 action_list.extend(action2layout.get_layout_action2s(self, feature, self.pos))
         return action_list
 
-class LayoutSprite(object):
+class LayoutSprite:
     def __init__(self, ls_type, param_list, pos):
         self.type = ls_type
         self.param_list = param_list

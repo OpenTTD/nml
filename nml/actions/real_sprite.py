@@ -120,7 +120,7 @@ def convert_palette(pal):
         ret[palmap_d2w[idx]] = palmap_d2w[colour]
     return ret
 
-class RealSprite(object):
+class RealSprite:
     """
     @ivar param_list: Original parameters from NML source file.
     @type param_list: List of L{expression.Expression}, or C{None}
@@ -288,7 +288,7 @@ class RealSpriteAction(SpriteAction):
             file.print_sprite([s for s in self.sprite_list if not s.is_empty])
         if self.last: file.newline()
 
-class RecolourSprite(object):
+class RecolourSprite:
     def __init__(self, mapping, label = None, poslist = None):
         self.mapping = mapping
         self.label = label
@@ -365,7 +365,7 @@ class RecolourSpriteAction(SpriteAction):
         if self.last: file.newline()
         file.end_sprite()
 
-class TemplateUsage(object):
+class TemplateUsage:
     def __init__(self, name, param_list, label, pos):
         self.name = name
         self.param_list = param_list

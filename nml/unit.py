@@ -29,7 +29,7 @@ def get_unit(name):
     return units[name]
 
 
-class Unit(object):
+class Unit:
     def __init__(self, name, type, convert, ottd_mul, ottd_shift):
         """
         Unit definition.

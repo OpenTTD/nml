@@ -19,7 +19,7 @@ from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringL
 
 tilelayout_names = {}
 
-class BaseAction0Property(object):
+class BaseAction0Property:
     """
     Base class for Action0 properties.
     """
