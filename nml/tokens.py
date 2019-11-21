@@ -247,7 +247,7 @@ class NMLLexer:
         """
         Initial construction of the scanner.
         """
-        self.lexer = lex.lex(module=self)
+        self.lexer = lex.lex(module=self, optimize=1, lextab='nml.generated.lextab')
 
 
     def setup(self, text, fname):

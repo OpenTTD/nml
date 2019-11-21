@@ -33,7 +33,10 @@ class NMLParser:
         self.lexer = tokens.NMLLexer()
         self.lexer.build()
         self.tokens = self.lexer.tokens
-        self.parser = yacc.yacc(debug = False, module = self, write_tables = 0)
+        self.parser = yacc.yacc(module=self,
+                                debug=False, optimize=True,
+                                write_tables=True,
+                                tabmodule='nml.generated.parsetab')
 
     def parse(self, text, input_filename):
         self.lexer.setup(text, input_filename)

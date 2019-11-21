@@ -3,8 +3,18 @@
 import os
 
 from setuptools import setup, Extension, find_packages
+from setuptools.command.build_py import build_py
 from nml import version_info
 NML_VERSION = version_info.get_and_write_version()
+
+
+class NMLBuildPy(build_py):
+    def run(self):
+        # Create a parser so that nml/generated/{parse,lex}tab.py are generated.
+        from nml import parser
+        parser.NMLParser()
+        # Then continue with the normal setuptools build.
+        super().run()
 
 setup(
     name='nml',
@@ -39,4 +49,5 @@ setup(
         "Pillow>=5.2",
         "ply",
     ],
+    cmdclass={'build_py': NMLBuildPy}
 )
