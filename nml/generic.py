@@ -377,7 +377,7 @@ def print_warning(msg, pos = None):
     msg = " nmlc warning: " + msg
 
     if sys.stderr.isatty():
-        msg = "\033[33m" + msg + "\033[0m"
+        msg = "\033[93m" + msg + "\033[0m"
 
     hide_progress()
     print(msg, file=sys.stderr)
