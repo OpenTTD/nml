@@ -16,6 +16,27 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 # -*- coding: utf-8 -*-
 import sys, os, time
 
+# Enable VT100 sequences on windows consoles
+if os.name == "nt":
+    class Break(Exception): pass
+    try:
+        from ctypes import byref, windll
+        from ctypes.wintypes import DWORD, HANDLE
+        kernel32 = windll.kernel32
+        h = kernel32.GetStdHandle(-11) # stdout
+        if h is None or h == HANDLE(-1):
+            raise Break()
+        FILE_TYPE_CHAR = 0x0002
+        if (kernel32.GetFileType(h) & 3) != FILE_TYPE_CHAR:
+            raise Break()
+        mode = DWORD()
+        kernel32.GetConsoleMode(h, byref(mode))
+        ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004
+        if (mode.value & ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0:
+            kernel32.SetConsoleMode(h, mode.value | ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+    except Break:
+        pass
+
 def truncate_int32(value):
     """
     Truncate the given value so it can be stored in exactly 4 bytes. The sign
@@ -355,7 +376,7 @@ def print_warning(msg, pos = None):
 
     msg = " nmlc warning: " + msg
 
-    if (sys.stderr.isatty()) and (os.name == 'posix'):
+    if sys.stderr.isatty():
         msg = "\033[33m" + msg + "\033[0m"
 
     hide_progress()
