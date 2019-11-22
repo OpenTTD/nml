@@ -388,7 +388,13 @@ def print_error(msg):
     Output an error message to the user.
     """
     clear_progress()
-    print("nmlc ERROR: " + msg, file=sys.stderr)
+
+    msg = " nmlc ERROR: " + msg
+
+    if sys.stderr.isatty():
+        msg = "\033[91m" + msg + "\033[0m"
+
+    print(msg, file=sys.stderr)
 
 def print_dbg(indent, *args):
     """
