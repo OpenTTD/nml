@@ -241,7 +241,7 @@ class ParameterSetting:
         self.properties_set.add(name)
         if name == 'names':
             for name_value in value.values:
-                num = name_value.name.reduce_constant().value
+                num = name_value.name.reduce_constant().uvalue
                 desc = name_value.value
                 if not isinstance(desc, expression.String):
                     raise generic.ScriptError("setting name description must be a string", desc.pos)

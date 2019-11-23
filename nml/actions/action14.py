@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import grfstrings
+from nml import generic, grfstrings
 from nml.actions import base_action
 
 
@@ -247,8 +247,12 @@ def param_desc_actions(root, params):
                 setting_node.subnodes.append(TextNode("DESC", setting.desc_string))
             if setting.type == 'int':
                 setting_node.subnodes.append(BinaryNode("MASK", 1, param_num))
-                min_val = setting.min_val.value if setting.min_val is not None else 0
-                max_val = setting.max_val.value if setting.max_val is not None else 0xFFFFFFFF
+                min_val = setting.min_val.uvalue if setting.min_val is not None else 0
+                max_val = setting.max_val.uvalue if setting.max_val is not None else 0xFFFFFFFF
+                if min_val > max_val:
+                    generic.print_warning("Limits for GRF parameter {} are incoherent, ignoring.".format(param_num))
+                    min_val = 0
+                    max_val = 0xFFFFFFFF
                 setting_node.subnodes.append(LimitNode(min_val, max_val))
                 if len(setting.val_names) > 0:
                     value_names_node = BranchNode("VALU")
@@ -258,10 +262,10 @@ def param_desc_actions(root, params):
             else:
                 assert setting.type == 'bool'
                 setting_node.subnodes.append(BinaryNode("TYPE", 1, 1))
-                bit = setting.bit_num.value if setting.bit_num is not None else 0
+                bit = setting.bit_num.uvalue if setting.bit_num is not None else 0
                 setting_node.subnodes.append(SettingMaskNode(param_num, bit, 1))
             if setting.def_val is not None:
-                setting_node.subnodes.append(BinaryNode("DFLT", 4, setting.def_val.value))
+                setting_node.subnodes.append(BinaryNode("DFLT", 4, setting.def_val.uvalue))
             param_root.subnodes.append(setting_node)
             setting_num += 1
         param_num += 1
