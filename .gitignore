@@ -1,4 +1,6 @@
 build/*
 **/__pycache__/*
 nml/__version__.py
+nml/generated/parsetab.py
+nml/generated/lextab.py
 **/.nmlcache
