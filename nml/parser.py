@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, expression, tokens, nmlop, unit
-from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, railtypetable, roadtypetable, tramtypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
+from nml.ast import assignment, basecost, cargotable, conditional, deactivate, disable_item, error, font, general, grf, item, loop, produce, tracktypetable, replace, spriteblock, switch, townnames, snowline, skipall, tilelayout, alt_sprites, base_graphics, override, sort_vehicles
 from nml.actions import actionD, real_sprite
 import ply.yacc as yacc
 
@@ -658,54 +658,29 @@ class NMLParser:
         else: t[0] = t[1] + [t[3]]
 
     def p_railtypetable(self, t):
-        '''railtype : RAILTYPETABLE LBRACE railtypetable_list RBRACE
-                    | RAILTYPETABLE LBRACE railtypetable_list COMMA RBRACE'''
-        t[0] = railtypetable.RailtypeTable(t[3], t.lineno(1))
-
-    def p_railtypetable_list(self, t):
-        '''railtypetable_list : railtypetable_item
-                              | railtypetable_list COMMA railtypetable_item'''
-        if len(t) == 2: t[0] = [t[1]]
-        else: t[0] = t[1] + [t[3]]
-
-    def p_railtypetable_item(self, t):
-        '''railtypetable_item : ID
-                              | STRING_LITERAL
-                              | ID COLON LBRACKET expression_list RBRACKET'''
-        if len(t) == 2: t[0] = t[1]
-        else: t[0] = assignment.Assignment(t[1], t[4], t[1].pos)
+        '''railtype : RAILTYPETABLE LBRACE tracktypetable_list RBRACE
+                    | RAILTYPETABLE LBRACE tracktypetable_list COMMA RBRACE'''
+        t[0] = tracktypetable.RailtypeTable(t[3], t.lineno(1))
 
     def p_roadtypetable(self, t):
-        '''roadtype : ROADTYPETABLE LBRACE roadtypetable_list RBRACE
-                    | ROADTYPETABLE LBRACE roadtypetable_list COMMA RBRACE'''
-        t[0] = roadtypetable.RoadtypeTable(t[3], t.lineno(1))
-
-    def p_roadtypetable_list(self, t):
-        '''roadtypetable_list : roadtypetable_item
-                              | roadtypetable_list COMMA roadtypetable_item'''
-        if len(t) == 2: t[0] = [t[1]]
-        else: t[0] = t[1] + [t[3]]
-
-    def p_roadtypetable_item(self, t):
-        '''roadtypetable_item : ID
-                              | STRING_LITERAL
-                              | ID COLON LBRACKET expression_list RBRACKET'''
-        if len(t) == 2: t[0] = t[1]
-        else: t[0] = assignment.Assignment(t[1], t[4], t[1].pos)
+        '''roadtype : ROADTYPETABLE LBRACE tracktypetable_list RBRACE
+                    | ROADTYPETABLE LBRACE tracktypetable_list COMMA RBRACE'''
+        t[0] = tracktypetable.RoadtypeTable(t[3], t.lineno(1))
 
     def p_tramtypetable(self, t):
-        '''tramtype : TRAMTYPETABLE LBRACE tramtypetable_list RBRACE
-                    | TRAMTYPETABLE LBRACE tramtypetable_list COMMA RBRACE'''
-        t[0] = tramtypetable.TramtypeTable(t[3], t.lineno(1))
+        '''tramtype : TRAMTYPETABLE LBRACE tracktypetable_list RBRACE
+                    | TRAMTYPETABLE LBRACE tracktypetable_list COMMA RBRACE'''
+        t[0] = tracktypetable.TramtypeTable(t[3], t.lineno(1))
 
-    def p_tramtypetable_list(self, t):
-        '''tramtypetable_list : tramtypetable_item
-                              | tramtypetable_list COMMA tramtypetable_item'''
+
+    def p_tracktypetable_list(self, t):
+        '''tracktypetable_list : tracktypetable_item
+                              | tracktypetable_list COMMA tracktypetable_item'''
         if len(t) == 2: t[0] = [t[1]]
         else: t[0] = t[1] + [t[3]]
 
-    def p_tramtypetable_item(self, t):
-        '''tramtypetable_item : ID
+    def p_tracktypetable_item(self, t):
+        '''tracktypetable_item : ID
                               | STRING_LITERAL
                               | ID COLON LBRACKET expression_list RBRACKET'''
         if len(t) == 2: t[0] = t[1]

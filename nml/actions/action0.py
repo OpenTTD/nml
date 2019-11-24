@@ -706,7 +706,7 @@ def get_cargolist_action(cargo_list):
     action0.num_ids = len(cargo_list)
     return [action0]
 
-def get_railtypelist_action(railtype_list):
+def get_tracktypelist_action(table_prop_id, cond_tracktype_not_defined, tracktype_list):
     action6.free_parameters.save()
     act6 = action6.Action6()
 
@@ -714,84 +714,22 @@ def get_railtypelist_action(railtype_list):
     action0, offset = create_action0(0x08, expression.ConstantNumeric(0), act6, action_list)
     id_table = []
     offset += 1 # Skip property number
-    for railtype in railtype_list:
-        if isinstance(railtype, expression.StringLiteral):
-            id_table.append(railtype)
+    for tracktype in tracktype_list:
+        if isinstance(tracktype, expression.StringLiteral):
+            id_table.append(tracktype)
             offset+=4
             continue
-        param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(railtype[-1])))
+        param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(tracktype[-1])))
         action_list.extend(extra_actions)
-        for idx in range(len(railtype)-2, -1, -1):
-            val = expression.ConstantNumeric(expression.parse_string_to_dword(railtype[idx]))
-            action_list.append(action7.SkipAction(0x09, 0x00, 4, (0x0D, None), val.value, 1))
+        for idx in range(len(tracktype)-2, -1, -1):
+            val = expression.ConstantNumeric(expression.parse_string_to_dword(tracktype[idx]))
+            action_list.append(action7.SkipAction(0x09, 0x00, 4, (cond_tracktype_not_defined, None), val.value, 1))
             action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0xFF), val))
         act6.modify_bytes(param, 4, offset)
         id_table.append(expression.StringLiteral(r"\00\00\00\00", None))
         offset += 4
-    action0.prop_list.append(IDListProp(0x12, id_table))
-    action0.num_ids = len(railtype_list)
-
-    if len(act6.modifications) > 0: action_list.append(act6)
-
-    action_list.append(action0)
-    action6.free_parameters.restore()
-    return action_list
-
-def get_roadtypelist_action(roadtype_list):
-    action6.free_parameters.save()
-    act6 = action6.Action6()
-
-    action_list = []
-    action0, offset = create_action0(0x08, expression.ConstantNumeric(0), act6, action_list)
-    id_table = []
-    offset += 1 # Skip property number
-    for roadtype in roadtype_list:
-        if isinstance(roadtype, expression.StringLiteral):
-            id_table.append(roadtype)
-            offset+=4
-            continue
-        param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(roadtype[-1])))
-        action_list.extend(extra_actions)
-        for idx in range(len(roadtype)-2, -1, -1):
-            val = expression.ConstantNumeric(expression.parse_string_to_dword(roadtype[idx]))
-            action_list.append(action7.SkipAction(0x09, 0x00, 4, (0x0F, None), val.value, 1))
-            action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0xFF), val))
-        act6.modify_bytes(param, 4, offset)
-        id_table.append(expression.StringLiteral(r"\00\00\00\00", None))
-        offset += 4
-    action0.prop_list.append(IDListProp(0x16, id_table))
-    action0.num_ids = len(roadtype_list)
-
-    if len(act6.modifications) > 0: action_list.append(act6)
-
-    action_list.append(action0)
-    action6.free_parameters.restore()
-    return action_list
-
-def get_tramtypelist_action(tramtype_list):
-    action6.free_parameters.save()
-    act6 = action6.Action6()
-
-    action_list = []
-    action0, offset = create_action0(0x08, expression.ConstantNumeric(0), act6, action_list)
-    id_table = []
-    offset += 1 # Skip property number
-    for tramtype in tramtype_list:
-        if isinstance(tramtype, expression.StringLiteral):
-            id_table.append(tramtype)
-            offset+=4
-            continue
-        param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(tramtype[-1])))
-        action_list.extend(extra_actions)
-        for idx in range(len(tramtype)-2, -1, -1):
-            val = expression.ConstantNumeric(expression.parse_string_to_dword(tramtype[idx]))
-            action_list.append(action7.SkipAction(0x09, 0x00, 4, (0x11, None), val.value, 1))
-            action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0xFF), val))
-        act6.modify_bytes(param, 4, offset)
-        id_table.append(expression.StringLiteral(r"\00\00\00\00", None))
-        offset += 4
-    action0.prop_list.append(IDListProp(0x17, id_table))
-    action0.num_ids = len(tramtype_list)
+    action0.prop_list.append(IDListProp(table_prop_id, id_table))
+    action0.num_ids = len(tracktype_list)
 
     if len(act6.modifications) > 0: action_list.append(act6)
 
