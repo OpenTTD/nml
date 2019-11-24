@@ -74,6 +74,9 @@ class SpriteGroupRef(Expression):
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
 
+    def supported_by_action2(self, raise_error):
+        return True
+
     def type(self):
         return Type.SPRITEGROUP_REF
 

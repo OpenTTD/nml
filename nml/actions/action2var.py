@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.actions import action2, action2real, action2var_variables, action4, action6, actionD
 from nml import expression, generic, global_constants, nmlop
-from nml.ast import general
+from nml.ast import general, switch
 
 class Action2Var(action2.Action2):
     """
@@ -176,9 +176,12 @@ class VarAction2Var:
 # Class for var 7E procedure calls
 class VarAction2ProcCallVar(VarAction2Var):
     def __init__(self, sg_ref):
+        if not isinstance(action2.resolve_spritegroup(sg_ref.name), (switch.Switch, switch.RandomSwitch)):
+            raise generic.ScriptError("Block with name '{}' is not a valid procedure".format(sg_ref.name), sg_ref.pos)
         VarAction2Var.__init__(self, 0x7E, 0, 0)
         # Reference to the called action2
         self.sg_ref = sg_ref
+        self.comment = str(sg_ref)
 
     def resolve_parameter(self, feature):
         self.parameter = self.sg_ref.get_action2_id(feature)
@@ -618,6 +621,9 @@ class Varaction2Parser:
         elif isinstance(expr, (VarAction2LoadTempVar, VarAction2LoadLayoutParam)):
             self.var_list.append(expr)
             self.var_list_size += expr.get_size()
+
+        elif isinstance(expr, expression.SpriteGroupRef):
+            self.parse_proc_call(expr)
 
         else:
             expr.supported_by_action2(True)
