@@ -249,7 +249,8 @@ def param_desc_actions(root, params):
                 setting_node.subnodes.append(BinaryNode("MASK", 1, param_num))
                 min_val = setting.min_val.uvalue if setting.min_val is not None else 0
                 max_val = setting.max_val.uvalue if setting.max_val is not None else 0xFFFFFFFF
-                if min_val > max_val:
+                def_val = setting.def_val.uvalue if setting.def_val is not None else 0
+                if min_val > max_val or def_val < min_val or def_val > max_val:
                     generic.print_warning("Limits for GRF parameter {} are incoherent, ignoring.".format(param_num))
                     min_val = 0
                     max_val = 0xFFFFFFFF
