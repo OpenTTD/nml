@@ -33,7 +33,7 @@ class Boolean(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
-        if expr.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
+        if expr.type() != Type.INTEGER:
             raise generic.ScriptError("Only integers can be converted to a boolean value.", self.pos)
         if expr.is_boolean(): return expr
         return Boolean(expr)

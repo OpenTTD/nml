@@ -29,7 +29,7 @@ class BinNot(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
-        if expr.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
+        if expr.type() != Type.INTEGER:
             raise generic.ScriptError("Not-operator (~) requires an integer argument.", expr.pos)
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(0xFFFFFFFF ^ expr.value)
         if isinstance(expr, BinNot): return expr.expr
@@ -58,7 +58,7 @@ class Not(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
-        if expr.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
+        if expr.type() != Type.INTEGER:
             raise generic.ScriptError("Not-operator (!) requires an integer argument.", expr.pos)
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value == 0)
         if isinstance(expr, Not): return Boolean(expr.expr).reduce()

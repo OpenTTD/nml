@@ -96,11 +96,11 @@ def unsigned_rrotate(a, b):
     return generic.truncate_int32((a >> b) | (a << (32 - b)))
 
 def validate_func_int(expr1, expr2, pos):
-    if expr1.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF) or expr2.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
+    if expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
         raise generic.ScriptError("Binary operator requires both operands to be integers.", pos)
 
 def validate_func_float(expr1, expr2, pos):
-    if expr1.type() not in (Type.INTEGER, Type.FLOAT, Type.SPRITEGROUP_REF) or expr2.type() not in (Type.INTEGER, Type.FLOAT, Type.SPRITEGROUP_REF):
+    if expr1.type() not in (Type.INTEGER, Type.FLOAT) or expr2.type() not in (Type.INTEGER, Type.FLOAT):
         raise generic.ScriptError("Binary operator requires both operands to be integers or floats.", pos)
     # If one is a float, the other must be constant since we can't handle floats at runtime
     if (expr1.type() == Type.FLOAT and not isinstance(expr2, (ConstantNumeric, ConstantFloat))) or \
