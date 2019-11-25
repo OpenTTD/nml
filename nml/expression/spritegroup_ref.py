@@ -39,6 +39,7 @@ class SpriteGroupRef(Expression):
         self.param_list = param_list
         self.pos = pos
         self.act2 = act2
+        self.is_procedure = False
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Reference to:', self.name)
@@ -78,9 +79,11 @@ class SpriteGroupRef(Expression):
         return True
 
     def collect_references(self):
-        return [self]
+        if self.is_procedure: return [self]
+        return []
 
     def type(self):
+        if self.is_procedure: return Type.INTEGER
         return Type.SPRITEGROUP_REF
 
     def __eq__(self, other):

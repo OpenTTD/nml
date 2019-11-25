@@ -41,7 +41,7 @@ class TernaryOp(Expression):
                 return expr1
             else:
                 return expr2
-        if guard.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF) or expr1.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF) or expr2.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
+        if guard.type() != Type.INTEGER or expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
             raise generic.ScriptError("All parts of the ternary operator (?:) must be integers.", self.pos)
         return TernaryOp(guard, expr1, expr2, self.pos)
 

@@ -178,6 +178,8 @@ class VarAction2ProcCallVar(VarAction2Var):
     def __init__(self, sg_ref):
         if not isinstance(action2.resolve_spritegroup(sg_ref.name), (switch.Switch, switch.RandomSwitch)):
             raise generic.ScriptError("Block with name '{}' is not a valid procedure".format(sg_ref.name), sg_ref.pos)
+        if not sg_ref.is_procedure:
+            raise generic.ScriptError("Unexpected identifier encountered: '{}'".format(sg_ref.name), sg_ref.pos)
         VarAction2Var.__init__(self, 0x7E, 0, 0)
         # Reference to the called action2
         self.sg_ref = sg_ref
