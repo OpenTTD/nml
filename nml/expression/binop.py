@@ -178,6 +178,9 @@ class BinOp(Expression):
             return False
         return self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
 
+    def collect_references(self):
+        return self.expr1.collect_references() + self.expr2.collect_references()
+
     def is_boolean(self):
         if self.op in (nmlop.AND, nmlop.OR, nmlop.XOR):
             return self.expr1.is_boolean() and self.expr2.is_boolean()

@@ -29,7 +29,7 @@ class BinNot(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
-        if expr.type() != Type.INTEGER:
+        if expr.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
             raise generic.ScriptError("Not-operator (~) requires an integer argument.", expr.pos)
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(0xFFFFFFFF ^ expr.value)
         if isinstance(expr, BinNot): return expr.expr
@@ -40,6 +40,9 @@ class BinNot(Expression):
 
     def supported_by_actionD(self, raise_error):
         return self.expr.supported_by_actionD(raise_error)
+
+    def collect_references(self):
+        return self.expr.collect_references()
 
     def __str__(self):
         return "~" + str(self.expr)
@@ -55,7 +58,7 @@ class Not(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
-        if expr.type() != Type.INTEGER:
+        if expr.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
             raise generic.ScriptError("Not-operator (!) requires an integer argument.", expr.pos)
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value == 0)
         if isinstance(expr, Not): return Boolean(expr.expr).reduce()
@@ -75,6 +78,9 @@ class Not(Expression):
 
     def supported_by_actionD(self, raise_error):
         return self.expr.supported_by_actionD(raise_error)
+
+    def collect_references(self):
+        return self.expr.collect_references()
 
     def is_boolean(self):
         return True

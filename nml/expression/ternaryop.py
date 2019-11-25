@@ -41,7 +41,7 @@ class TernaryOp(Expression):
                 return expr1
             else:
                 return expr2
-        if guard.type() != Type.INTEGER or expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
+        if guard.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF) or expr1.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF) or expr2.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
             raise generic.ScriptError("All parts of the ternary operator (?:) must be integers.", self.pos)
         return TernaryOp(guard, expr1, expr2, self.pos)
 
@@ -50,6 +50,9 @@ class TernaryOp(Expression):
 
     def supported_by_actionD(self, raise_error):
         return self.guard.supported_by_actionD(raise_error) and self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
+
+    def collect_references(self):
+        return self.guard.collect_references() + self.expr1.collect_references() + self.expr2.collect_references()
 
     def is_boolean(self):
         return self.expr1.is_boolean() and self.expr2.is_boolean()

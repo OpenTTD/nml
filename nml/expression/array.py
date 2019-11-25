@@ -31,3 +31,9 @@ class Array(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values], self.pos)
+
+    def collect_references(self):
+        refs = []
+        for v in self.values:
+            refs += v.collect_references()
+        return refs

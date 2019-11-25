@@ -95,12 +95,12 @@ class StorageOp(Expression):
         args = []
         if self.value is not None:
             value = self.value.reduce(id_dicts)
-            if value.type() != Type.INTEGER:
+            if value.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
                 raise generic.ScriptError("Value to store must be an integer.", value.pos)
             args.append(value)
 
         register = self.register.reduce(id_dicts)
-        if register.type() != Type.INTEGER:
+        if register.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
             raise generic.ScriptError("Register to access must be an integer.", register.pos)
         if isinstance(register, ConstantNumeric) and register.value > self.info['max']:
             raise generic.ScriptError("Maximum register for {} is {:d}".format(self.name, self.info['max']), self.pos)
@@ -121,3 +121,6 @@ class StorageOp(Expression):
         if raise_error:
             raise generic.ScriptError("{}() may only be used inside switch-blocks".format(self.name), self.pos)
         return False
+
+    def collect_references(self):
+        return self.register.collect_references() + self.value.collect_references()

@@ -33,7 +33,7 @@ class Boolean(Expression):
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         expr = self.expr.reduce(id_dicts)
-        if expr.type() != Type.INTEGER:
+        if expr.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
             raise generic.ScriptError("Only integers can be converted to a boolean value.", self.pos)
         if expr.is_boolean(): return expr
         return Boolean(expr)
@@ -43,6 +43,9 @@ class Boolean(Expression):
 
     def supported_by_actionD(self, raise_error):
         return self.expr.supported_by_actionD(raise_error)
+
+    def collect_references(self):
+        return self.expr.collect_references()
 
     def is_boolean(self):
         return True

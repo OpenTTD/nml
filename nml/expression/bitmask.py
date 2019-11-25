@@ -31,13 +31,19 @@ class BitMask(Expression):
         ret = ConstantNumeric(0, self.pos)
         for orig_expr in self.values:
             val = orig_expr.reduce(id_dicts)
-            if val.type() != Type.INTEGER:
+            if val.type() not in (Type.INTEGER, Type.SPRITEGROUP_REF):
                 raise generic.ScriptError("Parameters of 'bitmask' must be integers.", orig_expr.pos)
             if isinstance(val, ConstantNumeric) and val.value >= 32:
                 raise generic.ScriptError("Parameters of 'bitmask' cannot be greater than 31", orig_expr.pos)
             val = BinOp(nmlop.SHIFT_LEFT, ConstantNumeric(1), val, val.pos)
             ret = BinOp(nmlop.OR, ret, val, self.pos)
         return ret.reduce()
+
+    def collect_references(self):
+        refs = []
+        for v in self.values:
+            refs += v.collect_references()
+        return refs
 
     def __str__(self):
         return "bitmask(" + ", ".join(str(e) for e in self.values) + ")"
