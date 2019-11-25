@@ -978,6 +978,8 @@ def parse_varaction2(switch_block):
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = parser.var_list
     offset += parser.var_list_size + 1 # +1 for the byte num-ranges
+    for proc in parser.proc_call_list:
+        action2.add_ref(proc, varaction2, True)
 
     none_result = None
     if any(x is not None and x.value is None for x in [r.result for r in switch_block.body.ranges] + [switch_block.body.default]):

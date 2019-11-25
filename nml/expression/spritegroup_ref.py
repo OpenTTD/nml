@@ -77,6 +77,9 @@ class SpriteGroupRef(Expression):
     def supported_by_action2(self, raise_error):
         return True
 
+    def collect_references(self):
+        return [self]
+
     def type(self):
         return Type.SPRITEGROUP_REF
 

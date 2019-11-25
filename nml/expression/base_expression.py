@@ -101,6 +101,15 @@ class Expression:
         if raise_error: raise generic.ScriptError("This expression can not be assigned to a parameter", self.pos)
         return False
 
+    def collect_references(self):
+        """
+        This function should collect all references to other nodes from this instance.
+
+        @return: A collection containing all links to other nodes.
+        @rtype: C{iterable} of L{SpriteGroupRef}
+        """
+        return []
+
     def is_boolean(self):
         """
         Check if this expression is limited to 0 or 1 as value.
