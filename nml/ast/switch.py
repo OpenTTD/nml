@@ -49,7 +49,7 @@ class Switch(switch_base_class):
         switch_base_class.pre_process(self)
 
     def collect_references(self):
-        all_refs = []
+        all_refs = self.expr.collect_references()
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
             if result is not None and isinstance(result.value, expression.SpriteGroupRef):
                 all_refs.append(result.value)
