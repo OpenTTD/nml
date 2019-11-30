@@ -4,3 +4,6 @@ nml/__version__.py
 nml/generated/parsetab.py
 nml/generated/lextab.py
 **/.nmlcache
+nml.egg-info/*
+nml_lz77*
+regression/*output*/*
