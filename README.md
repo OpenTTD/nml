@@ -14,24 +14,25 @@ your option, any later version. For more information, see [LICENSE](https://gith
 Last updated:    2019-04-02
 Release version: 0.4.5
 
-## 1) Table of Contents
+## Table of Contents
 
-2) Contact
-3) Dependencies
-3.1) Required dependencies
-3.2) Optional dependencies
-4) Installation
-5) Usage
-6) Known issues
-7) Credits
+1. [Contact](#1-contact)
+2. [Dependencies](#2-dependencies)
+    * 2.1 [Required dependencies](#21-required-dependencies)
+    * 2.2 [Optional dependencies](#22-optional-dependencies)
+3. [Installation](#3-installation)
+4. [Usage](#4-usage)
+5. [Known issues](#5-known-issues)
+6. [Credits](#6-credits)
 
-## 2) Contact
+## 1) Contact
 
-Contact can be made via the [issue tracker / source repository](https://github.com/OpenTTD/nml) or via IRC on the \#openttd channel on OFTC.
+- [issue tracker / source repository](https://github.com/OpenTTD/nml)
+- IRC chat using #openttd on irc.oftc.net [more info about our irc channel](https://wiki.openttd.org/Irc)
 
-## 3) Dependencies
+## 2) Dependencies
 
-### 3.1) Required dependencies
+### 2.1) Required dependencies
 
 NML requires the following 3rd party packages to run:
 
@@ -43,14 +44,14 @@ NML requires the following 3rd party packages to run:
 - `ply`
   Downloadable from http://www.dabeaz.com/ply/
 
-### 3.2) Optional dependencies
+### 2.2) Optional dependencies
 
 To install NML you'll need these 3rd party packages:
 
 - gcc (or possibly another c++ compiler).
   Needed to compile the cython version of the lz77 module for grf encoding.
 
-## 4) Installation
+## 3) Installation
 
 The easiest way to install NML is by using pip:
 
@@ -67,7 +68,7 @@ python setup.py install
 If you want to install the package manually copy 'nmlc' to any directory
 in your path and the directory 'nml' to any directory in your python path.
 
-## 5) Usage
+## 4) Usage
 
 Usage: nmlc [options] `<filename>`.
 
@@ -120,21 +121,21 @@ Options:
                           [default: 3, max: 4]
 ```
 
-## 6) Known issues
+## 5) Known issues
 
 See the [issue tracker](https://dev.openttdcoop.org/projects/nml/issues).
 
-## 7) Credits
+## 6) Credits
 
 Active developers (in alphabetical order):
 
-- Albert Hofkamp (Alberth)
 - Christoph Elsenhans (frosch)
 - Ingo von Borstel (planetmaker)
-- Remko Bijker (Rubidium)
 
 Inactive developers:
 
+- Albert Hofkamp (Alberth)
 - Jasper Reichardt (Hirundo)
+- Remko Bijker (Rubidium)
 - José Soler (Terkhen)
 - Thijs Marinussen (Yexo)
