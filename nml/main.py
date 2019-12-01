@@ -335,6 +335,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         if im.mode != "P":
             continue
         pal = palette.validate_palette(im, f)
+        im.close()
 
         if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DEFAULT" and pal == "LEGACY"):
             raise generic.ImageError("Image has '{}' palette, but you forced the '{}' palette".format(pal, used_palette), f)
