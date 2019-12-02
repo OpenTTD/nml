@@ -39,6 +39,9 @@ class Operator:
     @ivar actd_num: Numeric value of the operator in action D.
     @type actd_num: C{int} or C{None}
 
+    @ivar commutative: Whether swapping the operands will always maintain the same result.
+    @type commutative: C{Bool}
+
     @ivar returns_boolean: Whether the operator gives a boolean result.
     @type returns_boolean: C{bool}
 
@@ -48,10 +51,12 @@ class Operator:
     @ivar prefix_text: Prefix text to use for the string representation of the operator, if available.
     @type prefix_text: C{None} or C{str}
     """
+
     def __init__(self,
             act2_supports = False, act2_str = None, act2_num = None,
             actd_supports = False, actd_str = None, actd_num = None,
             returns_boolean = False,
+            commutative = False,
             token = None, prefix_text = None,
             compiletime_func = None,
             validate_func = None):
@@ -61,6 +66,7 @@ class Operator:
         self.actd_supports = actd_supports
         self.actd_str = actd_str
         self.actd_num = actd_num
+        self.commutative = commutative
         self.returns_boolean = returns_boolean
         self.token = token
         self.prefix_text = prefix_text
@@ -126,6 +132,7 @@ def validate_func_rhs_positive(expr1, expr2, pos):
 ADD = Operator(
     act2_supports = True, act2_str = r'\2+', act2_num = 0,
     actd_supports = True, actd_str = r'\D+', actd_num = 1,
+    commutative = True,
     token = '+',
     compiletime_func = operator.add,
     validate_func = validate_func_add,
@@ -158,6 +165,7 @@ MOD = Operator(
 MUL = Operator(
     act2_supports = True, act2_str = r'\2*', act2_num = 10,
     actd_supports = True, actd_str = r'\D*', actd_num = 4,
+    commutative = True,
     token = '*',
     compiletime_func = operator.mul,
     validate_func = validate_func_float,
@@ -166,6 +174,7 @@ MUL = Operator(
 AND = Operator(
     act2_supports = True, act2_str = r'\2&', act2_num = 11,
     actd_supports = True, actd_str = r'\D&', actd_num = 7,
+    commutative = True,
     token = '&',
     compiletime_func = operator.and_,
     validate_func = validate_func_int,
@@ -174,6 +183,7 @@ AND = Operator(
 OR = Operator(
     act2_supports = True, act2_str = r'\2|', act2_num = 12,
     actd_supports = True, actd_str = r'\D|', actd_num = 8,
+    commutative = True,
     token = '|',
     compiletime_func = operator.or_,
     validate_func = validate_func_int,
@@ -182,6 +192,7 @@ OR = Operator(
 XOR = Operator(
     act2_supports = True, act2_str = r'\2^', act2_num = 13,
     actd_supports = True,
+    commutative = True,
     token = '^',
     compiletime_func = operator.xor,
     validate_func = validate_func_int,
@@ -190,6 +201,7 @@ XOR = Operator(
 CMP_EQ = Operator(
     act2_supports = True,
     actd_supports = True,
+    commutative = True,
     returns_boolean = True,
     token = '==',
     compiletime_func = operator.eq,
@@ -199,6 +211,7 @@ CMP_EQ = Operator(
 CMP_NEQ = Operator(
     act2_supports = True,
     actd_supports = True,
+    commutative = True,
     returns_boolean = True,
     token = '!=',
     compiletime_func = operator.ne,
@@ -244,6 +257,7 @@ CMP_GT = Operator(
 MIN = Operator(
     act2_supports = True, act2_str = r'\2<', act2_num = 2,
     actd_supports = True,
+    commutative = True,
     compiletime_func = min,
     prefix_text = "min",
     validate_func = validate_func_float,
@@ -252,6 +266,7 @@ MIN = Operator(
 MAX = Operator(
     act2_supports = True, act2_str = r'\2>', act2_num = 3,
     actd_supports = True,
+    commutative = True,
     compiletime_func = max,
     prefix_text = "max",
     validate_func = validate_func_float,
