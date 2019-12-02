@@ -90,7 +90,7 @@ class BinOp(Expression):
         # - If the operator allows it and the second expression is more complex than
         #   the first one swap them.
         op = self.op
-        if op in commutative_operators or self.op in (nmlop.CMP_LT, nmlop.CMP_GT):
+        if op.commutative or op in (nmlop.CMP_LT, nmlop.CMP_GT):
             prio1 = self.get_priority(expr1)
             prio2 = self.get_priority(expr2)
             if prio2 < prio1:
@@ -194,15 +194,3 @@ class BinOp(Expression):
 
     def __hash__(self):
         return hash((self.op, self.expr1, self.expr2))
-
-commutative_operators = set([
-    nmlop.ADD,
-    nmlop.MUL,
-    nmlop.AND,
-    nmlop.OR,
-    nmlop.XOR,
-    nmlop.CMP_EQ,
-    nmlop.CMP_NEQ,
-    nmlop.MIN,
-    nmlop.MAX,
-])
