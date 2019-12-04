@@ -12,7 +12,7 @@ class NMLBuildPy(build_py):
     def run(self):
         # Create a parser so that nml/generated/{parse,lex}tab.py are generated.
         from nml import parser
-        parser.NMLParser()
+        parser.NMLParser(rebuild=True)
         # Then continue with the normal setuptools build.
         super().run()
 

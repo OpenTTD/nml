@@ -29,12 +29,12 @@ class NMLParser:
     @ivar parser: PLY parser.
     @type parser: L{ply.yacc}
     """
-    def __init__(self):
+    def __init__(self, rebuild = False):
         self.lexer = tokens.NMLLexer()
-        self.lexer.build()
+        self.lexer.build(rebuild)
         self.tokens = self.lexer.tokens
         self.parser = yacc.yacc(module=self,
-                                debug=False, optimize=True,
+                                debug=False, optimize=not rebuild,
                                 write_tables=True,
                                 tabmodule='nml.generated.parsetab')
 
