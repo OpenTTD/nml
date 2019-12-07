@@ -21,10 +21,13 @@ from .boolean import Boolean
 
 class BinOp(Expression):
     def __init__(self, op, expr1, expr2, pos = None):
-        Expression.__init__(self, pos)
         self.op = op
-        self.expr1 = expr1
-        self.expr2 = expr2
+        self.expr1 = expr1 if isinstance(expr1, Expression) else ConstantNumeric(expr1)
+        self.expr2 = expr2 if isinstance(expr2, Expression) else ConstantNumeric(expr2)
+        pos = (pos or self.expr1.pos or self.expr2.pos)
+        self.expr1.pos = self.expr1.pos or pos
+        self.expr2.pos = self.expr2.pos or pos
+        Expression.__init__(self, pos)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Binary operator, op =', self.op.token)
