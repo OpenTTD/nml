@@ -63,14 +63,14 @@ class Not(Expression):
         if isinstance(expr, ConstantNumeric): return ConstantNumeric(expr.value == 0)
         if isinstance(expr, Not): return Boolean(expr.expr).reduce()
         if isinstance(expr, BinOp):
-            if expr.op == nmlop.CMP_EQ: return BinOp(nmlop.CMP_NEQ, expr.expr1, expr.expr2)
-            if expr.op == nmlop.CMP_NEQ: return BinOp(nmlop.CMP_EQ, expr.expr1, expr.expr2)
-            if expr.op == nmlop.CMP_LE: return BinOp(nmlop.CMP_GT, expr.expr1, expr.expr2)
-            if expr.op == nmlop.CMP_GE: return BinOp(nmlop.CMP_LT, expr.expr1, expr.expr2)
-            if expr.op == nmlop.CMP_LT: return BinOp(nmlop.CMP_GE, expr.expr1, expr.expr2)
-            if expr.op == nmlop.CMP_GT: return BinOp(nmlop.CMP_LE, expr.expr1, expr.expr2)
-            if expr.op == nmlop.HASBIT: return BinOp(nmlop.NOTHASBIT, expr.expr1, expr.expr2)
-            if expr.op == nmlop.NOTHASBIT: return BinOp(nmlop.HASBIT, expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_EQ: return nmlop.CMP_NEQ(expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_NEQ: return nmlop.CMP_EQ(expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_LE: return nmlop.CMP_GT(expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_GE: return nmlop.CMP_LT(expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_LT: return nmlop.CMP_GE(expr.expr1, expr.expr2)
+            if expr.op == nmlop.CMP_GT: return nmlop.CMP_LE(expr.expr1, expr.expr2)
+            if expr.op == nmlop.HASBIT: return nmlop.NOTHASBIT(expr.expr1, expr.expr2)
+            if expr.op == nmlop.NOTHASBIT: return nmlop.HASBIT(expr.expr1, expr.expr2)
         return Not(expr)
 
     def supported_by_action2(self, raise_error):

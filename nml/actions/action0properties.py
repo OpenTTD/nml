@@ -177,8 +177,8 @@ def two_byte_property(low_prop, high_prop, low_prop_info = {}, high_prop_info = 
     @return: Sequence of two dictionaries with property information (low part, high part).
     @rtype:  C{list} of C{dict}
     """
-    low_byte_info = {'num': low_prop, 'size': 1, 'value_function': lambda value: BinOp(nmlop.AND, value, ConstantNumeric(0xFF, value.pos), value.pos).reduce()}
-    high_byte_info = {'num': high_prop, 'size': 1, 'value_function': lambda value: BinOp(nmlop.SHIFT_RIGHT, value, ConstantNumeric(8, value.pos), value.pos).reduce()}
+    low_byte_info = {'num': low_prop, 'size': 1, 'value_function': lambda value: nmlop.AND(value, 0xFF).reduce()}
+    high_byte_info = {'num': high_prop, 'size': 1, 'value_function': lambda value: nmlop.SHIFT_RIGHT(value, 8).reduce()}
     low_byte_info.update(low_prop_info)
     high_byte_info.update(high_prop_info)
     return [low_byte_info, high_byte_info]
@@ -234,12 +234,12 @@ def cargo_list(value, max_num_cargos):
 
     ret = None
     for i, cargo in enumerate(cargoes):
-        byte = BinOp(nmlop.AND, cargo, ConstantNumeric(0xFF, cargo.pos), cargo.pos)
+        byte = nmlop.AND(cargo, 0xFF)
         if i == 0:
             ret = byte
         else:
-            byte = BinOp(nmlop.SHIFT_LEFT, byte, ConstantNumeric(i * 8, cargo.pos), cargo.pos)
-            ret = BinOp(nmlop.OR, ret, byte, cargo.pos)
+            byte = nmlop.SHIFT_LEFT(byte, i * 8)
+            ret = nmlop.OR(ret, byte)
     return ret.reduce()
 
 #
@@ -322,7 +322,7 @@ def accepted_cargos(prop_num, *values):
 def vehicle_length(value):
     if isinstance(value, ConstantNumeric):
         generic.check_range(value.value, 1, 8, "vehicle length", value.pos)
-    return BinOp(nmlop.SUB, ConstantNumeric(8, value.pos), value, value.pos).reduce()
+    return nmlop.SUB(8, value).reduce()
 
 def zero_refit_mask(prop_num):
     # Zero the refit mask, in addition to setting some other refit property
@@ -380,9 +380,9 @@ properties[0x00].update(general_veh_props)
 
 def roadveh_speed_prop(prop_info):
     # prop 08 value is min(value, 255)
-    prop08_value = lambda value: BinOp(nmlop.MIN, value, ConstantNumeric(0xFF, value.pos), value.pos).reduce()
+    prop08_value = lambda value: nmlop.MIN(value, 0xFF).reduce()
     # prop 15 value is (value + 3) / 4
-    prop15_value = lambda value: BinOp(nmlop.DIV, BinOp(nmlop.ADD, value, ConstantNumeric(3, value.pos), value.pos), ConstantNumeric(4, value.pos), value.pos).reduce()
+    prop15_value = lambda value: nmlop.DIV(nmlop.ADD(value, 3), 4).reduce()
     # prop 15 should not be set if value(prop08_value) <= 255. But as we test prop15 and prop15 = 0.25/prop08, test for 64:
     prop15_test = lambda value: isinstance(value, ConstantNumeric) and value.value >= 0x40
     prop08 = {'size': 1, 'num': 0x08, 'value_function': prop08_value}
@@ -436,7 +436,7 @@ def speed_fraction(value):
     if isinstance(value, ConstantNumeric) and not (0 <= value.value <= 255):
         # Do not use check_range to provide better error message
         raise generic.ScriptError("speed fraction must be in range 0 .. 1", value.pos)
-    return BinOp(nmlop.SUB, ConstantNumeric(255, value.pos), value, value.pos).reduce()
+    return nmlop.SUB(255, value).reduce()
 
 properties[0x02] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
@@ -475,10 +475,10 @@ properties[0x02].update(general_veh_props)
 def aircraft_is_heli(value):
     if isinstance(value, ConstantNumeric) and not value.value in (0, 2, 3):
         raise generic.ScriptError("Invalid value for aircraft_type", value.pos)
-    return BinOp(nmlop.AND, value, ConstantNumeric(2, value.pos), value.pos).reduce()
+    return nmlop.AND(value, 2).reduce()
 
 def aircraft_is_large(value):
-    return BinOp(nmlop.AND, value, ConstantNumeric(1, value.pos), value.pos).reduce()
+    return nmlop.AND(value, 1).reduce()
 
 properties[0x03] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
@@ -531,16 +531,16 @@ def house_prop_0A(value):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
 
-    min_year = BinOp(nmlop.SUB, value.values[0], ConstantNumeric(1920, value.pos), value.pos)
-    min_year = BinOp(nmlop.MAX, min_year, ConstantNumeric(0, value.pos), value.pos)
-    min_year = BinOp(nmlop.MIN, min_year, ConstantNumeric(255, value.pos), value.pos)
+    min_year = nmlop.SUB(value.values[0], 1920, value.pos)
+    min_year = nmlop.MAX(min_year, 0)
+    min_year = nmlop.MIN(min_year, 255)
 
-    max_year = BinOp(nmlop.SUB, value.values[1], ConstantNumeric(1920, value.pos), value.pos)
-    max_year = BinOp(nmlop.MAX, max_year, ConstantNumeric(0, value.pos), value.pos)
-    max_year = BinOp(nmlop.MIN, max_year, ConstantNumeric(255, value.pos), value.pos)
-    max_year = BinOp(nmlop.SHIFT_LEFT, max_year, ConstantNumeric(8, value.pos), value.pos)
+    max_year = nmlop.SUB(value.values[1], 1920, value.pos)
+    max_year = nmlop.MAX(max_year, 0)
+    max_year = nmlop.MIN(max_year, 255)
+    max_year = nmlop.SHIFT_LEFT(max_year, 8)
 
-    return BinOp(nmlop.OR, max_year, min_year, value.pos).reduce()
+    return nmlop.OR(max_year, min_year).reduce()
 
 def house_prop_21_22(value, index):
     # Take one of the values from the years_available array
@@ -558,12 +558,12 @@ def house_random_colours(value):
     for i, colour in enumerate(value.values):
         if isinstance(colour, ConstantNumeric):
             generic.check_range(colour.value, 0, 15, "Random house colours", colour.pos)
-        byte = BinOp(nmlop.AND, colour, ConstantNumeric(0xFF, colour.pos), colour.pos)
+        byte = nmlop.AND(colour, 0xFF)
         if i == 0:
             ret = byte
         else:
-            byte = BinOp(nmlop.SHIFT_LEFT, byte, ConstantNumeric(i * 8, colour.pos), colour.pos)
-            ret = BinOp(nmlop.OR, ret, byte, colour.pos)
+            byte = nmlop.SHIFT_LEFT(byte, i * 8)
+            ret = nmlop.OR(ret, byte)
     return ret.reduce()
 
 def house_available_mask(value):
@@ -572,12 +572,12 @@ def house_available_mask(value):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("availability_mask must be an array with exactly 2 values", value.pos)
 
-    climates = BinOp(nmlop.AND, value.values[1], ConstantNumeric(0xF, value.pos), value.pos)
-    climates = BinOp(nmlop.SHIFT_LEFT, climates, ConstantNumeric(12, value.pos), value.pos)
-    above_snow = BinOp(nmlop.AND, value.values[1], ConstantNumeric(0x800, value.pos), value.pos)
+    climates = nmlop.AND(value.values[1], 0xF, value.pos)
+    climates = nmlop.SHIFT_LEFT(climates, 12)
+    above_snow = nmlop.AND(value.values[1], 0x800, value.pos)
 
-    ret = BinOp(nmlop.OR, climates, value.values[0], value.pos)
-    ret = BinOp(nmlop.OR, ret, above_snow, value.pos)
+    ret = nmlop.OR(climates, value.values[0])
+    ret = nmlop.OR(ret, above_snow)
     return ret.reduce()
 
 # List of valid IDs of old house types
@@ -598,7 +598,7 @@ def mt_house_old_id(value, num_ids, size_bit):
         raise generic.ScriptError("Substitute / override house type must have the same size as the newly defined house.", value.pos)
     ret = [value]
     for i in range(1, num_ids):
-        ret.append(BinOp(nmlop.ADD, value, ConstantNumeric(i, value.pos), value.pos).reduce())
+        ret.append(nmlop.ADD(value, i).reduce())
     return ret
 
 def mt_house_prop09(value, num_ids, size_bit):
@@ -606,16 +606,16 @@ def mt_house_prop09(value, num_ids, size_bit):
     # Additionally, correctly set the size bit (0, 2, 3 or 4) for the first tile
     if isinstance(value, ConstantNumeric) and (value.value & 0x1D) != 0:
         raise generic.ScriptError("Invalid bits set in house property 'building_flags'.", value.pos)
-    ret = [BinOp(nmlop.OR, value, ConstantNumeric(1 << size_bit, value.pos), value.pos).reduce()]
+    ret = [nmlop.OR(value, 1 << size_bit).reduce()]
     for _i in range(1, num_ids):
-        ret.append(BinOp(nmlop.AND, value, ConstantNumeric(1 << 5, value.pos), value.pos).reduce())
+        ret.append(nmlop.AND(value, 1 << 5).reduce())
     return ret
 
 def mt_house_mask(mask, value, num_ids, size_bit):
     # Mask out the bits not present in the 'mask' parameter for additional tiles
     ret = [value]
     for _i in range(1, num_ids):
-        ret.append(BinOp(nmlop.AND, value, ConstantNumeric(mask, value.pos), value.pos).reduce())
+        ret.append(nmlop.AND(value, mask).reduce())
     return ret
 
 def mt_house_zero(value, num_ids, size_bit):

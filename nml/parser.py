@@ -208,7 +208,7 @@ class NMLParser:
 
     def p_unary_minus(self, t):
         'expression : MINUS expression'
-        t[0] = expression.BinOp(self.code_to_op[t[1]], expression.ConstantNumeric(0), t[2], t.lineno(1))
+        t[0] = nmlop.SUB(0, t[2], t.lineno(1))
 
     def p_variable(self, t):
         'variable : VARIABLE LBRACKET expression_list RBRACKET'

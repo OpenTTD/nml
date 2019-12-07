@@ -35,8 +35,8 @@ class BitMask(Expression):
                 raise generic.ScriptError("Parameters of 'bitmask' must be integers.", orig_expr.pos)
             if isinstance(val, ConstantNumeric) and val.value >= 32:
                 raise generic.ScriptError("Parameters of 'bitmask' cannot be greater than 31", orig_expr.pos)
-            val = BinOp(nmlop.SHIFT_LEFT, ConstantNumeric(1), val, val.pos)
-            ret = BinOp(nmlop.OR, ret, val, self.pos)
+            val = nmlop.SHIFT_LEFT(1, val)
+            ret = nmlop.OR(ret, val)
         return ret.reduce()
 
     def collect_references(self):

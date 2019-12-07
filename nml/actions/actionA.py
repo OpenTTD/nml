@@ -62,7 +62,7 @@ def parse_actionA(replaces):
 
         first_sprite = replaces.start_id # number of first sprite
         if sprite_offset != 0:
-            first_sprite = expression.BinOp(nmlop.ADD, first_sprite, expression.ConstantNumeric(sprite_offset, first_sprite.pos), first_sprite.pos).reduce()
+            first_sprite = nmlop.ADD(first_sprite, sprite_offset).reduce()
         first_sprite, offset = actionD.write_action_value(first_sprite, action_list, act6, offset, 2)
         block_list.append( (this_block, first_sprite.value) )
 

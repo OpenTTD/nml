@@ -43,7 +43,7 @@ general_vehicle_cbs = {
 
 # Function to convert vehicle length to the actual property value, which is (8 - length)
 def vehicle_length(value):
-    return expression.BinOp(nmlop.SUB, expression.ConstantNumeric(8, value.pos), value, value.pos)
+    return nmlop.SUB(8, value)
 
 # Trains
 callbacks[0x00] = {
@@ -216,8 +216,8 @@ def cargo_profit_value(value):
     # (amount * price_factor * (cb_result * 329 / 256)) / 256
     # This allows us to report a factor of 256 in the documentation, which makes a lot more sense than 199.804...
     # Not doing the division here would improve accuracy, but limits the range of the return value too much
-    value = expression.BinOp(nmlop.MUL, value, expression.ConstantNumeric(329), value.pos)
-    return expression.BinOp(nmlop.DIV, value, expression.ConstantNumeric(256), value.pos)
+    value = nmlop.MUL(value, 329)
+    return nmlop.DIV(value, 256)
 
 callbacks[0x0B] = {
     'profit'         : {'type': 'cb', 'num':  0x39, 'flag_bit': 0, 'value_function': cargo_profit_value},

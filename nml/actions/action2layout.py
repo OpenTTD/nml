@@ -198,12 +198,10 @@ class Action2LayoutSprite:
         if self.sprite_from_action1:
             sprite_num |= 1 << 31
 
-        # Prepare the return value
-        expr = expression.ConstantNumeric(sprite_num, self.pos)
         # Add the sprite
-        expr = expression.BinOp(nmlop.ADD, self.get_param('sprite'), expr, self.pos)
+        expr = nmlop.ADD(self.get_param('sprite'), sprite_num, self.pos)
         # Add the palette
-        expr = expression.BinOp(nmlop.ADD, expression.BinOp(nmlop.SHIFT_LEFT, self.get_param('palette'), expression.ConstantNumeric(16, self.pos), self.pos), expr, self.pos)
+        expr = nmlop.ADD(nmlop.SHIFT_LEFT(self.get_param('palette'), 16, self.pos), expr)
         return expr.reduce()
 
     def get_param(self, name):

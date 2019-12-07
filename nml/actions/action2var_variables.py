@@ -53,18 +53,16 @@ def default_60xvar(name, args, pos, info):
 def value_sign_extend(var, info):
     #r = (x ^ m) - m; with m being (1 << (num_bits -1))
     m = expression.ConstantNumeric(1 << (info['size'] - 1))
-    return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, var, m, var.pos), m, var.pos)
+    return nmlop.SUB(nmlop.XOR(var, m), m)
 
 def value_mul_div(mul, div):
-    return lambda var, info: expression.BinOp(nmlop.DIV,
-            expression.BinOp(nmlop.MUL, var, expression.ConstantNumeric(mul, var.pos), var.pos),
-            expression.ConstantNumeric(div, var.pos), var.pos)
+    return lambda var, info: nmlop.DIV(nmlop.MUL(var, mul), div)
 
 def value_add_constant(const):
-    return lambda var, info: expression.BinOp(nmlop.ADD, var, expression.ConstantNumeric(const, var.pos), var.pos)
+    return lambda var, info: nmlop.ADD(var, const)
 
 def value_equals(const):
-    return lambda var, info: expression.BinOp(nmlop.CMP_EQ, var, expression.ConstantNumeric(const, var.pos), var.pos)
+    return lambda var, info: nmlop.CMP_EQ(var, const)
 
 # Commonly used functions to let a variable accept an (x, y)-offset as parameters
 
@@ -75,11 +73,11 @@ def tile_offset(name, args, pos, info, min, max):
         if isinstance(arg, expression.ConstantNumeric):
             generic.check_range(arg.value, min, max, "Argument of '{}'".format(name), arg.pos)
 
-    x = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xF), args[0].pos)
-    y = expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xF), args[1].pos)
+    x = nmlop.AND(args[0], 0xF)
+    y = nmlop.AND(args[1], 0xF)
     # Shift y left by four
-    y = expression.BinOp(nmlop.SHIFT_LEFT, y, expression.ConstantNumeric(4), y.pos)
-    param = expression.BinOp(nmlop.ADD, x, y, x.pos)
+    y = nmlop.SHIFT_LEFT(y, 4)
+    param = nmlop.ADD(x, y)
     #Make sure to reduce the result
     return ( param.reduce(), [] )
 
@@ -140,7 +138,7 @@ varact2vars_vehicles = {
     'curv_info_cur_next'               : {'var': 0x45, 'start':  8, 'size':  4, 'value_function': value_sign_extend},
     'curv_info_prev_next'              : {'var': 0x45, 'start': 16, 'size':  4, 'value_function': value_sign_extend},
     'curv_info'                        : {'var': 0x45, 'start':  0, 'size': 12,
-            'value_function': lambda var, info: expression.BinOp(nmlop.AND, var, expression.ConstantNumeric(0x0F0F, var.pos), var.pos).reduce()},
+            'value_function': lambda var, info: nmlop.AND(var, 0x0F0F).reduce()},
     'motion_counter'                   : {'var': 0x46, 'start':  8, 'size': 24},
     'cargo_type_in_veh'                : {'var': 0x47, 'start':  0, 'size':  8},
     'cargo_unit_weight'                : {'var': 0x47, 'start':  8, 'size':  8},
@@ -229,7 +227,7 @@ def signed_byte_parameter(name, args, pos, info):
     if isinstance(args[0], expression.ConstantNumeric):
 
         generic.check_range(args[0].value, -128, 127, "parameter of {}()".format(name), pos)
-    ret = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0xFF, pos), pos).reduce()
+    ret = nmlop.AND(args[0], 0xFF, pos).reduce()
     return (ret, [])
 
 varact2vars60x_vehicles = {
@@ -327,7 +325,7 @@ varact2vars60x_stations = {
     'nearby_tile_water_class'       : {'var': 0x67, 'start': 13, 'size':  2, 'param_function': signed_tile_offset},
     'nearby_tile_height'            : {'var': 0x67, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_class'             : {'var': 0x67, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
-    'nearby_tile_is_station'        : {'var': 0x68, 'start':  0, 'size': 32, 'param_function': signed_tile_offset, 'value_function': lambda var, info: expression.BinOp(nmlop.CMP_NEQ, var, expression.ConstantNumeric(0xFFFFFFFF, var.pos), var.pos)},
+    'nearby_tile_is_station'        : {'var': 0x68, 'start':  0, 'size': 32, 'param_function': signed_tile_offset, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
     'nearby_tile_station_id'        : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_same_grf'          : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(0)},
     'nearby_tile_other_grf'         : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(1)},
@@ -378,7 +376,7 @@ def house_same_class(var, info):
                                      expression.ConstantNumeric(0xFF), expression.ConstantNumeric(0xFF), var.pos)
     var61 = expression.Variable(expression.ConstantNumeric(0x7B), expression.ConstantNumeric(info['start']),
                                      expression.ConstantNumeric((1 << info['size']) - 1), expression.ConstantNumeric(0x61), var.pos)
-    return expression.BinOp(nmlop.VAL2, north_tile, var61, var.pos)
+    return nmlop.VAL2(north_tile, var61, var.pos)
 
 
 varact2vars_houses = {
@@ -413,9 +411,9 @@ def cargo_accepted_nearby(name, args, pos, info):
         for i, offs in enumerate(offsets[:]):
             if isinstance(offs, expression.ConstantNumeric):
                 generic.check_range(offs.value, -128, 127, "{}-parameter {:d} '{}offset'".format(name, i + 1, "x" if i == 0 else "y"), pos)
-            offsets[i] = expression.BinOp(nmlop.AND, offs, expression.ConstantNumeric(0xFF, pos), pos).reduce()
+            offsets[i] = nmlop.AND(offs, 0xFF, pos).reduce()
         # Register 0x100 should be set to xoffset | (yoffset << 8)
-        reg100 = expression.BinOp(nmlop.OR, expression.BinOp(nmlop.MUL, offsets[1], expression.ConstantNumeric(256, pos), pos), offsets[0], pos).reduce()
+        reg100 = nmlop.OR(nmlop.MUL(offsets[1], 256, pos), offsets[0]).reduce()
     else:
         reg100 = expression.ConstantNumeric(0, pos)
 
@@ -431,10 +429,10 @@ def nearest_house_matching_criterion(name, args, pos, info):
     if isinstance(args[1], expression.ConstantNumeric) and args[1].value not in (0, 1, 2):
         raise generic.ScriptError("Invalid value for {}()-parameter 2 'criterion'".format(name), pos)
 
-    radius = expression.BinOp(nmlop.AND, args[0], expression.ConstantNumeric(0x3F, pos), pos)
-    criterion = expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0x03, pos), pos)
-    criterion = expression.BinOp(nmlop.MUL, criterion, expression.ConstantNumeric(0x40, pos), pos)
-    retval = expression.BinOp(nmlop.OR, criterion, radius, pos).reduce()
+    radius = nmlop.AND(args[0], 0x3F, pos)
+    criterion = nmlop.AND(args[1], 0x03, pos)
+    criterion = nmlop.MUL(criterion, 0x40)
+    retval = nmlop.OR(criterion, radius).reduce()
     return (retval, [])
 
 varact2vars60x_houses = {
@@ -549,7 +547,7 @@ def industry_layout_count(name, args, pos, info):
 
     extra_params = []
     extra_params.append( (0x100, grfid) )
-    extra_params.append( (0x101, expression.BinOp(nmlop.AND, args[1], expression.ConstantNumeric(0xFF)).reduce()) )
+    extra_params.append( (0x101, nmlop.AND(args[1], 0xFF).reduce()) )
     return (args[0], extra_params)
 
 def industry_town_count(name, args, pos, info):

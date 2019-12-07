@@ -129,7 +129,7 @@ def parse_randomswitch_type(random_switch):
             count = random_switch.type_count.value
         else:
             count = 0
-            count_expr = expression.BinOp(nmlop.STO_TMP, random_switch.type_count, expression.ConstantNumeric(0x100), type_pos)
+            count_expr = nmlop.STO_TMP(random_switch.type_count, 0x100, type_pos)
         count = type_info['value'] | count
 
     if random_switch.triggers.value != 0 and not type_info['triggers']:
