@@ -35,7 +35,7 @@ class BaseCost(base_statement.BaseStatement):
             cost.value = cost.value.reduce(global_constants.const_list)
             if isinstance(cost.value, expression.ConstantNumeric):
                 generic.check_range(cost.value.value, -8, 16, 'Base cost value', cost.value.pos)
-            cost.value = expression.BinOp(nmlop.ADD, cost.value, expression.ConstantNumeric(8), cost.value.pos).reduce()
+            cost.value = nmlop.ADD(cost.value, 8).reduce()
 
             if isinstance(cost.name, expression.Identifier):
                 if cost.name.value in base_cost_table:

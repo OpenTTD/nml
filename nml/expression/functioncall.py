@@ -141,7 +141,7 @@ def builtin_min(name, args, pos):
     """
     if len(args) < 2:
         raise generic.ScriptError("min() requires at least 2 arguments", pos)
-    return reduce(lambda x, y: BinOp(nmlop.MIN, x, y, pos), args)
+    return reduce(lambda x, y: nmlop.MIN(x, y, pos), args)
 
 def builtin_max(name, args, pos):
     """
@@ -151,7 +151,7 @@ def builtin_max(name, args, pos):
     """
     if len(args) < 2:
         raise generic.ScriptError("max() requires at least 2 arguments", pos)
-    return reduce(lambda x, y: BinOp(nmlop.MAX, x, y, pos), args)
+    return reduce(lambda x, y: nmlop.MAX(x, y, pos), args)
 
 def builtin_date(name, args, pos):
     """
@@ -177,13 +177,13 @@ def builtin_date(name, args, pos):
         if month != 1 or day != 1:
             raise generic.ScriptError("when the year parameter of date() is not a compile time constant month and day should be 1", pos)
         #num_days = year*365 + year/4 - year/100 + year/400
-        part1 = BinOp(nmlop.MUL, year, ConstantNumeric(365))
-        part2 = BinOp(nmlop.DIV, year, ConstantNumeric(4))
-        part3 = BinOp(nmlop.DIV, year, ConstantNumeric(100))
-        part4 = BinOp(nmlop.DIV, year, ConstantNumeric(400))
-        res = BinOp(nmlop.ADD, part1, part2)
-        res = BinOp(nmlop.SUB, res, part3)
-        res = BinOp(nmlop.ADD, res, part4)
+        part1 = nmlop.MUL(year, 365)
+        part2 = nmlop.DIV(year, 4)
+        part3 = nmlop.DIV(year, 100)
+        part4 = nmlop.DIV(year, 400)
+        res = nmlop.ADD(part1, part2)
+        res = nmlop.SUB(res, part3)
+        res = nmlop.ADD(res, part4)
         return res
 
     generic.check_range(year.value, 0, 5000000, "year", year.pos)
@@ -230,17 +230,17 @@ def builtin_storage(name, args, pos):
 def builtin_ucmp(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
-    return BinOp(nmlop.VACT2_UCMP, args[0], args[1], pos)
+    return nmlop.VACT2_UCMP(args[0], args[1], pos)
 
 def builtin_cmp(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
-    return BinOp(nmlop.VACT2_CMP, args[0], args[1], pos)
+    return nmlop.VACT2_CMP(args[0], args[1], pos)
 
 def builtin_rotate(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
-    return BinOp(nmlop.ROT_RIGHT, args[0], args[1], pos)
+    return nmlop.ROT_RIGHT(args[0], args[1], pos)
 
 def builtin_hasbit(name, args, pos):
     """
@@ -250,7 +250,7 @@ def builtin_hasbit(name, args, pos):
     """
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
-    return BinOp(nmlop.HASBIT, args[0], args[1], pos)
+    return nmlop.HASBIT(args[0], args[1], pos)
 
 def builtin_getbits(name, args, pos):
     """
@@ -262,11 +262,11 @@ def builtin_getbits(name, args, pos):
         raise generic.ScriptError(name + "() must have exactly three parameters", pos)
 
     # getbits(value, first, amount) = (value >> first) & ((0xFFFFFFFF << amount) ^ 0xFFFFFFFF)
-    part1 = BinOp(nmlop.SHIFTU_RIGHT, args[0], args[1], pos)
-    part2 = BinOp(nmlop.SHIFT_LEFT, ConstantNumeric(0xFFFFFFFF), args[2], pos)
-    part3 = BinOp(nmlop.XOR, part2, ConstantNumeric(0xFFFFFFFF), pos)
+    part1 = nmlop.SHIFTU_RIGHT(args[0], args[1], pos)
+    part2 = nmlop.SHIFT_LEFT(0xFFFFFFFF, args[2], pos)
+    part3 = nmlop.XOR(part2, 0xFFFFFFFF, pos)
 
-    return BinOp(nmlop.AND, part1, part3, pos)
+    return nmlop.AND(part1, part3, pos)
 
 def builtin_version_openttd(name, args, pos):
     """
@@ -368,7 +368,7 @@ def builtin_visual_effect_and_powered(name, args, pos):
     if len(args) != arg_len:
         raise generic.ScriptError(name + "() must have {:d} parameters".format(arg_len), pos)
     effect = args[0].reduce_constant(global_constants.const_list).value
-    offset = BinOp(nmlop.ADD, args[1], ConstantNumeric(8), args[1].pos).reduce_constant().value
+    offset = nmlop.ADD(args[1], 8).reduce_constant().value
     generic.check_range(offset, 0, 0x0F, "offset in function " + name, pos)
     if arg_len == 3:
         powered = args[2].reduce_constant(global_constants.const_list).value
@@ -503,8 +503,8 @@ def builtin_int(name, args, pos):
 def builtin_abs(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    guard = BinOp(nmlop.CMP_LT, args[0], ConstantNumeric(0), args[0].pos)
-    return TernaryOp(guard, BinOp(nmlop.SUB, ConstantNumeric(0), args[0], args[0].pos), args[0], args[0].pos).reduce()
+    guard = nmlop.CMP_LT(args[0], 0)
+    return TernaryOp(guard, nmlop.SUB(0, args[0]), args[0], args[0].pos).reduce()
 
 def builtin_sound_file(name, args, pos):
     if len(args) not in (1, 2):
@@ -540,12 +540,12 @@ def builtin_relative_coord(name, args, pos):
     if isinstance(args[1], ConstantNumeric):
         generic.check_range(args[1].value, 0, 255, "Argument of '{}'".format(name), args[1].pos)
 
-    x_coord = BinOp(nmlop.AND, args[0], ConstantNumeric(0xFF), args[0].pos)
-    y_coord = BinOp(nmlop.AND, args[1], ConstantNumeric(0xFF), args[1].pos)
+    x_coord = nmlop.AND(args[0], 0xFF)
+    y_coord = nmlop.AND(args[1], 0xFF)
     # Shift Y to its position.
-    y_coord = BinOp(nmlop.SHIFT_LEFT, y_coord, ConstantNumeric(8), y_coord.pos)
+    y_coord = nmlop.SHIFT_LEFT(y_coord, 8)
 
-    return BinOp(nmlop.OR, x_coord, y_coord, pos)
+    return nmlop.OR(x_coord, y_coord, pos)
 
 def builtin_num_corners_raised(name, args, pos):
     """
@@ -565,11 +565,10 @@ def builtin_num_corners_raised(name, args, pos):
     # - And-masking leaves only the lowest bit in each nibble (000d|000c|000b|000a|000e)
     # - The modulus operation adds one to the output for each set bit
     # - We now have the count of bits in the slope, which is wat we want. yay!
-    slope = BinOp(nmlop.AND, slope, ConstantNumeric(0x1F),    pos)
-    slope = BinOp(nmlop.MUL, slope, ConstantNumeric(0x8421),  pos)
-    slope = BinOp(nmlop.AND, slope, ConstantNumeric(0x11111), pos)
-
-    return  BinOp(nmlop.MOD, slope, ConstantNumeric(0xF),     pos)
+    slope = nmlop.AND(slope, 0x1F,    pos)
+    slope = nmlop.MUL(slope, 0x8421)
+    slope = nmlop.AND(slope, 0x11111)
+    return  nmlop.MOD(slope, 0xF)
 
 def builtin_slope_to_sprite_offset(name, args, pos):
     """
@@ -585,15 +584,15 @@ def builtin_slope_to_sprite_offset(name, args, pos):
 
     # step 1: ((slope >= 0) & (slope <= 14)) * slope
     # This handles all non-steep slopes
-    expr = BinOp(nmlop.AND, BinOp(nmlop.CMP_LE, args[0], ConstantNumeric(14), pos),
-            BinOp(nmlop.CMP_GE, args[0], ConstantNumeric(0), pos), pos)
-    expr = BinOp(nmlop.MUL, expr, args[0], pos)
+    expr = nmlop.AND(nmlop.CMP_LE(args[0], 14, pos),
+                     nmlop.CMP_GE(args[0], 0, pos))
+    expr = nmlop.MUL(expr, args[0])
     # Now handle the steep slopes separately
     # So add (slope == SLOPE_XX) * offset_of_SLOPE_XX for each steep slope
     steep_slopes = [(23, 16), (27, 17), (29, 15), (30, 18)]
     for slope, offset in steep_slopes:
-        to_add = BinOp(nmlop.MUL, BinOp(nmlop.CMP_EQ, args[0], ConstantNumeric(slope), pos), ConstantNumeric(offset), pos)
-        expr = BinOp(nmlop.ADD, expr, to_add, pos)
+        to_add = nmlop.MUL(nmlop.CMP_EQ(args[0], slope, pos), offset)
+        expr = nmlop.ADD(expr, to_add)
     return expr
 
 def builtin_palette_1cc(name, args, pos):
@@ -608,7 +607,7 @@ def builtin_palette_1cc(name, args, pos):
     if isinstance(args[0], ConstantNumeric):
         generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
 
-    return BinOp(nmlop.ADD, args[0], ConstantNumeric(775), pos)
+    return nmlop.ADD(args[0], 775, pos)
 
 def builtin_palette_2cc(name, args, pos):
     """
@@ -623,12 +622,12 @@ def builtin_palette_2cc(name, args, pos):
         if isinstance(args[i], ConstantNumeric):
             generic.check_range(args[i].value, 0, 15, "Argument of '{}'".format(name), args[i].pos)
 
-    col2 = BinOp(nmlop.MUL, args[1], ConstantNumeric(16), pos)
-    col12 = BinOp(nmlop.ADD, col2, args[0], pos)
+    col2 = nmlop.MUL(args[1], 16, pos)
+    col12 = nmlop.ADD(col2, args[0])
     # Base sprite is not a constant
     base = global_constants.patch_variable('base_sprite_2cc', global_constants.patch_variables['base_sprite_2cc'], pos)
 
-    return BinOp(nmlop.ADD, col12, base, pos)
+    return nmlop.ADD(col12, base)
 
 def builtin_vehicle_curv_info(name, args, pos):
     """
@@ -643,9 +642,9 @@ def builtin_vehicle_curv_info(name, args, pos):
         if isinstance(arg, ConstantNumeric):
             generic.check_range(arg.value, -2, 2, "Argument of '{}'".format(name), arg.pos)
 
-    args = [BinOp(nmlop.AND, arg, ConstantNumeric(0xF), pos) for arg in args]
-    cur_next = BinOp(nmlop.SHIFT_LEFT, args[1], ConstantNumeric(8), pos)
-    return BinOp(nmlop.OR, args[0], cur_next, pos)
+    args = [nmlop.AND(arg, 0xF, pos) for arg in args]
+    cur_next = nmlop.SHIFT_LEFT(args[1], 8)
+    return nmlop.OR(args[0], cur_next)
 
 def builtin_format_string(name, args, pos):
     """

@@ -241,7 +241,7 @@ def parse_graphics_block(graphics_block, feature, id, size, is_livery_override =
         # Multi-tile houses need more work
         size_bit = size.value if size is not None else 0
         for i, tile in enumerate(house_tiles[size_bit]):
-            tile_id = id if i == 0 else expression.BinOp(nmlop.ADD, id, expression.ConstantNumeric(i, id.pos), id.pos).reduce()
+            tile_id = id if i == 0 else nmlop.ADD(id, i).reduce()
             action_list.extend(parse_graphics_block_single_id(graphics_block, feature, tile_id, is_livery_override, tile, id))
     else:
         action_list.extend(parse_graphics_block_single_id(graphics_block, feature, id, is_livery_override))
@@ -396,10 +396,10 @@ def parse_graphics_block_single_id(graphics_block, feature, id, is_livery_overri
                     's' : 0x030101,
                 }
                 lowbytes = expression.ConstantNumeric(lowbytes_dict[house_tile])
-                highbyte = expression.BinOp(nmlop.SHIFT_LEFT, house_north_tile_id, expression.ConstantNumeric(24))
-                register_FF = expression.BinOp(nmlop.OR, lowbytes, highbyte, lowbytes.pos).reduce()
-                register_FF = expression.BinOp(nmlop.STO_TMP, register_FF, expression.ConstantNumeric(0xFF))
-                expr = expression.BinOp(nmlop.VAL2, register_FF, expr, register_FF.pos)
+                highbyte = nmlop.SHIFT_LEFT(house_north_tile_id, 24)
+                register_FF = nmlop.OR(lowbytes, highbyte).reduce()
+                register_FF = nmlop.STO_TMP(register_FF, 0xFF)
+                expr = nmlop.VAL2(register_FF, expr)
 
                 if len(mapping) == 0:
                     # mapping must not be empty

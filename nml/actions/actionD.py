@@ -241,7 +241,7 @@ def parse_min_max(assignment):
 def parse_boolean(assignment):
     assert isinstance(assignment.value, expression.Boolean)
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
-    expr = expression.BinOp(nmlop.CMP_NEQ, assignment.value.expr, expression.ConstantNumeric(0))
+    expr = nmlop.CMP_NEQ(assignment.value.expr, 0)
     cond_block = nml.ast.conditional.Conditional(expr, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None)
     actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
     return actions
@@ -257,7 +257,7 @@ def transform_bin_op(assignment):
         op = nmlop.CMP_LE
 
     if op == nmlop.CMP_LE:
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
+        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.SUB(expr1, expr2))))
         op = nmlop.CMP_LT
         expr1 = assignment.param
         expr2 = expression.ConstantNumeric(1)
@@ -267,13 +267,13 @@ def transform_bin_op(assignment):
         op = nmlop.CMP_LT
 
     if op == nmlop.CMP_LT:
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
+        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.SUB(expr1, expr2))))
         op = nmlop.SHIFTU_LEFT #shift left by negative number = shift right
         expr1 = assignment.param
         expr2 = expression.ConstantNumeric(-31)
 
     elif op == nmlop.CMP_NEQ:
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
+        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.SUB(expr1, expr2))))
         op = nmlop.DIV
         # We rely here on the (ondocumented) behavior of both OpenTTD and TTDPatch
         # that expr/0==expr. What we do is compute A/A, which will result in 1 if
@@ -284,9 +284,9 @@ def transform_bin_op(assignment):
     elif op == nmlop.CMP_EQ:
         # We compute A==B by doing not(A - B) which will result in a value != 0
         # if A is equal to B
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.SUB, expr1, expr2))))
+        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.SUB(expr1, expr2))))
         # Clamp the value to 0/1, see above for details
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.BinOp(nmlop.DIV, assignment.param, assignment.param))))
+        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.DIV(assignment.param, assignment.param))))
         op = nmlop.SUB
         expr1 = expression.ConstantNumeric(1)
         expr2 = assignment.param
@@ -295,15 +295,15 @@ def transform_bin_op(assignment):
         if isinstance(expr2, expression.ConstantNumeric):
             expr2.value *= -1
         else:
-            expr2 = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(0), expr2)
+            expr2 = nmlop.SUB(0, expr2)
         op = nmlop.SHIFT_LEFT if op == nmlop.SHIFT_RIGHT else nmlop.SHIFTU_LEFT
 
     elif op == nmlop.XOR:
         #a ^ b ==> (a | b) - (a & b)
         expr1 = parse_subexpression(expr1, extra_actions)
         expr2 = parse_subexpression(expr2, extra_actions)
-        tmp_param1, tmp_action_list1 = get_tmp_parameter(expression.BinOp(nmlop.OR, expr1, expr2))
-        tmp_param2, tmp_action_list2 = get_tmp_parameter(expression.BinOp(nmlop.AND, expr1, expr2))
+        tmp_param1, tmp_action_list1 = get_tmp_parameter(nmlop.OR(expr1, expr2))
+        tmp_param2, tmp_action_list2 = get_tmp_parameter(nmlop.AND(expr1, expr2))
         extra_actions.extend(tmp_action_list1)
         extra_actions.extend(tmp_action_list2)
         expr1 = expression.Parameter(expression.ConstantNumeric(tmp_param1))
@@ -347,11 +347,11 @@ def parse_actionD(assignment):
         return parse_boolean(assignment)
 
     if isinstance(assignment.value, expression.Not):
-        expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(1), assignment.value.expr)
+        expr = nmlop.SUB(1, assignment.value.expr)
         assignment = ParameterAssignment(assignment.param, expr)
 
     if isinstance(assignment.value, expression.BinNot):
-        expr = expression.BinOp(nmlop.SUB, expression.ConstantNumeric(0xFFFFFFFF), assignment.value.expr)
+        expr = nmlop.SUB(0xFFFFFFFF, assignment.value.expr)
         assignment = ParameterAssignment(assignment.param, expr)
 
     action6.free_parameters.save()

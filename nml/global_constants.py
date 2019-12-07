@@ -1037,7 +1037,7 @@ constant_numbers = {
 def signextend(param, info):
     #r = (x ^ m) - m; with m being (1 << (num_bits -1))
     m = expression.ConstantNumeric(1 << (info['size'] * 8 - 1))
-    return expression.BinOp(nmlop.SUB, expression.BinOp(nmlop.XOR, param, m, param.pos), m, param.pos)
+    return nmlop.SUB(nmlop.XOR(param, m), m)
 
 def global_param_write(info, expr, pos):
     if not ('writable' in info and info['writable']): raise generic.ScriptError("Target parameter is not writable.", pos)
@@ -1047,7 +1047,7 @@ def global_param_read(info, pos):
     param = expression.Parameter(expression.ConstantNumeric(info['num']), pos)
     if info['size'] == 1:
         mask = expression.ConstantNumeric(0xFF)
-        param = expression.BinOp(nmlop.AND, param, mask)
+        param = nmlop.AND(param, mask)
     else:
         assert info['size'] == 4
     if 'function' in info: return info['function'](param, info)
@@ -1074,14 +1074,14 @@ def misc_bit_write(info, expr, pos):
     param = expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos)
 
     #param = (expr != 0) ? param | (1 << bit) : param & ~(1 << bit)
-    expr = expression.BinOp(nmlop.CMP_NEQ, expr, expression.ConstantNumeric(0, pos), pos)
-    or_expr = expression.BinOp(nmlop.OR, param, expression.ConstantNumeric(1 << info['bit'], pos), pos)
-    and_expr = expression.BinOp(nmlop.AND, param, expression.ConstantNumeric(~(1 << info['bit']), pos), pos)
+    expr = nmlop.CMP_NEQ(expr, 0, pos)
+    or_expr = nmlop.OR(param, 1 << info['bit'], pos)
+    and_expr = nmlop.AND(param, ~(1 << info['bit']), pos)
     expr = expression.TernaryOp(expr, or_expr, and_expr, pos)
     return (param, expr)
 
 def misc_bit_read(info, pos):
-    return expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos), expression.ConstantNumeric(info['bit'], pos), pos)
+    return nmlop.HASBIT(expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos), info['bit'])
 
 def misc_grf_bit(name, info, pos):
     return expression.SpecialParameter(name, info, misc_bit_write, misc_bit_read, True, pos)
@@ -1105,7 +1105,7 @@ def add_1920(expr, info):
     @return: A new expression that adds 1920 to the given expression.
     @rtype: L{Expression}
     """
-    return expression.BinOp(nmlop.ADD, expr, expression.ConstantNumeric(1920, expr.pos), expr.pos)
+    return nmlop.ADD(expr, 1920)
 
 def map_exponentiate(expr, info):
     """
@@ -1122,8 +1122,8 @@ def map_exponentiate(expr, info):
     @rtype: L{Expression}
     """
     #map (log2(x) - a) to x, i.e. do 1 << (x + a)
-    expr = expression.BinOp(nmlop.ADD, expr, expression.ConstantNumeric(info['log_offset'], expr.pos), expr.pos)
-    return expression.BinOp(nmlop.SHIFT_LEFT, expression.ConstantNumeric(1, expr.pos), expr, expr.pos)
+    expr = nmlop.ADD(expr, info['log_offset'])
+    return nmlop.SHIFT_LEFT(1, expr)
 
 def patch_variable_read(info, pos):
     """
@@ -1140,9 +1140,9 @@ def patch_variable_read(info, pos):
     """
     expr = expression.PatchVariable(info['num'], pos)
     if info['start'] != 0:
-        expr = expression.BinOp(nmlop.SHIFT_RIGHT, expr, expression.ConstantNumeric(info['start'], pos), pos)
+        expr = nmlop.SHIFT_RIGHT(expr, info['start'], pos)
     if info['size'] != 32:
-        expr = expression.BinOp(nmlop.AND, expr, expression.ConstantNumeric((1 << info['size']) - 1, pos), pos)
+        expr = nmlop.AND(expr, (1 << info['size']) - 1, pos)
     if 'function' in info:
         expr = info['function'](expr, info)
     return expr
@@ -1193,10 +1193,10 @@ config_flags = {
 }
 
 def unified_maglev_read(info, pos):
-    bit0 = expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(0x85), pos), expression.ConstantNumeric(0x32), pos)
-    bit1 = expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(0x85), pos), expression.ConstantNumeric(0x33), pos)
-    shifted_bit1 = expression.BinOp(nmlop.SHIFT_LEFT, bit1, expression.ConstantNumeric(1))
-    return expression.BinOp(nmlop.OR, shifted_bit1, bit0)
+    bit0 = nmlop.HASBIT(expression.Parameter(expression.ConstantNumeric(0x85), pos), 0x32)
+    bit1 = nmlop.HASBIT(expression.Parameter(expression.ConstantNumeric(0x85), pos), 0x33)
+    shifted_bit1 = nmlop.SHIFT_LEFT(bit1, 1)
+    return nmlop.OR(shifted_bit1, bit0)
 
 def unified_maglev(name, info, pos):
     return expression.SpecialParameter(name, info, None, unified_maglev_read, False, pos)

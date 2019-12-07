@@ -510,9 +510,9 @@ def parse_property_value(prop_info, value, unit = None, size_bit = None):
                 value = adjust_value(value, org_value, unit, prop_info['adjust_value'])
         elif mul != div:
             # Compute (value * mul + div/2) / div
-            value = expression.BinOp(nmlop.MUL, value, expression.ConstantNumeric(mul, value.pos), value.pos)
-            value = expression.BinOp(nmlop.ADD, value, expression.ConstantNumeric(int(div / 2), value.pos), value.pos)
-            value = expression.BinOp(nmlop.DIV, value, expression.ConstantNumeric(div, value.pos), value.pos)
+            value = nmlop.MUL(value, mul)
+            value = nmlop.ADD(value, int(div / 2))
+            value = nmlop.DIV(value, div)
 
     elif isinstance(value, expression.ConstantFloat):
         # Round floats to ints
@@ -787,12 +787,12 @@ def get_snowlinetable_action(snowline_table):
             continue
 
         # Merge the next 4 values together in a single parameter.
-        val2 = expression.BinOp(nmlop.SHIFT_LEFT, snowline_table[idx + 1], expression.ConstantNumeric(8))
-        val3 = expression.BinOp(nmlop.SHIFT_LEFT, snowline_table[idx + 2], expression.ConstantNumeric(16))
-        val4 = expression.BinOp(nmlop.SHIFT_LEFT, snowline_table[idx + 3], expression.ConstantNumeric(24))
-        expr = expression.BinOp(nmlop.OR, val, val2)
-        expr = expression.BinOp(nmlop.OR, expr, val3)
-        expr = expression.BinOp(nmlop.OR, expr, val4)
+        val2 = nmlop.SHIFT_LEFT(snowline_table[idx + 1], 8)
+        val3 = nmlop.SHIFT_LEFT(snowline_table[idx + 2], 16)
+        val4 = nmlop.SHIFT_LEFT(snowline_table[idx + 3], 24)
+        expr = nmlop.OR(val, val2)
+        expr = nmlop.OR(expr, val3)
+        expr = nmlop.OR(expr, val4)
         expr = expr.reduce()
 
         #Cache lookup, saves some ActionDs

@@ -94,9 +94,9 @@ def compute_table(snowline):
                 height = expression.ConstantNumeric(int(float(height.value) * mul / div + 0.5), height.pos)
             elif mul != div:
                 # Compute (value * mul + div/2) / div
-                height = expression.BinOp(nmlop.MUL, height, expression.ConstantNumeric(mul, height.pos), height.pos)
-                height = expression.BinOp(nmlop.ADD, height, expression.ConstantNumeric(int(div / 2), height.pos), height.pos)
-                height = expression.BinOp(nmlop.DIV, height, expression.ConstantNumeric(div, height.pos), height.pos)
+                height = nmlop.MUL(height, mul)
+                height = nmlop.ADD(height, int(div / 2))
+                height = nmlop.DIV(height, div)
 
         # For 'linear' snow-line, only accept integer constants.
         if snowline.type != 'equal' and not isinstance(height, expression.ConstantNumeric):

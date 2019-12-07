@@ -120,15 +120,15 @@ class BinOp(Expression):
             # to perform some operations on the value. These operations are faster than a normal
             # advanced varaction2 operator so we try to use them whenever we can.
             if op == nmlop.AND and expr1.add is None:
-                expr1.mask = BinOp(nmlop.AND, expr1.mask, expr2, self.pos).reduce(id_dicts)
+                expr1.mask = nmlop.AND(expr1.mask, expr2, self.pos).reduce(id_dicts)
                 return expr1
             if op == nmlop.ADD and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = expr2
-                else: expr1.add = BinOp(nmlop.ADD, expr1.add, expr2, self.pos).reduce(id_dicts)
+                else: expr1.add = nmlop.ADD(expr1.add, expr2, self.pos).reduce(id_dicts)
                 return expr1
             if op == nmlop.SUB and expr1.div is None and expr1.mod is None:
                 if expr1.add is None: expr1.add = ConstantNumeric(0)
-                expr1.add = BinOp(nmlop.SUB, expr1.add, expr2, self.pos).reduce(id_dicts)
+                expr1.add = nmlop.SUB(expr1.add, expr2, self.pos).reduce(id_dicts)
                 return expr1
             # The div and mod fields cannot be used at the same time. Also whenever either of those
             # two are used the add field has to be set, so we change it to zero when it's not yet set.
@@ -145,7 +145,7 @@ class BinOp(Expression):
             # Don't use any extra opcodes but just reduce the shift-right in that case.
             if op == nmlop.SHIFT_LEFT and isinstance(expr2, ConstantNumeric) and expr1.add is None and expr2.value < expr1.shift.value:
                 expr1.shift.value -= expr2.value
-                expr1.mask = BinOp(nmlop.SHIFT_LEFT, expr1.mask, expr2).reduce()
+                expr1.mask = nmlop.SHIFT_LEFT(expr1.mask, expr2).reduce()
                 return expr1
 
         # - Try to merge multiple additions/subtractions with constant numbers
@@ -153,12 +153,12 @@ class BinOp(Expression):
                 isinstance(expr1, BinOp) and expr1.op in (nmlop.ADD, nmlop.SUB) and isinstance(expr1.expr2, ConstantNumeric):
             val = expr2.value if op == nmlop.ADD else -expr2.value
             if expr1.op == nmlop.ADD:
-                return BinOp(nmlop.ADD, expr1.expr1, ConstantNumeric(expr1.expr2.value + val), self.pos).reduce()
+                return nmlop.ADD(expr1.expr1, (expr1.expr2.value + val), self.pos).reduce()
             if expr1.op == nmlop.SUB:
-                return BinOp(nmlop.SUB, expr1.expr1, ConstantNumeric(expr1.expr2.value - val), self.pos).reduce()
+                return nmlop.SUB(expr1.expr1, (expr1.expr2.value - val), self.pos).reduce()
 
         if op == nmlop.OR and isinstance(expr1, Boolean) and isinstance(expr2, Boolean):
-            return Boolean(BinOp(op, expr1.expr, expr2.expr, self.pos)).reduce(id_dicts)
+            return Boolean(nmlop.OR(expr1.expr, expr2.expr, self.pos)).reduce(id_dicts)
 
         return BinOp(op, expr1, expr2, self.pos)
 
