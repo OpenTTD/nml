@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import operator
 from .expression.base_expression import Type, ConstantNumeric, ConstantFloat
+from .expression.binop import BinOp
 from nml import generic
 
 class Operator:
@@ -90,6 +91,10 @@ class Operator:
             return '{}({}, {})'.format(self.prefix_text, expr1, expr2)
         else: # Infix notation.
             return '({} {} {})'.format(expr1, self.token, expr2)
+
+    def __call__(self, expr1, expr2, pos=None):
+        return BinOp(self, expr1, expr2, pos)
+
 
 def unsigned_rshift(a, b):
     if a < 0:
