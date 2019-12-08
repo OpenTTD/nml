@@ -718,6 +718,7 @@ constant_numbers = {
     'ANIM_TRIGGER_APT_NEW_CARGO'            : 2,
     'ANIM_TRIGGER_APT_CARGO_TAKEN'          : 3,
     'ANIM_TRIGGER_APT_250_TICKS'            : 4,
+    'ANIM_TRIGGER_APT_AIRPLANE_LANDS'       : 5,
 
     # Animation looping
     'ANIMATION_NON_LOOPING'                 : 0,
