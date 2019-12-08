@@ -18,9 +18,9 @@ from .base_expression import ConstantNumeric, Expression, Type
 from .parameter import parse_string_to_dword
 
 storage_op_info = {
-    'STORE_PERM' : {'store': True,  'perm': True,  'grfid': False, 'max': 0x0F},
+    'STORE_PERM' : {'store': True,  'perm': True,  'grfid': False, 'max': 0xFF},
     'STORE_TEMP' : {'store': True,  'perm': False, 'grfid': False, 'max': 0x10F},
-    'LOAD_PERM'  : {'store': False, 'perm': True,  'grfid': True,  'max': 0x0F},
+    'LOAD_PERM'  : {'store': False, 'perm': True,  'grfid': True,  'max': 0xFF},
     'LOAD_TEMP'  : {'store': False, 'perm': False, 'grfid': False, 'max': 0xFF},
 }
 
