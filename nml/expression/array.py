@@ -33,7 +33,5 @@ class Array(Expression):
         return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values], self.pos)
 
     def collect_references(self):
-        refs = []
-        for v in self.values:
-            refs += v.collect_references()
-        return refs
+        from itertools import chain
+        return list(chain.from_iterable(v.collect_references() for v in self.values))

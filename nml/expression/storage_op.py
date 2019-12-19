@@ -123,7 +123,4 @@ class StorageOp(Expression):
         return False
 
     def collect_references(self):
-        refs = self.register.collect_references()
-        if self.value is not None:
-            refs += self.value.collect_references()
-        return refs
+        return self.register.collect_references() + (self.value.collect_references() if self.value is not None else [])
