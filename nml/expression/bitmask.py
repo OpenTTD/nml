@@ -40,10 +40,8 @@ class BitMask(Expression):
         return ret.reduce()
 
     def collect_references(self):
-        refs = []
-        for v in self.values:
-            refs += v.collect_references()
-        return refs
+        from itertools import chain
+        return list(chain.from_iterable(v.collect_references() for v in self.values))
 
     def __str__(self):
         return "bitmask(" + ", ".join(str(e) for e in self.values) + ")"
