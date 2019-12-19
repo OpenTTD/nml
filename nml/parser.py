@@ -29,13 +29,19 @@ class NMLParser:
     @ivar parser: PLY parser.
     @type parser: L{ply.yacc}
     """
-    def __init__(self, rebuild = False):
+    def __init__(self, rebuild = False, debug = False):
+        if debug:
+            try:
+                import os
+                os.remove(os.path.normpath(os.path.join(os.path.dirname(__file__), "generated", "parsetab.py")))
+            except FileNotFoundError:
+                pass
         self.lexer = tokens.NMLLexer()
-        self.lexer.build(rebuild)
+        self.lexer.build(rebuild or debug)
         self.tokens = self.lexer.tokens
         self.parser = yacc.yacc(module=self,
-                                debug=False, optimize=not rebuild,
-                                write_tables=True,
+                                debug=debug, optimize=not (rebuild or debug),
+                                write_tables=not debug,
                                 tabmodule='nml.generated.parsetab')
 
     def parse(self, text, input_filename):

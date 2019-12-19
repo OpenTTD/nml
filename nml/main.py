@@ -40,7 +40,8 @@ def parse_cli(argv):
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(debug=False, crop=False, compress=True, outputs=[], start_sprite_num=0,
                             custom_tags="custom_tags.txt", lang_dir="lang", default_lang="english.lng", cache_dir=".nmlcache",
-                            forced_palette="ANY", quiet=False, md5_filename=None, keep_orphaned=True, verbosity=generic.verbosity_level, rebuild_parser=False)
+                            forced_palette="ANY", quiet=False, md5_filename=None, keep_orphaned=True, verbosity=generic.verbosity_level,
+                            rebuild_parser=False, debug_parser=False)
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
@@ -71,6 +72,7 @@ def parse_cli(argv):
     opt_parser.add_option("--clear-orphaned", action="store_false", dest="keep_orphaned", help="Remove unused/orphaned items from cache files.")
     opt_parser.add_option("--verbosity", type="int", dest="verbosity", metavar="<level>", help="Set the verbosity level for informational output. [default: %default, max: {}]".format(generic.VERBOSITY_MAX))
     opt_parser.add_option("-R", "--rebuild-parser", action="store_true", dest="rebuild_parser", help="Force regeneration of parser tables.")
+    opt_parser.add_option("-D", "--debug-parser", action="store_true", dest="debug_parser", help="Enable debug mode for parser.")
 
     opts, args = opt_parser.parse_args(argv)
 
@@ -165,7 +167,7 @@ def main(argv):
             generic.print_error("Unknown output format {}".format(outext))
             sys.exit(2)
 
-    ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.compress, opts.crop, not opts.no_cache, opts.forced_palette, opts.md5_filename, opts.rebuild_parser)
+    ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.compress, opts.crop, not opts.no_cache, opts.forced_palette, opts.md5_filename, opts.rebuild_parser, opts.debug_parser)
 
     input.close()
     sys.exit(ret)
@@ -173,7 +175,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, compress_grf, crop_sprites, enable_cache, forced_palette, md5_filename, rebuild_parser):
+def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, compress_grf, crop_sprites, enable_cache, forced_palette, md5_filename, rebuild_parser, debug_parser):
     """
     Compile an NML file.
 
@@ -221,7 +223,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
 
     generic.print_progress("Init parser ...")
 
-    nml_parser = parser.NMLParser(rebuild_parser)
+    nml_parser = parser.NMLParser(rebuild_parser, debug_parser)
     if input_filename is None:
         input_filename = 'input'
 
