@@ -184,6 +184,9 @@ class BinOp(Expression):
     def collect_references(self):
         return self.expr1.collect_references() + self.expr2.collect_references()
 
+    def is_read_only(self):
+        return self.expr1.is_read_only() and self.expr2.is_read_only()
+
     def is_boolean(self):
         if self.op in (nmlop.AND, nmlop.OR, nmlop.XOR):
             return self.expr1.is_boolean() and self.expr2.is_boolean()

@@ -35,3 +35,6 @@ class Array(Expression):
     def collect_references(self):
         from itertools import chain
         return list(chain.from_iterable(v.collect_references() for v in self.values))
+
+    def is_read_only(self):
+        return all(v.is_read_only() for v in self.values)

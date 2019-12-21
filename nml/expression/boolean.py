@@ -47,6 +47,9 @@ class Boolean(Expression):
     def collect_references(self):
         return self.expr.collect_references()
 
+    def is_read_only(self):
+        return self.expr.is_read_only()
+
     def is_boolean(self):
         return True
 
