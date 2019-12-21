@@ -296,7 +296,8 @@ class ParameterDescription:
         return ret
 
     def debug_print(self, indentation):
-        self.num.debug_print(indentation)
+        if self.num is not None:
+            self.num.debug_print(indentation)
         for setting in self.setting_list:
             setting.debug_print(indentation + 2)
 
