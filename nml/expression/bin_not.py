@@ -44,6 +44,9 @@ class BinNot(Expression):
     def collect_references(self):
         return self.expr.collect_references()
 
+    def is_read_only(self):
+        return self.expr.is_read_only()
+
     def __str__(self):
         return "~" + str(self.expr)
 
@@ -81,6 +84,9 @@ class Not(Expression):
 
     def collect_references(self):
         return self.expr.collect_references()
+
+    def is_read_only(self):
+        return self.expr.is_read_only()
 
     def is_boolean(self):
         return True

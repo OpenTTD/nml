@@ -110,6 +110,14 @@ class Expression:
         """
         return []
 
+    def is_read_only(self):
+        """
+        Check if this expression store values.
+
+        @return: True if the expression doesn't store values.
+        """
+        return True
+
     def is_boolean(self):
         """
         Check if this expression is limited to 0 or 1 as value.

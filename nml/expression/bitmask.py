@@ -43,5 +43,8 @@ class BitMask(Expression):
         from itertools import chain
         return list(chain.from_iterable(v.collect_references() for v in self.values))
 
+    def is_read_only(self):
+        return all(v.is_read_only() for v in self.values)
+
     def __str__(self):
         return "bitmask(" + ", ".join(str(e) for e in self.values) + ")"
