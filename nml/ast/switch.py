@@ -128,9 +128,14 @@ class SwitchBody:
                 self.ranges.remove(r)
             else:
                 r.reduce_expressions(var_feature, extra_dicts)
-        if self.default is not None and self.default.value is not None:
-            self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_feature, extra_dicts)
-
+        if self.default is not None:
+            if self.default.value is not None:
+                self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_feature, extra_dicts)
+            if len(self.ranges) != 0:
+                if any(self.default.value != r.result.value for r in self.ranges):
+                    return
+                generic.print_warning("Switch-Block ranges are the same as default, optimising.", self.default.pos)
+                self.ranges = []
 
     def debug_print(self, indentation):
         for r in self.ranges:

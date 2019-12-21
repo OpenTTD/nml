@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 from nml.actions import action2
+from nml.ast import switch
 from .base_expression import Type, Expression
 from itertools import chain
 
@@ -74,6 +75,13 @@ class SpriteGroupRef(Expression):
         return spritegroup.get_action2(feature).id
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
+        if self.name.value != 'CB_FAILED' and not self.is_procedure:
+            spritegroup = action2.resolve_spritegroup(self.name)
+            if isinstance(spritegroup, switch.Switch) and spritegroup.expr.is_read_only() and \
+                    spritegroup.body.default is not None and spritegroup.body.default.value is not None and \
+                    len(spritegroup.body.ranges) == 0:
+                generic.print_warning("Block '{}' returns a constant, optimising.".format(spritegroup.name.value), self.pos)
+                return spritegroup.body.default.value
         return self
 
     def supported_by_action2(self, raise_error):
