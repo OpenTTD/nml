@@ -82,6 +82,9 @@ class SpriteGroupRef(Expression):
                     len(spritegroup.body.ranges) == 0:
                 generic.print_warning("Block '{}' returns a constant, optimising.".format(spritegroup.name.value), self.pos)
                 return spritegroup.body.default.value
+            elif isinstance(spritegroup, switch.RandomSwitch) and len(spritegroup.choices) == 1:
+                generic.print_warning("Block '{}' returns a constant, optimising.".format(spritegroup.name.value), self.pos)
+                return spritegroup.choices[0].result.value
         return self
 
     def supported_by_action2(self, raise_error):
