@@ -576,6 +576,8 @@ varact2vars60x_industries = {
     'last_month_transported'       : {'var': 0x6D, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
     'last_cargo_accepted_at'       : {'var': 0x6E, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
     'incoming_cargo_waiting'       : {'var': 0x6F, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'production_rate'              : {'var': 0x70, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'transported_last_month_pct'   : {'var': 0x71, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
 }
 
 #
