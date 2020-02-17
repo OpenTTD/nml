@@ -257,15 +257,16 @@ general_veh_props = {
 def ottd_display_speed(value, divisor, unit):
     return int(value.value / divisor) * 10 // 16 * unit.ottd_mul >> unit.ottd_shift
 
-class VariableByteListProp(BaseAction0Property):
+class VariableListProp(BaseAction0Property):
     """
-    Property value that is a variable-length list of bytes, the list length is written before the data.
+    Property value that is a variable-length list of variable sized values, the list length is written before the data.
     """
-    def __init__(self, prop_num, data):
+    def __init__(self, prop_num, data, size):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
         self.prop_num = prop_num
         self.data = data
+        self.size = size
 
     def write(self, file):
         file.print_bytex(self.prop_num)
@@ -273,15 +274,18 @@ class VariableByteListProp(BaseAction0Property):
             file.print_byte(len(elem))
             for i, val in enumerate(elem):
                 if i % 8 == 0: file.newline()
-                file.print_bytex(val)
+                file.print_varx(val, self.size)
             file.newline()
 
     def get_size(self):
         total_len = 1 # Prop number
         for elem in self.data:
             # For each item ID to set, make space for all values + 1 for the length
-            total_len += len(elem) + 1
+            total_len += len(elem) * self.size + 1
         return total_len
+
+def VariableByteListProp(prop_num, data):
+    return VariableListProp(prop_num, data, 1)
 
 def ctt_list(prop_num, *values):
     # values may have multiple entries, if more than one item ID is set (e.g. multitile houses)
@@ -290,6 +294,26 @@ def ctt_list(prop_num, *values):
         if not isinstance(value, Array):
             raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
     return [VariableByteListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
+
+def VariableWordListProp(num_prop, data):
+    return VariableListProp(num_prop, data, 2)
+
+def accepted_cargos(prop_num, *values):
+    # values may have multiple entries, if more than one item ID is set (e.g. multitile houses)
+    # Each value is an expression.Array of cargo types and amount arrays
+    cargos = []
+    for value in values:
+        if not isinstance(value, Array) or len(value.values) > 16:
+            raise generic.ScriptError("accepted_cargos must be an array with no more than 16 values", value.pos)
+        tile_cargos = []
+        for cargo_amount_pair in value.values:
+            if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
+                raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
+            cargo_id = cargo_amount_pair.values[0].reduce_constant().value
+            cargo_amount = cargo_amount_pair.values[1].reduce_constant().value
+            tile_cargos.append((cargo_amount << 8) | cargo_id)
+        cargos.append(tile_cargos)
+    return [VariableWordListProp(prop_num, cargos)]
 
 def vehicle_length(value):
     if isinstance(value, ConstantNumeric):
@@ -520,42 +544,6 @@ def house_prop_21_22(value, index):
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
     return value.values[index]
 
-def house_acceptance(value, index):
-    if not isinstance(value, Array) or len(value.values) > 3:
-        raise generic.ScriptError("accepted_cargos must be an array with no more than 3 values", value.pos)
-
-    if index < len(value.values):
-        cargo_amount_pair = value.values[index]
-        if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
-            raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
-        return cargo_amount_pair.values[1]
-    else:
-        return ConstantNumeric(0, value.pos)
-
-def house_accepted_cargo_types(value):
-    if not isinstance(value, Array) or len(value.values) > 3:
-        raise generic.ScriptError("accepted_cargos must be an array with no more than 3 values", value.pos)
-
-    cargoes = []
-    for i in range(3):
-        if i < len(value.values):
-            cargo_amount_pair = value.values[i]
-            if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
-                raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
-            cargoes.append(cargo_amount_pair.values[0])
-        else:
-            cargoes.append(ConstantNumeric(0xFF, value.pos))
-
-    ret = None
-    for i, cargo in enumerate(cargoes):
-        byte = BinOp(nmlop.AND, cargo, ConstantNumeric(0xFF, cargo.pos), cargo.pos)
-        if i == 0:
-            ret = byte
-        else:
-            byte = BinOp(nmlop.SHIFT_LEFT, byte, ConstantNumeric(i * 8, cargo.pos), cargo.pos)
-            ret = BinOp(nmlop.OR, ret, byte, cargo.pos)
-    return ret.reduce()
-
 def house_random_colours(value):
     # User sets array with 4 values (range 0..15)
     # Output is a dword, each byte being a value from the array
@@ -645,10 +633,7 @@ properties[0x07] = {
                                  {'size': 2, 'num': 0x22, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 1)}],
     'population'              : {'size': 1, 'num': 0x0B, 'multitile_function': mt_house_zero},
     'mail_multiplier'         : {'size': 1, 'num': 0x0C, 'multitile_function': mt_house_zero},
-    'accepted_cargos'         : [{'size': 1, 'num': 0x0D, 'multitile_function': mt_house_same, 'value_function': lambda value: house_acceptance(value, 0)},
-                                 {'size': 1, 'num': 0x0E, 'multitile_function': mt_house_same, 'value_function': lambda value: house_acceptance(value, 1)},
-                                 {'size': 1, 'num': 0x0F, 'multitile_function': mt_house_same, 'value_function': lambda value: house_acceptance(value, 2)},
-                                 {'size': 4, 'num': 0x1E, 'multitile_function': mt_house_same, 'value_function': house_accepted_cargo_types}],
+    # prop 0D - 0F are replaced by prop 23
     'local_authority_impact'  : {'size': 2, 'num': 0x10, 'multitile_function': mt_house_same},
     'removal_cost_multiplier' : {'size': 1, 'num': 0x11, 'multitile_function': mt_house_same},
     'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC, 'multitile_function': mt_house_same},
@@ -663,9 +648,11 @@ properties[0x07] = {
     'animation_speed'         : {'size': 1, 'num': 0x1B, 'multitile_function': mt_house_same},
     'building_class'          : {'size': 1, 'num': 0x1C, 'multitile_function': mt_house_class},
     # prop 1D (callback flags 2) is not set by user
+    # prop 1E is replaced by prop 23
     'minimum_lifetime'        : {'size': 1, 'num': 0x1F, 'multitile_function': mt_house_zero},
-    'watched_cargo_types'     : {'multitile_function': mt_house_same, 'custom_function': lambda *values: ctt_list(0x20, *values)}
+    'watched_cargo_types'     : {'multitile_function': mt_house_same, 'custom_function': lambda *values: ctt_list(0x20, *values)},
     # prop 21 -22 see above (years_available, prop 0A)
+    'accepted_cargos'         : {'multitile_function': mt_house_same, 'custom_function': lambda *values: accepted_cargos(0x23, *values)},
 }
 
 # Feature 0x08 (General Vars) is implemented elsewhere (e.g. basecost, snowline)
@@ -674,34 +661,17 @@ properties[0x07] = {
 # Feature 0x09 (Industry Tiles)
 #
 
-def industrytile_cargos(value):
-    if not isinstance(value, Array) or len(value.values) > 3:
-        raise generic.ScriptError("accepted_cargos must be an array with no more than 3 values", value.pos)
-    prop_num = 0x0A
-    props = []
-    for cargo_amount_pair in value.values:
-        if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
-            raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
-        cargo_id = cargo_amount_pair.values[0].reduce_constant().value
-        cargo_amount = cargo_amount_pair.values[1].reduce_constant().value
-        props.append(Action0Property(prop_num, ConstantNumeric((cargo_amount << 8) | cargo_id), 2))
-        prop_num += 1
-
-    while prop_num <= 0x0C:
-        props.append(Action0Property(prop_num, ConstantNumeric(0), 2))
-        prop_num += 1
-    return props
-
 properties[0x09] = {
     'substitute'         : {'size': 1, 'num': 0x08, 'first': None},
     'override'           : {'size': 1, 'num': 0x09},
-    'accepted_cargos'    : {'custom_function': industrytile_cargos}, # = prop 0A - 0C
+    # prop 0A - 0C are replaced by prop 13
     'land_shape_flags'   : {'size': 1, 'num': 0x0D},
     # prop 0E (callback flags) is not set by user
     'animation_info'     : {'size': 2, 'num': 0x0F, 'value_function': animation_info},
     'animation_speed'    : {'size': 1, 'num': 0x10},
     'animation_triggers' : {'size': 1, 'num': 0x11},
     'special_flags'      : {'size': 1, 'num': 0x12},
+    'accepted_cargos'    : {'custom_function': lambda value: accepted_cargos(0x13, value)},
 }
 
 #

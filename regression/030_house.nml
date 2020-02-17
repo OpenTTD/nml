@@ -141,7 +141,7 @@ if (cargotype_available("GRAI") || cargotype_available("WHEA")) {
             building_flags: bitmask(HOUSE_FLAG_ANIMATE);
             population: 100;
             mail_multiplier: 25;
-            accepted_cargos: [[cargotype_available("GRAI") ? GRAI : WHEA, 8], [PASS, 2], [MAIL, 1]];
+            accepted_cargos: [[GRAI, 8], [WHEA, 8], [PASS, 2], [MAIL, 1]];
             local_authority_impact: 200;
             removal_cost_multiplier: 250;
             probability: 15; // high probability for testing purposes
