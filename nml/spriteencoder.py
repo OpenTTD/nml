@@ -186,16 +186,19 @@ class SpriteEncoder:
                 image_32_pos = generic.PixelPosition(cache_key[0], cache_key[1][0], cache_key[1][1])
                 alpha = pixel_stats.get('alpha', 0)
                 if alpha > 0 and (sprite_info.flags.value & real_sprite.FLAG_NOALPHA) != 0:
-                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are semi-transparent".format(str(image_32_pos), alpha, total, alpha * 100 // total))
+                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are semi-transparent, but NOALPHA is in flags".format(
+                       str(image_32_pos), alpha, total, alpha * 100 // total))
 
             if cache_key[2] is not None:
                 image_8_pos = generic.PixelPosition(cache_key[2], cache_key[3][0], cache_key[3][1])
                 white = pixel_stats.get('white', 0)
                 anim = pixel_stats.get('anim', 0)
                 if white > 0 and (sprite_info.flags.value & real_sprite.FLAG_WHITE) == 0:
-                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are pure white".format(str(image_8_pos), white, total, white * 100 // total))
+                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are pure white, but WHITE isn't in flags".format(
+                        str(image_8_pos), white, total, white * 100 // total))
                 if anim > 0 and (sprite_info.flags.value & real_sprite.FLAG_ANIM) == 0:
-                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are animated".format(str(image_8_pos), anim, total, anim * 100 // total))
+                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are animated, but ANIM isn't in flags".format(
+                        str(image_8_pos), anim, total, anim * 100 // total))
 
         return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings)
 
