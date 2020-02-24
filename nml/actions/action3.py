@@ -163,6 +163,7 @@ def create_proc_call_varaction2(feature, proc, ret_value_function, pos):
     @return: A list of extra actions, reference to the created action2 and a comment to add
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef}, C{str})
     """
+    proc.is_procedure = True
     varact2parser = action2var.Varaction2Parser(feature)
     varact2parser.parse_proc_call(proc)
 
