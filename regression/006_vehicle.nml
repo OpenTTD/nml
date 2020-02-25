@@ -55,6 +55,11 @@ alternative_sprites(foster_express_set, ZOOM_LEVEL_NORMAL, BIT_DEPTH_32BPP, "ope
 
 param[0] = 9;
 
+switch(FEAT_ROADVEHS, SELF, switch_length, position_in_consist) {
+    1: return 5;
+    return 6;
+}
+
 // Trams:
 item(FEAT_ROADVEHS, foster_express_tram, 89) {
     property {
@@ -80,6 +85,7 @@ item(FEAT_ROADVEHS, foster_express_tram, 89) {
         misc_flags:                   bitmask(ROADVEH_FLAG_TRAM); // This is a tram
     }
     graphics {
-        foster_express_set;
+        length:  switch_length;
+        default: foster_express_set;
     }
 }
