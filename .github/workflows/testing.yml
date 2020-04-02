@@ -1,0 +1,60 @@
+name: Testing
+
+on:
+  pull_request:
+  push:
+    branches:
+    - master
+
+jobs:
+  testing:
+    name: Python 3.x on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-2016]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions/cache@v1
+      if: startsWith(matrix.os, 'ubuntu')
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - uses: actions/cache@v1
+      if: startsWith(matrix.os, 'macOS')
+      with:
+        path: ~/Library/Caches/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - uses: actions/cache@v1
+      if: startsWith(matrix.os, 'windows')
+      with:
+        path: ~\AppData\Local\pip\Cache
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    # Just check we can successfully build it
+    - name: Build standalone executable
+      if: startsWith(matrix.os, 'windows')
+      run: |
+        pip install pyinstaller
+        pyinstaller ./nmlc.spec
