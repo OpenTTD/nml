@@ -118,9 +118,9 @@ def get_git_version(detailed = False):
 
         # Compose the actual version string
         str_tag = ""
-        if len(tag) > 0:
-            version = tag[0]
-            str_tag = tag[0]
+        if tag:
+            version = tag
+            str_tag = tag
         elif branch == "master":
             version = isodate + "-g" + changeset
         else:
