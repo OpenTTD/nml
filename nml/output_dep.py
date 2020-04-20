@@ -14,7 +14,6 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 # -*- coding: utf-8 -*-
-import codecs
 from nml import output_base
 
 class OutputDEP(output_base.TextOutputBase):
@@ -26,7 +25,7 @@ class OutputDEP(output_base.TextOutputBase):
         self.grf_filename = grf_filename
 
     def open_file(self):
-        return codecs.open(self.filename, 'w', 'utf-8')
+        return open(self.filename, 'w', encoding='utf-8')
 
     def write(self, text):
         self.file.write(self.grf_filename + ': ' + text + '\n')

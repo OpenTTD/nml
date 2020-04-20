@@ -88,6 +88,19 @@ class OutputBase:
         """
         return False
 
+    def __enter__(self):
+        """
+        Allow `OutputBase` and subclasses to be used as context managers.
+        """
+        self.open()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        """
+        Allow `OutputBase` and subclasses to be used as context managers.
+        """
+        self.close()
+
 
 class SpriteOutputBase(OutputBase):
     """

@@ -263,21 +263,22 @@ def read_extra_commands(custom_tags_file):
         #Failed to open custom_tags.txt, ignore this
         return
     line_no = 0
-    for line in codecs.open(generic.find_file(custom_tags_file), "r", "utf-8"):
-        line_no += 1
-        line = line.strip()
-        if len(line) == 0 or line[0] == "#": continue
+    with open(generic.find_file(custom_tags_file), "r", encoding="utf-8") as fh:
+        for line in fh:
+            line_no += 1
+            line = line.strip()
+            if len(line) == 0 or line[0] == "#": continue
 
-        i = line.find(':')
-        if i == -1:
-            raise generic.ScriptError("Line has no ':' delimiter.", generic.LinePosition(custom_tags_file, line_no))
-        name = line[:i].strip()
-        value = line[i+1:]
-        if name in commands:
-            generic.print_warning('Overwriting existing tag "' + name + '".', generic.LinePosition(custom_tags_file, line_no))
-        commands[name] = {'unicode': value}
-        if is_ascii_string(value):
-            commands[name]['ascii'] = value
+            i = line.find(':')
+            if i == -1:
+                raise generic.ScriptError("Line has no ':' delimiter.", generic.LinePosition(custom_tags_file, line_no))
+            name = line[:i].strip()
+            value = line[i+1:]
+            if name in commands:
+                generic.print_warning('Overwriting existing tag "' + name + '".', generic.LinePosition(custom_tags_file, line_no))
+            commands[name] = {'unicode': value}
+            if is_ascii_string(value):
+                commands[name]['ascii'] = value
 
 
 class StringCommand:
@@ -1201,8 +1202,8 @@ def parse_file(filename, default):
     """
     lang = Language(False)
     try:
-        with codecs.open(generic.find_file(filename), "r", "utf-8") as f:
-            for idx, line in enumerate(f):
+        with open(generic.find_file(filename), "r", encoding="utf-8") as fh:
+            for idx, line in enumerate(fh):
                 pos = generic.LinePosition(filename, idx + 1)
                 line = line.rstrip('\n\r').lstrip('\uFEFF')
                 # The default language is processed twice here. Once as fallback langauge

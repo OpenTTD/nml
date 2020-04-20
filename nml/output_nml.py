@@ -13,7 +13,6 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import codecs
 from nml import output_base
 
 class OutputNML(output_base.TextOutputBase):
@@ -24,8 +23,7 @@ class OutputNML(output_base.TextOutputBase):
         output_base.TextOutputBase.__init__(self, filename)
 
     def open_file(self):
-        return codecs.open(self.filename, 'w', encoding='utf-8')
-
+        return open(self.filename, 'w', encoding='utf-8')
 
     def write(self, text):
         self.file.write(text)

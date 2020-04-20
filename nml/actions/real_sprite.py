@@ -201,12 +201,12 @@ class RealSprite:
         to 0,0,image_width,image_height.
         """
         if self.xpos is None:
-            im = Image.open(generic.find_file(self.file.value))
-            self.xpos = expression.ConstantNumeric(0)
-            self.ypos = expression.ConstantNumeric(0)
-            self.xsize = expression.ConstantNumeric(im.size[0])
-            self.ysize = expression.ConstantNumeric(im.size[1])
-            self.check_sprite_size()
+            with Image.open(generic.find_file(self.file.value)) as im:
+                self.xpos = expression.ConstantNumeric(0)
+                self.ypos = expression.ConstantNumeric(0)
+                self.xsize = expression.ConstantNumeric(im.size[0])
+                self.ysize = expression.ConstantNumeric(im.size[1])
+                self.check_sprite_size()
         if self.mask_pos is None:
             self.mask_pos = (self.xpos, self.ypos)
 
