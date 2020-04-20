@@ -237,9 +237,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
 
     for outputfile in outputfiles:
         if isinstance(outputfile, output_nml.OutputNML):
-            outputfile.open()
-            outputfile.write(str(result))
-            outputfile.close()
+            with outputfile:
+                outputfile.write(str(result))
 
     generic.print_progress("Preprocessing ...")
 
@@ -304,13 +303,12 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     skip_sprite_processing = True
     for outputfile in outputfiles:
         if isinstance(outputfile, output_dep.OutputDEP):
-            outputfile.open()
-            for f in sprite_files:
-                if f[0] is not None:
-                    outputfile.write(f[0])
-                if f[1] is not None:
-                    outputfile.write(f[1])
-            outputfile.close()
+            with outputfile:
+                for f in sprite_files:
+                    if f[0] is not None:
+                        outputfile.write(f[0])
+                    if f[1] is not None:
+                        outputfile.write(f[1])
         skip_sprite_processing &= outputfile.skip_sprite_checks()
 
     if skip_sprite_processing:
@@ -332,12 +330,13 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
             f = f_pair[0]
 
         try:
-            im = Image.open(generic.find_file(f))
+            with Image.open(generic.find_file(f)) as im:
+                # Verify the image is running in Palette mode, if not, skip this file.
+                if im.mode != "P":
+                    continue
+                pal = palette.validate_palette(im, f)
         except IOError as ex:
             raise generic.ImageError(str(ex), f)
-        if im.mode != "P":
-            continue
-        pal = palette.validate_palette(im, f)
 
         if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DEFAULT" and pal == "LEGACY"):
             raise generic.ImageError("Image has '{}' palette, but you forced the '{}' palette".format(pal, used_palette), f)
