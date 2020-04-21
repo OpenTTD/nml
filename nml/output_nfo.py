@@ -14,9 +14,9 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 # -*- coding: utf-8 -*-
-import io
 from nml import generic, grfstrings, output_base
 from nml.actions import real_sprite
+from nml.util import StringIO
 
 zoom_levels = {
     0 : 'normal',
@@ -38,7 +38,7 @@ class OutputNFO(output_base.SpriteOutputBase):
         self.sprite_num = start_sprite_num
 
     def open(self):
-        self.file = io.StringIO()
+        self.file = StringIO()
 
     def open_file(self):
         handle = open(self.filename, 'w', encoding='utf-8')
