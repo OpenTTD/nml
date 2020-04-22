@@ -22,7 +22,8 @@ Release version: 0.4.5
     * 2.2 [Optional dependencies](#22-optional-dependencies)
 3. [Installation](#3-installation)
 4. [Usage](#4-usage)
-5. [Known issues](#5-known-issues)
+5. [Reporting bugs and contributing](#5-reporting-bugs-and-contributing)
+    * 5.1 [Reporting bugs](#51-reporting-bugs)
 6. [Credits](#6-credits)
 
 ## 1) Contact
@@ -121,9 +122,14 @@ Options:
                           [default: 3, max: 4]
 ```
 
-## 5) Known issues
+## 5) Reporting bugs and contributing
 
-See the [issue tracker](https://dev.openttdcoop.org/projects/nml/issues).
+### 5.1) Reporting bugs
+
+If you find any bugs with NML, please let us know preferrably via our [issue tracker](https://github.com/OpenTTD/nml/issues) or via the NML release topic on the [TT-Forums](https://www.tt-forums.net/viewtopic.php?f=68&t=48891).
+Please make sure that you're using the latest available version before reporting a bug. You can check the [issue tracker](https://github.com/OpenTTD/nml/issues) to see if the bug you've found is already reported (or fixed!).
+
+If you have bug fixes or other patches for NML, please also share those with us via the [pull request page](https://github.com/OpenTTD/nml/pulls).
 
 ## 6) Credits
 
