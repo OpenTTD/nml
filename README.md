@@ -24,6 +24,7 @@ Release version: 0.4.5
 4. [Usage](#4-usage)
 5. [Reporting bugs and contributing](#5-reporting-bugs-and-contributing)
     * 5.1 [Reporting bugs](#51-reporting-bugs)
+    * 5.2 [Making an NML release](#52-making-an-nml-release)
 6. [Credits](#6-credits)
 
 ## 1) Contact
@@ -126,10 +127,21 @@ Options:
 
 ### 5.1) Reporting bugs
 
-If you find any bugs with NML, please let us know preferrably via our [issue tracker](https://github.com/OpenTTD/nml/issues) or via the NML release topic on the [TT-Forums](https://www.tt-forums.net/viewtopic.php?f=68&t=48891).
+If you find any bugs with NML, please let us know via the [GitHub issue tracker](https://github.com/OpenTTD/nml/issues).
 Please make sure that you're using the latest available version before reporting a bug. You can check the [issue tracker](https://github.com/OpenTTD/nml/issues) to see if the bug you've found is already reported (or fixed!).
 
-If you have bug fixes or other patches for NML, please also share those with us via the [pull request page](https://github.com/OpenTTD/nml/pulls).
+If you have bug fixes or other patches for NML, please also share those with us via the [GitHub pull request page](https://github.com/OpenTTD/nml/pulls).
+
+### 5.2) Making an NML release
+
+1. Check that all relevant PRs are approved and merged.
+2. Update the changelog.
+This is done manually, and commits are grouped by type.
+Example: https://github.com/OpenTTD/nml/blob/master/docs/changelog.txt
+3. Decide what the version number will be.
+4. Publish a new release using the release tool in the GitHub project: https://github.com/OpenTTD/nml/releases/new
+5. GitHub Actions will build the release and publish to PyPI (the Python package index).
+
 
 ## 6) Credits
 
