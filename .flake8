@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 120
+inline-quotes = double
+
+# We use 'black' for coding style; these next two warnings are not PEP-8
+# compliant.
+ignore = E203, W503
