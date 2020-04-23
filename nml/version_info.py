@@ -121,13 +121,14 @@ def get_git_version(detailed = False):
         if tag:
             version = tag
             str_tag = tag
-        elif branch == "master":
-            version = isodate + "-g" + changeset
         else:
-            version = isodate + "-" + branch + "-g" + changeset
+            version = "0.5.0.dev" + isodate.replace("-", "") + "+"
+            if branch != "master":
+                version += branch + "."
+            version += "g" + changeset
 
         if modified:
-            version += "M"
+            version += "m"
 
         if detailed:
             version = changeset + ";" + branch + ";" + str_tag + ";" + str(modified) + ";" + isodate + ";" + version
