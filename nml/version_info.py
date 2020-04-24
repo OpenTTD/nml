@@ -93,8 +93,11 @@ def get_git_version(detailed = False):
         # Look for modifications
         try:
             modified  = (len(get_child_output(["git", "-C", path, "diff-index", "HEAD"], env=env)) > 0)
-            changeset = get_child_output(["git", "-C", path, "rev-parse", "--verify", "HEAD"], env=env)[0][:8]
             isodate   = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
+            describe  = get_child_output(["git", "-C", path, "describe", "--tags", "--long"], env=env)[0].split('-')
+            tag = describe[0]
+            release = describe[1] == "0"
+            changeset = describe[2]
         except OSError as e:
             print("Git checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
             return version
@@ -108,30 +111,19 @@ def get_git_version(detailed = False):
         except subprocess.CalledProcessError:
             branch = "master"
 
-        # We may fail to find a tag - but that is fine
-        tag = []
-        try:
-            # pipe stderr to /dev/null or it will show in the console
-            tag = get_child_output(["git", "-C", path, "name-rev", "--name-only", "--tags", "--no-undefined", "HEAD"], env=env, stderr=DEVNULL)[0]
-        except (OSError, subprocess.CalledProcessError):
-            pass
-
         # Compose the actual version string
-        str_tag = ""
-        if tag:
-            version = tag
-            str_tag = tag
-        else:
-            version = "0.5.0.dev" + isodate.replace("-", "") + "+"
+        version = tag
+        if not release:
+            version += ".post0.dev" + isodate.replace("-", "") + "+"
             if branch != "master":
                 version += branch + "."
-            version += "g" + changeset
+            version += changeset
 
         if modified:
             version += "m"
 
         if detailed:
-            version = changeset + ";" + branch + ";" + str_tag + ";" + str(modified) + ";" + isodate + ";" + version
+            version = changeset + ";" + branch + ";" + tag + ";" + str(release) + ";" + str(modified) + ";" + isodate + ";" + version
 
     return version
 
