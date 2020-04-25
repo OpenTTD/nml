@@ -1,3 +1,116 @@
+0.5.0 (2020-04-26)
+------------------------------------------------------------------------
+
+NML 0.5.0 is a substantial release, covering multiple areas of the newgrf spec.  Thanks to everyone who helped.
+
+
+Industries
+----------
+NOTE TO AUTHORS: NML 0.5.0 removes many industry properties and vars.
+Industry sets using these properties or vars will *not* compile with nml 0.5.0 and need to be updated.
+All industry vars removed in 0.5.0 are replaced by equivalent new vars.
+Production callback (produce block) format also changed so produce blocks will need to be updated.
+We don't break NML backwards compatibility lightly, but this change was necessary to support 16 accepted and 16 produced cargos.
+Thanks.
+
+- Support for up to 16 accepted cargos and 16 produced cargos (available in OpenTTD 1.9.0 onwards)
+- New industry properties and vars
+  - cargo_types
+  - incoming_cargo_waiting
+  - produced_cargo_waiting
+  - this_month_production
+  - last_month_production
+  - this_month_transported
+  - last_month_transported
+  - transported_last_month_pct
+  - production_rate
+- Removed legacy industry properties and vars
+  - accept_cargo_types
+  - prod_cargo_types
+  - prod_multiplier
+  - input_multiplier_1
+  - input_multiplier_2
+  - input_multiplier_3
+  - production_rate_1
+  - production_rate_2
+  - waiting_cargo_1
+  - waiting_cargo_2
+  - waiting_cargo_3
+  - produced_cargo_waiting_1
+  - produced_cargo_waiting_2
+  - produced_this_month_1
+  - produced_this_month_2
+  - produced_last_month_1
+  - produced_last_month_2
+  - transported_this_month_1
+  - transported_this_month_2
+  - transported_last_month_1
+  - transported_last_month_2
+  - transported_last_month_pct_1
+  - transported_last_month_pct_2
+- New approach to tile cargo acceptance
+  - use INDTILE_FLAG_ACCEPT_ALL to accept all cargos industry accepts
+  - or use up to 16 cargos with accepted_cargos property
+- Production callback format changed - see https://newgrf-specs.tt-wiki.net/wiki/NML:Produce
+
+Industry docs: https://newgrf-specs.tt-wiki.net/wiki/NML:Industries
+industry tile docs: https://newgrf-specs.tt-wiki.net/wiki/NML:IndustryTiles
+
+Houses
+------
+- Support for up to 16 accepted cargos at houses
+
+Houses docs: https://newgrf-specs.tt-wiki.net/wiki/NML:Houses
+
+
+Roadtypes and Tramtypes
+-----------------------
+- Support for Roadtypes and Tramtypes (available in OpenTTD 1.10.0 onwards)
+
+Roadtypes docs; https://newgrf-specs.tt-wiki.net/wiki/NML:Roadtypes
+Tramtypes docs: https://newgrf-specs.tt-wiki.net/wiki/NML:Tramtypes
+
+
+Railtypes
+---------
+- Increase railtype ID range from 16 to 64, to support 64 railtypes
+- Railtype flag RAILTYPE_FLAG_HIDDEN for hiding a railtype from player construction menu
+- Railtype flags RAILTYPE_FLAG_ALLOW_90DEG and RAILTYPE_FLAG_DISALLOW_90DEG for 90 degree curves
+- Railtype flags RAILTYPE_FLAG_HIDDEN and RAILTYPE_FLAG_PRECOMBINED for precombined spriteset type
+
+Railtypes docs: https://newgrf-specs.tt-wiki.net/wiki/NML:Railtypes
+
+
+Procedures
+----------
+- Support for use of switches and random switches as procedures, reducing repetition of switches
+
+There are no docs for this at the time of release.
+
+
+Other Changes
+-------------
+- Feature: Add ANIM_TRIGGER_APT_AIRPLANE_LANDS (follows OpenTTD #7182)
+- Feature: Add station var nearby_tile_grfid (0x6A)
+- Feature: Add TTDPatchFlag 256_persistent_registers (0x80)
+- Feature: PUSH/POP_COLOUR codes for strings
+- Feature: Debug_print for GRF parameters
+- Feature: Allow PLY to generate parsing/lexing tables (improves performance); regeneration can be forced with nmlc -R
+- Feature: syntax highlighting support for Visual Studio Editor
+- Change: improved colouring of nmlc errors and warnings (where shell/terminal supports this)
+- Change: Make sprite encoder warnings more informative (#89)
+- Add: nmlc -D option to enable debug mode for parser
+- Fix #36: Global variable traffic_side was inconsistent with global parameter traffic_side
+- Fix #39: Add compatibility with >=pillow-7.0.0
+- Fix #52: Compatibility with python 3.8
+- Fix #57: GRF parameters could be given negative values
+- Fix: Add missing parameter in industry and airport tiles in RandomAction2
+- Fix: Properly clean up resource handles (eliminates 'too many open files' error on macOS with larger GRFs)
+- Codechange: Update nml version detection to support Git using similar approach to OpenTTD
+- Doc: Update example train nml to demonstrate use of sprite stack and vehicle length
+- Doc/Fix: Update the stated version requirements
+
+
 0.4.5 (2018-06-30)
 ------------------------------------------------------------------------
 - Feature: increase cargo ID range from 32 to 64, to support 64 cargos in OpenTTD 11ab3c4ea2f6a6d29efda8c9ba2af04194621ea7
