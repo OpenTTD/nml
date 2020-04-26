@@ -1,9 +1,8 @@
 name: Release
 
 on:
-  push:
-    tags:
-    - '*'
+  release:
+    types: [published]
 
 jobs:
   release:
@@ -88,12 +87,18 @@ jobs:
         pip install --upgrade pyinstaller
         pyinstaller nmlc.spec
         $version = python setup.py --version
-        echo "::set-output name=version::$version"
-      id: nml_version
+        $archive = echo "nml-standalone-$version-win64.zip"
+        Compress-Archive -Path dist/nmlc.exe, LICENSE, README.md, docs/changelog.txt -DestinationPath $archive
+        echo "::set-output name=archive::$archive"
+      id: nml_archive
 
-    - name: Archive executable
+    - name: Publish standalone executable
       if: startsWith(matrix.os, 'windows')
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: nml-${{ steps.nml_version.outputs.version }}-win64
-        path: dist/nmlc.exe
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./${{ steps.nml_archive.outputs.archive }}
+        asset_name: ${{ steps.nml_archive.outputs.archive }}
+        asset_content_type: application/zip
