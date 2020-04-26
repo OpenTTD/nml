@@ -132,12 +132,17 @@ If you have bug fixes or other patches for NML, please also share those with us 
 ### 5.2) Making an NML release
 
 1. Check that all relevant PRs are approved and merged.
-2. Update the changelog.
+2. Decide what the version number will be.
+3. Update the changelog.
 This is done manually, and commits are grouped by type.
+The audience is NewGRF authors and downstream package maintainers, so don't list commits that don't affect those audiences.
+For large releases and/or if there are deprecations or nml syntax changes, provide more detailed release notes.
 Example: https://github.com/OpenTTD/nml/blob/master/docs/changelog.txt
-3. Decide what the version number will be.
 4. Publish a new release using the release tool in the GitHub project: https://github.com/OpenTTD/nml/releases/new
 5. GitHub Actions will build the release and publish to PyPI (the Python package index).
+6. GitHub Actions will publish the Windows binary as an artefact.
+Download this, then upload it to the GitHub release.
+7. (Optional) announce the release in places such as https://www.tt-forums.net/viewforum.php?f=68
 
 
 ## 6) Credits
