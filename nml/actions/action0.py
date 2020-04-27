@@ -204,8 +204,8 @@ used_ids = [
     BlockAllocation(  0,    255, "Object"),
     BlockAllocation(  0,     63, "Railtype"),
     BlockAllocation(  0,    255, "Airport Tile"),
-    BlockAllocation(  0,     15, "Roadtype"),
-    BlockAllocation(  0,     15, "Tramtype"),
+    BlockAllocation(  0,     62, "Roadtype"),
+    BlockAllocation(  0,     62, "Tramtype"),
 ]
 
 def print_stats():
