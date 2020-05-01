@@ -94,7 +94,8 @@ def get_git_version(detailed = False):
         try:
             modified  = (len(get_child_output(["git", "-C", path, "diff-index", "HEAD"], env=env)) > 0)
             isodate   = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
-            describe  = get_child_output(["git", "-C", path, "describe", "--tags", "--long"], env=env)[0].split('-')
+            # git describe output is <tag>-<commits since tag>-<hash>, and <tag> may contain '-'
+            describe  = get_child_output(["git", "-C", path, "describe", "--tags", "--long"], env=env)[0].rsplit('-', 2)
             tag = describe[0]
             release = describe[1] == "0"
             changeset = describe[2]
@@ -111,8 +112,8 @@ def get_git_version(detailed = False):
         except subprocess.CalledProcessError:
             branch = "master"
 
-        # Compose the actual version string
-        version = tag
+        # Compose the actual version string following PEP440
+        version = tag.replace("-", "").lower()
         if not release:
             version += ".post0.dev" + isodate.replace("-", "") + "+"
             if branch != "master":
