@@ -4,8 +4,6 @@ import os
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_py import build_py
-from nml import version_info
-NML_VERSION = version_info.get_and_write_version()
 
 
 class NMLBuildPy(build_py):
@@ -18,7 +16,9 @@ class NMLBuildPy(build_py):
 
 setup(
     name='nml',
-    version=NML_VERSION,
+    use_scm_version={
+        "write_to": "nml/__version__.py" 
+    },
     packages=find_packages(),
     description='An OpenTTD NewGRF compiler for the nml language',
     long_description=('A tool to compile NewGRFs for OpenTTD from nml files'
@@ -48,6 +48,7 @@ setup(
     install_requires=[
         "Pillow>=3.4",
         "ply",
+        "setuptools_scm",
     ],
     cmdclass={'build_py': NMLBuildPy}
 )

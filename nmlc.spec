@@ -9,7 +9,8 @@ a = Analysis(['nmlc'],
              datas=[],
              hiddenimports=[
                 'nml.generated.lextab',
-                'nml.generated.parsetab'
+                'nml.generated.parsetab',
+                'pkg_resources.py2_warn' # needed for setuptools >= 45 and pyinstaller <= 3.6
              ],
              hookspath=[],
              runtime_hooks=[],
