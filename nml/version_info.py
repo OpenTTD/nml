@@ -45,39 +45,6 @@ def get_child_output(cmd, env=None, stderr=None):
     return subprocess.check_output(cmd, universal_newlines = True, env=env, stderr=stderr).split()
 
 
-def get_hg_version():
-    path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    version = ''
-    if os.path.isdir(os.path.join(path,'.hg')):
-        # we want to return to where we were. So save the old path
-        try:
-            version_list = get_child_output(['hg', '-R', path, 'id', '-n', '-t', '-i'])
-        except OSError as e:
-            print("Mercurial checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
-            return version
-
-        if version_list[1].endswith('+'):
-            modified = 'M'
-        else:
-            modified = ''
-
-        # Test whether we have a tag (=release version) and add it, if found
-        if len(version_list) > 2 and version_list[2] != 'tip' and modified == '':
-            # Tagged release
-            version = version_list[2]
-        else:
-            # Branch or modified version
-            hash = version_list[0].rstrip('+')
-
-            # Get the date of the commit of the current NML version in days since January 1st 2000
-            ctimes = get_child_output(["hg", "-R", path, "parent", "--template='{date|hgdate} {date|shortdate}\n'"])
-            ctime = (int((ctimes[0].split("'"))[1]) - 946684800) // (60 * 60 * 24)
-            cversion = str(ctime)
-
-            # Combine the version string
-            version = "v{}{}:{} from {}".format(cversion, modified, hash, ctimes[2].split("'", 1)[0])
-    return version
-
 def get_git_version(detailed = False):
     # method adopted shamelessly from OpenTTD's findversion.sh
     path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
