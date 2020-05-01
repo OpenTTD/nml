@@ -77,7 +77,20 @@ jobs:
       run: |
         python setup.py sdist bdist_wheel
         twine upload --username __token__ dist/*.whl dist/*.tar.gz
+        version=`python setup.py --version`
+        archive=`echo "nml-$version.tar.gz"`
+        echo "::set-output name=archive::$archive"
+      id: nml_source_archive
 
+    - name: Publish source tarball
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./dist/${{ steps.nml_source_archive.outputs.archive }}
+        asset_name: ${{ steps.nml_source_archive.outputs.archive }}
+        asset_content_type: application/gzip
 
   release-windows:
     name: Windows release
