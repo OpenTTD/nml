@@ -139,9 +139,8 @@ The audience is NewGRF authors and downstream package maintainers, so don't list
 For large releases and/or if there are deprecations or nml syntax changes, provide more detailed release notes.
 Example: https://github.com/OpenTTD/nml/blob/master/docs/changelog.txt
 4. Publish a new release using the release tool in the GitHub project: https://github.com/OpenTTD/nml/releases/new
-5. GitHub Actions will build the release and publish to PyPI (the Python package index).
+5. GitHub Actions will build the release, publish to PyPI (the Python package index) and also to the GitHub release.
 6. GitHub Actions will publish the Windows binary to the GitHub release.
-Download the source tarball, then upload it to the GitHub release (helpful for debian package maintainers).
 7. (Optional) announce the release in places such as https://www.tt-forums.net/viewforum.php?f=68
 
 
