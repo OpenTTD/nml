@@ -108,15 +108,17 @@ class ActionF(base_action.BaseAction):
                 named_numbers[self.name.value] = self.id_number # Add name to the set 'safe' names.
         else: numbered_numbers.add(self.id_number) # Add number to the set of 'safe' numbers.
 
+        # Ask existing action F for the lowest available bit.
+        if len(town_names_blocks) == 0: startbit = 0
+        else: startbit = max(block.free_bit for block in town_names_blocks.values())
+
         town_names_blocks[self.id_number] = self # Add self to the available blocks.
 
-        # Ask descendants for the lowest available bit.
-        if len(blocks) == 0: startbit = 0 # No descendants, all bits are free.
-        else: startbit = max(town_names_blocks[block].free_bit for block in blocks)
         # Allocate random bits to all parts.
         for part in self.parts:
             num_bits = part.assign_bits(startbit)
-            startbit += num_bits
+            # Prevent overlap if really needed
+            if len(part.pieces) > 1: startbit += num_bits
         self.free_bit = startbit
 
         if startbit > 32:
