@@ -255,7 +255,7 @@ general_veh_props = {
 }
 
 def ottd_display_speed(value, divisor, unit):
-    return (round(value.value // divisor * 10 * unit.ottd_mul) >> unit.ottd_shift) // 16
+    return (round(value.value / divisor * 10 * unit.ottd_mul) >> unit.ottd_shift) // 16
 
 class VariableListProp(BaseAction0Property):
     """
