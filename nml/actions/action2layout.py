@@ -313,10 +313,12 @@ class Action2LayoutSprite:
                 self.create_register(name, offset)
             return val
         else:
+            self.palette_from_action1 = False
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, (1 << 14) - 1, "palette", value.pos)
-            self.palette_from_action1 = False
-            return value
+                return value
+            self.create_register(name, value)
+            return expression.ConstantNumeric(0)
 
     def _validate_always_draw(self, name, value):
         if not isinstance(value, expression.ConstantNumeric):
