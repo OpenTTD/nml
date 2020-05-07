@@ -70,7 +70,12 @@ cargotable {
 }
 
 roadtypetable {
-    ROAD, ELRD, YELL,
+    ROAD,
+    ELRD,
+    "2YEL", // Labels beginning with a number must be given as strings to avoid a syntax error.
+
+    // RED_TEST refers to RED_ if a roadtype with that label exists in-game.
+    // If not, the fallbacks will be tried until reaching one that does exist.
     RED_TEST: [RED_, REDR, ROAD]
 }
 
@@ -252,7 +257,7 @@ item(FEAT_ROADVEHS, flatbed_truck_3) {
         /* Properties common to all vehicle types */
         name: string(STR_NAME_FLATBED_TRUCK_3);
         climates_available: bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPICAL);
-        road_type: YELL;
+        road_type: roadtype("2YEL"); // Must use `roadtype("")` when the label starts with a number.
         introduction_date: date(1926,01,01);
         model_life: 65;
         /* retire_early not set, use default retirement behaviour */
