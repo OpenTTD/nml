@@ -191,32 +191,19 @@ class Action2LayoutSprite:
         elif self.get_param('recolour_mode') != 0 and not self.is_set('palette'):
             raise generic.ScriptError("'palette' must be set when 'recolour_mode' is not set to RECOLOUR_NONE.")
 
-        # add the constant terms first
+        # Add the constant terms first
         sprite_num = self.get_param('recolour_mode') << 14
         if self.get_param('always_draw'):
             sprite_num |= 1 << 30
         if self.sprite_from_action1:
             sprite_num |= 1 << 31
 
-        add_sprite = False
-        sprite = self.get_param('sprite')
-        if isinstance(sprite, expression.ConstantNumeric):
-            sprite_num |= sprite.value
-        else:
-            add_sprite = True
-
-        add_palette = False
-        palette = self.get_param('palette')
-        if isinstance(palette, expression.ConstantNumeric):
-            sprite_num |= palette.value << 16
-        else:
-            add_palette = True
-
-        expr = expression.ConstantNumeric(sprite_num, sprite.pos)
-        if add_sprite:
-            expr = expression.BinOp(nmlop.ADD, sprite, expr, sprite.pos)
-        if add_palette:
-            expr = expression.BinOp(nmlop.ADD, palette, expr, sprite.pos)
+        # Prepare the return value
+        expr = expression.ConstantNumeric(sprite_num, self.pos)
+        # Add the sprite
+        expr = expression.BinOp(nmlop.ADD, self.get_param('sprite'), expr, self.pos)
+        # Add the palette
+        expr = expression.BinOp(nmlop.ADD, expression.BinOp(nmlop.SHIFT_LEFT, self.get_param('palette'), expression.ConstantNumeric(16, self.pos), self.pos), expr, self.pos)
         return expr.reduce()
 
     def get_param(self, name):
