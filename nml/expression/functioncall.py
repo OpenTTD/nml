@@ -420,6 +420,20 @@ def builtin_railtype(name, args, pos):
         raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your railtype table", pos)
     return ConstantNumeric(global_constants.railtype_table[args[0].value])
 
+def builtin_roadtype(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.roadtype_table:
+        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your roadtype table", pos)
+    return ConstantNumeric(global_constants.roadtype_table[args[0].value])
+
+def builtin_tramtype(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.tramtype_table:
+        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your tramtype table", pos)
+    return ConstantNumeric(global_constants.tramtype_table[args[0].value])
+
 def builtin_reserve_sprites(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
@@ -688,6 +702,8 @@ function_table = {
     'str2number' : builtin_str2number,
     'cargotype' : builtin_cargotype,
     'railtype' : builtin_railtype,
+    'roadtype' : builtin_roadtype,
+    'tramtype': builtin_tramtype,
     'reserve_sprites' : builtin_reserve_sprites,
     'industry_type' : builtin_industry_type,
     'accept_cargo': builtin_cargoexpr,
