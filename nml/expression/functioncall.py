@@ -14,7 +14,9 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import datetime, calendar, math
-from nml import generic, nmlop
+from functools import reduce
+
+from nml import generic, global_constants, nmlop
 from .array import Array
 from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
 from .binop import BinOp
@@ -25,7 +27,6 @@ from .storage_op import StorageOp
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
 from . import identifier
-from functools import reduce
 
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):
@@ -161,7 +162,6 @@ def builtin_date(name, args, pos):
     days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     if len(args) != 3:
         raise generic.ScriptError("date() requires exactly 3 arguments", pos)
-    from nml import global_constants
     identifier.ignore_all_invalid_ids = True
     year = args[0].reduce(global_constants.const_list)
     identifier.ignore_all_invalid_ids = False
@@ -367,7 +367,6 @@ def builtin_visual_effect_and_powered(name, args, pos):
     arg_len = 2 if name == 'visual_effect' else 3
     if len(args) != arg_len:
         raise generic.ScriptError(name + "() must have {:d} parameters".format(arg_len), pos)
-    from nml import global_constants
     effect = args[0].reduce_constant(global_constants.const_list).value
     offset = BinOp(nmlop.ADD, args[1], ConstantNumeric(8), args[1].pos).reduce_constant().value
     generic.check_range(offset, 0, 0x0F, "offset in function " + name, pos)
@@ -389,7 +388,6 @@ def builtin_create_effect(name, args, pos):
     """
     if len(args) != 4:
         raise generic.ScriptError(name + "() must have 4 parameters", pos)
-    from nml import global_constants
 
     sprite = args[0].reduce_constant(global_constants.const_list).value
     offset1 = args[1].reduce_constant().value
@@ -411,7 +409,6 @@ def builtin_str2number(name, args, pos):
 def builtin_cargotype(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    from nml import global_constants
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
         raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your cargo table", pos)
     return ConstantNumeric(global_constants.cargo_numbers[args[0].value])
@@ -419,7 +416,6 @@ def builtin_cargotype(name, args, pos):
 def builtin_railtype(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    from nml import global_constants
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.railtype_table:
         raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your railtype table", pos)
     return ConstantNumeric(global_constants.railtype_table[args[0].value])
@@ -440,7 +436,6 @@ def builtin_industry_type(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have 2 parameters", pos)
 
-    from nml import global_constants
     type = args[0].reduce_constant(global_constants.const_list).value
     if type not in (0, 1):
         raise generic.ScriptError("First argument of industry_type() must be IND_TYPE_OLD or IND_TYPE_NEW", pos)
@@ -456,7 +451,6 @@ def builtin_cargoexpr(name, args, pos):
     if len(args) < 1:
         raise generic.ScriptError(name + "() must have 1 or more parameters", pos)
 
-    from nml import global_constants
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
         raise generic.ScriptError("First argument of " + name + "() must be a string literal that is also in your cargo table", pos)
     cargotype = global_constants.cargo_numbers[args[0].value]
@@ -499,23 +493,23 @@ def builtin_abs(name, args, pos):
     return TernaryOp(guard, BinOp(nmlop.SUB, ConstantNumeric(0), args[0], args[0].pos), args[0], args[0].pos).reduce()
 
 def builtin_sound_file(name, args, pos):
-    from nml.actions import action11
     if len(args) not in (1, 2):
         raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
     if not isinstance(args[0], StringLiteral):
         raise generic.ScriptError("Parameter for " + name + "() must be a string literal", pos)
     volume = args[1].reduce_constant().value if len(args) >= 2 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)
+    from nml.actions import action11
     return ConstantNumeric(action11.add_sound( (args[0].value, volume), pos), pos)
 
 def builtin_sound_import(name, args, pos):
-    from nml.actions import action11
     if len(args) not in (2, 3):
         raise generic.ScriptError(name + "() must have 2 or 3 parameters", pos)
     grfid = parse_string_to_dword(args[0].reduce())
     sound_num = args[1].reduce_constant().value
     volume = args[2].reduce_constant().value if len(args) >= 3 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)
+    from nml.actions import action11
     return ConstantNumeric(action11.add_sound( (grfid, sound_num, volume), pos), pos)
 
 def builtin_relative_coord(name, args, pos):
@@ -618,7 +612,6 @@ def builtin_palette_2cc(name, args, pos):
     col2 = BinOp(nmlop.MUL, args[1], ConstantNumeric(16), pos)
     col12 = BinOp(nmlop.ADD, col2, args[0], pos)
     # Base sprite is not a constant
-    from nml import global_constants
     base = global_constants.patch_variable(global_constants.patch_variables['base_sprite_2cc'], pos)
 
     return BinOp(nmlop.ADD, col12, base, pos)
