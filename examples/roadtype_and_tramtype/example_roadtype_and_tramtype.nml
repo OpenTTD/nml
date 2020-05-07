@@ -276,7 +276,7 @@ item(FEAT_ROADTYPES, blue_road, 6) {
 item(FEAT_ROADTYPES, yellow_road, 7) {
     property {
         name: string(STR_NAME_YELLOW_ROAD);
-        label: "YELL";
+        label: "2YEL";
         powered_roadtype_list: ["ROAD"];
         toolbar_caption: string(STR_TOOLBAR_CAPTION_YELLOW_ROAD);
         menu_text: string(STR_MENU_TEXT_YELLOW_ROAD);
