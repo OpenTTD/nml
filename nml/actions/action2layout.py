@@ -281,6 +281,8 @@ class Action2LayoutSprite:
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, (1 << 14) - 1, "sprite", value.pos)
                 return value
+            if value.supported_by_actionD(raise_error=False):
+                return value
             self.create_register(name, value)
             return expression.ConstantNumeric(0)
 
@@ -303,6 +305,8 @@ class Action2LayoutSprite:
             self.palette_from_action1 = False
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, (1 << 14) - 1, "palette", value.pos)
+                return value
+            if value.supported_by_actionD(raise_error=False):
                 return value
             self.create_register(name, value)
             return expression.ConstantNumeric(0)
