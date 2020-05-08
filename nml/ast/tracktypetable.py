@@ -52,14 +52,27 @@ class BaseTracktypeTable(base_statement.BaseStatement):
     def debug_print(self, indentation):
         generic.print_dbg(indentation, self.track_kind.title() + "type table")
         for tracktype in self.tracktype_list:
-            generic.print_dbg(indentation + 2, self.track_kind.title() + ': ', tracktype.value)
+            if isinstance(tracktype, assignment.Assignment):
+                generic.print_dbg(indentation + 2, self.track_kind.title() + ':', tracktype.name.value)
+                for v in tracktype.value:
+                    generic.print_dbg(indentation + 4, "Try:", v.value)
+            else:
+                generic.print_dbg(indentation + 2, self.track_kind.title() + ':', tracktype.value)
 
     def get_action_list(self):
         return action0.get_tracktypelist_action(self.table_prop_id, self.cond_tracktype_not_defined, self.tracktype_list)
 
     def __str__(self):
-        ret = self.track_kind + 'typetable {\n'
-        ret += ', '.join([expression.identifier_to_print(tracktype.value) for tracktype in self.tracktype_list])
+        lines = []
+        for tracktype in self.tracktype_list:
+            if isinstance(tracktype, assignment.Assignment):
+                ids = [expression.identifier_to_print(v.value) for v in tracktype.value]
+                lines.append("{}: [{}]".format(str(tracktype.name), ", ".join(ids)))
+            else:
+                lines.append(expression.identifier_to_print(tracktype.value))
+
+        ret = self.track_kind + 'typetable {\n    '
+        ret += ', '.join(lines)
         ret += '\n}\n'
         return ret
 
