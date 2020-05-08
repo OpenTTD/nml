@@ -149,12 +149,12 @@ template tmpl_level_crossing_railtypes_closed(y) {
 
     [ 0,  y,  5, 12,  -3,  -8]
     [ 50, y, 19, 19,  -4,  -6]
-    [100, y, 23, 17, -24,  -9]
+    [100, y, 23, 17, -24,  -9, ANIM]
     [150, y,  5, 12,  -5,  -8]
     [200, y, 25, 14,   3,  -9]
-    [250, y,  5, 12,  -1,  -8]
-    [300, y,  5, 12,  -3, -10]
-    [350, y, 19, 14, -15, -11]
+    [250, y,  5, 12,  -1,  -8, ANIM]
+    [300, y,  5, 12,  -3, -10, ANIM]
+    [350, y, 19, 14, -15, -11, ANIM]
 }
 
 template tmpl_level_crossing_railtypes_left_open(y) {
@@ -174,12 +174,12 @@ template tmpl_level_crossing_railtypes_left_closed(y) {
 
     [  0, y, 21, 19, -14,  -6]
     [ 50, y, 5,  12,  -2,  -6]
-    [100, y, 5,  12,  -3,  -9]
+    [100, y, 5,  12,  -3,  -9, ANIM]
     [150, y, 23, 15, -23,  -9]
     [200, y, 5,  12,   4,  -7]
-    [250, y, 23, 17,   0,  -7]
-    [300, y, 21, 13,  -2, -11]
-    [350, y, 5,  12,  -3,  -9]
+    [250, y, 23, 17,   0,  -7, ANIM]
+    [300, y, 21, 13,  -2, -11, ANIM]
+    [350, y, 5,  12,  -3,  -9, ANIM]
 }
 // right hand traffic:
 spriteset(lc_right_closed, "gfx/lc_right.png") {
