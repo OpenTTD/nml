@@ -53,20 +53,12 @@ class TownNames(base_statement.BaseStatement):
         self.parts = []
 
     def debug_print(self, indentation):
-        if isinstance(self.name, str):
-            name_text = "name = " + repr(self.name)
-            if self.id_number is not None: name_text += " (allocated number is 0x{:x})".format(self.id_number)
-        elif self.id_number is not None:
-            name_text = "number = 0x{:x}".format(self.id_number)
-        else:
-            name_text = "(unnamed)"
-
-        generic.print_dbg(indentation, 'Town name ' + name_text)
-        if self.style_name is not None:
-            generic.print_dbg(indentation, "  style name string:", self.style_name)
-        for part in self.parts:
-            generic.print_dbg(indentation, "-name part:")
-            part.debug_print(indentation + 2)
+        generic.print_dbg(indentation, 'Town name')
+        if self.name is not None:
+            generic.print_dbg(indentation + 2, 'Name:')
+            self.name.debug_print(indentation + 4)
+        for param in self.param_list:
+            param.debug_print(indentation + 2)
 
     def pre_process(self):
         self.actFs = []
@@ -309,6 +301,13 @@ class TownNamesParam:
         self.key = key
         self.value = value
         self.pos = pos
+
+    def debug_print(self, indentation):
+        generic.print_dbg(indentation, 'Town names param')
+        generic.print_dbg(indentation + 2, 'Key:')
+        self.key.debug_print(indentation + 4)
+        generic.print_dbg(indentation + 2, 'Value:')
+        self.value.debug_print(indentation + 4)
 
     def __str__(self):
         return '{}: {};\n'.format(self.key, self.value)
