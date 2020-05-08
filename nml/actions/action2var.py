@@ -406,9 +406,6 @@ class Varaction2Parser:
 
     def preprocess_storageop(self, expr):
         assert isinstance(expr, expression.StorageOp)
-        max = 0xF if expr.info['perm'] else 0x10F
-        if isinstance(expr.register, expression.ConstantNumeric) and expr.register.value > max:
-            raise generic.ScriptError("Register number must be in range 0..{:d}, encountered {:d}.".format(max, expr.register.value), expr.pos)
         if expr.info['perm'] and self.feature not in (0x08, 0x0A, 0x0D):
             raise generic.ScriptError("Persistent storage is not supported for feature '{}'".format(general.feature_name(self.feature)), expr.pos)
 
