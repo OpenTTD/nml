@@ -15,7 +15,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-2016]
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8, pypy3]
+        exclude:
+          # Prebuilt pillow wheels aren't always available for the relevant PyPy version.
+          # The Ubuntu runner has zlib headers and can build it locally, but these can't without more work.
+          - os: macOS-latest
+            python-version: pypy3
+          - os: windows-2016
+            python-version: pypy3
 
     steps:
     - uses: actions/checkout@v1
