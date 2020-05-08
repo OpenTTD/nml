@@ -461,9 +461,9 @@ class NMLParser:
         '''produce : PRODUCE LPAREN ID COMMA produce_cargo_list COMMA produce_cargo_list COMMA expression RPAREN
                    | PRODUCE LPAREN ID COMMA produce_cargo_list COMMA produce_cargo_list RPAREN'''
         if len(t) == 11:
-            t[0] = produce.Produce2(t[3], t[5], t[7], t[9], t.lineno(1))
+            t[0] = produce.Produce(t[3], t[5], t[7], t[9], t.lineno(1))
         else:
-            t[0] = produce.Produce2(t[3], t[5], t[7], expression.ConstantNumeric(0), t.lineno(1))
+            t[0] = produce.Produce(t[3], t[5], t[7], expression.ConstantNumeric(0), t.lineno(1))
 
     #
     # Real sprites and related stuff
