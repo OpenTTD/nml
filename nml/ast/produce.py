@@ -110,7 +110,7 @@ class Produce2(produce_base_class):
         return []
 
     def __str__(self):
-        return 'produce({0}, [{1}], [{2}], {3});\n'.format(str(self.name), str(self.subtract_in), str(self.add_out), str(self.again))
+        return 'produce({0}, [{1}], [{2}], {3})\n'.format(str(self.name), ' '.join(str(x) for x in self.subtract_in), ' '.join(str(x) for x in self.add_out), str(self.again))
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Produce, name =', self.name)
