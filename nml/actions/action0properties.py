@@ -15,7 +15,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 from nml import generic, nmlop
-from nml.expression import BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral, Identifier, ProduceCargo, AcceptCargo
+from nml.expression import (BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral,
+                            Identifier, ProduceCargo, AcceptCargo, parse_string_to_dword)
 
 tilelayout_names = {}
 
@@ -992,54 +993,62 @@ properties[0x0F] = {
 }
 
 #
-# Feature 0x10 (Rail Types)
+# General tracktype properties that apply to features 0x10 & 0x12/13 (rail/road/tramtypes)
 #
 
-class RailtypeListProp(BaseAction0Property):
-    def __init__(self, prop_num, railtype_list):
+class LabelListProp(BaseAction0Property):
+    def __init__(self, prop_num, labels):
         self.prop_num = prop_num
-        self.railtype_list = railtype_list
+        self.labels = labels
 
     def write(self, file):
         file.print_bytex(self.prop_num)
-        file.print_byte(len(self.railtype_list))
-        for railtype in self.railtype_list:
-            railtype.write(file, 4)
+        file.print_byte(len(self.labels))
+        for label in self.labels:
+            parse_string_to_dword(label)  # Error if the wrong length or not ASCII
+            label.write(file, 4)
         file.newline()
 
     def get_size(self):
-        return len(self.railtype_list) * 4 + 2
+        return len(self.labels) * 4 + 2
 
-def railtype_list(value, prop_num):
+
+def label_list(value, prop_num, description):
     if not isinstance(value, Array):
-        raise generic.ScriptError("Railtype list must be an array of literal strings", value.pos)
-    for val in value.values:
-        if not isinstance(val, StringLiteral): raise generic.ScriptError("Railtype list must be an array of literal strings", val.pos)
-    return [RailtypeListProp(prop_num, value.values)]
+        raise generic.ScriptError(description + " list must be an array of literal strings", value.pos)
+    return [LabelListProp(prop_num, value.values)]
 
-properties[0x10] = {
+common_tracktype_props = {
     'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
     'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
     'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
     'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
     'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
     'new_engine_text'          : {'size': 2, 'num': 0x0D, 'string': 0xDC},
-    'compatible_railtype_list' : {'custom_function': lambda x: railtype_list(x, 0x0E)},
-    'powered_railtype_list'    : {'custom_function': lambda x: railtype_list(x, 0x0F)},
-    'railtype_flags'           : {'size': 1, 'num': 0x10},
-    'curve_speed_multiplier'   : {'size': 1, 'num': 0x11},
-    'station_graphics'         : {'size': 1, 'num': 0x12},
     'construction_cost'        : {'size': 2, 'num': 0x13},
-    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (5000, 1397)},
-    'acceleration_model'       : {'size': 1, 'num': 0x15},
     'map_colour'               : {'size': 1, 'num': 0x16},
     'introduction_date'        : {'size': 4, 'num': 0x17},
-    'requires_railtype_list'   : {'custom_function': lambda x: railtype_list(x, 0x18)},
-    'introduces_railtype_list' : {'custom_function': lambda x: railtype_list(x, 0x19)},
     'sort_order'               : {'size': 1, 'num': 0x1A},
     'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
     'maintenance_cost'         : {'size': 2, 'num': 0x1C},
-    'alternative_railtype_list': {'custom_function': lambda x: railtype_list(x, 0x1D)},
+}
+
+#
+# Feature 0x10 (Rail Types)
+#
+
+properties[0x10] = {
+    **common_tracktype_props,
+    'compatible_railtype_list' : {'custom_function': lambda x: label_list(x, 0x0E, "Railtype")},
+    'powered_railtype_list'    : {'custom_function': lambda x: label_list(x, 0x0F, "Railtype")},
+    'railtype_flags'           : {'size': 1, 'num': 0x10},
+    'curve_speed_multiplier'   : {'size': 1, 'num': 0x11},
+    'station_graphics'         : {'size': 1, 'num': 0x12},
+    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (5000, 1397)},
+    'acceleration_model'       : {'size': 1, 'num': 0x15},
+    'requires_railtype_list'   : {'custom_function': lambda x: label_list(x, 0x18, "Railtype")},
+    'introduces_railtype_list' : {'custom_function': lambda x: label_list(x, 0x19, "Railtype")},
+    'alternative_railtype_list': {'custom_function': lambda x: label_list(x, 0x1D, "Railtype")},
 }
 
 #
@@ -1060,92 +1069,26 @@ properties[0x11] = {
 # Feature 0x12 (Road Types)
 #
 
-class RoadtypeListProp(BaseAction0Property):
-    def __init__(self, prop_num, roadtype_list):
-        self.prop_num = prop_num
-        self.roadtype_list = roadtype_list
-
-    def write(self, file):
-        file.print_bytex(self.prop_num)
-        file.print_byte(len(self.roadtype_list))
-        for roadtype in self.roadtype_list:
-            roadtype.write(file, 4)
-        file.newline()
-
-    def get_size(self):
-        return len(self.roadtype_list) * 4 + 2
-
-def roadtype_list(value, prop_num):
-    if not isinstance(value, Array):
-        raise generic.ScriptError("Roadtype list must be an array of literal strings", value.pos)
-    for val in value.values:
-        if not isinstance(val, StringLiteral): raise generic.ScriptError("Roadtype list must be an array of literal strings", val.pos)
-    return [RoadtypeListProp(prop_num, value.values)]
-
 properties[0x12] = {
-    'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
-    'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
-    'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
-    'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
-    'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
-    'new_engine_text'          : {'size': 2, 'num': 0x0D, 'string': 0xDC},
-    'powered_roadtype_list'    : {'custom_function': lambda x: roadtype_list(x, 0x0F)},
+    **common_tracktype_props,
+    'powered_roadtype_list'    : {'custom_function': lambda x: label_list(x, 0x0F, "Roadtype")},
     'roadtype_flags'           : {'size': 1, 'num': 0x10},
-    'construction_cost'        : {'size': 2, 'num': 0x13},
     'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (10000, 1397)},
-    'map_colour'               : {'size': 1, 'num': 0x16},
-    'introduction_date'        : {'size': 4, 'num': 0x17},
-    'requires_roadtype_list'   : {'custom_function': lambda x: roadtype_list(x, 0x18)},
-    'introduces_roadtype_list' : {'custom_function': lambda x: roadtype_list(x, 0x19)},
-    'sort_order'               : {'size': 1, 'num': 0x1A},
-    'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
-    'maintenance_cost'         : {'size': 2, 'num': 0x1C},
-    'alternative_roadtype_list': {'custom_function': lambda x: roadtype_list(x, 0x1D)},
+    'requires_roadtype_list'   : {'custom_function': lambda x: label_list(x, 0x18, "Roadtype")},
+    'introduces_roadtype_list' : {'custom_function': lambda x: label_list(x, 0x19, "Roadtype")},
+    'alternative_roadtype_list': {'custom_function': lambda x: label_list(x, 0x1D, "Roadtype")},
 }
 
 #
 # Feature 0x13 (Tram Types)
 #
 
-class TramtypeListProp(BaseAction0Property):
-    def __init__(self, prop_num, tramtype_list):
-        self.prop_num = prop_num
-        self.tramtype_list = tramtype_list
-
-    def write(self, file):
-        file.print_bytex(self.prop_num)
-        file.print_byte(len(self.tramtype_list))
-        for tramtype in self.tramtype_list:
-            tramtype.write(file, 4)
-        file.newline()
-
-    def get_size(self):
-        return len(self.tramtype_list) * 4 + 2
-
-def tramtype_list(value, prop_num):
-    if not isinstance(value, Array):
-        raise generic.ScriptError("Tramtype list must be an array of literal strings", value.pos)
-    for val in value.values:
-        if not isinstance(val, StringLiteral): raise generic.ScriptError("Tramtype list must be an array of literal strings", val.pos)
-    return [TramtypeListProp(prop_num, value.values)]
-
 properties[0x13] = {
-    'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
-    'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
-    'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
-    'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
-    'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
-    'new_engine_text'          : {'size': 2, 'num': 0x0D, 'string': 0xDC},
-    'powered_tramtype_list'    : {'custom_function': lambda x: tramtype_list(x, 0x0F)},
+    **common_tracktype_props,
+    'powered_tramtype_list'    : {'custom_function': lambda x: label_list(x, 0x0F, "Tramtype")},
     'tramtype_flags'           : {'size': 1, 'num': 0x10},
-    'construction_cost'        : {'size': 2, 'num': 0x13},
     'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (10000, 1397)},
-    'map_colour'               : {'size': 1, 'num': 0x16},
-    'introduction_date'        : {'size': 4, 'num': 0x17},
-    'requires_tramtype_list'   : {'custom_function': lambda x: tramtype_list(x, 0x18)},
-    'introduces_tramtype_list' : {'custom_function': lambda x: tramtype_list(x, 0x19)},
-    'sort_order'               : {'size': 1, 'num': 0x1A},
-    'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
-    'maintenance_cost'         : {'size': 2, 'num': 0x1C},
-    'alternative_tramtype_list': {'custom_function': lambda x: tramtype_list(x, 0x1D)},
+    'requires_tramtype_list'   : {'custom_function': lambda x: label_list(x, 0x18, "Tramtype")},
+    'introduces_tramtype_list' : {'custom_function': lambda x: label_list(x, 0x19, "Tramtype")},
+    'alternative_tramtype_list': {'custom_function': lambda x: label_list(x, 0x1D, "Tramtype")},
 }
