@@ -752,7 +752,7 @@ constant_numbers = {
     'PALETTE_CC_PALE_GREEN'                 : 776,
     'PALETTE_CC_PINK'                       : 777,
     'PALETTE_CC_YELLOW'                     : 778,
-    'PALETTE_CC_RED'                        : 778,
+    'PALETTE_CC_RED'                        : 779,
     'PALETTE_CC_LIGHT_BLUE'                 : 780,
     'PALETTE_CC_GREEN'                      : 781,
     'PALETTE_CC_DARK_GREEN'                 : 782,
