@@ -1,4 +1,6 @@
-global-exclude ._*
+# Exclude hidden files and directories
+global-exclude .*
+prune .*
 
 # Include documentation
 recursive-include docs *.html *.txt nmlc.1 nml.spec
