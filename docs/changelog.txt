@@ -1,3 +1,25 @@
+0.5.1 (2020-05-10)
+------------------------------------------------------------------------
+This release fixes a number of issues reported in 0.5.0.
+
+Note:
+Although nmlc now permits up to 63 each of road and tramtypes, OpenTTD currently requires that the combined total not be more than 63 and that the same label not be used for both a roadtype and a tramtype.
+These limitations are not checked by nmlc.
+
+- Add: Builtin functions roadtype() and tramtype()
+- Fix: Allow calculations for palette in spritelayout
+- Fix #116: TownNames used bits could be the same for sub-parts (#117)
+- Fix #120: Value range of transported_last_month_pct should be 0..100 (#122)
+- Fix #121: STORE_PERM address limit should be 255, not 15
+- Fix #134: Incorrect value of PALETTE_CC_RED
+- Fix #74: Update ottd_display_speed to match changes from OpenTTD r23945 (#75)
+- Fix: ANIM warnings in examples
+- Fix: Make the industry example GRF do something, rather than crashing
+- Fix: Correct limit of available road/tramtypes
+- Fix: Produce, TownNames & TracktypeTable debug_print (#126, #127, #129)
+- Fix: Don't attempt to determine version from git when building from a release tarball
+
+
 0.5.0 (2020-04-26)
 ------------------------------------------------------------------------
 
