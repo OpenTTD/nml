@@ -13,88 +13,6 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-# The following version determination code is a greatly simplified version
-# of the mercurial repo code. The version is stored in nml/__version__.py
-# get_numeric_version is used only for the purpose of packet creation,
-# in all other cases use get_nml_version()
-
-import subprocess, os
-
-try:
-    from subprocess import DEVNULL  # Python 3.3+
-except ImportError:
-    DEVNULL = open(os.devnull, 'wb')
-
-
-def get_child_output(cmd, env=None, stderr=None):
-    """
-    Run a child process, and collect the generated output.
-
-    @param cmd: Command to execute.
-    @type  cmd: C{list} of C{str}
-
-    @param env: Environment
-    @type  env: C{dict}
-
-    @param stderr: Pipe destination for stderr
-    @type  stderr: file object
-
-    @return: Generated output of the command, split on whitespace.
-    @rtype:  C{list} of C{str}
-    """
-    return subprocess.check_output(cmd, universal_newlines = True, env=env, stderr=stderr).split()
-
-
-def get_git_version(detailed = False):
-    # method adopted shamelessly from OpenTTD's findversion.sh
-    path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    version = ''
-    env = dict(os.environ, LC_ALL='C')
-    if os.path.isdir(os.path.join(path,'.git')):
-        # Refresh the index to make sure file stat info is in sync
-        try:
-            get_child_output(["git", "-C", path, "update-index", "--refresh"], env=env)
-        except:
-            pass
-
-        # Look for modifications
-        try:
-            modified  = (len(get_child_output(["git", "-C", path, "diff-index", "HEAD"], env=env)) > 0)
-            isodate   = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
-            # git describe output is <tag>-<commits since tag>-<hash>, and <tag> may contain '-'
-            describe  = get_child_output(["git", "-C", path, "describe", "--tags", "--long"], env=env)[0].rsplit('-', 2)
-            tag = describe[0]
-            release = describe[1] == "0"
-            changeset = describe[2]
-        except OSError as e:
-            print("Git checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
-            return version
-        except subprocess.CalledProcessError as e:
-            print("Git checkout found but cannot determine its version. Error: ", e)
-            return version
-        # A detached head will make the command fail, but it's uncritical
-        # Treat it like branch 'master'.
-        try:
-            branch = get_child_output(["git", "-C", path, "symbolic-ref", "-q", "HEAD"], env=env)[0].split('/')[-1]
-        except subprocess.CalledProcessError:
-            branch = "master"
-
-        # Compose the actual version string following PEP440
-        version = tag.replace("-", "").lower()
-        if not release:
-            version += ".post0.dev" + isodate.replace("-", "") + "+"
-            if branch != "master":
-                version += branch + "."
-            version += changeset
-
-        if modified:
-            version += "m"
-
-        if detailed:
-            version = changeset + ";" + branch + ";" + tag + ";" + str(release) + ";" + str(modified) + ";" + isodate + ";" + version
-
-    return version
-
 def get_lib_versions():
     versions = {}
     #PIL
@@ -114,11 +32,19 @@ def get_lib_versions():
     return versions
 
 def get_nml_version():
-    # first try whether we find an nml repository. Use that version, if available
-    version = get_git_version()
-    if version:
-        return version
-    # no repository was found. Return the version which was saved upon built
+    # First check if this is a git repository, and use that version if available.
+    # (unless this is a released tarball, see below)
+    try:
+        from nml import version_update
+        version = version_update.get_git_version()
+        if version:
+            return version
+    except ImportError:
+        # version_update is excluded from release tarballs,
+        #  so that the predetermined version is always used.
+        pass
+
+    # No repository was found. Return the version which was saved upon build.
     try:
         from nml import __version__
         version = __version__.version
@@ -127,25 +53,9 @@ def get_nml_version():
     return version
 
 def get_cli_version():
-    #version string for usage in command line
+    # Version string for usage in command line
     result = get_nml_version() + "\n"
     result += "Library versions encountered:\n"
     for lib, lib_ver in get_lib_versions().items():
         result += lib + ": " + lib_ver + "\n"
-    return result[0:-1] #strip trailing newline
-
-def get_and_write_version():
-    version = get_nml_version()
-    if version:
-        try:
-            path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            f = open(os.path.join(path, "nml", "__version__.py"), "w")
-            f.write('# this file is autogenerated by setup.py\n')
-            f.write('version = "{}"\n'.format(version))
-            f.close()
-            return version.split()[0]
-        except IOError:
-            print("Version file NOT written")
-
-if __name__ == '__main__':
-    print(get_git_version(detailed=True))
+    return result.strip()
