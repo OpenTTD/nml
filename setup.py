@@ -4,9 +4,16 @@ import os
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_py import build_py
-from nml import version_info
-NML_VERSION = version_info.get_and_write_version()
 
+try:
+    # Update the version by querying git if possible.
+    from nml import version_update
+    NML_VERSION = version_update.get_and_write_version()
+except ImportError:
+    # version_update is excluded from released tarballs, so that
+    #  only the predetermined version is used when building from one.
+    from nml import version_info
+    NML_VERSION = version_info.get_nml_version()
 
 class NMLBuildPy(build_py):
     def run(self):

@@ -21,5 +21,8 @@ recursive-include examples *.nml *.lng *.png
 # include nml itself, including c-modules
 recursive-include nml *.py *.c
 
+# Building from a released tarball shouldn't try to update the version
+exclude nml/version_update.py
+
 # Include build files and main script file
 include Makefile nmlc
