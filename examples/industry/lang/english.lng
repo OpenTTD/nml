@@ -2,4 +2,4 @@
 STR_GRF_NAME                                                    :NML Example NewGRF: Industry
 STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Industry{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.
 
-STR_INDUSTRY_EXTRA_TEXT                                         :{}Mail produced this month: {YELLOW}{SIGNED_WORD}
+STR_INDUSTRY_EXTRA_TEXT                                         :{}Goods produced this month: {YELLOW}{SIGNED_WORD}
