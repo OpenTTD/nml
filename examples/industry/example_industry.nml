@@ -37,17 +37,39 @@ cargotable {
  	PASS, COAL, MAIL, OIL_, LVST, GOOD, GRAI, WOOD, IORE, STEL, VALU
 }
 
-produce(test_produce1, [COAL: STORE_TEMP(5, 0); IORE: STORE_TEMP(7, 1);], [STEL: 5;], 1)
-produce(test_produce2, [COAL: 5; IORE: 7;], [STEL: 5;])
-produce(test_produce3, [], [], 0)
-
 /*
 * This example extends the cargos accepted and produce by the default temperate factory.
 */
 
+produce(consume_all_prod,
+    // Consume the full amount of all waiting cargos (stored by factory_production_switch below).
+    [COAL: LOAD_TEMP(1); IORE: LOAD_TEMP(2); GRAI: LOAD_TEMP(3);],
+    // Produce steel from coal and ore, goods from grain.
+    [STEL: LOAD_TEMP(1) / 2 + LOAD_TEMP(2); GOOD: LOAD_TEMP(3) * 2;],
+    0
+)
+
+produce(do_nothing_prod, [], [])
+
+// Make the factory produce cargo only when coal is delivered.
+// Other cargos will be stockpiled until then.
+switch(FEAT_INDUSTRIES, SELF, factory_production_switch, [
+    STORE_TEMP(incoming_cargo_waiting("COAL"), 1),
+    STORE_TEMP(incoming_cargo_waiting("IORE"), 2),
+    STORE_TEMP(incoming_cargo_waiting("GRAI"), 3),
+    incoming_cargo_waiting("COAL")
+]) {
+    // If no coal, don't produce anything.
+    0: do_nothing_prod;
+    // Otherwise consume all waiting cargo.
+    consume_all_prod;
+}
+
 switch(FEAT_INDUSTRIES, SELF, extra_text_switch,
-        [STORE_TEMP(this_month_production("MAIL"), 256)]) {
-	return string(STR_INDUSTRY_EXTRA_TEXT);
+        // Put the production amount on the textstack for use in a string parameter.
+        // See https://newgrf-specs.tt-wiki.net/wiki/NML:Language_files#String_parameters
+        [STORE_TEMP(this_month_production("GOOD"), 256)]) {
+        return string(STR_INDUSTRY_EXTRA_TEXT);
 }
 
 item(FEAT_INDUSTRIES, factory) {
@@ -55,14 +77,16 @@ item(FEAT_INDUSTRIES, factory) {
         substitute: INDUSTRYTYPE_TEMPERATE_FACTORY;
         override: INDUSTRYTYPE_TEMPERATE_FACTORY;
         cargo_types: [
-            accept_cargo("COAL", produce_cargo("MAIL", 1), produce_cargo("GOOD", 1), produce_cargo("STEL", 1), produce_cargo("VALU", 1)),
-            accept_cargo("OIL_"),
-            accept_cargo("IORE", produce_cargo("STEL", 4)),
-            accept_cargo("GRAI", produce_cargo("MAIL", 0.5), produce_cargo("VALU", 0.5))
+            accept_cargo("COAL"),
+            accept_cargo("IORE"),
+            accept_cargo("GRAI"),
+            // Output production amount by callback above, but must be listed here.
+            produce_cargo("STEL", 0),
+            produce_cargo("GOOD", 0)
         ];
     }
     graphics {
- 		produce_cargo_arrival: test_produce1;
+        produce_cargo_arrival: factory_production_switch;
         extra_text_industry: extra_text_switch;
     }
 }
