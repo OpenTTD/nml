@@ -50,6 +50,7 @@ spriteset(brewery_spriteset_building) {
     tmpl_building_sprite(150, 60, 91, -60, "brewery_snow.png")
 }
 
+default_palette = PALETTE_USE_DEFAULT;
 /* Generic sprite layout that is used for all tiles of the building. Parmaeters:
  * - building_sprite: offset in the brewery_spriteset_building spriteset to use. -1 to skip building sprite.
  * - with_smoke: Show smoke above the tile (also depends on animation state) */
@@ -70,7 +71,7 @@ spritelayout brewery_sprite_layout(building_sprite, with_smoke) {
         sprite: brewery_spriteset_building((terrain_type == TILETYPE_SNOW) * 3 + building_sprite); 
         /* Enable recolouring for the flag on top, it will get a random colour */
         recolour_mode: RECOLOUR_REMAP;
-        palette: PALETTE_USE_DEFAULT;
+        palette: default_palette;
         zextent: 48;
         hide_sprite: building_sprite == -1 || construction_state != 3;
     }
