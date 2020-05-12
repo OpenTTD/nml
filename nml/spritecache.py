@@ -17,16 +17,11 @@ import array, json, os
 from nml import generic
 
 keep_orphaned = True
+cache_root_dir = None
 
 class SpriteCache:
     """
     Cache for compressed sprites.
-
-    @ivar cache_filename: Filename of cache data file.
-    @type cache_filename: C{str}
-
-    @ivar cache_index_filename: Filename of cache index file.
-    @type cache_index_filename: C{str}
 
     @ivar cache_time: Date of cache files. The cache is invalid, if the source image files are newer.
     @type cache_time: C{int}
@@ -77,9 +72,8 @@ class SpriteCache:
         meta-information or padding. Offsets and sizes for the various sprites
         are in the cacheindex file.
     """
-    def __init__(self, filename):
-        self.cache_filename = filename + ".cache"
-        self.cache_index_filename = filename + ".cacheindex"
+    def __init__(self, sources=None):
+        self.sources = sources
         self.cache_time = 0
         self.cached_sprites = {}
 
@@ -137,25 +131,24 @@ class SpriteCache:
         """
         Read the *.grf.cache[index] files.
         """
-        if not (os.access(self.cache_filename, os.R_OK) and os.access(self.cache_index_filename, os.R_OK)):
-            # Cache files don't exist
+
+        files = SpriteCacheFiles(self.sources)
+        if not files:
             return
 
-        index_file = open(self.cache_index_filename, 'r')
-        cache_file = open(self.cache_filename, 'rb')
         cache_data = array.array('B')
-        cache_size = os.fstat(cache_file.fileno()).st_size
-        cache_data.fromfile(cache_file, cache_size)
+        cache_size = os.fstat(files.cache_file.fileno()).st_size
+        cache_data.fromfile(files.cache_file, cache_size)
         assert cache_size == len(cache_data)
-        self.cache_time = os.path.getmtime(self.cache_filename)
 
+        self.cache_time = files.mtime
         source_mtime = dict()
 
         try:
             # Just assert and print a generic message on errors, as the cache data should be correct
             # Not asserting could lead to errors later on
             # Also, it doesn't make sense to inform the user about things he shouldn't know about and can't fix
-            sprite_index = json.load(index_file)
+            sprite_index = json.load(files.index_file)
             assert isinstance(sprite_index, list)
             for sprite in sprite_index:
                 assert isinstance(sprite, dict)
@@ -238,16 +231,19 @@ class SpriteCache:
                 if is_valid:
                     self.cached_sprites[key] = value
         except:
-            generic.print_warning(self.cache_index_filename + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
+            generic.print_warning(files.index_filepath + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
             self.cached_sprites = {} # Clear cache
 
-        index_file.close()
-        cache_file.close()
+        files.close()
 
     def write_cache(self):
         """
         Write the cache data to the .cache[index] files.
         """
+
+        if cache_root_dir is None:
+            return
+
         index_data = []
         sprite_data = array.array('B')
         offset = 0
@@ -292,9 +288,71 @@ class SpriteCache:
 
         index_output = json.JSONEncoder(sort_keys = True).encode(index_data)
 
-        index_file = open(self.cache_index_filename, 'w')
-        index_file.write(index_output)
-        index_file.close()
-        cache_file = open(self.cache_filename, 'wb')
-        sprite_data.tofile(cache_file)
-        cache_file.close()
+        files = SpriteCacheFiles(self.sources, write=True)
+        if files:
+            files.index_file.write(index_output)
+            sprite_data.tofile(files.cache_file)
+        files.close()
+
+
+class SpriteCacheFiles:
+    def __init__(self, sources, write=False):
+        self.sources = sources
+        self.index_file = None
+        self.index_filepath = None
+        self.cache_file = None
+        self.cache_filepath = None
+        self.mtime = 0.0
+
+        if cache_root_dir is None or not sources:
+            return
+
+        self.index_filepath = self.get_filepath(".cacheindex")
+        self.cache_filepath = self.get_filepath(".cache")
+
+        index_file = self.open_file(self.index_filepath, 'w' if write else 'r')
+        if not index_file:
+            return
+
+        cache_file = self.open_file(self.cache_filepath, 'wb' if write else 'rb')
+        if not cache_file:
+            index_file.close()
+            return
+
+        self.index_file = index_file
+        self.cache_file = cache_file
+        self.mtime = os.path.getmtime(self.get_filepath('.cache'))
+
+    def __bool__(self):
+        # Both files were opened if this is set.
+        return self.index_file is not None
+
+    def close(self):
+        if self:
+            self.index_file.close()
+            self.cache_file.close()
+
+    def get_filepath(self, extension):
+        filepath = ""
+        for part in self.sources:
+            if part is None:
+                continue
+            path, name = os.path.split(part)
+            if len(filepath) == 0:
+                # Make sure that the path does not leave the cache dir
+                path = os.path.normpath(path).replace(os.path.pardir, "__")
+                filepath = os.path.join(cache_root_dir, path, name)
+            else:
+                # In case of multiple source files, ignore the path component for all but the first
+                filepath += "_" + name
+        return filepath + extension
+
+    def open_file(self, filepath, mode):
+        try:
+            if 'w' in mode:
+                os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            return open(filepath, mode)
+        except OSError:
+            if 'w' in mode:
+                generic.print_warning("Can't create cache file {}. Check permissions, or use --cache-dir or --no-cache.".format(filepath))
+            return None
