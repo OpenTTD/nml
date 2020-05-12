@@ -485,6 +485,7 @@ def find_file(filepath):
 cache_root_dir = ".nmlcache"
 
 def set_cache_root_dir(dir):
+    global cache_root_dir
     cache_root_dir = os.path.abspath(dir)
     os.makedirs(cache_root_dir, exist_ok=True)
 
