@@ -6,9 +6,10 @@ grf {
     min_compatible_version: 0;
 }
 
+runway_sprite = 0xA68;
 spritelayout dirt_runway_sw_snow {
     building {
-        sprite:        0xA68;
+        sprite:        runway_sprite;
         yoffset:       0x0F;
         yextent:       1;
         zextent:       6;
