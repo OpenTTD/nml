@@ -426,15 +426,17 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     action6.free_parameters.save()
     act6 = action6.Action6()
 
+    advanced = any(x.is_advanced_sprite() for x in building_sprites + [ground_sprite])
+
     offset = 4
     sprite_num = ground_sprite.get_sprite_number()
     sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
-    offset += ground_sprite.get_registers_size()
+    if advanced: offset += ground_sprite.get_registers_size()
 
     for sprite in building_sprites:
         sprite_num = sprite.get_sprite_number()
         sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
-        offset += sprite.get_registers_size()
+        if advanced: offset += sprite.get_registers_size()
         offset += 3 if sprite.type == Action2LayoutSpriteType.CHILD else 6
 
     if len(act6.modifications) > 0:
