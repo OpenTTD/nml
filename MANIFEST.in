@@ -2,6 +2,9 @@
 global-exclude .*
 prune .*
 
+# Not useful downstream
+exclude changelog-to-bbcode.py
+
 # Include documentation
 recursive-include docs *.html *.txt nmlc.1 nml.spec
 include LICENSE

@@ -145,8 +145,7 @@ Other Changes
 - Fix: String encoding with cases was non-deterministic and resulted in differing md5sums for the NewGRF.
 - Fix: Rearrange order of string id assignment to keep compatibility.
 - Fix: When some IDs depleted, an internal NML error was raised instead of the intended error message.
-- Fix: most_common_refit was reading the wrong bits in var 42; read the write bits and rename it to most_common_cargo_type
-       as it's more accurate; also add most_common_cargo_subtype which also reads var 42 and was previously missing
+- Fix: most_common_refit was reading the wrong bits in var 42; read the write bits and rename it to most_common_cargo_type as it's more accurate; also add most_common_cargo_subtype which also reads var 42 and was previously missing
 - Fix: Switch from :r format code to !r conversion flag to avoid crashes.
 - Update: Changelog
 
@@ -424,8 +423,7 @@ Other Changes
 ------------------------------------------------------------------------
 - Feature: Action5 for tunnel portals
 - Fix: Properly catch out-of-bounds image reads (issue #3666)
-- Fix: Character code 0xA0 (NBSP) is used for an up arrow in TTD, so
-       don't write it as ascii. Force unicode instead (issue #3643)
+- Fix: Character code 0xA0 (NBSP) is used for an up arrow in TTD, so don't write it as ascii. Force unicode instead (issue #3643)
 
 
 0.2.2 (2012-01-29)
@@ -446,8 +444,7 @@ Other Changes
 
 0.2.1 (2011-12-18)
 ------------------------------------------------------------------------
-- Feature: CB_RESULT_NO_MORE_ARTICULATED_PARTS, CB_RESULT_REVERSED_VEHICLE
-       and CB_RESULT_NO_TEXT as constants to make porting projects to NML 0.3 easier.
+- Feature: CB_RESULT_NO_MORE_ARTICULATED_PARTS, CB_RESULT_REVERSED_VEHICLE and CB_RESULT_NO_TEXT as constants to make porting projects to NML 0.3 easier.
 - Fix: Internal error when the ID in a replace-block was not a compile-time constant
 - Fix: Crash when referencing a SpriteSetCollection in a graphics-block that was inside an if-block
 - Fix: Text files in docs/ were not included in source package
