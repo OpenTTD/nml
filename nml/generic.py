@@ -486,10 +486,9 @@ cache_root_dir = ".nmlcache"
 
 def set_cache_root_dir(dir):
     global cache_root_dir
-    cache_root_dir = os.path.abspath(dir)
-    os.makedirs(cache_root_dir, exist_ok=True)
+    cache_root_dir = None if dir is None else os.path.abspath(dir)
 
-def get_cache_file(sources, extension):
+def _cache_file_path(sources, extension):
     """
     Compose a filename for a cache file.
 
@@ -512,10 +511,27 @@ def get_cache_file(sources, extension):
                 # Make sure that the path does not leave the cache dir
                 path = os.path.normpath(path).replace(os.path.pardir, "__")
                 path = os.path.join(cache_root_dir, path)
-                os.makedirs(path, exist_ok=True)
                 result = os.path.join(path, name)
             else:
                 # In case of multiple soure files, ignore the path component for all but the first
                 result += "_" + name
 
     return result + extension
+
+def open_cache_file(sources, extension, mode):
+    if cache_root_dir is None:
+        raise FileNotFoundError("No cache directory")
+
+    if not any(sources):
+        raise FileNotFoundError("Can't create cache file with no sources")
+
+    path = _cache_file_path(sources, extension)
+
+    try:
+        if 'w' in mode:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+        return open(path, mode)
+    except OSError:
+        if 'w' in mode:
+            print_warning("Can't create cache file {}. Check permissions, or use --cache-dir or --no-cache.".format(path))
+        raise

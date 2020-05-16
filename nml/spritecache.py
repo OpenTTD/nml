@@ -22,11 +22,8 @@ class SpriteCache:
     """
     Cache for compressed sprites.
 
-    @ivar cache_filename: Filename of cache data file.
-    @type cache_filename: C{str}
-
-    @ivar cache_index_filename: Filename of cache index file.
-    @type cache_index_filename: C{str}
+    @ivar sources: Tuple of paths to files the cache belongs to or depends on.
+    @type sources: C{tuple} of (C{str} or C{None})
 
     @ivar cache_time: Date of cache files. The cache is invalid, if the source image files are newer.
     @type cache_time: C{int}
@@ -77,9 +74,8 @@ class SpriteCache:
         meta-information or padding. Offsets and sizes for the various sprites
         are in the cacheindex file.
     """
-    def __init__(self, filename):
-        self.cache_filename = filename + ".cache"
-        self.cache_index_filename = filename + ".cacheindex"
+    def __init__(self, sources=()):
+        self.sources = sources
         self.cache_time = 0
         self.cached_sprites = {}
 
@@ -137,17 +133,21 @@ class SpriteCache:
         """
         Read the *.grf.cache[index] files.
         """
-        if not (os.access(self.cache_filename, os.R_OK) and os.access(self.cache_index_filename, os.R_OK)):
-            # Cache files don't exist
+
+        try:
+            with generic.open_cache_file(self.sources, ".cache", 'rb') as cache_file:
+                index_file = generic.open_cache_file(self.sources, ".cacheindex", 'r')
+
+                cache_data = array.array('B')
+                cache_size = os.fstat(cache_file.fileno()).st_size
+                cache_data.fromfile(cache_file, cache_size)
+                assert cache_size == len(cache_data)
+                self.cache_time = os.path.getmtime(cache_file.name)
+        except OSError:
+            # Cache files don't exist (or otherwise aren't readable)
             return
 
-        index_file = open(self.cache_index_filename, 'r')
-        cache_file = open(self.cache_filename, 'rb')
-        cache_data = array.array('B')
-        cache_size = os.fstat(cache_file.fileno()).st_size
-        cache_data.fromfile(cache_file, cache_size)
-        assert cache_size == len(cache_data)
-        self.cache_time = os.path.getmtime(self.cache_filename)
+        # cache_file is closed by `with` block, but index_file is still open.
 
         source_mtime = dict()
 
@@ -238,16 +238,19 @@ class SpriteCache:
                 if is_valid:
                     self.cached_sprites[key] = value
         except:
-            generic.print_warning(self.cache_index_filename + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
+            generic.print_warning(index_file.name + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
             self.cached_sprites = {} # Clear cache
 
         index_file.close()
-        cache_file.close()
 
     def write_cache(self):
         """
         Write the cache data to the .cache[index] files.
         """
+        if generic.cache_root_dir is None:
+            # Writing cache files will fail, so bail early.
+            return
+
         index_data = []
         sprite_data = array.array('B')
         offset = 0
@@ -292,9 +295,10 @@ class SpriteCache:
 
         index_output = json.JSONEncoder(sort_keys = True).encode(index_data)
 
-        index_file = open(self.cache_index_filename, 'w')
-        index_file.write(index_output)
-        index_file.close()
-        cache_file = open(self.cache_filename, 'wb')
-        sprite_data.tofile(cache_file)
-        cache_file.close()
+        try:
+            with generic.open_cache_file(self.sources, ".cache", 'wb') as cache_file, \
+                    generic.open_cache_file(self.sources, ".cacheindex", 'w') as index_file:
+                index_file.write(index_output)
+                sprite_data.tofile(cache_file)
+        except OSError:
+            return

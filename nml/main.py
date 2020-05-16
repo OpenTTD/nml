@@ -77,7 +77,7 @@ def parse_cli(argv):
     opts, args = opt_parser.parse_args(argv)
 
     generic.set_verbosity(0 if opts.quiet else opts.verbosity)
-    generic.set_cache_root_dir(opts.cache_dir)
+    generic.set_cache_root_dir(None if opts.no_cache else opts.cache_dir)
     spritecache.keep_orphaned = opts.keep_orphaned
 
     opts.outputfile_given = (opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.dep_filename or opts.outputs)
@@ -167,7 +167,7 @@ def main(argv):
             generic.print_error("Unknown output format {}".format(outext))
             sys.exit(2)
 
-    ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.compress, opts.crop, not opts.no_cache, opts.forced_palette, opts.md5_filename, opts.rebuild_parser, opts.debug_parser)
+    ret = nml(input, input_filename, opts.debug, outputs, opts.start_sprite_num, opts.compress, opts.crop, opts.forced_palette, opts.md5_filename, opts.rebuild_parser, opts.debug_parser)
 
     input.close()
     sys.exit(ret)
@@ -175,7 +175,7 @@ def main(argv):
 def filename_output_from_input(name, ext):
     return os.path.splitext(name)[0] + ext
 
-def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, compress_grf, crop_sprites, enable_cache, forced_palette, md5_filename, rebuild_parser, debug_parser):
+def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, compress_grf, crop_sprites, forced_palette, md5_filename, rebuild_parser, debug_parser):
     """
     Compile an NML file.
 
@@ -196,9 +196,6 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
 
     @param crop_sprites: Enable sprite cropping.
     @type  crop_sprites: C{bool}
-
-    @param enable_cache: Enable sprite cache.
-    @type  enable_cache: C{bool}
 
     @param forced_palette: Palette to use for the file.
     @type  forced_palette: C{str}
@@ -358,7 +355,7 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
         outputfile.palette = used_palette # used by RecolourSpriteAction
         if isinstance(outputfile, output_grf.OutputGRF):
             if encoder is None:
-                encoder = spriteencoder.SpriteEncoder(compress_grf, crop_sprites, enable_cache, used_palette)
+                encoder = spriteencoder.SpriteEncoder(compress_grf, crop_sprites, used_palette)
             outputfile.encoder = encoder
 
     generic.clear_progress()
