@@ -965,7 +965,7 @@ class Language:
         """
         if self.langid is not None:
             raise generic.ScriptError("grflangid already set", pos)
-        lang_text = data[1].strip()
+        lang_text = data.strip()
         value = LANG_NAMES.get(lang_text)
         if value is None:
             try:
@@ -988,7 +988,7 @@ class Language:
             raise generic.ScriptError("plural form already set", pos)
         try:
             # Explicitly force base 10 like in OpenTTD's lang file
-            value = int(data[1], 10)
+            value = int(data, 10)
         except ValueError:
             raise generic.ScriptError("Invalid plural form", pos)
         if value < 0 or value > NUM_PLURAL_FORMS:
@@ -1026,7 +1026,7 @@ class Language:
         if self.genders is not None:
             raise generic.ScriptError("Genders already defined", pos)
         self.genders = {}
-        for idx, gender in enumerate(data[1].split()):
+        for idx, gender in enumerate(data.split()):
             self.genders[gender] = idx + 1
             self.gender_map[gender] = []
 
@@ -1039,7 +1039,7 @@ class Language:
         """
         if self.genders is None:
             raise generic.ScriptError("##map_gender is not allowed before ##gender", pos)
-        genders = data[1].split()
+        genders = data.split()
         if len(genders) != 2:
             raise generic.ScriptError("Invalid ##map_gender line", pos)
         if genders[0] not in self.genders:
@@ -1056,7 +1056,7 @@ class Language:
         if self.cases is not None:
             raise generic.ScriptError("Cases already defined", pos)
         self.cases = {}
-        for idx, case in enumerate(data[1].split()):
+        for idx, case in enumerate(data.split()):
             self.cases[case] = idx + 1
             self.case_map[case] = []
 
@@ -1069,22 +1069,26 @@ class Language:
         """
         if self.cases is None:
             raise generic.ScriptError("##map_case is not allowed before ##case", pos)
-        cases = data[1].split()
+        cases = data.split()
         if len(cases) != 2:
             raise generic.ScriptError("Invalid ##map_case line", pos)
         if cases[0] not in self.cases:
             raise generic.ScriptError("Trying to map non-existing case '{}'".format(cases[0]), pos)
         self.case_map[cases[0]].append(cases[1])
 
-    def handle_text(self, data, pos):
+    def handle_text(self, string, case, value, pos):
         """
-        Handle a text string.
+        Handle a text string definition.
 
-        @param data: Data of the pragma.
-        @type  data: C{str}
+        @param string: Name of the string.
+        @type  string: C{str}
+
+        @param case: The case being defined (optional).
+        @type  case: C{str} or C{None}
+
+        @param value: Value of the string.
+        @type  value: C{str}
         """
-        _type, string, case, value = data
-
         if not re.match("[A-Za-z_0-9]+$", string):
             raise generic.ScriptError("Invalid string name \"{}\"".format(string), pos)
 
@@ -1121,69 +1125,51 @@ class Language:
                 self.strings[string].cases[case] = newgrf_string
 
 
-
-    def scan_line(self, line, pos):
-        """
-        Scan a line of a language file.
-
-        @param line: Line to scan.
-        @type  line: C{str}
-
-        @param pos: Position information of the line.
-        @type  pos: L{Position}
-
-        @return: Contents of the scanned line:
-                  - C{None} Nothing of interest found.
-                  - (<pragma>, <value>) A pragma line has been found.
-                  - ('string', <case>, <value>) A string with optional case has been found.
-        @rtype:  C{None} or a C{tuple}
-        """
-        if len(line) == 0: return None # Silently ignore empty lines.
-
-        if line[0] == '#':
-            if len(line) > 2 and line[1] == '#' and line[2] != '#':
-                # "##pragma" line.
-                if self.default: return None # Default language ignores all pragmas.
-
-                if line[:12] == "##grflangid ":  return ('grflangid',  line[12:])
-                if line[:9]  == "##plural ":     return ('plural',     line[9:])
-                if line[:9]  == "##gender ":     return ('gender',     line[9:])
-                if line[:13] == "##map_gender ": return ('map_gender', line[13:])
-                if line[:11] == "##map_case ":   return ('map_case',   line[11:])
-                if line[:7]  == "##case ":       return ('case',       line[7:])
-                raise generic.ScriptError("Invalid pragma", pos)
-
-            return None # Normal comment
-
-        # Must be a line defining a string.
-        i = line.find(':')
-        if i == -1:
-            raise generic.ScriptError("Line has no ':' delimiter", pos)
-
-        name = line[:i].strip()
-        value = line[i + 1:]
-        i = name.find('.') # Find a case.
-        if i > 0:
-            case = name[i + 1:]
-            name = name[:i]
-        else:
-            case = None
-
-        if self.default and case is not None: return None # Ignore cases for the default language
-        return ('string', name, case, value)
-
-
     def handle_string(self, line, pos):
-        funcs = { 'grflangid'  : self.handle_grflangid,
-                  'plural'     : self.handle_plural,
-                  'gender'     : self.handle_gender,
-                  'map_gender' : self.handle_map_gender,
-                  'map_case'   : self.handle_map_case,
-                  'case'       : self.handle_case,
-                  'string'     : self.handle_text }
+        if len(line) == 0:
+            # Silently ignore empty lines.
+            return
 
-        res = self.scan_line(line, pos)
-        if res is not None: funcs[res[0]](res, pos)
+        elif len(line) > 2 and line[:2] == "##" and not line[:3] == "###":
+            # "##pragma" line, call relevant handler.
+            if self.default:
+                # Default language ignores all pragmas.
+                return
+            pragmas = { '##grflangid'  : self.handle_grflangid,
+                        '##plural'     : self.handle_plural,
+                        '##gender'     : self.handle_gender,
+                        '##map_gender' : self.handle_map_gender,
+                        '##map_case'   : self.handle_map_case,
+                        '##case'       : self.handle_case }
+            try:
+                pragma, value = line.split(" ", maxsplit=1)
+                handler = pragmas[pragma]
+            except (ValueError, KeyError):
+                raise generic.ScriptError("Invalid pragma", pos)
+            handler(value, pos)
+
+        elif line[0] == "#":
+            # Normal comment, ignore
+            return
+
+        else:
+            # Must be a line defining a string.
+            try:
+                name, value = line.split(":", maxsplit=1)
+                name = name.rstrip()
+            except ValueError:
+                raise generic.ScriptError("Line has no ':' delimiter", pos)
+
+            if "." in name:
+                name, case = name.rsplit(".", maxsplit=1)
+            else:
+                case = None
+
+            if self.default and case is not None:
+                # Ignore cases for the default language
+                return
+
+            self.handle_text(name, case, value, pos)
 
 
 default_lang = Language(True)
