@@ -1162,6 +1162,8 @@ class Language:
 
             if "." in name:
                 name, case = name.rsplit(".", maxsplit=1)
+                if not case:
+                    raise generic.ScriptError("No case after '.' delimiter", pos)
             else:
                 case = None
 
