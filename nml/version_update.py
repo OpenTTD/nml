@@ -19,7 +19,7 @@ def get_child_output(cmd, env=None, stderr=None):
     return subprocess.check_output(cmd, universal_newlines = True, env=env, stderr=stderr).split()
 
 
-def get_git_version(detailed = False):
+def get_git_version():
     # method adopted shamelessly from OpenTTD's findversion.sh
     path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
     version = ''
@@ -55,17 +55,21 @@ def get_git_version(detailed = False):
 
         # Compose the actual version string following PEP440
         version = tag.replace("-", "").lower()
-        if not release:
-            version += ".post0.dev" + isodate.replace("-", "") + "+"
+        local_parts = []
+
+        if modified or not release:
+            version += ".post" + isodate.replace("-", "")
             if branch != "master":
-                version += branch + "."
-            version += changeset
+                local_parts.append(branch.replace("-", "."))
+
+        if not release:
+            local_parts.append(changeset)
 
         if modified:
-            version += "m"
+            local_parts.append("m")
 
-        if detailed:
-            version = changeset + ";" + branch + ";" + tag + ";" + str(release) + ";" + str(modified) + ";" + isodate + ";" + version
+        if local_parts:
+            version += "+" + ".".join(local_parts)
 
     return version
 
