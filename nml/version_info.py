@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import os, sys
+
 def get_lib_versions():
     versions = {}
     #PIL
@@ -54,8 +56,19 @@ def get_nml_version():
 
 def get_cli_version():
     # Version string for usage in command line
-    result = get_nml_version() + "\n"
+    result = get_nml_version() + "\n\n"
+
+    nmlc_path = os.path.abspath(sys.argv[0])
+    result += "nmlc: {}\n".format(nmlc_path)
+
+    from nml import lz77
+    lz77_ver = "C (native)" if lz77.is_native else "Python"
+    result += "LZ77 implementation: {}\n\n".format(lz77_ver)
+
     result += "Library versions encountered:\n"
     for lib, lib_ver in get_lib_versions().items():
-        result += lib + ": " + lib_ver + "\n"
-    return result.strip()
+        result += "  {}: {}\n".format(lib, lib_ver)
+
+    result += "\nPython: {}\n".format(sys.executable)
+    result += "version {}".format(sys.version)
+    return result
