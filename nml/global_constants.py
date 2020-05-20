@@ -1233,6 +1233,7 @@ is_default_tramtype_table = True
 # if no tramtype_table is provided, OpenTTD sets all vehicles to ELRL
 tramtype_table = {'ELRL': 0}
 
+identifier_refcount = {}
 item_names = {}
 settings = {}
 named_parameters = {}
