@@ -94,6 +94,9 @@ class ParameterAssignment(base_statement.BaseStatement):
             if not self.param.can_assign():
                 raise generic.ScriptError("Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos)
         elif isinstance(self.param, expression.Identifier):
+            if global_constants.identifier_refcount[self.param.value] == 0:
+                generic.print_warning("Named parameter '{}' is not referenced, ignoring.".format(self.param.value), self.param.pos)
+                return
             num = action6.free_parameters.pop_unique(self.pos)
             global_constants.named_parameters[self.param.value] = num
         elif not isinstance(self.param, expression.Parameter):
@@ -315,6 +318,9 @@ def parse_actionD(assignment):
     if isinstance(assignment.param, expression.SpecialParameter):
         assignment.param, assignment.value = assignment.param.to_assignment(assignment.value)
     elif isinstance(assignment.param, expression.Identifier):
+        if global_constants.identifier_refcount[assignment.param.value] == 0:
+            # Named parameter is not referenced, ignoring
+            return []
         assignment.param = expression.Parameter(expression.ConstantNumeric(global_constants.named_parameters[assignment.param.value]), assignment.param.pos)
     assert isinstance(assignment.param, expression.Parameter)
 
