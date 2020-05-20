@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic
+from nml import generic, global_constants
 from .base_expression import Expression, ConstantNumeric
 from .string_literal import StringLiteral
 
@@ -46,6 +46,10 @@ class Identifier(Expression):
     def __init__(self, value, pos = None):
         Expression.__init__(self, pos)
         self.value = value
+        if value in global_constants.identifier_refcount:
+            global_constants.identifier_refcount[value] += 1
+        else:
+            global_constants.identifier_refcount[value] = 0
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'ID:', self.value)
