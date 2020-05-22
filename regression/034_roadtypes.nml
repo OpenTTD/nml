@@ -1,0 +1,7 @@
+
+item(FEAT_ROADTYPES, regression_road, 0) {
+    property {
+        label: "ROAD";
+        speed_limit: 130km/h;
+    }
+}
