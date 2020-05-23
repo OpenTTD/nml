@@ -255,8 +255,11 @@ general_veh_props = {
     'name'               : {'num': -1, 'string': None},
 }
 
-def ottd_display_speed(value, divisor, unit):
-    return (round(value.value / divisor * 10 * unit.ottd_mul) >> unit.ottd_shift) // 16
+def ottd_display_speed(value, mul, div, unit):
+    # Convert value to km/h-ish.
+    kmh_ish = value.value * mul // div
+    # Duplicate OpenTTD's `ConvertKmhishSpeedToDisplaySpeed()`
+    return ((10 * kmh_ish * unit.ottd_mul) >> unit.ottd_shift) // 16
 
 class VariableListProp(BaseAction0Property):
     """
@@ -331,7 +334,7 @@ def zero_refit_mask(prop_num):
 properties[0x00] = {
     'track_type'                   : {'size': 1, 'num': 0x05},
     'ai_special_flag'              : {'size': 1, 'num': 0x08},
-    'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': (5000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
+    'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': (5000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 1, unit)},
     # 09 doesn't exist
     'power'                        : {'size': 2, 'num': 0x0B, 'unit_type': 'power'},
     # 0A doesn't exist
@@ -391,7 +394,7 @@ def roadveh_speed_prop(prop_info):
 properties[0x01] = {
     'road_type'                    : {'size': 1, 'num': 0x05},
     'tram_type'                    : {'size': 1, 'num': 0x05},
-    'speed'                        : roadveh_speed_prop({'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)}),
+    'speed'                        : roadveh_speed_prop({'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 2, unit)}),
     'running_cost_factor'          : {'size': 1, 'num': 0x09},
     'running_cost_base'            : {'size': 4, 'num': 0x0A},
     # 0B -0D don't exist
@@ -439,7 +442,7 @@ properties[0x02] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'is_refittable'                : {'size': 1, 'num': 0x09},
     'cost_factor'                  : {'size': 1, 'num': 0x0A},
-    'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 2, unit)},
+    'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 2, unit)},
     'default_cargo_type'           : {'size': 1, 'num': 0x0C},
     'cargo_capacity'               : {'size': 2, 'num': 0x0D},
     # 0E does not exist
@@ -481,7 +484,7 @@ properties[0x03] = {
     'sprite_id'                    : {'size': 1, 'num': 0x08},
     'aircraft_type'                : [{'size': 1, 'num': 0x09, 'value_function': aircraft_is_heli}, {'size': 1, 'num': 0x0A, 'value_function': aircraft_is_large}],
     'cost_factor'                  : {'size': 1, 'num': 0x0B},
-    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': (701, 2507), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1 / (8 * 1.6), unit)},
+    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': (701, 2507), 'adjust_value': lambda val, unit: ottd_display_speed(val, 128, 10, unit)},
     'acceleration'                 : {'size': 1, 'num': 0x0D},
     'running_cost_factor'          : {'size': 1, 'num': 0x0E},
     'passenger_capacity'           : {'size': 2, 'num': 0x0F},
