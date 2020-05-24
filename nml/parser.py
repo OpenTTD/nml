@@ -458,9 +458,12 @@ class NMLParser:
         else: t[0] = t[2]
 
     def p_produce(self, t):
-        '''produce : PRODUCE LPAREN ID COMMA produce_cargo_list COMMA produce_cargo_list COMMA expression RPAREN
+        '''produce : PRODUCE LPAREN ID COMMA expression_list RPAREN SEMICOLON
+                   | PRODUCE LPAREN ID COMMA produce_cargo_list COMMA produce_cargo_list COMMA expression RPAREN
                    | PRODUCE LPAREN ID COMMA produce_cargo_list COMMA produce_cargo_list RPAREN'''
-        if len(t) == 11:
+        if len(t) == 8:
+            t[0] = produce.ProduceOld([t[3]] + t[5], t.lineno(1))
+        elif len(t) == 11:
             t[0] = produce.Produce(t[3], t[5], t[7], t[9], t.lineno(1))
         else:
             t[0] = produce.Produce(t[3], t[5], t[7], expression.ConstantNumeric(0), t.lineno(1))
