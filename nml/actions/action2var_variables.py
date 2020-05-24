@@ -498,6 +498,9 @@ varact2vars60x_industrytiles = {
 #
 
 varact2vars_industries = {
+    'waiting_cargo_1'              : {'var': 0x40, 'start':  0, 'size': 16, 'replaced_by': 'incoming_cargo_waiting'},
+    'waiting_cargo_2'              : {'var': 0x41, 'start':  0, 'size': 16, 'replaced_by': 'incoming_cargo_waiting'},
+    'waiting_cargo_3'              : {'var': 0x42, 'start':  0, 'size': 16, 'replaced_by': 'incoming_cargo_waiting'},
     'water_distance'               : {'var': 0x43, 'start':  0, 'size': 32},
     'layout_num'                   : {'var': 0x44, 'start':  0, 'size':  8},
     # bits 0 .. 16 are either useless or already covered by var A7
@@ -506,7 +509,21 @@ varact2vars_industries = {
     'founder_colour2'              : {'var': 0x45, 'start': 28, 'size':  4},
     'build_date'                   : {'var': 0x46, 'start':  0, 'size': 32},
     'random_bits'                  : {'var': 0x5F, 'start':  8, 'size': 16},
+    'produced_cargo_waiting_1'     : {'var': 0x8A, 'start':  0, 'size': 16, 'replaced_by': 'produced_cargo_waiting'},
+    'produced_cargo_waiting_2'     : {'var': 0x8C, 'start':  0, 'size': 16, 'replaced_by': 'produced_cargo_waiting'},
+    'production_rate_1'            : {'var': 0x8E, 'start':  0, 'size':  8, 'replaced_by': 'production_rate'},
+    'production_rate_2'            : {'var': 0x8F, 'start':  0, 'size':  8, 'replaced_by': 'production_rate'},
     'production_level'             : {'var': 0x93, 'start':  0, 'size':  8},
+    'produced_this_month_1'        : {'var': 0x94, 'start':  0, 'size': 16, 'replaced_by': 'this_month_production'},
+    'produced_this_month_2'        : {'var': 0x96, 'start':  0, 'size': 16, 'replaced_by': 'this_month_production'},
+    'transported_this_month_1'     : {'var': 0x98, 'start':  0, 'size': 16, 'replaced_by': 'this_month_transported'},
+    'transported_this_month_2'     : {'var': 0x9A, 'start':  0, 'size': 16, 'replaced_by': 'this_month_transported'},
+    'transported_last_month_pct_1' : {'var': 0x9C, 'start':  0, 'size':  8, 'value_function': value_mul_div(101, 256), 'replaced_by': 'transported_last_month_pct'},
+    'transported_last_month_pct_2' : {'var': 0x9D, 'start':  0, 'size':  8, 'value_function': value_mul_div(101, 256), 'replaced_by': 'transported_last_month_pct'},
+    'produced_last_month_1'        : {'var': 0x9E, 'start':  0, 'size': 16, 'replaced_by': 'last_month_production'},
+    'produced_last_month_2'        : {'var': 0xA0, 'start':  0, 'size': 16, 'replaced_by': 'last_month_production'},
+    'transported_last_month_1'     : {'var': 0xA2, 'start':  0, 'size': 16, 'replaced_by': 'last_month_transported'},
+    'transported_last_month_2'     : {'var': 0xA4, 'start':  0, 'size': 16, 'replaced_by': 'last_month_transported'},
     'founder'                      : {'var': 0xA7, 'start':  0, 'size':  8},
     'colour'                       : {'var': 0xA8, 'start':  0, 'size':  8},
     'counter'                      : {'var': 0xAA, 'start':  0, 'size': 16},

@@ -629,6 +629,8 @@ class Varaction2Parser:
             assert False #supported_by_action2 should have raised the correct error already
 
 def parse_var(name, info, pos):
+    if 'replaced_by' in info:
+        generic.print_warning("'{}' is deprecated, consider using '{}' instead".format(name, info['replaced_by']), pos)
     param = expression.ConstantNumeric(info['param']) if 'param' in info else None
     res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']),
                               expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
