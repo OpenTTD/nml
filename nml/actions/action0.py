@@ -433,12 +433,13 @@ def get_property_info_list(feature, name):
         raise generic.ScriptError("Setting properties for feature '{}' is not possible, no properties are defined.".format(general.feature_name(feature)), name.pos)
 
     if isinstance(name, expression.Identifier):
-        if not name.value in properties[feature]: raise generic.ScriptError("Unknown property name: " + name.value, name.pos)
-        prop_info_list = properties[feature][name.value]
+        prop_name = name.value
+        if prop_name not in properties[feature]:
+            raise generic.ScriptError("Unknown property name: " + prop_name, name.pos)
+        prop_info_list = properties[feature][prop_name]
         if not isinstance(prop_info_list, list): prop_info_list = [prop_info_list]
     elif isinstance(name, expression.ConstantNumeric):
-        for p in properties[feature]:
-            prop_info_list = properties[feature][p]
+        for prop_name, prop_info_list in properties[feature].items():
             if not isinstance(prop_info_list, list): prop_info_list = [prop_info_list]
             # Only non-compound properties may be set by number
             if len(prop_info_list) == 1 and 'num' in prop_info_list[0] and prop_info_list[0]['num'] == name.value:
@@ -448,6 +449,8 @@ def get_property_info_list(feature, name):
     else: assert False
 
     for prop_info in prop_info_list:
+        if 'replaced_by' in prop_info:
+            generic.print_warning("'{}' is deprecated, consider using '{}' instead".format(prop_name, prop_info['replaced_by']), name.pos)
         if 'warning' in prop_info:
             generic.print_warning(prop_info['warning'], name.pos)
     return prop_info_list
