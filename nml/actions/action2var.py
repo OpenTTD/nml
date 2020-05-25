@@ -628,7 +628,7 @@ class Varaction2Parser:
             expr.supported_by_action2(True)
             assert False #supported_by_action2 should have raised the correct error already
 
-def parse_var(info, pos):
+def parse_var(name, info, pos):
     param = expression.ConstantNumeric(info['param']) if 'param' in info else None
     res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']),
                               expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
@@ -945,15 +945,16 @@ def reduce_varaction2_expr(expr, feature, extra_dicts = []):
     vars_normal = action2var_variables.varact2vars[feature]
     vars_60x = action2var_variables.varact2vars60x[feature]
 
-    # lambda function to convert (value, pos) to a function pointer
-    # since we need the variable name later on, a reverse lookup is needed
-    # TODO pass the function name along to avoid this
-    func60x = lambda value, pos: expression.FunctionPtr(expression.Identifier(generic.reverse_lookup(vars_60x, value), pos), parse_60x_var, value)
+    def func60x(name, value, pos):
+        return expression.FunctionPtr(expression.Identifier(name, pos), parse_60x_var, value)
 
-    return expr.reduce(extra_dicts + [(action2var_variables.varact2_globalvars, parse_var), \
-        (vars_normal, parse_var), \
-        (vars_60x, func60x)] + \
-        global_constants.const_list)
+    id_dicts = extra_dicts + [
+        (action2var_variables.varact2_globalvars, parse_var),
+        (vars_normal, parse_var),
+        (vars_60x, func60x)
+    ] + global_constants.const_list
+
+    return expr.reduce(id_dicts)
 
 def parse_varaction2(switch_block):
     global return_action_id

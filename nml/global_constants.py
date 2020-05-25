@@ -1053,8 +1053,8 @@ def global_param_read(info, pos):
     if 'function' in info: return info['function'](param, info)
     return param
 
-def param_from_info(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(global_parameters, info), info, global_param_write, global_param_read, False, pos)
+def param_from_info(name, info, pos):
+    return expression.SpecialParameter(name, info, global_param_write, global_param_read, False, pos)
 
 global_parameters = {
     'climate'                            : {'num': 0x83, 'size': 1},
@@ -1083,8 +1083,8 @@ def misc_bit_write(info, expr, pos):
 def misc_bit_read(info, pos):
     return expression.BinOp(nmlop.HASBIT, expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos), expression.ConstantNumeric(info['bit'], pos), pos)
 
-def misc_grf_bit(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(misc_grf_bits, info), info, misc_bit_write, misc_bit_read, True, pos)
+def misc_grf_bit(name, info, pos):
+    return expression.SpecialParameter(name, info, misc_bit_write, misc_bit_read, True, pos)
 
 misc_grf_bits = {
     'traffic_side'                       : {'param': 0x86, 'bit': 4},
@@ -1147,8 +1147,8 @@ def patch_variable_read(info, pos):
         expr = info['function'](expr, info)
     return expr
 
-def patch_variable(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(patch_variables, info), info, None, patch_variable_read, False, pos)
+def patch_variable(name, info, pos):
+    return expression.SpecialParameter(name, info, None, patch_variable_read, False, pos)
 
 patch_variables = {
     'starting_year'           : {'num': 0x0B, 'start':  0, 'size': 32, 'function': add_1920},
@@ -1169,8 +1169,8 @@ patch_variables = {
 def config_flag_read(bit, pos):
     return expression.SpecialCheck((0x01, r'\70'), 0x85, (0, 1), bit, "PatchFlag({})".format(bit), varsize = 1, pos = pos)
 
-def config_flag(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(config_flags, info), info, None, config_flag_read, True, pos)
+def config_flag(name, info, pos):
+    return expression.SpecialParameter(name, info, None, config_flag_read, True, pos)
 
 config_flags = {
     'long_bridges'            : 0x0F,
@@ -1198,25 +1198,27 @@ def unified_maglev_read(info, pos):
     shifted_bit1 = expression.BinOp(nmlop.SHIFT_LEFT, bit1, expression.ConstantNumeric(1))
     return expression.BinOp(nmlop.OR, shifted_bit1, bit0)
 
-def unified_maglev(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(unified_maglev_var, info), info, None, unified_maglev_read, False, pos)
+def unified_maglev(name, info, pos):
+    return expression.SpecialParameter(name, info, None, unified_maglev_read, False, pos)
 
 unified_maglev_var = {
     'unified_maglev' : 0,
 }
 
-def setting_from_info(info, pos):
-    return expression.SpecialParameter(generic.reverse_lookup(settings, info), info, global_param_write, global_param_read, False, pos)
+def setting_from_info(name, info, pos):
+    return expression.SpecialParameter(name, info, global_param_write, global_param_read, False, pos)
 
-def item_to_id(item, pos):
+def item_to_id(name, item, pos):
     if not isinstance(item.id, expression.ConstantNumeric):
-        raise generic.ScriptError("Referencing item '{}' with a non-constant id is not possible.".format(item.name), pos)
+        raise generic.ScriptError("Referencing item '{}' with a non-constant id is not possible.".format(name), pos)
     return expression.ConstantNumeric(item.id.value, pos)
 
-def param_from_name(info, pos):
+def param_from_name(name, info, pos):
+    del name # unused; to match other id_list callbacks
     return expression.Parameter(expression.ConstantNumeric(info), pos)
 
-def create_spritegroup_ref(info, pos):
+def create_spritegroup_ref(name, info, pos):
+    del name # unused; to match other id_list callbacks
     return expression.SpriteGroupRef(expression.Identifier(info), [], pos)
 
 cargo_numbers = {}
