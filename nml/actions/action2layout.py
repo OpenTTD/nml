@@ -258,7 +258,7 @@ class Action2LayoutSprite:
         if len(sg_ref.param_list) == 0:
             offset = None
         elif len(sg_ref.param_list) == 1:
-            id_dicts = [(spriteset.labels, lambda val, pos: expression.ConstantNumeric(val, pos))]
+            id_dicts = [(spriteset.labels, lambda name, val, pos: expression.ConstantNumeric(val, pos))]
             offset = action2var.reduce_varaction2_expr(sg_ref.param_list[0], self.feature, self.extra_dicts + id_dicts)
             if isinstance(offset, expression.ConstantNumeric):
                 generic.check_range(offset.value, 0, len(real_sprite.parse_sprite_data(spriteset)) - 1, "offset within spriteset", sg_ref.pos)
@@ -381,7 +381,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
         reg = action2var.VarAction2LayoutParam()
         param_registers.append(reg)
         param_map[param.value] = reg
-    param_map = (param_map, lambda value, pos: action2var.VarAction2LoadLayoutParam(value))
+    param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadLayoutParam(value))
     spritelayout.register_map[feature] = param_registers
 
     # Reduce all expressions, can't do that earlier as feature is not known

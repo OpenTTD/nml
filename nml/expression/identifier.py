@@ -19,9 +19,12 @@ from .string_literal import StringLiteral
 
 ignore_all_invalid_ids = False
 
-def default_id_func(x, pos):
+def default_id_func(name, x, pos):
     """
     Default id conversion function.
+
+    @param name: Key in the containing dictionary.
+    @type  name: Any, unused (to match other id_dicts callbacks)
 
     @param x: Value to convert.
     @type  x: C{str}, C{int}, or C{float}
@@ -32,6 +35,7 @@ def default_id_func(x, pos):
     @return: Expression of the id.
     @rtype:  L{Expression}
     """
+    del name  # unused
     if isinstance(x, str):
         return StringLiteral(x, pos)
     else:
@@ -59,9 +63,9 @@ class Identifier(Expression):
             if self.value in id_d:
                 if search_func_ptr:
                     # Do not reduce function pointers, since they have no (numerical) value
-                    return func(id_d[self.value], self.pos)
+                    return func(self.value, id_d[self.value], self.pos)
                 else:
-                    return func(id_d[self.value], self.pos).reduce(id_dicts)
+                    return func(self.value, id_d[self.value], self.pos).reduce(id_dicts)
 
         if unknown_id_fatal and not ignore_all_invalid_ids:
             raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)

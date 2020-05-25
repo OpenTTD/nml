@@ -626,7 +626,7 @@ def builtin_palette_2cc(name, args, pos):
     col2 = BinOp(nmlop.MUL, args[1], ConstantNumeric(16), pos)
     col12 = BinOp(nmlop.ADD, col2, args[0], pos)
     # Base sprite is not a constant
-    base = global_constants.patch_variable(global_constants.patch_variables['base_sprite_2cc'], pos)
+    base = global_constants.patch_variable('base_sprite_2cc', global_constants.patch_variables['base_sprite_2cc'], pos)
 
     return BinOp(nmlop.ADD, col12, base, pos)
 
