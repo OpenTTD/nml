@@ -6,16 +6,18 @@ grf {
     min_compatible_version: 0;
 }
 
+switch(FEAT_INDUSTRIES, SELF, dumb_add, a, b, a + b) { return; }
+
 /* some computation that requires registers for intermediate values */
-switch(FEAT_INDUSTRIES, SELF, callee, (water_distance+layout_num)*(founder_type+founder_colour1)) {
+switch(FEAT_INDUSTRIES, SELF, callee, a, (water_distance+layout_num)*(founder_type+founder_colour1)+a) {
+    return a + dumb_add(5, a);
+}
+
+switch(FEAT_INDUSTRIES, SELF, caller2, dumb_add(1,dumb_add(founder_colour2, build_date))*(water_distance+founder_colour1)*(random_bits+callee(1))*(founder_type+layout_num)*(build_type+counter)) {
     return;
 }
 
-switch(FEAT_INDUSTRIES, SELF, caller2, (founder_colour2+build_date)*(water_distance+founder_colour1)*(random_bits+callee())*(founder_type+layout_num)*(build_type+counter)) {
-    return;
-}
-
-switch(FEAT_INDUSTRIES, SELF, caller1, (founder_colour2+build_date)*(random_bits+callee())*(build_type+counter)) {
+switch(FEAT_INDUSTRIES, SELF, caller1, (founder_colour2+build_date)*dumb_add(random_bits, callee(0))*(build_type+counter)) {
     return;
 }
 

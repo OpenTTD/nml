@@ -24,8 +24,10 @@
 4 * 9 0D 00 \D= FF 00 \dx00000009
 
 // Name: switch_length
-5 * 23 02 01 FF 89
-40 00 \dx000000FF
+// d : register 80
+5 * 31 02 01 FF 89
+7D 80 20 \dxFFFFFFFF 	// d
+\2+ 40 00 \dx000000FF
 \b1
 \wx8005 \dx00000001 \dx00000001 	// 1 .. 1: return 5;
 \wx8006 // default: return 6;
@@ -127,8 +129,10 @@ FF
 \wx8000 // Return computed value
 
 // Name: @action3_1
-25 * 24 02 01 00 89
-7E FF 00 \dxFFFFFFFF 	// switch_length
+25 * 38 02 01 00 89
+1A 20 \dx00000000
+\2sto 1A 20 \dx00000080
+\2r 7E FF 00 \dxFFFFFFFF 	// switch_length(0)
 \b1
 \wx00FD \dx0000FFFF \dx0000FFFF 	// @CB_FAILED01;
 \wx00FC // return (8 - var[0x1C, 0, -1])
