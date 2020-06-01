@@ -242,7 +242,7 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
 
 # Temporary load and store classes used for spritelayout parameters
 # Register is allocated in a separate entity
-class VarAction2LayoutParam:
+class VarAction2CallParam:
     def __init__(self):
         self.register = None
         self.store_vars = []
@@ -255,11 +255,11 @@ class VarAction2LayoutParam:
         for load_var in self.load_vars:
             load_var.parameter = register
 
-class VarAction2LoadLayoutParam(VarAction2Var, expression.Expression):
+class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
     def __init__(self, param):
         VarAction2Var.__init__(self, 0x7D, 0, 0)
         expression.Expression.__init__(self, None)
-        assert isinstance(param, VarAction2LayoutParam)
+        assert isinstance(param, VarAction2CallParam)
         param.load_vars.append(self)
         # Register is stored in parameter
 
@@ -280,10 +280,10 @@ class VarAction2LoadLayoutParam(VarAction2Var, expression.Expression):
         assert not raise_error
         return False
 
-class VarAction2StoreLayoutParam(VarAction2Var):
+class VarAction2StoreCallParam(VarAction2Var):
     def __init__(self, param):
         VarAction2Var.__init__(self, 0x1A, 0, 0)
-        assert isinstance(param, VarAction2LayoutParam)
+        assert isinstance(param, VarAction2CallParam)
         param.store_vars.append(self)
         # Register is stored in mask
 
@@ -499,7 +499,7 @@ class Varaction2Parser:
         if expr.op.act2_num is None: expr.supported_by_action2(True)
 
         if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
-                isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadLayoutParam)) or \
+                isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadCallParam)) or \
                 (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
                 expr.op == nmlop.VAL2:
             expr2 = expr.expr2
@@ -617,7 +617,7 @@ class Varaction2Parser:
         elif isinstance(expr, expression.String):
             self.parse_string(expr)
 
-        elif isinstance(expr, (VarAction2LoadTempVar, VarAction2LoadLayoutParam)):
+        elif isinstance(expr, (VarAction2LoadTempVar, VarAction2LoadCallParam)):
             self.var_list.append(expr)
             self.var_list_size += expr.get_size()
 
@@ -833,7 +833,7 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
             varact2parser.var_list_size += 1
         varact2parser.parse_expr(reduce_varaction2_expr(param, var_feature))
         varact2parser.var_list.append(nmlop.STO_TMP)
-        store_tmp = VarAction2StoreLayoutParam(layout.register_map[parent_action.feature][i])
+        store_tmp = VarAction2StoreCallParam(layout.register_map[parent_action.feature][i])
         varact2parser.var_list.append(store_tmp)
         varact2parser.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
 
