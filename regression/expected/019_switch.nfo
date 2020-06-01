@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d12
+0 * 4 \d13
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -27,8 +27,9 @@
 \wx8000 // default: return 0;
 
 // Name: coal_mine_subtype_switch
-5 * 47 02 0A FF 89
-1A 20 \dx00000004
+// a : register 80
+5 * 48 02 0A FF 89
+7D 80 20 \dxFFFFFFFF 	// a
 \2psto 1A 20 \dx00000000
 \2r 02 00 \dx000000FF
 \b2
@@ -45,30 +46,38 @@
 22 03
 
 // Name: @return_action_0
-8 * 13 02 0A FE 89
+8 * 30 02 0A FF 89
+1A 20 \dx00000004
+\2sto 1A 00 \dx00000080
+\b1
+\wx00FF \dx00000000 \dx00000000 	// coal_mine_subtype_switch
+\wx00FF // coal_mine_subtype_switch
+
+// Name: @return_action_1
+9 * 13 02 0A FE 89
 10 00 \dx00000001
 \b0
 \wx8000 // Return computed value
 
 // Name: @CB_FAILED_PROD
-9 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
+10 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
 
 // Name: @CB_FAILED0A
-10 * 23 02 0A FD 89
+11 * 23 02 0A FD 89
 0C 00 \dx0000FFFF
 \b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FD // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-11 * 43 02 0A FD 89
+12 * 43 02 0A FD 89
 0C 00 \dx0000FFFF
 \b3
-\wx00FF \dx00000037 \dx00000037 	// coal_mine_subtype_switch;
+\wx00FF \dx00000037 \dx00000037 	// @return_action_0;
 \wx8002 \dx0000003A \dx0000003A 	// return string(STR_COALMINE_EXTRA_TEXT);
 \wx00FE \dx0000003B \dx0000003B 	// return var[0x10, 0, 1]
 \wx00FD // @CB_FAILED0A;
 
-12 * 7 03 0A 01 00 \b0
+13 * 7 03 0A 01 00 \b0
 \wx00FD 	// @action3_0;
 

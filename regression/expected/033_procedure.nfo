@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d11
+0 * 4 \d13
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -16,33 +16,71 @@
 00
 00
 2 * 52 08 08 "NML\33" "NML regression test" 00 "A test newgrf testing NML" 00
-// Name: callee
-3 * 49 02 0A FF 89
-45 30 \dx00000003
-\2+ 45 38 \dx0000000F
-\2sto 1A 20 \dx00000084
-\2r 43 20 \dxFFFFFFFF
-\2+ 44 20 \dx000000FF
-\2* 7D 84 00 \dxFFFFFFFF
+// Name: dumb_add
+// a : register 8A
+// b : register 8B
+3 * 22 02 0A FF 89
+7D 8A 20 \dxFFFFFFFF 	// a
+\2+ 7D 8B 00 \dxFFFFFFFF 	// b
 \b0
 \wx8000 // Return computed value
 
+// Name: @return_action_0
+4 * 66 02 0A FE 89
+1A 20 \dx00000005
+\2sto 1A 20 \dx0000008A
+\2r 7D 88 20 \dxFFFFFFFF 	// a
+\2sto 1A 20 \dx0000008B
+\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(5, a)
+\2sto 1A 20 \dx00000089
+\2r 7D 88 20 \dxFFFFFFFF 	// a
+\2+ 7D 89 00 \dxFFFFFFFF
+\b0
+\wx8000 // Return computed value
+
+// Name: callee
+// a : register 88
+5 * 67 02 0A FE 89
+45 30 \dx00000003
+\2+ 45 38 \dx0000000F
+\2sto 1A 20 \dx00000089
+\2r 43 20 \dxFFFFFFFF
+\2+ 44 20 \dx000000FF
+\2* 7D 89 20 \dxFFFFFFFF
+\2+ 7D 88 00 \dxFFFFFFFF 	// a
+\b1
+\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FE // default: return (a + dumb_add(5, a))
+
 // Name: caller2
-4 * 137 02 0A FE 89
+6 * 230 02 0A FD 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
 \2r 45 30 \dx00000003
 \2+ 44 20 \dx000000FF
 \2sto 1A 20 \dx00000081
-\2r 7E FF 20 \dxFFFFFFFF 	// callee
+\2r 1A 20 \dx00000001
+\2sto 1A 20 \dx00000088
+\2r 7E FE 20 \dxFFFFFFFF 	// callee(1)
 \2+ 5F 28 \dx0000FFFF
 \2sto 1A 20 \dx00000082
 \2r 43 20 \dxFFFFFFFF
 \2+ 45 38 \dx0000000F
 \2sto 1A 20 \dx00000083
+\2r 1A 20 \dx00000001
+\2sto 1A 20 \dx00000086
 \2r 45 3C \dx0000000F
-\2+ 46 20 \dxFFFFFFFF
+\2sto 1A 20 \dx0000008A
+\2r 46 20 \dxFFFFFFFF
+\2sto 1A 20 \dx0000008B
+\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(var[0x45, 28, 15], var[0x46, 0, -1])
+\2sto 1A 20 \dx00000087
+\2r 1A 20 \dx00000086
+\2sto 1A 20 \dx0000008A
+\2r 1A 20 \dx00000087
+\2sto 1A 20 \dx0000008B
+\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(1, dumb_add(var[0x45, 28, 15], var[0x46, 0, -1]))
 \2* 7D 83 20 \dxFFFFFFFF
 \2* 7D 82 20 \dxFFFFFFFF
 \2* 7D 81 20 \dxFFFFFFFF
@@ -51,46 +89,55 @@ B3 20 \dx00000003
 \wx8000 // Return computed value
 
 // Name: caller1
-5 * 79 02 0A FF 89
+7 * 143 02 0A FF 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
-\2r 7E FF 20 \dxFFFFFFFF 	// callee
-\2+ 5F 28 \dx0000FFFF
-\2sto 1A 20 \dx00000081
+\2r 5F 28 \dx0000FFFF
+\2sto 1A 20 \dx00000083
+\2r 1A 20 \dx00000000
+\2sto 1A 20 \dx00000088
+\2r 7E FE 20 \dxFFFFFFFF 	// callee(0)
+\2sto 1A 20 \dx00000084
+\2r 1A 20 \dx00000083
+\2sto 1A 20 \dx0000008A
+\2r 1A 20 \dx00000084
+\2sto 1A 20 \dx0000008B
+\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(var[0x5F, 8, 65535], callee(0))
+\2sto 1A 20 \dx00000085
 \2r 45 3C \dx0000000F
 \2+ 46 20 \dxFFFFFFFF
-\2* 7D 81 20 \dxFFFFFFFF
+\2* 7D 85 20 \dxFFFFFFFF
 \2* 7D 80 00 \dxFFFFFFFF
 \b0
 \wx8000 // Return computed value
 
-6 * 11 00 0A \b2 01 FF \wx0000
+8 * 11 00 0A \b2 01 FF \wx0000
 08 00
 09 00
 
-7 * 11 00 0A \b2 01 FF \wx0000
+9 * 11 00 0A \b2 01 FF \wx0000
 21 00
 22 42
 
 // Name: @CB_FAILED_PROD
-8 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
+10 * 15 02 0A FE 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
 
 // Name: @CB_FAILED0A
-9 * 23 02 0A FD 89
+11 * 23 02 0A FE 89
 0C 00 \dx0000FFFF
 \b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FD // Non-graphics callback, return graphics result
+\wx00FE // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-10 * 33 02 0A FD 89
+12 * 33 02 0A FE 89
 0C 00 \dx0000FFFF
 \b2
-\wx00FE \dx0000003B \dx0000003B 	// caller2;
+\wx00FD \dx0000003B \dx0000003B 	// caller2;
 \wx00FF \dx0000015F \dx0000015F 	// caller1;
-\wx00FD // @CB_FAILED0A;
+\wx00FE // @CB_FAILED0A;
 
-11 * 7 03 0A 01 00 \b0
-\wx00FD 	// @action3_0;
+13 * 7 03 0A 01 00 \b0
+\wx00FE 	// @action3_0;
 
