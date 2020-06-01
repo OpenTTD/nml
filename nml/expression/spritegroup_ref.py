@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from nml.actions import action2
 from .base_expression import Type, Expression
+from itertools import chain
 
 class SpriteGroupRef(Expression):
     """
@@ -79,7 +80,7 @@ class SpriteGroupRef(Expression):
         return True
 
     def collect_references(self):
-        return [self]
+        return list(chain([self], *(p.collect_references() for p in self.param_list)))
 
     def type(self):
         if self.is_procedure: return Type.INTEGER
