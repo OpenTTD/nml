@@ -378,10 +378,10 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     param_map = {}
     param_registers = []
     for i, param in enumerate(spritelayout.param_list):
-        reg = action2var.VarAction2LayoutParam()
+        reg = action2var.VarAction2CallParam()
         param_registers.append(reg)
         param_map[param.value] = reg
-    param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadLayoutParam(value))
+    param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value))
     spritelayout.register_map[feature] = param_registers
 
     # Reduce all expressions, can't do that earlier as feature is not known
