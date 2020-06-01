@@ -28,8 +28,8 @@ switch_base_class = action2.make_sprite_group_class(False, True, True)
 class Switch(switch_base_class):
     def __init__(self, param_list, body, pos):
         base_statement.BaseStatement.__init__(self, "switch-block", pos, False, False)
-        if len(param_list) != 4:
-            raise generic.ScriptError("Switch-block requires 4 parameters, encountered " + str(len(param_list)), pos)
+        if len(param_list) < 4:
+            raise generic.ScriptError("Switch-block requires at least 4 parameters, encountered " + str(len(param_list)), pos)
         if not isinstance(param_list[1], expression.Identifier):
             raise generic.ScriptError("Switch-block parameter 2 'variable range' must be an identifier.", param_list[1].pos)
         if param_list[1].value in var_ranges:
@@ -38,14 +38,36 @@ class Switch(switch_base_class):
             raise generic.ScriptError("Unrecognized value for switch parameter 2 'variable range': '{}'".format(param_list[1].value), param_list[1].pos)
         if not isinstance(param_list[2], expression.Identifier):
             raise generic.ScriptError("Switch-block parameter 3 'name' must be an identifier.", param_list[2].pos)
-        self.initialize(param_list[2], general.parse_feature(param_list[0]).value)
-        self.expr = param_list[3]
+        self.initialize(param_list[2], general.parse_feature(param_list[0]).value, len(param_list) - 4)
+        self.expr = param_list[-1]
         self.body = body
+        self.param_list = param_list[3:-1]
+        self.register_map = {}
 
     def pre_process(self):
+        # Check parameter names
+        seen_names = set()
+        for param in self.param_list:
+            if not isinstance(param, expression.Identifier):
+                raise generic.ScriptError("switch parameter names must be identifiers.", param.pos)
+            if param.value in seen_names:
+                raise generic.ScriptError("Duplicate parameter name '{}' encountered.".format(param.value), param.pos)
+            seen_names.add(param.value)
+
         var_feature = action2var.get_feature(self) # Feature of the accessed variables
-        self.expr = action2var.reduce_varaction2_expr(self.expr, var_feature)
-        self.body.reduce_expressions(var_feature)
+
+        # Allocate registers
+        param_map = {}
+        param_registers = []
+        for i, param in enumerate(self.param_list):
+            reg = action2var.VarAction2CallParam()
+            param_registers.append(reg)
+            param_map[param.value] = reg
+        param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))
+        self.register_map[var_feature] = param_registers
+
+        self.expr = action2var.reduce_varaction2_expr(self.expr, var_feature, [param_map])
+        self.body.reduce_expressions(var_feature, [param_map])
         switch_base_class.pre_process(self)
 
     def collect_references(self):
@@ -57,6 +79,11 @@ class Switch(switch_base_class):
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Switch, Feature = {:d}, name = {}'.format(next(iter(self.feature_set)), self.name.value))
+
+        if self.param_list:
+            generic.print_dbg(indentation + 2, 'Parameters:')
+            for param in self.param_list:
+                param.debug_print(indentation + 4)
 
         generic.print_dbg(indentation + 2, 'Expression:')
         self.expr.debug_print(indentation + 4)
@@ -71,7 +98,8 @@ class Switch(switch_base_class):
 
     def __str__(self):
         var_range = 'SELF' if self.var_range == 0x89 else 'PARENT'
-        return 'switch({}, {}, {}, {}) {{\n{}}}\n'.format(str(next(iter(self.feature_set))), var_range, str(self.name), str(self.expr), str(self.body))
+        params = "" if not self.param_list else "{}, ".format(", ".join(str(x) for x in self.param_list))
+        return 'switch({}, {}, {}, {}{}) {{\n{}}}\n'.format(next(iter(self.feature_set)), var_range, self.name, params, self.expr, self.body)
 
 
 class SwitchBody:
@@ -89,7 +117,9 @@ class SwitchBody:
         self.ranges = ranges
         self.default = default
 
-    def reduce_expressions(self, var_feature):
+    def reduce_expressions(self, var_feature, extra_dicts = None):
+        if extra_dicts is None:
+            extra_dicts = []
         for r in self.ranges[:]:
             if r.min is r.max and isinstance(r.min, expression.Identifier) and r.min.value == 'default':
                 if self.default is not None:
@@ -97,9 +127,9 @@ class SwitchBody:
                 self.default = r.result
                 self.ranges.remove(r)
             else:
-                r.reduce_expressions(var_feature)
+                r.reduce_expressions(var_feature, extra_dicts)
         if self.default is not None and self.default.value is not None:
-            self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_feature)
+            self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_feature, extra_dicts)
 
 
     def debug_print(self, indentation):
@@ -122,11 +152,13 @@ class SwitchRange:
         self.result = result
         self.unit = unit
 
-    def reduce_expressions(self, var_feature):
+    def reduce_expressions(self, var_feature, extra_dicts = None):
+        if extra_dicts is None:
+            extra_dicts = []
         self.min = self.min.reduce(global_constants.const_list)
         self.max = self.max.reduce(global_constants.const_list)
         if self.result.value is not None:
-            self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
+            self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature, extra_dicts)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Min:')

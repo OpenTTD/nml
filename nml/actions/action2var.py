@@ -38,14 +38,21 @@ class Action2Var(action2.Action2):
                   action2.
     @ivar ranges: C{list} of L{VarAction2Range}
     """
-    def __init__(self, feature, name, pos, type_byte):
+    def __init__(self, feature, name, pos, type_byte, param_registers=None):
         action2.Action2.__init__(self, feature, name, pos)
         self.type_byte = type_byte
         self.ranges = []
+        self.param_registers = param_registers or []
 
     def resolve_tmp_storage(self):
+        # A return action may use the parameters of its parent
+        # Make sure param registers are not reused
         for var in self.var_list:
-            if isinstance(var, VarAction2StoreTempVar):
+            if isinstance(var, VarAction2LoadCallParam):
+                self.remove_tmp_location(var.parameter, False)
+
+        for var in self.param_registers + self.var_list: # Allocate param registers first
+            if isinstance(var, (VarAction2StoreTempVar, VarAction2CallParam)):
                 if not self.tmp_locations:
                     raise generic.ScriptError("There are not enough registers available " +
                             "to perform all required computations in switch blocks. " +
@@ -256,11 +263,12 @@ class VarAction2CallParam:
             load_var.parameter = register
 
 class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
-    def __init__(self, param):
+    def __init__(self, param, name):
         VarAction2Var.__init__(self, 0x7D, 0, 0)
         expression.Expression.__init__(self, None)
         assert isinstance(param, VarAction2CallParam)
         param.load_vars.append(self)
+        self.name = name
         # Register is stored in parameter
 
     def write(self, file, size):
@@ -279,6 +287,9 @@ class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
     def supported_by_actionD(self, raise_error):
         assert not raise_error
         return False
+
+    def __str__(self):
+        return self.name
 
 class VarAction2StoreCallParam(VarAction2Var):
     def __init__(self, param):
@@ -557,6 +568,38 @@ class Varaction2Parser:
     def parse_proc_call(self, expr):
         assert isinstance(expr, expression.SpriteGroupRef)
         var_access = VarAction2ProcCallVar(expr)
+        target = action2.resolve_spritegroup(expr.name)
+        refs = expr.collect_references()
+
+        # Fill param registers for the call
+        tmp_vars = []
+        for i, param in enumerate(expr.param_list):
+            if i > 0: # No operator before first param as per advanced VarAct2 syntax
+                self.var_list.append(nmlop.VAL2)
+                self.var_list_size += 1
+            if refs != [expr]:
+                # For f(x, g(y)), x can be overwritten by y if f and g share the same param registers
+                # Use temporary variables as an intermediate step
+                store_tmp = VarAction2StoreTempVar()
+                tmp_vars.append((store_tmp, VarAction2StoreCallParam(target.register_map[self.feature][i])))
+            else:
+                store_tmp = VarAction2StoreCallParam(target.register_map[self.feature][i])
+            self.parse_expr(reduce_varaction2_expr(param, self.feature))
+            self.var_list.append(nmlop.STO_TMP)
+            self.var_list.append(store_tmp)
+            self.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
+
+        # Fill param registers with temporary variables if needed
+        for (src, dest) in tmp_vars:
+            self.var_list.append(nmlop.VAL2)
+            self.var_list.append(src)
+            self.var_list.append(nmlop.STO_TMP)
+            self.var_list.append(dest)
+            self.var_list_size += src.get_size() + dest.get_size() + 2 # Add 2 for operators
+
+        if expr.param_list:
+            self.var_list.append(nmlop.VAL2)
+            self.var_list_size += 1
         self.var_list.append(var_access)
         self.var_list_size += var_access.get_size()
         self.proc_call_list.append(expr)
@@ -970,7 +1013,7 @@ def parse_varaction2(switch_block):
     action_list = action2real.create_spriteset_actions(switch_block)
 
     feature = next(iter(switch_block.feature_set))
-    varaction2 = Action2Var(feature, switch_block.name.value, switch_block.pos, switch_block.var_range)
+    varaction2 = Action2Var(feature, switch_block.name.value, switch_block.pos, switch_block.var_range, switch_block.register_map[get_feature(switch_block)])
 
     expr = reduce_varaction2_expr(switch_block.expr, get_feature(switch_block))
 
