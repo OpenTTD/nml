@@ -48,7 +48,8 @@ class Action2Layout(action2.Action2):
         if len(self.sprite_list) == 0:
             size += 9
 
-        action2.Action2.write_sprite_start(self, file, size)
+        regs = ["{} : register {:X}".format(reg.name, reg.register) for reg in self.param_registers]
+        action2.Action2.write_sprite_start(self, file, size, regs)
         if advanced:
             file.print_byte(0x40 | len(self.sprite_list))
         else:
@@ -378,7 +379,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     param_map = {}
     param_registers = []
     for i, param in enumerate(spritelayout.param_list):
-        reg = action2var.VarAction2CallParam()
+        reg = action2var.VarAction2CallParam(param.value)
         param_registers.append(reg)
         param_map[param.value] = reg
     param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))

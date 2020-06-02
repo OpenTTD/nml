@@ -51,6 +51,8 @@
 FF
 
 // Name: brewery_sprite_layout - feature 07
+// building_sprite : register 8B
+// with_smoke : register 8C
 22 * 49 02 07 FF \b67 \dx00000F8D \wx0000
 \dxC0000000 \wx0002 \b0 \b0 80 83
 \dx00000000 \wx0003 \b0 \b0 \b0 \b16 \b16 \b48 85 86
@@ -77,7 +79,7 @@ FF
 \2& 1A 20 \dx00000001
 \2^ 1A 20 \dx00000001
 \2sto 1A 20 \dx00000084
-\2r 7D 8B 20 \dxFFFFFFFF
+\2r 7D 8B 20 \dxFFFFFFFF 	// building_sprite
 \2cmp 1A 20 \dxFFFFFFFF
 \2& 1A 20 \dx00000001
 \2| 7D 84 20 \dxFFFFFFFF
@@ -87,13 +89,13 @@ FF
 \2cmp 1A 20 \dx00000004
 \2& 1A 20 \dx00000001
 \2* 1A 20 \dx00000003
-\2+ 7D 8B 20 \dxFFFFFFFF
+\2+ 7D 8B 20 \dxFFFFFFFF 	// building_sprite
 \2sto 1A 20 \dx00000086
 \2r 46 20 \dx000000FF
 \2cmp 1A 20 \dx00000000
 \2& 1A 20 \dx00000001
 \2sto 1A 20 \dx00000087
-\2r 7D 8C 20 \dxFFFFFFFF
+\2r 7D 8C 20 \dxFFFFFFFF 	// with_smoke
 \2u< 1A 20 \dx00000001
 \2^ 1A 20 \dx00000001
 \2| 7D 87 20 \dxFFFFFFFF
