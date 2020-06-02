@@ -90,7 +90,8 @@ class Action2Var(action2.Action2):
             else:
                 size += var.get_size()
 
-        self.write_sprite_start(file, size)
+        regs = ["{} : register {:X}".format(reg.name, reg.register) for reg in self.param_registers]
+        self.write_sprite_start(file, size, regs)
         file.print_bytex(self.type_byte)
         file.newline()
         for var in self.var_list:
@@ -250,10 +251,11 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
 # Temporary load and store classes used for spritelayout parameters
 # Register is allocated in a separate entity
 class VarAction2CallParam:
-    def __init__(self):
+    def __init__(self, name):
         self.register = None
         self.store_vars = []
         self.load_vars = []
+        self.name = name
 
     def set_register(self, register):
         self.register = register
@@ -269,6 +271,7 @@ class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
         assert isinstance(param, VarAction2CallParam)
         param.load_vars.append(self)
         self.name = name
+        self.comment = param.name
         # Register is stored in parameter
 
     def write(self, file, size):

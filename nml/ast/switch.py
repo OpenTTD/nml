@@ -60,7 +60,7 @@ class Switch(switch_base_class):
         param_map = {}
         param_registers = []
         for i, param in enumerate(self.param_list):
-            reg = action2var.VarAction2CallParam()
+            reg = action2var.VarAction2CallParam(param.value)
             param_registers.append(reg)
             param_map[param.value] = reg
         param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))
