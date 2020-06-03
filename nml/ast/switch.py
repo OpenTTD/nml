@@ -51,8 +51,8 @@ class Switch(switch_base_class):
     def collect_references(self):
         all_refs = self.expr.collect_references()
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
-            if result is not None and isinstance(result.value, expression.SpriteGroupRef):
-                all_refs.append(result.value)
+            if result is not None and result.value is not None:
+                all_refs += result.value.collect_references()
         return all_refs
 
     def debug_print(self, indentation):
@@ -256,8 +256,7 @@ class RandomSwitch(switch_base_class):
     def collect_references(self):
         all_refs = []
         for choice in self.choices:
-            if isinstance(choice.result.value, expression.SpriteGroupRef):
-                all_refs.append(choice.result.value)
+            all_refs += choice.result.value.collect_references()
         return all_refs
 
     def debug_print(self, indentation):
