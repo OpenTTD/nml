@@ -79,8 +79,7 @@ class SpriteGroupRef(Expression):
         return True
 
     def collect_references(self):
-        if self.is_procedure: return [self]
-        return []
+        return [self]
 
     def type(self):
         if self.is_procedure: return Type.INTEGER

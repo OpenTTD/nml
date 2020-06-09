@@ -228,8 +228,7 @@ class GraphicsBlock(graphics_base_class):
     def collect_references(self):
         all_refs = []
         for result in [g.result for g in self.graphics_list] + ([self.default_graphics] if self.default_graphics is not None else []):
-            if isinstance(result.value, expression.SpriteGroupRef):
-                all_refs.append(result.value)
+            all_refs += result.value.collect_references()
         return all_refs
 
     def debug_print(self, indentation):

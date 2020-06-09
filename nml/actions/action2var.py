@@ -729,6 +729,9 @@ def create_return_action(expr, feature, name, var_range):
     varaction2.default_result = expression.ConstantNumeric(0) # Bogus result, it's the nvar == 0 that matters
     varaction2.default_comment = 'Return computed value'
 
+    for proc in varact2parser.proc_call_list:
+        action2.add_ref(proc, varaction2, True)
+
     ref = expression.SpriteGroupRef(expression.Identifier(name), [], None, varaction2)
     action_list.append(varaction2)
     return (action_list, ref)
