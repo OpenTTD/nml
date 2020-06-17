@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, nmlop
 
-callbacks = 0x14 * [{}]
+callbacks = 0x15 * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -299,4 +299,10 @@ callbacks[0x13] = {
     'catenary_back'   : {'type': 'cargo', 'num': 0x05},
     'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
     'depots'          : {'type': 'cargo', 'num': 0x08},
+}
+
+# Roadstops
+callbacks[0x14] = {
+    #'fences'          : {'type': 'cargo', 'num': 0x01},
+    'default'         : {'type': 'cargo', 'num': None},
 }

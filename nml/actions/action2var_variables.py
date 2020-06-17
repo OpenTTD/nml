@@ -16,10 +16,10 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import expression, nmlop, generic
 
 # Use feature 0x14 for towns (accessible via station/house/industry parent scope)
-varact2vars = 0x15 * [{}]
-varact2vars60x = 0x15 * [{}]
-# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13
-varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x14, None, 0x14, 0x14, None, 0x0A, 0x14, None, None, None, None, 0x14, None, None, None, None]
+varact2vars = 0x16 * [{}]
+varact2vars60x = 0x16 * [{}]
+# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14
+varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x15, None, 0x15, 0x15, None, 0x0A, 0x15, None, None, None, None, 0x15, None, None, None, None, None]
 
 def default_60xvar(name, args, pos, info):
     """
@@ -729,6 +729,11 @@ varact2vars_tramtype = {
 }
 # Tramtypes have no 60+x variables
 
+# Roadstops
+varact2vars_roadstop = {
+    'view'                  : {'var': 0x40, 'start': 0, 'size': 8},
+    'current_roadtype'      : {'var': 0x41, 'start': 0, 'size': 8},
+}
 
 #
 # Towns are not a true feature, but accessible via the parent scope of e.g. industries, stations
@@ -777,4 +782,5 @@ varact2vars[0x11] = varact2vars_airporttiles
 varact2vars60x[0x11] = varact2vars60x_airporttiles
 varact2vars[0x12] = varact2vars_roadtype
 varact2vars[0x13] = varact2vars_tramtype
-varact2vars[0x14] = varact2vars_towns
+varact2vars[0x14] = varact2vars_roadstop
+varact2vars[0x15] = varact2vars_towns

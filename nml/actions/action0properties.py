@@ -152,7 +152,7 @@ class Action0Property(BaseAction0Property):
 #
 # 'first' (value doesn't matter) if the property should be set first (generally a substitute type)
 
-properties = 0x14 * [None]
+properties = 0x15 * [None]
 
 #
 # Some helper functions that are used for multiple features
@@ -1119,4 +1119,16 @@ properties[0x13] = {
     'requires_tramtype_list'   : {'custom_function': lambda x: label_list(x, 0x18, "Tramtype")},
     'introduces_tramtype_list' : {'custom_function': lambda x: label_list(x, 0x19, "Tramtype")},
     'alternative_tramtype_list': {'custom_function': lambda x: label_list(x, 0x1D, "Tramtype")},
+}
+
+#
+# Feature 0x14 (RoadStops)
+#
+
+properties[0x14] = {
+    'class'                   : {'size': 4, 'num': 0x08, 'string_literal': 4},
+    'type'                    : {'size': 1, 'num': 0x09},
+    'name'                    : {'size': 2, 'num': 0x0A, 'string': 0xDC},
+    'classname'               : {'size': 2, 'num': 0x0B, 'string': 0xDC},
+    'draw_default_roads'      : {'size': 1, 'num': 0x0C},
 }

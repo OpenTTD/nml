@@ -195,8 +195,8 @@ def free_references(source_action):
 
 # Features using sprite groups directly: vehicles, canals, cargos, railtypes, airports, roadtypes, tramtypes
 features_sprite_group = [0x00, 0x01, 0x02, 0x03, 0x05, 0x0B, 0x0D, 0x10, 0x12, 0x13]
-# Features using sprite layouts: stations, houses, industry tiles, objects and airport tiles
-features_sprite_layout = [0x04, 0x07, 0x09, 0x0F, 0x11]
+# Features using sprite layouts: stations, houses, industry tiles, objects, airport tiles and road stops
+features_sprite_layout = [0x04, 0x07, 0x09, 0x0F, 0x11, 0x14]
 # All features that need sprite sets
 features_sprite_set = features_sprite_group + features_sprite_layout
 
