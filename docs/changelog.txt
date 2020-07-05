@@ -1,3 +1,14 @@
+0.5.3 (2020-07-05)
+------------------------------------------------------------------------
+This release primarily restores legacy industry properties and vars which were removed in NML 0.5.0.  This is done for compatibility, so that older industry grfs can still be compiled with NML 0.5.3.  
+
+See the NML 0.5.0 changelog entry for a list of the legacy industry properties and vars that were removed, and are restored in NML 0.5.3. A warning will be shown when these are used, and they may be removed again in some future version.
+
+- Change: Show more info in `nmlc --version
+- Change: Reintroduce industry property 0.4 syntax for compatibility
+- Fix: Rounding errors for some speed values (#147)
+
+
 0.5.2 (2020-05-17)
 ------------------------------------------------------------------------
 This release primarily fixes a spritelayout-related bug introduced in 0.5.1 that may affect many grfs.
