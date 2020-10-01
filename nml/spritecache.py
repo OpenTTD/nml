@@ -13,7 +13,10 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import array, json, os
+import array
+import json
+import os
+
 from nml import generic
 
 keep_orphaned = True
