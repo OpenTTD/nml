@@ -381,12 +381,18 @@ properties[0x00].update(general_veh_props)
 
 def roadveh_speed_prop(prop_info):
     # prop 08 value is min(value, 255)
-    prop08_value = lambda value: nmlop.MIN(value, 0xFF).reduce()
+    def prop08_value(value):
+        return nmlop.MIN(value, 0xFF).reduce()
+
     # prop 15 value is (value + 3) / 4
-    prop15_value = lambda value: nmlop.DIV(nmlop.ADD(value, 3), 4).reduce()
+    def prop15_value(value):
+        return nmlop.DIV(nmlop.ADD(value, 3), 4).reduce()
+
     # prop 15 should not be set if value(prop08_value) <= 255.
     # But as we test prop15 and prop15 = 0.25/prop08, test for 64:
-    prop15_test = lambda value: isinstance(value, ConstantNumeric) and value.value >= 0x40
+    def prop15_test(value):
+        return isinstance(value, ConstantNumeric) and value.value >= 0x40
+
     prop08 = {'size': 1, 'num': 0x08, 'value_function': prop08_value}
     prop15 = {'size': 1, 'num': 0x15, 'value_function': prop15_value, 'test_function': prop15_test}
     for key in prop_info:
