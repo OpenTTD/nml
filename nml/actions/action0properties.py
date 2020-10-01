@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 from nml import generic, nmlop
-from nml.expression import (BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral,
+from nml.expression import (ConstantNumeric, ConstantFloat, Array, StringLiteral,
                             Identifier, ProduceCargo, AcceptCargo, parse_string_to_dword)
 
 tilelayout_names = {}
@@ -473,7 +473,7 @@ properties[0x02].update(general_veh_props)
 #
 
 def aircraft_is_heli(value):
-    if isinstance(value, ConstantNumeric) and not value.value in (0, 2, 3):
+    if isinstance(value, ConstantNumeric) and value.value not in (0, 2, 3):
         raise generic.ScriptError("Invalid value for aircraft_type", value.pos)
     return nmlop.AND(value, 2).reduce()
 
@@ -594,7 +594,7 @@ def mt_house_old_id(value, num_ids, size_bit):
     # For substitute / override properties
     # Set value for tile i (0 .. 3) to (value + i)
     # Also validate that the size of the old house matches
-    if isinstance(value, ConstantNumeric) and not value.value in old_houses[size_bit]:
+    if isinstance(value, ConstantNumeric) and value.value not in old_houses[size_bit]:
         raise generic.ScriptError("Substitute / override house type must have the same size as the newly defined house.", value.pos)
     ret = [value]
     for i in range(1, num_ids):

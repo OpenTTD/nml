@@ -97,11 +97,11 @@ tail_text = """\
       <!-- Preprocessor commands starting with a hash - Main switch for preprocessor -->
       <context attribute="Error" lineEndContext="#pop" name="AfterHash">
         <!-- define, elif, else, endif, error, if, ifdef, ifndef, include, include_next, line, pragma, undef, warning -->
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\s*if(?:def|ndef)?(?=\s+\S)" insensitive="true" beginRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\s*endif" insensitive="true" endRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Define" String="#\s*define.*((?=\\))" insensitive="true" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\s*(?:el(?:se|if)|include(?:_next)?|define|undef|line|error|warning|pragma)" insensitive="true" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\s+[0-9]+" insensitive="true" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s*if(?:def|ndef)?(?=\\s+\\S)" insensitive="true" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s*endif" insensitive="true" endRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Define" String="#\\s*define.*((?=\\))" insensitive="true" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s*(?:el(?:se|if)|include(?:_next)?|define|undef|line|error|warning|pragma)" insensitive="true" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s+[0-9]+" insensitive="true" firstNonSpace="true" />
       </context>
       <!-- Preprocessor instructions -->
       <context attribute="Preprocessor" lineEndContext="#pop" name="Preprocessor">

@@ -2,6 +2,14 @@
 max-line-length = 120
 inline-quotes = double
 
-# We use 'black' for coding style; these next two warnings are not PEP-8
-# compliant.
-ignore = E203, W503
+# We use 'black' for coding style; these next two warnings are not PEP-8 compliant.
+# E241 is so we can align data tables in a pleasing way (black fixes issues outside of nofmt blocks).
+ignore = E203, E241, W503
+per-file-ignores =
+    # Ignore unused imports
+    nml/expression/__init__.py:F401
+    # Block formatting
+    nml/actions/real_sprite.py:E126,E131
+    nml/palette.py:E126,E131
+
+exclude = generated

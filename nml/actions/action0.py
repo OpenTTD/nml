@@ -337,7 +337,9 @@ def adjust_value(value, org_value, unit, ottd_convert_func):
         value = expression.ConstantNumeric(int(value.value + 1), value.pos)
     higher_value = value
 
-    if abs(ottd_convert_func(lower_value, unit) - org_value.value) < abs(ottd_convert_func(higher_value, unit) - org_value.value):
+    lower_value_ottd = abs(ottd_convert_func(lower_value, unit) - org_value.value)
+    higher_value_ottd = abs(ottd_convert_func(higher_value, unit) - org_value.value)
+    if lower_value_ottd < higher_value_ottd:
         return lower_value
     return higher_value
 
@@ -425,8 +427,6 @@ def get_property_info_list(feature, name):
     @return: A list of dictionaries with property information
     @rtype: C{list} of C{dict}
     """
-    global properties
-
     #Validate feature
     assert feature in range (0, len(properties)) #guaranteed by item
     if properties[feature] is None:
@@ -490,7 +490,7 @@ def parse_property_value(prop_info, value, unit = None, size_bit = None):
 
         # Divide by conversion factor specified by unit
         if unit is not None:
-            if not 'unit_type' in prop_info or unit.type != prop_info['unit_type']:
+            if 'unit_type' not in prop_info or unit.type != prop_info['unit_type']:
                 raise generic.ScriptError("Invalid unit for property", value.pos)
             unit_mul, unit_div = unit.convert, 1
             if isinstance(unit_mul, tuple):
@@ -580,7 +580,7 @@ def parse_property(prop_info, value_list, feature, id):
                 value = expression.ConstantNumeric(0)
 
             elif isinstance(value, expression.String):
-                if not 'string' in prop_info: raise generic.ScriptError("String used as value for non-string property: " + str(prop_info['num']), value.pos)
+                if 'string' not in prop_info: raise generic.ScriptError("String used as value for non-string property: " + str(prop_info['num']), value.pos)
                 string_range = prop_info['string']
                 stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
                 value = expression.ConstantNumeric(stringid)
@@ -616,7 +616,6 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
     @param feature: Feature of the associated item
     @type feature: C{int}
     """
-    global properties
     first_warnings = [(info, pos_list[i]) for i, info in enumerate(prop_info_list) if 'first' in info and i != 0]
     for info, pos in first_warnings:
         for prop_name, prop_info in properties[feature].items():
@@ -670,14 +669,14 @@ def parse_property_block(prop_list, feature, id, size):
 
     for prop_info, value_list in zip(prop_info_list, value_list_list):
         if 'test_function' in prop_info and not prop_info['test_function'](*value_list): continue
-        properties, extra_actions, mods, extra_append_actions = parse_property(prop_info, value_list, feature, id)
+        props, extra_actions, mods, extra_append_actions = parse_property(prop_info, value_list, feature, id)
         action_list.extend(extra_actions)
         action_list_append.extend(extra_append_actions)
         for mod in mods:
             act6.modify_bytes(mod[0], mod[1], mod[2] + offset)
-        for p in properties:
+        for p in props:
             offset += p.get_size()
-        action0.prop_list.extend(properties)
+        action0.prop_list.extend(props)
 
     if len(act6.modifications) > 0: action_list.append(act6)
     if len(action0.prop_list) != 0:

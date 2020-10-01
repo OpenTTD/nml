@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml.actions import action2, action2var, action6, actionD
-from nml import expression, nmlop, global_constants
+from nml import expression, nmlop, global_constants, generic
 
 class Action2Production(action2.Action2):
     """
@@ -161,16 +161,14 @@ def get_production_v2_actions(produce):
     @type produce: L{Produce2}
     """
     action_list = []
-    act6 = action6.Action6()
     action6.free_parameters.save()
 
-    result_list = []
     varact2parser = action2var.Varaction2Parser(0x0A)
 
     def resolve_cargoitem(item):
         cargolabel = item.name.value
         if cargolabel not in global_constants.cargo_numbers:
-            raise generic.ScriptError("Cargo label {0} not found in your cargo table".format(cargolabel), pos)
+            raise generic.ScriptError("Cargo label {0} not found in your cargo table".format(cargolabel), produce.pos)
         cargoindex = global_constants.cargo_numbers[cargolabel]
         valueregister = resolve_prodcb_register(item.value, varact2parser)
         return (cargoindex, valueregister)

@@ -79,7 +79,7 @@ def parse_error_block(error):
         msg_string = error.msg
         grfstrings.validate_string(msg_string)
         langs.extend(grfstrings.get_translations(msg_string))
-        for l in langs: assert l is not None
+        for lang in langs: assert lang is not None
     else:
         custom_msg = False
         msg = error.msg.reduce_constant().value
@@ -89,7 +89,7 @@ def parse_error_block(error):
         if isinstance(error.data, expression.String):
             grfstrings.validate_string(error.data)
             langs.extend(grfstrings.get_translations(error.data))
-            for l in langs: assert l is not None
+            for lang in langs: assert lang is not None
         elif not isinstance(error.data, expression.StringLiteral):
             raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos)
 

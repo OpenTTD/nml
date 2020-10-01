@@ -237,7 +237,7 @@ class SpriteCache:
 
                 if is_valid:
                     self.cached_sprites[key] = value
-        except:
+        except Exception:
             generic.print_warning(index_file.name + " contains invalid data, ignoring. Please remove the file and file a bug report if this warning keeps appearing")
             self.cached_sprites = {} # Clear cache
 

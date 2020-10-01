@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import os, codecs, glob, re
+import os, glob, re
 from nml import generic
 
 def utf8_get_size(char):
@@ -147,7 +147,7 @@ def get_translations(string):
     for param in string.params:
         if not isinstance(param, nml.expression.String): continue
         param_translations = get_translations(param)
-        translations.extend([langid for langid in param_translations if not langid in translations])
+        translations.extend([langid for langid in param_translations if langid not in translations])
 
     return translations
 
@@ -570,7 +570,7 @@ class NewGRFString:
             #
             command = StringCommand(command_name, cmd_pos, pos)
             if end >= len(string):
-                raise generic.ScriptError("Missing '}' from command \"{}\"".format(string[start:]), pos)
+                raise generic.ScriptError("Missing '}}' from command \"{}\"".format(string[start:]), pos)
             if string[end] == '.':
                 if command_name not in commands or 'allow_case' not in commands[command_name]:
                     raise generic.ScriptError("Command \"{}\" can't have a case".format(command_name), pos)
@@ -586,7 +586,7 @@ class NewGRFString:
                 arg_start = end + 1
                 end = string.find('}', end + 1)
                 if end == -1 or not command.set_arguments(string[arg_start:end]):
-                    raise generic.ScriptError("Missing '}' from command \"{}\"".format(string[start:]), pos)
+                    raise generic.ScriptError("Missing '}}' from command \"{}\"".format(string[start:]), pos)
             command.validate_arguments(lang)
             if command_name == 'G=' and self.components:
                 raise generic.ScriptError("Set-gender command {G=} must be at the start of the string", pos)

@@ -30,8 +30,7 @@ temp1 = units | keywords | functions | layouts | set(["int", "bool"])
 block_names_table = sorted(temp1)
 
 
-
-##Create list of properties and variables
+# Create list of properties and variables
 var_tables = [
     action2var_variables.varact2_globalvars,
     action2var_variables.varact2vars_vehicles,
