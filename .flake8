@@ -12,4 +12,7 @@ per-file-ignores =
     nml/actions/real_sprite.py:E126,E131
     nml/palette.py:E126,E131
 
-exclude = generated
+exclude =
+    generated
+    nml/actions/action2var_variables.py
+    nml/actions/action3_callbacks.py
