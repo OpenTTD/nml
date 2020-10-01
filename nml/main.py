@@ -426,10 +426,10 @@ def run():
         if developmode: raise # Reraise exception in developmode
         sys.exit(1)
 
-    except SystemExit as ex:
+    except SystemExit:
         raise
 
-    except KeyboardInterrupt as ex:
+    except KeyboardInterrupt:
         generic.print_error('Application forcibly terminated by user.')
 
         if developmode: raise # Reraise exception in developmode

@@ -17,9 +17,7 @@ import datetime, calendar, math
 from functools import reduce
 
 from nml import generic, global_constants, nmlop
-from .array import Array
 from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
-from .binop import BinOp
 from .bitmask import BitMask
 from .cargo import ProduceCargo, AcceptCargo
 from .parameter import parse_string_to_dword

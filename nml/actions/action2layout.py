@@ -234,7 +234,7 @@ class Action2LayoutSprite:
         assert isinstance(value, expression.Expression)
         name = name.value
 
-        if not name in self.params:
+        if name not in self.params:
             raise generic.ScriptError("Unknown sprite parameter '{}'".format(name), value.pos)
         if self.is_set(name):
             raise generic.ScriptError("Sprite parameter '{}' can be set only once per sprite.".format(name), value.pos)
@@ -289,7 +289,7 @@ class Action2LayoutSprite:
         if not isinstance(value, expression.ConstantNumeric):
             raise generic.ScriptError("Expected a compile-time constant.", value.pos)
 
-        if not value.value in (0, 1, 2):
+        if value.value not in (0, 1, 2):
             raise generic.ScriptError("Value of 'recolour_mode' must be RECOLOUR_NONE, RECOLOUR_TRANSPARENT or RECOLOUR_REMAP.")
         return value.value
 
@@ -356,7 +356,7 @@ class Action2LayoutSprite:
         value = expression.Not(value)
         try:
             value = value.reduce()
-        except:
+        except generic.ScriptError:
             pass
         self.create_register(name, value)
         return None

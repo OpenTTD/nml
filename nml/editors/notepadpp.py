@@ -71,7 +71,8 @@ string5="""\
 </NotepadPlus>
 """
 
-#Build np++ xml file
+
+# Build np++ xml file
 def write_file(fname):
     handle = open(fname, "w")
 

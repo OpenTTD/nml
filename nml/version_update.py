@@ -28,7 +28,8 @@ def get_git_version():
         # Refresh the index to make sure file stat info is in sync
         try:
             get_child_output(["git", "-C", path, "update-index", "--refresh"], env=env)
-        except:
+        except subprocess.CalledProcessError:
+            # Not an issue if this fails
             pass
 
         # Look for modifications

@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import hashlib, os
-from nml import generic, output_base, grfstrings, spriteencoder
+from nml import generic, output_base, grfstrings
 
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename):

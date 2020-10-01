@@ -222,7 +222,7 @@ def parse_conditional_block(cond_list):
     # actions (like action6) can be skipped safely
     for block in blocks:
         block['param_dst'], block['cond_actions'], block['cond_type'], block['cond_value'], block['cond_value_size'] = parse_conditional(block['expr'])
-        if not 'last_block' in block:
+        if 'last_block' not in block:
             block['action_list'] = [actionD.ActionD(expression.ConstantNumeric(param_skip_all), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0), expression.ConstantNumeric(0))]
         else:
             block['action_list'] = []

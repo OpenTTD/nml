@@ -296,8 +296,8 @@ class RecolourSprite:
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Recolour sprite, mapping:')
-        for assignment in self.mapping:
-            generic.print_dbg(indentation + 2, '{}: {};'.format(assignment.name, assignment.value))
+        for recolour in self.mapping:
+            generic.print_dbg(indentation + 2, '{}: {};'.format(recolour.name, recolour.value))
 
     def get_labels(self):
         labels = {}
@@ -319,8 +319,8 @@ class RecolourSprite:
     def __str__(self):
         ret = "" if self.label is None else str(self.label) + ": "
         ret += "recolour_sprite {\n"
-        for assignment in self.mapping:
-            ret += '{}: {};'.format(assignment.name, assignment.value)
+        for recolour in self.mapping:
+            ret += '{}: {};'.format(recolour.name, recolour.value)
         ret += "}"
         return ret
 
@@ -333,13 +333,13 @@ class RecolourSpriteAction(SpriteAction):
     def prepare_output(self, sprite_num):
         SpriteAction.prepare_output(self, sprite_num)
         colour_mapping = {}
-        for assignment in self.sprite.mapping:
-            if assignment.value.max is not None and assignment.name.max.value - assignment.name.min.value != assignment.value.max.value - assignment.value.min.value:
-                raise generic.ScriptError("From and to ranges in a recolour block need to have the same size", assignment.pos)
-            for i in range(assignment.name.max.value - assignment.name.min.value + 1):
-                idx = assignment.name.min.value + i
-                val = assignment.value.min.value
-                if assignment.value.max is not None:
+        for recolour in self.sprite.mapping:
+            if recolour.value.max is not None and recolour.name.max.value - recolour.name.min.value != recolour.value.max.value - recolour.value.min.value:
+                raise generic.ScriptError("From and to ranges in a recolour block need to have the same size", recolour.pos)
+            for i in range(recolour.name.max.value - recolour.name.min.value + 1):
+                idx = recolour.name.min.value + i
+                val = recolour.value.min.value
+                if recolour.value.max is not None:
                     val += i
                 colour_mapping[idx] = val
         for i in range(256):
