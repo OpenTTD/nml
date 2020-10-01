@@ -16,7 +16,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 """
 Abstract base classes that implements common functionality for output classes
 """
-import array, io
+import array
+import io
 
 class OutputBase:
     """

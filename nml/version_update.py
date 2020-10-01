@@ -1,4 +1,5 @@
-import subprocess, os
+import os
+import subprocess
 
 def get_child_output(cmd, env=None, stderr=None):
     """

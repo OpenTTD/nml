@@ -13,7 +13,11 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import sys, os, codecs, optparse
+import codecs
+import optparse
+import os
+import sys
+
 from nml import generic, grfstrings, parser, version_info, output_nml, output_nfo, output_grf, output_dep, palette, spriteencoder, spritecache, global_constants
 from nml.actions import action2layout, action2var, action8, sprite_count, real_sprite, action4, action0, action1, action2, action6, action7, action11, actionF
 from nml.ast import grf, alt_sprites
