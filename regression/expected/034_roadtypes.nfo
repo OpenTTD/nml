@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 15 00 12 \b2 01 FF \wx0000 
-08 "ROAD" 
-14 \wx0104 
+0 * 15 00 12 \b2 01 FF \wx0000
+08 "ROAD"
+14 \wx0104
 

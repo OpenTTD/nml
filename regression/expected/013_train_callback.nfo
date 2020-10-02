@@ -5,136 +5,136 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d75 
+0 * 4 \d75
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "W" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 52 08 08 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00 
-3 * 208 00 08 \b1 32 FF \wx0000 
-09 "WDPR" "SCRP" "CMNT" "WOOD" "LVST" 
-"STEL" "VEHI" "BRCK" "WOOL" "BUBL" 
-"TOYS" "FZDR" "FRUT" "FRVG" "FOOD" 
-"OIL_" "GOOD" "WATR" "MILK" "COAL" 
-"IORE" "AORE" "CLAY" "GRVL" "SAND" 
-"GRAI" "RSGR" "MAIZ" "CORE" "FERT" 
-"CTCD" "SULP" "WHEA" "RFPR" "COLA" 
-"PETR" "PAPR" "TOFF" "SUGR" "PASS" 
-"MAIL" "BATT" "SWET" "RUBR" "FMSP" 
-"ENSP" "MNSP" "FICR" "PLAS" "PLST" 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "W"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 52 08 08 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 208 00 08 \b1 32 FF \wx0000
+09 "WDPR" "SCRP" "CMNT" "WOOD" "LVST"
+"STEL" "VEHI" "BRCK" "WOOL" "BUBL"
+"TOYS" "FZDR" "FRUT" "FRVG" "FOOD"
+"OIL_" "GOOD" "WATR" "MILK" "COAL"
+"IORE" "AORE" "CLAY" "GRVL" "SAND"
+"GRAI" "RSGR" "MAIZ" "CORE" "FERT"
+"CTCD" "SULP" "WHEA" "RFPR" "COLA"
+"PETR" "PAPR" "TOFF" "SUGR" "PASS"
+"MAIL" "BATT" "SWET" "RUBR" "FMSP"
+"ENSP" "MNSP" "FICR" "PLAS" "PLST"
 
-4 * 28 00 08 \b1 05 FF \wx0000 
-12 "RAIL" "ELRL" "MONO" "MGLV" "TRPD" 
+4 * 28 00 08 \b1 05 FF \wx0000
+12 "RAIL" "ELRL" "MONO" "MGLV" "TRPD"
 
-5 * 6 01 00 \b8 FF \wx0004 
+5 * 6 01 00 \b8 FF \wx0004
 
-6 temperate_railwagons.png 8bpp 0 25 8 24 -3 -12 normal 
-7 temperate_railwagons.png 8bpp 16 25 22 17 -14 -9 normal 
-8 temperate_railwagons.png 8bpp 48 25 32 12 -16 -8 normal 
-9 temperate_railwagons.png 8bpp 96 25 22 17 -6 -9 normal 
+6 temperate_railwagons.png 8bpp 0 25 8 24 -3 -12 normal
+7 temperate_railwagons.png 8bpp 16 25 22 17 -14 -9 normal
+8 temperate_railwagons.png 8bpp 48 25 32 12 -16 -8 normal
+9 temperate_railwagons.png 8bpp 96 25 22 17 -6 -9 normal
 
-10 temperate_railwagons.png 8bpp 0 250 8 24 -3 -12 normal 
-11 temperate_railwagons.png 8bpp 16 250 22 17 -14 -9 normal 
-12 temperate_railwagons.png 8bpp 48 250 32 12 -16 -8 normal 
-13 temperate_railwagons.png 8bpp 96 250 22 17 -6 -9 normal 
+10 temperate_railwagons.png 8bpp 0 250 8 24 -3 -12 normal
+11 temperate_railwagons.png 8bpp 16 250 22 17 -14 -9 normal
+12 temperate_railwagons.png 8bpp 48 250 32 12 -16 -8 normal
+13 temperate_railwagons.png 8bpp 96 250 22 17 -6 -9 normal
 
-14 arctic_railwagons.pcx 8bpp 0 25 8 24 -3 -12 normal 
-15 arctic_railwagons.pcx 8bpp 16 25 22 17 -14 -9 normal 
-16 arctic_railwagons.pcx 8bpp 48 25 32 12 -16 -8 normal 
-17 arctic_railwagons.pcx 8bpp 96 25 22 17 -6 -9 normal 
+14 arctic_railwagons.pcx 8bpp 0 25 8 24 -3 -12 normal
+15 arctic_railwagons.pcx 8bpp 16 25 22 17 -14 -9 normal
+16 arctic_railwagons.pcx 8bpp 48 25 32 12 -16 -8 normal
+17 arctic_railwagons.pcx 8bpp 96 25 22 17 -6 -9 normal
 
-18 arctic_railwagons.pcx 8bpp 0 250 8 24 -3 -12 normal 
-19 arctic_railwagons.pcx 8bpp 16 250 22 17 -14 -9 normal 
-20 arctic_railwagons.pcx 8bpp 48 250 32 12 -16 -8 normal 
-21 arctic_railwagons.pcx 8bpp 96 250 22 17 -6 -9 normal 
+18 arctic_railwagons.pcx 8bpp 0 250 8 24 -3 -12 normal
+19 arctic_railwagons.pcx 8bpp 16 250 22 17 -14 -9 normal
+20 arctic_railwagons.pcx 8bpp 48 250 32 12 -16 -8 normal
+21 arctic_railwagons.pcx 8bpp 96 250 22 17 -6 -9 normal
 
-22 temperate_railwagons.png 8bpp 0 225 8 24 -3 -12 normal 
-23 temperate_railwagons.png 8bpp 16 225 22 17 -14 -9 normal 
-24 temperate_railwagons.png 8bpp 48 225 32 12 -16 -8 normal 
-25 temperate_railwagons.png 8bpp 96 225 22 17 -6 -9 normal 
+22 temperate_railwagons.png 8bpp 0 225 8 24 -3 -12 normal
+23 temperate_railwagons.png 8bpp 16 225 22 17 -14 -9 normal
+24 temperate_railwagons.png 8bpp 48 225 32 12 -16 -8 normal
+25 temperate_railwagons.png 8bpp 96 225 22 17 -6 -9 normal
 
-26 temperate_railwagons.png 8bpp 0 350 8 24 -3 -12 normal 
-27 temperate_railwagons.png 8bpp 16 350 22 17 -14 -9 normal 
-28 temperate_railwagons.png 8bpp 48 350 32 12 -16 -8 normal 
-29 temperate_railwagons.png 8bpp 96 350 22 17 -6 -9 normal 
+26 temperate_railwagons.png 8bpp 0 350 8 24 -3 -12 normal
+27 temperate_railwagons.png 8bpp 16 350 22 17 -14 -9 normal
+28 temperate_railwagons.png 8bpp 48 350 32 12 -16 -8 normal
+29 temperate_railwagons.png 8bpp 96 350 22 17 -6 -9 normal
 
-30 temperate_railwagons.png 8bpp 0 150 8 24 -3 -12 normal 
-31 temperate_railwagons.png 8bpp 16 150 22 17 -14 -9 normal 
-32 temperate_railwagons.png 8bpp 48 150 32 12 -16 -8 normal 
-33 temperate_railwagons.png 8bpp 96 150 22 17 -6 -9 normal 
+30 temperate_railwagons.png 8bpp 0 150 8 24 -3 -12 normal
+31 temperate_railwagons.png 8bpp 16 150 22 17 -14 -9 normal
+32 temperate_railwagons.png 8bpp 48 150 32 12 -16 -8 normal
+33 temperate_railwagons.png 8bpp 96 150 22 17 -6 -9 normal
 
-34 temperate_railwagons.png 8bpp 0 275 8 24 -3 -12 normal 
-35 temperate_railwagons.png 8bpp 16 275 22 17 -14 -9 normal 
-36 temperate_railwagons.png 8bpp 48 275 32 12 -16 -8 normal 
-37 temperate_railwagons.png 8bpp 96 275 22 17 -6 -9 normal 
+34 temperate_railwagons.png 8bpp 0 275 8 24 -3 -12 normal
+35 temperate_railwagons.png 8bpp 16 275 22 17 -14 -9 normal
+36 temperate_railwagons.png 8bpp 48 275 32 12 -16 -8 normal
+37 temperate_railwagons.png 8bpp 96 275 22 17 -6 -9 normal
 
 // Name: bulk_wagon_coal_default_group - feature 00
-38 * 13 02 00 FF \b2 \b2 
-\w0 \w1 
-\w0 \w1 
+38 * 13 02 00 FF \b2 \b2
+\w0 \w1
+\w0 \w1
 
 // Name: bulk_wagon_coal_arctic_group - feature 00
-39 * 13 02 00 FE \b2 \b2 
-\w2 \w3 
-\w2 \w3 
+39 * 13 02 00 FE \b2 \b2
+\w2 \w3
+\w2 \w3
 
 // Name: bulk_wagon_coal2_group - feature 00
-40 * 13 02 00 FD \b2 \b2 
-\w4 \w5 
-\w4 \w5 
+40 * 13 02 00 FD \b2 \b2
+\w4 \w5
+\w4 \w5
 
 // Name: bulk_wagon_grain_group - feature 00
-41 * 13 02 00 FC \b2 \b2 
-\w6 \w7 
-\w6 \w7 
+41 * 13 02 00 FC \b2 \b2
+\w6 \w7
+\w6 \w7
 
 // Name: bulk_wagon_coal_default_switch
-42 * 15 02 00 FD 80 02 \b0 04 
+42 * 15 02 00 FD 80 02 \b0 04
 \wx00FF \wx00FF \wx00FF // (2/3) -> (3/4): bulk_wagon_coal_default_group;
 \wx00FD // (1/3) -> (1/4): bulk_wagon_coal2_group;
 
 // param[127] = (param[131] & 255)
-43 * 9 0D 7F \D& 83 FF \dx000000FF 
+43 * 9 0D 7F \D& 83 FF \dx000000FF
 
-44 * 7 06 
-7F 04 FF \wx0006 
-FF 
+44 * 7 06
+7F 04 FF \wx0006
+FF
 
 // Name: bulk_wagon_coal_climate_switch
-45 * 23 02 00 FD 89 
+45 * 23 02 00 FD 89
 1A 00 \dx00000000 	// param[127]
-\b1 
+\b1
 \wx00FE \dx00000001 \dx00000001 	// 1 .. 1: bulk_wagon_coal_arctic_group;
 \wx00FD // default: bulk_wagon_coal_default_switch;
 
 // Name: bulk_wagon_graphics_switch
-46 * 23 02 00 FC 89 
-47 00 \dx000000FF 
-\b1 
+46 * 23 02 00 FC 89
+47 00 \dx000000FF
+\b1
 \wx00FD \dx00000013 \dx00000013 	// 19 .. 19: bulk_wagon_coal_climate_switch;
 \wx00FC // default: bulk_wagon_grain_group;
 
 // Name: @CB_FAILED_REAL00
-47 * 9 02 00 FD \b1 \b1 
-\w0 
-\w0 
+47 * 9 02 00 FD \b1 \b1
+\w0
+\w0
 
 // Name: @CB_FAILED00
-48 * 23 02 00 FD 89 
-0C 00 \dx0000FFFF 
-\b1 
+48 * 23 02 00 FD 89
+0C 00 \dx0000FFFF
+\b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FD // Non-graphics callback, return graphics result
 
 // Name: bulk_wagon_cb_capacity_switch
-49 * 83 02 00 FE 89 
-47 00 \dx000000FF 
-\b7 
+49 * 83 02 00 FE 89
+47 00 \dx000000FF
+\b7
 \wx8019 \dx0000002F \dx0000002F 	// 47 .. 47: return 25;
 \wx8014 \dx0000000C \dx0000000C 	// 12 .. 12: return 20;
 \wx8014 \dx0000000D \dx0000000D 	// 13 .. 13: return 20;
@@ -145,9 +145,9 @@ FF
 \wx00FD // No default specified -> fail callback
 
 // Name: bulk_wagon_cb_weight_switch
-50 * 53 02 00 FD 89 
-47 00 \dx000000FF 
-\b4 
+50 * 53 02 00 FD 89
+47 00 \dx000000FF
+\b4
 \wx8012 \dx00000013 \dx00000013 	// 19 .. 19: return 18;
 \wx8012 \dx0000000C \dx0000000C 	// 12 .. 12: return 18;
 \wx8012 \dx0000000D \dx0000000D 	// 13 .. 13: return 18;
@@ -155,132 +155,132 @@ FF
 \wx00FD // No default specified -> fail callback
 
 // param[125] = (param[1] * 5000)
-51 * 9 0D 7D \D* 01 FF \dx00001388 
+51 * 9 0D 7D \D* 01 FF \dx00001388
 
 // param[126] = (param[125] + 698)
-52 * 9 0D 7E \D+ 7D FF \dx000002BA 
+52 * 9 0D 7E \D+ 7D FF \dx000002BA
 
 // param[127] = (param[126] / 1397)
-53 * 9 0D 7F \D/ 7E FF \dx00000575 
+53 * 9 0D 7F \D/ 7E FF \dx00000575
 
 // param[124] = (param[2] * 12500)
-54 * 9 0D 7C \D* 02 FF \dx000030D4 
+54 * 9 0D 7C \D* 02 FF \dx000030D4
 
 // param[125] = (param[124] + 6286)
-55 * 9 0D 7D \D+ 7C FF \dx0000188E 
+55 * 9 0D 7D \D+ 7C FF \dx0000188E
 
 // param[126] = (param[125] / 12573)
-56 * 9 0D 7E \D/ 7D FF \dx0000311D 
+56 * 9 0D 7E \D/ 7D FF \dx0000311D
 
 // param[123] = (param[3] * 8)
-57 * 9 0D 7B \D* 03 FF \dx00000008 
+57 * 9 0D 7B \D* 03 FF \dx00000008
 
 // param[124] = (param[123] + 2)
-58 * 9 0D 7C \D+ 7B FF \dx00000002 
+58 * 9 0D 7C \D+ 7B FF \dx00000002
 
 // param[125] = (param[124] / 5)
-59 * 9 0D 7D \D/ 7C FF \dx00000005 
+59 * 9 0D 7D \D/ 7C FF \dx00000005
 
 // param[122] = (param[4] * 2965)
-60 * 9 0D 7A \D* 04 FF \dx00000B95 
+60 * 9 0D 7A \D* 04 FF \dx00000B95
 
 // param[123] = (param[122] + 1105)
-61 * 9 0D 7B \D+ 7A FF \dx00000451 
+61 * 9 0D 7B \D+ 7A FF \dx00000451
 
 // param[124] = (param[123] / 2211)
-62 * 9 0D 7C \D/ 7B FF \dx000008A3 
+62 * 9 0D 7C \D/ 7B FF \dx000008A3
 
-63 * 22 06 
-7F 02 FF \wx000B 
-7E 02 FF \wx000E 
-7D 02 FF \wx0011 
-7C 02 FF \wx0014 
-FF 
+63 * 22 06
+7F 02 FF \wx000B
+7E 02 FF \wx000E
+7D 02 FF \wx0011
+7C 02 FF \wx0014
+FF
 
-64 * 22 00 00 \b5 01 FF \wx0074 
-09 \wx0024 
-09 \wx0000 
-09 \wx0000 
-09 \wx0000 
-0B \wx0000 
+64 * 22 00 00 \b5 01 FF \wx0074
+09 \wx0024
+09 \wx0000
+09 \wx0000
+09 \wx0000
+0B \wx0000
 
 // param[127] = (param[1] & 255)
-65 * 9 0D 7F \D& 01 FF \dx000000FF 
+65 * 9 0D 7F \D& 01 FF \dx000000FF
 
 // param[126] = (param[1] << -8)
-66 * 9 0D 7E \D<< 01 FF \dxFFFFFFF8 
+66 * 9 0D 7E \D<< 01 FF \dxFFFFFFF8
 
-67 * 12 06 
-7F 01 FF \wx004D 
-7E 01 FF \wx004F 
-FF 
+67 * 12 06
+7F 01 FF \wx004D
+7E 01 FF \wx004F
+FF
 
-68 * 82 00 00 \b26 01 FF \wx0074 
-06 0F 
-28 \wx0010 
-1D \dx00000000 
-29 \wx01CB 
-1D \dx00000000 
-2C \b4 
-00 01 0C 0D 
-1D \dx00000000 
-15 13 
-12 FD 
-2A \dx000A7A40 
-04 FF 
-26 00 
-03 1E 
-02 00 
-07 0A 
-17 B6 
-0D 05 
-09 \wx0000 
-1C 28 
-05 00 
-0B \wx0000 
-0E \dx00004C30 
-14 1E 
-16 00 
-24 00 
-25 00 
+68 * 82 00 00 \b26 01 FF \wx0074
+06 0F
+28 \wx0010
+1D \dx00000000
+29 \wx01CB
+1D \dx00000000
+2C \b4
+00 01 0C 0D
+1D \dx00000000
+15 13
+12 FD
+2A \dx000A7A40
+04 FF
+26 00
+03 1E
+02 00
+07 0A
+17 B6
+0D 05
+09 \wx0000
+1C 28
+05 00
+0B \wx0000
+0E \dx00004C30
+14 1E
+16 00
+24 00
+25 00
 
-69 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00 
+69 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00
 
-70 * 9 00 00 \b1 01 FF \wx0074 
-1E 08 
+70 * 9 00 00 \b1 01 FF \wx0074
+1E 08
 
 // Name: @action3_0
-71 * 33 02 00 FD 89 
-10 00 \dx000000FF 
-\b2 
+71 * 33 02 00 FD 89
+10 00 \dx000000FF
+\b2
 \wx00FE \dx00000014 \dx00000014 	// bulk_wagon_cb_capacity_switch;
 \wx00FD \dx00000016 \dx00000016 	// bulk_wagon_cb_weight_switch;
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_1
-72 * 33 02 00 FF 89 
-10 00 \dx000000FF 
-\b2 
+72 * 33 02 00 FF 89
+10 00 \dx000000FF
+\b2
 \wx801E \dx00000014 \dx00000014 	// return 30;
 \wx8019 \dx00000016 \dx00000016 	// return 25;
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_2
-73 * 33 02 00 FD 89 
-0C 00 \dx0000FFFF 
-\b2 
+73 * 33 02 00 FD 89
+0C 00 \dx0000FFFF
+\b2
 \wx00FE \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch;
 \wx00FD \dx00000036 \dx00000036 	// @action3_0;
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_3
-74 * 23 02 00 FC 89 
-0C 00 \dx0000FFFF 
-\b1 
+74 * 23 02 00 FC 89
+0C 00 \dx0000FFFF
+\b1
 \wx00FF \dx00000036 \dx00000036 	// @action3_1;
 \wx00FC // bulk_wagon_graphics_switch;
 
-75 * 12 03 00 01 FF \wx0074 \b1 
+75 * 12 03 00 01 FF \wx0074 \b1
 FF \wx00FC 	// @action3_3;
 \wx00FD 	// @action3_2;
 

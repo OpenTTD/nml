@@ -5,144 +5,144 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d22 
+0 * 4 \d22
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "A" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 165 08 08 "NML\04" "NML Example NewGRF: Industry" 00 "\8ENML Example NewGRF: Industry\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML." 00 
-3 * 37 04 00 FF 01 \wxD000 "\0DGoods produced this month: \90\7C" 00 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "A"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 165 08 08 "NML\04" "NML Example NewGRF: Industry" 00 "\8ENML Example NewGRF: Industry\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML." 00
+3 * 37 04 00 FF 01 \wxD000 "\0DGoods produced this month: \90\7C" 00
 
-4 * 52 00 08 \b1 0B FF \wx0000 
-09 "PASS" "COAL" "MAIL" "OIL_" "LVST" 
-"GOOD" "GRAI" "WOOD" "IORE" "STEL" 
-"VALU" 
+4 * 52 00 08 \b1 0B FF \wx0000
+09 "PASS" "COAL" "MAIL" "OIL_" "LVST"
+"GOOD" "GRAI" "WOOD" "IORE" "STEL"
+"VALU"
 
 // Name: consume_all_prod
-5 * 17 02 0A FF 02 \b3 01 01 08 02 06 03 \b2 09 81 05 82 83 
+5 * 17 02 0A FF 02 \b3 01 01 08 02 06 03 \b2 09 81 05 82 83
 
 // Name: consume_all_prod@registers
-6 * 97 02 0A FF 89 
-7D 02 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000080 
-\2r 7D 01 20 \dxFFFFFFFF 
-\2/ 1A 20 \dx00000002 
-\2+ 7D 80 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000081 
-\2r 7D 03 20 \dxFFFFFFFF 
-\2* 1A 20 \dx00000002 
-\2sto 1A 20 \dx00000082 
-\2r 1A 20 \dx00000000 
-\2sto 1A 00 \dx00000083 
-\b1 
-\wx00FF \dx00000000 \dx00000000 
-\wx00FF // 
+6 * 97 02 0A FF 89
+7D 02 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000080
+\2r 7D 01 20 \dxFFFFFFFF
+\2/ 1A 20 \dx00000002
+\2+ 7D 80 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000081
+\2r 7D 03 20 \dxFFFFFFFF
+\2* 1A 20 \dx00000002
+\2sto 1A 20 \dx00000082
+\2r 1A 20 \dx00000000
+\2sto 1A 00 \dx00000083
+\b1
+\wx00FF \dx00000000 \dx00000000
+\wx00FF //
 
 // Name: do_nothing_prod
-7 * 7 02 0A FE 02 \b0 \b0 80 
+7 * 7 02 0A FE 02 \b0 \b0 80
 
 // Name: do_nothing_prod@registers
-8 * 30 02 0A FE 89 
-1A 20 \dx00000000 
-\2sto 1A 00 \dx00000080 
-\b1 
-\wx00FE \dx00000000 \dx00000000 
-\wx00FE // 
+8 * 30 02 0A FE 89
+1A 20 \dx00000000
+\2sto 1A 00 \dx00000080
+\b1
+\wx00FE \dx00000000 \dx00000000
+\wx00FE //
 
 // Name: factory_production_switch
-9 * 69 02 0A FF 89 
-6F 01 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000001 
-\2r 6F 08 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000002 
-\2r 6F 06 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000003 
-\2r 6F 01 00 \dxFFFFFFFF 
-\b1 
+9 * 69 02 0A FF 89
+6F 01 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000001
+\2r 6F 08 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000002
+\2r 6F 06 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000003
+\2r 6F 01 00 \dxFFFFFFFF
+\b1
 \wx00FE \dx00000000 \dx00000000 	// 0 .. 0: do_nothing_prod;
 \wx00FF // default: consume_all_prod;
 
 // Name: extra_text_switch
-10 * 31 02 0A FE 89 
-6A 05 20 \dxFFFFFFFF 
-\2sto 1A 00 \dx00000100 
-\b1 
+10 * 31 02 0A FE 89
+6A 05 20 \dxFFFFFFFF
+\2sto 1A 00 \dx00000100
+\b1
 \wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx8000 // default: return string(STR_INDUSTRY_EXTRA_TEXT);
 
-11 * 27 00 0A \b6 01 FF \wx0000 
-08 06 
-09 06 
-25 \b2 
-09 05 
-26 \b3 
-01 08 06 
-27 \b2 
-00 00 
-28 \b0 \b0 
-12 * 11 00 0A \b2 01 FF \wx0000 
-21 02 
-22 01 
+11 * 27 00 0A \b6 01 FF \wx0000
+08 06
+09 06
+25 \b2
+09 05
+26 \b3
+01 08 06
+27 \b2
+00 00
+28 \b0 \b0
+12 * 11 00 0A \b2 01 FF \wx0000
+21 02
+22 01
 
 // Name: @CB_FAILED_PROD
-13 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00 
+13 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
 
 // Name: @CB_FAILED0A
-14 * 23 02 0A FD 89 
-0C 00 \dx0000FFFF 
-\b1 
+14 * 23 02 0A FD 89
+0C 00 \dx0000FFFF
+\b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FD // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-15 * 23 02 0A FF 89 
-18 00 \dx000000FF 
-\b1 
+15 * 23 02 0A FF 89
+18 00 \dx000000FF
+\b1
 \wx00FF \dx00000000 \dx00000000 	// factory_production_switch;
 \wx00FD // @CB_FAILED0A;
 
 // Name: @action3_1
-16 * 33 02 0A FD 89 
-0C 00 \dx0000FFFF 
-\b2 
+16 * 33 02 0A FD 89
+0C 00 \dx0000FFFF
+\b2
 \wx00FF \dx00000000 \dx00000000 	// @action3_0;
 \wx00FE \dx0000003A \dx0000003A 	// extra_text_switch;
 \wx00FD // @CB_FAILED0A;
 
-17 * 7 03 0A 01 00 \b0 
+17 * 7 03 0A 01 00 \b0
 \wx00FD 	// @action3_1;
 
-18 * 13 00 09 \b3 01 FF \wx0000 
-08 27 
-09 27 
-12 02 
+18 * 13 00 09 \b3 01 FF \wx0000
+08 27
+09 27
+12 02
 
-19 * 13 00 09 \b3 01 FF \wx0001 
-08 28 
-09 28 
-12 02 
+19 * 13 00 09 \b3 01 FF \wx0001
+08 28
+09 28
+12 02
 
-20 * 13 00 09 \b3 01 FF \wx0002 
-08 29 
-09 29 
-12 02 
+20 * 13 00 09 \b3 01 FF \wx0002
+08 29
+09 29
+12 02
 
-21 * 13 00 09 \b3 01 FF \wx0003 
-08 2A 
-09 2A 
-12 02 
+21 * 13 00 09 \b3 01 FF \wx0003
+08 2A
+09 2A
+12 02
 
-22 * 26 00 0A \b6 01 FF \wx0001 
-08 09 
-09 09 
-25 \b3 
-04 06 07 
-26 \b0 
-27 \b3 
-08 0C 04 
-28 \b0 \b0 
+22 * 26 00 0A \b6 01 FF \wx0001
+08 09
+09 09
+25 \b3
+04 06 07
+26 \b0
+27 \b3
+08 0C 04
+28 \b0 \b0

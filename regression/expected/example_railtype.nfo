@@ -5,254 +5,254 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d171 
+0 * 4 \d171
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "W" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 293 08 08 "NML\02" "NML Example NewGRF: Railtype" 00 "\8ENML Example NewGRF: Railtype\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89Irwe, \98coding by \89planetmaker.\0D\98This NewGRF defines a graphical replacement for normal and electric rails" 00 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "W"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 293 08 08 "NML\02" "NML Example NewGRF: Railtype" 00 "\8ENML Example NewGRF: Railtype\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89Irwe, \98coding by \89planetmaker.\0D\98This NewGRF defines a graphical replacement for normal and electric rails" 00
 // param[127] = 0
-3 * 9 0D 7F \D= FF 00 \dx00000000 
+3 * 9 0D 7F \D= FF 00 \dx00000000
 
 // param[126] = 0
-4 * 9 0D 7E \D= FF 00 \dx00000000 
+4 * 9 0D 7E \D= FF 00 \dx00000000
 
-5 * 9 09 88 04 \7gG \dx01544A44 01 
+5 * 9 09 88 04 \7gG \dx01544A44 01
 
 // param[126] = 1
-6 * 9 0D 7E \D= FF 00 \dx00000001 
+6 * 9 0D 7E \D= FF 00 \dx00000001
 
-7 * 9 09 7E 04 \7= \dx00000000 01 
+7 * 9 09 7E 04 \7= \dx00000000 01
 
 // param[127] = 1
-8 * 9 0D 7F \D= FF 00 \dx00000001 
+8 * 9 0D 7F \D= FF 00 \dx00000001
 
-9 * 9 09 7F 04 \7! \dx00000000 01 
+9 * 9 09 7F 04 \7! \dx00000000 01
 
-10 * 13 0B 03 7F 05 "NuTracks" 00 
+10 * 13 0B 03 7F 05 "NuTracks" 00
 
-11 * 6 01 10 \b5 FF \wx000A 
+11 * 6 01 10 \b5 FF \wx000A
 
-12 gfx/lc_right.png 8bpp 5 5 44 23 -21 4 normal 
-13 gfx/lc_right.png 8bpp 55 5 44 23 -21 4 normal 
-14 gfx/lc_right.png 8bpp 0 100 5 12 -3 -8 normal 
-15 gfx/lc_right.png 8bpp 50 100 19 19 -4 -6 normal 
-16 gfx/lc_right.png 8bpp 100 100 23 17 -24 -9 normal 
-17 gfx/lc_right.png 8bpp 150 100 5 12 -5 -8 normal 
-18 gfx/lc_right.png 8bpp 200 100 25 14 3 -9 normal 
-19 gfx/lc_right.png 8bpp 250 100 5 12 -1 -8 normal 
-20 gfx/lc_right.png 8bpp 300 100 5 12 -3 -10 normal 
-21 gfx/lc_right.png 8bpp 350 100 19 14 -15 -11 normal 
+12 gfx/lc_right.png 8bpp 5 5 44 23 -21 4 normal
+13 gfx/lc_right.png 8bpp 55 5 44 23 -21 4 normal
+14 gfx/lc_right.png 8bpp 0 100 5 12 -3 -8 normal
+15 gfx/lc_right.png 8bpp 50 100 19 19 -4 -6 normal
+16 gfx/lc_right.png 8bpp 100 100 23 17 -24 -9 normal
+17 gfx/lc_right.png 8bpp 150 100 5 12 -5 -8 normal
+18 gfx/lc_right.png 8bpp 200 100 25 14 3 -9 normal
+19 gfx/lc_right.png 8bpp 250 100 5 12 -1 -8 normal
+20 gfx/lc_right.png 8bpp 300 100 5 12 -3 -10 normal
+21 gfx/lc_right.png 8bpp 350 100 19 14 -15 -11 normal
 
-22 gfx/lc_right.png 8bpp 5 5 44 23 -21 4 normal 
-23 gfx/lc_right.png 8bpp 55 5 44 23 -21 4 normal 
-24 gfx/lc_right.png 8bpp 0 50 5 12 -3 -8 normal 
-25 gfx/lc_right.png 8bpp 50 50 8 21 -5 -14 normal 
-26 gfx/lc_right.png 8bpp 100 50 6 23 -7 -20 normal 
-27 gfx/lc_right.png 8bpp 150 50 5 12 -5 -8 normal 
-28 gfx/lc_right.png 8bpp 200 50 7 21 3 -15 normal 
-29 gfx/lc_right.png 8bpp 250 50 5 12 -1 -8 normal 
-30 gfx/lc_right.png 8bpp 300 50 5 12 -3 -10 normal 
-31 gfx/lc_right.png 8bpp 350 50 8 22 -3 -19 normal 
+22 gfx/lc_right.png 8bpp 5 5 44 23 -21 4 normal
+23 gfx/lc_right.png 8bpp 55 5 44 23 -21 4 normal
+24 gfx/lc_right.png 8bpp 0 50 5 12 -3 -8 normal
+25 gfx/lc_right.png 8bpp 50 50 8 21 -5 -14 normal
+26 gfx/lc_right.png 8bpp 100 50 6 23 -7 -20 normal
+27 gfx/lc_right.png 8bpp 150 50 5 12 -5 -8 normal
+28 gfx/lc_right.png 8bpp 200 50 7 21 3 -15 normal
+29 gfx/lc_right.png 8bpp 250 50 5 12 -1 -8 normal
+30 gfx/lc_right.png 8bpp 300 50 5 12 -3 -10 normal
+31 gfx/lc_right.png 8bpp 350 50 8 22 -3 -19 normal
 
-32 gfx/lc_left.png 8bpp 5 5 44 23 -21 4 normal 
-33 gfx/lc_left.png 8bpp 55 5 44 23 -21 4 normal 
-34 gfx/lc_left.png 8bpp 0 100 21 19 -14 -6 normal 
-35 gfx/lc_left.png 8bpp 50 100 5 12 -2 -6 normal 
-36 gfx/lc_left.png 8bpp 100 100 5 12 -3 -9 normal 
-37 gfx/lc_left.png 8bpp 150 100 23 15 -23 -9 normal 
-38 gfx/lc_left.png 8bpp 200 100 5 12 4 -7 normal 
-39 gfx/lc_left.png 8bpp 250 100 23 17 0 -7 normal 
-40 gfx/lc_left.png 8bpp 300 100 21 13 -2 -11 normal 
-41 gfx/lc_left.png 8bpp 350 100 5 12 -3 -9 normal 
+32 gfx/lc_left.png 8bpp 5 5 44 23 -21 4 normal
+33 gfx/lc_left.png 8bpp 55 5 44 23 -21 4 normal
+34 gfx/lc_left.png 8bpp 0 100 21 19 -14 -6 normal
+35 gfx/lc_left.png 8bpp 50 100 5 12 -2 -6 normal
+36 gfx/lc_left.png 8bpp 100 100 5 12 -3 -9 normal
+37 gfx/lc_left.png 8bpp 150 100 23 15 -23 -9 normal
+38 gfx/lc_left.png 8bpp 200 100 5 12 4 -7 normal
+39 gfx/lc_left.png 8bpp 250 100 23 17 0 -7 normal
+40 gfx/lc_left.png 8bpp 300 100 21 13 -2 -11 normal
+41 gfx/lc_left.png 8bpp 350 100 5 12 -3 -9 normal
 
-42 gfx/lc_left.png 8bpp 5 5 44 23 -21 4 normal 
-43 gfx/lc_left.png 8bpp 55 5 44 23 -21 4 normal 
-44 gfx/lc_left.png 8bpp 0 50 7 21 0 -14 normal 
-45 gfx/lc_left.png 8bpp 50 50 5 12 -2 -6 normal 
-46 gfx/lc_left.png 8bpp 100 50 5 12 -3 -9 normal 
-47 gfx/lc_left.png 8bpp 150 50 7 21 -7 -15 normal 
-48 gfx/lc_left.png 8bpp 200 50 5 12 4 -7 normal 
-49 gfx/lc_left.png 8bpp 250 50 7 22 0 -17 normal 
-50 gfx/lc_left.png 8bpp 300 50 6 21 -2 -19 normal 
-51 gfx/lc_left.png 8bpp 350 50 5 12 -3 -9 normal 
+42 gfx/lc_left.png 8bpp 5 5 44 23 -21 4 normal
+43 gfx/lc_left.png 8bpp 55 5 44 23 -21 4 normal
+44 gfx/lc_left.png 8bpp 0 50 7 21 0 -14 normal
+45 gfx/lc_left.png 8bpp 50 50 5 12 -2 -6 normal
+46 gfx/lc_left.png 8bpp 100 50 5 12 -3 -9 normal
+47 gfx/lc_left.png 8bpp 150 50 7 21 -7 -15 normal
+48 gfx/lc_left.png 8bpp 200 50 5 12 4 -7 normal
+49 gfx/lc_left.png 8bpp 250 50 7 22 0 -17 normal
+50 gfx/lc_left.png 8bpp 300 50 6 21 -2 -19 normal
+51 gfx/lc_left.png 8bpp 350 50 5 12 -3 -9 normal
 
-52 gfx/rails_overlays.png 8bpp 0 155 40 21 -19 5 normal 
-53 gfx/rails_overlays.png 8bpp 50 155 40 21 -19 5 normal 
-54 gfx/rails_overlays.png 8bpp 100 155 40 7 -19 4 normal 
-55 gfx/rails_overlays.png 8bpp 150 155 40 7 -21 20 normal 
-56 gfx/rails_overlays.png 8bpp 200 155 12 19 11 6 normal 
-57 gfx/rails_overlays.png 8bpp 250 155 12 19 -21 6 normal 
-58 gfx/rails_overlays.png 8bpp 0 195 64 39 -33 -8 normal 
-59 gfx/rails_overlays.png 8bpp 75 195 64 23 -31 0 normal 
-60 gfx/rails_overlays.png 8bpp 150 195 64 23 -31 0 normal 
-61 gfx/rails_overlays.png 8bpp 225 195 64 39 -32 -9 normal 
+52 gfx/rails_overlays.png 8bpp 0 155 40 21 -19 5 normal
+53 gfx/rails_overlays.png 8bpp 50 155 40 21 -19 5 normal
+54 gfx/rails_overlays.png 8bpp 100 155 40 7 -19 4 normal
+55 gfx/rails_overlays.png 8bpp 150 155 40 7 -21 20 normal
+56 gfx/rails_overlays.png 8bpp 200 155 12 19 11 6 normal
+57 gfx/rails_overlays.png 8bpp 250 155 12 19 -21 6 normal
+58 gfx/rails_overlays.png 8bpp 0 195 64 39 -33 -8 normal
+59 gfx/rails_overlays.png 8bpp 75 195 64 23 -31 0 normal
+60 gfx/rails_overlays.png 8bpp 150 195 64 23 -31 0 normal
+61 gfx/rails_overlays.png 8bpp 225 195 64 39 -32 -9 normal
 
 // Name: lc_right_closed - feature 10
-62 * 7 02 10 FF \b1 \b0 
-\w0 
+62 * 7 02 10 FF \b1 \b0
+\w0
 
 
 // Name: lc_right_open - feature 10
-63 * 7 02 10 FE \b1 \b0 
-\w1 
+63 * 7 02 10 FE \b1 \b0
+\w1
 
 
 // Name: right_level_crossing_state_switch
-64 * 23 02 10 FE 89 
-42 00 \dx000000FF 
-\b1 
+64 * 23 02 10 FE 89
+42 00 \dx000000FF
+\b1
 \wx00FF \dx00000001 \dx00000001 	// 1 .. 1: lc_right_closed;
 \wx00FE // default: lc_right_open;
 
 // Name: lc_left_closed - feature 10
-65 * 7 02 10 FF \b1 \b0 
-\w2 
+65 * 7 02 10 FF \b1 \b0
+\w2
 
 
 // Name: lc_left_open - feature 10
-66 * 7 02 10 FD \b1 \b0 
-\w3 
+66 * 7 02 10 FD \b1 \b0
+\w3
 
 
 // Name: left_level_crossing_state_switch
-67 * 23 02 10 FD 89 
-42 00 \dx000000FF 
-\b1 
+67 * 23 02 10 FD 89
+42 00 \dx000000FF
+\b1
 \wx00FF \dx00000001 \dx00000001 	// 1 .. 1: lc_left_closed;
 \wx00FD // default: lc_left_open;
 
 // Name: level_crossing_switch
-68 * 23 02 10 FE 89 
-06 04 \dx00000001 
-\b1 
+68 * 23 02 10 FE 89
+06 04 \dx00000001
+\b1
 \wx00FD \dx00000000 \dx00000000 	// 0 .. 0: left_level_crossing_state_switch;
 \wx00FE // default: right_level_crossing_state_switch;
 
-69 * 152 00 10 \b3 01 FF \wx0000 
-08 "RAIL" 
-0E \b17 "RAIL" "ELRL" "_040" "_080" "RLOW" "RMED" "RHIG" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNN" "DBNE" "DBHN" "DBHE" 
-0F \b17 "RAIL" "ELRL" "_040" "_080" "RLOW" "RMED" "RHIG" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNN" "DBNE" "DBHN" "DBHE" 
+69 * 152 00 10 \b3 01 FF \wx0000
+08 "RAIL"
+0E \b17 "RAIL" "ELRL" "_040" "_080" "RLOW" "RMED" "RHIG" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNN" "DBNE" "DBHN" "DBHE"
+0F \b17 "RAIL" "ELRL" "_040" "_080" "RLOW" "RMED" "RHIG" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNN" "DBNE" "DBHN" "DBHE"
 
 // Name: track_overlays - feature 10
-70 * 7 02 10 FD \b1 \b0 
-\w4 
+70 * 7 02 10 FD \b1 \b0
+\w4
 
 
-71 * 6 01 10 \b1 FF \wx0010 
+71 * 6 01 10 \b1 FF \wx0010
 
-72 gfx/rails_overlays.png 8bpp 75 0 64 31 -31 0 normal 
-73 gfx/rails_overlays.png 8bpp 0 0 64 31 -31 0 normal 
-74 gfx/rails_overlays.png 8bpp 150 0 64 31 -31 0 normal 
-75 gfx/rails_overlays.png 8bpp 225 0 64 31 -31 0 normal 
-76 gfx/rails_overlays.png 8bpp 0 40 64 31 -31 0 normal 
-77 gfx/rails_overlays.png 8bpp 300 0 64 31 -31 0 normal 
-78 gfx/rails_overlays.png 8bpp 75 40 64 39 -31 -8 normal 
-79 gfx/rails_overlays.png 8bpp 150 40 64 23 -31 0 normal 
-80 gfx/rails_overlays.png 8bpp 225 40 64 23 -31 0 normal 
-81 gfx/rails_overlays.png 8bpp 300 40 64 39 -30 -9 normal 
-82 gfx/rails_overlays.png 8bpp 0 120 64 31 -31 0 normal 
-83 gfx/rails_overlays.png 8bpp 0 80 64 31 -31 0 normal 
-84 gfx/rails_overlays.png 8bpp 225 80 64 31 -31 0 normal 
-85 gfx/rails_overlays.png 8bpp 150 80 64 31 -31 0 normal 
-86 gfx/rails_overlays.png 8bpp 75 80 64 31 -31 0 normal 
-87 gfx/rails_overlays.png 8bpp 300 80 64 31 -31 0 normal 
+72 gfx/rails_overlays.png 8bpp 75 0 64 31 -31 0 normal
+73 gfx/rails_overlays.png 8bpp 0 0 64 31 -31 0 normal
+74 gfx/rails_overlays.png 8bpp 150 0 64 31 -31 0 normal
+75 gfx/rails_overlays.png 8bpp 225 0 64 31 -31 0 normal
+76 gfx/rails_overlays.png 8bpp 0 40 64 31 -31 0 normal
+77 gfx/rails_overlays.png 8bpp 300 0 64 31 -31 0 normal
+78 gfx/rails_overlays.png 8bpp 75 40 64 39 -31 -8 normal
+79 gfx/rails_overlays.png 8bpp 150 40 64 23 -31 0 normal
+80 gfx/rails_overlays.png 8bpp 225 40 64 23 -31 0 normal
+81 gfx/rails_overlays.png 8bpp 300 40 64 39 -30 -9 normal
+82 gfx/rails_overlays.png 8bpp 0 120 64 31 -31 0 normal
+83 gfx/rails_overlays.png 8bpp 0 80 64 31 -31 0 normal
+84 gfx/rails_overlays.png 8bpp 225 80 64 31 -31 0 normal
+85 gfx/rails_overlays.png 8bpp 150 80 64 31 -31 0 normal
+86 gfx/rails_overlays.png 8bpp 75 80 64 31 -31 0 normal
+87 gfx/rails_overlays.png 8bpp 300 80 64 31 -31 0 normal
 
 // Name: track_underlays - feature 10
-88 * 7 02 10 FF \b1 \b0 
-\w0 
+88 * 7 02 10 FF \b1 \b0
+\w0
 
 
-89 * 6 01 10 \b1 FF \wx0004 
+89 * 6 01 10 \b1 FF \wx0004
 
-90 gfx/tunnel_track.png 8bpp 75 0 64 31 -31 0 normal 
-91 gfx/tunnel_track.png 8bpp 0 0 64 31 -31 0 normal 
-92 gfx/tunnel_track.png 8bpp 75 50 64 31 -31 0 normal 
-93 gfx/tunnel_track.png 8bpp 0 50 64 31 -31 0 normal 
+90 gfx/tunnel_track.png 8bpp 75 0 64 31 -31 0 normal
+91 gfx/tunnel_track.png 8bpp 0 0 64 31 -31 0 normal
+92 gfx/tunnel_track.png 8bpp 75 50 64 31 -31 0 normal
+93 gfx/tunnel_track.png 8bpp 0 50 64 31 -31 0 normal
 
 // Name: tunnel_overlays - feature 10
-94 * 7 02 10 FC \b1 \b0 
-\w0 
+94 * 7 02 10 FC \b1 \b0
+\w0
 
 
-95 * 6 01 10 \b1 FF \wx0006 
+95 * 6 01 10 \b1 FF \wx0006
 
-96 gfx/depot_normal.png 8bpp 200 10 16 8 17 7 normal 
-97 gfx/depot_normal.png 8bpp 118 8 64 47 -9 -31 normal 
-98 gfx/depot_normal.png 8bpp 0 10 16 8 -31 7 normal 
-99 gfx/depot_normal.png 8bpp 37 8 64 47 -53 -31 normal 
-100 gfx/depot_normal.png 8bpp 37 63 64 47 -53 -31 normal 
-101 gfx/depot_normal.png 8bpp 118 63 64 47 -9 -31 normal 
+96 gfx/depot_normal.png 8bpp 200 10 16 8 17 7 normal
+97 gfx/depot_normal.png 8bpp 118 8 64 47 -9 -31 normal
+98 gfx/depot_normal.png 8bpp 0 10 16 8 -31 7 normal
+99 gfx/depot_normal.png 8bpp 37 8 64 47 -53 -31 normal
+100 gfx/depot_normal.png 8bpp 37 63 64 47 -53 -31 normal
+101 gfx/depot_normal.png 8bpp 118 63 64 47 -9 -31 normal
 
 // Name: depot_normal_rail - feature 10
-102 * 7 02 10 FB \b1 \b0 
-\w0 
+102 * 7 02 10 FB \b1 \b0
+\w0
 
 
-103 * 6 01 10 \b1 FF \wx000A 
+103 * 6 01 10 \b1 FF \wx000A
 
-104 gfx/rails_overlays.png 8bpp 75 0 64 31 -31 0 normal 
-105 gfx/rails_overlays.png 8bpp 0 0 64 31 -31 0 normal 
-106 gfx/rails_overlays.png 8bpp 75 40 64 39 -31 -8 normal 
-107 gfx/rails_overlays.png 8bpp 150 40 64 23 -31 0 normal 
-108 gfx/rails_overlays.png 8bpp 225 40 64 23 -31 0 normal 
-109 gfx/rails_overlays.png 8bpp 300 40 64 39 -30 -9 normal 
-110 gfx/rails_overlays.png 8bpp 150 0 64 31 -31 0 normal 
-111 gfx/rails_overlays.png 8bpp 225 0 64 31 -31 0 normal 
-112 gfx/rails_overlays.png 8bpp 0 40 64 31 -31 0 normal 
-113 gfx/rails_overlays.png 8bpp 300 0 64 31 -31 0 normal 
+104 gfx/rails_overlays.png 8bpp 75 0 64 31 -31 0 normal
+105 gfx/rails_overlays.png 8bpp 0 0 64 31 -31 0 normal
+106 gfx/rails_overlays.png 8bpp 75 40 64 39 -31 -8 normal
+107 gfx/rails_overlays.png 8bpp 150 40 64 23 -31 0 normal
+108 gfx/rails_overlays.png 8bpp 225 40 64 23 -31 0 normal
+109 gfx/rails_overlays.png 8bpp 300 40 64 39 -30 -9 normal
+110 gfx/rails_overlays.png 8bpp 150 0 64 31 -31 0 normal
+111 gfx/rails_overlays.png 8bpp 225 0 64 31 -31 0 normal
+112 gfx/rails_overlays.png 8bpp 0 40 64 31 -31 0 normal
+113 gfx/rails_overlays.png 8bpp 300 0 64 31 -31 0 normal
 
 // Name: bridge_underlay - feature 10
-114 * 7 02 10 FA \b1 \b0 
-\w0 
+114 * 7 02 10 FA \b1 \b0
+\w0
 
 
-115 * 6 01 10 \b1 FF \wx0008 
+115 * 6 01 10 \b1 FF \wx0008
 
-116 gfx/fences.png 8bpp 0 0 32 20 -30 -4 normal 
-117 gfx/fences.png 8bpp 48 0 32 20 0 -3 normal 
-118 gfx/fences.png 8bpp 96 0 2 30 0 -17 normal 
-119 gfx/fences.png 8bpp 112 0 64 5 -30 -4 normal 
-120 gfx/fences.png 8bpp 192 0 32 12 -30 -4 normal 
-121 gfx/fences.png 8bpp 240 0 32 12 2 -3 normal 
-122 gfx/fences.png 8bpp 288 0 32 28 -31 -12 normal 
-123 gfx/fences.png 8bpp 350 0 32 28 1 -10 normal 
+116 gfx/fences.png 8bpp 0 0 32 20 -30 -4 normal
+117 gfx/fences.png 8bpp 48 0 32 20 0 -3 normal
+118 gfx/fences.png 8bpp 96 0 2 30 0 -17 normal
+119 gfx/fences.png 8bpp 112 0 64 5 -30 -4 normal
+120 gfx/fences.png 8bpp 192 0 32 12 -30 -4 normal
+121 gfx/fences.png 8bpp 240 0 32 12 2 -3 normal
+122 gfx/fences.png 8bpp 288 0 32 28 -31 -12 normal
+123 gfx/fences.png 8bpp 350 0 32 28 1 -10 normal
 
 // Name: fencesCC - feature 10
-124 * 7 02 10 F9 \b1 \b0 
-\w0 
+124 * 7 02 10 F9 \b1 \b0
+\w0
 
 
-125 * 6 01 10 \b1 FF \wx0010 
+125 * 6 01 10 \b1 FF \wx0010
 
-126 gfx/gui_rail.png 8bpp 0 0 20 20 0 0 normal 
-127 gfx/gui_rail.png 8bpp 25 0 20 20 0 0 normal 
-128 gfx/gui_rail.png 8bpp 50 0 20 20 0 0 normal 
-129 gfx/gui_rail.png 8bpp 75 0 20 20 0 0 normal 
-130 gfx/gui_rail.png 8bpp 100 0 20 20 0 0 normal 
-131 gfx/gui_rail.png 8bpp 125 0 20 20 0 0 normal 
-132 gfx/gui_rail.png 8bpp 150 0 20 20 0 0 normal 
-133 gfx/gui_rail.png 8bpp 175 0 20 20 0 0 normal 
-134 gfx/gui_rail.png 8bpp 200 0 32 32 0 0 normal 
-135 gfx/gui_rail.png 8bpp 250 0 32 32 0 0 normal 
-136 gfx/gui_rail.png 8bpp 300 0 32 32 0 0 normal 
-137 gfx/gui_rail.png 8bpp 350 0 32 32 0 0 normal 
-138 gfx/gui_rail.png 8bpp 400 0 32 32 0 0 normal 
-139 gfx/gui_rail.png 8bpp 450 0 32 32 0 0 normal 
-140 gfx/gui_rail.png 8bpp 500 0 32 32 0 0 normal 
-141 gfx/gui_rail.png 8bpp 550 0 32 32 0 0 normal 
+126 gfx/gui_rail.png 8bpp 0 0 20 20 0 0 normal
+127 gfx/gui_rail.png 8bpp 25 0 20 20 0 0 normal
+128 gfx/gui_rail.png 8bpp 50 0 20 20 0 0 normal
+129 gfx/gui_rail.png 8bpp 75 0 20 20 0 0 normal
+130 gfx/gui_rail.png 8bpp 100 0 20 20 0 0 normal
+131 gfx/gui_rail.png 8bpp 125 0 20 20 0 0 normal
+132 gfx/gui_rail.png 8bpp 150 0 20 20 0 0 normal
+133 gfx/gui_rail.png 8bpp 175 0 20 20 0 0 normal
+134 gfx/gui_rail.png 8bpp 200 0 32 32 0 0 normal
+135 gfx/gui_rail.png 8bpp 250 0 32 32 0 0 normal
+136 gfx/gui_rail.png 8bpp 300 0 32 32 0 0 normal
+137 gfx/gui_rail.png 8bpp 350 0 32 32 0 0 normal
+138 gfx/gui_rail.png 8bpp 400 0 32 32 0 0 normal
+139 gfx/gui_rail.png 8bpp 450 0 32 32 0 0 normal
+140 gfx/gui_rail.png 8bpp 500 0 32 32 0 0 normal
+141 gfx/gui_rail.png 8bpp 550 0 32 32 0 0 normal
 
 // Name: gui_normal - feature 10
-142 * 7 02 10 F8 \b1 \b0 
-\w0 
+142 * 7 02 10 F8 \b1 \b0
+\w0
 
 
-143 * 31 03 10 01 00 \b8 
+143 * 31 03 10 01 00 \b8
 00 \wx00F8 	// gui_normal;
 01 \wx00FD 	// track_overlays;
 02 \wx00FF 	// track_underlays;
@@ -261,52 +261,52 @@
 07 \wx00FE 	// level_crossing_switch;
 08 \wx00FB 	// depot_normal_rail;
 09 \wx00F9 	// fencesCC;
-\wx0000 
+\wx0000
 
-144 * 120 00 10 \b3 01 FF \wx0001 
-08 "ELRL" 
-0E \b17 "RAIL" "ELRL" "_040" "_080" "RLOW" "RMED" "RHIG" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNN" "DBNE" "DBHN" "DBHE" 
-0F \b9 "ELRL" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNE" "DBHE" 
+144 * 120 00 10 \b3 01 FF \wx0001
+08 "ELRL"
+0E \b17 "RAIL" "ELRL" "_040" "_080" "RLOW" "RMED" "RHIG" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNN" "DBNE" "DBHN" "DBHE"
+0F \b9 "ELRL" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNE" "DBHE"
 
-145 * 6 01 10 \b1 FF \wx0006 
+145 * 6 01 10 \b1 FF \wx0006
 
-146 gfx/depot_electric.png 8bpp 200 10 16 8 17 7 normal 
-147 gfx/depot_electric.png 8bpp 118 8 64 47 -9 -31 normal 
-148 gfx/depot_electric.png 8bpp 0 10 16 8 -31 7 normal 
-149 gfx/depot_electric.png 8bpp 37 8 64 47 -53 -31 normal 
-150 gfx/depot_electric.png 8bpp 37 63 64 47 -53 -31 normal 
-151 gfx/depot_electric.png 8bpp 118 63 64 47 -9 -31 normal 
+146 gfx/depot_electric.png 8bpp 200 10 16 8 17 7 normal
+147 gfx/depot_electric.png 8bpp 118 8 64 47 -9 -31 normal
+148 gfx/depot_electric.png 8bpp 0 10 16 8 -31 7 normal
+149 gfx/depot_electric.png 8bpp 37 8 64 47 -53 -31 normal
+150 gfx/depot_electric.png 8bpp 37 63 64 47 -53 -31 normal
+151 gfx/depot_electric.png 8bpp 118 63 64 47 -9 -31 normal
 
 // Name: depot_electric_rail - feature 10
-152 * 7 02 10 FB \b1 \b0 
-\w0 
+152 * 7 02 10 FB \b1 \b0
+\w0
 
 
-153 * 6 01 10 \b1 FF \wx0010 
+153 * 6 01 10 \b1 FF \wx0010
 
-154 gfx/gui_erail.png 8bpp 0 0 20 20 0 0 normal 
-155 gfx/gui_erail.png 8bpp 25 0 20 20 0 0 normal 
-156 gfx/gui_erail.png 8bpp 50 0 20 20 0 0 normal 
-157 gfx/gui_erail.png 8bpp 75 0 20 20 0 0 normal 
-158 gfx/gui_erail.png 8bpp 100 0 20 20 0 0 normal 
-159 gfx/gui_erail.png 8bpp 125 0 20 20 0 0 normal 
-160 gfx/gui_erail.png 8bpp 150 0 20 20 0 0 normal 
-161 gfx/gui_erail.png 8bpp 175 0 20 20 0 0 normal 
-162 gfx/gui_erail.png 8bpp 200 0 32 32 0 0 normal 
-163 gfx/gui_erail.png 8bpp 250 0 32 32 0 0 normal 
-164 gfx/gui_erail.png 8bpp 300 0 32 32 0 0 normal 
-165 gfx/gui_erail.png 8bpp 350 0 32 32 0 0 normal 
-166 gfx/gui_erail.png 8bpp 400 0 32 32 0 0 normal 
-167 gfx/gui_erail.png 8bpp 450 0 32 32 0 0 normal 
-168 gfx/gui_erail.png 8bpp 500 0 32 32 0 0 normal 
-169 gfx/gui_erail.png 8bpp 550 0 32 32 0 0 normal 
+154 gfx/gui_erail.png 8bpp 0 0 20 20 0 0 normal
+155 gfx/gui_erail.png 8bpp 25 0 20 20 0 0 normal
+156 gfx/gui_erail.png 8bpp 50 0 20 20 0 0 normal
+157 gfx/gui_erail.png 8bpp 75 0 20 20 0 0 normal
+158 gfx/gui_erail.png 8bpp 100 0 20 20 0 0 normal
+159 gfx/gui_erail.png 8bpp 125 0 20 20 0 0 normal
+160 gfx/gui_erail.png 8bpp 150 0 20 20 0 0 normal
+161 gfx/gui_erail.png 8bpp 175 0 20 20 0 0 normal
+162 gfx/gui_erail.png 8bpp 200 0 32 32 0 0 normal
+163 gfx/gui_erail.png 8bpp 250 0 32 32 0 0 normal
+164 gfx/gui_erail.png 8bpp 300 0 32 32 0 0 normal
+165 gfx/gui_erail.png 8bpp 350 0 32 32 0 0 normal
+166 gfx/gui_erail.png 8bpp 400 0 32 32 0 0 normal
+167 gfx/gui_erail.png 8bpp 450 0 32 32 0 0 normal
+168 gfx/gui_erail.png 8bpp 500 0 32 32 0 0 normal
+169 gfx/gui_erail.png 8bpp 550 0 32 32 0 0 normal
 
 // Name: gui_electric - feature 10
-170 * 7 02 10 F8 \b1 \b0 
-\w0 
+170 * 7 02 10 F8 \b1 \b0
+\w0
 
 
-171 * 31 03 10 01 01 \b8 
+171 * 31 03 10 01 01 \b8
 00 \wx00F8 	// gui_electric;
 01 \wx00FD 	// track_overlays;
 02 \wx00FF 	// track_underlays;
@@ -315,5 +315,5 @@
 07 \wx00FE 	// level_crossing_switch;
 08 \wx00FB 	// depot_electric_rail;
 09 \wx00F9 	// fencesCC;
-\wx0000 
+\wx0000
 

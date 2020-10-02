@@ -5,394 +5,394 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d120 
+0 * 4 \d120
 
-1 * 665 14 "C" "INFO" 
-"T" "NAME" 1F "NML Voorbeeld NewGRF: Trein" 00 
-"T" "DESC" 1F "\8ENML Voorbeeld NewGRF: Trein\0D\98Deze NewGRF is bedoeld als voorbeeld van de hogere NewGRF-programmeertaal NML.\0DOriginele graphics door \89Purno, \98geprogrammeerd door \89DJNekkid.\0D\98Deze NewGRF voegt een Nederlands treinstel toe, de ICM 'Koploper'." 00 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 01 
-"C" "PARA" 
-"C" \d0 
-"T" "NAME" 7F "Colour scheme" 00 
-"T" "NAME" 1F "Kleurenschema" 00 
-"T" "DESC" 7F "Select the type of colour scheme to use" 00 
-"T" "DESC" 1F "Kies het soort kleurenschema" 00 
-"B" "MASK" \w1 00 
-"B" "LIMI" \w8 \d0 \d2 
-"C" "VALU" 
-"T" \d0 7F "One company colour" 00 
-"T" \d0 1F "ÞEén bedrijfskleur" 00 
-"T" \d1 7F "Two company colours" 00 
-"T" \d1 1F "Twee bedrijfskleuren" 00 
-"T" \d2 7F "Real-world colours" 00 
-"T" \d2 1F "Realistische kleuren" 00 
-00 
-"B" "DFLT" \w4 \dx00000001 
-00 
-00 
-"B" "PALS" \w1 "W" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 264 08 08 "NML\00" "NML Example NewGRF: Train" 00 "\8ENML Example NewGRF: Train\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89Purno, \98coding by \89DJNekkid.\0D\98This NewGRF defines a Dutch EMU, the ICM 'Koploper'." 00 
-3 * 287 04 00 FF 05 \wxD000 " (3 parts)" 00 " (4 parts)" 00 "... train too long (max. 4 coupled EMUs)." 00 "... ICM may not be attached to other types of trains." 00 "Choose between 3- and 4-part EMU via refit\0DStated values are for the 3-part variant, the 4-part version has 33% more capacity and 50% more power and running cost." 00 
+1 * 665 14 "C" "INFO"
+"T" "NAME" 1F "NML Voorbeeld NewGRF: Trein" 00
+"T" "DESC" 1F "\8ENML Voorbeeld NewGRF: Trein\0D\98Deze NewGRF is bedoeld als voorbeeld van de hogere NewGRF-programmeertaal NML.\0DOriginele graphics door \89Purno, \98geprogrammeerd door \89DJNekkid.\0D\98Deze NewGRF voegt een Nederlands treinstel toe, de ICM 'Koploper'." 00
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 01
+"C" "PARA"
+"C" \d0
+"T" "NAME" 7F "Colour scheme" 00
+"T" "NAME" 1F "Kleurenschema" 00
+"T" "DESC" 7F "Select the type of colour scheme to use" 00
+"T" "DESC" 1F "Kies het soort kleurenschema" 00
+"B" "MASK" \w1 00
+"B" "LIMI" \w8 \d0 \d2
+"C" "VALU"
+"T" \d0 7F "One company colour" 00
+"T" \d0 1F "ÞEén bedrijfskleur" 00
+"T" \d1 7F "Two company colours" 00
+"T" \d1 1F "Twee bedrijfskleuren" 00
+"T" \d2 7F "Real-world colours" 00
+"T" \d2 1F "Realistische kleuren" 00
+00
+"B" "DFLT" \w4 \dx00000001
+00
+00
+"B" "PALS" \w1 "W"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 264 08 08 "NML\00" "NML Example NewGRF: Train" 00 "\8ENML Example NewGRF: Train\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89Purno, \98coding by \89DJNekkid.\0D\98This NewGRF defines a Dutch EMU, the ICM 'Koploper'." 00
+3 * 287 04 00 FF 05 \wxD000 " (3 parts)" 00 " (4 parts)" 00 "... train too long (max. 4 coupled EMUs)." 00 "... ICM may not be attached to other types of trains." 00 "Choose between 3- and 4-part EMU via refit\0DStated values are for the 3-part variant, the 4-part version has 33% more capacity and 50% more power and running cost." 00
 
-4 * 342 04 00 9F 05 \wxD000 " (driedelig)" 00 " (vierdelig)" 00 "... trein te lang (max. 4 gekoppelde treinstellen)." 00 "... ICM kan niet aan andere treinsoorten worden gekoppeld." 00 "Kies door ombouwen tussen een 3- of vierdelig treinstel.\0D De waarden hierboven zijn voor de driedelige variant, de vierdelige versie heeft 33% meer capaciteit en 50% meer vermogen en bedrijfskosten." 00 
+4 * 342 04 00 9F 05 \wxD000 " (driedelig)" 00 " (vierdelig)" 00 "... trein te lang (max. 4 gekoppelde treinstellen)." 00 "... ICM kan niet aan andere treinsoorten worden gekoppeld." 00 "Kies door ombouwen tussen een 3- of vierdelig treinstel.\0D De waarden hierboven zijn voor de driedelige variant, de vierdelige versie heeft 33% meer capaciteit en 50% meer vermogen en bedrijfskosten." 00
 
-5 * 24 00 08 \b1 04 FF \wx0000 
-12 "RAIL" "ELRL" "MONO" "MGLV" 
+5 * 24 00 08 \b1 04 FF \wx0000
+12 "RAIL" "ELRL" "MONO" "MGLV"
 
-6 * 6 01 00 \b4 FF \wx0008 
+6 * 6 01 00 \b4 FF \wx0008
 
-7 icm.png 8bpp 1 1 8 24 -3 -12 normal 
-8 icm.png 8bpp 10 1 22 20 -14 -12 normal 
-9 icm.png 8bpp 33 1 32 16 -16 -12 normal 
-10 icm.png 8bpp 66 1 22 20 -6 -12 normal 
-11 icm.png 8bpp 89 1 8 24 -3 -12 normal 
-12 icm.png 8bpp 98 1 22 20 -14 -12 normal 
-13 icm.png 8bpp 121 1 32 16 -16 -12 normal 
-14 icm.png 8bpp 154 1 22 20 -6 -12 normal 
+7 icm.png 8bpp 1 1 8 24 -3 -12 normal
+8 icm.png 8bpp 10 1 22 20 -14 -12 normal
+9 icm.png 8bpp 33 1 32 16 -16 -12 normal
+10 icm.png 8bpp 66 1 22 20 -6 -12 normal
+11 icm.png 8bpp 89 1 8 24 -3 -12 normal
+12 icm.png 8bpp 98 1 22 20 -14 -12 normal
+13 icm.png 8bpp 121 1 32 16 -16 -12 normal
+14 icm.png 8bpp 154 1 22 20 -6 -12 normal
 
-15 icm.png 8bpp 1 65 8 24 -3 -12 normal 
-16 icm.png 8bpp 10 65 22 20 -14 -12 normal 
-17 icm.png 8bpp 33 65 32 16 -16 -12 normal 
-18 icm.png 8bpp 66 65 22 20 -6 -12 normal 
-19 icm.png 8bpp 89 65 8 24 -3 -12 normal 
-20 icm.png 8bpp 98 65 22 20 -14 -12 normal 
-21 icm.png 8bpp 121 65 32 16 -16 -12 normal 
-22 icm.png 8bpp 154 65 22 20 -6 -12 normal 
+15 icm.png 8bpp 1 65 8 24 -3 -12 normal
+16 icm.png 8bpp 10 65 22 20 -14 -12 normal
+17 icm.png 8bpp 33 65 32 16 -16 -12 normal
+18 icm.png 8bpp 66 65 22 20 -6 -12 normal
+19 icm.png 8bpp 89 65 8 24 -3 -12 normal
+20 icm.png 8bpp 98 65 22 20 -14 -12 normal
+21 icm.png 8bpp 121 65 32 16 -16 -12 normal
+22 icm.png 8bpp 154 65 22 20 -6 -12 normal
 
-23 icm.png 8bpp 89 33 8 24 -3 -12 normal 
-24 icm.png 8bpp 98 33 22 20 -14 -12 normal 
-25 icm.png 8bpp 121 33 32 16 -16 -12 normal 
-26 icm.png 8bpp 154 33 22 20 -6 -12 normal 
-27 icm.png 8bpp 1 33 8 24 -3 -12 normal 
-28 icm.png 8bpp 10 33 22 20 -14 -12 normal 
-29 icm.png 8bpp 33 33 32 16 -16 -12 normal 
-30 icm.png 8bpp 66 33 22 20 -6 -12 normal 
+23 icm.png 8bpp 89 33 8 24 -3 -12 normal
+24 icm.png 8bpp 98 33 22 20 -14 -12 normal
+25 icm.png 8bpp 121 33 32 16 -16 -12 normal
+26 icm.png 8bpp 154 33 22 20 -6 -12 normal
+27 icm.png 8bpp 1 33 8 24 -3 -12 normal
+28 icm.png 8bpp 10 33 22 20 -14 -12 normal
+29 icm.png 8bpp 33 33 32 16 -16 -12 normal
+30 icm.png 8bpp 66 33 22 20 -6 -12 normal
 
-31 icm.png 8bpp 89 97 8 24 -3 -12 normal 
-32 icm.png 8bpp 98 97 22 20 -14 -12 normal 
-33 icm.png 8bpp 121 97 32 16 -16 -12 normal 
-34 icm.png 8bpp 154 97 22 20 -6 -12 normal 
-35 icm.png 8bpp 1 97 8 24 -3 -12 normal 
-36 icm.png 8bpp 10 97 22 20 -14 -12 normal 
-37 icm.png 8bpp 33 97 32 16 -16 -12 normal 
-38 icm.png 8bpp 66 97 22 20 -6 -12 normal 
+31 icm.png 8bpp 89 97 8 24 -3 -12 normal
+32 icm.png 8bpp 98 97 22 20 -14 -12 normal
+33 icm.png 8bpp 121 97 32 16 -16 -12 normal
+34 icm.png 8bpp 154 97 22 20 -6 -12 normal
+35 icm.png 8bpp 1 97 8 24 -3 -12 normal
+36 icm.png 8bpp 10 97 22 20 -14 -12 normal
+37 icm.png 8bpp 33 97 32 16 -16 -12 normal
+38 icm.png 8bpp 66 97 22 20 -6 -12 normal
 
 // Name: set_icm_front_lighted - feature 00
-39 * 9 02 00 FF \b1 \b1 
-\w0 
-\w0 
+39 * 9 02 00 FF \b1 \b1
+\w0
+\w0
 
 // Name: set_icm_front - feature 00
-40 * 9 02 00 FE \b1 \b1 
-\w1 
-\w1 
+40 * 9 02 00 FE \b1 \b1
+\w1
+\w1
 
 // Name: sw_icm_graphics_front
-41 * 23 02 00 FE 89 
-40 00 \dx000000FF 
-\b1 
+41 * 23 02 00 FE 89
+40 00 \dx000000FF
+\b1
 \wx00FF \dx00000000 \dx00000000 	// 0 .. 0: set_icm_front_lighted;
 \wx00FE // default: set_icm_front;
 
 // Name: set_icm_rear_lighted - feature 00
-42 * 9 02 00 FF \b1 \b1 
-\w2 
-\w2 
+42 * 9 02 00 FF \b1 \b1
+\w2
+\w2
 
 // Name: set_icm_rear - feature 00
-43 * 9 02 00 FD \b1 \b1 
-\w3 
-\w3 
+43 * 9 02 00 FD \b1 \b1
+\w3
+\w3
 
 // Name: sw_icm_graphics_rear
-44 * 23 02 00 FD 89 
-40 08 \dx000000FF 
-\b1 
+44 * 23 02 00 FD 89
+40 08 \dx000000FF
+\b1
 \wx00FF \dx00000000 \dx00000000 	// 0 .. 0: set_icm_rear_lighted;
 \wx00FD // default: set_icm_rear;
 
-45 * 6 01 00 \b1 FF \wx0001 
+45 * 6 01 00 \b1 FF \wx0001
 
-46 icm.png 8bpp 1 193 1 1 0 0 normal 
+46 icm.png 8bpp 1 193 1 1 0 0 normal
 
 // Name: set_icm_invisible - feature 00
-47 * 9 02 00 FF \b1 \b1 
-\w0 
-\w0 
+47 * 9 02 00 FF \b1 \b1
+\w0
+\w0
 
-48 * 6 01 00 \b1 FF \wx0004 
+48 * 6 01 00 \b1 FF \wx0004
 
-49 icm.png 8bpp 1 129 8 24 -3 -12 normal 
-50 icm.png 8bpp 10 129 22 20 -14 -12 normal 
-51 icm.png 8bpp 33 129 32 16 -16 -12 normal 
-52 icm.png 8bpp 66 129 22 20 -6 -12 normal 
+49 icm.png 8bpp 1 129 8 24 -3 -12 normal
+50 icm.png 8bpp 10 129 22 20 -14 -12 normal
+51 icm.png 8bpp 33 129 32 16 -16 -12 normal
+52 icm.png 8bpp 66 129 22 20 -6 -12 normal
 
 // Name: set_icm_middle - feature 00
-53 * 9 02 00 FC \b1 \b1 
-\w0 
-\w0 
+53 * 9 02 00 FC \b1 \b1
+\w0
+\w0
 
 // Name: sw_icm_graphics_middle
-54 * 81 02 00 FC 89 
-F2 20 \dx000000FF 
-\2cmp 1A 20 \dx00000000 
-\2& 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000080 
-\2r 40 A0 \dx000000FF \dx00000000 \dx00000004 
-\2cmp 1A 20 \dx00000002 
-\2& 1A 20 \dx00000001 
-\2& 7D 80 00 \dxFFFFFFFF 
-\b1 
+54 * 81 02 00 FC 89
+F2 20 \dx000000FF
+\2cmp 1A 20 \dx00000000
+\2& 1A 20 \dx00000001
+\2sto 1A 20 \dx00000080
+\2r 40 A0 \dx000000FF \dx00000000 \dx00000004
+\2cmp 1A 20 \dx00000002
+\2& 1A 20 \dx00000001
+\2& 7D 80 00 \dxFFFFFFFF
+\b1
 \wx00FF \dx00000001 \dx00000001 	// 1 .. 1: set_icm_invisible;
 \wx00FC // default: set_icm_middle;
 
 // Name: @CB_FAILED_REAL00
-55 * 9 02 00 FF \b1 \b1 
-\w0 
-\w0 
+55 * 9 02 00 FF \b1 \b1
+\w0
+\w0
 
 // Name: @CB_FAILED00
-56 * 23 02 00 FF 89 
-0C 00 \dx0000FFFF 
-\b1 
+56 * 23 02 00 FF 89
+0C 00 \dx0000FFFF
+\b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FF // Non-graphics callback, return graphics result
 
 // Name: sw_icm_graphics
-57 * 51 02 00 FD 89 
-40 80 \dx000000FF \dx00000000 \dx00000004 
-\b3 
+57 * 51 02 00 FD 89
+40 80 \dx000000FF \dx00000000 \dx00000004
+\b3
 \wx00FE \dx00000000 \dx00000000 	// 0 .. 0: sw_icm_graphics_front;
 \wx00FC \dx00000001 \dx00000002 	// 1 .. 2: sw_icm_graphics_middle;
 \wx00FD \dx00000003 \dx00000003 	// 3 .. 3: sw_icm_graphics_rear;
 \wx00FF // default: @CB_FAILED00;
 
 // Name: sw_icm_cargo_subtype_text
-58 * 33 02 00 FC 89 
-F2 00 \dx000000FF 
-\b2 
+58 * 33 02 00 FC 89
+F2 00 \dx000000FF
+\b2
 \wx8000 \dx00000000 \dx00000000 	// 0 .. 0: return string(STR_ICM_SUBTYPE_3_PART);
 \wx8001 \dx00000001 \dx00000001 	// 1 .. 1: return string(STR_ICM_SUBTYPE_4_PART);
 \wx8400 // default: return 1024;
 
 // param[127] = param[17]
-59 * 9 0D 7F \D= 11 FE \dx0000FFFF 
+59 * 9 0D 7F \D= 11 FE \dx0000FFFF
 
-60 * 7 06 
-7F 04 FF \wx001B 
-FF 
+60 * 7 06
+7F 04 FF \wx001B
+FF
 
 // Name: @return_action_0
-61 * 34 02 00 FE 89 
-43 38 \dx0000000F 
-\2* 1A 20 \dx00000010 
-\2+ 1A 20 \dx00000003 
+61 * 34 02 00 FE 89
+43 38 \dx0000000F
+\2* 1A 20 \dx00000010
+\2+ 1A 20 \dx00000003
 \2+ 1A 00 \dx00000000 	// param[127]
-\b0 
+\b0
 \wx8000 // Return computed value
 
 // param[124] = param[17]
-62 * 9 0D 7C \D= 11 FE \dx0000FFFF 
+62 * 9 0D 7C \D= 11 FE \dx0000FFFF
 
 // param[125] = (param[124] + 16384)
-63 * 9 0D 7D \D+ 7C FF \dx00004000 
+63 * 9 0D 7D \D+ 7C FF \dx00004000
 
 // param[126] = (param[125] | 32768)
-64 * 9 0D 7E \D| 7D FF \dx00008000 
+64 * 9 0D 7E \D| 7D FF \dx00008000
 
 // param[123] = param[17]
-65 * 9 0D 7B \D= 11 FE \dx0000FFFF 
+65 * 9 0D 7B \D= 11 FE \dx0000FFFF
 
 // param[124] = (param[123] + 3)
-66 * 9 0D 7C \D+ 7B FF \dx00000003 
+66 * 9 0D 7C \D+ 7B FF \dx00000003
 
 // param[125] = (param[124] | 32768)
-67 * 9 0D 7D \D| 7C FF \dx00008000 
+67 * 9 0D 7D \D| 7C FF \dx00008000
 
-68 * 17 06 
-00 04 FF \wx0006 
-7E 02 FF \wx0015 
-7D 02 FF \wx001F 
-FF 
+68 * 17 06
+00 04 FF \wx0006
+7E 02 FF \wx0015
+7D 02 FF \wx001F
+FF
 
 // Name: sw_icm_colour_mapping
-69 * 43 02 00 FE 89 
+69 * 43 02 00 FE 89
 1A 00 \dx00000000 	// param[0]
-\b3 
+\b3
 \wx00FE \dx00000000 \dx00000000 	// 0 .. 0: return (((var[0x43, 24, 15] * 16) + 3) + base_sprite_2cc)
 \wx8000 \dx00000001 \dx00000001 	// 1 .. 1: return param[126];
 \wx8000 \dx00000002 \dx00000002 	// 2 .. 2: return param[125];
 \wx00FF // default: @CB_FAILED00;
 
 // Name: sw_icm_start_stop
-70 * 31 02 00 FB 89 
-40 50 \dx000000FF \dx00000001 \dx00000001 
-\b1 
+70 * 31 02 00 FB 89
+40 50 \dx000000FF \dx00000001 \dx00000001
+\b1
 \wx8400 \dx00000001 \dx00000010 	// 1 .. 16: return 1024;
 \wx8002 // default: return string(STR_ICM_CANNOT_START);
 
 // Name: sw_icm_articulated_part
-71 * 23 02 00 FA 89 
-10 00 \dxFFFFFFFF 
-\b1 
+71 * 23 02 00 FA 89
+10 00 \dxFFFFFFFF
+\b1
 \wx8074 \dx00000001 \dx00000003 	// 1 .. 3: return 116;
 \wxFFFF // default: return 32767;
 
 // Name: sw_icm_can_attach_wagon
-72 * 23 02 00 F9 89 
-C6 00 \dx0000FFFF 
-\b1 
+72 * 23 02 00 F9 89
+C6 00 \dx0000FFFF
+\b1
 \wx8401 \dx00000074 \dx00000074 	// 116 .. 116: return 1025;
 \wx8003 // default: return string(STR_ICM_CANNOT_ATTACH_OTHER);
 
 // Name: sw_icm_shorten_3_part_vehicle
-73 * 41 02 00 F8 89 
-40 80 \dx000000FF \dx00000000 \dx00000004 
-\b2 
+73 * 41 02 00 F8 89
+40 80 \dx000000FF \dx00000000 \dx00000004
+\b2
 \wx8007 \dx00000001 \dx00000001 	// 1 .. 1: return 7;
 \wx8001 \dx00000002 \dx00000002 	// 2 .. 2: return 1;
 \wx8000 // default: return 0;
 
 // Name: sw_icm_length
-74 * 23 02 00 F8 89 
-F2 00 \dx000000FF 
-\b1 
+74 * 23 02 00 F8 89
+F2 00 \dx000000FF
+\b1
 \wx00F8 \dx00000000 \dx00000000 	// 0 .. 0: sw_icm_shorten_3_part_vehicle;
 \wx8000 // default: return 0;
 
 // Name: sw_icm_power
-75 * 23 02 00 F7 89 
-F2 00 \dx000000FF 
-\b1 
+75 * 23 02 00 F7 89
+F2 00 \dx000000FF
+\b1
 \wx8699 \dx00000000 \dx00000000 	// 0 .. 0: return 1689;
 \wx89E6 // default: return 2534;
 
 // Name: sw_icm_weight
-76 * 23 02 00 F6 89 
-F2 00 \dx000000FF 
-\b1 
+76 * 23 02 00 F6 89
+F2 00 \dx000000FF
+\b1
 \wx8090 \dx00000000 \dx00000000 	// 0 .. 0: return 144;
 \wx80C0 // default: return 192;
 
 // Name: sw_icm_te
-77 * 23 02 00 F5 89 
-F2 00 \dx000000FF 
-\b1 
+77 * 23 02 00 F5 89
+F2 00 \dx000000FF
+\b1
 \wx8019 \dx00000000 \dx00000000 	// 0 .. 0: return 25;
 \wx801C // default: return 28;
 
 // param[142] = 2
-78 * 9 0D 8E \D= FF 00 \dx00000002 
+78 * 9 0D 8E \D= FF 00 \dx00000002
 
 // param[158] = (param[158] | 8)
-79 * 9 0D 9E \D| 9E FF \dx00000008 
+79 * 9 0D 9E \D| 9E FF \dx00000008
 
-80 * 9 00 08 \b1 01 FF \wx002C 
-08 0A 
+80 * 9 00 08 \b1 01 FF \wx002C
+08 0A
 
-81 * 104 00 00 \b37 01 FF \wx0074 
-06 07 
-2A \dx000B0D34 
-04 FF 
-03 1E 
-02 14 
-28 \wx0001 
-1D \dx00000000 
-29 \wx0000 
-1D \dx00000000 
-2C \b0 
-1D \dx00000000 
-2D \b0 
-1D \dx00000000 
-07 06 
-17 2D 
-0D 64 
-12 FD 
-09 \wx008D 
-27 06 
-1C 00 
-05 01 
-08 01 
-0B \wx069A 
-0E \dx00004C3C 
-13 00 
-14 24 
-16 90 
-24 00 
-18 00 
-19 28 
-1B \wx0000 
-1F 1A 
-20 0F 
-21 00 
-22 BA 
-23 00 
-25 00 
+81 * 104 00 00 \b37 01 FF \wx0074
+06 07
+2A \dx000B0D34
+04 FF
+03 1E
+02 14
+28 \wx0001
+1D \dx00000000
+29 \wx0000
+1D \dx00000000
+2C \b0
+1D \dx00000000
+2D \b0
+1D \dx00000000
+07 06
+17 2D
+0D 64
+12 FD
+09 \wx008D
+27 06
+1C 00
+05 01
+08 01
+0B \wx069A
+0E \dx00004C3C
+13 00
+14 24
+16 90
+24 00
+18 00
+19 28
+1B \wx0000
+1F 1A
+20 0F
+21 00
+22 BA
+23 00
+25 00
 
-82 * 33 04 00 7F 01 FF \wx0074 "ICM 'Koploper' (Electric)" 00 
+82 * 33 04 00 7F 01 FF \wx0074 "ICM 'Koploper' (Electric)" 00
 
-83 * 35 04 00 1F 01 FF \wx0074 "ICM 'Koploper' (Electrisch)" 00 
+83 * 35 04 00 1F 01 FF \wx0074 "ICM 'Koploper' (Electrisch)" 00
 
-84 * 6 01 00 \b1 FF \wx0001 
+84 * 6 01 00 \b1 FF \wx0001
 
-85 icm.png 8bpp 1 161 53 14 -25 -10 normal 
+85 icm.png 8bpp 1 161 53 14 -25 -10 normal
 
 // Name: set_icm_purchase - feature 00
-86 * 9 02 00 F4 \b1 \b1 
-\w0 
-\w0 
+86 * 9 02 00 F4 \b1 \b1
+\w0
+\w0
 
-87 * 9 00 00 \b1 01 FF \wx0074 
-1E 79 
+87 * 9 00 00 \b1 01 FF \wx0074
+1E 79
 
 // Name: @return_action_0
-88 * 41 02 00 F3 89 
-F2 20 \dx000000FF 
-\2cmp 1A 20 \dx00000001 
-\2& 1A 20 \dx00000001 
+88 * 41 02 00 F3 89
+F2 20 \dx000000FF
+\2cmp 1A 20 \dx00000001
+\2& 1A 20 \dx00000001
 \2* 1A 20 \dx00000032 	// expr1 - expr2
-\2+ 1A 00 \dx00000064 
-\b0 
+\2+ 1A 00 \dx00000064
+\b0
 \wx8000 // Return computed value
 
 // Name: @return_action_1
-89 * 85 02 00 F2 89 
-40 A0 \dx000000FF \dx00000000 \dx00000004 
-\2cmp 1A 20 \dx00000002 
-\2& 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000080 
-\2r F2 20 \dx000000FF 
-\2cmp 1A 20 \dx00000000 
-\2& 1A 20 \dx00000001 
-\2& 7D 80 20 \dxFFFFFFFF 
+89 * 85 02 00 F2 89
+40 A0 \dx000000FF \dx00000000 \dx00000004
+\2cmp 1A 20 \dx00000002
+\2& 1A 20 \dx00000001
+\2sto 1A 20 \dx00000080
+\2r F2 20 \dx000000FF
+\2cmp 1A 20 \dx00000000
+\2& 1A 20 \dx00000001
+\2& 7D 80 20 \dxFFFFFFFF
 \2* 1A 20 \dxFFFFFFDC 	// expr1 - expr2
-\2+ 1A 00 \dx00000024 
-\b0 
+\2+ 1A 00 \dx00000024
+\b0
 \wx8000 // Return computed value
 
 // Name: @return_action_2
-90 * 20 02 00 F1 89 
-1A 20 \dx00000008 
-\2- 1C 00 \dxFFFFFFFF 
-\b0 
+90 * 20 02 00 F1 89
+1A 20 \dx00000008
+\2- 1C 00 \dxFFFFFFFF
+\b0
 \wx8000 // Return computed value
 
 // Name: @action3_1
-91 * 24 02 00 00 89 
+91 * 24 02 00 00 89
 7E F8 00 \dxFFFFFFFF 	// sw_icm_length
-\b1 
+\b1
 \wx00FF \dx0000FFFF \dx0000FFFF 	// @CB_FAILED00;
 \wx00F1 // return (8 - var[0x1C, 0, -1])
 
 // Name: @action3_0
-92 * 73 02 00 F5 89 
-10 00 \dx000000FF 
-\b6 
+92 * 73 02 00 F5 89
+10 00 \dx000000FF
+\b6
 \wx00F7 \dx0000000B \dx0000000B 	// sw_icm_power;
 \wx00F3 \dx0000000D \dx0000000D 	// return ((var[0xF2, 0, 255] == 1) ? 150 : 100)
 \wx00F2 \dx00000014 \dx00000014 	// return (((var[0xF2, 0, 255] == 0) & (((var[0x40, 0, 255] + 0) % 4) == 2)) ? 0 : 36)
@@ -402,9 +402,9 @@ F2 20 \dx000000FF
 \wx00FD // sw_icm_graphics;
 
 // Name: @action3_2
-93 * 63 02 00 F6 89 
-10 00 \dx000000FF 
-\b5 
+93 * 63 02 00 F6 89
+10 00 \dx000000FF
+\b5
 \wx8699 \dx0000000B \dx0000000B 	// return 1689;
 \wx8064 \dx0000000D \dx0000000D 	// return 100;
 \wx801B \dx00000014 \dx00000014 	// return 27;
@@ -413,34 +413,34 @@ F2 20 \dx000000FF
 \wx00FD // sw_icm_graphics;
 
 // Name: @return_action_3
-94 * 49 02 00 F2 89 
-40 A0 \dx000000FF \dx00000000 \dx00000004 
-\2cmp 1A 20 \dx00000000 
-\2& 1A 20 \dx00000001 
+94 * 49 02 00 F2 89
+40 A0 \dx000000FF \dx00000000 \dx00000004
+\2cmp 1A 20 \dx00000000
+\2& 1A 20 \dx00000001
 \2* 1A 20 \dxFFFFFFF2 	// expr1 - expr2
-\2+ 1A 00 \dx000000C8 
-\b0 
+\2+ 1A 00 \dx000000C8
+\b0
 \wx8000 // Return computed value
 
 // Name: @return_action_4
-95 * 85 02 00 F3 89 
-40 A0 \dx000000FF \dx00000000 \dx00000004 
-\2cmp 1A 20 \dx00000002 
-\2& 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000080 
-\2r F2 20 \dx000000FF 
-\2cmp 1A 20 \dx00000000 
-\2& 1A 20 \dx00000001 
-\2& 7D 80 20 \dxFFFFFFFF 
+95 * 85 02 00 F3 89
+40 A0 \dx000000FF \dx00000000 \dx00000004
+\2cmp 1A 20 \dx00000002
+\2& 1A 20 \dx00000001
+\2sto 1A 20 \dx00000080
+\2r F2 20 \dx000000FF
+\2cmp 1A 20 \dx00000000
+\2& 1A 20 \dx00000001
+\2& 7D 80 20 \dxFFFFFFFF
 \2* 1A 20 \dxFFFFFFDC 	// expr1 - expr2
-\2+ 1A 00 \dx00000024 
-\b0 
+\2+ 1A 00 \dx00000024
+\b0
 \wx8000 // Return computed value
 
 // Name: @action3_3
-96 * 93 02 00 F5 89 
-0C 00 \dx0000FFFF 
-\b8 
+96 * 93 02 00 F5 89
+0C 00 \dx0000FFFF
+\b8
 \wx00F2 \dx00000010 \dx00000010 	// return ((((var[0x40, 0, 255] + 0) % 4) == 0) ? 186 : 200)
 \wx00F3 \dx00000015 \dx00000015 	// return (((var[0xF2, 0, 255] == 0) & (((var[0x40, 0, 255] + 0) % 4) == 2)) ? 0 : 36)
 \wx00FA \dx00000016 \dx00000016 	// sw_icm_articulated_part;
@@ -452,9 +452,9 @@ F2 20 \dx000000FF
 \wx00FD // sw_icm_graphics;
 
 // Name: @action3_4
-97 * 63 02 00 FD 89 
-0C 00 \dx0000FFFF 
-\b5 
+97 * 63 02 00 FD 89
+0C 00 \dx0000FFFF
+\b5
 \wx00F4 \dx00000000 \dx00000000 	// set_icm_purchase;
 \wx00FA \dx00000016 \dx00000016 	// sw_icm_articulated_part;
 \wx8004 \dx00000023 \dx00000023 	// return string(STR_ICM_ADDITIONAL_TEXT);
@@ -462,87 +462,87 @@ F2 20 \dx000000FF
 \wx00F6 \dx00000036 \dx00000036 	// @action3_2;
 \wx00FD // sw_icm_graphics;
 
-98 * 12 03 00 01 FF \wx0074 \b1 
+98 * 12 03 00 01 FF \wx0074 \b1
 FF \wx00FD 	// @action3_4;
 \wx00F5 	// @action3_3;
 
 // param[126] = param[161]
-99 * 5 0D 7E \D= A1 00 
+99 * 5 0D 7E \D= A1 00
 
 // param[127] = (302012601 - param[126])
-100 * 9 0D 7F \D- FF 7E \dx120058B9 
+100 * 9 0D 7F \D- FF 7E \dx120058B9
 
 // param[127] = (param[127] << -31)
-101 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1 
+101 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-102 * 9 07 7F 04 \7= \dx00000000 01 
+102 * 9 07 7F 04 \7= \dx00000000 01
 
-103 * 10 00 00 \b1 01 FF \wx0074 
-2B \wx00B9 
+103 * 10 00 00 \b1 01 FF \wx0074
+2B \wx00B9
 
-104 * 6 01 00 \b2 FF \wx0004 
+104 * 6 01 00 \b2 FF \wx0004
 
-105 cargo_wagons.png 8bpp 1 1 8 24 -3 -12 normal 
-106 cargo_wagons.png 8bpp 10 1 22 20 -14 -12 normal 
-107 cargo_wagons.png 8bpp 33 1 32 16 -16 -12 normal 
-108 cargo_wagons.png 8bpp 66 1 22 20 -6 -12 normal 
+105 cargo_wagons.png 8bpp 1 1 8 24 -3 -12 normal
+106 cargo_wagons.png 8bpp 10 1 22 20 -14 -12 normal
+107 cargo_wagons.png 8bpp 33 1 32 16 -16 -12 normal
+108 cargo_wagons.png 8bpp 66 1 22 20 -6 -12 normal
 
-109 cargo_wagons.png 8bpp 1 33 8 24 -3 -12 normal 
-110 cargo_wagons.png 8bpp 10 33 22 20 -14 -12 normal 
-111 cargo_wagons.png 8bpp 33 33 32 16 -16 -12 normal 
-112 cargo_wagons.png 8bpp 66 33 22 20 -6 -12 normal 
+109 cargo_wagons.png 8bpp 1 33 8 24 -3 -12 normal
+110 cargo_wagons.png 8bpp 10 33 22 20 -14 -12 normal
+111 cargo_wagons.png 8bpp 33 33 32 16 -16 -12 normal
+112 cargo_wagons.png 8bpp 66 33 22 20 -6 -12 normal
 
 // Name: set_cargo_wagon - feature 00
-113 * 9 02 00 F5 \b1 \b1 
-\w0 
-\w0 
+113 * 9 02 00 F5 \b1 \b1
+\w0
+\w0
 
 // Name: cargo_wagon_switch_vehicle
-114 * 30 02 00 F5 89 
-1A 20 \dx80000000 
-\2sto 1A 00 \dx00000100 
-\b1 
+114 * 30 02 00 F5 89
+1A 20 \dx80000000
+\2sto 1A 00 \dx00000100
+\b1
 \wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00F5 // default: set_cargo_wagon;
 
 // Name: set_cargo_wagon_load - feature 00
-115 * 9 02 00 FD \b1 \b1 
-\w1 
-\w1 
+115 * 9 02 00 FD \b1 \b1
+\w1
+\w1
 
 // Name: cargo_wagon_switch_load
-116 * 30 02 00 FD 89 
-1A 20 \dx00000000 
-\2sto 1A 00 \dx00000100 
-\b1 
+116 * 30 02 00 FD 89
+1A 20 \dx00000000
+\2sto 1A 00 \dx00000100
+\b1
 \wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00FD // default: set_cargo_wagon_load;
 
 // Name: cargo_wagon_switch_graphics
-117 * 37 02 00 FD 89 
-10 20 \dxFFFFFFFF 
-\2u>> 1A 20 \dx00000008 
-\2& 1A 00 \dx000000FF 
-\b1 
+117 * 37 02 00 FD 89
+10 20 \dxFFFFFFFF
+\2u>> 1A 20 \dx00000008
+\2& 1A 00 \dx000000FF
+\b1
 \wx00F5 \dx00000000 \dx00000000 	// 0 .. 0: cargo_wagon_switch_vehicle;
 \wx00FD // default: cargo_wagon_switch_load;
 
-118 * 37 00 00 \b11 01 FF \wx0075 
-06 0F 
-2A \dx000A96C9 
-04 FF 
-28 \wx0020 
-1D \dx00000000 
-12 FD 
-27 80 
-14 28 
-16 14 
-24 00 
-0B \wx0000 
+118 * 37 00 00 \b11 01 FF \wx0075
+06 0F
+2A \dx000A96C9
+04 FF
+28 \wx0020
+1D \dx00000000
+12 FD
+27 80
+14 28
+16 14
+24 00
+0B \wx0000
 
-119 * 19 04 00 7F 01 FF \wx0075 "Cargo Wagon" 00 
+119 * 19 04 00 7F 01 FF \wx0075 "Cargo Wagon" 00
 
-120 * 12 03 00 01 FF \wx0075 \b1 
+120 * 12 03 00 01 FF \wx0075 \b1
 FF \wx00FD 	// cargo_wagon_switch_graphics;
 \wx00FD 	// cargo_wagon_switch_graphics;
 

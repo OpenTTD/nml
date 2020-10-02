@@ -5,92 +5,92 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d11 
+0 * 4 \d11
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "A" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 52 08 08 "NML\33" "NML regression test" 00 "A test newgrf testing NML" 00 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "A"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 52 08 08 "NML\33" "NML regression test" 00 "A test newgrf testing NML" 00
 // Name: callee
-3 * 49 02 0A FF 89 
-45 30 \dx00000003 
-\2+ 45 38 \dx0000000F 
-\2sto 1A 20 \dx00000084 
-\2r 43 20 \dxFFFFFFFF 
-\2+ 44 20 \dx000000FF 
-\2* 7D 84 00 \dxFFFFFFFF 
-\b0 
+3 * 49 02 0A FF 89
+45 30 \dx00000003
+\2+ 45 38 \dx0000000F
+\2sto 1A 20 \dx00000084
+\2r 43 20 \dxFFFFFFFF
+\2+ 44 20 \dx000000FF
+\2* 7D 84 00 \dxFFFFFFFF
+\b0
 \wx8000 // Return computed value
 
 // Name: caller2
-4 * 137 02 0A FE 89 
-B3 20 \dx00000003 
-\2+ AA 20 \dx0000FFFF 
-\2sto 1A 20 \dx00000080 
-\2r 45 30 \dx00000003 
-\2+ 44 20 \dx000000FF 
-\2sto 1A 20 \dx00000081 
+4 * 137 02 0A FE 89
+B3 20 \dx00000003
+\2+ AA 20 \dx0000FFFF
+\2sto 1A 20 \dx00000080
+\2r 45 30 \dx00000003
+\2+ 44 20 \dx000000FF
+\2sto 1A 20 \dx00000081
 \2r 7E FF 20 \dxFFFFFFFF 	// callee
-\2+ 5F 28 \dx0000FFFF 
-\2sto 1A 20 \dx00000082 
-\2r 43 20 \dxFFFFFFFF 
-\2+ 45 38 \dx0000000F 
-\2sto 1A 20 \dx00000083 
-\2r 45 3C \dx0000000F 
-\2+ 46 20 \dxFFFFFFFF 
-\2* 7D 83 20 \dxFFFFFFFF 
-\2* 7D 82 20 \dxFFFFFFFF 
-\2* 7D 81 20 \dxFFFFFFFF 
-\2* 7D 80 00 \dxFFFFFFFF 
-\b0 
+\2+ 5F 28 \dx0000FFFF
+\2sto 1A 20 \dx00000082
+\2r 43 20 \dxFFFFFFFF
+\2+ 45 38 \dx0000000F
+\2sto 1A 20 \dx00000083
+\2r 45 3C \dx0000000F
+\2+ 46 20 \dxFFFFFFFF
+\2* 7D 83 20 \dxFFFFFFFF
+\2* 7D 82 20 \dxFFFFFFFF
+\2* 7D 81 20 \dxFFFFFFFF
+\2* 7D 80 00 \dxFFFFFFFF
+\b0
 \wx8000 // Return computed value
 
 // Name: caller1
-5 * 79 02 0A FF 89 
-B3 20 \dx00000003 
-\2+ AA 20 \dx0000FFFF 
-\2sto 1A 20 \dx00000080 
+5 * 79 02 0A FF 89
+B3 20 \dx00000003
+\2+ AA 20 \dx0000FFFF
+\2sto 1A 20 \dx00000080
 \2r 7E FF 20 \dxFFFFFFFF 	// callee
-\2+ 5F 28 \dx0000FFFF 
-\2sto 1A 20 \dx00000081 
-\2r 45 3C \dx0000000F 
-\2+ 46 20 \dxFFFFFFFF 
-\2* 7D 81 20 \dxFFFFFFFF 
-\2* 7D 80 00 \dxFFFFFFFF 
-\b0 
+\2+ 5F 28 \dx0000FFFF
+\2sto 1A 20 \dx00000081
+\2r 45 3C \dx0000000F
+\2+ 46 20 \dxFFFFFFFF
+\2* 7D 81 20 \dxFFFFFFFF
+\2* 7D 80 00 \dxFFFFFFFF
+\b0
 \wx8000 // Return computed value
 
-6 * 11 00 0A \b2 01 FF \wx0000 
-08 00 
-09 00 
+6 * 11 00 0A \b2 01 FF \wx0000
+08 00
+09 00
 
-7 * 11 00 0A \b2 01 FF \wx0000 
-21 00 
-22 42 
+7 * 11 00 0A \b2 01 FF \wx0000
+21 00
+22 42
 
 // Name: @CB_FAILED_PROD
-8 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00 
+8 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
 
 // Name: @CB_FAILED0A
-9 * 23 02 0A FD 89 
-0C 00 \dx0000FFFF 
-\b1 
+9 * 23 02 0A FD 89
+0C 00 \dx0000FFFF
+\b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FD // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-10 * 33 02 0A FD 89 
-0C 00 \dx0000FFFF 
-\b2 
+10 * 33 02 0A FD 89
+0C 00 \dx0000FFFF
+\b2
 \wx00FE \dx0000003B \dx0000003B 	// caller2;
 \wx00FF \dx0000015F \dx0000015F 	// caller1;
 \wx00FD // @CB_FAILED0A;
 
-11 * 7 03 0A 01 00 \b0 
+11 * 7 03 0A 01 00 \b0
 \wx00FD 	// @action3_0;
 
