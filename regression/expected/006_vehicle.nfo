@@ -5,148 +5,148 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d28 
+0 * 4 \d28
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "W" 
-"B" "BLTR" \w1 "3" 
-00 
-00 
-2 * 52 08 08 "NML\6" "NML regression test" 00 "A test newgrf testing NML" 00 
-3 * 32 00 08 \b1 06 FF \wx0000 
-09 "PASS" "MAIL" "GOOD" "IORE" "GOLD" 
-"FOOD" 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "W"
+"B" "BLTR" \w1 "3"
+00
+00
+2 * 52 08 08 "NML\6" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 32 00 08 \b1 06 FF \wx0000
+09 "PASS" "MAIL" "GOOD" "IORE" "GOLD"
+"FOOD"
 
 // param[0] = 9
-4 * 9 0D 00 \D= FF 00 \dx00000009 
+4 * 9 0D 00 \D= FF 00 \dx00000009
 
 // Name: switch_length
-5 * 23 02 01 FF 89 
-40 00 \dx000000FF 
-\b1 
+5 * 23 02 01 FF 89
+40 00 \dx000000FF
+\b1
 \wx8005 \dx00000001 \dx00000001 	// 1 .. 1: return 5;
 \wx8006 // default: return 6;
 
 // param[126] = (param[0] * 5)
-6 * 9 0D 7E \D* 00 FF \dx00000005 
+6 * 9 0D 7E \D* 00 FF \dx00000005
 
 // param[127] = (param[126] + 5)
-7 * 9 0D 7F \D+ 7E FF \dx00000005 
+7 * 9 0D 7F \D+ 7E FF \dx00000005
 
-8 * 7 06 
-7F 01 FF \wx002C 
-FF 
+8 * 7 06
+7F 01 FF \wx002C
+FF
 
-9 * 63 00 01 \b21 01 FF \wx0059 
-06 03 
-04 28 
-03 1E 
-1F \dx000AF386 
-02 01 
-0A \dx00004C48 
-09 87 
-11 8F 
-08 B4 
-13 16 
-14 58 
-0E FF 
-07 10 
-18 4D 
-19 80 
-0F 00 
-1D \wx0003 
-16 \dx00000000 
-1E \wx0000 
-16 \dx00000000 
-1C 01 
+9 * 63 00 01 \b21 01 FF \wx0059
+06 03
+04 28
+03 1E
+1F \dx000AF386
+02 01
+0A \dx00004C48
+09 87
+11 8F
+08 B4
+13 16
+14 58
+0E FF
+07 10
+18 4D
+19 80
+0F 00
+1D \wx0003
+16 \dx00000000
+1E \wx0000
+16 \dx00000000
+1C 01
 
-10 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00 
+10 * 27 04 01 7F 01 FF \wx0059 "Foster Express Tram" 00
 
-11 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00 
+11 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00
 
-12 * 6 01 01 \b1 FF \wx0008 
+12 * 6 01 01 \b1 FF \wx0008
 
-13 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal 
-|	opengfx_generic_trams1.png 32bpp 48 56 8 18 -3 -10 normal 
-|	opengfx_generic_trams1.pcx mask 48 56 
-|	opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 zi2 
-14 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal 
-|	opengfx_generic_trams1.png 32bpp 64 56 20 19 -14 -5 normal 
-|	opengfx_generic_trams1.pcx mask 64 56 
-|	opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 zi2 
-15 opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 normal 
-|	opengfx_generic_trams1.png 32bpp 96 56 28 15 -14 -8 normal 
-|	opengfx_generic_trams1.pcx mask 96 56 
-|	opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 zi2 
-16 opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 normal 
-|	opengfx_generic_trams1.png 32bpp 144 56 20 19 -6 -7 normal 
-|	opengfx_generic_trams1.pcx mask 144 56 
-|	opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 zi2 
-17 opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 normal 
-|	opengfx_generic_trams1.png 32bpp 176 56 8 18 -3 -10 normal 
-|	opengfx_generic_trams1.pcx mask 176 56 
-|	opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 zi2 
-18 opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 normal 
-|	opengfx_generic_trams1.png 32bpp 192 56 20 19 -14 -9 normal 
-|	opengfx_generic_trams1.pcx mask 192 56 
-|	opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 zi2 
-19 opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 normal 
-|	opengfx_generic_trams1.png 32bpp 224 56 28 15 -14 -8 normal 
-|	opengfx_generic_trams1.pcx mask 224 56 
-|	opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 zi2 
-20 opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 normal 
-|	opengfx_generic_trams1.png 32bpp 272 56 20 19 -6 -7 normal 
-|	opengfx_generic_trams1.pcx mask 272 56 
-|	opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 zi2 
+13 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal
+|	opengfx_generic_trams1.png 32bpp 48 56 8 18 -3 -10 normal
+|	opengfx_generic_trams1.pcx mask 48 56
+|	opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 zi2
+14 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal
+|	opengfx_generic_trams1.png 32bpp 64 56 20 19 -14 -5 normal
+|	opengfx_generic_trams1.pcx mask 64 56
+|	opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 zi2
+15 opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 normal
+|	opengfx_generic_trams1.png 32bpp 96 56 28 15 -14 -8 normal
+|	opengfx_generic_trams1.pcx mask 96 56
+|	opengfx_generic_trams1.pcx 8bpp 96 56 28 15 -14 -8 zi2
+16 opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 normal
+|	opengfx_generic_trams1.png 32bpp 144 56 20 19 -6 -7 normal
+|	opengfx_generic_trams1.pcx mask 144 56
+|	opengfx_generic_trams1.pcx 8bpp 144 56 20 19 -6 -7 zi2
+17 opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 normal
+|	opengfx_generic_trams1.png 32bpp 176 56 8 18 -3 -10 normal
+|	opengfx_generic_trams1.pcx mask 176 56
+|	opengfx_generic_trams1.pcx 8bpp 176 56 8 18 -3 -10 zi2
+18 opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 normal
+|	opengfx_generic_trams1.png 32bpp 192 56 20 19 -14 -9 normal
+|	opengfx_generic_trams1.pcx mask 192 56
+|	opengfx_generic_trams1.pcx 8bpp 192 56 20 19 -14 -9 zi2
+19 opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 normal
+|	opengfx_generic_trams1.png 32bpp 224 56 28 15 -14 -8 normal
+|	opengfx_generic_trams1.pcx mask 224 56
+|	opengfx_generic_trams1.pcx 8bpp 224 56 28 15 -14 -8 zi2
+20 opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 normal
+|	opengfx_generic_trams1.png 32bpp 272 56 20 19 -6 -7 normal
+|	opengfx_generic_trams1.pcx mask 272 56
+|	opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 zi2
 
 // Name: foster_express_set - feature 01
-21 * 9 02 01 FE \b1 \b1 
-\w0 
-\w0 
+21 * 9 02 01 FE \b1 \b1
+\w0
+\w0
 
 // Name: @CB_FAILED_REAL01
-22 * 9 02 01 FD \b1 \b1 
-\w0 
-\w0 
+22 * 9 02 01 FD \b1 \b1
+\w0
+\w0
 
 // Name: @CB_FAILED01
-23 * 23 02 01 FD 89 
-0C 00 \dx0000FFFF 
-\b1 
+23 * 23 02 01 FD 89
+0C 00 \dx0000FFFF
+\b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FD // Non-graphics callback, return graphics result
 
 // Name: @return_action_0
-24 * 20 02 01 FC 89 
-1A 20 \dx00000008 
-\2- 1C 00 \dxFFFFFFFF 
-\b0 
+24 * 20 02 01 FC 89
+1A 20 \dx00000008
+\2- 1C 00 \dxFFFFFFFF
+\b0
 \wx8000 // Return computed value
 
 // Name: @action3_1
-25 * 24 02 01 00 89 
+25 * 24 02 01 00 89
 7E FF 00 \dxFFFFFFFF 	// switch_length
-\b1 
+\b1
 \wx00FD \dx0000FFFF \dx0000FFFF 	// @CB_FAILED01;
 \wx00FC // return (8 - var[0x1C, 0, -1])
 
 // Name: @action3_0
-26 * 23 02 01 FC 89 
-10 00 \dx000000FF 
-\b1 
+26 * 23 02 01 FC 89
+10 00 \dx000000FF
+\b1
 \wx0000 \dx00000023 \dx00000023 	// @action3_1;
 \wx00FE // foster_express_set;
 
 // Name: @action3_2
-27 * 23 02 01 FE 89 
-0C 00 \dx0000FFFF 
-\b1 
+27 * 23 02 01 FE 89
+0C 00 \dx0000FFFF
+\b1
 \wx00FC \dx00000036 \dx00000036 	// @action3_0;
 \wx00FE // foster_express_set;
 
-28 * 9 03 01 01 FF \wx0059 \b0 
+28 * 9 03 01 01 FF \wx0059 \b0
 \wx00FE 	// @action3_2;
 

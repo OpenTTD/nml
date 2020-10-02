@@ -5,36 +5,36 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d6 
+0 * 4 \d6
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "A" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 52 08 08 "NML\15" "NML regression test" 00 "A test newgrf testing NML" 00 
-3 * 33 04 0F FF 02 \wxD000 "Miscellaneous" 00 "Basic object" 00 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "A"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 52 08 08 "NML\15" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 33 04 0F FF 02 \wxD000 "Miscellaneous" 00 "Basic object" 00
 
 // Name: obj_basic_tile - feature 0F
-4 * 18 02 0F FF \b1 \dx0000058C 
-\dx03078A48 \b0 \b0 \b0 \b16 \b16 \b30 
+4 * 18 02 0F FF \b1 \dx0000058C
+\dx03078A48 \b0 \b0 \b0 \b16 \b16 \b30
 
-5 * 41 00 0F \b11 01 FF \wx0000 
-08 "MISC" 
-09 \wxD000 
-0A \wxD001 
-0B 07 
-0C 11 
-0E \dx000A96C9 
-0F \dx000AC196 
-0D 01 
-14 01 
-10 \wx0800 
-16 04 
+5 * 41 00 0F \b11 01 FF \wx0000
+08 "MISC"
+09 \wxD000
+0A \wxD001
+0B 07
+0C 11
+0E \dx000A96C9
+0F \dx000AC196
+0D 01
+14 01
+10 \wx0800
+16 04
 
-6 * 7 03 0F 01 00 \b0 
+6 * 7 03 0F 01 00 \b0
 \wx00FF 	// obj_basic_tile;
 

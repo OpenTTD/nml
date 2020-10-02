@@ -5,175 +5,175 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d146 
+0 * 4 \d146
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "W" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 301 08 08 "NML\03" "NML Example NewGRF: Road Vehicle" 00 "\8ENML Example NewGRF: Road Vehicle\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89DanMack, Zephyris, \98coding by \89Terkhen, planetmaker.\0D\98This NewGRF defines first-generation flatbed truck." 00 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "W"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 301 08 08 "NML\03" "NML Example NewGRF: Road Vehicle" 00 "\8ENML Example NewGRF: Road Vehicle\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89DanMack, Zephyris, \98coding by \89Terkhen, planetmaker.\0D\98This NewGRF defines first-generation flatbed truck." 00
 // param[127] = 0
-3 * 9 0D 7F \D= FF 00 \dx00000000 
+3 * 9 0D 7F \D= FF 00 \dx00000000
 
-4 * 6 09 85 01 \70 78 01 
+4 * 6 09 85 01 \70 78 01
 
 // param[127] = 1
-5 * 9 0D 7F \D= FF 00 \dx00000001 
+5 * 9 0D 7F \D= FF 00 \dx00000001
 
-6 * 9 09 7F 04 \7! \dx00000000 01 
+6 * 9 09 7F 04 \7! \dx00000000 01
 
-7 * 44 0B 02 7F 02 "enable multiple NewGRF engine sets = on" 00 
+7 * 44 0B 02 7F 02 "enable multiple NewGRF engine sets = on" 00
 
-8 * 68 00 08 \b1 0F FF \wx0000 
-09 "LVST" "WOOL" "SCRP" "FICR" "PETR" 
-"RFPR" "GOOD" "ENSP" "FMSP" "MNSP" 
-"PAPR" "STEL" "VEHI" "COPR" "WOOD" 
+8 * 68 00 08 \b1 0F FF \wx0000
+09 "LVST" "WOOL" "SCRP" "FICR" "PETR"
+"RFPR" "GOOD" "ENSP" "FMSP" "MNSP"
+"PAPR" "STEL" "VEHI" "COPR" "WOOD"
 
 // param[127] = 1145130834
-9 * 9 0D 7F \D= FF 00 \dx44414F52 
+9 * 9 0D 7F \D= FF 00 \dx44414F52
 
-10 * 9 09 00 04 0F \dx52444552 01 
+10 * 9 09 00 04 0F \dx52444552 01
 
 // param[127] = 1380205906
-11 * 9 0D 7F \D= FF FF \dx52444552 
+11 * 9 0D 7F \D= FF FF \dx52444552
 
-12 * 9 09 00 04 0F \dx5F444552 01 
+12 * 9 09 00 04 0F \dx5F444552 01
 
 // param[127] = 1598309714
-13 * 9 0D 7F \D= FF FF \dx5F444552 
+13 * 9 0D 7F \D= FF FF \dx5F444552
 
-14 * 7 06 
-7F 04 FF \wx0014 
-FF 
+14 * 7 06
+7F 04 FF \wx0014
+FF
 
-15 * 24 00 08 \b1 04 FF \wx0000 
-16 "ROAD" "ELRD" "2YEL" "\00\00\00\00" 
+15 * 24 00 08 \b1 04 FF \wx0000
+16 "ROAD" "ELRD" "2YEL" "\00\00\00\00"
 
-16 * 6 01 01 \b10 FF \wx0008 
+16 * 6 01 01 \b10 FF \wx0008
 
-17 gfx/flatbed_truck_1_paper.png 8bpp 0 0 8 18 -3 -10 normal 
-18 gfx/flatbed_truck_1_paper.png 8bpp 16 0 20 16 -14 -7 normal 
-19 gfx/flatbed_truck_1_paper.png 8bpp 48 0 28 12 -14 -6 normal 
-20 gfx/flatbed_truck_1_paper.png 8bpp 96 0 20 16 -6 -7 normal 
-21 gfx/flatbed_truck_1_paper.png 8bpp 128 0 8 18 -3 -10 normal 
-22 gfx/flatbed_truck_1_paper.png 8bpp 144 0 20 16 -14 -7 normal 
-23 gfx/flatbed_truck_1_paper.png 8bpp 176 0 28 12 -14 -6 normal 
-24 gfx/flatbed_truck_1_paper.png 8bpp 224 0 20 16 -6 -7 normal 
+17 gfx/flatbed_truck_1_paper.png 8bpp 0 0 8 18 -3 -10 normal
+18 gfx/flatbed_truck_1_paper.png 8bpp 16 0 20 16 -14 -7 normal
+19 gfx/flatbed_truck_1_paper.png 8bpp 48 0 28 12 -14 -6 normal
+20 gfx/flatbed_truck_1_paper.png 8bpp 96 0 20 16 -6 -7 normal
+21 gfx/flatbed_truck_1_paper.png 8bpp 128 0 8 18 -3 -10 normal
+22 gfx/flatbed_truck_1_paper.png 8bpp 144 0 20 16 -14 -7 normal
+23 gfx/flatbed_truck_1_paper.png 8bpp 176 0 28 12 -14 -6 normal
+24 gfx/flatbed_truck_1_paper.png 8bpp 224 0 20 16 -6 -7 normal
 
-25 gfx/flatbed_truck_1_paper.png 8bpp 260 0 8 18 -3 -10 normal 
-26 gfx/flatbed_truck_1_paper.png 8bpp 276 0 20 16 -14 -7 normal 
-27 gfx/flatbed_truck_1_paper.png 8bpp 308 0 28 12 -14 -6 normal 
-28 gfx/flatbed_truck_1_paper.png 8bpp 356 0 20 16 -6 -7 normal 
-29 gfx/flatbed_truck_1_paper.png 8bpp 388 0 8 18 -3 -10 normal 
-30 gfx/flatbed_truck_1_paper.png 8bpp 404 0 20 16 -14 -7 normal 
-31 gfx/flatbed_truck_1_paper.png 8bpp 436 0 28 12 -14 -6 normal 
-32 gfx/flatbed_truck_1_paper.png 8bpp 484 0 20 16 -6 -7 normal 
+25 gfx/flatbed_truck_1_paper.png 8bpp 260 0 8 18 -3 -10 normal
+26 gfx/flatbed_truck_1_paper.png 8bpp 276 0 20 16 -14 -7 normal
+27 gfx/flatbed_truck_1_paper.png 8bpp 308 0 28 12 -14 -6 normal
+28 gfx/flatbed_truck_1_paper.png 8bpp 356 0 20 16 -6 -7 normal
+29 gfx/flatbed_truck_1_paper.png 8bpp 388 0 8 18 -3 -10 normal
+30 gfx/flatbed_truck_1_paper.png 8bpp 404 0 20 16 -14 -7 normal
+31 gfx/flatbed_truck_1_paper.png 8bpp 436 0 28 12 -14 -6 normal
+32 gfx/flatbed_truck_1_paper.png 8bpp 484 0 20 16 -6 -7 normal
 
-33 gfx/flatbed_truck_1_steel.png 8bpp 0 0 8 18 -3 -10 normal 
-34 gfx/flatbed_truck_1_steel.png 8bpp 16 0 20 16 -14 -7 normal 
-35 gfx/flatbed_truck_1_steel.png 8bpp 48 0 28 12 -14 -6 normal 
-36 gfx/flatbed_truck_1_steel.png 8bpp 96 0 20 16 -6 -7 normal 
-37 gfx/flatbed_truck_1_steel.png 8bpp 128 0 8 18 -3 -10 normal 
-38 gfx/flatbed_truck_1_steel.png 8bpp 144 0 20 16 -14 -7 normal 
-39 gfx/flatbed_truck_1_steel.png 8bpp 176 0 28 12 -14 -6 normal 
-40 gfx/flatbed_truck_1_steel.png 8bpp 224 0 20 16 -6 -7 normal 
+33 gfx/flatbed_truck_1_steel.png 8bpp 0 0 8 18 -3 -10 normal
+34 gfx/flatbed_truck_1_steel.png 8bpp 16 0 20 16 -14 -7 normal
+35 gfx/flatbed_truck_1_steel.png 8bpp 48 0 28 12 -14 -6 normal
+36 gfx/flatbed_truck_1_steel.png 8bpp 96 0 20 16 -6 -7 normal
+37 gfx/flatbed_truck_1_steel.png 8bpp 128 0 8 18 -3 -10 normal
+38 gfx/flatbed_truck_1_steel.png 8bpp 144 0 20 16 -14 -7 normal
+39 gfx/flatbed_truck_1_steel.png 8bpp 176 0 28 12 -14 -6 normal
+40 gfx/flatbed_truck_1_steel.png 8bpp 224 0 20 16 -6 -7 normal
 
-41 gfx/flatbed_truck_1_steel.png 8bpp 260 0 8 18 -3 -10 normal 
-42 gfx/flatbed_truck_1_steel.png 8bpp 276 0 20 16 -14 -7 normal 
-43 gfx/flatbed_truck_1_steel.png 8bpp 308 0 28 12 -14 -6 normal 
-44 gfx/flatbed_truck_1_steel.png 8bpp 356 0 20 16 -6 -7 normal 
-45 gfx/flatbed_truck_1_steel.png 8bpp 388 0 8 18 -3 -10 normal 
-46 gfx/flatbed_truck_1_steel.png 8bpp 404 0 20 16 -14 -7 normal 
-47 gfx/flatbed_truck_1_steel.png 8bpp 436 0 28 12 -14 -6 normal 
-48 gfx/flatbed_truck_1_steel.png 8bpp 484 0 20 16 -6 -7 normal 
+41 gfx/flatbed_truck_1_steel.png 8bpp 260 0 8 18 -3 -10 normal
+42 gfx/flatbed_truck_1_steel.png 8bpp 276 0 20 16 -14 -7 normal
+43 gfx/flatbed_truck_1_steel.png 8bpp 308 0 28 12 -14 -6 normal
+44 gfx/flatbed_truck_1_steel.png 8bpp 356 0 20 16 -6 -7 normal
+45 gfx/flatbed_truck_1_steel.png 8bpp 388 0 8 18 -3 -10 normal
+46 gfx/flatbed_truck_1_steel.png 8bpp 404 0 20 16 -14 -7 normal
+47 gfx/flatbed_truck_1_steel.png 8bpp 436 0 28 12 -14 -6 normal
+48 gfx/flatbed_truck_1_steel.png 8bpp 484 0 20 16 -6 -7 normal
 
-49 gfx/flatbed_truck_1_wood.png 8bpp 0 0 8 18 -3 -10 normal 
-50 gfx/flatbed_truck_1_wood.png 8bpp 16 0 20 16 -14 -7 normal 
-51 gfx/flatbed_truck_1_wood.png 8bpp 48 0 28 12 -14 -6 normal 
-52 gfx/flatbed_truck_1_wood.png 8bpp 96 0 20 16 -6 -7 normal 
-53 gfx/flatbed_truck_1_wood.png 8bpp 128 0 8 18 -3 -10 normal 
-54 gfx/flatbed_truck_1_wood.png 8bpp 144 0 20 16 -14 -7 normal 
-55 gfx/flatbed_truck_1_wood.png 8bpp 176 0 28 12 -14 -6 normal 
-56 gfx/flatbed_truck_1_wood.png 8bpp 224 0 20 16 -6 -7 normal 
+49 gfx/flatbed_truck_1_wood.png 8bpp 0 0 8 18 -3 -10 normal
+50 gfx/flatbed_truck_1_wood.png 8bpp 16 0 20 16 -14 -7 normal
+51 gfx/flatbed_truck_1_wood.png 8bpp 48 0 28 12 -14 -6 normal
+52 gfx/flatbed_truck_1_wood.png 8bpp 96 0 20 16 -6 -7 normal
+53 gfx/flatbed_truck_1_wood.png 8bpp 128 0 8 18 -3 -10 normal
+54 gfx/flatbed_truck_1_wood.png 8bpp 144 0 20 16 -14 -7 normal
+55 gfx/flatbed_truck_1_wood.png 8bpp 176 0 28 12 -14 -6 normal
+56 gfx/flatbed_truck_1_wood.png 8bpp 224 0 20 16 -6 -7 normal
 
-57 gfx/flatbed_truck_1_wood.png 8bpp 260 0 8 18 -3 -10 normal 
-58 gfx/flatbed_truck_1_wood.png 8bpp 276 0 20 16 -14 -7 normal 
-59 gfx/flatbed_truck_1_wood.png 8bpp 308 0 28 12 -14 -6 normal 
-60 gfx/flatbed_truck_1_wood.png 8bpp 356 0 20 16 -6 -7 normal 
-61 gfx/flatbed_truck_1_wood.png 8bpp 388 0 8 18 -3 -10 normal 
-62 gfx/flatbed_truck_1_wood.png 8bpp 404 0 20 16 -14 -7 normal 
-63 gfx/flatbed_truck_1_wood.png 8bpp 436 0 28 12 -14 -6 normal 
-64 gfx/flatbed_truck_1_wood.png 8bpp 484 0 20 16 -6 -7 normal 
+57 gfx/flatbed_truck_1_wood.png 8bpp 260 0 8 18 -3 -10 normal
+58 gfx/flatbed_truck_1_wood.png 8bpp 276 0 20 16 -14 -7 normal
+59 gfx/flatbed_truck_1_wood.png 8bpp 308 0 28 12 -14 -6 normal
+60 gfx/flatbed_truck_1_wood.png 8bpp 356 0 20 16 -6 -7 normal
+61 gfx/flatbed_truck_1_wood.png 8bpp 388 0 8 18 -3 -10 normal
+62 gfx/flatbed_truck_1_wood.png 8bpp 404 0 20 16 -14 -7 normal
+63 gfx/flatbed_truck_1_wood.png 8bpp 436 0 28 12 -14 -6 normal
+64 gfx/flatbed_truck_1_wood.png 8bpp 484 0 20 16 -6 -7 normal
 
-65 gfx/flatbed_truck_1_copper.png 8bpp 0 0 8 18 -3 -10 normal 
-66 gfx/flatbed_truck_1_copper.png 8bpp 16 0 20 16 -14 -7 normal 
-67 gfx/flatbed_truck_1_copper.png 8bpp 48 0 28 12 -14 -6 normal 
-68 gfx/flatbed_truck_1_copper.png 8bpp 96 0 20 16 -6 -7 normal 
-69 gfx/flatbed_truck_1_copper.png 8bpp 128 0 8 18 -3 -10 normal 
-70 gfx/flatbed_truck_1_copper.png 8bpp 144 0 20 16 -14 -7 normal 
-71 gfx/flatbed_truck_1_copper.png 8bpp 176 0 28 12 -14 -6 normal 
-72 gfx/flatbed_truck_1_copper.png 8bpp 224 0 20 16 -6 -7 normal 
+65 gfx/flatbed_truck_1_copper.png 8bpp 0 0 8 18 -3 -10 normal
+66 gfx/flatbed_truck_1_copper.png 8bpp 16 0 20 16 -14 -7 normal
+67 gfx/flatbed_truck_1_copper.png 8bpp 48 0 28 12 -14 -6 normal
+68 gfx/flatbed_truck_1_copper.png 8bpp 96 0 20 16 -6 -7 normal
+69 gfx/flatbed_truck_1_copper.png 8bpp 128 0 8 18 -3 -10 normal
+70 gfx/flatbed_truck_1_copper.png 8bpp 144 0 20 16 -14 -7 normal
+71 gfx/flatbed_truck_1_copper.png 8bpp 176 0 28 12 -14 -6 normal
+72 gfx/flatbed_truck_1_copper.png 8bpp 224 0 20 16 -6 -7 normal
 
-73 gfx/flatbed_truck_1_copper.png 8bpp 260 0 8 18 -3 -10 normal 
-74 gfx/flatbed_truck_1_copper.png 8bpp 276 0 20 16 -14 -7 normal 
-75 gfx/flatbed_truck_1_copper.png 8bpp 308 0 28 12 -14 -6 normal 
-76 gfx/flatbed_truck_1_copper.png 8bpp 356 0 20 16 -6 -7 normal 
-77 gfx/flatbed_truck_1_copper.png 8bpp 388 0 8 18 -3 -10 normal 
-78 gfx/flatbed_truck_1_copper.png 8bpp 404 0 20 16 -14 -7 normal 
-79 gfx/flatbed_truck_1_copper.png 8bpp 436 0 28 12 -14 -6 normal 
-80 gfx/flatbed_truck_1_copper.png 8bpp 484 0 20 16 -6 -7 normal 
+73 gfx/flatbed_truck_1_copper.png 8bpp 260 0 8 18 -3 -10 normal
+74 gfx/flatbed_truck_1_copper.png 8bpp 276 0 20 16 -14 -7 normal
+75 gfx/flatbed_truck_1_copper.png 8bpp 308 0 28 12 -14 -6 normal
+76 gfx/flatbed_truck_1_copper.png 8bpp 356 0 20 16 -6 -7 normal
+77 gfx/flatbed_truck_1_copper.png 8bpp 388 0 8 18 -3 -10 normal
+78 gfx/flatbed_truck_1_copper.png 8bpp 404 0 20 16 -14 -7 normal
+79 gfx/flatbed_truck_1_copper.png 8bpp 436 0 28 12 -14 -6 normal
+80 gfx/flatbed_truck_1_copper.png 8bpp 484 0 20 16 -6 -7 normal
 
-81 gfx/flatbed_truck_1_goods.png 8bpp 0 0 8 18 -3 -10 normal 
-82 gfx/flatbed_truck_1_goods.png 8bpp 16 0 20 16 -14 -7 normal 
-83 gfx/flatbed_truck_1_goods.png 8bpp 48 0 28 12 -14 -6 normal 
-84 gfx/flatbed_truck_1_goods.png 8bpp 96 0 20 16 -6 -7 normal 
-85 gfx/flatbed_truck_1_goods.png 8bpp 128 0 8 18 -3 -10 normal 
-86 gfx/flatbed_truck_1_goods.png 8bpp 144 0 20 16 -14 -7 normal 
-87 gfx/flatbed_truck_1_goods.png 8bpp 176 0 28 12 -14 -6 normal 
-88 gfx/flatbed_truck_1_goods.png 8bpp 224 0 20 16 -6 -7 normal 
+81 gfx/flatbed_truck_1_goods.png 8bpp 0 0 8 18 -3 -10 normal
+82 gfx/flatbed_truck_1_goods.png 8bpp 16 0 20 16 -14 -7 normal
+83 gfx/flatbed_truck_1_goods.png 8bpp 48 0 28 12 -14 -6 normal
+84 gfx/flatbed_truck_1_goods.png 8bpp 96 0 20 16 -6 -7 normal
+85 gfx/flatbed_truck_1_goods.png 8bpp 128 0 8 18 -3 -10 normal
+86 gfx/flatbed_truck_1_goods.png 8bpp 144 0 20 16 -14 -7 normal
+87 gfx/flatbed_truck_1_goods.png 8bpp 176 0 28 12 -14 -6 normal
+88 gfx/flatbed_truck_1_goods.png 8bpp 224 0 20 16 -6 -7 normal
 
-89 gfx/flatbed_truck_1_goods.png 8bpp 260 0 8 18 -3 -10 normal 
-90 gfx/flatbed_truck_1_goods.png 8bpp 276 0 20 16 -14 -7 normal 
-91 gfx/flatbed_truck_1_goods.png 8bpp 308 0 28 12 -14 -6 normal 
-92 gfx/flatbed_truck_1_goods.png 8bpp 356 0 20 16 -6 -7 normal 
-93 gfx/flatbed_truck_1_goods.png 8bpp 388 0 8 18 -3 -10 normal 
-94 gfx/flatbed_truck_1_goods.png 8bpp 404 0 20 16 -14 -7 normal 
-95 gfx/flatbed_truck_1_goods.png 8bpp 436 0 28 12 -14 -6 normal 
-96 gfx/flatbed_truck_1_goods.png 8bpp 484 0 20 16 -6 -7 normal 
+89 gfx/flatbed_truck_1_goods.png 8bpp 260 0 8 18 -3 -10 normal
+90 gfx/flatbed_truck_1_goods.png 8bpp 276 0 20 16 -14 -7 normal
+91 gfx/flatbed_truck_1_goods.png 8bpp 308 0 28 12 -14 -6 normal
+92 gfx/flatbed_truck_1_goods.png 8bpp 356 0 20 16 -6 -7 normal
+93 gfx/flatbed_truck_1_goods.png 8bpp 388 0 8 18 -3 -10 normal
+94 gfx/flatbed_truck_1_goods.png 8bpp 404 0 20 16 -14 -7 normal
+95 gfx/flatbed_truck_1_goods.png 8bpp 436 0 28 12 -14 -6 normal
+96 gfx/flatbed_truck_1_goods.png 8bpp 484 0 20 16 -6 -7 normal
 
 // Name: flatbed_truck_1_paper - feature 01
-97 * 13 02 01 FF \b2 \b2 
-\w0 \w1 
-\w0 \w1 
+97 * 13 02 01 FF \b2 \b2
+\w0 \w1
+\w0 \w1
 
 // Name: flatbed_truck_1_steel - feature 01
-98 * 13 02 01 FE \b2 \b2 
-\w2 \w3 
-\w2 \w3 
+98 * 13 02 01 FE \b2 \b2
+\w2 \w3
+\w2 \w3
 
 // Name: flatbed_truck_1_wood - feature 01
-99 * 13 02 01 FD \b2 \b2 
-\w4 \w5 
-\w4 \w5 
+99 * 13 02 01 FD \b2 \b2
+\w4 \w5
+\w4 \w5
 
 // Name: flatbed_truck_1_copper - feature 01
-100 * 13 02 01 FC \b2 \b2 
-\w6 \w7 
-\w6 \w7 
+100 * 13 02 01 FC \b2 \b2
+\w6 \w7
+\w6 \w7
 
 // Name: flatbed_truck_1_goods - feature 01
-101 * 13 02 01 FB \b2 \b2 
-\w8 \w9 
-\w8 \w9 
+101 * 13 02 01 FB \b2 \b2
+\w8 \w9
+\w8 \w9
 
 // Name: flatbed_truck_1_capacity_switch
-102 * 103 02 01 FA 89 
-47 00 \dx000000FF 
-\b9 
+102 * 103 02 01 FA 89
+47 00 \dx000000FF
+\b9
 \wx800E \dx00000006 \dx00000006 	// 6 .. 6: return 14;
 \wx800E \dx00000007 \dx00000007 	// 7 .. 7: return 14;
 \wx800E \dx00000008 \dx00000008 	// 8 .. 8: return 14;
@@ -185,396 +185,396 @@ FF
 \wx800C \dx0000000C \dx0000000C 	// 12 .. 12: return 12;
 \wx8014 // default: return 20;
 
-103 * 85 00 01 \b26 01 FF \wx0058 
-06 07 
-05 00 
-1F \dx000ABBE1 
-04 41 
-03 0F 
-02 14 
-1D \wx0024 
-16 \dx00000000 
-1E \wx0081 
-16 \dx00000000 
-24 \b6 
-00 01 02 03 04 05 
-16 \dx00000000 
-25 \b0 
-16 \dx00000000 
-07 05 
-11 6C 
-09 5A 
-0E FF 
-08 60 
-1C 02 
-1A 00 
-0A \dx00004C48 
-13 0C 
-14 26 
-0F 14 
-12 17 
+103 * 85 00 01 \b26 01 FF \wx0058
+06 07
+05 00
+1F \dx000ABBE1
+04 41
+03 0F
+02 14
+1D \wx0024
+16 \dx00000000
+1E \wx0081
+16 \dx00000000
+24 \b6
+00 01 02 03 04 05
+16 \dx00000000
+25 \b0
+16 \dx00000000
+07 05
+11 6C
+09 5A
+0E FF
+08 60
+1C 02
+1A 00
+0A \dx00004C48
+13 0C
+14 26
+0F 14
+12 17
 
-104 * 37 04 01 7F 01 FF \wx0058 "Flatbed Truck 1 (Normal Road)" 00 
+104 * 37 04 01 7F 01 FF \wx0058 "Flatbed Truck 1 (Normal Road)" 00
 
-105 * 9 00 01 \b1 01 FF \wx0058 
-17 08 
+105 * 9 00 01 \b1 01 FF \wx0058
+17 08
 
 // Name: @action3_0
-106 * 23 02 01 F9 89 
-10 00 \dx000000FF 
-\b1 
+106 * 23 02 01 F9 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_1
-107 * 23 02 01 00 89 
-10 00 \dx000000FF 
-\b1 
+107 * 23 02 01 00 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_2
-108 * 33 02 01 F8 89 
-0C 00 \dx0000FFFF 
-\b2 
+108 * 33 02 01 F8 89
+0C 00 \dx0000FFFF
+\b2
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_0;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_3
-109 * 43 02 01 F7 89 
-0C 00 \dx0000FFFF 
-\b3 
+109 * 43 02 01 F7 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FF \dx00000000 \dx00000000 	// flatbed_truck_1_paper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_0;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_4
-110 * 43 02 01 F6 89 
-0C 00 \dx0000FFFF 
-\b3 
+110 * 43 02 01 F6 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FE \dx00000000 \dx00000000 	// flatbed_truck_1_steel;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_0;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_5
-111 * 43 02 01 F5 89 
-0C 00 \dx0000FFFF 
-\b3 
+111 * 43 02 01 F5 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FC \dx00000000 \dx00000000 	// flatbed_truck_1_copper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_0;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_6
-112 * 43 02 01 F9 89 
-0C 00 \dx0000FFFF 
-\b3 
+112 * 43 02 01 F9 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FD \dx00000000 \dx00000000 	// flatbed_truck_1_wood;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_0;
 \wx00FB // flatbed_truck_1_goods;
 
-113 * 21 03 01 01 FF \wx0058 \b4 
+113 * 21 03 01 01 FF \wx0058 \b4
 0A \wx00F7 	// @action3_3;
 0B \wx00F6 	// @action3_4;
 0D \wx00F5 	// @action3_5;
 0E \wx00F9 	// @action3_6;
 \wx00F8 	// @action3_2;
 
-114 * 85 00 01 \b26 01 FF \wx0059 
-06 07 
-05 01 
-1F \dx000ABBE1 
-04 41 
-03 0F 
-02 14 
-1D \wx0024 
-16 \dx00000000 
-1E \wx0081 
-16 \dx00000000 
-24 \b6 
-00 01 02 03 04 05 
-16 \dx00000000 
-25 \b0 
-16 \dx00000000 
-07 05 
-11 6C 
-09 5A 
-0E FF 
-08 60 
-1C 02 
-1A 00 
-0A \dx00004C48 
-13 0C 
-14 26 
-0F 14 
-12 17 
+114 * 85 00 01 \b26 01 FF \wx0059
+06 07
+05 01
+1F \dx000ABBE1
+04 41
+03 0F
+02 14
+1D \wx0024
+16 \dx00000000
+1E \wx0081
+16 \dx00000000
+24 \b6
+00 01 02 03 04 05
+16 \dx00000000
+25 \b0
+16 \dx00000000
+07 05
+11 6C
+09 5A
+0E FF
+08 60
+1C 02
+1A 00
+0A \dx00004C48
+13 0C
+14 26
+0F 14
+12 17
 
-115 * 42 04 01 7F 01 FF \wx0059 "Flatbed Truck 2 (Electrified Road)" 00 
+115 * 42 04 01 7F 01 FF \wx0059 "Flatbed Truck 2 (Electrified Road)" 00
 
-116 * 9 00 01 \b1 01 FF \wx0059 
-17 08 
+116 * 9 00 01 \b1 01 FF \wx0059
+17 08
 
 // Name: @action3_7
-117 * 23 02 01 F8 89 
-10 00 \dx000000FF 
-\b1 
+117 * 23 02 01 F8 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_8
-118 * 23 02 01 00 89 
-10 00 \dx000000FF 
-\b1 
+118 * 23 02 01 00 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_9
-119 * 33 02 01 F9 89 
-0C 00 \dx0000FFFF 
-\b2 
+119 * 33 02 01 F9 89
+0C 00 \dx0000FFFF
+\b2
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_7;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_10
-120 * 43 02 01 F5 89 
-0C 00 \dx0000FFFF 
-\b3 
+120 * 43 02 01 F5 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FF \dx00000000 \dx00000000 	// flatbed_truck_1_paper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_7;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_11
-121 * 43 02 01 F6 89 
-0C 00 \dx0000FFFF 
-\b3 
+121 * 43 02 01 F6 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FE \dx00000000 \dx00000000 	// flatbed_truck_1_steel;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_7;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_12
-122 * 43 02 01 F7 89 
-0C 00 \dx0000FFFF 
-\b3 
+122 * 43 02 01 F7 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FC \dx00000000 \dx00000000 	// flatbed_truck_1_copper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_7;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_13
-123 * 43 02 01 F8 89 
-0C 00 \dx0000FFFF 
-\b3 
+123 * 43 02 01 F8 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FD \dx00000000 \dx00000000 	// flatbed_truck_1_wood;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_7;
 \wx00FB // flatbed_truck_1_goods;
 
-124 * 21 03 01 01 FF \wx0059 \b4 
+124 * 21 03 01 01 FF \wx0059 \b4
 0A \wx00F5 	// @action3_10;
 0B \wx00F6 	// @action3_11;
 0D \wx00F7 	// @action3_12;
 0E \wx00F8 	// @action3_13;
 \wx00F9 	// @action3_9;
 
-125 * 85 00 01 \b26 01 FF \wx005A 
-06 07 
-05 02 
-1F \dx000ABBE1 
-04 41 
-03 0F 
-02 14 
-1D \wx0024 
-16 \dx00000000 
-1E \wx0081 
-16 \dx00000000 
-24 \b6 
-00 01 02 03 04 05 
-16 \dx00000000 
-25 \b0 
-16 \dx00000000 
-07 05 
-11 6C 
-09 5A 
-0E FF 
-08 60 
-1C 02 
-1A 00 
-0A \dx00004C48 
-13 0C 
-14 26 
-0F 14 
-12 17 
+125 * 85 00 01 \b26 01 FF \wx005A
+06 07
+05 02
+1F \dx000ABBE1
+04 41
+03 0F
+02 14
+1D \wx0024
+16 \dx00000000
+1E \wx0081
+16 \dx00000000
+24 \b6
+00 01 02 03 04 05
+16 \dx00000000
+25 \b0
+16 \dx00000000
+07 05
+11 6C
+09 5A
+0E FF
+08 60
+1C 02
+1A 00
+0A \dx00004C48
+13 0C
+14 26
+0F 14
+12 17
 
-126 * 37 04 01 7F 01 FF \wx005A "Flatbed Truck 3 (Yellow Road)" 00 
+126 * 37 04 01 7F 01 FF \wx005A "Flatbed Truck 3 (Yellow Road)" 00
 
-127 * 9 00 01 \b1 01 FF \wx005A 
-17 08 
+127 * 9 00 01 \b1 01 FF \wx005A
+17 08
 
 // Name: @action3_14
-128 * 23 02 01 F9 89 
-10 00 \dx000000FF 
-\b1 
+128 * 23 02 01 F9 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_15
-129 * 23 02 01 00 89 
-10 00 \dx000000FF 
-\b1 
+129 * 23 02 01 00 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_16
-130 * 33 02 01 F8 89 
-0C 00 \dx0000FFFF 
-\b2 
+130 * 33 02 01 F8 89
+0C 00 \dx0000FFFF
+\b2
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_14;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_17
-131 * 43 02 01 F7 89 
-0C 00 \dx0000FFFF 
-\b3 
+131 * 43 02 01 F7 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FF \dx00000000 \dx00000000 	// flatbed_truck_1_paper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_14;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_18
-132 * 43 02 01 F6 89 
-0C 00 \dx0000FFFF 
-\b3 
+132 * 43 02 01 F6 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FE \dx00000000 \dx00000000 	// flatbed_truck_1_steel;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_14;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_19
-133 * 43 02 01 F5 89 
-0C 00 \dx0000FFFF 
-\b3 
+133 * 43 02 01 F5 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FC \dx00000000 \dx00000000 	// flatbed_truck_1_copper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_14;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_20
-134 * 43 02 01 F9 89 
-0C 00 \dx0000FFFF 
-\b3 
+134 * 43 02 01 F9 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FD \dx00000000 \dx00000000 	// flatbed_truck_1_wood;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F9 \dx00000036 \dx00000036 	// @action3_14;
 \wx00FB // flatbed_truck_1_goods;
 
-135 * 21 03 01 01 FF \wx005A \b4 
+135 * 21 03 01 01 FF \wx005A \b4
 0A \wx00F7 	// @action3_17;
 0B \wx00F6 	// @action3_18;
 0D \wx00F5 	// @action3_19;
 0E \wx00F9 	// @action3_20;
 \wx00F8 	// @action3_16;
 
-136 * 85 00 01 \b26 01 FF \wx005B 
-06 07 
-05 03 
-1F \dx000ABBE1 
-04 41 
-03 0F 
-02 14 
-1D \wx0024 
-16 \dx00000000 
-1E \wx0081 
-16 \dx00000000 
-24 \b6 
-00 01 02 03 04 05 
-16 \dx00000000 
-25 \b0 
-16 \dx00000000 
-07 05 
-11 6C 
-09 5A 
-0E FF 
-08 60 
-1C 02 
-1A 00 
-0A \dx00004C48 
-13 0C 
-14 26 
-0F 14 
-12 17 
+136 * 85 00 01 \b26 01 FF \wx005B
+06 07
+05 03
+1F \dx000ABBE1
+04 41
+03 0F
+02 14
+1D \wx0024
+16 \dx00000000
+1E \wx0081
+16 \dx00000000
+24 \b6
+00 01 02 03 04 05
+16 \dx00000000
+25 \b0
+16 \dx00000000
+07 05
+11 6C
+09 5A
+0E FF
+08 60
+1C 02
+1A 00
+0A \dx00004C48
+13 0C
+14 26
+0F 14
+12 17
 
-137 * 60 04 01 7F 01 FF \wx005B "Flatbed Truck 4 (Unknown, fallback to Red then Road)" 00 
+137 * 60 04 01 7F 01 FF \wx005B "Flatbed Truck 4 (Unknown, fallback to Red then Road)" 00
 
-138 * 9 00 01 \b1 01 FF \wx005B 
-17 08 
+138 * 9 00 01 \b1 01 FF \wx005B
+17 08
 
 // Name: @action3_21
-139 * 23 02 01 F8 89 
-10 00 \dx000000FF 
-\b1 
+139 * 23 02 01 F8 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_22
-140 * 23 02 01 00 89 
-10 00 \dx000000FF 
-\b1 
+140 * 23 02 01 00 89
+10 00 \dx000000FF
+\b1
 \wx00FA \dx0000000F \dx0000000F 	// flatbed_truck_1_capacity_switch;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_23
-141 * 33 02 01 F9 89 
-0C 00 \dx0000FFFF 
-\b2 
+141 * 33 02 01 F9 89
+0C 00 \dx0000FFFF
+\b2
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_21;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_24
-142 * 43 02 01 FF 89 
-0C 00 \dx0000FFFF 
-\b3 
+142 * 43 02 01 FF 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FF \dx00000000 \dx00000000 	// flatbed_truck_1_paper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_21;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_25
-143 * 43 02 01 FE 89 
-0C 00 \dx0000FFFF 
-\b3 
+143 * 43 02 01 FE 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FE \dx00000000 \dx00000000 	// flatbed_truck_1_steel;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_21;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_26
-144 * 43 02 01 FC 89 
-0C 00 \dx0000FFFF 
-\b3 
+144 * 43 02 01 FC 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FC \dx00000000 \dx00000000 	// flatbed_truck_1_copper;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_21;
 \wx00FB // flatbed_truck_1_goods;
 
 // Name: @action3_27
-145 * 43 02 01 FB 89 
-0C 00 \dx0000FFFF 
-\b3 
+145 * 43 02 01 FB 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FD \dx00000000 \dx00000000 	// flatbed_truck_1_wood;
 \wx00FA \dx00000015 \dx00000015 	// flatbed_truck_1_capacity_switch;
 \wx00F8 \dx00000036 \dx00000036 	// @action3_21;
 \wx00FB // flatbed_truck_1_goods;
 
-146 * 21 03 01 01 FF \wx005B \b4 
+146 * 21 03 01 01 FF \wx005B \b4
 0A \wx00FF 	// @action3_24;
 0B \wx00FE 	// @action3_25;
 0D \wx00FC 	// @action3_26;

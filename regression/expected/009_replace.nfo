@@ -5,28 +5,28 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d12 
+0 * 4 \d12
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "W" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 52 08 08 "NML\9" "NML regression test" 00 "A test newgrf testing NML" 00 
-3 * 5 0A \b1 \b2 \w3092 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "W"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 52 08 08 "NML\9" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 5 0A \b1 \b2 \w3092
 
-4 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal 
-5 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 4 normal 
+4 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal
+5 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 4 normal
 
-6 * 5 05 09 FF \w6 
+6 * 5 05 09 FF \w6
 
-7 oneway.png 8bpp 18 8 24 16 -12 -8 normal 
-8 oneway.png 8bpp 50 8 24 16 -12 -8 normal 
-9 oneway.png 8bpp 82 8 28 16 -14 -8 normal 
-10 oneway.png 8bpp 114 8 24 16 -10 -8 normal 
-11 oneway.png 8bpp 146 8 24 16 -10 -8 normal 
-12 oneway.png 8bpp 178 8 28 16 -12 -8 normal 
+7 oneway.png 8bpp 18 8 24 16 -12 -8 normal
+8 oneway.png 8bpp 50 8 24 16 -12 -8 normal
+9 oneway.png 8bpp 82 8 28 16 -14 -8 normal
+10 oneway.png 8bpp 114 8 24 16 -10 -8 normal
+11 oneway.png 8bpp 146 8 24 16 -10 -8 normal
+12 oneway.png 8bpp 178 8 28 16 -12 -8 normal
 

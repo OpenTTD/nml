@@ -5,184 +5,184 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d37 
+0 * 4 \d37
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "D" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 292 08 08 "NML\01" "NML Example NewGRF: Object" 00 "\8ENML Example NewGRF: Object\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89planetmaker, \98coding by \89planetmaker.\0D\98This NewGRF defines a tile which can act as company-land replacement." 00 
-3 * 34 04 0F FF 02 \wxD000 "Infrastructure" 00 "Company land" 00 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "D"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 292 08 08 "NML\01" "NML Example NewGRF: Object" 00 "\8ENML Example NewGRF: Object\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89planetmaker, \98coding by \89planetmaker.\0D\98This NewGRF defines a tile which can act as company-land replacement." 00
+3 * 34 04 0F FF 02 \wxD000 "Infrastructure" 00 "Company land" 00
 
-4 * 19 04 00 FF 01 \wxD002 "Company land" 00 
+4 * 19 04 00 FF 01 \wxD002 "Company land" 00
 
 // param[126] = param[161]
-5 * 5 0D 7E \D= A1 00 
+5 * 5 0D 7E \D= A1 00
 
 // param[127] = (param[126] - 302012611)
-6 * 9 0D 7F \D- 7E FF \dx120058C3 
+6 * 9 0D 7F \D- 7E FF \dx120058C3
 
 // param[127] = (param[127] << -31)
-7 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1 
+7 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-8 * 9 09 7F 04 \7= \dx00000000 01 
+8 * 9 09 7F 04 \7= \dx00000000 01
 
-9 * 19 0B 03 7F 06 "1.2.0 (r22723)" 00 
+9 * 19 0B 03 7F 06 "1.2.0 (r22723)" 00
 
-10 * 6 01 0F \b1 FF \wx0013 
+10 * 6 01 0F \b1 FF \wx0013
 
-11 cc_grid.png 8bpp 1 1 64 31 -31 0 normal 
-12 cc_grid.png 8bpp 81 1 64 31 -31 0 normal 
-13 cc_grid.png 8bpp 161 1 64 23 -31 0 normal 
-14 cc_grid.png 8bpp 241 1 64 23 -31 0 normal 
-15 cc_grid.png 8bpp 321 1 64 31 -31 0 normal 
-16 cc_grid.png 8bpp 399 1 64 31 -31 0 normal 
-17 cc_grid.png 8bpp 479 1 64 23 -31 0 normal 
-18 cc_grid.png 8bpp 559 1 64 23 -31 0 normal 
-19 cc_grid.png 8bpp 639 1 64 39 -31 -8 normal 
-20 cc_grid.png 8bpp 719 1 64 39 -31 -8 normal 
-21 cc_grid.png 8bpp 799 1 64 31 -31 -8 normal 
-22 cc_grid.png 8bpp 879 1 64 31 -31 -8 normal 
-23 cc_grid.png 8bpp 959 1 64 39 -31 -8 normal 
-24 cc_grid.png 8bpp 1039 1 64 39 -31 -8 normal 
-25 cc_grid.png 8bpp 1119 1 64 31 -31 -8 normal 
-26 cc_grid.png 8bpp 1197 1 64 47 -31 -16 normal 
-27 cc_grid.png 8bpp 1277 1 64 15 -31 0 normal 
-28 cc_grid.png 8bpp 1357 1 64 31 -31 -8 normal 
-29 cc_grid.png 8bpp 1437 1 64 31 -31 -8 normal 
+11 cc_grid.png 8bpp 1 1 64 31 -31 0 normal
+12 cc_grid.png 8bpp 81 1 64 31 -31 0 normal
+13 cc_grid.png 8bpp 161 1 64 23 -31 0 normal
+14 cc_grid.png 8bpp 241 1 64 23 -31 0 normal
+15 cc_grid.png 8bpp 321 1 64 31 -31 0 normal
+16 cc_grid.png 8bpp 399 1 64 31 -31 0 normal
+17 cc_grid.png 8bpp 479 1 64 23 -31 0 normal
+18 cc_grid.png 8bpp 559 1 64 23 -31 0 normal
+19 cc_grid.png 8bpp 639 1 64 39 -31 -8 normal
+20 cc_grid.png 8bpp 719 1 64 39 -31 -8 normal
+21 cc_grid.png 8bpp 799 1 64 31 -31 -8 normal
+22 cc_grid.png 8bpp 879 1 64 31 -31 -8 normal
+23 cc_grid.png 8bpp 959 1 64 39 -31 -8 normal
+24 cc_grid.png 8bpp 1039 1 64 39 -31 -8 normal
+25 cc_grid.png 8bpp 1119 1 64 31 -31 -8 normal
+26 cc_grid.png 8bpp 1197 1 64 47 -31 -16 normal
+27 cc_grid.png 8bpp 1277 1 64 15 -31 0 normal
+28 cc_grid.png 8bpp 1357 1 64 31 -31 -8 normal
+29 cc_grid.png 8bpp 1437 1 64 31 -31 -8 normal
 
 // Name: company_land_layout - feature 0F
-30 * 31 02 0F FF \b66 \dx00000000 \wx0002 81 
-\dxC0008000 \wx0002 \b0 \b0 80 00 
-\dx00000000 \wx0002 \b0 \b0 80 83 
+30 * 31 02 0F FF \b66 \dx00000000 \wx0002 81
+\dxC0008000 \wx0002 \b0 \b0 80 00
+\dx00000000 \wx0002 \b0 \b0 80 83
 
 // Name: company_land_layout@registers - feature 0F
-31 * 92 02 0F FF 89 
-7D 01 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000080 
-\2r 7D 00 20 \dxFFFFFFFF 
-\2+ 7D 80 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000081 
-\2r 7D 01 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000082 
-\2r 7D 00 20 \dxFFFFFFFF 
-\2+ 7D 82 20 \dxFFFFFFFF 
-\2sto 1A 00 \dx00000083 
-\b1 
-\wx00FF \dx00000000 \dx00000000 
-\wx00FF // 
+31 * 92 02 0F FF 89
+7D 01 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000080
+\2r 7D 00 20 \dxFFFFFFFF
+\2+ 7D 80 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000081
+\2r 7D 01 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000082
+\2r 7D 00 20 \dxFFFFFFFF
+\2+ 7D 82 20 \dxFFFFFFFF
+\2sto 1A 00 \dx00000083
+\b1
+\wx00FF \dx00000000 \dx00000000
+\wx00FF //
 
 // Name: company_land_terrain_switch
-32 * 470 02 0F FE 89 
-41 28 \dx0000001F 
-\2cmp 1A 20 \dx0000001E 
-\2& 1A 20 \dx00000001 
-\2* 1A 20 \dx00000012 
-\2sto 1A 20 \dx00000080 
-\2r 41 28 \dx0000001F 
-\2cmp 1A 20 \dx0000001D 
-\2& 1A 20 \dx00000001 
-\2* 1A 20 \dx0000000F 
-\2sto 1A 20 \dx00000081 
-\2r 41 28 \dx0000001F 
-\2cmp 1A 20 \dx0000001B 
-\2& 1A 20 \dx00000001 
-\2* 1A 20 \dx00000011 
-\2sto 1A 20 \dx00000082 
-\2r 41 28 \dx0000001F 
-\2cmp 1A 20 \dx00000017 
-\2& 1A 20 \dx00000001 
-\2* 1A 20 \dx00000010 
-\2sto 1A 20 \dx00000083 
-\2r 41 28 \dx0000001F 
-\2cmp 1A 20 \dx00000000 
-\2< 1A 20 \dx00000001 
-\2sto 1A 20 \dx00000084 
-\2r 41 28 \dx0000001F 
-\2cmp 1A 20 \dx0000000E 
-\2^ 1A 20 \dx00000002 
-\2< 1A 20 \dx00000001 
-\2& 7D 84 20 \dxFFFFFFFF 
-\2* 41 28 \dx0000001F 
-\2+ 7D 83 20 \dxFFFFFFFF 
-\2+ 7D 82 20 \dxFFFFFFFF 
-\2+ 7D 81 20 \dxFFFFFFFF 
-\2+ 7D 80 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000000 
-\2r 1A 20 \dx00000F8D 
-\2sto 1A 20 \dx00000001 
-\2r 41 20 \dx00000007 
-\2cmp 1A 20 \dx00000001 
-\2& 1A 20 \dx00000001 
+32 * 470 02 0F FE 89
+41 28 \dx0000001F
+\2cmp 1A 20 \dx0000001E
+\2& 1A 20 \dx00000001
+\2* 1A 20 \dx00000012
+\2sto 1A 20 \dx00000080
+\2r 41 28 \dx0000001F
+\2cmp 1A 20 \dx0000001D
+\2& 1A 20 \dx00000001
+\2* 1A 20 \dx0000000F
+\2sto 1A 20 \dx00000081
+\2r 41 28 \dx0000001F
+\2cmp 1A 20 \dx0000001B
+\2& 1A 20 \dx00000001
+\2* 1A 20 \dx00000011
+\2sto 1A 20 \dx00000082
+\2r 41 28 \dx0000001F
+\2cmp 1A 20 \dx00000017
+\2& 1A 20 \dx00000001
+\2* 1A 20 \dx00000010
+\2sto 1A 20 \dx00000083
+\2r 41 28 \dx0000001F
+\2cmp 1A 20 \dx00000000
+\2< 1A 20 \dx00000001
+\2sto 1A 20 \dx00000084
+\2r 41 28 \dx0000001F
+\2cmp 1A 20 \dx0000000E
+\2^ 1A 20 \dx00000002
+\2< 1A 20 \dx00000001
+\2& 7D 84 20 \dxFFFFFFFF
+\2* 41 28 \dx0000001F
+\2+ 7D 83 20 \dxFFFFFFFF
+\2+ 7D 82 20 \dxFFFFFFFF
+\2+ 7D 81 20 \dxFFFFFFFF
+\2+ 7D 80 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000000
+\2r 1A 20 \dx00000F8D
+\2sto 1A 20 \dx00000001
+\2r 41 20 \dx00000007
+\2cmp 1A 20 \dx00000001
+\2& 1A 20 \dx00000001
 \2sto 1A 20 \dx00000085 	// guard
-\2^ 1A 20 \dx00000001 
+\2^ 1A 20 \dx00000001
 \2sto 1A 20 \dx00000086 	// !guard
-\2r 7D 01 20 \dxFFFFFFFF 
-\2* 7D 86 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000087 
-\2r 7D 85 20 \dxFFFFFFFF 
-\2* 1A 20 \dx000011C6 
-\2+ 7D 87 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx00000001 
-\2r 41 20 \dx00000007 
-\2cmp 1A 20 \dx00000004 
-\2& 1A 20 \dx00000001 
+\2r 7D 01 20 \dxFFFFFFFF
+\2* 7D 86 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000087
+\2r 7D 85 20 \dxFFFFFFFF
+\2* 1A 20 \dx000011C6
+\2+ 7D 87 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000001
+\2r 41 20 \dx00000007
+\2cmp 1A 20 \dx00000004
+\2& 1A 20 \dx00000001
 \2sto 1A 20 \dx00000088 	// guard
-\2^ 1A 20 \dx00000001 
+\2^ 1A 20 \dx00000001
 \2sto 1A 20 \dx00000089 	// !guard
-\2r 7D 01 20 \dxFFFFFFFF 
-\2* 7D 89 20 \dxFFFFFFFF 
-\2sto 1A 20 \dx0000008A 
-\2r 7D 88 20 \dxFFFFFFFF 
-\2* 1A 20 \dx000011C6 
-\2+ 7D 8A 20 \dxFFFFFFFF 
-\2sto 1A 00 \dx00000001 
-\b1 
+\2r 7D 01 20 \dxFFFFFFFF
+\2* 7D 89 20 \dxFFFFFFFF
+\2sto 1A 20 \dx0000008A
+\2r 7D 88 20 \dxFFFFFFFF
+\2* 1A 20 \dx000011C6
+\2+ 7D 8A 20 \dxFFFFFFFF
+\2sto 1A 00 \dx00000001
+\b1
 \wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00FF // default: company_land_layout;
 
 // Name: company_land_purchase_switch
-33 * 51 02 0F FF 89 
-1A 20 \dx00000000 
-\2sto 1A 20 \dx00000000 
-\2r 1A 20 \dx00000F8D 
-\2sto 1A 20 \dx00000001 
-\2r 1A 00 \dx00000001 
-\b1 
+33 * 51 02 0F FF 89
+1A 20 \dx00000000
+\2sto 1A 20 \dx00000000
+\2r 1A 20 \dx00000F8D
+\2sto 1A 20 \dx00000001
+\2r 1A 00 \dx00000001
+\b1
 \wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00FF // default: company_land_layout;
 
-34 * 43 00 0F \b12 01 FF \wx0000 
-08 "INFR" 
-09 \wxD000 
-0A \wxD001 
-0B 0F 
-0C 11 
-0D 01 
-14 01 
-0E \dx0000016E 
-0F \dx0037BB49 
-10 \wx0834 
-16 00 
-17 01 
+34 * 43 00 0F \b12 01 FF \wx0000
+08 "INFR"
+09 \wxD000
+0A \wxD001
+0B 0F
+0C 11
+0D 01
+14 01
+0E \dx0000016E
+0F \dx0037BB49
+10 \wx0834
+16 00
+17 01
 
-35 * 10 00 0F \b1 01 FF \wx0000 
-15 \wx0011 
+35 * 10 00 0F \b1 01 FF \wx0000
+15 \wx0011
 
 // Name: @action3_0
-36 * 43 02 0F FF 89 
-0C 00 \dx0000FFFF 
-\b3 
+36 * 43 02 0F FF 89
+0C 00 \dx0000FFFF
+\b3
 \wx00FF \dx00000000 \dx00000000 	// company_land_purchase_switch;
 \wx8400 \dx00000157 \dx00000157 	// return 1024;
 \wx8002 \dx0000015C \dx0000015C 	// return string(STR_NAME_COMPANY_LAND);
 \wx00FE // company_land_terrain_switch;
 
-37 * 10 03 0F 01 00 \b1 
+37 * 10 03 0F 01 00 \b1
 FF \wx00FF 	// @action3_0;
 \wx00FE 	// company_land_terrain_switch;
 

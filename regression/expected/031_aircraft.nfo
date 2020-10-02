@@ -5,25 +5,25 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d4 
+0 * 4 \d4
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "A" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 52 08 08 "NML\30" "NML regression test" 00 "A test newgrf testing NML" 00 
-3 * 26 00 03 \b7 01 FF \wx0014 
-1A \dx000B0612 
-04 1E 
-03 1E 
-06 07 
-0C 3F 
-1F \wx0400 
-0F \wx0115 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "A"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 52 08 08 "NML\30" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 26 00 03 \b7 01 FF \wx0014
+1A \dx000B0612
+04 1E
+03 1E
+06 07
+0C 3F
+1F \wx0400
+0F \wx0115
 
-4 * 23 04 03 7F 01 FF \wx0014 "Test plane 0x14" 00 
+4 * 23 04 03 7F 01 FF \wx0014 "Test plane 0x14" 00
 

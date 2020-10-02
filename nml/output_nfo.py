@@ -50,6 +50,10 @@ class OutputNFO(output_base.SpriteOutputBase):
                      '// Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags\n\n')
         return handle
 
+    def assemble_file(self, real_file):
+        # All print functions add a space in case there's something written after so remove trailing whitespaces
+        real_file.write(self.file.getvalue().replace(" \n", "\n"))
+
     def print_byte(self, value):
         value = self.prepare_byte(value)
         self.file.write("\\b" + str(value) + " ")

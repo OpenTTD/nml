@@ -5,31 +5,31 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d7 
+0 * 4 \d7
 
-1 * 54 14 "C" "INFO" 
-"B" "VRSN" \w4 \dx00000000 
-"B" "MINV" \w4 \dx00000000 
-"B" "NPAR" \w1 00 
-"B" "PALS" \w1 "A" 
-"B" "BLTR" \w1 "8" 
-00 
-00 
-2 * 52 08 08 "NML\18" "NML regression test" 00 "A test newgrf testing NML" 00 
+1 * 54 14 "C" "INFO"
+"B" "VRSN" \w4 \dx00000000
+"B" "MINV" \w4 \dx00000000
+"B" "NPAR" \w1 00
+"B" "PALS" \w1 "A"
+"B" "BLTR" \w1 "8"
+00
+00
+2 * 52 08 08 "NML\18" "NML regression test" 00 "A test newgrf testing NML" 00
 // param[127] = 2664
-3 * 9 0D 7F \D= FF 00 \dx00000A68 
+3 * 9 0D 7F \D= FF 00 \dx00000A68
 
 // param[126] = (param[127] + 52576256)
-4 * 9 0D 7E \D+ 7F FF \dx03224000 
+4 * 9 0D 7E \D+ 7F FF \dx03224000
 
-5 * 7 06 
-7E 04 FF \wx0008 
-FF 
+5 * 7 06
+7E 04 FF \wx0008
+FF
 
 // Name: dirt_runway_sw_snow - feature 11
-6 * 18 02 11 FF \b1 \dx00000000 
-\dx00000000 \b0 \b15 \b0 \b16 \b1 \b6 
+6 * 18 02 11 FF \b1 \dx00000000
+\dx00000000 \b0 \b15 \b0 \b16 \b1 \b6
 
-7 * 7 03 11 01 00 \b0 
+7 * 7 03 11 01 00 \b0
 \wx00FF 	// dirt_runway_sw_snow;
 
