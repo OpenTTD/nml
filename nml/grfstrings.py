@@ -364,7 +364,8 @@ class StringCommand:
         @param lang: Language of the string.
         @type  lang: L{Language}
 
-        @param wanted_lang_id: Language-id to use for interpreting the command (this string may be from another language, eg with missing strings).
+        @param wanted_lang_id: Language-id to use for interpreting the command
+                               (this string may be from another language, eg with missing strings).
 
         @param prev_command: Argument of previous string command (parameter number, size).
         @type  prev_command: C{tuple} or C{None}

@@ -353,7 +353,10 @@ class RecolourSpriteAction(SpriteAction):
         file.start_sprite(257)
         file.print_bytex(0)
         if file.palette not in ("DEFAULT", "LEGACY"):
-            raise generic.ScriptError("Recolour sprites are only supported when writing to the DEFAULT (DOS) or LEGACY (WIN) palette. If you don't have any real sprites use the commandline option -p to set a palette.")
+            raise generic.ScriptError(
+                "Recolour sprites are only supported when writing to the DEFAULT (DOS) or LEGACY (WIN) palette."
+                " If you don't have any real sprites use the commandline option -p to set a palette."
+            )
         colour_table = self.output_table if file.palette == "DEFAULT" else convert_palette(self.output_table)
         for idx, colour in enumerate(colour_table):
             if idx % 16 == 0:
@@ -460,7 +463,8 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
     if num_param > param_offset:
         mask = sprite.param_list[param_offset]
         param_offset += 1
-        # Mask may be either string (file only) or array (empty => no mask, 1 value => file only, 2 => offsets only, 3 => file + offsets)
+        # Mask may be either string (file only)
+        #   or array (empty => no mask, 1 value => file only, 2 => offsets only, 3 => file + offsets)
         if isinstance(mask, expression.Array):
             if not (0 <= len(mask.values) <= 3):
                 raise generic.ScriptError("Real sprite mask should be an array with 0 to 3 values, encountered {:d}".format(len(mask.values)), mask.pos)

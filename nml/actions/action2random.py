@@ -185,13 +185,13 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
         if act2 is None: continue # May happen if said random switch is not used and therefore not parsed
         if act2_to_copy is not None:
             if act2_to_copy.randbit != act2.randbit:
-                msg = "random_switch '{}' cannot be dependent on both '{}' and '{}' as these are independent of each other."
-                msg = msg.format(random_switch.name.value, act2_to_copy.name, act2.name)
+                msg = ("random_switch '{}' cannot be dependent on both '{}' and '{}'"
+                       " as these are independent of each other.").format(random_switch.name.value, act2_to_copy.name, act2.name)
                 raise generic.ScriptError(msg, random_switch.pos)
 
             if act2_to_copy.nrand != act2.nrand:
-                msg = "random_switch '{}' cannot be dependent on both '{}' and '{}' as they don't use the same amount of random data."
-                msg = msg.format(random_switch.name.value, act2_to_copy.name, act2.name)
+                msg = ("random_switch '{}' cannot be dependent on both '{}' and '{}'"
+                       " as they don't use the same amount of random data.").format(random_switch.name.value, act2_to_copy.name, act2.name)
                 raise generic.ScriptError(msg, random_switch.pos)
         else:
             act2_to_copy = act2
@@ -218,8 +218,8 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
     if randbit != -1:
         #randbit has already been determined. Check that it is suitable
         if possible_mask & (required_mask << randbit) != (required_mask << randbit):
-            msg = "Combination of dependence on and independence from random_switches is not possible for random_switch '{}'."
-            msg = msg.format(random_switch.name.value)
+            msg = ("Combination of dependence on and independence from"
+                   " random_switches is not possible for random_switch '{}'.").format(random_switch.name.value)
             raise generic.ScriptError(msg, random_switch.pos)
     else:
         #find a suitable randbit

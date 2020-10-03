@@ -467,8 +467,8 @@ def find_file(filepath):
             if matches[0] != comp:
                 given_path = os.path.join(path, comp)
                 real_path = os.path.join(path, matches[0])
-                msg = "Path \"{}\" at the file system does not match path \"{}\" given in the input (case mismatch in the last component)"
-                msg = msg.format(real_path, given_path)
+                msg = ("Path \"{}\" at the file system does not match path \"{}\" given in the input"
+                       " (case mismatch in the last component)").format(real_path, given_path)
                 print_warning(msg)
         elif os.access(path, os.X_OK):
             # Path is only accessible, cannot inspect the file system.

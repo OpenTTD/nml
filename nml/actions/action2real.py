@@ -56,8 +56,8 @@ def get_real_action2s(spritegroup, feature):
         if view_names != sorted(['loading', 'loaded']):
             raise generic.ScriptError("Expected a 'loading' and a 'loaded' (list of) sprite set(s).", spritegroup.pos)
     elif feature in (0x05, 0x0B, 0x0D, 0x10):
-        msg = "Sprite groups for feature {:02X} will not be supported in the future, as they are no longer needed. Directly refer to sprite sets instead."
-        msg = msg.format(feature)
+        msg = ("Sprite groups for feature {:02X} will not be supported in the future, as they are no longer needed."
+               " Directly refer to sprite sets instead.").format(feature)
         generic.print_warning(msg, spritegroup.pos)
         if view_names != ['default']:
             raise generic.ScriptError("Expected only a 'default' (list of) sprite set(s).", spritegroup.pos)

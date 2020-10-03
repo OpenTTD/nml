@@ -254,7 +254,8 @@ def builtin_getbits(name, args, pos):
     """
     getbits(value, first, amount) builtin function.
 
-    @return Extract C{amount} bits starting at C{first} from C{value}, that is (C{value} >> C{first}) & (1 << C{amount} - 1)
+    @return Extract C{amount} bits starting at C{first} from C{value},
+            that is (C{value} >> C{first}) & (1 << C{amount} - 1)
     """
     if len(args) != 3:
         raise generic.ScriptError(name + "() must have exactly three parameters", pos)
@@ -371,7 +372,8 @@ def builtin_visual_effect_and_powered(name, args, pos):
     if arg_len == 3:
         powered = args[2].reduce_constant(global_constants.const_list).value
         if powered != 0 and powered != 0x80:
-            raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
+            raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be"
+                                      " either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
     else:
         powered = 0
     return ConstantNumeric(effect | offset | powered)

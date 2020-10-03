@@ -96,12 +96,18 @@ tail_text = """\
 
       <!-- Preprocessor commands starting with a hash - Main switch for preprocessor -->
       <context attribute="Error" lineEndContext="#pop" name="AfterHash">
-        <!-- define, elif, else, endif, error, if, ifdef, ifndef, include, include_next, line, pragma, undef, warning -->
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s*if(?:def|ndef)?(?=\\s+\\S)" insensitive="true" beginRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s*endif" insensitive="true" endRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Define" String="#\\s*define.*((?=\\))" insensitive="true" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s*(?:el(?:se|if)|include(?:_next)?|define|undef|line|error|warning|pragma)" insensitive="true" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="#\\s+[0-9]+" insensitive="true" firstNonSpace="true" />
+        <!-- define,elif,else,endif,error,if,ifdef,ifndef,include,include_next,line,pragma,undef,warning -->
+        <RegExpr attribute="Preprocessor" context="Preprocessor"
+                 String="#\\s*if(?:def|ndef)?(?=\\s+\\S)" insensitive="true" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor"
+                 String="#\\s*endif" insensitive="true" endRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Define"
+                 String="#\\s*define.*((?=\\))" insensitive="true" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor"
+                 String="#\\s*(?:el(?:se|if)|include(?:_next)?|define|undef|line|error|warning|pragma)"
+                 insensitive="true" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor"
+                 String="#\\s+[0-9]+" insensitive="true" firstNonSpace="true" />
       </context>
       <!-- Preprocessor instructions -->
       <context attribute="Preprocessor" lineEndContext="#pop" name="Preprocessor">
@@ -128,7 +134,8 @@ tail_text = """\
     <itemDatas>
       <itemData name="Normal Text"       defStyleNum="dsNormal" />
       <itemData name="Block"             defStyleNum="dsKeyword" />
-      <itemData name="Feature"           defStyleNum="dsKeyword" color="#0095ff" selColor="#ffffff" bold="1" italic="0" spellChecking="false"/>
+      <itemData name="Feature"           defStyleNum="dsKeyword" color="#0095ff"
+                                         selColor="#ffffff" bold="1" italic="0" spellChecking="false"/>
       <itemData name="Built-in Function" defStyleNum="dsDataType" spellChecking="false" />
       <itemData name="String"            defStyleNum="dsString"/>
       <itemData name="Preprocessor"      defStyleNum="dsOthers" spellChecking="false"/>

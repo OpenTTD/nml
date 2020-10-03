@@ -28,7 +28,10 @@ class SpriteContainer:
     @type block_name: L{Identifier}, or C{None} if N/A
 
     @ivar sprite_data: Mapping of (zoom level, bit-depth) to (sprite list, default file)
-    @type sprite_data: C{dict} that maps (C{tuple} of (C{int}, C{int})) to (C{tuple} of (C{list} of (L{RealSprite}, L{RecolourSprite} or L{TemplateUsage}), L{StringLiteral} or C{None}, L{Position}))
+    @type sprite_data: C{dict} that maps (C{tuple} of (C{int}, C{int}))
+                       to (C{tuple} of (C{list} of (L{RealSprite}, L{RecolourSprite} or L{TemplateUsage}),
+                                        L{StringLiteral} or C{None},
+                                        L{Position}))
     """
     sprite_blocks = {}
 
@@ -58,7 +61,12 @@ class SpriteContainer:
         Sorting makes sure that the order is consistent, and that the normal zoom, 8bpp sprites appear first.
 
         @return: List of 6-tuples (sprite_list, default_file, default_mask_file, position, zoom_level, bit_depth).
-        @rtype:  C{list} of C{tuple} of (C{list} of (L{RealSprite}, L{RecolourSprite} or L{TemplateUsage}), L{StringLiteral} or C{None}, L{Position}, C{int}, C{int})
+        @rtype:  C{list} of C{tuple} of (C{list} of (L{RealSprite},
+                                         L{RecolourSprite} or L{TemplateUsage}),
+                                         L{StringLiteral} or C{None},
+                                         L{Position},
+                                         C{int},
+                                         C{int})
         """
         return [val + key for key, val in sorted(self.sprite_data.items())]
 

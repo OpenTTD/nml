@@ -957,8 +957,8 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
         comment = "return {:d};".format(value.value)
         result = value
         if not(-16384 <= value.value <= 32767):
-            msg = "Callback results are limited to -16384..16383 (when the result is a signed number) or 0..32767 (unsigned), encountered {:d}."
-            msg = msg.format(value.value)
+            msg = ("Callback results are limited to -16384..16383 (when the result is a signed number)"
+                   " or 0..32767 (unsigned), encountered {:d}.").format(value.value)
             raise generic.ScriptError(msg, value.pos)
 
     elif isinstance(value, expression.String):

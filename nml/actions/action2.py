@@ -24,7 +24,8 @@ free_action2_ids = list(range(0, total_action2_ids))
 """
 Statistics about spritegroups.
 The 1st field of type C{int} contains the largest number of concurrently active spritegroup ids.
-The 2nd field of type L{Position} contains a positional reference to the last spritegroup of the concurrently active ones.
+The 2nd field of type L{Position} contains a positional reference
+  to the last spritegroup of the concurrently active ones.
 """
 spritegroup_stats = (0, None)
 
@@ -99,7 +100,11 @@ class Action2(base_action.BaseAction):
                 if num_used > spritegroup_stats[0]:
                     spritegroup_stats = (num_used, self.pos)
         except IndexError:
-            raise generic.ScriptError("Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block. Try reducing the number of such blocks.", self.pos)
+            raise generic.ScriptError(
+                "Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block."
+                " Try reducing the number of such blocks.",
+                self.pos
+            )
 
     def write_sprite_start(self, file, size, extra_comment=None):
         assert self.num_refs == 0, "Action2 reference counting has {:d} dangling references.".format(self.num_refs)
@@ -274,7 +279,8 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             This method should not be called, because calling a method on a meta class can be troublesome.
             Instead, call initialize(..).
             """
-            raise NotImplementedError('__init__ must be implemented in ASTSpriteGroup-subclass {!r}, initialize(..) should be called instead'.format(type(self)))
+            raise NotImplementedError(('__init__ must be implemented in ASTSpriteGroup-subclass {!r},'
+                                       ' initialize(..) should be called instead').format(type(self)))
 
         def initialize(self, name = None, feature = None, num_params = 0):
             """
