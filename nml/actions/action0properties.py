@@ -186,7 +186,8 @@ def two_byte_property(low_prop, high_prop, low_prop_info = {}, high_prop_info = 
 def animation_info(value, loop_bit=8, max_frame=253):
     """
     Convert animation info array of two elements to an animation info property.
-    The first is 0/1, and defines whether or not the animation loops. The second is the number of frames, at most 253 frames.
+    The first is 0/1, and defines whether or not the animation loops.
+    The second is the number of frames, at most 253 frames.
 
     @param value: Array of animation info.
     @type  value: C{Array}
@@ -383,7 +384,8 @@ def roadveh_speed_prop(prop_info):
     prop08_value = lambda value: nmlop.MIN(value, 0xFF).reduce()
     # prop 15 value is (value + 3) / 4
     prop15_value = lambda value: nmlop.DIV(nmlop.ADD(value, 3), 4).reduce()
-    # prop 15 should not be set if value(prop08_value) <= 255. But as we test prop15 and prop15 = 0.25/prop08, test for 64:
+    # prop 15 should not be set if value(prop08_value) <= 255.
+    # But as we test prop15 and prop15 = 0.25/prop08, test for 64:
     prop15_test = lambda value: isinstance(value, ConstantNumeric) and value.value >= 0x40
     prop08 = {'size': 1, 'num': 0x08, 'value_function': prop08_value}
     prop15 = {'size': 1, 'num': 0x15, 'value_function': prop15_value, 'test_function': prop15_test}

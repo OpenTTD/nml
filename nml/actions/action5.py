@@ -97,8 +97,8 @@ def parse_action5(replaces):
             raise generic.ScriptError(msg, replaces.pos)
 
         elif num_sprites > num_required:
-            msg = "Too many sprites specified for sprite replacement type '{}', expected {:d}, got {:d}, extra sprites may be ignored"
-            msg = msg.format(replaces.type, num_required, num_sprites)
+            msg = ("Too many sprites specified for sprite replacement type '{}',"
+                   " expected {:d}, got {:d}, extra sprites may be ignored").format(replaces.type, num_required, num_sprites)
             generic.print_warning(msg, replaces.pos)
 
         if replaces.offset != 0:

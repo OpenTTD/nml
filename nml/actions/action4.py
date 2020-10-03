@@ -67,7 +67,8 @@ class Action4(base_action.BaseAction):
 
 # List of various string ranges that may be used
 # Attributes:
-#  - random_id: If true, string IDs may be allocated randomly, else the ID has a special meaning and must be assigned (e.g. for vehicles, string ID = vehicle ID)
+#  - random_id: If true, string IDs may be allocated randomly, else the ID has a special meaning and must be assigned
+#               (e.g. for vehicles, string ID = vehicle ID)
 #  - ids: List of free IDs, only needed if random_id is true. Whenever an ID is used, it's removed from the list
 string_ranges = {
     0xC4: {'random_id': False}, # Station class names
@@ -75,7 +76,8 @@ string_ranges = {
     0xC9: {'random_id': False}, # House name
     # Misc. text ids, used for callbacks and such
     0xD0: {'random_id': True, 'total': 0x400, 'ids': list(range(0xD3FF, 0xCFFF, -1))},
-    # Misc. persistent text ids, used to set properties. Use Ids DC00..DCFF first to keep compatibility with older versions of OTTD.
+    # Misc. persistent text ids, used to set properties.
+    # Use Ids DC00..DCFF first to keep compatibility with older versions of OTTD.
     0xDC: {'random_id': True, 'total': 0x800, 'ids': list(range(0xDBFF, 0xD7FF, -1)) + list(range(0xDFFF, 0xDBFF, -1))},
 }
 
@@ -145,7 +147,8 @@ def get_string_action4s(feature, string_range, string, id = None):
     @param string: String to parse
     @type string: L{expression.String}
 
-    @param id: ID to use for this string, or C{None} if it will be allocated dynamically (random_id is true for the string range)
+    @param id: ID to use for this string, or C{None} if it will be allocated dynamically
+               (random_id is true for the string range)
     @type id: L{Expression} or C{None}
 
     @return: A tuple of two values:

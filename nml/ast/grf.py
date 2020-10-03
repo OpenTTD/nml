@@ -102,7 +102,11 @@ class GRF(base_statement.BaseStatement):
 
     def pre_process(self):
         if None in (self.name, self.desc, self.grfid, self.version, self.min_compatible_version):
-            raise generic.ScriptError("A GRF-block requires the 'name', 'desc', 'grfid', 'version' and 'min_compatible_version' properties to be set.", self.pos)
+            raise generic.ScriptError(
+                "A GRF-block requires the"
+                " 'name', 'desc', 'grfid', 'version' and 'min_compatible_version' properties to be set.",
+                self.pos
+            )
 
         self.grfid = self.grfid.reduce()
         global_constants.constant_numbers['GRFID'] = expression.parse_string_to_dword(self.grfid)
@@ -129,7 +133,12 @@ class GRF(base_statement.BaseStatement):
             param.pre_process(expression.ConstantNumeric(param_num))
             param_num = param.num.value + 1
             if param_num > param_stats[1]:
-                raise generic.ScriptError("No free parameters available. Consider assigning <num> manually and combine multiple bool parameters into a single bitmask parameter using <bit>.", self.pos)
+                raise generic.ScriptError(
+                    "No free parameters available."
+                    " Consider assigning <num> manually and combine multiple bool parameters into"
+                    " a single bitmask parameter using <bit>.",
+                    self.pos
+                )
             if param_num > param_stats[0]:
                 param_stats[0] = param_num
 

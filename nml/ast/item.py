@@ -66,7 +66,9 @@ class Item(base_statement.BaseStatementList):
             if self.name.value in global_constants.item_names:
                 existing_id = global_constants.item_names[self.name.value].id
                 if self.id is not None and existing_id.value != self.id.value:
-                    raise generic.ScriptError("Duplicate item with name '{}'. This item has already been assigned to id {:d}, cannot reassign to id {:d}".format(self.name.value, existing_id.value, self.id.value), self.pos)
+                    raise generic.ScriptError(
+                        ("Duplicate item with name '{}'."
+                         " This item has already been assigned to id {:d}, cannot reassign to id {:d}").format(self.name.value, existing_id.value, self.id.value), self.pos)
                 self.id = existing_id
 
         # We may have to reserve multiple item IDs for houses

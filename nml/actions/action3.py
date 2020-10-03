@@ -88,7 +88,8 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default, pos
     @param varact2parser: Parser containing a parsed expression
     @type varact2parser: L{Varaction2Parser}
 
-    @param mapping: Mapping of various values to sprite groups / return values, with a possible extra function to apply to the return value
+    @param mapping: Mapping of various values to sprite groups / return values,
+                    with a possible extra function to apply to the return value
     @type mapping: C{dict} that maps C{int} to C{tuple} of (L{SpriteGroupRef}, C{function}, or C{None})
 
     @param default: Default sprite group if no value matches
@@ -183,7 +184,8 @@ def create_cb_choice_varaction2(feature, expr, mapping, default, pos):
     @param expr: Expression to evaluate
     @type expr: L{Expression}
 
-    @param mapping: Mapping of various values to sprite groups, with a possible extra function to apply to the return value
+    @param mapping: Mapping of various values to sprite groups,
+                    with a possible extra function to apply to the return value
     @type mapping: C{dict} that maps C{int} to C{tuple} of (L{SpriteGroupRef}, C{function}, or C{None})
 
     @param default: Default sprite group if no value matches

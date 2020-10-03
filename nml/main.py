@@ -47,7 +47,9 @@ def parse_cli(argv):
     opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     opt_parser.add_option("--md5", dest="md5_filename", metavar="<file>", help="Write an md5sum of the resulting grf to <file>")
     opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
-    opt_parser.add_option("-M", action="store_true", dest="dep_check", help="output a rule suitable for make describing the graphics dependencies of the main grf file (requires input file or --grf)")
+    opt_parser.add_option("-M", action="store_true", dest="dep_check",
+                          help=("output a rule suitable for make describing"
+                                " the graphics dependencies of the main grf file (requires input file or --grf)"))
     opt_parser.add_option("--MF", dest="dep_filename", metavar="<file>", help="When used with -M, specifies a file to write the dependencies to")
     opt_parser.add_option("--MT", dest="depgrf_filename", metavar="<file>", help="target of the rule emitted by dependency generation (requires -M)")
     opt_parser.add_option("-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites")
@@ -61,7 +63,8 @@ def parse_cli(argv):
     opt_parser.add_option("--default-lang", dest="default_lang", metavar="<file>",
                         help="The default language is stored in <file> [default: %default]")
     opt_parser.add_option("--start-sprite", action="store", type="int", dest="start_sprite_num", metavar="<num>",
-                        help="Set the first sprite number to write (do not use except when you output nfo that you want to include in other files)")
+                        help=("Set the first sprite number to write"
+                              " (do not use except when you output nfo that you want to include in other files)"))
     opt_parser.add_option("-p", "--palette", dest="forced_palette", metavar="<palette>", choices = ["DEFAULT", "LEGACY", "DOS", "WIN", "ANY"],
                         help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DEFAULT', 'LEGACY', 'ANY'")
     opt_parser.add_option("--quiet", action="store_true", dest="quiet",
@@ -200,7 +203,8 @@ def nml(inputfile, input_filename, output_debug, outputfiles, start_sprite_num, 
     @param forced_palette: Palette to use for the file.
     @type  forced_palette: C{str}
 
-    @param md5_filename: Filename to use for writing the md5 sum of the grf file. C{None} if the file should not be written.
+    @param md5_filename: Filename to use for writing the md5 sum of the grf file.
+                         C{None} if the file should not be written.
     @type  md5_filename: C{str} or C{None}
     """
     generic.OnlyOnce.clear()

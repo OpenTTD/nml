@@ -26,8 +26,10 @@ from nml.actions import base_action
 # - free:            Number is available for use.
 # - named:           Number is allocated to represent a name.
 # - safe numbered:   Number is allocated by the user, and is safe to refer to.
-# - unsafe numbered: Number is allocated by the user, and is not safe to refer to (that is, it is below the point of 'prepare_output')
-# - invisible:       Number is allocated by a final town_name, without attaching a name to it. It is not accessible any more.
+# - unsafe numbered: Number is allocated by the user, and is not safe to refer to
+#                    (that is, it is below the point of 'prepare_output')
+# - invisible:       Number is allocated by a final town_name, without attaching a name to it.
+#                    It is not accessible any more.
 # Instances of the TownNames class have a 'name' attribute, which can be 'None' (for an invisible number),
 # a string (for a named number), or a (constant numeric) expression (for a safe/unsafe number).
 #

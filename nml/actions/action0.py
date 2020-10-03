@@ -553,7 +553,10 @@ def parse_property(prop_info, value_list, feature, id):
                 - List of actions to prepend
                 - List of modifications to apply via action 6
                 - List of actions to append
-    @rtype: C{tuple} of (C{list} of L{Action0Property}, C{list} of L{BaseAction}, C{list} of 3-C{tuple}, C{list} of L{BaseAction})
+    @rtype: C{tuple} of (C{list} of L{Action0Property},
+                         C{list} of L{BaseAction},
+                         C{list} of 3-C{tuple},
+                         C{list} of L{BaseAction})
     """
     action_list = []
     action_list_append = []
