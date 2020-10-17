@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, generic, grfstrings, global_constants
-from nml.actions import action8, action14
+from nml import expression, free_number_list, generic, grfstrings, global_constants
+from nml.actions import action6, action8, action14
 from nml.ast import base_statement
 
 palette_node = None
@@ -23,9 +23,11 @@ blitter_node = None
 """
 Statistics about registers used for parameters.
 The 1st field is the largest parameter register used.
-The 2nd field is the maximum amount of parameter registers available. This is where L{action6.free_parameters} begins.
+The 2nd field is the maximum amount of parameter registers available.
+After preprocessing the GRF block, the limit for L{action6.free_parameters} is set to
+the number of reserved params.
 """
-param_stats = [0, 0x40]
+param_stats = [0, 0x80]
 
 def print_stats():
     """
@@ -132,6 +134,8 @@ class GRF(base_statement.BaseStatement):
                 raise generic.ScriptError("No free parameters available. Consider assigning <num> manually and combine multiple bool parameters into a single bitmask parameter using <bit>.", self.pos)
             if param_num > param_stats[0]:
                 param_stats[0] = param_num
+        action6.free_parameters = free_number_list.FreeNumberList(list(range(param_stats[0], 0x80)), "No free parameters available to use for internal computations.", "No unique free parameters available for internal computations.")
+
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'GRF')
