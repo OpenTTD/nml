@@ -22,7 +22,7 @@ from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
 from .binop import BinOp
 from .bitmask import BitMask
 from .cargo import ProduceCargo, AcceptCargo
-from .parameter import parse_string_to_dword
+from .label import Label
 from .storage_op import StorageOp
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
@@ -83,7 +83,7 @@ class SpecialCheck(Expression):
     @type results: (C{int}, C{int})-tuple
 
     @ivar value: Value to test
-    @type value: C{int}
+    @type value: L{ConstantNumeric}
 
     @ivar varsize: Varsize for the action7/9 check
     @type varsize: C{int}
@@ -96,13 +96,17 @@ class SpecialCheck(Expression):
     """
     def __init__(self, op, varnum, results, value, to_string, varsize = 4, mask = None, pos = None):
         Expression.__init__(self, pos)
+        if mask is not None:
+            value = ConstantNumeric((value.value & mask) + (mask << 32), value.pos)
+            assert varsize == 8
+        else:
+            assert varsize <= 4
         self.op = op
         self.varnum = varnum
         self.results = results
         self.value = value
         self.to_string = to_string
         self.varsize = varsize;
-        self.mask = mask
 
     def reduce(self, id_dicts = [], unknown_id_fatal = True):
         return self
@@ -290,8 +294,8 @@ def builtin_cargotype_available(name, args, pos):
     """
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
-    label = args[0].reduce()
-    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    label = Label(args[0].reduce())
+    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), label, "{}({})".format(name, label), pos=args[0].pos)
 
 def builtin_railtype_available(name, args, pos):
     """
@@ -301,8 +305,8 @@ def builtin_railtype_available(name, args, pos):
     """
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
-    label = args[0].reduce()
-    return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    label = Label(args[0].reduce())
+    return SpecialCheck((0x0D, None), 0, (0, 1), label, "{}({})".format(name, label), pos=args[0].pos)
 
 def builtin_roadtype_available(name, args, pos):
     """
@@ -312,8 +316,8 @@ def builtin_roadtype_available(name, args, pos):
     """
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
-    label = args[0].reduce()
-    return SpecialCheck((0x0F, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    label = Label(args[0].reduce())
+    return SpecialCheck((0x0F, None), 0, (0, 1), label, "{}({})".format(name, label), pos=args[0].pos)
 
 def builtin_tramtype_available(name, args, pos):
     """
@@ -323,8 +327,8 @@ def builtin_tramtype_available(name, args, pos):
     """
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
-    label = args[0].reduce()
-    return SpecialCheck((0x11, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    label = Label(args[0].reduce())
+    return SpecialCheck((0x11, None), 0, (0, 1), label, "{}({})".format(name, label), pos=args[0].pos)
 
 def builtin_grf_status(name, args, pos):
     """
@@ -334,8 +338,6 @@ def builtin_grf_status(name, args, pos):
     """
     if len(args) not in (1, 2):
         raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
-    labels = [label.reduce() for label in args]
-    mask = parse_string_to_dword(labels[1]) if len(labels) > 1 else None
     if name == 'grf_current_status':
         op = (0x06, r'\7G')
         results = (1, 0)
@@ -347,13 +349,17 @@ def builtin_grf_status(name, args, pos):
         results = (0, 1)
     else:
         assert False, "Unknown grf status function"
-    if mask is None:
-        string = "{}({})".format(name, str(labels))
+
+    label = Label(args[0].reduce())
+    mask = None
+    if len(args) == 1:
+        string = "{}({})".format(name, label)
         varsize = 4
     else:
-        string = "{}({}, {})".format(name, str(labels), str(mask))
+        mask = Label(args[1]).value
+        string = "{}({}, {})".format(name, label, mask)
         varsize = 8
-    return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), string, varsize, mask, args[0].pos)
+    return SpecialCheck(op, 0x88, results, label, string, varsize, mask, label.pos)
 
 def builtin_visual_effect_and_powered(name, args, pos):
     """
@@ -404,7 +410,7 @@ def builtin_create_effect(name, args, pos):
 def builtin_str2number(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    return ConstantNumeric(parse_string_to_dword(args[0]))
+    return Label(args[0])
 
 def builtin_cargotype(name, args, pos):
     if len(args) != 1:
@@ -519,7 +525,7 @@ def builtin_sound_file(name, args, pos):
 def builtin_sound_import(name, args, pos):
     if len(args) not in (2, 3):
         raise generic.ScriptError(name + "() must have 2 or 3 parameters", pos)
-    grfid = parse_string_to_dword(args[0].reduce())
+    grfid = Label(args[0].reduce())
     sound_num = args[1].reduce_constant().value
     volume = args[2].reduce_constant().value if len(args) >= 3 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)

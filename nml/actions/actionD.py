@@ -177,15 +177,7 @@ def parse_special_check(assignment):
     check = assignment.value
     assert isinstance(check, expression.SpecialCheck)
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[0])))
-
-    value = check.value
-    if check.mask is not None:
-        value &= check.mask
-        value += check.mask << 32
-        assert check.varsize == 8
-    else:
-        assert check.varsize <= 4
-    actions.append(nml.actions.action7.SkipAction(9, check.varnum, check.varsize, check.op, value, 1))
+    actions.append(nml.actions.action7.SkipAction(9, check.varnum, check.varsize, check.op, check.value, 1))
 
     actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[1]))))
     return actions
@@ -396,7 +388,7 @@ def parse_actionD(assignment):
             action_list.extend(tmp_param_actions)
             param1 = expression.ConstantNumeric(0)
         param2 = expression.ConstantNumeric(0xFE)
-        data = expression.ConstantNumeric(expression.parse_string_to_dword(assignment.value.grfid))
+        data = expression.Label(assignment.value.grfid)
     elif isinstance(assignment.value, expression.PatchVariable):
         op = nmlop.ASSIGN
         param1 = expression.ConstantNumeric(assignment.value.num)

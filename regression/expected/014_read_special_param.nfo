@@ -55,7 +55,7 @@
 9 * 9 0D 12 \D= FF 00 \dx00000001
 
 // param[19] = param[0]
-10 * 9 0D 13 \D= 00 FE \dx014C4D4E
+10 * 9 0D 13 \D= 00 FE "NML\01"
 
 // param[158] = (param[158] | 2)
 11 * 9 0D 9E \D| 9E FF \dx00000002

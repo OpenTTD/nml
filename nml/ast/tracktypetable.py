@@ -37,13 +37,13 @@ class BaseTracktypeTable(base_statement.BaseStatement):
                         val_list.append(expression.StringLiteral(rt.value, rt.pos))
                     else:
                         val_list.append(rt)
-                    expression.parse_string_to_dword(val_list[-1]) # we don't care about the result, only validate the input
+                    expression.Label(val_list[-1]) # we don't care about the result, only validate the input
                 self.tracktype_list[i] = val_list if len(val_list) > 1 else val_list[0]
             else:
                 name = tracktype
                 if isinstance(tracktype, expression.Identifier):
                     self.tracktype_list[i] = expression.StringLiteral(tracktype.value, tracktype.pos)
-                expression.parse_string_to_dword(self.tracktype_list[i]) # we don't care about the result, only validate the input
+                expression.Label(self.tracktype_list[i]) # we don't care about the result, only validate the input
             self.tracktype_table[name.value] = i
 
     def pre_process(self):

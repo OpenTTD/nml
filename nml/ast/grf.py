@@ -27,6 +27,9 @@ The 2nd field is the maximum amount of parameter registers available. This is wh
 """
 param_stats = [0, 0x40]
 
+"""The grfid set in the `grf` block, if present"""
+GRFID = None
+
 def print_stats():
     """
     Print statistics about used ids.
@@ -105,7 +108,8 @@ class GRF(base_statement.BaseStatement):
             raise generic.ScriptError("A GRF-block requires the 'name', 'desc', 'grfid', 'version' and 'min_compatible_version' properties to be set.", self.pos)
 
         self.grfid = self.grfid.reduce()
-        global_constants.constant_numbers['GRFID'] = expression.parse_string_to_dword(self.grfid)
+        global GRFID
+        GRFID = expression.Label(self.grfid)
         self.name = self.name.reduce()
         if not isinstance(self.name, expression.String):
             raise generic.ScriptError("GRF-name must be a string", self.name.pos)

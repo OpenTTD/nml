@@ -6,9 +6,9 @@
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
 0 * 6 0E \b1
-\dx44434241
+"ABCD"
 
 1 * 10 0E \b2
-\dx04030201
-\dx48474645
+"\01\02\03\04"
+"EFGH"
 

@@ -33,18 +33,18 @@
 "RFPR" "GOOD" "ENSP" "FMSP" "MNSP"
 "PAPR" "STEL" "VEHI" "COPR" "WOOD"
 
-// param[127] = 1145130834
-9 * 9 0D 7F \D= FF 00 \dx44414F52
+// param[127] = "ROAD"
+9 * 9 0D 7F \D= FF 00 "ROAD"
 
-10 * 9 09 00 04 0F \dx52444552 01
+10 * 9 09 00 04 0F "REDR" 01
 
-// param[127] = 1380205906
-11 * 9 0D 7F \D= FF FF \dx52444552
+// param[127] = "REDR"
+11 * 9 0D 7F \D= FF FF "REDR"
 
-12 * 9 09 00 04 0F \dx5F444552 01
+12 * 9 09 00 04 0F "RED_" 01
 
-// param[127] = 1598309714
-13 * 9 0D 7F \D= FF FF \dx5F444552
+// param[127] = "RED_"
+13 * 9 0D 7F \D= FF FF "RED_"
 
 14 * 7 06
 7F 04 FF \wx0014

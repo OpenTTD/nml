@@ -16,7 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import itertools
 from nml import generic, nmlop
 from nml.expression import (BinOp, ConstantNumeric, ConstantFloat, Array, StringLiteral,
-                            Identifier, ProduceCargo, AcceptCargo, parse_string_to_dword)
+                            Identifier, ProduceCargo, AcceptCargo, Label)
 
 tilelayout_names = {}
 
@@ -1036,8 +1036,7 @@ class LabelListProp(BaseAction0Property):
         file.print_bytex(self.prop_num)
         file.print_byte(len(self.labels))
         for label in self.labels:
-            parse_string_to_dword(label)  # Error if the wrong length or not ASCII
-            label.write(file, 4)
+            Label(label).write(file, 4)
         file.newline()
 
     def get_size(self):

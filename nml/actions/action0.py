@@ -722,11 +722,11 @@ def get_tracktypelist_action(table_prop_id, cond_tracktype_not_defined, tracktyp
             id_table.append(tracktype)
             offset+=4
             continue
-        param, extra_actions = actionD.get_tmp_parameter(expression.ConstantNumeric(expression.parse_string_to_dword(tracktype[-1])))
+        param, extra_actions = actionD.get_tmp_parameter(expression.Label(tracktype[-1]))
         action_list.extend(extra_actions)
         for idx in range(len(tracktype)-2, -1, -1):
-            val = expression.ConstantNumeric(expression.parse_string_to_dword(tracktype[idx]))
-            action_list.append(action7.SkipAction(0x09, 0x00, 4, (cond_tracktype_not_defined, None), val.value, 1))
+            val = expression.Label(tracktype[idx])
+            action_list.append(action7.SkipAction(0x09, 0x00, 4, (cond_tracktype_not_defined, None), val, 1))
             action_list.append(actionD.ActionD(expression.ConstantNumeric(param), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0xFF), val))
         act6.modify_bytes(param, 4, offset)
         id_table.append(expression.StringLiteral(r"\00\00\00\00", None))
@@ -958,8 +958,8 @@ class EngineOverrideProp(BaseAction0Property):
 
     def write(self, file):
         file.print_bytex(0x11)
-        file.print_dwordx(self.source)
-        file.print_dwordx(self.target)
+        self.source.write(file, 4)
+        self.target.write(file, 4)
         file.newline()
 
     def get_size(self):
