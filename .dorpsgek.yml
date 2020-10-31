@@ -4,12 +4,6 @@ notifications:
       - openttd
       - openttd.notice
 
-  push:
-    only:
-    - master
-    only-by:
-    - DorpsGek
-  commit-comment:
   pull-request:
   issue:
-  
+  tag-created:
