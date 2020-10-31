@@ -46,10 +46,10 @@ class SkipAction(base_action.BaseAction):
         file.print_bytex(self.condtype[0], self.condtype[1])
         if self.varsize == 8:
             #grfid + mask
-            file.print_dwordx(self.value & 0xFFFFFFFF)
-            file.print_dwordx(self.value >> 32)
+            file.print_dwordx(self.value.value & 0xFFFFFFFF)
+            file.print_dwordx(self.value.value >> 32)
         else:
-            file.print_varx(self.value, self.varsize)
+            self.value.write(file, self.varsize)
         file.print_bytex(self.label)
         file.newline()
         file.end_sprite()
@@ -62,7 +62,7 @@ class SkipAction(base_action.BaseAction):
 
 class UnconditionalSkipAction(SkipAction):
     def __init__(self, action_type, label):
-        SkipAction.__init__(self, action_type, 0x9A, 1, (0, r'\71'), 0, label)
+        SkipAction.__init__(self, action_type, 0x9A, 1, (0, r'\71'), expression.ConstantNumeric(0), label)
 
 def op_to_cond_op(op):
     #The operators are reversed as we want to skip if the expression is true
@@ -84,7 +84,7 @@ def parse_conditional(expr):
     - The size of the value (as integer)
     '''
     if expr is None:
-        return (None, [], (2, r'\7='), 0, 4)
+        return (None, [], (2, r'\7='), expression.ConstantNumeric(0), 4)
     if isinstance(expr, expression.BinOp):
         if expr.op == nmlop.HASBIT or expr.op == nmlop.NOTHASBIT:
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
@@ -93,7 +93,7 @@ def parse_conditional(expr):
             else:
                 param, actions = actionD.get_tmp_parameter(expr.expr1)
             if isinstance(expr.expr2, expression.ConstantNumeric):
-                bit_num = expr.expr2.value
+                bit_num = expr.expr2
             else:
                 if isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric):
                     param = expr.expr2.num.value
@@ -103,7 +103,7 @@ def parse_conditional(expr):
                 act6 = action6.Action6()
                 act6.modify_bytes(param, 1, 4)
                 actions.append(act6)
-                bit_num = 0
+                bit_num = expression.ConstantNumeric(0)
             comp_type = (1, r'\70') if expr.op == nmlop.HASBIT else (0, r'\71')
             return (param, actions, comp_type, bit_num , 1)
         elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LE, nmlop.CMP_GE) \
@@ -114,17 +114,17 @@ def parse_conditional(expr):
             else:
                 param, actions = actionD.get_tmp_parameter(expr.expr1)
             op = op_to_cond_op(expr.op)
-            return (param, actions, op, expr.expr2.value, 4)
+            return (param, actions, op, expr.expr2, 4)
 
     if isinstance(expr, expression.Boolean):
         expr = expr.expr
 
     if isinstance(expr, expression.Not):
         param, actions = actionD.get_tmp_parameter(expr.expr)
-        return (param, actions, (3, r'\7!'), 0, 4)
+        return (param, actions, (3, r'\7!'), expression.ConstantNumeric(0), 4)
 
     param, actions = actionD.get_tmp_parameter(expr)
-    return (param, actions, (2, r'\7='), 0, 4)
+    return (param, actions, (2, r'\7='), expression.ConstantNumeric(0), 4)
 
 def cond_skip_actions(action_list, param, condtype, value, value_size, pos):
     if len(action_list) == 0: return []
@@ -239,7 +239,7 @@ def parse_conditional_block(cond_list):
         param = block['param_dst']
         if i == 0: action_list.extend(block['cond_actions'])
         else:
-            action_list.extend(cond_skip_actions(block['cond_actions'], param_skip_all, (2, r'\7='), 0, 4, cond_list.pos))
+            action_list.extend(cond_skip_actions(block['cond_actions'], param_skip_all, (2, r'\7='), expression.ConstantNumeric(0), 4, cond_list.pos))
             if param is None:
                 param = param_skip_all
             else:

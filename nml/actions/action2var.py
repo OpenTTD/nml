@@ -432,7 +432,7 @@ class Varaction2Parser:
 
         if expr.info['perm'] and self.feature == 0x08:
             # store grfid in register 0x100 for town persistent storage
-            grfid = expression.ConstantNumeric(0xFFFFFFFF if expr.grfid is None else expression.parse_string_to_dword(expr.grfid))
+            grfid = expression.ConstantNumeric(0xFFFFFFFF) if expr.grfid is None else expression.Label(expr.grfid)
             store_op = nmlop.STO_TMP(grfid, 0x100, expr.pos)
             ret = nmlop.VAL2(store_op, ret)
         elif expr.grfid is not None:

@@ -23,8 +23,7 @@ class DeactivateBlock(base_statement.BaseStatement):
         self.grfid_list = grfid_list
 
     def pre_process(self):
-        # Parse (string-)expressions to integers
-        self.grfid_list = [expression.parse_string_to_dword(grfid.reduce()) for grfid in self.grfid_list]
+        self.grfid_list = [expression.Label(grfid.reduce()) for grfid in self.grfid_list]
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Deactivate other newgrfs:')

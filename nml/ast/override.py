@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, expression, global_constants
-from nml.ast import base_statement
+from nml.ast import base_statement, grf
 from nml.actions import action0
 
 class EngineOverride(base_statement.BaseStatement):
@@ -36,15 +36,13 @@ class EngineOverride(base_statement.BaseStatement):
             raise generic.ScriptError("engine_override expects 1 or 2 parameters", self.pos)
 
         if len(self.args) == 1:
-            try:
-                self.source_grfid = expression.Identifier('GRFID').reduce(global_constants.const_list).value
-                assert isinstance(self.source_grfid, int)
-            except generic.ScriptError:
+            self.source_grfid = grf.GRFID
+            if self.source_grfid is None:
                 raise generic.ScriptError("GRFID of this grf is required, but no grf-block is defined.", self.pos)
         else:
-            self.source_grfid = expression.parse_string_to_dword(self.args[0].reduce(global_constants.const_list))
+            self.source_grfid = expression.Label(self.args[0].reduce(global_constants.const_list))
 
-        self.grfid = expression.parse_string_to_dword(self.args[-1].reduce(global_constants.const_list))
+        self.grfid = expression.Label(self.args[-1].reduce(global_constants.const_list))
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, 'Engine override')
