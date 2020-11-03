@@ -37,6 +37,7 @@ class FunctionPtr(Expression):
     """
 
     def __init__(self, name, func, *extra_args):
+        super().__init__(pos=None)
         self.name = name
         self.func = func
         self.extra_args = extra_args

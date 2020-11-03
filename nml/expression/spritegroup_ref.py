@@ -39,9 +39,9 @@ class SpriteGroupRef(Expression):
     """
 
     def __init__(self, name, param_list, pos, act2=None):
+        super().__init__(pos)
         self.name = name
         self.param_list = param_list
-        self.pos = pos
         self.act2 = act2
         self.is_procedure = False
 
