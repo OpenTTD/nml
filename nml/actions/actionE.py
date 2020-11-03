@@ -26,7 +26,7 @@ class ActionE(base_action.BaseAction):
         file.print_byte(len(self.grfid_list))
         for grfid in self.grfid_list:
             file.newline()
-            file.print_dwordx(grfid)
+            grfid.write(file, 4)
         file.newline()
         file.end_sprite()
 

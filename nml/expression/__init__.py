@@ -25,8 +25,9 @@ from .cargo import ProduceCargo, AcceptCargo
 from .functioncall import FunctionCall, SpecialCheck, GRMOp
 from .functionptr import FunctionPtr
 from .identifier import Identifier
+from .label import Label
 from .patch_variable import PatchVariable
-from .parameter import Parameter, OtherGRFParameter, parse_string_to_dword
+from .parameter import Parameter, OtherGRFParameter
 from .special_parameter import SpecialParameter
 from .spritegroup_ref import SpriteGroupRef
 from .storage_op import StorageOp

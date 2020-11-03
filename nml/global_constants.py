@@ -1167,7 +1167,7 @@ patch_variables = {
 }
 
 def config_flag_read(bit, pos):
-    return expression.SpecialCheck((0x01, r'\70'), 0x85, (0, 1), bit, "PatchFlag({})".format(bit), varsize = 1, pos = pos)
+    return expression.SpecialCheck((0x01, r'\70'), 0x85, (0, 1), expression.ConstantNumeric(bit), "PatchFlag({})".format(bit), varsize=1, pos=pos)
 
 def config_flag(name, info, pos):
     return expression.SpecialParameter(name, info, None, config_flag_read, True, pos)

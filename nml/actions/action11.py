@@ -58,7 +58,7 @@ class ImportSound(base_action.BaseAction):
         <sprite-number> * <length> FE 00 <grfid> <number>
 
     @ivar grfid: ID of the other grf.
-    @type grfid: C{int}
+    @type grfid: L{Label}
 
     @ivar number: Sound number to load.
     @type number: C{int}
@@ -76,7 +76,7 @@ class ImportSound(base_action.BaseAction):
         file.start_sprite(8)
         file.print_bytex(0xfe)
         file.print_bytex(0)
-        file.print_dwordx(self.grfid)
+        self.grfid.write(file, 4)
         file.print_wordx(self.number)
         file.end_sprite()
         if self.last: file.newline()
