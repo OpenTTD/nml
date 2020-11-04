@@ -13,10 +13,9 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic
+from nml import generic, global_constants
 from nml.actions import base_action
 from nml.ast import base_statement, general
-import nml
 
 total_action2_ids = 0x100
 free_action2_ids = list(range(0, total_action2_ids))
@@ -532,7 +531,7 @@ def register_spritegroup(spritegroup):
     if name in spritegroup_list:
         raise generic.ScriptError("Block with name '{}' has already been defined".format(name), spritegroup.pos)
     spritegroup_list[name] = spritegroup
-    nml.global_constants.spritegroups[name] = name
+    global_constants.spritegroups[name] = name
 
 
 def resolve_spritegroup(name):

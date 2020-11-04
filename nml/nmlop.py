@@ -14,8 +14,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import operator
+from .expression import binop
 from .expression.base_expression import Type, ConstantNumeric, ConstantFloat
-from .expression.binop import BinOp
 from nml import generic
 
 
@@ -101,7 +101,7 @@ class Operator:
             return "({} {} {})".format(expr1, self.token, expr2)
 
     def __call__(self, expr1, expr2, pos=None):
-        return BinOp(self, expr1, expr2, pos)
+        return binop.BinOp(self, expr1, expr2, pos)
 
 
 def unsigned_rshift(a, b):

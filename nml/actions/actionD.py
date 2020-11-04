@@ -14,9 +14,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, global_constants, expression, nmlop
-from nml.actions import base_action, action6
-from nml.ast import base_statement
-import nml
+from nml.actions import base_action, action6, action7
+from nml.ast import base_statement, conditional
 
 
 class ActionD(base_action.BaseAction):
@@ -184,10 +183,10 @@ def write_action_value(expr, action_list, act6, offset, size):
 def parse_ternary_op(assignment):
     assert isinstance(assignment.value, expression.TernaryOp)
     actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr2))
-    cond_block = nml.ast.conditional.Conditional(
+    cond_block = conditional.Conditional(
         assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)], None
     )
-    actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
+    actions.extend(conditional.ConditionalList([cond_block]).get_action_list())
     return actions
 
 
@@ -203,7 +202,7 @@ def parse_special_check(assignment):
         assert check.varsize == 8
     else:
         assert check.varsize <= 4
-    actions.append(nml.actions.action7.SkipAction(9, check.varnum, check.varsize, check.op, value, 1))
+    actions.append(action7.SkipAction(9, check.varnum, check.varsize, check.op, value, 1))
 
     actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[1]))))
     return actions
@@ -244,10 +243,10 @@ def parse_hasbit(assignment):
         assignment.value.op == nmlop.HASBIT or assignment.value.op == nmlop.NOTHASBIT
     )
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
-    cond_block = nml.ast.conditional.Conditional(
+    cond_block = conditional.Conditional(
         assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None
     )
-    actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
+    actions.extend(conditional.ConditionalList([cond_block]).get_action_list())
     return actions
 
 
@@ -271,10 +270,10 @@ def parse_boolean(assignment):
     assert isinstance(assignment.value, expression.Boolean)
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
     expr = nmlop.CMP_NEQ(assignment.value.expr, 0)
-    cond_block = nml.ast.conditional.Conditional(
+    cond_block = conditional.Conditional(
         expr, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None
     )
-    actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
+    actions.extend(conditional.ConditionalList([cond_block]).get_action_list())
     return actions
 
 
