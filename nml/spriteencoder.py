@@ -274,9 +274,6 @@ class SpriteEncoder:
         xoffset = sprite_info.xrel.value
         yoffset = sprite_info.yrel.value
 
-        im, mask_im = None, None
-        im_mask_pal = None
-
         # Select region of image bounded by x/ypos and x/ysize
         x = sprite_info.xpos.value
         y = sprite_info.ypos.value

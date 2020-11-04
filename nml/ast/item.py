@@ -200,7 +200,6 @@ class LiveryOverride(base_statement.BaseStatement):
 
     def pre_process(self):
         self.graphics_block.pre_process()
-        pass
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Livery override, wagon id:")
