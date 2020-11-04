@@ -82,7 +82,7 @@ Used for verbose information.
 is_native = False
 
 try:
-    from nml_lz77 import encode
+    from nml_lz77 import encode  # lgtm[py/unused-import]
 
     is_native = True
 except ImportError:

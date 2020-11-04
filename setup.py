@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import os
-
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_py import build_py
 
