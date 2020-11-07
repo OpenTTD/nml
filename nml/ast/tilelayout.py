@@ -17,6 +17,7 @@ from nml import generic, expression, global_constants
 from nml.actions import action0properties
 from nml.ast import base_statement, assignment
 
+
 class TileLayout(base_statement.BaseStatement):
     """
     'tile_layout' AST node. A TileLayout is a list of x,y-offset/tileID pairs.
@@ -36,6 +37,7 @@ class TileLayout(base_statement.BaseStatement):
     @ivar properties: table of all properties. Unknown property names are accepted and ignored.
     @type properties: C{dict} with C{str} keys and L{ConstantNumeric} values
     """
+
     def __init__(self, name, tile_list, pos):
         base_statement.BaseStatement.__init__(self, "tile layout", pos, False, False)
         self.name = name.value
@@ -54,25 +56,27 @@ class TileLayout(base_statement.BaseStatement):
                 assert isinstance(tileprop, LayoutTile)
                 x = tileprop.x.reduce_constant()
                 y = tileprop.y.reduce_constant()
-                tile = tileprop.tiletype.reduce(unknown_id_fatal = False)
-                if isinstance(tile, expression.Identifier) and tile.value == 'clear':
+                tile = tileprop.tiletype.reduce(unknown_id_fatal=False)
+                if isinstance(tile, expression.Identifier) and tile.value == "clear":
                     tile = expression.ConstantNumeric(0xFF)
                 self.tile_list.append(LayoutTile(x, y, tile))
         if self.name in action0properties.tilelayout_names:
-            raise generic.ScriptError("A tile layout with name '{}' has already been defined.".format(self.name), self.pos)
+            raise generic.ScriptError(
+                "A tile layout with name '{}' has already been defined.".format(self.name), self.pos
+            )
         action0properties.tilelayout_names[self.name] = self
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'TileLayout')
+        generic.print_dbg(indentation, "TileLayout")
         for tile in self.tile_list:
-            generic.print_dbg(indentation + 2, 'At {:d},{:d}:'.format(tile.x, tile.y))
+            generic.print_dbg(indentation + 2, "At {:d},{:d}:".format(tile.x, tile.y))
             tile.tiletype.debug_print(indentation + 4)
 
     def get_action_list(self):
         return []
 
     def __str__(self):
-        return 'tilelayout {} {{\n\t{}\n}}\n'.format(self.name, '\n\t'.join(str(x) for x in self.tile_prop_list))
+        return "tilelayout {} {{\n\t{}\n}}\n".format(self.name, "\n\t".join(str(x) for x in self.tile_prop_list))
 
     def get_size(self):
         size = 2
@@ -96,7 +100,12 @@ class TileLayout(base_statement.BaseStatement):
                 file.print_bytex(0xFE)
                 tile_id = global_constants.item_names[tile.tiletype.value].id
                 if not isinstance(tile_id, expression.ConstantNumeric):
-                    raise generic.ScriptError("Tile '{}' cannot be used in a tilelayout, as its ID is not a constant.".format(tile.tiletype.value), tile.tiletype.pos)
+                    raise generic.ScriptError(
+                        "Tile '{}' cannot be used in a tilelayout, as its ID is not a constant.".format(
+                            tile.tiletype.value
+                        ),
+                        tile.tiletype.pos,
+                    )
                 file.print_wordx(tile_id.value)
             file.newline()
         file.print_bytex(0)
@@ -117,10 +126,11 @@ class LayoutTile:
     @ivar tiletype: TileID of the tile to draw on the given offset.
     @type tiletype: L{Expression}
     """
+
     def __init__(self, x, y, tiletype):
         self.x = x
         self.y = y
         self.tiletype = tiletype
 
     def __str__(self):
-        return '{}, {}: {};'.format(self.x, self.y, self.tiletype)
+        return "{}, {}: {};".format(self.x, self.y, self.tiletype)

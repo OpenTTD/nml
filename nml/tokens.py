@@ -67,6 +67,7 @@ reserved = {
 line_directive1_pat = re.compile(r'\#line\s+(\d+)\s*(\r?\n|"(.*)"\r?\n)')
 line_directive2_pat = re.compile(r'\#\s+(\d+)\s+"(.*)"\s*((?:\d+\s*)*)\r?\n')
 
+
 class NMLLexer:
     """
     @ivar lexer: PLY scanner object.
@@ -81,87 +82,87 @@ class NMLLexer:
 
     # Tokens
     tokens = list(reserved.values()) + [
-        'ID',
-        'PLUS',
-        'MINUS',
-        'TIMES',
-        'DIVIDE',
-        'MODULO',
-        'AND',
-        'OR',
-        'XOR',
-        'LOGICAL_AND',
-        'LOGICAL_OR',
-        'LOGICAL_NOT',
-        'BINARY_NOT',
-        'EQ',
-        'LPAREN',
-        'RPAREN',
-        'SHIFT_LEFT',
-        'SHIFT_RIGHT',
-        'SHIFTU_RIGHT',
-        'COMP_EQ',
-        'COMP_NEQ',
-        'COMP_LE',
-        'COMP_GE',
-        'COMP_LT',
-        'COMP_GT',
-        'COMMA',
-        'RANGE',
-        'LBRACKET',
-        'RBRACKET',
-        'LBRACE',
-        'RBRACE',
-        'TERNARY_OPEN',
-        'COLON',
-        'SEMICOLON',
-        'STRING_LITERAL',
-        'NUMBER',
-        'FLOAT',
-        'UNIT',
+        "ID",
+        "PLUS",
+        "MINUS",
+        "TIMES",
+        "DIVIDE",
+        "MODULO",
+        "AND",
+        "OR",
+        "XOR",
+        "LOGICAL_AND",
+        "LOGICAL_OR",
+        "LOGICAL_NOT",
+        "BINARY_NOT",
+        "EQ",
+        "LPAREN",
+        "RPAREN",
+        "SHIFT_LEFT",
+        "SHIFT_RIGHT",
+        "SHIFTU_RIGHT",
+        "COMP_EQ",
+        "COMP_NEQ",
+        "COMP_LE",
+        "COMP_GE",
+        "COMP_LT",
+        "COMP_GT",
+        "COMMA",
+        "RANGE",
+        "LBRACKET",
+        "RBRACKET",
+        "LBRACE",
+        "RBRACE",
+        "TERNARY_OPEN",
+        "COLON",
+        "SEMICOLON",
+        "STRING_LITERAL",
+        "NUMBER",
+        "FLOAT",
+        "UNIT",
     ]
 
-    t_PLUS             = r'\+'
-    t_MINUS            = r'-'
-    t_TIMES            = r'\*'
-    t_MODULO           = r'%'
-    t_DIVIDE           = r'/'
-    t_AND              = r'&'
-    t_OR               = r'\|'
-    t_XOR              = r'\^'
-    t_LOGICAL_AND      = r'&&'
-    t_LOGICAL_OR       = r'\|\|'
-    t_LOGICAL_NOT      = r'!'
-    t_BINARY_NOT       = r'~'
-    t_EQ               = r'='
-    t_LPAREN           = r'\('
-    t_RPAREN           = r'\)'
-    t_SHIFT_LEFT       = r'<<'
-    t_SHIFT_RIGHT      = r'>>'
-    t_SHIFTU_RIGHT     = r'>>>'
-    t_COMP_EQ          = r'=='
-    t_COMP_NEQ         = r'!='
-    t_COMP_LE          = r'<='
-    t_COMP_GE          = r'>='
-    t_COMP_LT          = r'<'
-    t_COMP_GT          = r'>'
-    t_COMMA            = r','
-    t_RANGE            = r'\.\.'
-    t_LBRACKET         = r'\['
-    t_RBRACKET         = r'\]'
-    t_LBRACE           = r'{'
-    t_RBRACE           = r'}'
-    t_TERNARY_OPEN     = r'\?'
-    t_COLON            = r':'
-    t_SEMICOLON        = r';'
+    t_PLUS = r"\+"
+    t_MINUS = r"-"
+    t_TIMES = r"\*"
+    t_MODULO = r"%"
+    t_DIVIDE = r"/"
+    t_AND = r"&"
+    t_OR = r"\|"
+    t_XOR = r"\^"
+    t_LOGICAL_AND = r"&&"
+    t_LOGICAL_OR = r"\|\|"
+    t_LOGICAL_NOT = r"!"
+    t_BINARY_NOT = r"~"
+    t_EQ = r"="
+    t_LPAREN = r"\("
+    t_RPAREN = r"\)"
+    t_SHIFT_LEFT = r"<<"
+    t_SHIFT_RIGHT = r">>"
+    t_SHIFTU_RIGHT = r">>>"
+    t_COMP_EQ = r"=="
+    t_COMP_NEQ = r"!="
+    t_COMP_LE = r"<="
+    t_COMP_GE = r">="
+    t_COMP_LT = r"<"
+    t_COMP_GT = r">"
+    t_COMMA = r","
+    t_RANGE = r"\.\."
+    t_LBRACKET = r"\["
+    t_RBRACKET = r"\]"
+    t_LBRACE = r"{"
+    t_RBRACE = r"}"
+    t_TERNARY_OPEN = r"\?"
+    t_COLON = r":"
+    t_SEMICOLON = r";"
 
     def t_FLOAT(self, t):
-        r'\d+\.\d+'
+        r"\d+\.\d+"
         t.value = expression.ConstantFloat(float(t.value), t.lineno)
         return t
 
     def t_NUMBER(self, t):
-        r'(0x[0-9a-fA-F]+)|(\d+)'
+        r"(0x[0-9a-fA-F]+)|(\d+)"
         base = 10
         if len(t.value) >= 2 and t.value[0:2] == "0x":
             t.value = t.value[2:]
@@ -170,15 +171,15 @@ class NMLLexer:
         return t
 
     def t_UNIT(self, t):
-        r'(nfo)|(mph)|(km/h)|(m/s)|(hpI)|(hpM)|(hp)|(kW)|(tons)|(ton)|(kg)|(snow%)'
+        r"(nfo)|(mph)|(km/h)|(m/s)|(hpI)|(hpM)|(hp)|(kW)|(tons)|(ton)|(kg)|(snow%)"
         return t
 
     def t_ID(self, t):
-        r'[a-zA-Z_][a-zA-Z0-9_]*'
-        if t.value in reserved: # Check for reserved words
+        r"[a-zA-Z_][a-zA-Z0-9_]*"
+        if t.value in reserved:  # Check for reserved words
             t.type = reserved[t.value]
         else:
-            t.type = 'ID'
+            t.type = "ID"
             t.value = expression.Identifier(t.value, t.lineno)
         return t
 
@@ -189,7 +190,7 @@ class NMLLexer:
 
     # Ignored characters
     def t_ignore_comment(self, t):
-        r'(/\*(\n|.)*?\*/)|(//.*)'
+        r"(/\*(\n|.)*?\*/)|(//.*)"
         self.increment_lines(t.value.count("\n"))
 
     def t_ignore_whitespace(self, t):
@@ -212,7 +213,7 @@ class NMLLexer:
             self.includes.append(self.lexer.lineno)
 
         self.set_position(fname, int(m.group(1), 10))
-        self.increment_lines(t.value.count('\n') - 1)
+        self.increment_lines(t.value.count("\n") - 1)
 
     def t_line_directive2(self, t):
         r'\#\s+\d+\s+".*"\s*(\d+\s*)*\r?\n'
@@ -233,33 +234,39 @@ class NMLLexer:
                 self.includes.pop()
             else:
                 # But of course user input can never be trusted
-                generic.print_warning("Information about included files is inconsistent, position information for errors may be wrong.")
+                generic.print_warning(
+                    "Information about included files is inconsistent, position information for errors may be wrong."
+                )
 
         self.set_position(fname, line)
-        self.increment_lines(t.value.count('\n') - 1)
+        self.increment_lines(t.value.count("\n") - 1)
 
     def t_newline(self, t):
-        r'\n+'
+        r"\n+"
         self.increment_lines(len(t.value))
 
     def t_error(self, t):
-        print(("Illegal character '{}' (character code 0x{:02X}) at {}, column {:d}".format(t.value[0], ord(t.value[0]), t.lexer.lineno, self.find_column(t))))
+        print(
+            (
+                "Illegal character '{}' (character code 0x{:02X}) at {}, column {:d}".format(
+                    t.value[0], ord(t.value[0]), t.lexer.lineno, self.find_column(t)
+                )
+            )
+        )
         sys.exit(1)
 
-
-
-    def build(self, rebuild = False):
+    def build(self, rebuild=False):
         """
         Initial construction of the scanner.
         """
         if rebuild:
             try:
                 import os
+
                 os.remove(os.path.normpath(os.path.join(os.path.dirname(__file__), "generated", "lextab.py")))
             except FileNotFoundError:
                 pass
-        self.lexer = lex.lex(module=self, optimize=1, lextab='nml.generated.lextab')
-
+        self.lexer = lex.lex(module=self, optimize=1, lextab="nml.generated.lextab")
 
     def setup(self, text, fname):
         """
@@ -286,8 +293,7 @@ class NMLLexer:
         self.set_position(self.lexer.lineno.filename, self.lexer.lineno.line_start + count)
 
     def find_column(self, t):
-        last_cr = self.text.rfind('\n', 0, t.lexpos)
-        if last_cr < 0: last_cr = 0
+        last_cr = self.text.rfind("\n", 0, t.lexpos)
+        if last_cr < 0:
+            last_cr = 0
         return t.lexpos - last_cr
-
-

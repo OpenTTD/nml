@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import expression, generic, grfstrings
 from nml.actions import base_action, action6, actionD
 
+
 class ActionB(base_action.BaseAction):
     def __init__(self, severity, lang, msg, data, extra_params):
         self.severity = severity
@@ -26,7 +27,8 @@ class ActionB(base_action.BaseAction):
 
     def write(self, file):
         size = 4
-        if not isinstance(self.msg, int): size += grfstrings.get_string_size(self.msg)
+        if not isinstance(self.msg, int):
+            size += grfstrings.get_string_size(self.msg)
         if self.data is not None:
             size += grfstrings.get_string_size(self.data) + len(self.extra_params)
 
@@ -49,22 +51,24 @@ class ActionB(base_action.BaseAction):
     def skip_action7(self):
         return False
 
+
 default_error_msg = {
-    'REQUIRES_TTDPATCH' : 0,
-    'REQUIRES_DOS_WINDOWS' : 1,
-    'USED_WITH' : 2,
-    'INVALID_PARAMETER' : 3,
-    'MUST_LOAD_BEFORE' : 4,
-    'MUST_LOAD_AFTER' : 5,
-    'REQUIRES_OPENTTD' : 6,
+    "REQUIRES_TTDPATCH": 0,
+    "REQUIRES_DOS_WINDOWS": 1,
+    "USED_WITH": 2,
+    "INVALID_PARAMETER": 3,
+    "MUST_LOAD_BEFORE": 4,
+    "MUST_LOAD_AFTER": 5,
+    "REQUIRES_OPENTTD": 6,
 }
 
 error_severity = {
-    'NOTICE'  : 0,
-    'WARNING' : 1,
-    'ERROR'   : 2,
-    'FATAL'   : 3,
+    "NOTICE": 0,
+    "WARNING": 1,
+    "ERROR": 2,
+    "FATAL": 3,
 }
+
 
 def parse_error_block(error):
     action6.free_parameters.save()
@@ -79,7 +83,8 @@ def parse_error_block(error):
         msg_string = error.msg
         grfstrings.validate_string(msg_string)
         langs.extend(grfstrings.get_translations(msg_string))
-        for lang in langs: assert lang is not None
+        for lang in langs:
+            assert lang is not None
     else:
         custom_msg = False
         msg = error.msg.reduce_constant().value
@@ -89,9 +94,12 @@ def parse_error_block(error):
         if isinstance(error.data, expression.String):
             grfstrings.validate_string(error.data)
             langs.extend(grfstrings.get_translations(error.data))
-            for lang in langs: assert lang is not None
+            for lang in langs:
+                assert lang is not None
         elif not isinstance(error.data, expression.StringLiteral):
-            raise generic.ScriptError("Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos)
+            raise generic.ScriptError(
+                "Error parameter 3 'data' should be the identifier of a custom sting", error.data.pos
+            )
 
     params = []
     for expr in error.params:
@@ -113,7 +121,8 @@ def parse_error_block(error):
             data = error.data.value
         else:
             data = grfstrings.get_translation(error.data, lang)
-        if len(act6.modifications) > 0: action_list.append(act6)
+        if len(act6.modifications) > 0:
+            action_list.append(act6)
         action_list.append(ActionB(severity, lang, msg, data, params))
 
     action6.free_parameters.restore()

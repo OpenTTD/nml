@@ -17,6 +17,7 @@ import hashlib
 import os
 from nml import generic, output_base, grfstrings
 
+
 class OutputGRF(output_base.BinaryOutputBase):
     def __init__(self, filename):
         output_base.BinaryOutputBase.__init__(self, filename)
@@ -37,13 +38,13 @@ class OutputGRF(output_base.BinaryOutputBase):
             os.unlink(self.filename)
         except OSError:
             pass
-        return open(self.filename, 'wb')
+        return open(self.filename, "wb")
 
     def get_md5(self):
         return self.md5.hexdigest()
 
     def assemble_file(self, real_file):
-        #add end-of-chunks
+        # add end-of-chunks
         self.in_sprite = True
         self.print_dword(0)
         self.in_sprite = False
@@ -51,20 +52,20 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.sprite_output.print_dword(0)
         self.sprite_output.in_sprite = False
 
-        #add header
-        header = bytearray([0x00, 0x00, ord('G'), ord('R'), ord('F'), 0x82, 0x0D, 0x0A, 0x1A, 0x0A])
+        # add header
+        header = bytearray([0x00, 0x00, ord("G"), ord("R"), ord("F"), 0x82, 0x0D, 0x0A, 0x1A, 0x0A])
         size = len(self.file) + 1
         header.append(size & 0xFF)
         header.append((size >> 8) & 0xFF)
         header.append((size >> 16) & 0xFF)
         header.append(size >> 24)
-        header.append(0) #no compression
+        header.append(0)  # no compression
 
         header_str = bytes(header)
         real_file.write(header_str)
         self.md5.update(header_str)
 
-        #add data section, and then the sprite section
+        # add data section, and then the sprite section
         real_file.write(self.file)
         self.md5.update(self.file)
 
@@ -79,10 +80,10 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.sprite_output.discard()
 
     def _print_utf8(self, char, stream):
-        for c in chr(char).encode('utf8'):
+        for c in chr(char).encode("utf8"):
             stream.print_byte(c)
 
-    def print_string(self, value, final_zero = True, force_ascii = False, stream = None):
+    def print_string(self, value, final_zero=True, force_ascii=False, stream=None):
         if stream is None:
             stream = self
 
@@ -93,25 +94,26 @@ class OutputGRF(output_base.BinaryOutputBase):
             stream.print_byte(0x9E)
         i = 0
         while i < len(value):
-            if value[i] == '\\':
-                if value[i+1] in ('\\', '"'):
-                    stream.print_byte(ord(value[i+1]))
+            if value[i] == "\\":
+                if value[i + 1] in ("\\", '"'):
+                    stream.print_byte(ord(value[i + 1]))
                     i += 2
-                elif value[i+1] == 'U':
-                    self._print_utf8(int(value[i+2:i+6], 16), stream)
+                elif value[i + 1] == "U":
+                    self._print_utf8(int(value[i + 2 : i + 6], 16), stream)
                     i += 6
                 else:
-                    stream.print_byte(int(value[i+1:i+3], 16))
+                    stream.print_byte(int(value[i + 1 : i + 3], 16))
                     i += 3
             else:
                 self._print_utf8(ord(value[i]), stream)
                 i += 1
-        if final_zero: stream.print_byte(0)
+        if final_zero:
+            stream.print_byte(0)
 
     def comment(self, msg):
         pass
 
-    def start_sprite(self, size, type = 0xFF):
+    def start_sprite(self, size, type=0xFF):
         if type == 0xFF:
             output_base.BinaryOutputBase.start_sprite(self, size + 5)
             self.print_dword(size)
@@ -122,7 +124,7 @@ class OutputGRF(output_base.BinaryOutputBase):
             assert size == 0
             output_base.BinaryOutputBase.start_sprite(self, 9)
             self.print_dword(4)
-            self.print_byte(0xfd)
+            self.print_byte(0xFD)
             self.print_dword(self.sprite_num)
         else:
             assert False, "Unexpected info byte encountered."
@@ -147,7 +149,9 @@ class OutputGRF(output_base.BinaryOutputBase):
         elif sprite_info.file is not None:
             pos_warning = sprite_info.file.pos
 
-        size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings = self.encoder.get(sprite_info)
+        size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings = self.encoder.get(
+            sprite_info
+        )
 
         for w in warnings:
             generic.print_warning(w, pos_warning)
@@ -176,27 +180,29 @@ class OutputGRF(output_base.BinaryOutputBase):
         name = os.path.split(filename)[1]
         size = os.path.getsize(filename)
 
-        self.start_sprite(0, 0xfd)
+        self.start_sprite(0, 0xFD)
         self.sprite_output.start_sprite(8 + 3 + len(name) + 1 + size)
 
         self.sprite_output.print_dword(self.sprite_num)
         self.sprite_output.print_dword(3 + len(name) + 1 + size)
-        self.sprite_output.print_byte(0xff)
-        self.sprite_output.print_byte(0xff)
+        self.sprite_output.print_byte(0xFF)
+        self.sprite_output.print_byte(0xFF)
         self.sprite_output.print_byte(len(name))
-        self.print_string(name, force_ascii = True, final_zero = True, stream = self.sprite_output)  # ASCII filenames seems sufficient.
-        fp = open(generic.find_file(filename), 'rb')
+        self.print_string(
+            name, force_ascii=True, final_zero=True, stream=self.sprite_output
+        )  # ASCII filenames seems sufficient.
+        fp = open(generic.find_file(filename), "rb")
         while True:
             data = fp.read(1024)
-            if len(data) == 0: break
+            if len(data) == 0:
+                break
             for d in data:
                 self.sprite_output.print_byte(d)
         fp.close()
 
-        self.sprite_output.end_sprite();
+        self.sprite_output.end_sprite()
         self.end_sprite()
 
     def end_sprite(self):
         output_base.BinaryOutputBase.end_sprite(self)
         self.sprite_num += 1
-

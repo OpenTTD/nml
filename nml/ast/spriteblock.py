@@ -17,6 +17,7 @@ from nml import expression, generic, global_constants
 from nml.actions import action2, action2layout, action2real, real_sprite
 from nml.ast import base_statement, sprite_container
 
+
 class TemplateDeclaration(base_statement.BaseStatement):
     def __init__(self, name, param_list, sprite_list, pos):
         base_statement.BaseStatement.__init__(self, "template declaration", pos, False, False)
@@ -25,19 +26,28 @@ class TemplateDeclaration(base_statement.BaseStatement):
         self.sprite_list = sprite_list
 
     def pre_process(self):
-        #check that all templates that are referred to exist at this point
-        #This prevents circular dependencies
+        # check that all templates that are referred to exist at this point
+        # This prevents circular dependencies
         for sprite in self.sprite_list:
             if isinstance(sprite, real_sprite.TemplateUsage):
                 if sprite.name.value == self.name.value:
-                    raise generic.ScriptError("Sprite template '{}' includes itself.".format(sprite.name.value), self.pos)
+                    raise generic.ScriptError(
+                        "Sprite template '{}' includes itself.".format(sprite.name.value), self.pos
+                    )
                 elif sprite.name.value not in real_sprite.sprite_template_map:
-                    raise generic.ScriptError("Encountered unknown template identifier: " + sprite.name.value, sprite.pos)
-        #Register template
+                    raise generic.ScriptError(
+                        "Encountered unknown template identifier: " + sprite.name.value, sprite.pos
+                    )
+        # Register template
         if self.name.value not in real_sprite.sprite_template_map:
             real_sprite.sprite_template_map[self.name.value] = self
         else:
-            raise generic.ScriptError("Template named '{}' is already defined, first definition at {}".format(self.name.value, real_sprite.sprite_template_map[self.name.value].pos), self.pos)
+            raise generic.ScriptError(
+                "Template named '{}' is already defined, first definition at {}".format(
+                    self.name.value, real_sprite.sprite_template_map[self.name.value].pos
+                ),
+                self.pos,
+            )
 
     def get_labels(self):
         labels = {}
@@ -52,11 +62,11 @@ class TemplateDeclaration(base_statement.BaseStatement):
         return labels, offset
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Template declaration:', self.name.value)
-        generic.print_dbg(indentation + 2, 'Parameters:')
+        generic.print_dbg(indentation, "Template declaration:", self.name.value)
+        generic.print_dbg(indentation + 2, "Parameters:")
         for param in self.param_list:
             param.debug_print(indentation + 4)
-        generic.print_dbg(indentation + 2, 'Sprites:')
+        generic.print_dbg(indentation + 2, "Sprites:")
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
@@ -70,7 +80,9 @@ class TemplateDeclaration(base_statement.BaseStatement):
         ret += "}\n"
         return ret
 
-spriteset_base_class = action2.make_sprite_group_class(True, True, False, cls_is_relocatable = True)
+
+spriteset_base_class = action2.make_sprite_group_class(True, True, False, cls_is_relocatable=True)
+
 
 class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
     def __init__(self, param_list, sprite_list, pos):
@@ -86,12 +98,14 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         if len(param_list) >= 2:
             self.image_file = param_list[1].reduce()
             if not isinstance(self.image_file, expression.StringLiteral):
-                raise generic.ScriptError("Spriteset-block parameter 2 'file' must be a string literal", self.image_file.pos)
+                raise generic.ScriptError(
+                    "Spriteset-block parameter 2 'file' must be a string literal", self.image_file.pos
+                )
         else:
             self.image_file = None
         self.sprite_list = sprite_list
-        self.action1_num = None #set number in action1
-        self.labels = {} #mapping of real sprite labels to offsets
+        self.action1_num = None  # set number in action1
+        self.labels = {}  # mapping of real sprite labels to offsets
         self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def pre_process(self):
@@ -109,10 +123,12 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         return []
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Sprite set:', self.name.value)
-        generic.print_dbg(indentation + 2, 'Source:  ', self.image_file.value if self.image_file is not None else 'None')
+        generic.print_dbg(indentation, "Sprite set:", self.name.value)
+        generic.print_dbg(
+            indentation + 2, "Source:  ", self.image_file.value if self.image_file is not None else "None"
+        )
 
-        generic.print_dbg(indentation + 2, 'Sprites:')
+        generic.print_dbg(indentation + 2, "Sprites:")
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
@@ -128,10 +144,12 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         ret += "}\n"
         return ret
 
+
 spritegroup_base_class = action2.make_sprite_group_class(False, True, False)
 
+
 class SpriteGroup(spritegroup_base_class):
-    def __init__(self, name, spriteview_list, pos = None):
+    def __init__(self, name, spriteview_list, pos=None):
         base_statement.BaseStatement.__init__(self, "spritegroup", pos, False, False)
         self.initialize(name)
         self.spriteview_list = spriteview_list
@@ -145,7 +163,7 @@ class SpriteGroup(spritegroup_base_class):
         return []
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Sprite group:', self.name.value)
+        generic.print_dbg(indentation, "Sprite group:", self.name.value)
         for spriteview in self.spriteview_list:
             spriteview.debug_print(indentation + 2)
 
@@ -163,6 +181,7 @@ class SpriteGroup(spritegroup_base_class):
         ret += "}\n"
         return ret
 
+
 class SpriteView:
     def __init__(self, name, spriteset_list, pos):
         self.name = name
@@ -172,29 +191,35 @@ class SpriteView:
     def pre_process(self):
         self.spriteset_list = [x.reduce(global_constants.const_list) for x in self.spriteset_list]
         for sg_ref in self.spriteset_list:
-            if not (isinstance(sg_ref, expression.SpriteGroupRef)
-                    and action2.resolve_spritegroup(sg_ref.name).is_spriteset()):
+            if not (
+                isinstance(sg_ref, expression.SpriteGroupRef)
+                and action2.resolve_spritegroup(sg_ref.name).is_spriteset()
+            ):
                 raise generic.ScriptError("Expected a sprite set reference", sg_ref.pos)
             if len(sg_ref.param_list) != 0:
-                raise generic.ScriptError("Spritesets referenced from a spritegroup may not have parameters.", sg_ref.pos)
+                raise generic.ScriptError(
+                    "Spritesets referenced from a spritegroup may not have parameters.", sg_ref.pos
+                )
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Sprite view:', self.name.value)
-        generic.print_dbg(indentation + 2, 'Sprite sets:')
+        generic.print_dbg(indentation, "Sprite view:", self.name.value)
+        generic.print_dbg(indentation + 2, "Sprite sets:")
         for spriteset in self.spriteset_list:
             spriteset.debug_print(indentation + 4)
 
     def __str__(self):
         return "{}: [{}];".format(self.name, ", ".join([str(spriteset) for spriteset in self.spriteset_list]))
 
+
 spritelayout_base_class = action2.make_sprite_group_class(False, True, False)
 
+
 class SpriteLayout(spritelayout_base_class):
-    def __init__(self, name, param_list, layout_sprite_list, pos = None):
+    def __init__(self, name, param_list, layout_sprite_list, pos=None):
         base_statement.BaseStatement.__init__(self, "spritelayout", pos, False, False)
         self.initialize(name, None, len(param_list))
         self.param_list = param_list
-        self.register_map = {} # Set during action generation for easier referencing
+        self.register_map = {}  # Set during action generation for easier referencing
         self.layout_sprite_list = layout_sprite_list
 
     # Do not reduce expressions here as they may contain variables
@@ -214,17 +239,19 @@ class SpriteLayout(spritelayout_base_class):
         return []
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Sprite layout:', self.name.value)
-        generic.print_dbg(indentation + 2, 'Parameters:')
+        generic.print_dbg(indentation, "Sprite layout:", self.name.value)
+        generic.print_dbg(indentation + 2, "Parameters:")
         for param in self.param_list:
             param.debug_print(indentation + 4)
-        generic.print_dbg(indentation + 2, 'Sprites:')
+        generic.print_dbg(indentation + 2, "Sprites:")
         for layout_sprite in self.layout_sprite_list:
             layout_sprite.debug_print(indentation + 4)
 
     def __str__(self):
         params = "" if not self.param_list else "({})".format(", ".join(str(x) for x in self.param_list))
-        return 'spritelayout {}{} {{\n{}\n}}\n'.format(str(self.name), params, '\n'.join(str(x) for x in self.layout_sprite_list))
+        return "spritelayout {}{} {{\n{}\n}}\n".format(
+            str(self.name), params, "\n".join(str(x) for x in self.layout_sprite_list)
+        )
 
     def get_action_list(self):
         action_list = []
@@ -233,6 +260,7 @@ class SpriteLayout(spritelayout_base_class):
                 action_list.extend(action2layout.get_layout_action2s(self, feature, self.pos))
         return action_list
 
+
 class LayoutSprite:
     def __init__(self, ls_type, param_list, pos):
         self.type = ls_type
@@ -240,9 +268,11 @@ class LayoutSprite:
         self.pos = pos
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Tile layout sprite of type:', self.type)
+        generic.print_dbg(indentation, "Tile layout sprite of type:", self.type)
         for layout_param in self.param_list:
             layout_param.debug_print(indentation + 2)
 
     def __str__(self):
-        return '\t{} {{\n\t\t{}\n\t}}'.format(self.type, '\n\t\t'.join(str(layout_param) for layout_param in self.param_list))
+        return "\t{} {{\n\t\t{}\n\t}}".format(
+            self.type, "\n\t\t".join(str(layout_param) for layout_param in self.param_list)
+        )

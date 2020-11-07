@@ -17,6 +17,7 @@ from nml import expression, generic, global_constants
 from nml.actions import actionA, action5
 from nml.ast import base_statement, sprite_container
 
+
 class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContainer):
     """
     AST node for a 'replace' block.
@@ -31,6 +32,7 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
     @ivar sprite_list: List of real sprites to use
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
     """
+
     def __init__(self, param_list, sprite_list, name, pos):
         base_statement.BaseStatement.__init__(self, "replace-block", pos)
         sprite_container.SpriteContainer.__init__(self, "replace-block", name)
@@ -42,7 +44,9 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
         if num_params >= 2:
             self.image_file = param_list[1].reduce()
             if not isinstance(self.image_file, expression.StringLiteral):
-                raise generic.ScriptError("replace-block parameter 2 'file' must be a string literal", self.image_file.pos)
+                raise generic.ScriptError(
+                    "replace-block parameter 2 'file' must be a string literal", self.image_file.pos
+                )
         else:
             self.image_file = None
         self.sprite_list = sprite_list
@@ -52,14 +56,14 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
         self.start_id = self.start_id.reduce(global_constants.const_list)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Replace sprites starting at')
+        generic.print_dbg(indentation, "Replace sprites starting at")
         self.start_id.debug_print(indentation + 2)
 
-        generic.print_dbg(indentation + 2, 'Source:', self.image_file.value if self.image_file is not None else 'None')
+        generic.print_dbg(indentation + 2, "Source:", self.image_file.value if self.image_file is not None else "None")
         if self.block_name is not None:
-            generic.print_dbg(indentation + 2, 'Name:', self.block_name.value)
+            generic.print_dbg(indentation + 2, "Name:", self.block_name.value)
 
-        generic.print_dbg(indentation + 2, 'Sprites:')
+        generic.print_dbg(indentation + 2, "Sprites:")
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
@@ -74,6 +78,7 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
             ret += "\t{}\n".format(sprite)
         ret += "}\n"
         return ret
+
 
 class ReplaceNewSprite(base_statement.BaseStatement, sprite_container.SpriteContainer):
     """
@@ -92,21 +97,28 @@ class ReplaceNewSprite(base_statement.BaseStatement, sprite_container.SpriteCont
     @ivar sprite_list: List of real sprites to use
     @type sprite_list: Heterogeneous C{list} of L{RealSprite}, L{TemplateUsage}
     """
+
     def __init__(self, param_list, sprite_list, name, pos):
         base_statement.BaseStatement.__init__(self, "replacenew-block", pos)
         sprite_container.SpriteContainer.__init__(self, "replacenew-block", name)
         num_params = len(param_list)
         if not (1 <= num_params <= 3):
-            raise generic.ScriptError("replacenew-block requires 1 to 3 parameters, encountered " + str(num_params), pos)
+            raise generic.ScriptError(
+                "replacenew-block requires 1 to 3 parameters, encountered " + str(num_params), pos
+            )
 
         self.type = param_list[0]
         if not isinstance(self.type, expression.Identifier):
-            raise generic.ScriptError("replacenew parameter 'type' must be an identifier of a sprite replacement type", self.type.pos)
+            raise generic.ScriptError(
+                "replacenew parameter 'type' must be an identifier of a sprite replacement type", self.type.pos
+            )
 
         if num_params >= 2:
             self.image_file = param_list[1].reduce()
             if not isinstance(self.image_file, expression.StringLiteral):
-                raise generic.ScriptError("replacenew-block parameter 2 'file' must be a string literal", self.image_file.pos)
+                raise generic.ScriptError(
+                    "replacenew-block parameter 2 'file' must be a string literal", self.image_file.pos
+                )
         else:
             self.image_file = None
 
@@ -120,13 +132,15 @@ class ReplaceNewSprite(base_statement.BaseStatement, sprite_container.SpriteCont
         self.add_sprite_data(self.sprite_list, self.image_file, pos)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Replace sprites for new features of type', self.type)
-        generic.print_dbg(indentation + 2, 'Offset:  ', self.offset)
-        generic.print_dbg(indentation + 2, 'Source:  ', self.image_file.value if self.image_file is not None else 'None')
+        generic.print_dbg(indentation, "Replace sprites for new features of type", self.type)
+        generic.print_dbg(indentation + 2, "Offset:  ", self.offset)
+        generic.print_dbg(
+            indentation + 2, "Source:  ", self.image_file.value if self.image_file is not None else "None"
+        )
         if self.block_name is not None:
-            generic.print_dbg(indentation + 2, 'Name:', self.block_name.value)
+            generic.print_dbg(indentation + 2, "Name:", self.block_name.value)
 
-        generic.print_dbg(indentation + 2, 'Sprites:')
+        generic.print_dbg(indentation + 2, "Sprites:")
         for sprite in self.sprite_list:
             sprite.debug_print(indentation + 4)
 
@@ -145,4 +159,3 @@ class ReplaceNewSprite(base_statement.BaseStatement, sprite_container.SpriteCont
             ret += "\t{}\n".format(sprite)
         ret += "}\n"
         return ret
-

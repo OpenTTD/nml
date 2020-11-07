@@ -35,7 +35,8 @@ from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
 from .variable import Variable
 
-is_valid_id = re.compile('[a-zA-Z_][a-zA-Z0-9_]{3}$')
+is_valid_id = re.compile("[a-zA-Z_][a-zA-Z0-9_]{3}$")
+
 
 def identifier_to_print(name):
     """
@@ -45,6 +46,6 @@ def identifier_to_print(name):
     @param name: Name to check.
     @return The identifier itself, if it is a valid name, else a string literal text with the name.
     """
-    if is_valid_id.match(name): return name
+    if is_valid_id.match(name):
+        return name
     return '"{}"'.format(name)
-

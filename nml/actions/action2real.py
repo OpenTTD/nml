@@ -17,6 +17,7 @@ from nml import generic
 from nml.actions import action2, action1
 from nml.ast import general
 
+
 class Action2Real(action2.Action2):
     def __init__(self, feature, name, pos, loaded_list, loading_list):
         action2.Action2.__init__(self, feature, name, pos)
@@ -37,13 +38,19 @@ class Action2Real(action2.Action2):
         file.newline()
         file.end_sprite()
 
+
 def get_real_action2s(spritegroup, feature):
     loaded_list = []
     loading_list = []
     actions = []
 
     if feature not in action2.features_sprite_group:
-        raise generic.ScriptError("Sprite groups that combine sprite sets are not supported for feature '{}'.".format(general.feature_name(feature)), spritegroup.pos)
+        raise generic.ScriptError(
+            "Sprite groups that combine sprite sets are not supported for feature '{}'.".format(
+                general.feature_name(feature)
+            ),
+            spritegroup.pos,
+        )
 
     # First make sure that all referenced real sprites are put in a single action1
     spriteset_list = []
@@ -53,13 +60,15 @@ def get_real_action2s(spritegroup, feature):
 
     view_names = sorted([view.name.value for view in spritegroup.spriteview_list])
     if feature in (0x00, 0x01, 0x02, 0x03):
-        if view_names != sorted(['loading', 'loaded']):
+        if view_names != sorted(["loading", "loaded"]):
             raise generic.ScriptError("Expected a 'loading' and a 'loaded' (list of) sprite set(s).", spritegroup.pos)
     elif feature in (0x05, 0x0B, 0x0D, 0x10):
-        msg = ("Sprite groups for feature {:02X} will not be supported in the future, as they are no longer needed."
-               " Directly refer to sprite sets instead.").format(feature)
+        msg = (
+            "Sprite groups for feature {:02X} will not be supported in the future, as they are no longer needed."
+            " Directly refer to sprite sets instead."
+        ).format(feature)
         generic.print_warning(msg, spritegroup.pos)
-        if view_names != ['default']:
+        if view_names != ["default"]:
             raise generic.ScriptError("Expected only a 'default' (list of) sprite set(s).", spritegroup.pos)
 
     for view in spritegroup.spriteview_list:
@@ -68,12 +77,23 @@ def get_real_action2s(spritegroup, feature):
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)
             action1_index = action1.get_action1_index(spriteset)
-            if view.name.value == 'loading': loading_list.append(action1_index)
-            else: loaded_list.append(action1_index)
+            if view.name.value == "loading":
+                loading_list.append(action1_index)
+            else:
+                loaded_list.append(action1_index)
 
-    actions.append(Action2Real(feature, spritegroup.name.value + " - feature {:02X}".format(feature), spritegroup.pos, loaded_list, loading_list))
+    actions.append(
+        Action2Real(
+            feature,
+            spritegroup.name.value + " - feature {:02X}".format(feature),
+            spritegroup.pos,
+            loaded_list,
+            loading_list,
+        )
+    )
     spritegroup.set_action2(actions[-1], feature)
     return actions
+
 
 def make_simple_real_action2(feature, name, pos, action1_index):
     """
@@ -96,6 +116,7 @@ def make_simple_real_action2(feature, name, pos, action1_index):
     """
     return Action2Real(feature, name, pos, [action1_index], [action1_index] if feature <= 0x03 else [])
 
+
 def create_spriteset_actions(spritegroup):
     """
     Create action2s for directly-referenced sprite sets
@@ -110,13 +131,20 @@ def create_spriteset_actions(spritegroup):
     # Iterate over features first for more efficient action1s
     for feature in spritegroup.feature_set:
         if len(spritegroup.used_sprite_sets) != 0 and feature not in action2.features_sprite_group:
-            raise generic.ScriptError("Directly referring to sprite sets is not possible for feature {:02X}".format(feature), spritegroup.pos)
+            raise generic.ScriptError(
+                "Directly referring to sprite sets is not possible for feature {:02X}".format(feature), spritegroup.pos
+            )
         for spriteset in spritegroup.used_sprite_sets:
-            if spriteset.has_action2(feature): continue
+            if spriteset.has_action2(feature):
+                continue
             action_list.extend(action1.add_to_action1([spriteset], feature, spritegroup.pos))
 
-            real_action2 = make_simple_real_action2(feature, spriteset.name.value + " - feature {:02X}".format(feature), spritegroup.pos, action1.get_action1_index(spriteset))
+            real_action2 = make_simple_real_action2(
+                feature,
+                spriteset.name.value + " - feature {:02X}".format(feature),
+                spritegroup.pos,
+                action1.get_action1_index(spriteset),
+            )
             action_list.append(real_action2)
             spriteset.set_action2(real_action2, feature)
     return action_list
-

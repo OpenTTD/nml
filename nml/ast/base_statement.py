@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
+
 class BaseStatement:
     """
     Base class for a statement (AST node) in NML.
@@ -40,7 +41,8 @@ class BaseStatement:
     @ivar bs_out_item: Whether the statement may appear outside of item blocks (default: True)
     @type bs_out_item: C{bool}
     """
-    def __init__(self, name, pos, skipable = True, loopable = True, in_item = False, out_item = True):
+
+    def __init__(self, name, pos, skipable=True, loopable=True, in_item=False, out_item=True):
         assert skipable or not loopable
         self.bs_name = name
         self.pos = pos
@@ -59,12 +61,17 @@ class BaseStatement:
         seen_item = False
         for scope in scope_list:
             if scope.list_type == BaseStatementList.LIST_TYPE_SKIP:
-                if not self.bs_skipable: raise generic.ScriptError("{} may not appear inside a conditional block.".format(self.bs_name), self.pos)
+                if not self.bs_skipable:
+                    raise generic.ScriptError(
+                        "{} may not appear inside a conditional block.".format(self.bs_name), self.pos
+                    )
             if scope.list_type == BaseStatementList.LIST_TYPE_LOOP:
-                if not self.bs_loopable: raise generic.ScriptError("{} may not appear inside a loop.".format(self.bs_name), self.pos)
+                if not self.bs_loopable:
+                    raise generic.ScriptError("{} may not appear inside a loop.".format(self.bs_name), self.pos)
             if scope.list_type == BaseStatementList.LIST_TYPE_ITEM:
                 seen_item = True
-                if not self.bs_in_item: raise generic.ScriptError("{} may not appear inside an item block.".format(self.bs_name), self.pos)
+                if not self.bs_in_item:
+                    raise generic.ScriptError("{} may not appear inside an item block.".format(self.bs_name), self.pos)
         if not (seen_item or self.bs_out_item):
             raise generic.ScriptError("{} must appear inside an item block.".format(self.bs_name), self.pos)
 
@@ -88,7 +95,7 @@ class BaseStatement:
         @param indentation: Print all lines with at least C{indentation} spaces
         @type indentation: C{int}
         """
-        raise NotImplementedError('debug_print must be implemented in BaseStatement-subclass {!r}'.format(type(self)))
+        raise NotImplementedError("debug_print must be implemented in BaseStatement-subclass {!r}".format(type(self)))
 
     def get_action_list(self):
         """
@@ -97,7 +104,9 @@ class BaseStatement:
         @return: A list of action
         @rtype: C{list} of L{BaseAction}
         """
-        raise NotImplementedError('get_action_list must be implemented in BaseStatement-subclass {!r}'.format(type(self)))
+        raise NotImplementedError(
+            "get_action_list must be implemented in BaseStatement-subclass {!r}".format(type(self))
+        )
 
     def __str__(self):
         """
@@ -106,7 +115,7 @@ class BaseStatement:
         @return: An NML string representing this action
         @rtype: C{str}
         """
-        raise NotImplementedError('__str__ must be implemented in BaseStatement-subclass {!r}'.format(type(self)))
+        raise NotImplementedError("__str__ must be implemented in BaseStatement-subclass {!r}".format(type(self)))
 
 
 class BaseStatementList(BaseStatement):
@@ -120,12 +129,13 @@ class BaseStatementList(BaseStatement):
     @ivar statements: List of sub-statements in this block
     @type statements: C{list} of L{BaseStatement}
     """
+
     LIST_TYPE_NONE = 0
     LIST_TYPE_SKIP = 1
     LIST_TYPE_LOOP = 2
     LIST_TYPE_ITEM = 3
 
-    def __init__(self, name, pos, list_type, statements, skipable = True, loopable = True, in_item = False, out_item = True):
+    def __init__(self, name, pos, list_type, statements, skipable=True, loopable=True, in_item=False, out_item=True):
         BaseStatement.__init__(self, name, pos, skipable, loopable, in_item, out_item)
         assert list_type in (self.LIST_TYPE_NONE, self.LIST_TYPE_SKIP, self.LIST_TYPE_LOOP, self.LIST_TYPE_ITEM)
         self.list_type = list_type
@@ -157,5 +167,5 @@ class BaseStatementList(BaseStatement):
     def __str__(self):
         res = ""
         for stmt in self.statements:
-            res += '\t' + str(stmt).replace('\n', '\n\t')[0:-1]
+            res += "\t" + str(stmt).replace("\n", "\n\t")[0:-1]
         return res

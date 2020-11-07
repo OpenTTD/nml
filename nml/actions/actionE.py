@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.actions import base_action
 
+
 class ActionE(base_action.BaseAction):
     def __init__(self, grfid_list):
         self.grfid_list = grfid_list
@@ -30,6 +31,6 @@ class ActionE(base_action.BaseAction):
         file.newline()
         file.end_sprite()
 
+
 def parse_deactivate_block(block):
     return [ActionE(block.grfid_list)]
-

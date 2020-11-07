@@ -19,24 +19,25 @@ from .string_literal import StringLiteral
 from .variable import Variable
 from .boolean import Boolean
 
+
 class BinOp(Expression):
-    def __init__(self, op, expr1, expr2, pos = None):
+    def __init__(self, op, expr1, expr2, pos=None):
         self.op = op
         self.expr1 = expr1 if isinstance(expr1, Expression) else ConstantNumeric(expr1)
         self.expr2 = expr2 if isinstance(expr2, Expression) else ConstantNumeric(expr2)
-        pos = (pos or self.expr1.pos or self.expr2.pos)
+        pos = pos or self.expr1.pos or self.expr2.pos
         self.expr1.pos = self.expr1.pos or pos
         self.expr2.pos = self.expr2.pos or pos
         Expression.__init__(self, pos)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Binary operator, op =', self.op.token)
+        generic.print_dbg(indentation, "Binary operator, op =", self.op.token)
         self.expr1.debug_print(indentation + 2)
         self.expr2.debug_print(indentation + 2)
 
     def __str__(self):
         if self.op == nmlop.SUB and isinstance(self.expr1, ConstantNumeric) and self.expr1.value == 0:
-            return '-' + str(self.expr2)
+            return "-" + str(self.expr2)
         return self.op.to_string(self.expr1, self.expr2)
 
     def get_priority(self, expr):
@@ -55,12 +56,15 @@ class BinOp(Expression):
         @return: The priority for the given expression.
         @rtype: C{int}
         """
-        if isinstance(expr, Variable): return 0
-        if isinstance(expr, ConstantNumeric): return 2
-        if expr.supported_by_actionD(False): return 1
+        if isinstance(expr, Variable):
+            return 0
+        if isinstance(expr, ConstantNumeric):
+            return 2
+        if expr.supported_by_actionD(False):
+            return 1
         return -1
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         # Reducing a BinOp expression is done in several phases:
         # - Reduce both subexpressions.
         # - If both subexpressions are constant, compute the result and return it.
@@ -80,14 +84,22 @@ class BinOp(Expression):
             self.op.validate_func(expr1, expr2, self.pos)
 
         # - If both subexpressions are constant, compute the result and return it.
-        if isinstance(expr1, ConstantNumeric) and isinstance(expr2, ConstantNumeric) and self.op.compiletime_func is not None:
+        if (
+            isinstance(expr1, ConstantNumeric)
+            and isinstance(expr2, ConstantNumeric)
+            and self.op.compiletime_func is not None
+        ):
             return ConstantNumeric(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
 
         if isinstance(expr1, StringLiteral) and isinstance(expr2, StringLiteral):
             assert self.op == nmlop.ADD
             return StringLiteral(expr1.value + expr2.value, expr1.pos)
 
-        if isinstance(expr1, (ConstantNumeric, ConstantFloat)) and isinstance(expr2, (ConstantNumeric, ConstantFloat)) and self.op.compiletime_func is not None:
+        if (
+            isinstance(expr1, (ConstantNumeric, ConstantFloat))
+            and isinstance(expr2, (ConstantNumeric, ConstantFloat))
+            and self.op.compiletime_func is not None
+        ):
             return ConstantFloat(self.op.compiletime_func(expr1.value, expr2.value), self.pos)
 
         # - If the operator allows it and the second expression is more complex than
@@ -123,34 +135,49 @@ class BinOp(Expression):
                 expr1.mask = nmlop.AND(expr1.mask, expr2, self.pos).reduce(id_dicts)
                 return expr1
             if op == nmlop.ADD and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = expr2
-                else: expr1.add = nmlop.ADD(expr1.add, expr2, self.pos).reduce(id_dicts)
+                if expr1.add is None:
+                    expr1.add = expr2
+                else:
+                    expr1.add = nmlop.ADD(expr1.add, expr2, self.pos).reduce(id_dicts)
                 return expr1
             if op == nmlop.SUB and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = ConstantNumeric(0)
+                if expr1.add is None:
+                    expr1.add = ConstantNumeric(0)
                 expr1.add = nmlop.SUB(expr1.add, expr2, self.pos).reduce(id_dicts)
                 return expr1
             # The div and mod fields cannot be used at the same time. Also whenever either of those
             # two are used the add field has to be set, so we change it to zero when it's not yet set.
             if op == nmlop.DIV and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = ConstantNumeric(0)
+                if expr1.add is None:
+                    expr1.add = ConstantNumeric(0)
                 expr1.div = expr2
                 return expr1
             if op == nmlop.MOD and expr1.div is None and expr1.mod is None:
-                if expr1.add is None: expr1.add = ConstantNumeric(0)
+                if expr1.add is None:
+                    expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
             # Since we have a lot of nml-variables that are in fact only the high bits of an nfo
             # variable it can happen that we want to shift back the variable to the left.
             # Don't use any extra opcodes but just reduce the shift-right in that case.
-            if op == nmlop.SHIFT_LEFT and isinstance(expr2, ConstantNumeric) and expr1.add is None and expr2.value < expr1.shift.value:
+            if (
+                op == nmlop.SHIFT_LEFT
+                and isinstance(expr2, ConstantNumeric)
+                and expr1.add is None
+                and expr2.value < expr1.shift.value
+            ):
                 expr1.shift.value -= expr2.value
                 expr1.mask = nmlop.SHIFT_LEFT(expr1.mask, expr2).reduce()
                 return expr1
 
         # - Try to merge multiple additions/subtractions with constant numbers
-        if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and \
-                isinstance(expr1, BinOp) and expr1.op in (nmlop.ADD, nmlop.SUB) and isinstance(expr1.expr2, ConstantNumeric):
+        if (
+            op in (nmlop.ADD, nmlop.SUB)
+            and isinstance(expr2, ConstantNumeric)
+            and isinstance(expr1, BinOp)
+            and expr1.op in (nmlop.ADD, nmlop.SUB)
+            and isinstance(expr1.expr2, ConstantNumeric)
+        ):
             val = expr2.value if op == nmlop.ADD else -expr2.value
             if expr1.op == nmlop.ADD:
                 return nmlop.ADD(expr1.expr1, (expr1.expr2.value + val), self.pos).reduce()
@@ -165,17 +192,20 @@ class BinOp(Expression):
     def supported_by_action2(self, raise_error):
         if not self.op.act2_supports:
             token = " '{}'".format(self.op.token) if self.op.token else ""
-            if raise_error: raise generic.ScriptError("Operator{} not supported in a switch-block".format(token), self.pos)
+            if raise_error:
+                raise generic.ScriptError("Operator{} not supported in a switch-block".format(token), self.pos)
             return False
         return self.expr1.supported_by_action2(raise_error) and self.expr2.supported_by_action2(raise_error)
 
     def supported_by_actionD(self, raise_error):
         if not self.op.actd_supports:
             if raise_error:
-                if self.op == nmlop.STO_PERM: raise generic.ScriptError("STORE_PERM is only available in switch-blocks.", self.pos)
-                elif self.op == nmlop.STO_TMP: raise generic.ScriptError("STORE_TEMP is only available in switch-blocks.", self.pos)
+                if self.op == nmlop.STO_PERM:
+                    raise generic.ScriptError("STORE_PERM is only available in switch-blocks.", self.pos)
+                elif self.op == nmlop.STO_TMP:
+                    raise generic.ScriptError("STORE_TEMP is only available in switch-blocks.", self.pos)
 
-                #default case
+                # default case
                 token = " '{}'".format(self.op.token) if self.op.token else ""
                 raise generic.ScriptError("Operator{} not supported in parameter assignment".format(token), self.pos)
             return False
@@ -193,7 +223,13 @@ class BinOp(Expression):
         return self.op.returns_boolean
 
     def __eq__(self, other):
-        return other is not None and isinstance(other, BinOp) and self.op == other.op and self.expr1 == other.expr1 and self.expr2 == other.expr2
+        return (
+            other is not None
+            and isinstance(other, BinOp)
+            and self.op == other.op
+            and self.expr1 == other.expr1
+            and self.expr2 == other.expr2
+        )
 
     def __ne__(self, other):
         return not self.__eq__(other)

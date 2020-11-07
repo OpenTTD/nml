@@ -16,17 +16,18 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic, nmlop
 from .base_expression import Type, Expression, ConstantNumeric
 
+
 class BitMask(Expression):
     def __init__(self, values, pos):
         Expression.__init__(self, pos)
         self.values = values
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Get bitmask:')
+        generic.print_dbg(indentation, "Get bitmask:")
         for value in self.values:
             value.debug_print(indentation + 2)
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         ret = ConstantNumeric(0, self.pos)
         for orig_expr in self.values:
             val = orig_expr.reduce(id_dicts)
@@ -40,6 +41,7 @@ class BitMask(Expression):
 
     def collect_references(self):
         from itertools import chain
+
         return list(chain.from_iterable(v.collect_references() for v in self.values))
 
     def is_read_only(self):

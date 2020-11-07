@@ -13,7 +13,7 @@ with nmlL; if not, write to the Free Software Foundation, Inc.,
 
 from nml.editors import extract_tables
 
-output_file="nml_vs.tmLanguage.json"
+output_file = "nml_vs.tmLanguage.json"
 
 text1 = """\
 {
@@ -105,7 +105,7 @@ text6 = """\
 # Build VS .tmLanguage file
 def write_file(fname):
     handle = open(fname, "w")
-    
+
     line = r"(?<![_$[:alnum:]])(?:(?<=\.\.\.)|(?<!\.))("
     lineend = r")(?![_$[:alnum:]])(?:(?=\.\.\.)|(?!\.))"
 
@@ -116,6 +116,7 @@ def write_file(fname):
     handle.write(text5.replace("callbacks", line + "|".join(extract_tables.callback_names_table) + lineend))
     handle.write(text6)
     handle.close()
+
 
 def run():
     write_file(output_file)

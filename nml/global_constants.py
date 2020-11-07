@@ -1036,27 +1036,34 @@ constant_numbers = {
 }
 # fmt: on
 
+
 def signextend(param, info):
-    #r = (x ^ m) - m; with m being (1 << (num_bits -1))
-    m = expression.ConstantNumeric(1 << (info['size'] * 8 - 1))
+    # r = (x ^ m) - m; with m being (1 << (num_bits -1))
+    m = expression.ConstantNumeric(1 << (info["size"] * 8 - 1))
     return nmlop.SUB(nmlop.XOR(param, m), m)
 
+
 def global_param_write(info, expr, pos):
-    if not ('writable' in info and info['writable']): raise generic.ScriptError("Target parameter is not writable.", pos)
-    return expression.Parameter(expression.ConstantNumeric(info['num']), pos), expr
+    if not ("writable" in info and info["writable"]):
+        raise generic.ScriptError("Target parameter is not writable.", pos)
+    return expression.Parameter(expression.ConstantNumeric(info["num"]), pos), expr
+
 
 def global_param_read(info, pos):
-    param = expression.Parameter(expression.ConstantNumeric(info['num']), pos)
-    if info['size'] == 1:
+    param = expression.Parameter(expression.ConstantNumeric(info["num"]), pos)
+    if info["size"] == 1:
         mask = expression.ConstantNumeric(0xFF)
         param = nmlop.AND(param, mask)
     else:
-        assert info['size'] == 4
-    if 'function' in info: return info['function'](param, info)
+        assert info["size"] == 4
+    if "function" in info:
+        return info["function"](param, info)
     return param
+
 
 def param_from_info(name, info, pos):
     return expression.SpecialParameter(name, info, global_param_write, global_param_read, False, pos)
+
 
 # fmt: off
 global_parameters = {
@@ -1074,28 +1081,33 @@ global_parameters = {
 }
 # fmt: on
 
-def misc_bit_write(info, expr, pos):
-    param = expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos)
 
-    #param = (expr != 0) ? param | (1 << bit) : param & ~(1 << bit)
+def misc_bit_write(info, expr, pos):
+    param = expression.Parameter(expression.ConstantNumeric(info["param"], pos), pos)
+
+    # param = (expr != 0) ? param | (1 << bit) : param & ~(1 << bit)
     expr = nmlop.CMP_NEQ(expr, 0, pos)
-    or_expr = nmlop.OR(param, 1 << info['bit'], pos)
-    and_expr = nmlop.AND(param, ~(1 << info['bit']), pos)
+    or_expr = nmlop.OR(param, 1 << info["bit"], pos)
+    and_expr = nmlop.AND(param, ~(1 << info["bit"]), pos)
     expr = expression.TernaryOp(expr, or_expr, and_expr, pos)
     return (param, expr)
 
+
 def misc_bit_read(info, pos):
-    return nmlop.HASBIT(expression.Parameter(expression.ConstantNumeric(info['param'], pos), pos), info['bit'])
+    return nmlop.HASBIT(expression.Parameter(expression.ConstantNumeric(info["param"], pos), pos), info["bit"])
+
 
 def misc_grf_bit(name, info, pos):
     return expression.SpecialParameter(name, info, misc_bit_write, misc_bit_read, True, pos)
 
+
 misc_grf_bits = {
-    'traffic_side'                       : {'param': 0x86, 'bit': 4},
-    'desert_paved_roads'                 : {'param': 0x9E, 'bit': 1},
-    'train_width_32_px'                  : {'param': 0x9E, 'bit': 3},
-    'second_rocky_tileset'               : {'param': 0x9E, 'bit': 6},
+    "traffic_side": {"param": 0x86, "bit": 4},
+    "desert_paved_roads": {"param": 0x9E, "bit": 1},
+    "train_width_32_px": {"param": 0x9E, "bit": 3},
+    "second_rocky_tileset": {"param": 0x9E, "bit": 6},
 }
+
 
 def add_1920(expr, info):
     """
@@ -1111,6 +1123,7 @@ def add_1920(expr, info):
     """
     return nmlop.ADD(expr, 1920)
 
+
 def map_exponentiate(expr, info):
     """
     Given a exponent, add an offset to it and compute the exponentiation with base 2.
@@ -1125,9 +1138,10 @@ def map_exponentiate(expr, info):
     @return: An expression computing 2**(expr + info['log_offset']).
     @rtype: L{Expression}
     """
-    #map (log2(x) - a) to x, i.e. do 1 << (x + a)
-    expr = nmlop.ADD(expr, info['log_offset'])
+    # map (log2(x) - a) to x, i.e. do 1 << (x + a)
+    expr = nmlop.ADD(expr, info["log_offset"])
     return nmlop.SHIFT_LEFT(1, expr)
+
 
 def patch_variable_read(info, pos):
     """
@@ -1142,17 +1156,19 @@ def patch_variable_read(info, pos):
     @return: An expression that reads the special variables.
     @rtype: L{Expression}
     """
-    expr = expression.PatchVariable(info['num'], pos)
-    if info['start'] != 0:
-        expr = nmlop.SHIFT_RIGHT(expr, info['start'], pos)
-    if info['size'] != 32:
-        expr = nmlop.AND(expr, (1 << info['size']) - 1, pos)
-    if 'function' in info:
-        expr = info['function'](expr, info)
+    expr = expression.PatchVariable(info["num"], pos)
+    if info["start"] != 0:
+        expr = nmlop.SHIFT_RIGHT(expr, info["start"], pos)
+    if info["size"] != 32:
+        expr = nmlop.AND(expr, (1 << info["size"]) - 1, pos)
+    if "function" in info:
+        expr = info["function"](expr, info)
     return expr
+
 
 def patch_variable(name, info, pos):
     return expression.SpecialParameter(name, info, None, patch_variable_read, False, pos)
+
 
 # fmt: off
 patch_variables = {
@@ -1172,11 +1188,14 @@ patch_variables = {
 }
 # fmt: on
 
+
 def config_flag_read(bit, pos):
-    return expression.SpecialCheck((0x01, r'\70'), 0x85, (0, 1), bit, "PatchFlag({})".format(bit), varsize = 1, pos = pos)
+    return expression.SpecialCheck((0x01, r"\70"), 0x85, (0, 1), bit, "PatchFlag({})".format(bit), varsize=1, pos=pos)
+
 
 def config_flag(name, info, pos):
     return expression.SpecialParameter(name, info, None, config_flag_read, True, pos)
+
 
 # fmt: off
 config_flags = {
@@ -1200,54 +1219,62 @@ config_flags = {
 }
 # fmt: on
 
+
 def unified_maglev_read(info, pos):
     bit0 = nmlop.HASBIT(expression.Parameter(expression.ConstantNumeric(0x85), pos), 0x32)
     bit1 = nmlop.HASBIT(expression.Parameter(expression.ConstantNumeric(0x85), pos), 0x33)
     shifted_bit1 = nmlop.SHIFT_LEFT(bit1, 1)
     return nmlop.OR(shifted_bit1, bit0)
 
+
 def unified_maglev(name, info, pos):
     return expression.SpecialParameter(name, info, None, unified_maglev_read, False, pos)
 
+
 unified_maglev_var = {
-    'unified_maglev' : 0,
+    "unified_maglev": 0,
 }
+
 
 def setting_from_info(name, info, pos):
     return expression.SpecialParameter(name, info, global_param_write, global_param_read, False, pos)
+
 
 def item_to_id(name, item, pos):
     if not isinstance(item.id, expression.ConstantNumeric):
         raise generic.ScriptError("Referencing item '{}' with a non-constant id is not possible.".format(name), pos)
     return expression.ConstantNumeric(item.id.value, pos)
 
+
 def param_from_name(name, info, pos):
-    del name # unused; to match other id_list callbacks
+    del name  # unused; to match other id_list callbacks
     return expression.Parameter(expression.ConstantNumeric(info), pos)
 
+
 def create_spritegroup_ref(name, info, pos):
-    del name # unused; to match other id_list callbacks
+    del name  # unused; to match other id_list callbacks
     return expression.SpriteGroupRef(expression.Identifier(info), [], pos)
+
 
 cargo_numbers = {}
 
 is_default_railtype_table = True
 # if no railtype_table is provided, OpenTTD assumes these 4 railtypes
-railtype_table = {'RAIL': 0, 'ELRL': 1, 'MONO': 1, 'MGLV': 2}
+railtype_table = {"RAIL": 0, "ELRL": 1, "MONO": 1, "MGLV": 2}
 
 is_default_roadtype_table = True
 # if no roadtype_table is provided, OpenTTD sets all vehicles to ROAD
-roadtype_table = {'ROAD': 0}
+roadtype_table = {"ROAD": 0}
 
 is_default_tramtype_table = True
 # if no tramtype_table is provided, OpenTTD sets all vehicles to ELRL
-tramtype_table = {'ELRL': 0}
+tramtype_table = {"ELRL": 0}
 
 identifier_refcount = {}
 item_names = {}
 settings = {}
 named_parameters = {}
-spritegroups = {'CB_FAILED': 'CB_FAILED'}
+spritegroups = {"CB_FAILED": "CB_FAILED"}
 
 const_list = [
     constant_numbers,
@@ -1265,6 +1292,7 @@ const_list = [
     (unified_maglev_var, unified_maglev),
     (spritegroups, create_spritegroup_ref),
 ]
+
 
 def print_stats():
     """

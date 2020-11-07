@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import expression, grfstrings, generic
 from nml.actions import base_action, action6, actionD
 
+
 class Action4(base_action.BaseAction):
     """
     Class representing a single action 4.
@@ -36,6 +37,7 @@ class Action4(base_action.BaseAction):
     @ivar texts: List of strings to write
     @type texts: C{list} of C{str}
     """
+
     def __init__(self, feature, lang, size, id, texts):
         self.feature = feature
         self.lang = lang
@@ -44,8 +46,9 @@ class Action4(base_action.BaseAction):
         self.texts = texts
 
     def prepare_output(self, sprite_num):
-        #To indicate a word value, bit 7 of the lang ID must be set
-        if self.size == 2: self.lang = self.lang | 0x80
+        # To indicate a word value, bit 7 of the lang ID must be set
+        if self.size == 2:
+            self.lang = self.lang | 0x80
 
     def write(self, file):
         size = 4 + self.size
@@ -65,20 +68,21 @@ class Action4(base_action.BaseAction):
     def skip_action9(self):
         return False
 
+
 # List of various string ranges that may be used
 # Attributes:
 #  - random_id: If true, string IDs may be allocated randomly, else the ID has a special meaning and must be assigned
 #               (e.g. for vehicles, string ID = vehicle ID)
 #  - ids: List of free IDs, only needed if random_id is true. Whenever an ID is used, it's removed from the list
 string_ranges = {
-    0xC4: {'random_id': False}, # Station class names
-    0xC5: {'random_id': False}, # Station names
-    0xC9: {'random_id': False}, # House name
+    0xC4: {"random_id": False},  # Station class names
+    0xC5: {"random_id": False},  # Station names
+    0xC9: {"random_id": False},  # House name
     # Misc. text ids, used for callbacks and such
-    0xD0: {'random_id': True, 'total': 0x400, 'ids': list(range(0xD3FF, 0xCFFF, -1))},
+    0xD0: {"random_id": True, "total": 0x400, "ids": list(range(0xD3FF, 0xCFFF, -1))},
     # Misc. persistent text ids, used to set properties.
     # Use Ids DC00..DCFF first to keep compatibility with older versions of OTTD.
-    0xDC: {'random_id': True, 'total': 0x800, 'ids': list(range(0xDBFF, 0xD7FF, -1)) + list(range(0xDFFF, 0xDBFF, -1))},
+    0xDC: {"random_id": True, "total": 0x800, "ids": list(range(0xDBFF, 0xD7FF, -1)) + list(range(0xDFFF, 0xDBFF, -1))},
 }
 
 # Mapping of string identifiers to D0xx/DCxx text ids
@@ -88,15 +92,17 @@ used_strings = {
     0xDC: {},
 }
 
+
 def print_stats():
     """
     Print statistics about used ids.
     """
     for t, l in string_ranges.items():
-        if l['random_id']:
-            num_used = l['total'] - len(l['ids'])
+        if l["random_id"]:
+            num_used = l["total"] - len(l["ids"])
             if num_used > 0:
-                generic.print_info("{:02X}xx strings: {}/{}".format(t, num_used, l['total']))
+                generic.print_info("{:02X}xx strings: {}/{}".format(t, num_used, l["total"]))
+
 
 def get_global_string_actions():
     """
@@ -111,9 +117,9 @@ def get_global_string_actions():
     for string_range, strings in used_strings.items():
         for feature_name, id in strings.items():
             feature, string_name = feature_name
-            texts.append( (0x7F, id, grfstrings.get_translation(string_name), feature) )
+            texts.append((0x7F, id, grfstrings.get_translation(string_name), feature))
             for lang_id in grfstrings.get_translations(string_name):
-                texts.append( (lang_id, id, grfstrings.get_translation(string_name, lang_id), feature) )
+                texts.append((lang_id, id, grfstrings.get_translation(string_name, lang_id), feature))
 
     last_lang = -1
     last_id = -1
@@ -133,7 +139,8 @@ def get_global_string_actions():
         last_feature = feature
     return actions
 
-def get_string_action4s(feature, string_range, string, id = None):
+
+def get_string_action4s(feature, string_range, string, id=None):
     """
     Let a string from the lang files be used in the rest of NML.
     This may involve adding actions directly, but otherwise an ID is allocated and the string will be written later
@@ -164,13 +171,13 @@ def get_string_action4s(feature, string_range, string, id = None):
     mod = None
     if string_range is not None:
         size = 2
-        if string_ranges[string_range]['random_id']:
+        if string_ranges[string_range]["random_id"]:
             # ID is allocated randomly, we will output the actions later
             write_action4s = False
             if (feature, string) in used_strings[string_range]:
                 id_val = used_strings[string_range][(feature, string)]
             else:
-                id_val = string_ranges[string_range]['ids'].pop()
+                id_val = string_ranges[string_range]["ids"].pop()
                 used_strings[string_range][(feature, string)] = id_val
         else:
             # ID must be supplied
@@ -191,7 +198,9 @@ def get_string_action4s(feature, string_range, string, id = None):
             mod = (tmp_param, 2 if feature <= 3 else 1, 5 if feature <= 3 else 4)
 
     if write_action4s:
-        strings = [(lang_id, grfstrings.get_translation(string, lang_id)) for lang_id in grfstrings.get_translations(string)]
+        strings = [
+            (lang_id, grfstrings.get_translation(string, lang_id)) for lang_id in grfstrings.get_translations(string)
+        ]
         # Sort the strings for deterministic ordering and prepend the default language
         strings = [(0x7F, grfstrings.get_translation(string))] + sorted(strings, key=lambda lang_text: lang_text[0])
 

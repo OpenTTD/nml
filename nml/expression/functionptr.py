@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from .base_expression import Type, Expression
 
+
 class FunctionPtr(Expression):
     """
     Pointer to a function.
@@ -34,6 +35,7 @@ class FunctionPtr(Expression):
     @ivar extra_args List of arguments that should be passed to the function that is to be called.
     @type extra_args C{list}
     """
+
     def __init__(self, name, func, *extra_args):
         self.name = name
         self.func = func
@@ -45,8 +47,11 @@ class FunctionPtr(Expression):
     def __str__(self):
         assert False, "Function pointers should not appear inside expressions."
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        raise generic.ScriptError("'{}' is a function and should be called using the function call syntax.".format(str(self.name)), self.name.pos)
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+        raise generic.ScriptError(
+            "'{}' is a function and should be called using the function call syntax.".format(str(self.name)),
+            self.name.pos,
+        )
 
     def type(self):
         return Type.FUNCTION_PTR

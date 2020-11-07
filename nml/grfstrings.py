@@ -18,14 +18,20 @@ import os
 import re
 from nml import generic
 
+
 def utf8_get_size(char):
-    if char < 128: return 1
-    if char < 2048: return 2
-    if char < 65536: return 3
+    if char < 128:
+        return 1
+    if char < 2048:
+        return 2
+    if char < 65536:
+        return 3
     return 4
+
 
 DEFAULT_LANGUAGE = 0x7F
 DEFAULT_LANGNAME = "english.lng"
+
 
 def validate_string(string):
     """
@@ -37,6 +43,7 @@ def validate_string(string):
     """
     if string.name.value not in default_lang.strings:
         raise generic.ScriptError('Unknown string "{}"'.format(string.name.value), string.pos)
+
 
 def is_ascii_string(string):
     """
@@ -52,20 +59,21 @@ def is_ascii_string(string):
     assert isinstance(string, str)
     i = 0
     while i < len(string):
-        if string[i] != '\\':
+        if string[i] != "\\":
             if ord(string[i]) >= 0x7B:
                 return False
             i += 1
         else:
-            if string[i+1] in ('\\', '"'):
+            if string[i + 1] in ("\\", '"'):
                 i += 2
-            elif string[i+1] == 'U':
+            elif string[i + 1] == "U":
                 return False
             else:
                 i += 3
     return True
 
-def get_string_size(string, final_zero = True, force_ascii = False):
+
+def get_string_size(string, final_zero=True, force_ascii=False):
     """
     Get the size (in bytes) of a given string.
 
@@ -84,29 +92,31 @@ def get_string_size(string, final_zero = True, force_ascii = False):
     @raise generic.ScriptError: force_ascii and not is_ascii_string(string).
     """
     size = 0
-    if final_zero: size += 1
+    if final_zero:
+        size += 1
     if not is_ascii_string(string):
         if force_ascii:
             raise generic.ScriptError("Expected ascii string but got a unicode string")
         size += 2
     i = 0
     while i < len(string):
-        if string[i] != '\\':
+        if string[i] != "\\":
             size += utf8_get_size(ord(string[i]))
             i += 1
         else:
-            if string[i+1] in ('\\', '"'):
+            if string[i + 1] in ("\\", '"'):
                 size += 1
                 i += 2
-            elif string[i+1] == 'U':
-                size += utf8_get_size(int(string[i+2:i+6], 16))
+            elif string[i + 1] == "U":
+                size += utf8_get_size(int(string[i + 2 : i + 6], 16))
                 i += 6
             else:
                 size += 1
                 i += 3
     return size
 
-def get_translation(string, lang_id = DEFAULT_LANGUAGE):
+
+def get_translation(string, lang_id=DEFAULT_LANGUAGE):
     """
     Get the translation of a given string in a certain language. If there is no
     translation available in the given language return the default translation.
@@ -122,10 +132,13 @@ def get_translation(string, lang_id = DEFAULT_LANGUAGE):
     """
     for lang_pair in langs:
         langid, lang = lang_pair
-        if langid != lang_id: continue
-        if string.name.value not in lang.strings: break
+        if langid != lang_id:
+            continue
+        if string.name.value not in lang.strings:
+            break
         return lang.get_string(string, lang_id)
     return default_lang.get_string(string, lang_id)
+
 
 def get_translations(string):
     """
@@ -141,36 +154,45 @@ def get_translations(string):
     for lang_pair in langs:
         langid, lang = lang_pair
         assert langid is not None
-        if string.name.value in lang.strings and lang.get_string(string, langid) != default_lang.get_string(string, langid):
+        if string.name.value in lang.strings and lang.get_string(string, langid) != default_lang.get_string(
+            string, langid
+        ):
             translations.append(langid)
 
     # Also check for translated substrings
     import nml.expression
+
     for param in string.params:
-        if not isinstance(param, nml.expression.String): continue
+        if not isinstance(param, nml.expression.String):
+            continue
         param_translations = get_translations(param)
         translations.extend([langid for langid in param_translations if langid not in translations])
 
     return translations
 
+
 def com_parse_comma(val, lang_id):
     val = val.reduce_constant()
     return str(val)
+
 
 def com_parse_hex(val, lang_id):
     val = val.reduce_constant()
     return "0x{:X}".format(val.value)
 
+
 def com_parse_string(val, lang_id):
     import nml.expression
+
     if not isinstance(val, (nml.expression.StringLiteral, nml.expression.String)):
         raise generic.ScriptError("Expected a (literal) string", val.pos)
     if isinstance(val, nml.expression.String):
         # Check that the string exists
         if val.name.value not in default_lang.strings:
-            raise generic.ScriptError("Substring \"{}\" does not exist".format(val.name.value), val.pos)
+            raise generic.ScriptError('Substring "{}" does not exist'.format(val.name.value), val.pos)
         return get_translation(val, lang_id)
     return val.value
+
 
 # fmt: off
 commands = {
@@ -259,10 +281,11 @@ commands = {
 # fmt: on
 
 special_commands = [
-'P',
-'G',
-'G=',
+    "P",
+    "G",
+    "G=",
 ]
+
 
 def read_extra_commands(custom_tags_file):
     """
@@ -270,25 +293,28 @@ def read_extra_commands(custom_tags_file):
     @type  custom_tags_file: C{str}
     """
     if not os.access(custom_tags_file, os.R_OK):
-        #Failed to open custom_tags.txt, ignore this
+        # Failed to open custom_tags.txt, ignore this
         return
     line_no = 0
     with open(generic.find_file(custom_tags_file), "r", encoding="utf-8") as fh:
         for line in fh:
             line_no += 1
             line = line.strip()
-            if len(line) == 0 or line[0] == "#": continue
+            if len(line) == 0 or line[0] == "#":
+                continue
 
-            i = line.find(':')
+            i = line.find(":")
             if i == -1:
                 raise generic.ScriptError("Line has no ':' delimiter.", generic.LinePosition(custom_tags_file, line_no))
             name = line[:i].strip()
-            value = line[i+1:]
+            value = line[i + 1 :]
             if name in commands:
-                generic.print_warning('Overwriting existing tag "' + name + '".', generic.LinePosition(custom_tags_file, line_no))
-            commands[name] = {'unicode': value}
+                generic.print_warning(
+                    'Overwriting existing tag "' + name + '".', generic.LinePosition(custom_tags_file, line_no)
+                )
+            commands[name] = {"unicode": value}
             if is_ascii_string(value):
-                commands[name]['ascii'] = value
+                commands[name]["ascii"] = value
 
 
 class StringCommand:
@@ -313,6 +339,7 @@ class StringCommand:
     @ivar pos: Position of the string.
     @type pos: L{Position}
     """
+
     def __init__(self, name, str_pos, pos):
         assert name in commands or name in special_commands
         self.name = name
@@ -330,7 +357,13 @@ class StringCommand:
         while cur < len(arg_string):
             if start != -1:
                 if (quoted and arg_string[cur] == '"') or (not quoted and arg_string[cur] in whitespace):
-                    if not quoted and self.offset is None and len(self.arguments) == 0 and isint(arg_string[start:cur]) and self.name in ('P', 'G'):
+                    if (
+                        not quoted
+                        and self.offset is None
+                        and len(self.arguments) == 0
+                        and isint(arg_string[start:cur])
+                        and self.name in ("P", "G")
+                    ):
                         self.offset = int(arg_string[start:cur])
                     else:
                         self.arguments.append(arg_string[start:cur])
@@ -345,24 +378,40 @@ class StringCommand:
         return start == -1
 
     def validate_arguments(self, lang):
-        if lang.langid == DEFAULT_LANGUAGE: return
-        if self.name == 'P':
+        if lang.langid == DEFAULT_LANGUAGE:
+            return
+        if self.name == "P":
             if not lang.has_plural_pragma():
                 raise generic.ScriptError("Using {P} without a ##plural pragma", self.pos)
             if len(self.arguments) != lang.get_num_plurals():
-                raise generic.ScriptError("Invalid number of arguments to plural command, expected {:d} but got {:d}".format(lang.get_num_plurals(), len(self.arguments)), self.pos)
-        elif self.name == 'G':
+                raise generic.ScriptError(
+                    "Invalid number of arguments to plural command, expected {:d} but got {:d}".format(
+                        lang.get_num_plurals(), len(self.arguments)
+                    ),
+                    self.pos,
+                )
+        elif self.name == "G":
             if not lang.has_gender_pragma():
                 raise generic.ScriptError("Using {G} without a ##gender pragma", self.pos)
             if len(self.arguments) != len(lang.genders):
-                raise generic.ScriptError("Invalid number of arguments to gender command, expected {:d} but got {:d}".format(len(lang.genders), len(self.arguments)), self.pos)
-        elif self.name == 'G=':
+                raise generic.ScriptError(
+                    "Invalid number of arguments to gender command, expected {:d} but got {:d}".format(
+                        len(lang.genders), len(self.arguments)
+                    ),
+                    self.pos,
+                )
+        elif self.name == "G=":
             if not lang.has_gender_pragma():
                 raise generic.ScriptError("Using {G=} without a ##gender pragma", self.pos)
             if len(self.arguments) != 1:
-                raise generic.ScriptError("Invalid number of arguments to set-gender command, expected {:d} but got {:d}".format(1, len(self.arguments)), self.pos)
+                raise generic.ScriptError(
+                    "Invalid number of arguments to set-gender command, expected {:d} but got {:d}".format(
+                        1, len(self.arguments)
+                    ),
+                    self.pos,
+                )
         elif len(self.arguments) != 0:
-            raise generic.ScriptError("Unexpected arguments to command \"{}\"".format(self.name), self.pos)
+            raise generic.ScriptError('Unexpected arguments to command "{}"'.format(self.name), self.pos)
 
     def parse_string(self, str_type, lang, wanted_lang_id, prev_command, stack, static_args):
         """
@@ -394,19 +443,24 @@ class StringCommand:
                 if pos == self.str_pos:
                     break
                 stack_pos += size
-            self_size = commands[self.name]['size']
+            self_size = commands[self.name]["size"]
             stack.remove((self.str_pos, self_size))
             if self.str_pos < len(static_args):
-                if 'parse' not in commands[self.name]:
-                    raise generic.ScriptError("Provided a static argument for string command '{}' which is invalid".format(self.name), self.pos)
+                if "parse" not in commands[self.name]:
+                    raise generic.ScriptError(
+                        "Provided a static argument for string command '{}' which is invalid".format(self.name),
+                        self.pos,
+                    )
                 # Parse commands using the wanted (not current) lang id, so translations are used if present
-                return commands[self.name]['parse'](static_args[self.str_pos], wanted_lang_id)
-            prefix = ''
-            suffix = ''
+                return commands[self.name]["parse"](static_args[self.str_pos], wanted_lang_id)
+            prefix = ""
+            suffix = ""
             if self.case:
-                prefix += STRING_SELECT_CASE[str_type] + '\\{:02X}'.format(self.case)
+                prefix += STRING_SELECT_CASE[str_type] + "\\{:02X}".format(self.case)
             if stack_pos + self_size > 8:
-                raise generic.ScriptError("Trying to read an argument from the stack without reading the arguments before", self.pos)
+                raise generic.ScriptError(
+                    "Trying to read an argument from the stack without reading the arguments before", self.pos
+                )
             if self_size == 4 and stack_pos == 4:
                 prefix += STRING_ROTATE[str_type] + STRING_ROTATE[str_type]
             elif self_size == 4 and stack_pos == 2:
@@ -427,60 +481,74 @@ class StringCommand:
         # Create a local copy because we shouldn't modify the original
         offset = self.offset
         if offset is None:
-            if self.name == 'P':
+            if self.name == "P":
                 if not prev_command:
-                    raise generic.ScriptError("A plural choice list {P} has to be preceded by another string code or provide an offset", self.pos)
+                    raise generic.ScriptError(
+                        "A plural choice list {P} has to be preceded by another string code or provide an offset",
+                        self.pos,
+                    )
                 offset = prev_command[0]
             else:
                 if not stack:
-                    raise generic.ScriptError("A gender choice list {G} has to be followed by another string code or provide an offset", self.pos)
+                    raise generic.ScriptError(
+                        "A gender choice list {G} has to be followed by another string code or provide an offset",
+                        self.pos,
+                    )
                 offset = stack[0][0]
         offset -= len(static_args)
-        if self.name == 'P':
+        if self.name == "P":
             if offset < 0:
                 return self.arguments[lang.static_plural_form(static_args[offset]) - 1]
-            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + '\\{:02X}'.format(0x80 + offset)
+            ret = BEGIN_PLURAL_CHOICE_LIST[str_type] + "\\{:02X}".format(0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type] + '\\{:02X}'.format(idx + 1)
+                    ret += CHOICE_LIST_ITEM[str_type] + "\\{:02X}".format(idx + 1)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
-        if self.name == 'G':
+        if self.name == "G":
             if offset < 0:
                 return self.arguments[lang.static_gender(static_args[offset]) - 1]
-            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + '\\{:02X}'.format(0x80 + offset)
+            ret = BEGIN_GENDER_CHOICE_LIST[str_type] + "\\{:02X}".format(0x80 + offset)
             for idx, arg in enumerate(self.arguments):
                 if idx == len(self.arguments) - 1:
                     ret += CHOICE_LIST_DEFAULT[str_type]
                 else:
-                    ret += CHOICE_LIST_ITEM[str_type] + '\\{:02X}'.format(idx + 1)
+                    ret += CHOICE_LIST_ITEM[str_type] + "\\{:02X}".format(idx + 1)
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
 
     def get_type(self):
         if self.name in commands:
-            if 'ascii' in commands[self.name]: return 'ascii'
-            else: return 'unicode'
-        if self.name == 'P' or self.name == 'G':
+            if "ascii" in commands[self.name]:
+                return "ascii"
+            else:
+                return "unicode"
+        if self.name == "P" or self.name == "G":
             for arg in self.arguments:
-                if not is_ascii_string(arg): return 'unicode'
-        return 'ascii'
+                if not is_ascii_string(arg):
+                    return "unicode"
+        return "ascii"
 
     def is_important_command(self):
-        if self.name in special_commands: return False
-        return 'size' in commands[self.name]
+        if self.name in special_commands:
+            return False
+        return "size" in commands[self.name]
 
     def get_arg_size(self):
-        return commands[self.name]['size']
+        return commands[self.name]["size"]
+
 
 # Characters that are valid in hex numbers
 VALID_HEX = "0123456789abcdefABCDEF"
+
+
 def is_valid_hex(string):
     return all(c in VALID_HEX for c in string)
+
 
 def validate_escapes(string, pos):
     """
@@ -496,21 +564,23 @@ def validate_escapes(string, pos):
     i = 0
     while i < len(string):
         # find next '\'
-        i = string.find('\\', i)
-        if i == -1: break
+        i = string.find("\\", i)
+        if i == -1:
+            break
 
-        if i+1 >= len(string):
+        if i + 1 >= len(string):
             raise generic.ScriptError("Unexpected end-of-line encountered after '\\'", pos)
-        if string[i+1] in ('\\', '"'):
+        if string[i + 1] in ("\\", '"'):
             i += 2
-        elif string[i+1] == 'U':
-            if i+5 >= len(string) or not is_valid_hex(string[i+2:i+6]):
+        elif string[i + 1] == "U":
+            if i + 5 >= len(string) or not is_valid_hex(string[i + 2 : i + 6]):
                 raise generic.ScriptError("Expected 4 hexadecimal characters after '\\U'", pos)
             i += 6
         else:
-            if i+2 >= len(string) or not is_valid_hex(string[i+1:i+3]):
+            if i + 2 >= len(string) or not is_valid_hex(string[i + 1 : i + 3]):
                 raise generic.ScriptError("Expected 2 hexadecimal characters after '\\'", pos)
             i += 3
+
 
 class NewGRFString:
     """
@@ -528,6 +598,7 @@ class NewGRFString:
     @ivar pos: Position of the string text.
     @type pos: L{Position}
     """
+
     def __init__(self, string, lang, pos):
         """
         Construct a L{NewGRFString}, and break down the string text into text literals and string commands.
@@ -548,8 +619,8 @@ class NewGRFString:
         self.pos = pos
         idx = 0
         while idx < len(string):
-            if string[idx] != '{':
-                j = string.find('{', idx)
+            if string[idx] != "{":
+                j = string.find("{", idx)
                 if j == -1:
                     self.components.append(string[idx:])
                     break
@@ -562,49 +633,58 @@ class NewGRFString:
             if start >= len(string):
                 raise generic.ScriptError("Expected '}' before end-of-line.", pos)
             if string[start].isdigit():
-                while end < len(string) and string[end].isdigit(): end += 1
-                if end == len(string) or string[end] != ':':
+                while end < len(string) and string[end].isdigit():
+                    end += 1
+                if end == len(string) or string[end] != ":":
                     raise generic.ScriptError("Error while parsing position part of string command", pos)
                 cmd_pos = int(string[start:end])
                 start = end + 1
                 end = start
-            #Read the command name
-            while end < len(string) and string[end] not in '} =.': end += 1
+            # Read the command name
+            while end < len(string) and string[end] not in "} =.":
+                end += 1
             command_name = string[start:end]
-            if end < len(string) and string[end] == '=':
-                command_name += '='
+            if end < len(string) and string[end] == "=":
+                command_name += "="
             if command_name not in commands and command_name not in special_commands:
-                raise generic.ScriptError("Undefined command \"{}\"".format(command_name), pos)
-            if command_name in commands and 'deprecated' in commands[command_name]:
-                generic.print_warning("String code '{}' has been deprecated and will be removed soon".format(command_name), pos)
-                del commands[command_name]['deprecated']
+                raise generic.ScriptError('Undefined command "{}"'.format(command_name), pos)
+            if command_name in commands and "deprecated" in commands[command_name]:
+                generic.print_warning(
+                    "String code '{}' has been deprecated and will be removed soon".format(command_name), pos
+                )
+                del commands[command_name]["deprecated"]
             #
             command = StringCommand(command_name, cmd_pos, pos)
             if end >= len(string):
                 raise generic.ScriptError("Missing '}}' from command \"{}\"".format(string[start:]), pos)
-            if string[end] == '.':
-                if command_name not in commands or 'allow_case' not in commands[command_name]:
-                    raise generic.ScriptError("Command \"{}\" can't have a case".format(command_name), pos)
+            if string[end] == ".":
+                if command_name not in commands or "allow_case" not in commands[command_name]:
+                    raise generic.ScriptError('Command "{}" can\'t have a case'.format(command_name), pos)
                 case_start = end + 1
                 end = case_start
-                while end < len(string) and string[end] not in '} ': end += 1
+                while end < len(string) and string[end] not in "} ":
+                    end += 1
                 case = string[case_start:end]
                 if lang.cases is None or case not in lang.cases:
-                    raise generic.ScriptError("Invalid case-name \"{}\"".format(case), pos)
+                    raise generic.ScriptError('Invalid case-name "{}"'.format(case), pos)
                 command.case = lang.cases[case]
-            if string[end] != '}':
-                command.argument_is_assigment = string[end] == '='
+            if string[end] != "}":
+                command.argument_is_assigment = string[end] == "="
                 arg_start = end + 1
-                end = string.find('}', end + 1)
+                end = string.find("}", end + 1)
                 if end == -1 or not command.set_arguments(string[arg_start:end]):
                     raise generic.ScriptError("Missing '}}' from command \"{}\"".format(string[start:]), pos)
             command.validate_arguments(lang)
-            if command_name == 'G=' and self.components:
+            if command_name == "G=" and self.components:
                 raise generic.ScriptError("Set-gender command {G=} must be at the start of the string", pos)
             self.components.append(command)
             idx = end + 1
 
-        if len(self.components) > 0 and isinstance(self.components[0], StringCommand) and self.components[0].name == 'G=':
+        if (
+            len(self.components) > 0
+            and isinstance(self.components[0], StringCommand)
+            and self.components[0].name == "G="
+        ):
             self.gender = self.components[0].arguments[0]
             if self.gender not in lang.genders:
                 raise generic.ScriptError("Invalid gender name '{}'".format(self.gender), pos)
@@ -628,21 +708,22 @@ class NewGRFString:
         """
         for comp in self.components:
             if isinstance(comp, StringCommand):
-                if comp.get_type() == 'unicode':
-                    return 'unicode'
+                if comp.get_type() == "unicode":
+                    return "unicode"
             else:
-                if not is_ascii_string(comp): return 'unicode'
+                if not is_ascii_string(comp):
+                    return "unicode"
         for case in self.cases.values():
-            if case.get_type() == 'unicode':
-                return 'unicode'
-        return 'ascii'
+            if case.get_type() == "unicode":
+                return "unicode"
+        return "ascii"
 
     def remove_non_default_commands(self):
         i = 0
         while i < len(self.components):
             comp = self.components[i]
             if isinstance(comp, StringCommand):
-                if comp.name == 'P' or comp.name == 'G':
+                if comp.name == "P" or comp.name == "G":
                     self.components[i] = comp.arguments[-1] if comp.arguments else ""
             i += 1
 
@@ -685,95 +766,99 @@ class NewGRFString:
     def match_commands(self, other_string):
         return self.get_command_sizes() == other_string.get_command_sizes()
 
-def isint(x, base = 10):
+
+def isint(x, base=10):
     try:
         int(x, base)
         return True
     except ValueError:
         return False
 
+
 NUM_PLURAL_FORMS = 13
 
-CHOICE_LIST_ITEM         = {'unicode': r'\UE09A\10', 'ascii': r'\9A\10'}
-CHOICE_LIST_DEFAULT      = {'unicode': r'\UE09A\11', 'ascii': r'\9A\11'}
-CHOICE_LIST_END          = {'unicode': r'\UE09A\12', 'ascii': r'\9A\12'}
-BEGIN_GENDER_CHOICE_LIST = {'unicode': r'\UE09A\13', 'ascii': r'\9A\13'}
-BEGIN_CASE_CHOICE_LIST   = {'unicode': r'\UE09A\14', 'ascii': r'\9A\14'}
-BEGIN_PLURAL_CHOICE_LIST = {'unicode': r'\UE09A\15', 'ascii': r'\9A\15'}
-SET_STRING_GENDER        = {'unicode': r'\UE09A\0E', 'ascii': r'\9A\0E'}
-STRING_SKIP              = {'unicode': r'\UE085',    'ascii': r'\85'}
-STRING_ROTATE            = {'unicode': r'\UE086',    'ascii': r'\86'}
-STRING_PUSH_WORD         = {'unicode': r'\UE09A\03\20\20', 'ascii': r'\9A\03\20\20'}
-STRING_SELECT_CASE       = {'unicode': r'\UE09A\0F', 'ascii': r'\9A\0F'}
+CHOICE_LIST_ITEM = {"unicode": r"\UE09A\10", "ascii": r"\9A\10"}
+CHOICE_LIST_DEFAULT = {"unicode": r"\UE09A\11", "ascii": r"\9A\11"}
+CHOICE_LIST_END = {"unicode": r"\UE09A\12", "ascii": r"\9A\12"}
+BEGIN_GENDER_CHOICE_LIST = {"unicode": r"\UE09A\13", "ascii": r"\9A\13"}
+BEGIN_CASE_CHOICE_LIST = {"unicode": r"\UE09A\14", "ascii": r"\9A\14"}
+BEGIN_PLURAL_CHOICE_LIST = {"unicode": r"\UE09A\15", "ascii": r"\9A\15"}
+SET_STRING_GENDER = {"unicode": r"\UE09A\0E", "ascii": r"\9A\0E"}
+STRING_SKIP = {"unicode": r"\UE085", "ascii": r"\85"}
+STRING_ROTATE = {"unicode": r"\UE086", "ascii": r"\86"}
+STRING_PUSH_WORD = {"unicode": r"\UE09A\03\20\20", "ascii": r"\9A\03\20\20"}
+STRING_SELECT_CASE = {"unicode": r"\UE09A\0F", "ascii": r"\9A\0F"}
 
 # Information about languages, borrowed from OpenTTD.
 # (isocode name, grf langid, plural number)
-LANG_INFOS = [('af_ZA', 0x1b,  0),
-              ('ar_EG', 0x14,  1),
-              ('be_BY', 0x10,  6),
-              ('bg_BG', 0x18,  0),
-              ('ca_ES', 0x22,  0),
-              ('cs_CZ', 0x15, 10),
-              ('cv_RU', 0x0b,  0),
-              ('cy_GB', 0x0f,  0),
-              ('da_DK', 0x2d,  0),
-              ('de_DE', 0x02,  0),
-              ('el_GR', 0x1e,  2),
-              ('en_AU', 0x3d,  0),
-              ('en_GB', 0x01,  0),
-              ('en_US', 0x00,  0),
-              ('eo_EO', 0x05,  0),
-              ('es_ES', 0x04,  0),
-              ('et_EE', 0x34,  0),
-              ('eu_ES', 0x21,  0),
-              ('fa_IR', 0x62,  0),
-              ('fi_FI', 0x35,  0),
-              ('fo_FO', 0x12,  0),
-              ('fr_FR', 0x03,  2),
-              ('fy_NL', 0x32,  0),
-              ('ga_IE', 0x08,  4),
-              ('gd_GB', 0x13, 13),
-              ('gl_ES', 0x31,  0),
-              ('he_IL', 0x61,  0),
-              ('hr_HR', 0x38,  6),
-              ('hu_HU', 0x24,  2),
-              ('id_ID', 0x5a,  1),
-              ('io_IO', 0x06,  0),
-              ('is_IS', 0x29,  0),
-              ('it_IT', 0x27,  0),
-              ('ja_JP', 0x39,  1),
-              ('ko_KR', 0x3a, 11),
-              ('la_VA', 0x66,  0),
-              ('lb_LU', 0x23,  0),
-              ('lt_LT', 0x2b,  5),
-              ('lv_LV', 0x2a,  3),
-              ('mk_MK', 0x26,  0),
-              ('mr_IN', 0x11,  0),
-              ('ms_MY', 0x3c,  0),
-              ('mt_MT', 0x09, 12),
-              ('nb_NO', 0x2f,  0),
-              ('nl_NL', 0x1f,  0),
-              ('nn_NO', 0x0e,  0),
-              ('pl_PL', 0x30,  7),
-              ('pt_BR', 0x37,  2),
-              ('pt_PT', 0x36,  0),
-              ('ro_RO', 0x28,  0),
-              ('ru_RU', 0x07,  6),
-              ('sk_SK', 0x16, 10),
-              ('sl_SI', 0x2c,  8),
-              ('sr_RS', 0x0d,  6),
-              ('sv_SE', 0x2e,  0),
-              ('ta_IN', 0x0a,  0),
-              ('th_TH', 0x42,  1),
-              ('tr_TR', 0x3e,  1),
-              ('uk_UA', 0x33,  6),
-              ('ur_PK', 0x5c,  0),
-              ('vi_VN', 0x54,  1),
-              ('zh_CN', 0x56,  1),
-              ('zh_TW', 0x0c,  1),
-            ]
+LANG_INFOS = [
+    ("af_ZA", 0x1B, 0),
+    ("ar_EG", 0x14, 1),
+    ("be_BY", 0x10, 6),
+    ("bg_BG", 0x18, 0),
+    ("ca_ES", 0x22, 0),
+    ("cs_CZ", 0x15, 10),
+    ("cv_RU", 0x0B, 0),
+    ("cy_GB", 0x0F, 0),
+    ("da_DK", 0x2D, 0),
+    ("de_DE", 0x02, 0),
+    ("el_GR", 0x1E, 2),
+    ("en_AU", 0x3D, 0),
+    ("en_GB", 0x01, 0),
+    ("en_US", 0x00, 0),
+    ("eo_EO", 0x05, 0),
+    ("es_ES", 0x04, 0),
+    ("et_EE", 0x34, 0),
+    ("eu_ES", 0x21, 0),
+    ("fa_IR", 0x62, 0),
+    ("fi_FI", 0x35, 0),
+    ("fo_FO", 0x12, 0),
+    ("fr_FR", 0x03, 2),
+    ("fy_NL", 0x32, 0),
+    ("ga_IE", 0x08, 4),
+    ("gd_GB", 0x13, 13),
+    ("gl_ES", 0x31, 0),
+    ("he_IL", 0x61, 0),
+    ("hr_HR", 0x38, 6),
+    ("hu_HU", 0x24, 2),
+    ("id_ID", 0x5A, 1),
+    ("io_IO", 0x06, 0),
+    ("is_IS", 0x29, 0),
+    ("it_IT", 0x27, 0),
+    ("ja_JP", 0x39, 1),
+    ("ko_KR", 0x3A, 11),
+    ("la_VA", 0x66, 0),
+    ("lb_LU", 0x23, 0),
+    ("lt_LT", 0x2B, 5),
+    ("lv_LV", 0x2A, 3),
+    ("mk_MK", 0x26, 0),
+    ("mr_IN", 0x11, 0),
+    ("ms_MY", 0x3C, 0),
+    ("mt_MT", 0x09, 12),
+    ("nb_NO", 0x2F, 0),
+    ("nl_NL", 0x1F, 0),
+    ("nn_NO", 0x0E, 0),
+    ("pl_PL", 0x30, 7),
+    ("pt_BR", 0x37, 2),
+    ("pt_PT", 0x36, 0),
+    ("ro_RO", 0x28, 0),
+    ("ru_RU", 0x07, 6),
+    ("sk_SK", 0x16, 10),
+    ("sl_SI", 0x2C, 8),
+    ("sr_RS", 0x0D, 6),
+    ("sv_SE", 0x2E, 0),
+    ("ta_IN", 0x0A, 0),
+    ("th_TH", 0x42, 1),
+    ("tr_TR", 0x3E, 1),
+    ("uk_UA", 0x33, 6),
+    ("ur_PK", 0x5C, 0),
+    ("vi_VN", 0x54, 1),
+    ("zh_CN", 0x56, 1),
+    ("zh_TW", 0x0C, 1),
+]
 LANG_NAMES = dict((lng[0], lng[1]) for lng in LANG_INFOS)
 LANG_PLURALS = dict((lng[1], lng[2]) for lng in LANG_INFOS)
+
 
 class Language:
     """
@@ -801,6 +886,7 @@ class Language:
     @ivar strings: Language strings of the file.
     @type strings: C{dict} of
     """
+
     def __init__(self, default):
         self.default = default
         self.langid = None
@@ -812,7 +898,8 @@ class Language:
         self.strings = {}
 
     def get_num_plurals(self):
-        if self.plural is None: return 0
+        if self.plural is None:
+            return 0
         num_plurals = {
             0: 2,
             1: 1,
@@ -839,20 +926,21 @@ class Language:
 
     def static_gender(self, expr):
         import nml.expression
+
         if isinstance(expr, nml.expression.StringLiteral):
             return len(self.genders)
         if not isinstance(expr, nml.expression.String):
             raise generic.ScriptError("{G} can only refer to a string argument")
         parsed = self.get_string(expr, self.langid)
-        if parsed.find(SET_STRING_GENDER['ascii']) == 0:
-            return int(parsed[len(SET_STRING_GENDER['ascii']) + 1 : len(SET_STRING_GENDER['ascii']) + 3], 16)
-        if parsed.find(SET_STRING_GENDER['unicode']) == 0:
-            return int(parsed[len(SET_STRING_GENDER['unicode']) + 1 : len(SET_STRING_GENDER['unicode']) + 3], 16)
+        if parsed.find(SET_STRING_GENDER["ascii"]) == 0:
+            return int(parsed[len(SET_STRING_GENDER["ascii"]) + 1 : len(SET_STRING_GENDER["ascii"]) + 3], 16)
+        if parsed.find(SET_STRING_GENDER["unicode"]) == 0:
+            return int(parsed[len(SET_STRING_GENDER["unicode"]) + 1 : len(SET_STRING_GENDER["unicode"]) + 3], 16)
         return len(self.genders)
 
     def static_plural_form(self, expr):
-        #Return values are the same as "Plural index" here:
-        #http://newgrf-specs.tt-wiki.net/wiki/StringCodes#Using_plural_forms
+        # Return values are the same as "Plural index" here:
+        # http://newgrf-specs.tt-wiki.net/wiki/StringCodes#Using_plural_forms
         val = expr.reduce_constant().value
         if self.plural == 0:
             return 1 if val == 1 else 2
@@ -927,7 +1015,7 @@ class Language:
                 return 1
             if val == 2 or val == 12:
                 return 2
-            if (val >= 3 and val <= 10) or (val >= 13 and val <=19):
+            if (val >= 3 and val <= 10) or (val >= 13 and val <= 19):
                 return 3
             return 4
         assert False, "Unknown plural type"
@@ -955,12 +1043,18 @@ class Language:
         str_type = self.strings[string_id].get_type()
         parsed_string = ""
         if self.strings[string_id].gender is not None:
-            parsed_string += SET_STRING_GENDER[str_type] + '\\{:02X}'.format(self.genders[self.strings[string_id].gender])
+            parsed_string += SET_STRING_GENDER[str_type] + "\\{:02X}".format(
+                self.genders[self.strings[string_id].gender]
+            )
         if len(self.strings[string_id].cases) > 0:
             parsed_string += BEGIN_CASE_CHOICE_LIST[str_type]
             for case_name, case_string in sorted(self.strings[string_id].cases.items()):
                 case_id = self.cases[case_name]
-                parsed_string += CHOICE_LIST_ITEM[str_type] + '\\{:02X}'.format(case_id) + case_string.parse_string(str_type, self, lang_id, string.params)
+                parsed_string += (
+                    CHOICE_LIST_ITEM[str_type]
+                    + "\\{:02X}".format(case_id)
+                    + case_string.parse_string(str_type, self, lang_id, string.params)
+                )
             parsed_string += CHOICE_LIST_DEFAULT[str_type]
         parsed_string += self.strings[string_id].parse_string(str_type, self, lang_id, string.params)
         if len(self.strings[string_id].cases) > 0:
@@ -1025,7 +1119,6 @@ class Language:
             msg = "Language with language id 0x{:02x} has plural form {:d} while the language uses plural form {:d}."
             msg = msg.format(self.langid, self.plural, expected)
             raise generic.ScriptError(msg, pos)
-
 
     def handle_gender(self, data, pos):
         """
@@ -1101,22 +1194,24 @@ class Language:
         @type  value: C{str}
         """
         if not re.match("[A-Za-z_0-9]+$", string):
-            raise generic.ScriptError("Invalid string name \"{}\"".format(string), pos)
+            raise generic.ScriptError('Invalid string name "{}"'.format(string), pos)
 
         if string in self.strings and case is None:
-            raise generic.ScriptError("String name \"{}\" is used multiple times".format(string), pos)
+            raise generic.ScriptError('String name "{}" is used multiple times'.format(string), pos)
 
         if self.default:
             self.strings[string] = NewGRFString(value, self, pos)
             self.strings[string].remove_non_default_commands()
         else:
             if string not in default_lang.strings:
-                generic.print_warning("String name \"{}\" does not exist in master file".format(string), pos)
+                generic.print_warning('String name "{}" does not exist in master file'.format(string), pos)
                 return
 
             newgrf_string = NewGRFString(value, self, pos)
             if not default_lang.strings[string].match_commands(newgrf_string):
-                generic.print_warning("String commands don't match with master file \"{}\"".format(DEFAULT_LANGNAME), pos)
+                generic.print_warning(
+                    'String commands don\'t match with master file "{}"'.format(DEFAULT_LANGNAME), pos
+                )
                 return
 
             if case is None:
@@ -1126,15 +1221,14 @@ class Language:
                     generic.print_warning("String with case used before the base string", pos)
                     return
                 if self.cases is None or case not in self.cases:
-                    generic.print_warning("Invalid case name \"{}\"".format(case), pos)
+                    generic.print_warning('Invalid case name "{}"'.format(case), pos)
                     return
                 if case in self.strings[string].cases:
-                    raise generic.ScriptError("String name \"{}.{}\" is used multiple times".format(string, case), pos)
+                    raise generic.ScriptError('String name "{}.{}" is used multiple times'.format(string, case), pos)
                 if newgrf_string.gender:
                     generic.print_warning("Case-strings can't set the gender, only the base string can", pos)
                     return
                 self.strings[string].cases[case] = newgrf_string
-
 
     def handle_string(self, line, pos):
         if len(line) == 0:
@@ -1146,12 +1240,14 @@ class Language:
             if self.default:
                 # Default language ignores all pragmas.
                 return
-            pragmas = { '##grflangid'  : self.handle_grflangid,
-                        '##plural'     : self.handle_plural,
-                        '##gender'     : self.handle_gender,
-                        '##map_gender' : self.handle_map_gender,
-                        '##map_case'   : self.handle_map_case,
-                        '##case'       : self.handle_case }
+            pragmas = {
+                "##grflangid": self.handle_grflangid,
+                "##plural": self.handle_plural,
+                "##gender": self.handle_gender,
+                "##map_gender": self.handle_map_gender,
+                "##map_case": self.handle_map_case,
+                "##case": self.handle_case,
+            }
             try:
                 pragma, value = line.split(" ", maxsplit=1)
                 handler = pragmas[pragma]
@@ -1189,6 +1285,7 @@ default_lang = Language(True)
 default_lang.langid = DEFAULT_LANGUAGE
 langs = []
 
+
 def parse_file(filename, default):
     """
     Read and parse a single language file.
@@ -1204,10 +1301,11 @@ def parse_file(filename, default):
         with open(generic.find_file(filename), "r", encoding="utf-8") as fh:
             for idx, line in enumerate(fh):
                 pos = generic.LinePosition(filename, idx + 1)
-                line = line.rstrip('\n\r').lstrip('\uFEFF')
+                line = line.rstrip("\n\r").lstrip("\uFEFF")
                 # The default language is processed twice here. Once as fallback langauge
                 # and once as normal language.
-                if default: default_lang.handle_string(line, pos)
+                if default:
+                    default_lang.handle_string(line, pos)
                 lang.handle_string(line, pos)
     except UnicodeDecodeError:
         pos = generic.LanguageFilePosition(filename)
@@ -1215,17 +1313,23 @@ def parse_file(filename, default):
             raise generic.ScriptError("The default language file contains non-utf8 characters.", pos)
         generic.print_warning("Language file contains non-utf8 characters. Ignoring (part of) the contents.", pos)
     except generic.ScriptError as err:
-        if default: raise
+        if default:
+            raise
         generic.print_warning(err.value, err.pos)
     else:
         if lang.langid is None:
-            generic.print_warning("Language file does not contain a ##grflangid pragma", generic.LanguageFilePosition(filename))
+            generic.print_warning(
+                "Language file does not contain a ##grflangid pragma", generic.LanguageFilePosition(filename)
+            )
         else:
             for lng in langs:
                 if lng[0] == lang.langid:
-                    msg = "Language file has the same ##grflangid (with number {:d}) as another language file".format(lang.langid)
+                    msg = "Language file has the same ##grflangid (with number {:d}) as another language file".format(
+                        lang.langid
+                    )
                     raise generic.ScriptError(msg, generic.LanguageFilePosition(filename))
             langs.append((lang.langid, lang))
+
 
 def read_lang_files(lang_dir, default_lang_file):
     """
@@ -1244,10 +1348,13 @@ def read_lang_files(lang_dir, default_lang_file):
 
     DEFAULT_LANGNAME = default_lang_file
     if not os.path.exists(lang_dir + os.sep + default_lang_file):
-        generic.print_warning("Default language file \"{}\" doesn't exist".format(os.path.join(lang_dir, default_lang_file)))
+        generic.print_warning(
+            'Default language file "{}" doesn\'t exist'.format(os.path.join(lang_dir, default_lang_file))
+        )
         return
     parse_file(lang_dir + os.sep + default_lang_file, True)
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
-        if filename.endswith(default_lang_file): continue
+        if filename.endswith(default_lang_file):
+            continue
         parse_file(filename, False)
     langs.sort()

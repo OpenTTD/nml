@@ -18,11 +18,12 @@ from .base_expression import ConstantNumeric, Expression, Type
 from .parameter import parse_string_to_dword
 
 storage_op_info = {
-    'STORE_PERM' : {'store': True,  'perm': True,  'grfid': False, 'max': 0xFF},
-    'STORE_TEMP' : {'store': True,  'perm': False, 'grfid': False, 'max': 0x10F},
-    'LOAD_PERM'  : {'store': False, 'perm': True,  'grfid': True,  'max': 0xFF},
-    'LOAD_TEMP'  : {'store': False, 'perm': False, 'grfid': False, 'max': 0xFF},
+    "STORE_PERM": {"store": True, "perm": True, "grfid": False, "max": 0xFF},
+    "STORE_TEMP": {"store": True, "perm": False, "grfid": False, "max": 0x10F},
+    "LOAD_PERM": {"store": False, "perm": True, "grfid": True, "max": 0xFF},
+    "LOAD_TEMP": {"store": False, "perm": False, "grfid": False, "max": 0xFF},
 }
+
 
 class StorageOp(Expression):
     """
@@ -44,20 +45,24 @@ class StorageOp(Expression):
     @type grfid: L{Expression}
 
     """
-    def __init__(self, name, args, pos = None):
+
+    def __init__(self, name, args, pos=None):
         Expression.__init__(self, pos)
         self.name = name
         assert name in storage_op_info
         self.info = storage_op_info[name]
 
-        arg_len = (2,) if self.info['store'] else (1,)
-        if self.info['grfid']: arg_len += (arg_len[0] + 1,)
+        arg_len = (2,) if self.info["store"] else (1,)
+        if self.info["grfid"]:
+            arg_len += (arg_len[0] + 1,)
         if len(args) not in arg_len:
             argstr = "{:d}".format(arg_len[0]) if len(arg_len) == 1 else "{}..{}".format(arg_len[0], arg_len[1])
-            raise generic.ScriptError("{} requires {} argument(s), encountered {:d}".format(name, argstr, len(args)), pos)
+            raise generic.ScriptError(
+                "{} requires {} argument(s), encountered {:d}".format(name, argstr, len(args)), pos
+            )
 
         i = 0
-        if self.info['store']:
+        if self.info["store"]:
             self.value = args[i]
             i += 1
         else:
@@ -68,30 +73,31 @@ class StorageOp(Expression):
 
         if i < len(args):
             self.grfid = args[i]
-            assert self.info['grfid']
+            assert self.info["grfid"]
         else:
             self.grfid = None
 
-
     def debug_print(self, indentation):
         generic.print_dbg(indentation, self.name)
-        generic.print_dbg(indentation + 2, 'Register:')
+        generic.print_dbg(indentation + 2, "Register:")
         self.register.debug_print(indentation + 4)
         if self.value is not None:
-            generic.print_dbg(indentation + 2, 'Value:')
+            generic.print_dbg(indentation + 2, "Value:")
             self.value.debug_print(indentation + 4)
         if self.grfid is not None:
-            generic.print_dbg(indentation + 2, 'GRFID:')
+            generic.print_dbg(indentation + 2, "GRFID:")
             self.grfid.debug_print(indentation + 4)
 
     def __str__(self):
         args = []
-        if self.value is not None: args.append(str(self.value))
+        if self.value is not None:
+            args.append(str(self.value))
         args.append(str(self.register))
-        if self.grfid is not None: args.append(str(self.grfid))
+        if self.grfid is not None:
+            args.append(str(self.grfid))
         return "{}({})".format(self.name, ", ".join(args))
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         args = []
         if self.value is not None:
             value = self.value.reduce(id_dicts)
@@ -102,8 +108,8 @@ class StorageOp(Expression):
         register = self.register.reduce(id_dicts)
         if register.type() != Type.INTEGER:
             raise generic.ScriptError("Register to access must be an integer.", register.pos)
-        if isinstance(register, ConstantNumeric) and register.value > self.info['max']:
-            raise generic.ScriptError("Maximum register for {} is {:d}".format(self.name, self.info['max']), self.pos)
+        if isinstance(register, ConstantNumeric) and register.value > self.info["max"]:
+            raise generic.ScriptError("Maximum register for {} is {:d}".format(self.name, self.info["max"]), self.pos)
         args.append(register)
 
         if self.grfid is not None:
@@ -126,5 +132,5 @@ class StorageOp(Expression):
         return self.register.collect_references() + (self.value.collect_references() if self.value is not None else [])
 
     def is_read_only(self):
-        assert(self.info['store'] == (self.value is not None))
-        return (not self.info['store']) and self.register.is_read_only()
+        assert self.info["store"] == (self.value is not None)
+        return (not self.info["store"]) and self.register.is_read_only()

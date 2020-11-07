@@ -21,6 +21,7 @@ item_feature = None
 item_id = None
 item_size = None
 
+
 class Item(base_statement.BaseStatementList):
     """
     AST-node representing an item block
@@ -36,11 +37,16 @@ class Item(base_statement.BaseStatementList):
     @ivar size: Size, used by houses only
     @type size: L{ConstantNumeric} or C{None} if N/A
     """
+
     def __init__(self, params, body, pos):
-        base_statement.BaseStatementList.__init__(self, "item-block", pos, base_statement.BaseStatementList.LIST_TYPE_ITEM, body)
+        base_statement.BaseStatementList.__init__(
+            self, "item-block", pos, base_statement.BaseStatementList.LIST_TYPE_ITEM, body
+        )
 
         if not (1 <= len(params) <= 4):
-            raise generic.ScriptError("Item block requires between 1 and 4 parameters, found {:d}.".format(len(params)), self.pos)
+            raise generic.ScriptError(
+                "Item block requires between 1 and 4 parameters, found {:d}.".format(len(params)), self.pos
+            )
         self.feature = general.parse_feature(params[0])
         if self.feature.value in (0x08, 0x0C, 0x0E):
             raise generic.ScriptError("Defining item blocks for this feature is not allowed.", self.pos)
@@ -48,7 +54,7 @@ class Item(base_statement.BaseStatementList):
 
         self.id = params[2].reduce_constant(global_constants.const_list) if len(params) >= 3 else None
         if isinstance(self.id, expression.ConstantNumeric) and self.id.value == -1:
-            self.id = None # id == -1 means default
+            self.id = None  # id == -1 means default
 
         if len(params) >= 4:
             if self.feature.value != 0x07:
@@ -67,8 +73,12 @@ class Item(base_statement.BaseStatementList):
                 existing_id = global_constants.item_names[self.name.value].id
                 if self.id is not None and existing_id.value != self.id.value:
                     raise generic.ScriptError(
-                        ("Duplicate item with name '{}'."
-                         " This item has already been assigned to id {:d}, cannot reassign to id {:d}").format(self.name.value, existing_id.value, self.id.value), self.pos)
+                        (
+                            "Duplicate item with name '{}'."
+                            " This item has already been assigned to id {:d}, cannot reassign to id {:d}"
+                        ).format(self.name.value, existing_id.value, self.id.value),
+                        self.pos,
+                    )
                 self.id = existing_id
 
         # We may have to reserve multiple item IDs for houses
@@ -89,7 +99,7 @@ class Item(base_statement.BaseStatementList):
         base_statement.BaseStatementList.pre_process(self)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Item, feature', hex(self.feature.value))
+        generic.print_dbg(indentation, "Item, feature", hex(self.feature.value))
         base_statement.BaseStatementList.debug_print(self, indentation + 2)
 
     def get_action_list(self):
@@ -100,17 +110,18 @@ class Item(base_statement.BaseStatementList):
         return base_statement.BaseStatementList.get_action_list(self)
 
     def __str__(self):
-        ret = 'item({:d}'.format(self.feature.value)
+        ret = "item({:d}".format(self.feature.value)
         if self.name is not None:
-            ret += ', {}'.format(self.name)
-        ret += ', {}'.format(str(self.id) if self.id is not None else "-1")
+            ret += ", {}".format(self.name)
+        ret += ", {}".format(str(self.id) if self.id is not None else "-1")
         if self.size is not None:
-            sizes =["1X1", None, "2X1", "1X2", "2X2"]
-            ret += ', HOUSE_SIZE_{}'.format(sizes[self.size.value])
-        ret += ') {\n'
+            sizes = ["1X1", None, "2X1", "1X2", "2X2"]
+            ret += ", HOUSE_SIZE_{}".format(sizes[self.size.value])
+        ret += ") {\n"
         ret += base_statement.BaseStatementList.__str__(self)
-        ret += '}\n'
+        ret += "}\n"
         return ret
+
 
 class Property:
     """
@@ -129,6 +140,7 @@ class Property:
     @ivar pos: Position information.
     @type pos: L{Position}
     """
+
     def __init__(self, name, value, unit, pos):
         self.pos = pos
         self.name = name
@@ -136,15 +148,16 @@ class Property:
         self.unit = unit
 
     def pre_process(self):
-        self.value = self.value.reduce(global_constants.const_list, unknown_id_fatal = False)
+        self.value = self.value.reduce(global_constants.const_list, unknown_id_fatal=False)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Property:', self.name.value)
+        generic.print_dbg(indentation, "Property:", self.name.value)
         self.value.debug_print(indentation + 2)
 
     def __str__(self):
-        unit = '' if self.unit is None else ' ' + str(self.unit)
-        return '\t{}: {}{};'.format(self.name, self.value, unit)
+        unit = "" if self.unit is None else " " + str(self.unit)
+        return "\t{}: {}{};".format(self.name, self.value, unit)
+
 
 class PropertyBlock(base_statement.BaseStatement):
     """
@@ -154,8 +167,9 @@ class PropertyBlock(base_statement.BaseStatement):
     @ivar prop_list: List of properties.
     @type prop_list: C{list} of L{Property}
     """
+
     def __init__(self, prop_list, pos):
-        base_statement.BaseStatement.__init__(self, "property-block", pos, in_item = True, out_item = False)
+        base_statement.BaseStatement.__init__(self, "property-block", pos, in_item=True, out_item=False)
         self.prop_list = prop_list
 
     def pre_process(self):
@@ -163,7 +177,7 @@ class PropertyBlock(base_statement.BaseStatement):
             prop.pre_process()
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Property block:')
+        generic.print_dbg(indentation, "Property block:")
         for prop in self.prop_list:
             prop.debug_print(indentation + 2)
 
@@ -171,15 +185,16 @@ class PropertyBlock(base_statement.BaseStatement):
         return action0.parse_property_block(self.prop_list, item_feature, item_id, item_size)
 
     def __str__(self):
-        ret = 'property {\n'
+        ret = "property {\n"
         for prop in self.prop_list:
-            ret += '{}\n'.format(prop)
-        ret += '}\n'
+            ret += "{}\n".format(prop)
+        ret += "}\n"
         return ret
+
 
 class LiveryOverride(base_statement.BaseStatement):
     def __init__(self, wagon_id, graphics_block, pos):
-        base_statement.BaseStatement.__init__(self, "livery override", pos, in_item = True, out_item = False)
+        base_statement.BaseStatement.__init__(self, "livery override", pos, in_item=True, out_item=False)
         self.graphics_block = graphics_block
         self.wagon_id = wagon_id
 
@@ -188,30 +203,32 @@ class LiveryOverride(base_statement.BaseStatement):
         pass
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Livery override, wagon id:')
+        generic.print_dbg(indentation, "Livery override, wagon id:")
         self.wagon_id.debug_print(indentation + 2)
         for graphics in self.graphics_block.graphics_list:
             graphics.debug_print(indentation + 2)
-        generic.print_dbg(indentation + 2, 'Default graphics:', self.graphics_block.default_graphics)
+        generic.print_dbg(indentation + 2, "Default graphics:", self.graphics_block.default_graphics)
 
     def get_action_list(self):
         wagon_id = self.wagon_id.reduce_constant([(global_constants.item_names, global_constants.item_to_id)])
         return action3.parse_graphics_block(self.graphics_block, item_feature, wagon_id, item_size, True)
 
     def __str__(self):
-        ret = 'livery_override({}) {{\n'.format(self.wagon_id)
+        ret = "livery_override({}) {{\n".format(self.wagon_id)
         for graphics in self.graphics_block.graphics_list:
             ret += "\t{}\n".format(graphics)
         if self.graphics_block.default_graphics is not None:
-            ret += '\t{}\n'.format(self.graphics_block.default_graphics)
-        ret += '}\n'
+            ret += "\t{}\n".format(self.graphics_block.default_graphics)
+        ret += "}\n"
         return ret
+
 
 graphics_base_class = action2.make_sprite_group_class(False, False, True)
 
+
 class GraphicsBlock(graphics_base_class):
     def __init__(self, graphics_list, default_graphics, pos):
-        base_statement.BaseStatement.__init__(self, "graphics-block", pos, in_item = True, out_item = False)
+        base_statement.BaseStatement.__init__(self, "graphics-block", pos, in_item=True, out_item=False)
         self.graphics_list = graphics_list
         self.default_graphics = default_graphics
 
@@ -220,7 +237,10 @@ class GraphicsBlock(graphics_base_class):
             graphics_def.reduce_expressions(item_feature)
         if self.default_graphics is not None:
             if self.default_graphics.value is None:
-                raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.pos)
+                raise generic.ScriptError(
+                    "Returning the computed value is not possible in a graphics-block, as there is no computed value.",
+                    self.pos,
+                )
             self.default_graphics.value = action2var.reduce_varaction2_expr(self.default_graphics.value, item_feature)
 
         # initialize base class and pre_process it as well (in that order)
@@ -229,16 +249,18 @@ class GraphicsBlock(graphics_base_class):
 
     def collect_references(self):
         all_refs = []
-        for result in [g.result for g in self.graphics_list] + ([self.default_graphics] if self.default_graphics is not None else []):
+        for result in [g.result for g in self.graphics_list] + (
+            [self.default_graphics] if self.default_graphics is not None else []
+        ):
             all_refs += result.value.collect_references()
         return all_refs
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Graphics block:')
+        generic.print_dbg(indentation, "Graphics block:")
         for graphics in self.graphics_list:
             graphics.debug_print(indentation + 2)
         if self.default_graphics is not None:
-            generic.print_dbg(indentation + 2, 'Default graphics:')
+            generic.print_dbg(indentation + 2, "Default graphics:")
             self.default_graphics.debug_print(indentation + 4)
 
     def get_action_list(self):
@@ -247,16 +269,17 @@ class GraphicsBlock(graphics_base_class):
         return []
 
     def __str__(self):
-        ret = 'graphics {\n'
+        ret = "graphics {\n"
         for graphics in self.graphics_list:
             ret += "\t{}\n".format(graphics)
         if self.default_graphics is not None:
-            ret += '\t{}\n'.format(self.default_graphics)
-        ret += '}\n'
+            ret += "\t{}\n".format(self.default_graphics)
+        ret += "}\n"
         return ret
 
+
 class GraphicsDefinition:
-    def __init__(self, cargo_id, result, unit = None):
+    def __init__(self, cargo_id, result, unit=None):
         self.cargo_id = cargo_id
         self.result = result
         self.unit = unit
@@ -264,15 +287,17 @@ class GraphicsDefinition:
     def reduce_expressions(self, var_feature):
         # Do not reduce cargo-id (yet)
         if self.result.value is None:
-            raise generic.ScriptError("Returning the computed value is not possible in a graphics-block, as there is no computed value.", self.result.pos)
+            raise generic.ScriptError(
+                "Returning the computed value is not possible in a graphics-block, as there is no computed value.",
+                self.result.pos,
+            )
         self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Cargo ID:')
+        generic.print_dbg(indentation, "Cargo ID:")
         self.cargo_id.debug_print(indentation + 2)
-        generic.print_dbg(indentation, 'Result:')
+        generic.print_dbg(indentation, "Result:")
         self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        return '{}: {}'.format(self.cargo_id, self.result)
-
+        return "{}: {}".format(self.cargo_id, self.result)

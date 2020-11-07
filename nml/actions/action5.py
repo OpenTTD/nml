@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from nml.actions import base_action, real_sprite
 
+
 class Action5(base_action.BaseAction):
     def __init__(self, type, num_sprites, offset):
         self.type = type
@@ -27,7 +28,7 @@ class Action5(base_action.BaseAction):
             self.type |= 0x80
 
     def write(self, file):
-        #<Sprite-number> * <Length> 05 <type> <num-sprites> [<offset>]
+        # <Sprite-number> * <Length> 05 <type> <num-sprites> [<offset>]
         size = 5 if self.offset is None else 8
         file.start_sprite(size)
         file.print_bytex(0x05)
@@ -41,45 +42,48 @@ class Action5(base_action.BaseAction):
         file.end_sprite()
 
     def skip_action7(self):
-        #skipping with Action7 should work, according to the Action7/9 specs
-        #However, skipping invalid (OpenTTD-only) Action5s in TTDP can only be done using Action9, else an error occurs
-        #To be on the safe side, don't allow skipping with Action7 at all
+        # skipping with Action7 should work, according to the Action7/9 specs
+        # However, skipping invalid (OpenTTD-only) Action5s in TTDP can only be done using Action9, else an error occurs
+        # To be on the safe side, don't allow skipping with Action7 at all
         return False
 
+
 class Action5BlockType:
-    FIXED  = 0, #fixed number of sprites
-    ANY    = 1, #any number of sprites
-    OFFSET = 2, #flexible number of sprites, offset may be set
+    FIXED = (0,)  # fixed number of sprites
+    ANY = (1,)  # any number of sprites
+    OFFSET = (2,)  # flexible number of sprites, offset may be set
+
 
 action5_table = {
-    'PRE_SIGNAL' : (0x04, 48, Action5BlockType.FIXED),
-    'PRE_SIGNAL_SEMAPHORE' : (0x04, 112, Action5BlockType.FIXED),
-    'PRE_SIGNAL_SEMAPHORE_PBS' : (0x04, 240, Action5BlockType.OFFSET),
-    'CATENARY' : (0x05, 48, Action5BlockType.OFFSET),
-    'FOUNDATIONS_SLOPES' : (0x06, 74, Action5BlockType.FIXED),
-    'FOUNDATIONS_SLOPES_HALFTILES' : (0x06, 90, Action5BlockType.OFFSET),
-    'TTDP_GUI_25' : (0x07, 73, Action5BlockType.FIXED),
-    'TTDP_GUI' : (0x07, 93, Action5BlockType.FIXED),
-    'CANALS' : (0x08, 65, Action5BlockType.OFFSET),
-    'ONE_WAY_ROAD' : (0x09, 6, Action5BlockType.OFFSET),
-    'COLOURMAP_2CC' : (0x0A, 256, Action5BlockType.OFFSET),
-    'TRAMWAY' : (0x0B, 119, Action5BlockType.OFFSET),
-    'SNOWY_TEMPERATE_TREES' : (0x0C, 133, Action5BlockType.FIXED),
-    'COAST_TILES' : (0x0D, 16, Action5BlockType.FIXED),
-    'COAST_TILES_BASEGFX' : (0x0D, 10, Action5BlockType.FIXED),
-    'COAST_TILES_DIAGONAL' : (0x0D, 18, Action5BlockType.FIXED),
-    'NEW_SIGNALS' : (0x0E, 0, Action5BlockType.ANY),
-    'SLOPED_RAILS' : (0x0F, 12, Action5BlockType.OFFSET),
-    'AIRPORTS' : (0x10, 15, Action5BlockType.OFFSET),
-    'ROAD_STOPS' : (0x11, 8, Action5BlockType.OFFSET),
-    'AQUEDUCTS' : (0x12, 8, Action5BlockType.OFFSET),
-    'AUTORAIL' : (0x13, 55, Action5BlockType.OFFSET),
-    'FLAGS' : (0x14, 36, Action5BlockType.OFFSET),
-    'OTTD_GUI' : (0x15, 184, Action5BlockType.OFFSET),
-    'AIRPORT_PREVIEW' : (0x16, 9, Action5BlockType.OFFSET),
-    'RAILTYPE_TUNNELS': (0x17, 16, Action5BlockType.OFFSET),
-    'OTTD_RECOLOUR' : (0x18, 1, Action5BlockType.OFFSET),
+    "PRE_SIGNAL": (0x04, 48, Action5BlockType.FIXED),
+    "PRE_SIGNAL_SEMAPHORE": (0x04, 112, Action5BlockType.FIXED),
+    "PRE_SIGNAL_SEMAPHORE_PBS": (0x04, 240, Action5BlockType.OFFSET),
+    "CATENARY": (0x05, 48, Action5BlockType.OFFSET),
+    "FOUNDATIONS_SLOPES": (0x06, 74, Action5BlockType.FIXED),
+    "FOUNDATIONS_SLOPES_HALFTILES": (0x06, 90, Action5BlockType.OFFSET),
+    "TTDP_GUI_25": (0x07, 73, Action5BlockType.FIXED),
+    "TTDP_GUI": (0x07, 93, Action5BlockType.FIXED),
+    "CANALS": (0x08, 65, Action5BlockType.OFFSET),
+    "ONE_WAY_ROAD": (0x09, 6, Action5BlockType.OFFSET),
+    "COLOURMAP_2CC": (0x0A, 256, Action5BlockType.OFFSET),
+    "TRAMWAY": (0x0B, 119, Action5BlockType.OFFSET),
+    "SNOWY_TEMPERATE_TREES": (0x0C, 133, Action5BlockType.FIXED),
+    "COAST_TILES": (0x0D, 16, Action5BlockType.FIXED),
+    "COAST_TILES_BASEGFX": (0x0D, 10, Action5BlockType.FIXED),
+    "COAST_TILES_DIAGONAL": (0x0D, 18, Action5BlockType.FIXED),
+    "NEW_SIGNALS": (0x0E, 0, Action5BlockType.ANY),
+    "SLOPED_RAILS": (0x0F, 12, Action5BlockType.OFFSET),
+    "AIRPORTS": (0x10, 15, Action5BlockType.OFFSET),
+    "ROAD_STOPS": (0x11, 8, Action5BlockType.OFFSET),
+    "AQUEDUCTS": (0x12, 8, Action5BlockType.OFFSET),
+    "AUTORAIL": (0x13, 55, Action5BlockType.OFFSET),
+    "FLAGS": (0x14, 36, Action5BlockType.OFFSET),
+    "OTTD_GUI": (0x15, 184, Action5BlockType.OFFSET),
+    "AIRPORT_PREVIEW": (0x16, 9, Action5BlockType.OFFSET),
+    "RAILTYPE_TUNNELS": (0x17, 16, Action5BlockType.OFFSET),
+    "OTTD_RECOLOUR": (0x18, 1, Action5BlockType.OFFSET),
 }
+
 
 def parse_action5(replaces):
     real_sprite_list = real_sprite.parse_sprite_data(replaces)
@@ -97,8 +101,10 @@ def parse_action5(replaces):
             raise generic.ScriptError(msg, replaces.pos)
 
         elif num_sprites > num_required:
-            msg = ("Too many sprites specified for sprite replacement type '{}',"
-                   " expected {:d}, got {:d}, extra sprites may be ignored").format(replaces.type, num_required, num_sprites)
+            msg = (
+                "Too many sprites specified for sprite replacement type '{}',"
+                " expected {:d}, got {:d}, extra sprites may be ignored"
+            ).format(replaces.type, num_required, num_sprites)
             generic.print_warning(msg, replaces.pos)
 
         if replaces.offset != 0:
@@ -122,4 +128,3 @@ def parse_action5(replaces):
         assert 0
 
     return [Action5(type_id, num_sprites, offset)] + real_sprite_list
-

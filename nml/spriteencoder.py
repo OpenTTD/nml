@@ -23,21 +23,27 @@ except ImportError:
     pass
 
 # Some constants for the 'info' byte
-INFO_RGB    = 1
-INFO_ALPHA  = 2
-INFO_PAL    = 4
-INFO_TILE   = 8
+INFO_RGB = 1
+INFO_ALPHA = 2
+INFO_PAL = 4
+INFO_TILE = 8
 INFO_NOCROP = 0x40
+
 
 def get_bpp(info):
     bpp = 0
-    if (info & INFO_RGB) != 0: bpp += 3
-    if (info & INFO_ALPHA) != 0: bpp += 1
-    if (info & INFO_PAL) != 0: bpp += 1
+    if (info & INFO_RGB) != 0:
+        bpp += 3
+    if (info & INFO_ALPHA) != 0:
+        bpp += 1
+    if (info & INFO_PAL) != 0:
+        bpp += 1
     return bpp
+
 
 def has_transparency(info):
     return (info & (INFO_ALPHA | INFO_PAL)) != 0
+
 
 def transparency_offset(info):
     """
@@ -55,6 +61,7 @@ def transparency_offset(info):
     else:
         return 0
 
+
 class SpriteEncoder:
     """
     Algorithms for cropping and compressing sprites. That is encoding source images into GRF sprites.
@@ -71,6 +78,7 @@ class SpriteEncoder:
     @ivar cached_image_files: Currently opened source image files.
     @type cached_image_files: C{dict} mapping C{str} to C{Image}
     """
+
     def __init__(self, compress_grf, crop_sprites, palette):
         self.compress_grf = compress_grf
         self.crop_sprites = crop_sprites
@@ -106,7 +114,9 @@ class SpriteEncoder:
 
             for sprite_info in sprite_list:
                 count_sprites += 1
-                generic.print_progress("Encoding {}/{}: {}".format(count_sprites, num_sprites, source_name), incremental = True)
+                generic.print_progress(
+                    "Encoding {}/{}: {}".format(count_sprites, num_sprites, source_name), incremental=True
+                )
 
                 cache_key = sprite_info.get_cache_key(self.crop_sprites)
                 cache_item = local_cache.get_item(cache_key, self.palette)
@@ -121,7 +131,16 @@ class SpriteEncoder:
                     else:
                         num_cached += 1
                 else:
-                    size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, pixel_stats = self.encode_sprite(sprite_info)
+                    (
+                        size_x,
+                        size_y,
+                        xoffset,
+                        yoffset,
+                        compressed_data,
+                        info_byte,
+                        crop_rect,
+                        pixel_stats,
+                    ) = self.encode_sprite(sprite_info)
                     num_enc += 1
 
                 # Store sprite in cache, unless already up-to-date
@@ -141,9 +160,13 @@ class SpriteEncoder:
             # Transfer data to global cache for later usage
             self.sprite_cache.cached_sprites.update(local_cache.cached_sprites)
 
-        generic.print_progress("Encoding ...", incremental = True)
+        generic.print_progress("Encoding ...", incremental=True)
         generic.clear_progress()
-        generic.print_info("{} sprites, {} cached, {} orphaned, {} duplicates, {} newly encoded ({})".format(num_sprites, num_cached, num_orphaned, num_dup, num_enc, "native" if lz77.is_native else "python"))
+        generic.print_info(
+            "{} sprites, {} cached, {} orphaned, {} duplicates, {} newly encoded ({})".format(
+                num_sprites, num_cached, num_orphaned, num_dup, num_enc, "native" if lz77.is_native else "python"
+            )
+        )
 
     def close(self):
         """
@@ -172,28 +195,38 @@ class SpriteEncoder:
         size_y = sprite_info.ysize.value
         xoffset = sprite_info.xrel.value
         yoffset = sprite_info.yrel.value
-        if cache_key[-1]: size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
+        if cache_key[-1]:
+            size_x, size_y, xoffset, yoffset = self.recompute_offsets(size_x, size_y, xoffset, yoffset, crop_rect)
 
         warnings = []
-        total = pixel_stats.get('total', 0)
+        total = pixel_stats.get("total", 0)
         if total > 0:
             if cache_key[0] is not None:
                 image_32_pos = generic.PixelPosition(cache_key[0], cache_key[1][0], cache_key[1][1])
-                alpha = pixel_stats.get('alpha', 0)
+                alpha = pixel_stats.get("alpha", 0)
                 if alpha > 0 and (sprite_info.flags.value & real_sprite.FLAG_NOALPHA) != 0:
-                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are semi-transparent, but NOALPHA is in flags".format(
-                       str(image_32_pos), alpha, total, alpha * 100 // total))
+                    warnings.append(
+                        "{}: {:d} of {:d} pixels ({:d}%) are semi-transparent, but NOALPHA is in flags".format(
+                            str(image_32_pos), alpha, total, alpha * 100 // total
+                        )
+                    )
 
             if cache_key[2] is not None:
                 image_8_pos = generic.PixelPosition(cache_key[2], cache_key[3][0], cache_key[3][1])
-                white = pixel_stats.get('white', 0)
-                anim = pixel_stats.get('anim', 0)
+                white = pixel_stats.get("white", 0)
+                anim = pixel_stats.get("anim", 0)
                 if white > 0 and (sprite_info.flags.value & real_sprite.FLAG_WHITE) == 0:
-                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are pure white, but WHITE isn't in flags".format(
-                        str(image_8_pos), white, total, white * 100 // total))
+                    warnings.append(
+                        "{}: {:d} of {:d} pixels ({:d}%) are pure white, but WHITE isn't in flags".format(
+                            str(image_8_pos), white, total, white * 100 // total
+                        )
+                    )
                 if anim > 0 and (sprite_info.flags.value & real_sprite.FLAG_ANIM) == 0:
-                    warnings.append("{}: {:d} of {:d} pixels ({:d}%) are animated, but ANIM isn't in flags".format(
-                        str(image_8_pos), anim, total, anim * 100 // total))
+                    warnings.append(
+                        "{}: {:d} of {:d} pixels ({:d}%) are animated, but ANIM isn't in flags".format(
+                            str(image_8_pos), anim, total, anim * 100 // total
+                        )
+                    )
 
         return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings)
 
@@ -213,7 +246,6 @@ class SpriteEncoder:
             im = Image.open(generic.find_file(filename))
             self.cached_image_files[filename] = im
         return im
-
 
     def encode_sprite(self, sprite_info):
         """
@@ -254,7 +286,7 @@ class SpriteEncoder:
             mask_x = sprite_info.mask_pos[0].value
             mask_y = sprite_info.mask_pos[1].value
 
-        pixel_stats = { 'total': size_x * size_y, 'alpha': 0, 'white': 0, 'anim': 0 }
+        pixel_stats = {"total": size_x * size_y, "alpha": 0, "white": 0, "anim": 0}
 
         # Read and validate image data
         if filename_32bpp is not None:
@@ -275,7 +307,7 @@ class SpriteEncoder:
 
             if (info_byte & INFO_ALPHA) != 0:
                 # Check for half-transparent pixels (not valid for ground sprites)
-                pixel_stats['alpha'] = sum(0x00 < p < 0xFF for p in rgb_sprite_data[3::4])
+                pixel_stats["alpha"] = sum(0x00 < p < 0xFF for p in rgb_sprite_data[3::4])
 
         if filename_8bpp is not None:
             mask_im = self.open_image_file(filename_8bpp.value)
@@ -294,26 +326,26 @@ class SpriteEncoder:
             mask_sprite_data = self.palconvert(mask_sprite.tobytes(), im_mask_pal)
 
             # Check for white pixels; those that cause "artefacts" when shading
-            pixel_stats['white'] = sum(p == 255 for p in mask_sprite_data)
+            pixel_stats["white"] = sum(p == 255 for p in mask_sprite_data)
 
             # Check for palette animation colours
-            if self.palette == 'DEFAULT':
-                pixel_stats['anim'] = sum(0xE3 <= p <= 0xFE for p in mask_sprite_data)
+            if self.palette == "DEFAULT":
+                pixel_stats["anim"] = sum(0xE3 <= p <= 0xFE for p in mask_sprite_data)
             else:
-                pixel_stats['anim'] = sum(0xD9 <= p <= 0xF4 for p in mask_sprite_data)
+                pixel_stats["anim"] = sum(0xD9 <= p <= 0xF4 for p in mask_sprite_data)
 
         # Compose pixel information in an array of bytes
-        sprite_data = array.array('B')
+        sprite_data = array.array("B")
         if (info_byte & INFO_RGB) != 0 and (info_byte & INFO_PAL) != 0:
-            mask_data = array.array('B', mask_sprite_data) # Convert to numeric
-            rgb_data = array.array('B', rgb_sprite_data)
+            mask_data = array.array("B", mask_sprite_data)  # Convert to numeric
+            rgb_data = array.array("B", rgb_sprite_data)
             if (info_byte & INFO_ALPHA) != 0:
                 for i in range(len(mask_sprite_data)):
-                    sprite_data.extend(rgb_data[4*i:4*(i+1)])
+                    sprite_data.extend(rgb_data[4 * i : 4 * (i + 1)])
                     sprite_data.append(mask_data[i])
             else:
                 for i in range(len(mask_sprite_data)):
-                    sprite_data.extend(rgb_data[3*i:3*(i+1)])
+                    sprite_data.extend(rgb_data[3 * i : 3 * (i + 1)])
                     sprite_data.append(mask_data[i])
         elif (info_byte & INFO_RGB) != 0:
             sprite_data.frombytes(rgb_sprite_data)
@@ -338,7 +370,7 @@ class SpriteEncoder:
             if len(tile_compressed_data) + 4 < len(compressed_data):
                 info_byte |= INFO_TILE
                 data_len = len(tile_data)
-                compressed_data = array.array('B')
+                compressed_data = array.array("B")
                 compressed_data.append(data_len & 0xFF)
                 compressed_data.append((data_len >> 8) & 0xFF)
                 compressed_data.append((data_len >> 16) & 0xFF)
@@ -349,12 +381,12 @@ class SpriteEncoder:
 
     def fakecompress(self, data):
         i = 0
-        output = array.array('B')
+        output = array.array("B")
         length = len(data)
         while i < length:
             n = min(length - i, 127)
             output.append(n)
-            output.extend(data[i:i+n])
+            output.extend(data[i : i + n])
             i += n
         return output
 
@@ -365,7 +397,7 @@ class SpriteEncoder:
             stream = self.fakecompress(data)
         return stream
 
-    def sprite_encode_tile(self, size_x, size_y, data, info, bpp, long_format = False):
+    def sprite_encode_tile(self, size_x, size_y, data, info, bpp, long_format=False):
         long_chunk = size_x > 256
 
         # There are basically four different encoding configurations here,
@@ -377,26 +409,26 @@ class SpriteEncoder:
         if not has_transparency(info):
             return None
         trans_offset = transparency_offset(info)
-        max_chunk_len = 0x7fff if long_chunk else 0x7f
-        line_offset_size = 4 if long_format else 2 # Whether to use 2 or 4 bytes in the list of line offsets
-        output = array.array('B', [0] * (line_offset_size * size_y))
+        max_chunk_len = 0x7FFF if long_chunk else 0x7F
+        line_offset_size = 4 if long_format else 2  # Whether to use 2 or 4 bytes in the list of line offsets
+        output = array.array("B", [0] * (line_offset_size * size_y))
 
         for y in range(size_y):
             # Write offset in the correct place, in little-endian format
             offset = len(output)
-            output[y*line_offset_size] = offset & 0xFF
-            output[y*line_offset_size + 1] = (offset >> 8) & 0xFF
+            output[y * line_offset_size] = offset & 0xFF
+            output[y * line_offset_size + 1] = (offset >> 8) & 0xFF
             if long_format:
-                output[y*line_offset_size + 2] = (offset >> 16) & 0xFF
-                output[y*line_offset_size + 3] = (offset >> 24) & 0xFF
+                output[y * line_offset_size + 2] = (offset >> 16) & 0xFF
+                output[y * line_offset_size + 3] = (offset >> 24) & 0xFF
 
-            line_start = y*size_x*bpp
+            line_start = y * size_x * bpp
 
             line_parts = []
             x1 = 0
             while True:
                 # Skip transparent pixels
-                while x1 < size_x and data[line_start + x1*bpp + trans_offset] == 0:
+                while x1 < size_x and data[line_start + x1 * bpp + trans_offset] == 0:
                     x1 += 1
                 if x1 == size_x:
                     # End-of-line reached
@@ -406,9 +438,10 @@ class SpriteEncoder:
                 # Only stop the chunk when encountering 3 consecutive transparent pixels
                 x2 = x1 + 1
                 while x2 - x1 < max_chunk_len and (
-                         (x2 < size_x and data[line_start + x2*bpp + trans_offset] != 0) or
-                         (x2 + 1 < size_x and data[line_start + (x2+1)*bpp + trans_offset] != 0) or
-                         (x2 + 2 < size_x and data[line_start + (x2+2)*bpp + trans_offset] != 0)):
+                    (x2 < size_x and data[line_start + x2 * bpp + trans_offset] != 0)
+                    or (x2 + 1 < size_x and data[line_start + (x2 + 1) * bpp + trans_offset] != 0)
+                    or (x2 + 2 < size_x and data[line_start + (x2 + 2) * bpp + trans_offset] != 0)
+                ):
                     x2 += 1
                 line_parts.append((x1, x2))
                 x1 = x2
@@ -426,13 +459,10 @@ class SpriteEncoder:
                 last_mask = 0x80 if idx == len(line_parts) - 1 else 0
                 chunk_len = x2 - x1
                 if long_chunk:
-                    output.extend((chunk_len & 0xFF,
-                                       (chunk_len >> 8) | last_mask,
-                                       x1 & 0xFF,
-                                       x1 >> 8))
+                    output.extend((chunk_len & 0xFF, (chunk_len >> 8) | last_mask, x1 & 0xFF, x1 >> 8))
                 else:
                     output.extend((chunk_len | last_mask, x1))
-                output.extend(data[line_start + x1*bpp : line_start + x2*bpp])
+                output.extend(data[line_start + x1 * bpp : line_start + x2 * bpp])
 
         if len(output) > 65535 and not long_format:
             # Recurse into the long format if that's possible.
@@ -453,40 +483,42 @@ class SpriteEncoder:
         if not has_transparency(info):
             return (data, (left, right, top, bottom))
 
-        trans_offset =  transparency_offset(info)
-        line_size = size_x * bpp # size (no. of bytes) of a scan line
+        trans_offset = transparency_offset(info)
+        line_size = size_x * bpp  # size (no. of bytes) of a scan line
         data_size = len(data)
 
-        #Crop the top of the sprite
-        while size_y > 1 and not any(data[line_size * top + trans_offset : line_size * (top+1) : bpp]):
+        # Crop the top of the sprite
+        while size_y > 1 and not any(data[line_size * top + trans_offset : line_size * (top + 1) : bpp]):
             top += 1
             size_y -= 1
 
-        #Crop the bottom of the sprite
-        while size_y > 1 and not any(data[data_size - line_size * (bottom+1) + trans_offset : data_size - line_size * bottom : bpp]):
+        # Crop the bottom of the sprite
+        while size_y > 1 and not any(
+            data[data_size - line_size * (bottom + 1) + trans_offset : data_size - line_size * bottom : bpp]
+        ):
             # Don't use negative indexing, it breaks for the last line (where you'd need index 0)
             bottom += 1
             size_y -= 1
 
-        #Modify data by removing top/bottom
+        # Modify data by removing top/bottom
         data = data[line_size * top : data_size - line_size * bottom]
 
-        #Crop the left of the sprite
-        while size_x > 1 and not any(data[left * bpp + trans_offset : : line_size]):
+        # Crop the left of the sprite
+        while size_x > 1 and not any(data[left * bpp + trans_offset :: line_size]):
             left += 1
             size_x -= 1
 
-        #Crop the right of the sprite
-        while size_x > 1 and not any(data[line_size - (right+1) * bpp + trans_offset : : line_size]):
+        # Crop the right of the sprite
+        while size_x > 1 and not any(data[line_size - (right + 1) * bpp + trans_offset :: line_size]):
             right += 1
             size_x -= 1
 
-        #Removing left/right data is not easily done by slicing
-        #Best to create a new array
+        # Removing left/right data is not easily done by slicing
+        # Best to create a new array
         if left + right > 0:
-            new_data = array.array('B')
+            new_data = array.array("B")
             for y in range(0, size_y):
-                a = data[y*line_size + left*bpp : (y+1)*line_size - right*bpp]
+                a = data[y * line_size + left * bpp : (y + 1) * line_size - right * bpp]
                 new_data.extend(a)
             data = new_data
 
@@ -497,4 +529,3 @@ class SpriteEncoder:
             return sprite_str.translate(real_sprite.translate_w2d)
         else:
             return sprite_str
-

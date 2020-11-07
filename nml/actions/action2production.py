@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml.actions import action2, action2var, action6, actionD
 from nml import expression, nmlop, global_constants, generic
 
+
 class Action2Production(action2.Action2):
     """
     Class corresponding to Action2Industries (=production CB)
@@ -32,6 +33,7 @@ class Action2Production(action2.Action2):
     @ivar again: Number (v0) or register (v1), production CB will be run again if nonzero.
     @type again C{int} or L{VarAction2Var}
     """
+
     def __init__(self, name, pos, version, sub_in, add_out, again):
         action2.Action2.__init__(self, 0x0A, name, pos)
         self.version = version
@@ -58,7 +60,8 @@ class Action2Production(action2.Action2):
             file.print_bytex(self.version)
             values = self.sub_in + self.add_out + [self.again]
             # Read register numbers if needed
-            if self.version == 1: values = [val.parameter for val in values]
+            if self.version == 1:
+                values = [val.parameter for val in values]
 
             for val in values[:-1]:
                 file.print_varx(val, cargo_size)
@@ -79,8 +82,13 @@ class Action2Production(action2.Action2):
         file.newline()
         file.end_sprite()
 
+
 def resolve_prodcb_register(param, varact2parser):
-    if isinstance(param, expression.StorageOp) and param.name == 'LOAD_TEMP' and isinstance(param.register, expression.ConstantNumeric):
+    if (
+        isinstance(param, expression.StorageOp)
+        and param.name == "LOAD_TEMP"
+        and isinstance(param.register, expression.ConstantNumeric)
+    ):
         # We can load a register directly
         res = action2var.VarAction2Var(0x7D, 0, 0xFFFFFFFF, param.register.value)
     else:
@@ -92,8 +100,9 @@ def resolve_prodcb_register(param, varact2parser):
         res = action2var.VarAction2LoadTempVar(store_tmp)
         varact2parser.var_list.append(nmlop.STO_TMP)
         varact2parser.var_list.append(store_tmp)
-        varact2parser.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
+        varact2parser.var_list_size += store_tmp.get_size() + 1  # Add 1 for operator
     return res
+
 
 def finish_production_actions(produce, prod_action, action_list, varact2parser):
     action_list.append(prod_action)
@@ -102,17 +111,20 @@ def finish_production_actions(produce, prod_action, action_list, varact2parser):
         produce.set_action2(prod_action, 0x0A)
     else:
         # Create intermediate varaction2
-        varaction2 = action2var.Action2Var(0x0A, '{}@registers'.format(produce.name.value), produce.pos, 0x89)
+        varaction2 = action2var.Action2Var(0x0A, "{}@registers".format(produce.name.value), produce.pos, 0x89)
         varaction2.var_list = varact2parser.var_list
         action_list.extend(varact2parser.extra_actions)
         extra_act6 = action6.Action6()
         for mod in varact2parser.mods:
             extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
-        if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
+        if len(extra_act6.modifications) > 0:
+            action_list.append(extra_act6)
         ref = expression.SpriteGroupRef(produce.name, [], None, prod_action)
-        varaction2.ranges.append(action2var.VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, ''))
+        varaction2.ranges.append(
+            action2var.VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, "")
+        )
         varaction2.default_result = ref
-        varaction2.default_comment = ''
+        varaction2.default_comment = ""
 
         # Add two references (default + range)
         action2.add_ref(ref, varaction2)
@@ -123,6 +135,7 @@ def finish_production_actions(produce, prod_action, action_list, varact2parser):
     action6.free_parameters.restore()
 
     return action_list
+
 
 def get_production_actions(produce):
     """
@@ -148,10 +161,14 @@ def get_production_actions(produce):
         for i, param in enumerate(produce.param_list):
             result_list.append(resolve_prodcb_register(param, varact2parser))
 
-    if len(act6.modifications) > 0: action_list.append(act6)
-    prod_action = Action2Production(produce.name.value, produce.pos, version, result_list[0:3], result_list[3:5], result_list[5])
+    if len(act6.modifications) > 0:
+        action_list.append(act6)
+    prod_action = Action2Production(
+        produce.name.value, produce.pos, version, result_list[0:3], result_list[3:5], result_list[5]
+    )
 
     return finish_production_actions(produce, prod_action, action_list, varact2parser)
+
 
 def get_production_v2_actions(produce):
     """
@@ -181,6 +198,7 @@ def get_production_v2_actions(produce):
 
     return finish_production_actions(produce, prod_action, action_list, varact2parser)
 
+
 def make_empty_production_action2(pos):
     """
     Make an empty production action2
@@ -193,4 +211,3 @@ def make_empty_production_action2(pos):
     @rtype: L{Action2Production}
     """
     return Action2Production("@CB_FAILED_PROD", pos, 0, [0, 0, 0], [0, 0], 0)
-

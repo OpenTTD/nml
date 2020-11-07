@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import grfstrings
 from nml.actions import base_action
 
+
 class Action8(base_action.BaseAction):
     def __init__(self, grfid, name, description):
         self.grfid = grfid

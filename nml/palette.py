@@ -296,11 +296,13 @@ palette_data = [bytes(pal) for pal in raw_palette_data]
 
 palette_name = ["DEFAULT", "LEGACY", "DEFAULT_TOYLAND", "LEGACY_TOYLAND"]
 
+
 def validate_palette(image, filename):
     palette = image.palette.palette
     if len(palette) != 768:
         raise generic.ImageError("Invalid palette; does not contain 256 entries.", filename)
     for i, pal in enumerate(palette_data):
-        if pal != palette: continue
+        if pal != palette:
+            continue
         return palette_name[i]
     raise generic.ImageError("Palette is not recognized as a valid palette.", filename)

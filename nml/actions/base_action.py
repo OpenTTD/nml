@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+
 class BaseAction:
     def prepare_output(self, sprite_num):
         """
@@ -32,7 +33,7 @@ class BaseAction:
         @param file: The outputfile to write the data to.
         @type  file: L{SpriteOutputBase}
         """
-        raise NotImplementedError('write is not implemented in {!r}'.format(type(self)))
+        raise NotImplementedError("write is not implemented in {!r}".format(type(self)))
 
     def skip_action7(self):
         """

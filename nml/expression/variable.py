@@ -16,8 +16,9 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from .base_expression import Type, Expression, ConstantNumeric
 
+
 class Variable(Expression):
-    def __init__(self, num, shift = None, mask = None, param = None, pos = None):
+    def __init__(self, num, shift=None, mask=None, param=None, pos=None):
         Expression.__init__(self, pos)
         self.num = num
         self.shift = shift if shift is not None else ConstantNumeric(0)
@@ -29,40 +30,44 @@ class Variable(Expression):
         self.extra_params = []
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Action2 variable')
+        generic.print_dbg(indentation, "Action2 variable")
         self.num.debug_print(indentation + 2)
         if self.param is not None:
-            generic.print_dbg(indentation + 2, 'Parameter:')
+            generic.print_dbg(indentation + 2, "Parameter:")
             if isinstance(self.param, str):
-                generic.print_dbg(indentation + 4, 'Procedure call:', self.param)
+                generic.print_dbg(indentation + 4, "Procedure call:", self.param)
             else:
                 self.param.debug_print(indentation + 4)
             if len(self.extra_params) > 0:
-                generic.print_dbg(indentation + 2, 'Extra parameters:')
+                generic.print_dbg(indentation + 2, "Extra parameters:")
             for extra_param in self.extra_params:
                 extra_param.debug_print(indentation + 4)
 
     def __str__(self):
         num = "0x{:02X}".format(self.num.value) if isinstance(self.num, ConstantNumeric) else str(self.num)
-        ret = 'var[{}, {}, {}'.format(num, self.shift, self.mask)
+        ret = "var[{}, {}, {}".format(num, self.shift, self.mask)
         if self.param is not None:
-            ret += ', {}'.format(self.param)
-        ret += ']'
+            ret += ", {}".format(self.param)
+        ret += "]"
         if self.add is not None:
-            ret = '({} + {})'.format(ret, self.add)
+            ret = "({} + {})".format(ret, self.add)
         if self.div is not None:
-            ret = '({} / {})'.format(ret, self.div)
+            ret = "({} / {})".format(ret, self.div)
         if self.mod is not None:
-            ret = '({} % {})'.format(ret, self.mod)
+            ret = "({} % {})".format(ret, self.mod)
         return ret
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         num = self.num.reduce(id_dicts)
         shift = self.shift.reduce(id_dicts)
         mask = self.mask.reduce(id_dicts)
         param = self.param.reduce(id_dicts) if self.param is not None else None
-        if num.type() != Type.INTEGER or shift.type() != Type.INTEGER or mask.type() != Type.INTEGER or \
-                (param is not None and param.type() != Type.INTEGER):
+        if (
+            num.type() != Type.INTEGER
+            or shift.type() != Type.INTEGER
+            or mask.type() != Type.INTEGER
+            or (param is not None and param.type() != Type.INTEGER)
+        ):
             raise generic.ScriptError("All parts of a variable access must be integers.", self.pos)
         var = Variable(num, shift, mask, param, self.pos)
         var.add = None if self.add is None else self.add.reduce(id_dicts)
@@ -77,7 +82,9 @@ class Variable(Expression):
     def supported_by_actionD(self, raise_error):
         if raise_error:
             if isinstance(self.num, ConstantNumeric):
-                if self.num.value == 0x7C: raise generic.ScriptError("LOAD_PERM is only available in switch-blocks.", self.pos)
-                if self.num.value == 0x7D: raise generic.ScriptError("LOAD_TEMP is only available in switch-blocks.", self.pos)
+                if self.num.value == 0x7C:
+                    raise generic.ScriptError("LOAD_PERM is only available in switch-blocks.", self.pos)
+                if self.num.value == 0x7D:
+                    raise generic.ScriptError("LOAD_TEMP is only available in switch-blocks.", self.pos)
             raise generic.ScriptError("Variable accesses are not supported outside of switch-blocks.", self.pos)
         return False

@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 # Available units, mapping of unit name to L{Unit} objects.
 units = {}
 
+
 def get_unit(name):
     """
     Get a unit by name.
@@ -91,31 +92,32 @@ def add_unit(name, type, convert, ottd_mul, ottd_shift):
     unit = Unit(name, type, convert, ottd_mul, ottd_shift)
     units[name] = unit
 
-#          name       type     convert      mul  shift
-add_unit('nfo',        'nfo',            1,    1,  0) #don't convert, take value literal
-
-#Speed (reference: m/s)
-#          name       type     convert      mul  shift
-add_unit(  'mph',    'speed', (3125, 1397),    1,  0)
-add_unit( 'km/h',    'speed', (  18,    5),  103,  6)
-add_unit(  'm/s',    'speed',            1, 1831, 12)
-
-#Power (reference: hpI (imperial hp))
 
 #          name       type     convert      mul  shift
-add_unit(   'hp',    'power',            1,    1,  0) # Default to imperial hp
-add_unit(   'kW',    'power', (2211, 2965), 6109, 13)
-add_unit(  'hpM',    'power', ( 731,  721), 4153, 12)
-add_unit(  'hpI',    'power',            1,    1,  0)
+add_unit("nfo", "nfo", 1, 1, 0)  # don't convert, take value literal
 
-#Weight (reference: ton)
+# Speed (reference: m/s)
+#          name       type     convert      mul  shift
+add_unit("mph", "speed", (3125, 1397), 1, 0)
+add_unit("km/h", "speed", (18, 5), 103, 6)
+add_unit("m/s", "speed", 1, 1831, 12)
+
+# Power (reference: hpI (imperial hp))
 
 #          name       type     convert      mul  shift
-add_unit(  'ton',   'weight',            1,    1,  0)
-add_unit( 'tons',   'weight',            1,    1,  0)
-add_unit(   'kg',   'weight',         1000, 1000,  0)
+add_unit("hp", "power", 1, 1, 0)  # Default to imperial hp
+add_unit("kW", "power", (2211, 2965), 6109, 13)
+add_unit("hpM", "power", (731, 721), 4153, 12)
+add_unit("hpI", "power", 1, 1, 0)
 
-#Snowline height
+# Weight (reference: ton)
 
 #          name       type     convert      mul  shift
-add_unit('snow%', 'snowline', ( 255,  100),    1,  0)
+add_unit("ton", "weight", 1, 1, 0)
+add_unit("tons", "weight", 1, 1, 0)
+add_unit("kg", "weight", 1000, 1000, 0)
+
+# Snowline height
+
+#          name       type     convert      mul  shift
+add_unit("snow%", "snowline", (255, 100), 1, 0)

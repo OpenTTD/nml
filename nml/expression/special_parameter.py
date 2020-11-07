@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from .base_expression import Expression
 
+
 class SpecialParameter(Expression):
     """
     Class for handling special grf parameters.
@@ -49,7 +50,7 @@ class SpecialParameter(Expression):
     @type is_bool: C{bool}
     """
 
-    def __init__(self, name, info, write_func, read_func, is_bool, pos = None):
+    def __init__(self, name, info, write_func, read_func, is_bool, pos=None):
         Expression.__init__(self, pos)
         self.name = name
         self.info = info
@@ -63,7 +64,7 @@ class SpecialParameter(Expression):
     def __str__(self):
         return self.name
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         return self
 
     def is_boolean(self):

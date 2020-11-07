@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
+
 class FreeNumberList:
     """
     Contains a list with numbers and functions to pop one number from the list,
@@ -49,6 +50,7 @@ class FreeNumberList:
         available when it is requested via pop_unique().
     @type exception_unique: C{str}
     """
+
     def __init__(self, free_numbers, exception, exception_unique):
         self.total_amount = len(free_numbers)
         self.stats = (0, None)
@@ -106,7 +108,8 @@ class FreeNumberList:
         @return: A unique free number.
         """
         for num in reversed(self.free_numbers):
-            if num in self.used_numbers: continue
+            if num in self.used_numbers:
+                continue
             self.free_numbers.remove(num)
             self.used_numbers.add(num)
 
