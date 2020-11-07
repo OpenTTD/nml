@@ -38,14 +38,24 @@ The 2nd field of type L{Position} contains a positional reference to the spriteg
 """
 a2register_stats = (0, None)
 
+
 def print_stats():
     """
     Print statistics about used ids.
     """
     if spritegroup_stats[0] > 0:
-        generic.print_info("Concurrent spritegroups: {}/{} ({})".format(spritegroup_stats[0], total_action2_ids, str(spritegroup_stats[1])))
+        generic.print_info(
+            "Concurrent spritegroups: {}/{} ({})".format(
+                spritegroup_stats[0], total_action2_ids, str(spritegroup_stats[1])
+            )
+        )
     if a2register_stats[0] > 0:
-        generic.print_info("Concurrent Action2 registers: {}/{} ({})".format(a2register_stats[0], total_tmp_locations, str(a2register_stats[1])))
+        generic.print_info(
+            "Concurrent Action2 registers: {}/{} ({})".format(
+                a2register_stats[0], total_tmp_locations, str(a2register_stats[1])
+            )
+        )
+
 
 class Action2(base_action.BaseAction):
     """
@@ -73,6 +83,7 @@ class Action2(base_action.BaseAction):
                          to be used in this varaction2.
     @type tmp_locations: C{list} of C{int}
     """
+
     def __init__(self, feature, name, pos):
         self.feature = feature
         self.name = name
@@ -80,10 +91,10 @@ class Action2(base_action.BaseAction):
         self.num_refs = 0
         self.id = None
         self.references = []
-        #0x00 - 0x7F: available to user
-        #0x80 - 0xFE: used by NML
-        #0xFF: Used for some house variables
-        #0x100 - 0x10F: Special meaning (used for some CB results)
+        # 0x00 - 0x7F: available to user
+        # 0x80 - 0xFE: used by NML
+        # 0xFF: Used for some house variables
+        # 0x100 - 0x10F: Special meaning (used for some CB results)
         self.tmp_locations = list(range(0x80, 0x80 + total_tmp_locations))
 
     def prepare_output(self, sprite_num):
@@ -103,7 +114,7 @@ class Action2(base_action.BaseAction):
             raise generic.ScriptError(
                 "Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block."
                 " Try reducing the number of such blocks.",
-                self.pos
+                self.pos,
             )
 
     def write_sprite_start(self, file, size, extra_comment=None):
@@ -153,6 +164,7 @@ class Action2(base_action.BaseAction):
             if force_recursive or act2_ref.is_proc:
                 act2_ref.action2.remove_tmp_location(location, True)
 
+
 class Action2Reference:
     """
     Container class to store information about an action2 reference
@@ -163,11 +175,13 @@ class Action2Reference:
     @ivar is_proc: Whether this reference is made because of a procedure call
     @type is_proc: C{bool}
     """
+
     def __init__(self, action2, is_proc):
         self.action2 = action2
         self.is_proc = is_proc
 
-def add_ref(ref, source_action, reference_as_proc = False):
+
+def add_ref(ref, source_action, reference_as_proc=False):
     """
     Add a reference to a certain action2.
     This is needed so we can correctly reserve / free action2 IDs later on.
@@ -189,6 +203,7 @@ def add_ref(ref, source_action, reference_as_proc = False):
     source_action.references.append(Action2Reference(act2, reference_as_proc))
     act2.num_refs += 1
 
+
 def free_references(source_action):
     """
     Free all references to other action2s from a certain action 2/3
@@ -199,7 +214,9 @@ def free_references(source_action):
     for act2_ref in source_action.references:
         act2 = act2_ref.action2
         act2.num_refs -= 1
-        if act2.num_refs == 0: free_action2_ids.append(act2.id)
+        if act2.num_refs == 0:
+            free_action2_ids.append(act2.id)
+
 
 # Features using sprite groups directly: vehicles, canals, cargos, railtypes, airports, roadtypes, tramtypes
 features_sprite_group = [0x00, 0x01, 0x02, 0x03, 0x05, 0x0B, 0x0D, 0x10, 0x12, 0x13]
@@ -208,7 +225,8 @@ features_sprite_layout = [0x04, 0x07, 0x09, 0x0F, 0x11]
 # All features that need sprite sets
 features_sprite_set = features_sprite_group + features_sprite_layout
 
-def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explicit_feature, cls_is_relocatable = False):
+
+def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explicit_feature, cls_is_relocatable=False):
     """
     Metaclass factory which makes base classes for all nodes 'Action 2 graph'
     This graph is made up of all blocks that are eventually compiled to Action2,
@@ -234,7 +252,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
     @rtype: C{type}
     """
 
-    #without either references or an explicit feature, we have nothing to base our feature on
+    # without either references or an explicit feature, we have nothing to base our feature on
     assert cls_is_referenced or cls_has_explicit_feature
 
     class ASTSpriteGroup(base_statement.BaseStatement):
@@ -273,16 +291,21 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
         @ivar used_sprite_sets: List of sprite sets used by this node
         @type used_sprite_sets: C{list} of L{SpriteSet}
         """
+
         def __init__(self):
             """
             Subclasses should implement their own __init__ method.
             This method should not be called, because calling a method on a meta class can be troublesome.
             Instead, call initialize(..).
             """
-            raise NotImplementedError(('__init__ must be implemented in ASTSpriteGroup-subclass {!r},'
-                                       ' initialize(..) should be called instead').format(type(self)))
+            raise NotImplementedError(
+                (
+                    "__init__ must be implemented in ASTSpriteGroup-subclass {!r},"
+                    " initialize(..) should be called instead"
+                ).format(type(self))
+            )
 
-        def initialize(self, name = None, feature = None, num_params = 0):
+        def initialize(self, name=None, feature=None, num_params=0):
             """
             Initialize this instance.
             This function is generally, but not necessarily, called from the child class' constructor.
@@ -331,7 +354,8 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             @return: True iff parsing of this node is needed
             @rtype: C{bool}
             """
-            if not cls_is_referenced: return True
+            if not cls_is_referenced:
+                return True
             if not self._prepared:
                 self._prepared = True
                 # copy, since we're going to modify
@@ -348,9 +372,11 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                     for n in self._referencing_nodes:
                         if n.feature_set != self.feature_set:
                             msg = "Cannot refer to block '{}' with feature '{}', expected feature is '{}'"
-                            msg = msg.format(self.name.value,
-                                    general.feature_name(next(iter(self.feature_set))),
-                                    general.feature_name(n.feature_set.difference(self.feature_set).pop()))
+                            msg = msg.format(
+                                self.name.value,
+                                general.feature_name(next(iter(self.feature_set))),
+                                general.feature_name(n.feature_set.difference(self.feature_set).pop()),
+                            )
                             raise generic.ScriptError(msg, n.pos)
 
                 elif len(self._referencing_nodes) != 0:
@@ -393,7 +419,9 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             @return: A collection containing all links to other nodes.
             @rtype: C{iterable} of L{SpriteGroupRef}
             """
-            raise NotImplementedError('collect_references must be implemented in ASTSpriteGroup-subclass {!r}'.format(type(self)))
+            raise NotImplementedError(
+                "collect_references must be implemented in ASTSpriteGroup-subclass {!r}".format(type(self))
+            )
 
         def set_action2(self, action2, feature):
             """
@@ -441,7 +469,8 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             @type target_ref: L{SpriteGroupRef}
             """
 
-            if target_ref.name.value == "CB_FAILED": return
+            if target_ref.name.value == "CB_FAILED":
+                return
 
             target = resolve_spritegroup(target_ref.name)
             if target.is_spriteset():
@@ -449,7 +478,12 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                 # Referencing a spriteset directly from graphics/[random]switch
                 # Passing parameters is not possible here
                 if len(target_ref.param_list) != 0:
-                    raise generic.ScriptError("Passing parameters to '{}' is only possible from a spritelayout.".format(target_ref.name.value), target_ref.pos)
+                    raise generic.ScriptError(
+                        "Passing parameters to '{}' is only possible from a spritelayout.".format(
+                            target_ref.name.value
+                        ),
+                        target_ref.pos,
+                    )
 
                 self.used_sprite_sets.append(target)
             else:
@@ -473,7 +507,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             self._referenced_nodes.remove(target)
             target._referencing_nodes.remove(self)
 
-        #Make metaclass arguments available outside of the class
+        # Make metaclass arguments available outside of the class
         def is_spriteset(self):
             return cls_is_spriteset
 
@@ -482,8 +516,10 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
 
     return ASTSpriteGroup
 
-#list of all registered sprite sets and sprite groups
+
+# list of all registered sprite sets and sprite groups
 spritegroup_list = {}
+
 
 def register_spritegroup(spritegroup):
     """
@@ -498,6 +534,7 @@ def register_spritegroup(spritegroup):
     spritegroup_list[name] = spritegroup
     nml.global_constants.spritegroups[name] = name
 
+
 def resolve_spritegroup(name):
     """
     Resolve a sprite group with a given name
@@ -511,4 +548,3 @@ def resolve_spritegroup(name):
     if name.value not in spritegroup_list:
         raise generic.ScriptError("Unknown identifier encountered: '{}'".format(name.value), name.pos)
     return spritegroup_list[name.value]
-

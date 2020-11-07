@@ -18,6 +18,7 @@ from nml.ast import assignment
 from nml.actions import action0
 from nml.ast import base_statement
 
+
 class BaseTracktypeTable(base_statement.BaseStatement):
     """Base class for RailtypeTable, RoadtypeTable etc."""
 
@@ -37,13 +38,17 @@ class BaseTracktypeTable(base_statement.BaseStatement):
                         val_list.append(expression.StringLiteral(rt.value, rt.pos))
                     else:
                         val_list.append(rt)
-                    expression.parse_string_to_dword(val_list[-1]) # we don't care about the result, only validate the input
+                    expression.parse_string_to_dword(
+                        val_list[-1]
+                    )  # we don't care about the result, only validate the input
                 self.tracktype_list[i] = val_list if len(val_list) > 1 else val_list[0]
             else:
                 name = tracktype
                 if isinstance(tracktype, expression.Identifier):
                     self.tracktype_list[i] = expression.StringLiteral(tracktype.value, tracktype.pos)
-                expression.parse_string_to_dword(self.tracktype_list[i]) # we don't care about the result, only validate the input
+                expression.parse_string_to_dword(
+                    self.tracktype_list[i]
+                )  # we don't care about the result, only validate the input
             self.tracktype_table[name.value] = i
 
     def pre_process(self):
@@ -53,14 +58,16 @@ class BaseTracktypeTable(base_statement.BaseStatement):
         generic.print_dbg(indentation, self.track_kind.title() + "type table")
         for tracktype in self.tracktype_list:
             if isinstance(tracktype, assignment.Assignment):
-                generic.print_dbg(indentation + 2, self.track_kind.title() + ':', tracktype.name.value)
+                generic.print_dbg(indentation + 2, self.track_kind.title() + ":", tracktype.name.value)
                 for v in tracktype.value:
                     generic.print_dbg(indentation + 4, "Try:", v.value)
             else:
-                generic.print_dbg(indentation + 2, self.track_kind.title() + ':', tracktype.value)
+                generic.print_dbg(indentation + 2, self.track_kind.title() + ":", tracktype.value)
 
     def get_action_list(self):
-        return action0.get_tracktypelist_action(self.table_prop_id, self.cond_tracktype_not_defined, self.tracktype_list)
+        return action0.get_tracktypelist_action(
+            self.table_prop_id, self.cond_tracktype_not_defined, self.tracktype_list
+        )
 
     def __str__(self):
         lines = []
@@ -71,14 +78,14 @@ class BaseTracktypeTable(base_statement.BaseStatement):
             else:
                 lines.append(expression.identifier_to_print(tracktype.value))
 
-        ret = self.track_kind + 'typetable {\n    '
-        ret += ', '.join(lines)
-        ret += '\n}\n'
+        ret = self.track_kind + "typetable {\n    "
+        ret += ", ".join(lines)
+        ret += "\n}\n"
         return ret
 
 
 class RailtypeTable(BaseTracktypeTable):
-    track_kind = 'rail'
+    track_kind = "rail"
     tracktype_table = global_constants.railtype_table
     table_prop_id = 0x12
     cond_tracktype_not_defined = 0x0D
@@ -89,7 +96,7 @@ class RailtypeTable(BaseTracktypeTable):
 
 
 class RoadtypeTable(BaseTracktypeTable):
-    track_kind = 'road'
+    track_kind = "road"
     tracktype_table = global_constants.roadtype_table
     table_prop_id = 0x16
     cond_tracktype_not_defined = 0x0F
@@ -100,7 +107,7 @@ class RoadtypeTable(BaseTracktypeTable):
 
 
 class TramtypeTable(BaseTracktypeTable):
-    track_kind = 'tram'
+    track_kind = "tram"
     tracktype_table = global_constants.tramtype_table
     table_prop_id = 0x17
     cond_tracktype_not_defined = 0x11

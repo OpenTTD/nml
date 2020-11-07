@@ -18,6 +18,7 @@ from nml.actions import base_action, action6
 from nml.ast import base_statement
 import nml
 
+
 class ActionD(base_action.BaseAction):
     """
     ActionD class
@@ -40,7 +41,8 @@ class ActionD(base_action.BaseAction):
                     if the parameter number is 0xFF. None if n/a.
     @type data: L{ConstantNumeric} or C{None}
     """
-    def __init__(self, target, param1, op, param2, data = None):
+
+    def __init__(self, target, param1, op, param2, data=None):
         self.target = target
         self.param1 = param1
         self.op = op
@@ -49,9 +51,10 @@ class ActionD(base_action.BaseAction):
 
     def write(self, file):
         size = 5
-        if self.data is not None: size += 4
+        if self.data is not None:
+            size += 4
 
-        #print the statement for easier debugging
+        # print the statement for easier debugging
         str1 = "param[{}]".format(self.param1) if self.param1.value != 0xFF else str(self.data)
         str2 = "param[{}]".format(self.param2) if self.param2.value != 0xFF else str(self.data)
         str_total = self.op.to_string(str1, str2) if self.op != nmlop.ASSIGN else str1
@@ -63,12 +66,14 @@ class ActionD(base_action.BaseAction):
         file.print_bytex(self.op.actd_num, self.op.actd_str)
         self.param1.write(file, 1)
         self.param2.write(file, 1)
-        if self.data is not None: self.data.write(file, 4)
+        if self.data is not None:
+            self.data.write(file, 4)
         file.newline()
         file.end_sprite()
 
     def skip_action7(self):
         return False
+
 
 class ParameterAssignment(base_statement.BaseStatement):
     """
@@ -81,6 +86,7 @@ class ParameterAssignment(base_statement.BaseStatement):
     @ivar value: Value to assign to this parameter
     @type value: L{Expression}
     """
+
     def __init__(self, param, value):
         base_statement.BaseStatement.__init__(self, "parameter assignment", param.pos)
         self.param = param
@@ -89,13 +95,17 @@ class ParameterAssignment(base_statement.BaseStatement):
     def pre_process(self):
         self.value = self.value.reduce(global_constants.const_list)
 
-        self.param = self.param.reduce(global_constants.const_list, unknown_id_fatal = False)
+        self.param = self.param.reduce(global_constants.const_list, unknown_id_fatal=False)
         if isinstance(self.param, expression.SpecialParameter):
             if not self.param.can_assign():
-                raise generic.ScriptError("Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos)
+                raise generic.ScriptError(
+                    "Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos
+                )
         elif isinstance(self.param, expression.Identifier):
             if global_constants.identifier_refcount[self.param.value] == 0:
-                generic.print_warning("Named parameter '{}' is not referenced, ignoring.".format(self.param.value), self.param.pos)
+                generic.print_warning(
+                    "Named parameter '{}' is not referenced, ignoring.".format(self.param.value), self.param.pos
+                )
                 return
             num = action6.free_parameters.pop_unique(self.pos)
             global_constants.named_parameters[self.param.value] = num
@@ -103,7 +113,7 @@ class ParameterAssignment(base_statement.BaseStatement):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Parameter assignment')
+        generic.print_dbg(indentation, "Parameter assignment")
         self.param.debug_print(indentation + 2)
         self.value.debug_print(indentation + 2)
 
@@ -111,23 +121,27 @@ class ParameterAssignment(base_statement.BaseStatement):
         return parse_actionD(self)
 
     def __str__(self):
-        return '{} = {};\n'.format(self.param, self.value)
+        return "{} = {};\n".format(self.param, self.value)
 
-#prevent evaluating common sub-expressions multiple times
+
+# prevent evaluating common sub-expressions multiple times
 def parse_subexpression(expr, action_list):
-    if isinstance(expr, expression.ConstantNumeric) or \
-            (isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric)):
+    if isinstance(expr, expression.ConstantNumeric) or (
+        isinstance(expr, expression.Parameter) and isinstance(expr.num, expression.ConstantNumeric)
+    ):
         return expr
     else:
         tmp_param, tmp_param_actions = get_tmp_parameter(expr)
         action_list.extend(tmp_param_actions)
         return expression.Parameter(expression.ConstantNumeric(tmp_param))
 
-#returns a (param_num, action_list) tuple.
+
+# returns a (param_num, action_list) tuple.
 def get_tmp_parameter(expr):
     param = action6.free_parameters.pop(expr.pos)
     actions = parse_actionD(ParameterAssignment(expression.Parameter(expression.ConstantNumeric(param)), expr))
     return (param, actions)
+
 
 def write_action_value(expr, action_list, act6, offset, size):
     """
@@ -166,12 +180,16 @@ def write_action_value(expr, action_list, act6, offset, size):
         result = expression.ConstantNumeric(0)
     return result, offset + size
 
+
 def parse_ternary_op(assignment):
     assert isinstance(assignment.value, expression.TernaryOp)
     actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr2))
-    cond_block = nml.ast.conditional.Conditional(assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)], None)
+    cond_block = nml.ast.conditional.Conditional(
+        assignment.value.guard, [ParameterAssignment(assignment.param, assignment.value.expr1)], None
+    )
     actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
     return actions
+
 
 def parse_special_check(assignment):
     check = assignment.value
@@ -189,6 +207,7 @@ def parse_special_check(assignment):
 
     actions.extend(parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(check.results[1]))))
     return actions
+
 
 def parse_grm(assignment):
     assert isinstance(assignment.value, expression.GRMOp)
@@ -212,39 +231,52 @@ def parse_grm(assignment):
     param2 = expression.ConstantNumeric(0xFE)
     data = expression.ConstantNumeric(0xFF | (assignment.value.feature << 8) | (assignment.value.count << 16))
 
-    if len(act6.modifications) > 0: action_list.append(act6)
+    if len(act6.modifications) > 0:
+        action_list.append(act6)
 
     action_list.append(ActionD(target, param1, op, param2, data))
     action6.free_parameters.restore()
     return action_list
 
+
 def parse_hasbit(assignment):
-    assert isinstance(assignment.value, expression.BinOp) and (assignment.value.op == nmlop.HASBIT or assignment.value.op == nmlop.NOTHASBIT)
+    assert isinstance(assignment.value, expression.BinOp) and (
+        assignment.value.op == nmlop.HASBIT or assignment.value.op == nmlop.NOTHASBIT
+    )
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
-    cond_block = nml.ast.conditional.Conditional(assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None)
+    cond_block = nml.ast.conditional.Conditional(
+        assignment.value, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None
+    )
     actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
     return actions
 
+
 def parse_min_max(assignment):
     assert isinstance(assignment.value, expression.BinOp) and assignment.value.op in (nmlop.MIN, nmlop.MAX)
-    #min(a, b) ==> a < b ? a : b.
-    #max(a, b) ==> a > b ? a : b.
+    # min(a, b) ==> a < b ? a : b.
+    # max(a, b) ==> a > b ? a : b.
     action6.free_parameters.save()
     action_list = []
     expr1 = parse_subexpression(assignment.value.expr1, action_list)
     expr2 = parse_subexpression(assignment.value.expr2, action_list)
     guard = expression.BinOp(nmlop.CMP_LT if assignment.value.op == nmlop.MIN else nmlop.CMP_GT, expr1, expr2)
-    action_list.extend(parse_actionD(ParameterAssignment(assignment.param, expression.TernaryOp(guard, expr1, expr2, None))))
+    action_list.extend(
+        parse_actionD(ParameterAssignment(assignment.param, expression.TernaryOp(guard, expr1, expr2, None)))
+    )
     action6.free_parameters.restore()
     return action_list
+
 
 def parse_boolean(assignment):
     assert isinstance(assignment.value, expression.Boolean)
     actions = parse_actionD(ParameterAssignment(assignment.param, expression.ConstantNumeric(0)))
     expr = nmlop.CMP_NEQ(assignment.value.expr, 0)
-    cond_block = nml.ast.conditional.Conditional(expr, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None)
+    cond_block = nml.ast.conditional.Conditional(
+        expr, [ParameterAssignment(assignment.param, expression.ConstantNumeric(1))], None
+    )
     actions.extend(nml.ast.conditional.ConditionalList([cond_block]).get_action_list())
     return actions
+
 
 def transform_bin_op(assignment):
     op = assignment.value.op
@@ -268,7 +300,7 @@ def transform_bin_op(assignment):
 
     if op == nmlop.CMP_LT:
         extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.SUB(expr1, expr2))))
-        op = nmlop.SHIFTU_LEFT #shift left by negative number = shift right
+        op = nmlop.SHIFTU_LEFT  # shift left by negative number = shift right
         expr1 = assignment.param
         expr2 = expression.ConstantNumeric(-31)
 
@@ -286,7 +318,9 @@ def transform_bin_op(assignment):
         # if A is equal to B
         extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.SUB(expr1, expr2))))
         # Clamp the value to 0/1, see above for details
-        extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.DIV(assignment.param, assignment.param))))
+        extra_actions.extend(
+            parse_actionD(ParameterAssignment(assignment.param, nmlop.DIV(assignment.param, assignment.param)))
+        )
         op = nmlop.SUB
         expr1 = expression.ConstantNumeric(1)
         expr2 = assignment.param
@@ -299,7 +333,7 @@ def transform_bin_op(assignment):
         op = nmlop.SHIFT_LEFT if op == nmlop.SHIFT_RIGHT else nmlop.SHIFTU_LEFT
 
     elif op == nmlop.XOR:
-        #a ^ b ==> (a | b) - (a & b)
+        # a ^ b ==> (a | b) - (a & b)
         expr1 = parse_subexpression(expr1, extra_actions)
         expr2 = parse_subexpression(expr2, extra_actions)
         tmp_param1, tmp_action_list1 = get_tmp_parameter(nmlop.OR(expr1, expr2))
@@ -312,6 +346,7 @@ def transform_bin_op(assignment):
 
     return op, expr1, expr2, extra_actions
 
+
 def parse_actionD(assignment):
     assignment.value.supported_by_actionD(True)
 
@@ -321,7 +356,9 @@ def parse_actionD(assignment):
         if global_constants.identifier_refcount[assignment.param.value] == 0:
             # Named parameter is not referenced, ignoring
             return []
-        assignment.param = expression.Parameter(expression.ConstantNumeric(global_constants.named_parameters[assignment.param.value]), assignment.param.pos)
+        assignment.param = expression.Parameter(
+            expression.ConstantNumeric(global_constants.named_parameters[assignment.param.value]), assignment.param.pos
+        )
     assert isinstance(assignment.param, expression.Parameter)
 
     if isinstance(assignment.value, expression.SpecialParameter):
@@ -369,7 +406,7 @@ def parse_actionD(assignment):
         action_list.extend(tmp_param_actions)
 
     data = None
-    #print assignment.value
+    # print assignment.value
     if isinstance(assignment.value, expression.ConstantNumeric):
         op = nmlop.ASSIGN
         param1 = expression.ConstantNumeric(0xFF)
@@ -428,9 +465,11 @@ def parse_actionD(assignment):
             action_list.extend(tmp_param_actions)
             param2 = expression.ConstantNumeric(tmp_param)
 
-    else: raise generic.ScriptError("Invalid expression in argument assignment", assignment.value.pos)
+    else:
+        raise generic.ScriptError("Invalid expression in argument assignment", assignment.value.pos)
 
-    if len(act6.modifications) > 0: action_list.append(act6)
+    if len(act6.modifications) > 0:
+        action_list.append(act6)
 
     action_list.append(ActionD(target, param1, op, param2, data))
     action6.free_parameters.restore()

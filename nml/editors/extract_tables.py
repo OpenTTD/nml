@@ -19,13 +19,13 @@ from nml.expression import functioncall
 from nml.actions import action0properties, action2layout, action2var_variables
 from nml.actions import action3_callbacks, action5, action12, actionB, real_sprite
 
-#Create list of blocks, functions and units
+# Create list of blocks, functions and units
 units = set(unit.units.keys())
 keywords = set(tokens.reserved.keys())
 functions = set(functioncall.function_table.keys())
 layouts = set(action2layout.layout_sprite_types.keys())
 
-#No easy way to get action14 stuff
+# No easy way to get action14 stuff
 temp1 = units | keywords | functions | layouts | set(["int", "bool"])
 block_names_table = sorted(temp1)
 
@@ -58,7 +58,8 @@ var_tables = [
     action2var_variables.varact2vars_tramtype,
     action2var_variables.varact2vars_airporttiles,
     action2var_variables.varact2vars60x_airporttiles,
-    action2var_variables.varact2vars_towns]
+    action2var_variables.varact2vars_towns,
+]
 
 variables = set()
 for d in var_tables:
@@ -81,7 +82,8 @@ prop_tables = [
     action0properties.properties[0x10],
     action0properties.properties[0x11],
     action0properties.properties[0x12],
-    action0properties.properties[0x13]]
+    action0properties.properties[0x13],
+]
 
 properties = set()
 for d in prop_tables:
@@ -108,28 +110,42 @@ cb_tables = [
     action3_callbacks.callbacks[0x10],
     action3_callbacks.callbacks[0x11],
     action3_callbacks.callbacks[0x12],
-    action3_callbacks.callbacks[0x13]]
+    action3_callbacks.callbacks[0x13],
+]
 
 callbacks = set()
 for d in cb_tables:
     for key in d.keys():
         callbacks.add(key)
 
-#No easy way to get action14 stuff
-act14_vars = set(["grfid", "name", "desc", "version", "min_compatible_version",
-                  "type", "bit", "min_value", "max_value", "def_value", "names"])
+# No easy way to get action14 stuff
+act14_vars = set(
+    [
+        "grfid",
+        "name",
+        "desc",
+        "version",
+        "min_compatible_version",
+        "type",
+        "bit",
+        "min_value",
+        "max_value",
+        "def_value",
+        "names",
+    ]
+)
 
 temp2 = variables | properties | layout_sprites | callbacks | act14_vars
 variables_names_table = sorted(temp2)
 
-#Create list of features
+# Create list of features
 features = set(general.feature_ids.keys())
 switch_names = set(switch.var_ranges.keys())
 
 temp3 = features | switch_names
 feature_names_table = sorted(temp3)
 
-#Create list of callbacks constants
+# Create list of callbacks constants
 const_tables = [
     global_constants.constant_numbers,
     global_constants.global_parameters,
@@ -139,19 +155,19 @@ const_tables = [
     global_constants.unified_maglev_var,
     global_constants.railtype_table,
     global_constants.roadtype_table,
-    global_constants.tramtype_table]
+    global_constants.tramtype_table,
+]
 
 constant_names = set()
 for d in const_tables:
     for key in d.keys():
         constant_names.add(key)
 
-act5_names  = set(action5.action5_table.keys())
-act12_names  = set(action12.font_sizes.keys())
-actB_names   = set(actionB.default_error_msg.keys()) | set(actionB.error_severity.keys())
+act5_names = set(action5.action5_table.keys())
+act12_names = set(action12.font_sizes.keys())
+actB_names = set(actionB.default_error_msg.keys()) | set(actionB.error_severity.keys())
 sprite_names = set(real_sprite.real_sprite_flags.keys())
-cost_names   = set(basecost.base_cost_table.keys())  | set(basecost.generic_base_costs)
+cost_names = set(basecost.base_cost_table.keys()) | set(basecost.generic_base_costs)
 
 temp4 = constant_names | act5_names | act12_names | actB_names | sprite_names | cost_names
 callback_names_table = sorted(temp4)
-

@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.actions import base_action
 
+
 class Action10(base_action.BaseAction):
     def __init__(self, label):
         self.label = label

@@ -22,6 +22,7 @@ This can be increased by switching to extended Action1.
 """
 max_sprite_block_size = 0xFF
 
+
 class Action1(base_action.BaseAction):
     """
     Class representing an Action1
@@ -35,13 +36,14 @@ class Action1(base_action.BaseAction):
     @ivar num_ent: Number of sprites per set (e.g. (usually) 8 for vehicles)
     @type num_ent: C{int}
     """
+
     def __init__(self, feature, num_sets, num_ent):
         self.feature = feature
         self.num_sets = num_sets
         self.num_ent = num_ent
 
     def write(self, file):
-        #<Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
+        # <Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
         file.start_sprite(6)
         file.print_bytex(1)
         file.print_bytex(self.feature)
@@ -49,6 +51,7 @@ class Action1(base_action.BaseAction):
         file.print_varx(self.num_ent, 3)
         file.newline()
         file.end_sprite()
+
 
 class SpritesetCollection(base_action.BaseAction):
     """
@@ -67,6 +70,7 @@ class SpritesetCollection(base_action.BaseAction):
                       range 0 .. len(spritesets) - 1.
     @type spritesets: C{dict} mapping L{SpriteSet} to C{int}.
     """
+
     def __init__(self, feature, num_sprites_per_spriteset):
         self.feature = feature
         self.num_sprites_per_spriteset = num_sprites_per_spriteset
@@ -146,12 +150,14 @@ class SpritesetCollection(base_action.BaseAction):
                     break
         return actions
 
+
 """
 Statistics about spritesets.
 The 1st field of type C{int} contains the largest block of consecutive spritesets.
 The 2nd field of type L{Position} contains a positional reference to the largest block of consecutive spritesets.
 """
 spriteset_stats = (0, None)
+
 
 def print_stats():
     """
@@ -160,7 +166,12 @@ def print_stats():
     if spriteset_stats[0] > 0:
         # NML uses as many concurrent spritesets as possible to prevent sprite duplication.
         # So, instead of the actual amount, we rather print the biggest unsplittable block, since that is what matters.
-        generic.print_info("Concurrent spritesets: {}/{} ({})".format(spriteset_stats[0], max_sprite_block_size, str(spriteset_stats[1])))
+        generic.print_info(
+            "Concurrent spritesets: {}/{} ({})".format(
+                spriteset_stats[0], max_sprite_block_size, str(spriteset_stats[1])
+            )
+        )
+
 
 """
 The collection which was previoulsy used. add_to_action1 will try to reuse this
@@ -169,6 +180,7 @@ as a spriteset with a different feature or amount of sprites is added a new
 collection will be created.
 """
 last_spriteset_collection = None
+
 
 def add_to_action1(spritesets, feature, pos):
     """
@@ -193,7 +205,9 @@ def add_to_action1(spritesets, feature, pos):
     setsize = len(real_sprite.parse_sprite_data(spritesets[0]))
     for spriteset in spritesets:
         if setsize != len(real_sprite.parse_sprite_data(spriteset)):
-            raise generic.ScriptError("Using spritesets with different sizes in a single sprite group / layout is not possible", pos)
+            raise generic.ScriptError(
+                "Using spritesets with different sizes in a single sprite group / layout is not possible", pos
+            )
 
     global spriteset_stats
     if spriteset_stats[0] < len(spritesets):
@@ -208,6 +222,7 @@ def add_to_action1(spritesets, feature, pos):
     last_spriteset_collection.add(spritesets)
 
     return actions
+
 
 def get_action1_index(spriteset):
     """
@@ -224,6 +239,7 @@ def get_action1_index(spriteset):
     """
     assert last_spriteset_collection is not None
     return last_spriteset_collection.get_index(spriteset)
+
 
 def make_cb_failure_action1(feature):
     """
@@ -243,5 +259,4 @@ def make_cb_failure_action1(feature):
     else:
         last_spriteset_collection = None
         actions = [Action1(feature, 1, 0)]
-    return (actions, 0) # Index is currently always 0, but will change with ext. A1
-
+    return (actions, 0)  # Index is currently always 0, but will change with ext. A1

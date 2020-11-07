@@ -19,6 +19,7 @@ Abstract base classes that implements common functionality for output classes
 import array
 import io
 
+
 class OutputBase:
     """
     Base class for output to a data file.
@@ -37,6 +38,7 @@ class OutputBase:
     @ivar file: Memory output file handle, if opened.
     @type file: C{file} or C{None}
     """
+
     def __init__(self, filename):
         self.filename = filename
         self.file = None
@@ -55,7 +57,6 @@ class OutputBase:
         @rtype: C{file}
         """
         raise NotImplementedError("Implement me in {}".format(type(self)))
-
 
     def assemble_file(self, real_file):
         """
@@ -117,6 +118,7 @@ class SpriteOutputBase(OutputBase):
     @ivar expected_count: Number of bytes expected in the current sprite.
     @type expected_count: C{int}
     """
+
     def __init__(self, filename):
         OutputBase.__init__(self, filename)
         self.in_sprite = False
@@ -140,7 +142,8 @@ class SpriteOutputBase(OutputBase):
         @precond: Must be outputting a sprite.
         """
         assert self.in_sprite
-        if -0x80 <= value < 0 : value += 0x100
+        if -0x80 <= value < 0:
+            value += 0x100
         assert value >= 0 and value <= 0xFF
         self.byte_count += 1
         return value
@@ -158,7 +161,8 @@ class SpriteOutputBase(OutputBase):
         @precond: Must be outputting a sprite.
         """
         assert self.in_sprite
-        if -0x8000 <= value < 0: value += 0x10000
+        if -0x8000 <= value < 0:
+            value += 0x10000
         assert value >= 0 and value <= 0xFFFF
         self.byte_count += 2
         return value
@@ -176,7 +180,8 @@ class SpriteOutputBase(OutputBase):
         @precond: Must be outputting a sprite.
         """
         assert self.in_sprite
-        if -0x80000000 <= value < 0: value += 0x100000000
+        if -0x80000000 <= value < 0:
+            value += 0x100000000
         assert value >= 0 and value <= 0xFFFFFFFF
         self.byte_count += 4
         return value
@@ -203,7 +208,7 @@ class SpriteOutputBase(OutputBase):
         else:
             assert False
 
-    def print_bytex(self, byte, pretty_print = None):
+    def print_bytex(self, byte, pretty_print=None):
         """
         Output an unsigned byte.
 
@@ -230,7 +235,7 @@ class SpriteOutputBase(OutputBase):
         """
         raise NotImplementedError("Implement print_dwordx() in {}".format(type(self)))
 
-    def newline(self, msg = "", prefix = "\t"):
+    def newline(self, msg="", prefix="\t"):
         """
         Output a line separator, prefixed with L{prefix}, C{"// "}, and the
         L{msg}, if the latter is not empty.
@@ -254,7 +259,6 @@ class SpriteOutputBase(OutputBase):
         """
         raise NotImplementedError("Implement comment() in {}".format(type(self)))
 
-
     def start_sprite(self, expected_size):
         """
         Note to the output stream that a sprite is about to be written.
@@ -276,13 +280,16 @@ class SpriteOutputBase(OutputBase):
         assert self.in_sprite
         self.in_sprite = False
         self.newline()
-        assert self.expected_count == self.byte_count, "Expected {:d} bytes to be written to sprite, got {:d}".format(self.expected_count, self.byte_count)
+        assert self.expected_count == self.byte_count, "Expected {:d} bytes to be written to sprite, got {:d}".format(
+            self.expected_count, self.byte_count
+        )
 
 
 class TextOutputBase(OutputBase):
     """
     Base class for textual output.
     """
+
     def __init__(self, filename):
         OutputBase.__init__(self, filename)
 
@@ -294,13 +301,14 @@ class BinaryOutputBase(SpriteOutputBase):
     """
     Class for binary output.
     """
+
     def __init__(self, filename):
         SpriteOutputBase.__init__(self, filename)
 
     def open(self):
-        self.file = array.array('B')
+        self.file = array.array("B")
 
-    def newline(self, msg = "", prefix = "\t"):
+    def newline(self, msg="", prefix="\t"):
         pass
 
     def print_data(self, data):
@@ -320,7 +328,7 @@ class BinaryOutputBase(SpriteOutputBase):
         value = self.prepare_byte(value)
         self.wb(value)
 
-    def print_bytex(self, value, pretty_print = None):
+    def print_bytex(self, value, pretty_print=None):
         self.print_byte(value)
 
     def print_word(self, value):

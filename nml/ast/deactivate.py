@@ -17,6 +17,7 @@ from nml.actions import actionE
 from nml.ast import base_statement
 from nml import expression, generic
 
+
 class DeactivateBlock(base_statement.BaseStatement):
     def __init__(self, grfid_list, pos):
         base_statement.BaseStatement.__init__(self, "deactivate()", pos)
@@ -27,7 +28,7 @@ class DeactivateBlock(base_statement.BaseStatement):
         self.grfid_list = [expression.parse_string_to_dword(grfid.reduce()) for grfid in self.grfid_list]
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Deactivate other newgrfs:')
+        generic.print_dbg(indentation, "Deactivate other newgrfs:")
         for grfid in self.grfid_list:
             grfid.debug_print(indentation + 2)
 
@@ -35,4 +36,4 @@ class DeactivateBlock(base_statement.BaseStatement):
         return actionE.parse_deactivate_block(self)
 
     def __str__(self):
-        return 'deactivate({});\n'.format(', '.join(str(grfid) for grfid in self.grfid_list))
+        return "deactivate({});\n".format(", ".join(str(grfid) for grfid in self.grfid_list))

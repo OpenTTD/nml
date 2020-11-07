@@ -19,6 +19,7 @@ from nml.ast import switch
 from .base_expression import Type, Expression
 from itertools import chain
 
+
 class SpriteGroupRef(Expression):
     """
     Container for a reference to a sprite group / layout
@@ -36,7 +37,8 @@ class SpriteGroupRef(Expression):
                     To be used for action2s that have no direct equivalent in the AST
     @type act2: L{Action2}
     """
-    def __init__(self, name, param_list, pos, act2 = None):
+
+    def __init__(self, name, param_list, pos, act2=None):
         self.name = name
         self.param_list = param_list
         self.pos = pos
@@ -44,15 +46,15 @@ class SpriteGroupRef(Expression):
         self.is_procedure = False
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Reference to:', self.name)
+        generic.print_dbg(indentation, "Reference to:", self.name)
         if len(self.param_list) != 0:
-            generic.print_dbg(indentation, 'Parameters:')
+            generic.print_dbg(indentation, "Parameters:")
             for p in self.param_list:
                 p.debug_print(indentation + 2)
 
     def __str__(self):
         if self.param_list:
-            return '{}({})'.format(self.name, ', '.join(str(x) for x in self.param_list))
+            return "{}({})".format(self.name, ", ".join(str(x) for x in self.param_list))
         return str(self.name)
 
     def get_action2_id(self, feature):
@@ -65,8 +67,10 @@ class SpriteGroupRef(Expression):
         @return: The set ID
         @rtype: C{int}
         """
-        if self.act2 is not None: return self.act2.id
-        if self.name.value == 'CB_FAILED': return 0 # 0 serves as a failed CB result because it is never used
+        if self.act2 is not None:
+            return self.act2.id
+        if self.name.value == "CB_FAILED":
+            return 0  # 0 serves as a failed CB result because it is never used
         try:
             spritegroup = action2.resolve_spritegroup(self.name)
         except generic.ScriptError:
@@ -74,16 +78,24 @@ class SpriteGroupRef(Expression):
 
         return spritegroup.get_action2(feature).id
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
-        if self.name.value != 'CB_FAILED' and not self.is_procedure:
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+        if self.name.value != "CB_FAILED" and not self.is_procedure:
             spritegroup = action2.resolve_spritegroup(self.name)
-            if isinstance(spritegroup, switch.Switch) and spritegroup.expr.is_read_only() and \
-                    spritegroup.body.default is not None and spritegroup.body.default.value is not None and \
-                    len(spritegroup.body.ranges) == 0:
-                generic.print_warning("Block '{}' returns a constant, optimising.".format(spritegroup.name.value), self.pos)
+            if (
+                isinstance(spritegroup, switch.Switch)
+                and spritegroup.expr.is_read_only()
+                and spritegroup.body.default is not None
+                and spritegroup.body.default.value is not None
+                and len(spritegroup.body.ranges) == 0
+            ):
+                generic.print_warning(
+                    "Block '{}' returns a constant, optimising.".format(spritegroup.name.value), self.pos
+                )
                 return spritegroup.body.default.value
             elif isinstance(spritegroup, switch.RandomSwitch) and len(spritegroup.choices) == 1:
-                generic.print_warning("Block '{}' returns a constant, optimising.".format(spritegroup.name.value), self.pos)
+                generic.print_warning(
+                    "Block '{}' returns a constant, optimising.".format(spritegroup.name.value), self.pos
+                )
                 return spritegroup.choices[0].result.value
         return self
 
@@ -94,11 +106,17 @@ class SpriteGroupRef(Expression):
         return list(chain([self], *(p.collect_references() for p in self.param_list)))
 
     def type(self):
-        if self.is_procedure: return Type.INTEGER
+        if self.is_procedure:
+            return Type.INTEGER
         return Type.SPRITEGROUP_REF
 
     def __eq__(self, other):
-        return other is not None and isinstance(other, SpriteGroupRef) and other.name == self.name and other.param_list == self.param_list
+        return (
+            other is not None
+            and isinstance(other, SpriteGroupRef)
+            and other.name == self.name
+            and other.param_list == self.param_list
+        )
 
     def __hash__(self):
         return hash(self.name) ^ hash(tuple(self.param_list))

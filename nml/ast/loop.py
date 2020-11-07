@@ -17,6 +17,7 @@ from nml.actions import action7
 from nml.ast import base_statement
 from nml import global_constants, generic
 
+
 class Loop(base_statement.BaseStatementList):
     """
     AST node for a while-loop.
@@ -24,9 +25,11 @@ class Loop(base_statement.BaseStatementList):
     @ivar expr: The conditional to check whether the loop continues.
     @type expr: L{Expression}
     """
+
     def __init__(self, expr, block, pos):
-        base_statement.BaseStatementList.__init__(self, "while-loop", pos,
-                base_statement.BaseStatementList.LIST_TYPE_LOOP, block, in_item = True)
+        base_statement.BaseStatementList.__init__(
+            self, "while-loop", pos, base_statement.BaseStatementList.LIST_TYPE_LOOP, block, in_item=True
+        )
         self.expr = expr
 
     def pre_process(self):
@@ -34,18 +37,18 @@ class Loop(base_statement.BaseStatementList):
         base_statement.BaseStatementList.pre_process(self)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'While loop')
-        generic.print_dbg(indentation + 2, 'Expression:')
+        generic.print_dbg(indentation, "While loop")
+        generic.print_dbg(indentation + 2, "Expression:")
         self.expr.debug_print(indentation + 4)
 
-        generic.print_dbg(indentation + 2, 'Block:')
+        generic.print_dbg(indentation + 2, "Block:")
         base_statement.BaseStatementList.debug_print(self, indentation + 4)
 
     def get_action_list(self):
         return action7.parse_loop_block(self)
 
     def __str__(self):
-        ret = 'while({}) {{\n'.format(self.expr)
+        ret = "while({}) {{\n".format(self.expr)
         ret += base_statement.BaseStatementList.__str__(self)
-        ret += '}\n'
+        ret += "}\n"
         return ret

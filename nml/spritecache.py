@@ -21,6 +21,7 @@ from nml import generic
 
 keep_orphaned = True
 
+
 class SpriteCache:
     """
     Cache for compressed sprites.
@@ -77,6 +78,7 @@ class SpriteCache:
         meta-information or padding. Offsets and sizes for the various sprites
         are in the cacheindex file.
     """
+
     def __init__(self, sources=()):
         self.sources = sources
         self.cache_time = 0
@@ -97,9 +99,9 @@ class SpriteCache:
         """
 
         if cache_key[2] is not None:
-            key = cache_key + (palette, )
+            key = cache_key + (palette,)
         else:
-            key = cache_key + (None, )
+            key = cache_key + (None,)
         return self.cached_sprites.get(key, None)
 
     def add_item(self, cache_key, palette, item):
@@ -117,9 +119,9 @@ class SpriteCache:
         """
 
         if cache_key[2] is not None:
-            key = cache_key + (palette, )
+            key = cache_key + (palette,)
         else:
-            key = cache_key + (None, )
+            key = cache_key + (None,)
         self.cached_sprites[key] = item
 
     def count_orphaned(self):
@@ -138,10 +140,10 @@ class SpriteCache:
         """
 
         try:
-            with generic.open_cache_file(self.sources, ".cache", 'rb') as cache_file:
-                index_file = generic.open_cache_file(self.sources, ".cacheindex", 'r')
+            with generic.open_cache_file(self.sources, ".cache", "rb") as cache_file:
+                index_file = generic.open_cache_file(self.sources, ".cacheindex", "r")
 
-                cache_data = array.array('B')
+                cache_data = array.array("B")
                 cache_size = os.fstat(cache_file.fileno()).st_size
                 cache_data.fromfile(cache_file, cache_size)
                 assert cache_size == len(cache_data)
@@ -164,50 +166,50 @@ class SpriteCache:
                 assert isinstance(sprite, dict)
                 # load RGB (32bpp) data
                 rgb_key = (None, None)
-                if 'rgb_file' in sprite and 'rgb_rect' in sprite:
-                    assert isinstance(sprite['rgb_file'], str)
-                    assert isinstance(sprite['rgb_rect'], list) and len(sprite['rgb_rect']) == 4
-                    assert all(isinstance(num, int) for num in sprite['rgb_rect'])
-                    rgb_key = (sprite['rgb_file'], tuple(sprite['rgb_rect']))
+                if "rgb_file" in sprite and "rgb_rect" in sprite:
+                    assert isinstance(sprite["rgb_file"], str)
+                    assert isinstance(sprite["rgb_rect"], list) and len(sprite["rgb_rect"]) == 4
+                    assert all(isinstance(num, int) for num in sprite["rgb_rect"])
+                    rgb_key = (sprite["rgb_file"], tuple(sprite["rgb_rect"]))
 
                 # load Mask (8bpp) data
                 mask_key = (None, None)
-                if 'mask_file' in sprite and 'mask_rect' in sprite:
-                    assert isinstance(sprite['mask_file'], str)
-                    assert isinstance(sprite['mask_rect'], list) and len(sprite['mask_rect']) == 4
-                    assert all(isinstance(num, int) for num in sprite['mask_rect'])
-                    mask_key = (sprite['mask_file'], tuple(sprite['mask_rect']))
+                if "mask_file" in sprite and "mask_rect" in sprite:
+                    assert isinstance(sprite["mask_file"], str)
+                    assert isinstance(sprite["mask_rect"], list) and len(sprite["mask_rect"]) == 4
+                    assert all(isinstance(num, int) for num in sprite["mask_rect"])
+                    mask_key = (sprite["mask_file"], tuple(sprite["mask_rect"]))
 
                 palette_key = None
-                if 'mask_pal' in sprite:
-                    palette_key = sprite['mask_pal']
+                if "mask_pal" in sprite:
+                    palette_key = sprite["mask_pal"]
 
                 # Compose key
                 assert any(i is not None for i in rgb_key + mask_key)
-                key = rgb_key + mask_key + ('crop' in sprite, palette_key)
+                key = rgb_key + mask_key + ("crop" in sprite, palette_key)
                 assert key not in self.cached_sprites
 
                 # Read size/offset from cache
-                assert 'offset' in sprite and 'size' in sprite
-                offset, size = sprite['offset'], sprite['size']
+                assert "offset" in sprite and "size" in sprite
+                offset, size = sprite["offset"], sprite["size"]
                 assert isinstance(offset, int) and isinstance(size, int)
                 assert offset >= 0 and size > 0
                 assert offset + size <= cache_size
-                data = cache_data[offset:offset+size]
+                data = cache_data[offset : offset + size]
 
                 # Read info / cropping data from cache
-                assert 'info' in sprite and isinstance(sprite['info'], int)
-                info = sprite['info']
-                if 'crop' in sprite:
-                    assert isinstance(sprite['crop'], list) and len(sprite['crop']) == 4
-                    assert all(isinstance(num, int) for num in sprite['crop'])
-                    crop = tuple(sprite['crop'])
+                assert "info" in sprite and isinstance(sprite["info"], int)
+                info = sprite["info"]
+                if "crop" in sprite:
+                    assert isinstance(sprite["crop"], list) and len(sprite["crop"]) == 4
+                    assert all(isinstance(num, int) for num in sprite["crop"])
+                    crop = tuple(sprite["crop"])
                 else:
                     crop = None
 
-                if 'pixel_stats' in sprite:
-                    assert isinstance(sprite['pixel_stats'], dict)
-                    pixel_stats = sprite['pixel_stats']
+                if "pixel_stats" in sprite:
+                    assert isinstance(sprite["pixel_stats"], dict)
+                    pixel_stats = sprite["pixel_stats"]
                 else:
                     pixel_stats = {}
 
@@ -221,7 +223,7 @@ class SpriteCache:
                     if mtime is None:
                         mtime = os.path.getmtime(generic.find_file(rgb_key[0]))
                         source_mtime[rgb_key[0]] = mtime
-                    
+
                     if mtime > self.cache_time:
                         is_valid = False
 
@@ -230,7 +232,7 @@ class SpriteCache:
                     if mtime is None:
                         mtime = os.path.getmtime(generic.find_file(mask_key[0]))
                         source_mtime[mask_key[0]] = mtime
-                    
+
                     if mtime > self.cache_time:
                         is_valid = False
 
@@ -241,9 +243,11 @@ class SpriteCache:
                 if is_valid:
                     self.cached_sprites[key] = value
         except Exception:
-            generic.print_warning("{} contains invalid data, ignoring.".format(index_file.name)
-                                  + " Please remove the file and file a bug report if this warning keeps appearing")
-            self.cached_sprites = {} # Clear cache
+            generic.print_warning(
+                "{} contains invalid data, ignoring.".format(index_file.name)
+                + " Please remove the file and file a bug report if this warning keeps appearing"
+            )
+            self.cached_sprites = {}  # Clear cache
 
         index_file.close()
 
@@ -256,7 +260,7 @@ class SpriteCache:
             return
 
         index_data = []
-        sprite_data = array.array('B')
+        sprite_data = array.array("B")
         offset = 0
 
         old_cache_valid = True
@@ -277,31 +281,34 @@ class SpriteCache:
             # Create dictionary with information
             sprite = {}
             if rgb_file is not None:
-                sprite['rgb_file'] = rgb_file
-                sprite['rgb_rect'] = tuple(rgb_rect)
+                sprite["rgb_file"] = rgb_file
+                sprite["rgb_rect"] = tuple(rgb_rect)
             if mask_file is not None:
-                sprite['mask_file'] = mask_file
-                sprite['mask_rect'] = tuple(mask_rect)
-                sprite['mask_pal'] = mask_pal
+                sprite["mask_file"] = mask_file
+                sprite["mask_rect"] = tuple(mask_rect)
+                sprite["mask_pal"] = mask_pal
 
             size = len(data)
-            sprite['offset'] = offset
-            sprite['size'] = size
-            sprite['info'] = info
-            if do_crop: sprite['crop'] = tuple(crop_rect)
-            sprite['pixel_stats'] = pixel_stats
+            sprite["offset"] = offset
+            sprite["size"] = size
+            sprite["info"] = info
+            if do_crop:
+                sprite["crop"] = tuple(crop_rect)
+            sprite["pixel_stats"] = pixel_stats
 
             index_data.append(sprite)
             sprite_data.extend(data)
             offset += size
 
-        if old_cache_valid: return
+        if old_cache_valid:
+            return
 
-        index_output = json.JSONEncoder(sort_keys = True).encode(index_data)
+        index_output = json.JSONEncoder(sort_keys=True).encode(index_data)
 
         try:
-            with generic.open_cache_file(self.sources, ".cache", 'wb') as cache_file, \
-                    generic.open_cache_file(self.sources, ".cacheindex", 'w') as index_file:
+            with generic.open_cache_file(self.sources, ".cache", "wb") as cache_file, generic.open_cache_file(
+                self.sources, ".cacheindex", "w"
+            ) as index_file:
                 index_file.write(index_output)
                 sprite_data.tofile(cache_file)
         except OSError:

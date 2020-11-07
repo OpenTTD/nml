@@ -15,10 +15,19 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 from nml import generic, nmlop
-from nml.expression import (ConstantNumeric, ConstantFloat, Array, StringLiteral,
-                            Identifier, ProduceCargo, AcceptCargo, parse_string_to_dword)
+from nml.expression import (
+    ConstantNumeric,
+    ConstantFloat,
+    Array,
+    StringLiteral,
+    Identifier,
+    ProduceCargo,
+    AcceptCargo,
+    parse_string_to_dword,
+)
 
 tilelayout_names = {}
+
 
 class BaseAction0Property:
     """
@@ -32,7 +41,7 @@ class BaseAction0Property:
         @param file: The outputfile we have to write to.
         @type  file: L{SpriteOutputBase}
         """
-        raise NotImplementedError('write is not implemented in {!r}'.format(type(self)))
+        raise NotImplementedError("write is not implemented in {!r}".format(type(self)))
 
     def get_size(self):
         """
@@ -42,7 +51,8 @@ class BaseAction0Property:
         @return: The size of this property in bytes.
         @rtype:  C{int}
         """
-        raise NotImplementedError('get_size is not implemented in {!r}'.format(type(self)))
+        raise NotImplementedError("get_size is not implemented in {!r}".format(type(self)))
+
 
 class Action0Property(BaseAction0Property):
     """
@@ -57,6 +67,7 @@ class Action0Property(BaseAction0Property):
     @ivar size: Size of the storage, in bytes.
     @type size: C{int}
     """
+
     def __init__(self, num, value, size):
         self.num = num
         self.values = value if isinstance(value, list) else [value]
@@ -80,6 +91,7 @@ class Action0Property(BaseAction0Property):
 
     def get_size(self):
         return self.size * len(self.values) + 1
+
 
 # @var properties: A mapping of features to properties. This is a list
 # with one item per feature. Entries should be a dictionary of properties,
@@ -158,7 +170,8 @@ properties = 0x14 * [None]
 # Some helper functions that are used for multiple features
 #
 
-def two_byte_property(low_prop, high_prop, low_prop_info = {}, high_prop_info = {}):
+
+def two_byte_property(low_prop, high_prop, low_prop_info={}, high_prop_info={}):
     """
     Decode a two byte value into two action 0 properties.
 
@@ -177,11 +190,12 @@ def two_byte_property(low_prop, high_prop, low_prop_info = {}, high_prop_info = 
     @return: Sequence of two dictionaries with property information (low part, high part).
     @rtype:  C{list} of C{dict}
     """
-    low_byte_info = {'num': low_prop, 'size': 1, 'value_function': lambda value: nmlop.AND(value, 0xFF).reduce()}
-    high_byte_info = {'num': high_prop, 'size': 1, 'value_function': lambda value: nmlop.SHIFT_RIGHT(value, 8).reduce()}
+    low_byte_info = {"num": low_prop, "size": 1, "value_function": lambda value: nmlop.AND(value, 0xFF).reduce()}
+    high_byte_info = {"num": high_prop, "size": 1, "value_function": lambda value: nmlop.SHIFT_RIGHT(value, 8).reduce()}
     low_byte_info.update(low_prop_info)
     high_byte_info.update(high_prop_info)
     return [low_byte_info, high_byte_info]
+
 
 def animation_info(value, loop_bit=8, max_frame=253):
     """
@@ -204,13 +218,16 @@ def animation_info(value, loop_bit=8, max_frame=253):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("animation_info must be an array with exactly 2 constant values", value.pos)
     looping = value.values[0].reduce_constant().value
-    frames  = value.values[1].reduce_constant().value
+    frames = value.values[1].reduce_constant().value
     if looping not in (0, 1):
         raise generic.ScriptError("First field of the animation_info array must be either 0 or 1", value.values[0].pos)
     if frames < 1 or frames > max_frame:
-        raise generic.ScriptError("Second field of the animation_info array must be between 1 and " + str(max_frame), value.values[1].pos)
+        raise generic.ScriptError(
+            "Second field of the animation_info array must be between 1 and " + str(max_frame), value.values[1].pos
+        )
 
     return ConstantNumeric((looping << loop_bit) + frames - 1)
+
 
 def cargo_list(value, max_num_cargos):
     """
@@ -230,7 +247,9 @@ def cargo_list(value, max_num_cargos):
     @type  prop_size: C{int}
     """
     if not isinstance(value, Array) or len(value.values) > max_num_cargos:
-        raise generic.ScriptError("Cargo list must be an array with no more than {:d} values".format(max_num_cargos), value.pos)
+        raise generic.ScriptError(
+            "Cargo list must be an array with no more than {:d} values".format(max_num_cargos), value.pos
+        )
     cargoes = value.values + [ConstantNumeric(0xFF, value.pos) for _ in range(max_num_cargos - len(value.values))]
 
     ret = None
@@ -242,6 +261,7 @@ def cargo_list(value, max_num_cargos):
             byte = nmlop.SHIFT_LEFT(byte, i * 8)
             ret = nmlop.OR(ret, byte)
     return ret.reduce()
+
 
 #
 # General vehicle properties that apply to feature 0x00 .. 0x03
@@ -265,10 +285,12 @@ def ottd_display_speed(value, mul, div, unit):
     # Duplicate OpenTTD's `ConvertKmhishSpeedToDisplaySpeed()`
     return ((10 * kmh_ish * unit.ottd_mul) >> unit.ottd_shift) // 16
 
+
 class VariableListProp(BaseAction0Property):
     """
     Property value that is a variable-length list of variable sized values, the list length is written before the data.
     """
+
     def __init__(self, prop_num, data, size):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
@@ -281,19 +303,22 @@ class VariableListProp(BaseAction0Property):
         for elem in self.data:
             file.print_byte(len(elem))
             for i, val in enumerate(elem):
-                if i % 8 == 0: file.newline()
+                if i % 8 == 0:
+                    file.newline()
                 file.print_varx(val, self.size)
             file.newline()
 
     def get_size(self):
-        total_len = 1 # Prop number
+        total_len = 1  # Prop number
         for elem in self.data:
             # For each item ID to set, make space for all values + 1 for the length
             total_len += len(elem) * self.size + 1
         return total_len
 
+
 def VariableByteListProp(prop_num, data):
     return VariableListProp(prop_num, data, 1)
+
 
 def ctt_list(prop_num, *values):
     # values may have multiple entries, if more than one item ID is set (e.g. multitile houses)
@@ -301,10 +326,17 @@ def ctt_list(prop_num, *values):
     for value in values:
         if not isinstance(value, Array):
             raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
-    return [VariableByteListProp(prop_num, [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values])]
+    return [
+        VariableByteListProp(
+            prop_num,
+            [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values],
+        )
+    ]
+
 
 def VariableWordListProp(num_prop, data):
     return VariableListProp(num_prop, data, 2)
+
 
 def accepted_cargos(prop_num, *values):
     # values may have multiple entries, if more than one item ID is set (e.g. multitile houses)
@@ -316,21 +348,28 @@ def accepted_cargos(prop_num, *values):
         tile_cargos = []
         for cargo_amount_pair in value.values:
             if not isinstance(cargo_amount_pair, Array) or len(cargo_amount_pair.values) != 2:
-                raise generic.ScriptError("Each element of accepted_cargos must be an array with two elements: cargoid and amount", cargo_amount_pair.pos)
+                raise generic.ScriptError(
+                    "Each element of accepted_cargos must be an array with two elements: cargoid and amount",
+                    cargo_amount_pair.pos,
+                )
             cargo_id = cargo_amount_pair.values[0].reduce_constant().value
             cargo_amount = cargo_amount_pair.values[1].reduce_constant().value
             tile_cargos.append((cargo_amount << 8) | cargo_id)
         cargos.append(tile_cargos)
     return [VariableWordListProp(prop_num, cargos)]
 
+
 def vehicle_length(value):
     if isinstance(value, ConstantNumeric):
         generic.check_range(value.value, 1, 8, "vehicle length", value.pos)
     return nmlop.SUB(8, value).reduce()
 
+
 def zero_refit_mask(prop_num):
     # Zero the refit mask, in addition to setting some other refit property
-    return {'size': 4, 'num': prop_num, 'value_function': lambda value: ConstantNumeric(0)}
+    return {"size": 4, "num": prop_num, "value_function": lambda value: ConstantNumeric(0)}
+
+
 #
 # Feature 0x00 (Trains)
 #
@@ -401,6 +440,7 @@ properties[0x00] = {
 # Feature 0x01 (Road Vehicles)
 #
 
+
 def roadveh_speed_prop(prop_info):
     # prop 08 value is min(value, 255)
     def prop08_value(value):
@@ -415,11 +455,12 @@ def roadveh_speed_prop(prop_info):
     def prop15_test(value):
         return isinstance(value, ConstantNumeric) and value.value >= 0x40
 
-    prop08 = {'size': 1, 'num': 0x08, 'value_function': prop08_value}
-    prop15 = {'size': 1, 'num': 0x15, 'value_function': prop15_value, 'test_function': prop15_test}
+    prop08 = {"size": 1, "num": 0x08, "value_function": prop08_value}
+    prop15 = {"size": 1, "num": 0x15, "value_function": prop15_value, "test_function": prop15_test}
     for key in prop_info:
         prop08[key] = prop15[key] = prop_info[key]
     return [prop08, prop15]
+
 
 # fmt: off
 properties[0x01] = {
@@ -475,12 +516,14 @@ properties[0x01] = {
 # Feature 0x02 (Ships)
 #
 
+
 def speed_fraction(value):
     # Unit is already converted to 0 .. 255 range when we get here
     if isinstance(value, ConstantNumeric) and not (0 <= value.value <= 255):
         # Do not use check_range to provide better error message
         raise generic.ScriptError("speed fraction must be in range 0 .. 1", value.pos)
     return nmlop.SUB(255, value).reduce()
+
 
 # fmt: off
 properties[0x02] = {
@@ -540,13 +583,16 @@ properties[0x02] = {
 # Feature 0x03 (Aircraft)
 #
 
+
 def aircraft_is_heli(value):
     if isinstance(value, ConstantNumeric) and value.value not in (0, 2, 3):
         raise generic.ScriptError("Invalid value for aircraft_type", value.pos)
     return nmlop.AND(value, 2).reduce()
 
+
 def aircraft_is_large(value):
     return nmlop.AND(value, 1).reduce()
+
 
 # fmt: off
 properties[0x03] = {
@@ -609,6 +655,7 @@ properties[0x05] = {
 # Feature 0x07 (Houses)
 #
 
+
 def house_prop_0A(value):
     # User sets an array [min_year, max_year] as property value
     # House property 0A is set to ((max_year - 1920) << 8) | (min_year - 1920)
@@ -627,11 +674,13 @@ def house_prop_0A(value):
 
     return nmlop.OR(max_year, min_year).reduce()
 
+
 def house_prop_21_22(value, index):
     # Take one of the values from the years_available array
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
     return value.values[index]
+
 
 def house_random_colours(value):
     # User sets array with 4 values (range 0..15)
@@ -651,6 +700,7 @@ def house_random_colours(value):
             ret = nmlop.OR(ret, byte)
     return ret.reduce()
 
+
 def house_available_mask(value):
     # User sets [town_zones, climates] array
     # Which is mapped to (town_zones | (climates & 0x800) | ((climates & 0xF) << 12))
@@ -665,26 +715,35 @@ def house_available_mask(value):
     ret = nmlop.OR(ret, above_snow)
     return ret.reduce()
 
+
 # List of valid IDs of old house types
 old_houses = {
-0 : set(), # 1x1, see below
-2 : set([74, 76, 87]), # 2x1
-3 : set([7, 66, 68, 99]), # 1x2
-4 : set([20, 32, 40]), # 2x2
+    0: set(),  # 1x1, see below
+    2: set([74, 76, 87]),  # 2x1
+    3: set([7, 66, 68, 99]),  # 1x2
+    4: set([20, 32, 40]),  # 2x2
 }
 # All houses not part of a multitile-house, are 1x1 houses
-old_houses[0] = set(range(110)).difference( house + i for house in (itertools.chain(*list(old_houses.values()))) for i in range(4 if house in old_houses[4] else 2) )
+old_houses[0] = set(range(110)).difference(
+    house + i
+    for house in (itertools.chain(*list(old_houses.values())))
+    for i in range(4 if house in old_houses[4] else 2)
+)
+
 
 def mt_house_old_id(value, num_ids, size_bit):
     # For substitute / override properties
     # Set value for tile i (0 .. 3) to (value + i)
     # Also validate that the size of the old house matches
     if isinstance(value, ConstantNumeric) and value.value not in old_houses[size_bit]:
-        raise generic.ScriptError("Substitute / override house type must have the same size as the newly defined house.", value.pos)
+        raise generic.ScriptError(
+            "Substitute / override house type must have the same size as the newly defined house.", value.pos
+        )
     ret = [value]
     for i in range(1, num_ids):
         ret.append(nmlop.ADD(value, i).reduce())
     return ret
+
 
 def mt_house_prop09(value, num_ids, size_bit):
     # Only bit 5 should be set for additional tiles
@@ -696,6 +755,7 @@ def mt_house_prop09(value, num_ids, size_bit):
         ret.append(nmlop.AND(value, 1 << 5).reduce())
     return ret
 
+
 def mt_house_mask(mask, value, num_ids, size_bit):
     # Mask out the bits not present in the 'mask' parameter for additional tiles
     ret = [value]
@@ -703,16 +763,20 @@ def mt_house_mask(mask, value, num_ids, size_bit):
         ret.append(nmlop.AND(value, mask).reduce())
     return ret
 
+
 def mt_house_zero(value, num_ids, size_bit):
     return [value] + (num_ids - 1) * [ConstantNumeric(0, value.pos)]
+
 
 def mt_house_same(value, num_ids, size_bit):
     # Set to the same value for all tiles
     return num_ids * [value]
 
+
 def mt_house_class(value, num_ids, size_bit):
     # Set class to 0xFF for additional tiles
     return [value] + (num_ids - 1) * [ConstantNumeric(0xFF, value.pos)]
+
 
 # fmt: off
 properties[0x07] = {
@@ -809,6 +873,7 @@ properties[0x09] = {
 # Feature 0x0A (Industries)
 #
 
+
 class IndustryLayoutProp(BaseAction0Property):
     def __init__(self, layout_list):
         self.layout_list = layout_list
@@ -829,6 +894,7 @@ class IndustryLayoutProp(BaseAction0Property):
             size += layout.get_size()
         return size
 
+
 def industry_layouts(value):
     if not isinstance(value, Array) or not all(isinstance(x, Identifier) for x in value.values):
         raise generic.ScriptError("layouts must be an array of layout names", value.pos)
@@ -839,6 +905,7 @@ def industry_layouts(value):
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
+
 def industry_prod_multiplier(value):
     if not isinstance(value, Array) or len(value.values) > 2:
         raise generic.ScriptError("Prod multiplier must be an array of up to two values", value.pos)
@@ -847,6 +914,7 @@ def industry_prod_multiplier(value):
         val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
         props.append(Action0Property(0x12 + i, val, 1))
     return props
+
 
 class RandomSoundsProp(BaseAction0Property):
     def __init__(self, sound_list):
@@ -862,10 +930,12 @@ class RandomSoundsProp(BaseAction0Property):
     def get_size(self):
         return len(self.sound_list) + 2
 
+
 def random_sounds(value):
     if not isinstance(value, Array) or not all(isinstance(x, ConstantNumeric) for x in value.values):
         raise generic.ScriptError("random_sound_effects must be an array with sounds effects", value.pos)
     return [RandomSoundsProp(value.values)]
+
 
 class ConflictingTypesProp(BaseAction0Property):
     def __init__(self, types_list):
@@ -881,6 +951,7 @@ class ConflictingTypesProp(BaseAction0Property):
     def get_size(self):
         return len(self.types_list) + 1
 
+
 def industry_conflicting_types(value):
     if not isinstance(value, Array):
         raise generic.ScriptError("conflicting_ind_types must be an array of industry types", value.pos)
@@ -893,6 +964,7 @@ def industry_conflicting_types(value):
     while len(types_list) < 3:
         types_list.append(ConstantNumeric(0xFF))
     return [ConflictingTypesProp(types_list)]
+
 
 def industry_input_multiplier(value, prop_num):
     if not isinstance(value, Array) or len(value.values) > 2:
@@ -907,6 +979,7 @@ def industry_input_multiplier(value, prop_num):
     mul2 = int(val2.value * 256)
     return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
+
 class IndustryInputMultiplierProp(BaseAction0Property):
     def __init__(self, prop_num, data):
         self.prop_num = prop_num
@@ -919,7 +992,7 @@ class IndustryInputMultiplierProp(BaseAction0Property):
             file.print_byte(0)
         else:
             file.print_byte(len(self.data))
-            file.print_byte(len(self.data[0])) # assume all sub-arrays are equal length
+            file.print_byte(len(self.data[0]))  # assume all sub-arrays are equal length
             file.newline()
             for out_muls in self.data:
                 for mul in out_muls:
@@ -932,30 +1005,42 @@ class IndustryInputMultiplierProp(BaseAction0Property):
         else:
             return 3 + len(self.data) * len(self.data[0]) * 2
 
+
 def industry_cargo_types(value):
     if isinstance(value, Array):
         cargo_types = value.values
     else:
         cargo_types = [value]
     if not all(isinstance(item, (ProduceCargo, AcceptCargo)) for item in value.values):
-        raise generic.ScriptError("Cargo types definition must be an array produce_cargo() and accept_cargo() expressions", value.pos)
+        raise generic.ScriptError(
+            "Cargo types definition must be an array produce_cargo() and accept_cargo() expressions", value.pos
+        )
 
     # collect all the cargo types involved
     input_cargos = []
     output_cargos = []
+
     def check_produce(prd):
         if len(prd.value) != 1:
             raise generic.ScriptError("Cargo types produce_cargo() expressions require 2 arguments", prd.pos)
         if not isinstance(prd.value[0], (ConstantNumeric, ConstantFloat)):
-            raise generic.ScriptError("Cargo types produce_cargo() expressions must have numeric constant values", prd.pos)
-        if prd.cargotype not in output_cargos: output_cargos.append(prd.cargotype)
+            raise generic.ScriptError(
+                "Cargo types produce_cargo() expressions must have numeric constant values", prd.pos
+            )
+        if prd.cargotype not in output_cargos:
+            output_cargos.append(prd.cargotype)
+
     def check_accept(acp):
-        if item.cargotype not in input_cargos: input_cargos.append(item.cargotype)
+        if item.cargotype not in input_cargos:
+            input_cargos.append(item.cargotype)
         for outitem in item.value:
             if isinstance(outitem, ProduceCargo):
                 check_produce(outitem)
             else:
-                raise generic.ScriptError("Cargo types accept_cargo() expressions must only contain produce_cargo() expressions", outitem.pos)
+                raise generic.ScriptError(
+                    "Cargo types accept_cargo() expressions must only contain produce_cargo() expressions", outitem.pos
+                )
+
     for item in cargo_types:
         # use "if not in: append" idiom rather than sets to preserve ordering of cargotypes between NML and NFO
         if isinstance(item, ProduceCargo):
@@ -966,13 +1051,17 @@ def industry_cargo_types(value):
             assert False
 
     if len(input_cargos) > 16:
-        raise generic.ScriptError("Cargo types definition contains more than 16 different accept_cargo() cargotypes", value.pos)
+        raise generic.ScriptError(
+            "Cargo types definition contains more than 16 different accept_cargo() cargotypes", value.pos
+        )
     if len(output_cargos) > 16:
-        raise generic.ScriptError("Cargo types definition contains more than 16 different produce_cargo() cargotypes", value.pos)
+        raise generic.ScriptError(
+            "Cargo types definition contains more than 16 different produce_cargo() cargotypes", value.pos
+        )
 
     # prepare lists for the remaining output properties
     prod_multipliers = [0 for cargo in output_cargos]
-    input_multipliers = [ [0 for outcargo in output_cargos] for incargo in input_cargos ]
+    input_multipliers = [[0 for outcargo in output_cargos] for incargo in input_cargos]
     has_inpmult = False
 
     # populate prod_multipliers and input_multipliers
@@ -983,14 +1072,16 @@ def industry_cargo_types(value):
             row = input_multipliers[input_cargos.index(item.cargotype)]
             for outitem in item.value:
                 row[output_cargos.index(outitem.cargotype)] = int(outitem.value[0].value * 256)
-                if outitem.value[0].value > 0: has_inpmult = True
+                if outitem.value[0].value > 0:
+                    has_inpmult = True
 
     return [
         VariableByteListProp(0x25, [output_cargos]),
         VariableByteListProp(0x26, [input_cargos]),
         VariableByteListProp(0x27, [prod_multipliers]),
-        IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else [])
+        IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else []),
     ]
+
 
 # fmt: off
 properties[0x0A] = {
@@ -1087,12 +1178,14 @@ properties[0x0B] = {
 # Feature 0x0D (Airports)
 #
 
+
 def airport_years(value):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Availability years must be an array with exactly two values", value.pos)
     min_year = value.values[0].reduce_constant()
     max_year = value.values[1].reduce_constant()
     return [Action0Property(0x0C, ConstantNumeric(max_year.value << 16 | min_year.value), 4)]
+
 
 class AirportLayoutProp(BaseAction0Property):
     def __init__(self, layout_list):
@@ -1105,7 +1198,7 @@ class AirportLayoutProp(BaseAction0Property):
         file.print_dword(self.get_size() - 6)
         file.newline()
         for layout in self.layout_list:
-            file.print_bytex(layout.properties['rotation'].value)
+            file.print_bytex(layout.properties["rotation"].value)
             layout.write(file)
         file.newline()
 
@@ -1115,6 +1208,7 @@ class AirportLayoutProp(BaseAction0Property):
             size += layout.get_size() + 1
         return size
 
+
 def airport_layouts(value):
     if not isinstance(value, Array) or not all(isinstance(x, Identifier) for x in value.values):
         raise generic.ScriptError("layouts must be an array of layout names", value.pos)
@@ -1123,12 +1217,15 @@ def airport_layouts(value):
         if name.value not in tilelayout_names:
             raise generic.ScriptError("Unknown layout name '{}'".format(name.value), name.pos)
         layout = tilelayout_names[name.value]
-        if 'rotation' not in layout.properties:
+        if "rotation" not in layout.properties:
             raise generic.ScriptError("Airport layouts must have the 'rotation' property", layout.pos)
-        if layout.properties['rotation'].value not in (0, 2, 4, 6):
-            raise generic.ScriptError("Airport layout rotation is not a valid direction.", layout.properties['rotation'].pos)
+        if layout.properties["rotation"].value not in (0, 2, 4, 6):
+            raise generic.ScriptError(
+                "Airport layout rotation is not a valid direction.", layout.properties["rotation"].pos
+            )
         layouts.append(layout)
     return [AirportLayoutProp(layouts)]
+
 
 # fmt: off
 properties[0x0D] = {
@@ -1151,6 +1248,7 @@ properties[0x0D] = {
 # Feature 0x0F (Objects)
 #
 
+
 def object_size(value):
     if not isinstance(value, Array) or len(value.values) != 2:
         raise generic.ScriptError("Object size must be an array with exactly two values", value.pos)
@@ -1159,6 +1257,7 @@ def object_size(value):
     if sizex.value < 1 or sizex.value > 15 or sizey.value < 1 or sizey.value > 15:
         raise generic.ScriptError("The size of an object must be at least 1x1 and at most 15x15 tiles", value.pos)
     return [Action0Property(0x0C, ConstantNumeric(sizey.value << 4 | sizex.value), 1)]
+
 
 # fmt: off
 properties[0x0F] = {
@@ -1187,6 +1286,7 @@ properties[0x0F] = {
 # General tracktype properties that apply to features 0x10 & 0x12/13 (rail/road/tramtypes)
 #
 
+
 class LabelListProp(BaseAction0Property):
     def __init__(self, prop_num, labels):
         self.prop_num = prop_num
@@ -1208,6 +1308,7 @@ def label_list(value, prop_num, description):
     if not isinstance(value, Array):
         raise generic.ScriptError(description + " list must be an array of literal strings", value.pos)
     return [LabelListProp(prop_num, value.values)]
+
 
 # fmt: off
 common_tracktype_props = {

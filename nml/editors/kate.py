@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.editors import extract_tables
 
-output_file="nml_kate.xml"
+output_file = "nml_kate.xml"
 
 header_text = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -158,6 +158,7 @@ tail_text = """\
 -->
 """
 
+
 def write_file(fname):
     handle = open(fname, "w")
 
@@ -179,6 +180,7 @@ def write_file(fname):
 
     handle.write(tail_text)
     handle.close()
+
 
 def run():
     write_file("nml_kate.xml")

@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import nmlop
 from nml.actions import base_action, real_sprite, actionD, action6
 
+
 class ActionA(base_action.BaseAction):
     """
     Action class for Action A (sprite replacement)
@@ -23,11 +24,12 @@ class ActionA(base_action.BaseAction):
     @ivar sets: List of sprite collections to be replaced.
     @type sets: C{list} of (C{int}, C{int})-tuples
     """
+
     def __init__(self, sets):
         self.sets = sets
 
     def write(self, file):
-        #<Sprite-number> * <Length> 0A <num-sets> [<num-sprites> <first-sprite>]+
+        # <Sprite-number> * <Length> 0A <num-sets> [<num-sprites> <first-sprite>]+
         size = 2 + 3 * len(self.sets)
         file.start_sprite(size)
         file.print_bytex(0x0A)
@@ -37,6 +39,7 @@ class ActionA(base_action.BaseAction):
             file.print_word(first)
         file.newline()
         file.end_sprite()
+
 
 def parse_actionA(replaces):
     """
@@ -52,21 +55,21 @@ def parse_actionA(replaces):
     real_sprite_list = real_sprite.parse_sprite_data(replaces)
     block_list = []
     total_sprites = len(real_sprite_list)
-    offset = 2 # Skip 0A and <num-sets>
-    sprite_offset = 0 # Number of sprites already covered by previous [<num-sprites> <first-sprite>]-pairs
+    offset = 2  # Skip 0A and <num-sets>
+    sprite_offset = 0  # Number of sprites already covered by previous [<num-sprites> <first-sprite>]-pairs
 
     while total_sprites > 0:
-        this_block = min(total_sprites, 255) # number of sprites in this block
+        this_block = min(total_sprites, 255)  # number of sprites in this block
         total_sprites -= this_block
-        offset += 1 # Skip <num-sprites>
+        offset += 1  # Skip <num-sprites>
 
-        first_sprite = replaces.start_id # number of first sprite
+        first_sprite = replaces.start_id  # number of first sprite
         if sprite_offset != 0:
             first_sprite = nmlop.ADD(first_sprite, sprite_offset).reduce()
         first_sprite, offset = actionD.write_action_value(first_sprite, action_list, act6, offset, 2)
-        block_list.append( (this_block, first_sprite.value) )
+        block_list.append((this_block, first_sprite.value))
 
-        sprite_offset += this_block # increase first-sprite for next block
+        sprite_offset += this_block  # increase first-sprite for next block
 
     if len(act6.modifications) > 0:
         action_list.append(act6)
@@ -76,4 +79,3 @@ def parse_actionA(replaces):
     action_list.extend(real_sprite_list)
 
     return action_list
-

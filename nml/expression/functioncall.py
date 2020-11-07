@@ -28,6 +28,7 @@ from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
 from . import identifier
 
+
 class FunctionCall(Expression):
     def __init__(self, name, params, pos):
         Expression.__init__(self, pos)
@@ -35,34 +36,36 @@ class FunctionCall(Expression):
         self.params = params
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Call function: ' + self.name.value)
+        generic.print_dbg(indentation, "Call function: " + self.name.value)
         for param in self.params:
-            generic.print_dbg(indentation + 2, 'Parameter:')
+            generic.print_dbg(indentation + 2, "Parameter:")
             param.debug_print(indentation + 4)
 
     def __str__(self):
-        ret = '{}({})'.format(self.name, ', '.join(str(param) for param in self.params))
+        ret = "{}({})".format(self.name, ", ".join(str(param) for param in self.params))
         return ret
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         # At this point we don't care about invalid arguments, they'll be handled later.
         identifier.ignore_all_invalid_ids = True
-        params = [param.reduce(id_dicts, unknown_id_fatal = False) for param in self.params]
+        params = [param.reduce(id_dicts, unknown_id_fatal=False) for param in self.params]
         identifier.ignore_all_invalid_ids = False
         if self.name.value in function_table:
             func = function_table[self.name.value]
             val = func(self.name.value, params, self.pos)
             return val.reduce(id_dicts)
         else:
-            #try user-defined functions
-            func_ptr = self.name.reduce(id_dicts, unknown_id_fatal = False, search_func_ptr = True)
-            if func_ptr != self.name: # we found something!
+            # try user-defined functions
+            func_ptr = self.name.reduce(id_dicts, unknown_id_fatal=False, search_func_ptr=True)
+            if func_ptr != self.name:  # we found something!
                 if func_ptr.type() == Type.SPRITEGROUP_REF:
                     func_ptr.param_list = params
                     func_ptr.is_procedure = True
                     return func_ptr
                 if func_ptr.type() != Type.FUNCTION_PTR:
-                    raise generic.ScriptError("'{}' is defined, but it is not a function.".format(self.name.value), self.pos)
+                    raise generic.ScriptError(
+                        "'{}' is defined, but it is not a function.".format(self.name.value), self.pos
+                    )
                 return func_ptr.call(params)
             if unknown_id_fatal:
                 raise generic.ScriptError("'{}' is not defined as a function.".format(self.name.value), self.pos)
@@ -94,17 +97,18 @@ class SpecialCheck(Expression):
     @ivar pos: Position information
     @type pos: L{Position}
     """
-    def __init__(self, op, varnum, results, value, to_string, varsize = 4, mask = None, pos = None):
+
+    def __init__(self, op, varnum, results, value, to_string, varsize=4, mask=None, pos=None):
         Expression.__init__(self, pos)
         self.op = op
         self.varnum = varnum
         self.results = results
         self.value = value
         self.to_string = to_string
-        self.varsize = varsize;
+        self.varsize = varsize
         self.mask = mask
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         return self
 
     def __str__(self):
@@ -113,15 +117,16 @@ class SpecialCheck(Expression):
     def supported_by_actionD(self, raise_error):
         return True
 
+
 class GRMOp(Expression):
-    def __init__(self, op, feature, count, to_string, pos = None):
+    def __init__(self, op, feature, count, to_string, pos=None):
         Expression.__init__(self, pos)
         self.op = op
         self.feature = feature
         self.count = count
         self.to_string = to_string
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         return self
 
     def __str__(self):
@@ -131,7 +136,8 @@ class GRMOp(Expression):
         return True
 
 
-#{ Builtin functions
+# { Builtin functions
+
 
 def builtin_min(name, args, pos):
     """
@@ -143,6 +149,7 @@ def builtin_min(name, args, pos):
         raise generic.ScriptError("min() requires at least 2 arguments", pos)
     return reduce(lambda x, y: nmlop.MIN(x, y, pos), args)
 
+
 def builtin_max(name, args, pos):
     """
     max(...) builtin function.
@@ -152,6 +159,7 @@ def builtin_max(name, args, pos):
     if len(args) < 2:
         raise generic.ScriptError("max() requires at least 2 arguments", pos)
     return reduce(lambda x, y: nmlop.MAX(x, y, pos), args)
+
 
 def builtin_date(name, args, pos):
     """
@@ -171,12 +179,14 @@ def builtin_date(name, args, pos):
     except generic.ConstError:
         raise generic.ScriptError("Month and day parameters of date() should be compile-time constants", pos)
     generic.check_range(month, 1, 12, "month", args[1].pos)
-    generic.check_range(day, 1, days_in_month[month-1], "day", args[2].pos)
+    generic.check_range(day, 1, days_in_month[month - 1], "day", args[2].pos)
 
     if not isinstance(year, ConstantNumeric):
         if month != 1 or day != 1:
-            raise generic.ScriptError("when the year parameter of date() is not a compile time constant month and day should be 1", pos)
-        #num_days = year*365 + year/4 - year/100 + year/400
+            raise generic.ScriptError(
+                "when the year parameter of date() is not a compile time constant month and day should be 1", pos
+            )
+        # num_days = year*365 + year/4 - year/100 + year/400
         part1 = nmlop.MUL(year, 365)
         part2 = nmlop.DIV(year, 4)
         part3 = nmlop.DIV(year, 100)
@@ -195,6 +205,7 @@ def builtin_date(name, args, pos):
         day_in_year += 1
     return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + day_in_year - 1, pos)
 
+
 def builtin_day_of_year(name, args, pos):
     """
     day_of_year(month, day) builtin function.
@@ -206,20 +217,21 @@ def builtin_day_of_year(name, args, pos):
 
     month = args[0].reduce()
     if not isinstance(month, ConstantNumeric):
-        raise generic.ScriptError('Month should be a compile-time constant.', month.pos)
+        raise generic.ScriptError("Month should be a compile-time constant.", month.pos)
     if month.value < 1 or month.value > 12:
-        raise generic.ScriptError('Month should be a value between 1 and 12.', month.pos)
+        raise generic.ScriptError("Month should be a value between 1 and 12.", month.pos)
 
     day = args[1].reduce()
     if not isinstance(day, ConstantNumeric):
-        raise generic.ScriptError('Day should be a compile-time constant.', day.pos)
+        raise generic.ScriptError("Day should be a compile-time constant.", day.pos)
 
     # Mapping of month to number of days in that month.
     number_days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
     if day.value < 1 or day.value > number_days[month.value]:
-        raise generic.ScriptError('Day should be value between 1 and {:d}.'.format(number_days[month.value]), day.pos)
+        raise generic.ScriptError("Day should be value between 1 and {:d}.".format(number_days[month.value]), day.pos)
 
     return ConstantNumeric(datetime.date(1, month.value, day.value).toordinal(), pos)
+
 
 def builtin_storage(name, args, pos):
     """
@@ -227,20 +239,24 @@ def builtin_storage(name, args, pos):
     """
     return StorageOp(name, args, pos)
 
+
 def builtin_ucmp(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return nmlop.VACT2_UCMP(args[0], args[1], pos)
+
 
 def builtin_cmp(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return nmlop.VACT2_CMP(args[0], args[1], pos)
 
+
 def builtin_rotate(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return nmlop.ROT_RIGHT(args[0], args[1], pos)
+
 
 def builtin_hasbit(name, args, pos):
     """
@@ -251,6 +267,7 @@ def builtin_hasbit(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return nmlop.HASBIT(args[0], args[1], pos)
+
 
 def builtin_getbits(name, args, pos):
     """
@@ -269,6 +286,7 @@ def builtin_getbits(name, args, pos):
 
     return nmlop.AND(part1, part3, pos)
 
+
 def builtin_version_openttd(name, args, pos):
     """
     version_openttd(major, minor, revision[, build]) builtin function.
@@ -283,6 +301,7 @@ def builtin_version_openttd(name, args, pos):
     build = args[3].reduce_constant().value if len(args) == 4 else 0x80000
     return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
 
+
 def builtin_cargotype_available(name, args, pos):
     """
     cargotype_available(cargo_label) builtin function.
@@ -292,7 +311,10 @@ def builtin_cargotype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x0B, r'\7c'), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    return SpecialCheck(
+        (0x0B, r"\7c"), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
+    )
+
 
 def builtin_railtype_available(name, args, pos):
     """
@@ -303,7 +325,10 @@ def builtin_railtype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x0D, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    return SpecialCheck(
+        (0x0D, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
+    )
+
 
 def builtin_roadtype_available(name, args, pos):
     """
@@ -314,7 +339,10 @@ def builtin_roadtype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x0F, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    return SpecialCheck(
+        (0x0F, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
+    )
+
 
 def builtin_tramtype_available(name, args, pos):
     """
@@ -325,7 +353,10 @@ def builtin_tramtype_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck((0x11, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos = args[0].pos)
+    return SpecialCheck(
+        (0x11, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
+    )
+
 
 def builtin_grf_status(name, args, pos):
     """
@@ -337,14 +368,14 @@ def builtin_grf_status(name, args, pos):
         raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
     labels = [label.reduce() for label in args]
     mask = parse_string_to_dword(labels[1]) if len(labels) > 1 else None
-    if name == 'grf_current_status':
-        op = (0x06, r'\7G')
+    if name == "grf_current_status":
+        op = (0x06, r"\7G")
         results = (1, 0)
-    elif name == 'grf_future_status':
-        op = (0x0A, r'\7gg')
+    elif name == "grf_future_status":
+        op = (0x0A, r"\7gg")
         results = (0, 1)
-    elif name == 'grf_order_behind':
-        op = (0x08, r'\7gG')
+    elif name == "grf_order_behind":
+        op = (0x08, r"\7gG")
         results = (0, 1)
     else:
         assert False, "Unknown grf status function"
@@ -356,6 +387,7 @@ def builtin_grf_status(name, args, pos):
         varsize = 8
     return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), string, varsize, mask, args[0].pos)
 
+
 def builtin_visual_effect_and_powered(name, args, pos):
     """
     Builtin function, used in two forms:
@@ -365,7 +397,7 @@ def builtin_visual_effect_and_powered(name, args, pos):
     and for the callback VEH_CB_VISUAL_EFFECT[_AND_POWERED]
 
     """
-    arg_len = 2 if name == 'visual_effect' else 3
+    arg_len = 2 if name == "visual_effect" else 3
     if len(args) != arg_len:
         raise generic.ScriptError(name + "() must have {:d} parameters".format(arg_len), pos)
     effect = args[0].reduce_constant(global_constants.const_list).value
@@ -374,11 +406,15 @@ def builtin_visual_effect_and_powered(name, args, pos):
     if arg_len == 3:
         powered = args[2].reduce_constant(global_constants.const_list).value
         if powered != 0 and powered != 0x80:
-            raise generic.ScriptError("3rd argument to visual_effect_and_powered (powered) must be"
-                                      " either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER", pos)
+            raise generic.ScriptError(
+                "3rd argument to visual_effect_and_powered (powered) must be"
+                " either ENABLE_WAGON_POWER or DISABLE_WAGON_POWER",
+                pos,
+            )
     else:
         powered = 0
     return ConstantNumeric(effect | offset | powered)
+
 
 def builtin_create_effect(name, args, pos):
     """
@@ -403,44 +439,59 @@ def builtin_create_effect(name, args, pos):
 
     return ConstantNumeric(sprite | (offset1 & 0xFF) << 8 | (offset2 & 0xFF) << 16 | (offset3 & 0xFF) << 24)
 
+
 def builtin_str2number(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     return ConstantNumeric(parse_string_to_dword(args[0]))
 
+
 def builtin_cargotype(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
-        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your cargo table", pos)
+        raise generic.ScriptError(
+            "Parameter for " + name + "() must be a string literal that is also in your cargo table", pos
+        )
     return ConstantNumeric(global_constants.cargo_numbers[args[0].value])
+
 
 def builtin_railtype(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.railtype_table:
-        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your railtype table", pos)
+        raise generic.ScriptError(
+            "Parameter for " + name + "() must be a string literal that is also in your railtype table", pos
+        )
     return ConstantNumeric(global_constants.railtype_table[args[0].value])
+
 
 def builtin_roadtype(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.roadtype_table:
-        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your roadtype table", pos)
+        raise generic.ScriptError(
+            "Parameter for " + name + "() must be a string literal that is also in your roadtype table", pos
+        )
     return ConstantNumeric(global_constants.roadtype_table[args[0].value])
+
 
 def builtin_tramtype(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.tramtype_table:
-        raise generic.ScriptError("Parameter for " + name + "() must be a string literal that is also in your tramtype table", pos)
+        raise generic.ScriptError(
+            "Parameter for " + name + "() must be a string literal that is also in your tramtype table", pos
+        )
     return ConstantNumeric(global_constants.tramtype_table[args[0].value])
+
 
 def builtin_reserve_sprites(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     count = args[0].reduce_constant()
-    return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, lambda x: '{}({:d})'.format(name, count.value), pos)
+    return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, lambda x: "{}({:d})".format(name, count.value), pos)
+
 
 def builtin_industry_type(name, args, pos):
     """
@@ -462,20 +513,24 @@ def builtin_industry_type(name, args, pos):
 
     return ConstantNumeric(type << 7 | id)
 
+
 def builtin_cargoexpr(name, args, pos):
     if len(args) < 1:
         raise generic.ScriptError(name + "() must have 1 or more parameters", pos)
 
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
-        raise generic.ScriptError("First argument of " + name + "() must be a string literal that is also in your cargo table", pos)
+        raise generic.ScriptError(
+            "First argument of " + name + "() must be a string literal that is also in your cargo table", pos
+        )
     cargotype = global_constants.cargo_numbers[args[0].value]
 
-    if name == 'produce_cargo':
+    if name == "produce_cargo":
         return ProduceCargo(cargotype, args[1:], pos)
-    elif name == 'accept_cargo':
+    elif name == "accept_cargo":
         return AcceptCargo(cargotype, args[1:], pos)
     else:
         assert False
+
 
 def builtin_trigonometric(name, args, pos):
     if len(args) != 1:
@@ -484,14 +539,15 @@ def builtin_trigonometric(name, args, pos):
     if not isinstance(val, (ConstantNumeric, ConstantFloat)):
         raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
     trigonometric_func_table = {
-        'acos': math.acos,
-        'asin': math.asin,
-        'atan': math.atan,
-        'cos': math.cos,
-        'sin': math.sin,
-        'tan': math.tan,
+        "acos": math.acos,
+        "asin": math.asin,
+        "atan": math.atan,
+        "cos": math.cos,
+        "sin": math.sin,
+        "tan": math.tan,
     }
     return ConstantFloat(trigonometric_func_table[name](val.value), val.pos)
+
 
 def builtin_int(name, args, pos):
     if len(args) != 1:
@@ -501,11 +557,13 @@ def builtin_int(name, args, pos):
         raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
     return ConstantNumeric(int(val.value), val.pos)
 
+
 def builtin_abs(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     guard = nmlop.CMP_LT(args[0], 0)
     return TernaryOp(guard, nmlop.SUB(0, args[0]), args[0], args[0].pos).reduce()
+
 
 def builtin_sound_file(name, args, pos):
     if len(args) not in (1, 2):
@@ -515,7 +573,9 @@ def builtin_sound_file(name, args, pos):
     volume = args[1].reduce_constant().value if len(args) >= 2 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)
     from nml.actions import action11
-    return ConstantNumeric(action11.add_sound( (args[0].value, volume), pos), pos)
+
+    return ConstantNumeric(action11.add_sound((args[0].value, volume), pos), pos)
+
 
 def builtin_sound_import(name, args, pos):
     if len(args) not in (2, 3):
@@ -525,7 +585,9 @@ def builtin_sound_import(name, args, pos):
     volume = args[2].reduce_constant().value if len(args) >= 3 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)
     from nml.actions import action11
-    return ConstantNumeric(action11.add_sound( (grfid, sound_num, volume), pos), pos)
+
+    return ConstantNumeric(action11.add_sound((grfid, sound_num, volume), pos), pos)
+
 
 def builtin_relative_coord(name, args, pos):
     """
@@ -548,6 +610,7 @@ def builtin_relative_coord(name, args, pos):
 
     return nmlop.OR(x_coord, y_coord, pos)
 
+
 def builtin_num_corners_raised(name, args, pos):
     """
     num_corners_raised(slope) builtin function.
@@ -566,10 +629,11 @@ def builtin_num_corners_raised(name, args, pos):
     # - And-masking leaves only the lowest bit in each nibble (000d|000c|000b|000a|000e)
     # - The modulus operation adds one to the output for each set bit
     # - We now have the count of bits in the slope, which is wat we want. yay!
-    slope = nmlop.AND(slope, 0x1F,    pos)
+    slope = nmlop.AND(slope, 0x1F, pos)
     slope = nmlop.MUL(slope, 0x8421)
     slope = nmlop.AND(slope, 0x11111)
-    return  nmlop.MOD(slope, 0xF)
+    return nmlop.MOD(slope, 0xF)
+
 
 def builtin_slope_to_sprite_offset(name, args, pos):
     """
@@ -585,8 +649,7 @@ def builtin_slope_to_sprite_offset(name, args, pos):
 
     # step 1: ((slope >= 0) & (slope <= 14)) * slope
     # This handles all non-steep slopes
-    expr = nmlop.AND(nmlop.CMP_LE(args[0], 14, pos),
-                     nmlop.CMP_GE(args[0], 0, pos))
+    expr = nmlop.AND(nmlop.CMP_LE(args[0], 14, pos), nmlop.CMP_GE(args[0], 0, pos))
     expr = nmlop.MUL(expr, args[0])
     # Now handle the steep slopes separately
     # So add (slope == SLOPE_XX) * offset_of_SLOPE_XX for each steep slope
@@ -595,6 +658,7 @@ def builtin_slope_to_sprite_offset(name, args, pos):
         to_add = nmlop.MUL(nmlop.CMP_EQ(args[0], slope, pos), offset)
         expr = nmlop.ADD(expr, to_add)
     return expr
+
 
 def builtin_palette_1cc(name, args, pos):
     """
@@ -609,6 +673,7 @@ def builtin_palette_1cc(name, args, pos):
         generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
 
     return nmlop.ADD(args[0], 775, pos)
+
 
 def builtin_palette_2cc(name, args, pos):
     """
@@ -626,9 +691,10 @@ def builtin_palette_2cc(name, args, pos):
     col2 = nmlop.MUL(args[1], 16, pos)
     col12 = nmlop.ADD(col2, args[0])
     # Base sprite is not a constant
-    base = global_constants.patch_variable('base_sprite_2cc', global_constants.patch_variables['base_sprite_2cc'], pos)
+    base = global_constants.patch_variable("base_sprite_2cc", global_constants.patch_variables["base_sprite_2cc"], pos)
 
     return nmlop.ADD(col12, base)
+
 
 def builtin_vehicle_curv_info(name, args, pos):
     """
@@ -646,6 +712,7 @@ def builtin_vehicle_curv_info(name, args, pos):
     args = [nmlop.AND(arg, 0xF, pos) for arg in args]
     cur_next = nmlop.SHIFT_LEFT(args[1], 8)
     return nmlop.OR(args[0], cur_next)
+
 
 def builtin_format_string(name, args, pos):
     """
@@ -665,7 +732,9 @@ def builtin_format_string(name, args, pos):
     for i, arg in enumerate(args[1:]):
         arg = arg.reduce()
         if not isinstance(arg, (StringLiteral, ConstantFloat, ConstantNumeric)):
-            raise generic.ScriptError(name + "() parameter {:d} is not a constant number of literal string".format(i+1), arg.pos)
+            raise generic.ScriptError(
+                name + "() parameter {:d} is not a constant number of literal string".format(i + 1), arg.pos
+            )
         format_args.append(arg.value)
 
     try:
@@ -674,58 +743,59 @@ def builtin_format_string(name, args, pos):
     except Exception as ex:
         raise generic.ScriptError("Invalid combination of format / arguments for {}: {}".format(name, str(ex)), pos)
 
-#}
+
+# }
 
 function_table = {
-    'min' : builtin_min,
-    'max' : builtin_max,
-    'date' : builtin_date,
-    'day_of_year' : builtin_day_of_year,
-    'bitmask' : lambda name, args, pos: BitMask(args, pos),
-    'STORE_TEMP' : builtin_storage,
-    'STORE_PERM' : builtin_storage,
-    'LOAD_TEMP' : builtin_storage,
-    'LOAD_PERM' : builtin_storage,
-    'hasbit' : builtin_hasbit,
-    'getbits' : builtin_getbits,
-    'version_openttd' : builtin_version_openttd,
-    'cargotype_available' : builtin_cargotype_available,
-    'railtype_available' : builtin_railtype_available,
-    'roadtype_available' : builtin_roadtype_available,
-    'tramtype_available' : builtin_tramtype_available,
-    'grf_current_status' : builtin_grf_status,
-    'grf_future_status' : builtin_grf_status,
-    'grf_order_behind' : builtin_grf_status,
-    'visual_effect' : builtin_visual_effect_and_powered,
-    'visual_effect_and_powered' : builtin_visual_effect_and_powered,
-    'create_effect' : builtin_create_effect,
-    'str2number' : builtin_str2number,
-    'cargotype' : builtin_cargotype,
-    'railtype' : builtin_railtype,
-    'roadtype' : builtin_roadtype,
-    'tramtype': builtin_tramtype,
-    'reserve_sprites' : builtin_reserve_sprites,
-    'industry_type' : builtin_industry_type,
-    'accept_cargo': builtin_cargoexpr,
-    'produce_cargo': builtin_cargoexpr,
-    'int' : builtin_int,
-    'abs' : builtin_abs,
-    'acos' : builtin_trigonometric,
-    'asin' : builtin_trigonometric,
-    'atan' : builtin_trigonometric,
-    'cos' : builtin_trigonometric,
-    'sin' : builtin_trigonometric,
-    'tan' : builtin_trigonometric,
-    'UCMP' : builtin_ucmp,
-    'CMP' : builtin_cmp,
-    'rotate' : builtin_rotate,
-    'sound' : builtin_sound_file,
-    'import_sound': builtin_sound_import,
-    'relative_coord' : builtin_relative_coord,
-    'num_corners_raised' : builtin_num_corners_raised,
-    'slope_to_sprite_offset' : builtin_slope_to_sprite_offset,
-    'palette_1cc' : builtin_palette_1cc,
-    'palette_2cc' : builtin_palette_2cc,
-    'vehicle_curv_info' : builtin_vehicle_curv_info,
-    'format_string' : builtin_format_string,
+    "min": builtin_min,
+    "max": builtin_max,
+    "date": builtin_date,
+    "day_of_year": builtin_day_of_year,
+    "bitmask": lambda name, args, pos: BitMask(args, pos),
+    "STORE_TEMP": builtin_storage,
+    "STORE_PERM": builtin_storage,
+    "LOAD_TEMP": builtin_storage,
+    "LOAD_PERM": builtin_storage,
+    "hasbit": builtin_hasbit,
+    "getbits": builtin_getbits,
+    "version_openttd": builtin_version_openttd,
+    "cargotype_available": builtin_cargotype_available,
+    "railtype_available": builtin_railtype_available,
+    "roadtype_available": builtin_roadtype_available,
+    "tramtype_available": builtin_tramtype_available,
+    "grf_current_status": builtin_grf_status,
+    "grf_future_status": builtin_grf_status,
+    "grf_order_behind": builtin_grf_status,
+    "visual_effect": builtin_visual_effect_and_powered,
+    "visual_effect_and_powered": builtin_visual_effect_and_powered,
+    "create_effect": builtin_create_effect,
+    "str2number": builtin_str2number,
+    "cargotype": builtin_cargotype,
+    "railtype": builtin_railtype,
+    "roadtype": builtin_roadtype,
+    "tramtype": builtin_tramtype,
+    "reserve_sprites": builtin_reserve_sprites,
+    "industry_type": builtin_industry_type,
+    "accept_cargo": builtin_cargoexpr,
+    "produce_cargo": builtin_cargoexpr,
+    "int": builtin_int,
+    "abs": builtin_abs,
+    "acos": builtin_trigonometric,
+    "asin": builtin_trigonometric,
+    "atan": builtin_trigonometric,
+    "cos": builtin_trigonometric,
+    "sin": builtin_trigonometric,
+    "tan": builtin_trigonometric,
+    "UCMP": builtin_ucmp,
+    "CMP": builtin_cmp,
+    "rotate": builtin_rotate,
+    "sound": builtin_sound_file,
+    "import_sound": builtin_sound_import,
+    "relative_coord": builtin_relative_coord,
+    "num_corners_raised": builtin_num_corners_raised,
+    "slope_to_sprite_offset": builtin_slope_to_sprite_offset,
+    "palette_1cc": builtin_palette_1cc,
+    "palette_2cc": builtin_palette_2cc,
+    "vehicle_curv_info": builtin_vehicle_curv_info,
+    "format_string": builtin_format_string,
 }

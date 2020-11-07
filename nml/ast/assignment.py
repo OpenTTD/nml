@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
+
 class Assignment:
     """
     Simple storage container for a name / value pair.
@@ -30,21 +31,23 @@ class Assignment:
     @ivar pos: Position information of the assignment
     @type pos: L{Position}
     """
+
     def __init__(self, name, value, pos):
         self.name = name
         self.value = value
         self.pos = pos
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Assignment')
-        generic.print_dbg(indentation + 2, 'Name:')
+        generic.print_dbg(indentation, "Assignment")
+        generic.print_dbg(indentation + 2, "Name:")
         self.name.debug_print(indentation + 4)
 
-        generic.print_dbg(indentation + 2, 'Value:')
+        generic.print_dbg(indentation + 2, "Value:")
         self.value.debug_print(indentation + 4)
 
     def __str__(self):
         return "{}: {};".format(self.name, self.value)
+
 
 class UnitAssignment(Assignment):
     """
@@ -53,15 +56,16 @@ class UnitAssignment(Assignment):
     @ivar unit: Unit of the value, or not C{None}
     @type unit: L{Unit}
     """
+
     def __init__(self, name, value, unit, pos):
         Assignment.__init__(self, name, value, pos)
         self.unit = unit
 
     def debug_print(self, indentation):
         Assignment.debug_print(self, indentation)
-        generic.print_dbg(indentation + 2, 'Unit:')
+        generic.print_dbg(indentation + 2, "Unit:")
         if self.unit is None:
-            generic.print_dbg(indentation + 4, 'None')
+            generic.print_dbg(indentation + 4, "None")
         else:
             generic.print_dbg(indentation + 4, self.unit)
 
@@ -70,6 +74,7 @@ class UnitAssignment(Assignment):
             return Assignment.__str__(self)
         else:
             return "{}: {} {};".format(self.name, self.value, self.unit.name)
+
 
 class Range:
     """
@@ -83,6 +88,7 @@ class Range:
     @ivar max: The maximum value of this range.
     @type max: L{Expression} or C{None}
     """
+
     def __init__(self, min, max):
         self.min = min
         self.max = max
@@ -91,4 +97,3 @@ class Range:
         if self.max is None:
             return str(self.min)
         return "{} .. {}".format(self.min, self.max)
-

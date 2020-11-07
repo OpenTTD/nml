@@ -25,8 +25,9 @@ class Action14(base_action.BaseAction):
         return False
 
     def write(self, file):
-        size = 2 # final 0-byte
-        for node in self.nodes: size += node.get_size()
+        size = 2  # final 0-byte
+        for node in self.nodes:
+            size += node.get_size()
 
         file.start_sprite(size)
         file.print_bytex(0x14)
@@ -35,6 +36,7 @@ class Action14(base_action.BaseAction):
         file.print_bytex(0)
 
         file.end_sprite()
+
 
 def split_action14(node, max_size):
     if node.get_size() <= max_size:
@@ -61,6 +63,7 @@ def split_action14(node, max_size):
         return [None, rest]
     return [new_node, rest]
 
+
 def get_actions(root):
     action_list = []
     while True:
@@ -71,6 +74,7 @@ def get_actions(root):
             break
 
     return action_list
+
 
 class Action14Node:
     def __init__(self, type_string, id):
@@ -83,7 +87,7 @@ class Action14Node:
 
         @return: The size (in bytes) of this node.
         """
-        raise NotImplementedError('get_size must be implemented in Action14Node-subclass {!r}'.format(type(self)))
+        raise NotImplementedError("get_size must be implemented in Action14Node-subclass {!r}".format(type(self)))
 
     def write(self, file):
         """
@@ -91,7 +95,7 @@ class Action14Node:
 
         @param file: The file to write the output to.
         """
-        raise NotImplementedError('write must be implemented in Action14Node-subclass {!r}'.format(type(self)))
+        raise NotImplementedError("write must be implemented in Action14Node-subclass {!r}".format(type(self)))
 
     def write_type_id(self, file):
         file.print_string(self.type_string, False, True)
@@ -100,8 +104,9 @@ class Action14Node:
         else:
             file.print_dword(self.id)
 
+
 class TextNode(Action14Node):
-    def __init__(self, id, string, skip_default_langid = False):
+    def __init__(self, id, string, skip_default_langid=False):
         Action14Node.__init__(self, "T", id)
         self.string = string
         grfstrings.validate_string(self.string)
@@ -129,13 +134,14 @@ class TextNode(Action14Node):
             file.print_string(grfstrings.get_translation(self.string, lang_id))
             file.newline()
 
+
 class BranchNode(Action14Node):
     def __init__(self, id):
         Action14Node.__init__(self, "C", id)
         self.subnodes = []
 
     def get_size(self):
-        size = 6 # "C", id, final 0-byte
+        size = 6  # "C", id, final 0-byte
         for node in self.subnodes:
             size += node.get_size()
         return size
@@ -148,20 +154,22 @@ class BranchNode(Action14Node):
         file.print_bytex(0)
         file.newline()
 
+
 class BinaryNode(Action14Node):
-    def __init__(self, id, size, val = None):
+    def __init__(self, id, size, val=None):
         Action14Node.__init__(self, "B", id)
         self.size = size
         self.val = val
 
     def get_size(self):
-        return 7 + self.size # "B" (1), id (4), size (2), data (self.size)
+        return 7 + self.size  # "B" (1), id (4), size (2), data (self.size)
 
     def write(self, file):
         self.write_type_id(file)
         file.print_word(self.size)
         file.print_varx(self.val, self.size)
         file.newline()
+
 
 class UsedPaletteNode(BinaryNode):
     def __init__(self, pal):
@@ -174,6 +182,7 @@ class UsedPaletteNode(BinaryNode):
         file.print_string(self.pal, False, True)
         file.newline()
 
+
 class BlitterNode(BinaryNode):
     def __init__(self, blitter):
         BinaryNode.__init__(self, "BLTR", 1)
@@ -184,6 +193,7 @@ class BlitterNode(BinaryNode):
         file.print_word(self.size)
         file.print_string(self.blitter, False, True)
         file.newline()
+
 
 class SettingMaskNode(BinaryNode):
     def __init__(self, param_num, first_bit, num_bits):
@@ -200,6 +210,7 @@ class SettingMaskNode(BinaryNode):
         file.print_byte(self.num_bits)
         file.newline()
 
+
 class LimitNode(BinaryNode):
     def __init__(self, min_val, max_val):
         BinaryNode.__init__(self, "LIMI", 8)
@@ -212,6 +223,7 @@ class LimitNode(BinaryNode):
         file.print_dword(self.min_val)
         file.print_dword(self.max_val)
         file.newline()
+
 
 def grf_name_desc_actions(root, name, desc, url, version, min_compatible_version):
     if len(grfstrings.get_translations(name)) > 0:
@@ -227,6 +239,7 @@ def grf_name_desc_actions(root, name, desc, url, version, min_compatible_version
     root.subnodes.append(version_node)
     min_compatible_version_node = BinaryNode("MINV", 4, min_compatible_version.value)
     root.subnodes.append(min_compatible_version_node)
+
 
 def param_desc_actions(root, params):
     num_params = 0
@@ -245,7 +258,7 @@ def param_desc_actions(root, params):
                 setting_node.subnodes.append(TextNode("NAME", setting.name_string))
             if setting.desc_string is not None:
                 setting_node.subnodes.append(TextNode("DESC", setting.desc_string))
-            if setting.type == 'int':
+            if setting.type == "int":
                 setting_node.subnodes.append(BinaryNode("MASK", 1, param_num))
                 min_val = setting.min_val.uvalue if setting.min_val is not None else 0
                 max_val = setting.max_val.uvalue if setting.max_val is not None else 0xFFFFFFFF
@@ -261,7 +274,7 @@ def param_desc_actions(root, params):
                         value_names_node.subnodes.append(TextNode(set_val_pair[0], set_val_pair[1]))
                     setting_node.subnodes.append(value_names_node)
             else:
-                assert setting.type == 'bool'
+                assert setting.type == "bool"
                 setting_node.subnodes.append(BinaryNode("TYPE", 1, 1))
                 bit = setting.bit_num.value if setting.bit_num is not None else 0
                 setting_node.subnodes.append(SettingMaskNode(param_num, bit, 1))
@@ -272,6 +285,7 @@ def param_desc_actions(root, params):
         param_num += 1
     if len(param_root.subnodes) > 0:
         root.subnodes.append(param_root)
+
 
 def PaletteAction(pal):
     root = BranchNode("INFO")

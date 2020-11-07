@@ -20,6 +20,7 @@ from nml.ast import base_statement
 
 townname_serial = 1
 
+
 class TownNames(base_statement.BaseStatement):
     """
     'town_names' ast node.
@@ -42,6 +43,7 @@ class TownNames(base_statement.BaseStatement):
     @ivar param_list: Stored parameter list.
     @type param_list: C{list} of (L{TownNamesPart} or L{TownNamesParam})
     """
+
     def __init__(self, name, param_list, pos):
         base_statement.BaseStatement.__init__(self, "town_names-block", pos, False, False)
         self.name = name
@@ -53,9 +55,9 @@ class TownNames(base_statement.BaseStatement):
         self.parts = []
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Town name')
+        generic.print_dbg(indentation, "Town name")
         if self.name is not None:
-            generic.print_dbg(indentation + 2, 'Name:')
+            generic.print_dbg(indentation + 2, "Name:")
             self.name.debug_print(indentation + 4)
         for param in self.param_list:
             param.debug_print(indentation + 2)
@@ -69,7 +71,7 @@ class TownNames(base_statement.BaseStatement):
                 self.actFs.extend(actFs)
                 self.parts.append(part)
             else:
-                if param.key.value != 'styles':
+                if param.key.value != "styles":
                     raise generic.ScriptError("Expected 'styles' keyword.", param.pos)
                 if len(param.value.params) > 0:
                     raise generic.ScriptError("Parameters of the 'styles' were not expected.", param.pos)
@@ -88,7 +90,7 @@ class TownNames(base_statement.BaseStatement):
                 raise generic.ScriptError("ID should be an integer number.", self.pos)
 
             self.id_number = value.value
-            if self.id_number < 0 or self.id_number > 0x7f:
+            if self.id_number < 0 or self.id_number > 0x7F:
                 raise generic.ScriptError("ID must be a number between 0 and 0x7f (inclusive)", self.pos)
 
             if self.id_number not in actionF.free_numbers:
@@ -96,10 +98,10 @@ class TownNames(base_statement.BaseStatement):
             actionF.free_numbers.remove(self.id_number)
 
     def __str__(self):
-        ret = 'town_names'
+        ret = "town_names"
         if self.name is not None:
-            ret += '({})'.format(self.name)
-        ret += '{{\n{}}}\n'.format(''.join(str(x) for x in self.param_list))
+            ret += "({})".format(self.name)
+        ret += "{{\n{}}}\n".format("".join(str(x) for x in self.param_list))
         return ret
 
     def get_action_list(self):
@@ -122,6 +124,7 @@ class TownNamesPart:
     @ivar num_bits: Number of bits to use, if defined.
     @type num_bits: C{int} or C{None}
     """
+
     def __init__(self, pieces, pos):
         self.pos = pos
         self.pieces = pieces
@@ -150,7 +153,9 @@ class TownNamesPart:
         if len(self.pieces) == 0:
             raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
         if len(self.pieces) > 255:
-            raise generic.ScriptError("Too many values in a part, found {:d}, maximum is 255".format(len(self.pieces)), self.pos)
+            raise generic.ScriptError(
+                "Too many values in a part, found {:d}, maximum is 255".format(len(self.pieces)), self.pos
+            )
 
         return actFs, self
 
@@ -166,15 +171,17 @@ class TownNamesPart:
         global townname_serial
 
         if len(self.pieces) <= 255:
-            return [] # Trivially correct.
+            return []  # Trivially correct.
 
         # There are too many pieces.
         number_action_f = (len(self.pieces) + 254) // 255
         pow2 = 1
-        while pow2 < number_action_f: pow2 = pow2 * 2
-        if pow2 < 255: number_action_f = pow2
+        while pow2 < number_action_f:
+            pow2 = pow2 * 2
+        if pow2 < 255:
+            number_action_f = pow2
 
-        heap = [] # Heap of (summed probability, subset-of-pieces)
+        heap = []  # Heap of (summed probability, subset-of-pieces)
         i = 0
         while i < number_action_f:
             # Index 'i' is added to have a unique sorting when lists have equal total probabilities.
@@ -183,7 +190,7 @@ class TownNamesPart:
 
         finished_actions = []
         # Index 'idx' is added to have a unique sorting when pieces have equal probabilities.
-        rev_pieces = sorted(((p.probability.value, idx, p) for idx, p in enumerate(self.pieces)), reverse = True)
+        rev_pieces = sorted(((p.probability.value, idx, p) for idx, p in enumerate(self.pieces)), reverse=True)
         for prob, _idx, piece in rev_pieces:
             while True:
                 sub = heapq.heappop(heap)
@@ -226,8 +233,6 @@ class TownNamesPart:
         # update self.parts
         return actFs
 
-
-
     def assign_bits(self, startbit):
         """
         Assign bits for this piece.
@@ -244,7 +249,8 @@ class TownNamesPart:
         self.startbit = startbit
         if self.num_bits is None:
             n = 1
-            while total > (1 << n): n = n + 1
+            while total > (1 << n):
+                n = n + 1
             self.num_bits = n
         assert (1 << self.num_bits) >= total
         return self.num_bits
@@ -258,28 +264,29 @@ class TownNamesPart:
 
     def debug_print(self, indentation):
         total = sum(piece.probability.value for piece in self.pieces)
-        generic.print_dbg(indentation, 'Town names part (total {:d})'.format(total))
+        generic.print_dbg(indentation, "Town names part (total {:d})".format(total))
         for piece in self.pieces:
             piece.debug_print(indentation + 2, total)
 
     def __str__(self):
-        return '{{\n\t{}\n}}\n'.format('\n\t'.join(str(piece) for piece in self.pieces))
+        return "{{\n\t{}\n}}\n".format("\n\t".join(str(piece) for piece in self.pieces))
 
     def get_length(self):
-        size = 3 # textcount, firstbit, bitcount bytes.
+        size = 3  # textcount, firstbit, bitcount bytes.
         size += sum(piece.get_length() for piece in self.pieces)
         return size
 
     def resolve_townname_id(self):
-        '''
+        """
         Resolve the reference numbers to previous C{town_names} blocks.
 
         @return: Set of referenced C{town_names} block numbers.
-        '''
+        """
         blocks = set()
         for piece in self.pieces:
             block = piece.resolve_townname_id()
-            if block is not None: blocks.add(block)
+            if block is not None:
+                blocks.add(block)
         return blocks
 
     def write(self, file):
@@ -297,20 +304,21 @@ class TownNamesParam:
     Currently known key/values:
      - 'styles'  / string expression
     """
+
     def __init__(self, key, value, pos):
         self.key = key
         self.value = value
         self.pos = pos
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Town names param')
-        generic.print_dbg(indentation + 2, 'Key:')
+        generic.print_dbg(indentation, "Town names param")
+        generic.print_dbg(indentation + 2, "Key:")
         self.key.debug_print(indentation + 4)
-        generic.print_dbg(indentation + 2, 'Value:')
+        generic.print_dbg(indentation + 2, "Value:")
         self.value.debug_print(indentation + 4)
 
     def __str__(self):
-        return '{}: {};\n'.format(self.key, self.value)
+        return "{}: {};\n".format(self.key, self.value)
 
 
 class TownNamesEntryDefinition:
@@ -329,6 +337,7 @@ class TownNamesEntryDefinition:
     @ivar pos: Position information of the parts block.
     @type pos: L{Position}
     """
+
     def __init__(self, def_number, probability, pos):
         self.def_number = def_number
         self.number = None
@@ -341,13 +350,15 @@ class TownNamesEntryDefinition:
             self.def_number = self.def_number.reduce_constant()
             if not isinstance(self.def_number, expression.ConstantNumeric):
                 raise generic.ScriptError("Reference to other town name ID should be an integer number.", self.pos)
-            if self.def_number.value < 0 or self.def_number.value > 0x7f:
-                raise generic.ScriptError("Reference number out of range (must be between 0 and 0x7f inclusive).", self.pos)
+            if self.def_number.value < 0 or self.def_number.value > 0x7F:
+                raise generic.ScriptError(
+                    "Reference number out of range (must be between 0 and 0x7f inclusive).", self.pos
+                )
 
         self.probability = self.probability.reduce_constant()
         if not isinstance(self.probability, expression.ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.", self.pos)
-        if self.probability.value < 0 or self.probability.value > 0x7f:
+        if self.probability.value < 0 or self.probability.value > 0x7F:
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
@@ -356,33 +367,45 @@ class TownNamesEntryDefinition:
         else:
             name_text = "number 0x{:x}".format(self.def_number.value)
 
-        generic.print_dbg(indentation, 'Insert town_name ID {} with probability {:d}/{:d}'.format(name_text, self.probability.value, total))
+        generic.print_dbg(
+            indentation,
+            "Insert town_name ID {} with probability {:d}/{:d}".format(name_text, self.probability.value, total),
+        )
 
     def __str__(self):
-        return 'town_names({}, {:d}),'.format(str(self.def_number), self.probability.value)
+        return "town_names({}, {:d}),".format(str(self.def_number), self.probability.value)
 
     def get_length(self):
         return 2
 
     def resolve_townname_id(self):
-        '''
+        """
         Resolve the reference number to a previous C{town_names} block.
 
         @return: Number of the referenced C{town_names} block.
-        '''
+        """
         if isinstance(self.def_number, expression.Identifier):
             self.number = actionF.named_numbers.get(self.def_number.value)
             if self.number is None:
-                raise generic.ScriptError('Town names name "{}" is not defined or points to a next town_names node'.format(self.def_number.value), self.pos)
+                raise generic.ScriptError(
+                    'Town names name "{}" is not defined or points to a next town_names node'.format(
+                        self.def_number.value
+                    ),
+                    self.pos,
+                )
         else:
             self.number = self.def_number.value
             if self.number not in actionF.numbered_numbers:
-                raise generic.ScriptError('Town names number "{}" is not defined or points to a next town_names node'.format(self.number), self.pos)
+                raise generic.ScriptError(
+                    'Town names number "{}" is not defined or points to a next town_names node'.format(self.number),
+                    self.pos,
+                )
         return self.number
 
     def write(self, file):
         file.print_bytex(self.probability.value | 0x80)
         file.print_bytex(self.number)
+
 
 class TownNamesEntryText:
     """
@@ -391,6 +414,7 @@ class TownNamesEntryText:
     @ivar pos: Position information of the parts block.
     @type pos: L{Position}
     """
+
     def __init__(self, id, text, probability, pos):
         self.id = id
         self.text = text
@@ -398,7 +422,7 @@ class TownNamesEntryText:
         self.pos = pos
 
     def pre_process(self):
-        if self.id.value != 'text':
+        if self.id.value != "text":
             raise generic.ScriptError("Expected 'text' prefix.", self.pos)
 
         if not isinstance(self.text, expression.StringLiteral):
@@ -407,26 +431,28 @@ class TownNamesEntryText:
         self.probability = self.probability.reduce_constant()
         if not isinstance(self.probability, expression.ConstantNumeric):
             raise generic.ScriptError("Probability should be an integer number.", self.pos)
-        if self.probability.value < 0 or self.probability.value > 0x7f:
+        if self.probability.value < 0 or self.probability.value > 0x7F:
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
-        generic.print_dbg(indentation, 'Text {} with probability {:d}/{:d}'.format(self.text.value, self.probability.value, total))
+        generic.print_dbg(
+            indentation, "Text {} with probability {:d}/{:d}".format(self.text.value, self.probability.value, total)
+        )
 
     def __str__(self):
-        return 'text({}, {:d}),'.format(self.text, self.probability.value)
+        return "text({}, {:d}),".format(self.text, self.probability.value)
 
     def get_length(self):
-        return 1 + grfstrings.get_string_size(self.text.value) # probability, text
+        return 1 + grfstrings.get_string_size(self.text.value)  # probability, text
 
     def resolve_townname_id(self):
-        '''
+        """
         Resolve the reference number to a previous C{town_names} block.
 
         @return: C{None}, as being the block number of a referenced previous C{town_names} block.
-        '''
+        """
         return None
 
     def write(self, file):
         file.print_bytex(self.probability.value)
-        file.print_string(self.text.value, final_zero = True)
+        file.print_string(self.text.value, final_zero=True)

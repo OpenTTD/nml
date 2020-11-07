@@ -17,6 +17,7 @@ from nml.actions import action2, action2real, action2var_variables, action4, act
 from nml import expression, generic, global_constants, nmlop
 from nml.ast import general, switch
 
+
 class Action2Var(action2.Action2):
     """
     Variational Action2. This is the NFO equivalent of a switch-block in NML.
@@ -38,6 +39,7 @@ class Action2Var(action2.Action2):
                   action2.
     @ivar ranges: C{list} of L{VarAction2Range}
     """
+
     def __init__(self, feature, name, pos, type_byte, param_registers=None):
         action2.Action2.__init__(self, feature, name, pos)
         self.type_byte = type_byte
@@ -51,12 +53,15 @@ class Action2Var(action2.Action2):
             if isinstance(var, VarAction2LoadCallParam):
                 self.remove_tmp_location(var.parameter, False)
 
-        for var in self.param_registers + self.var_list: # Allocate param registers first
+        for var in self.param_registers + self.var_list:  # Allocate param registers first
             if isinstance(var, (VarAction2StoreTempVar, VarAction2CallParam)):
                 if not self.tmp_locations:
-                    raise generic.ScriptError("There are not enough registers available " +
-                            "to perform all required computations in switch blocks. " +
-                            "Please reduce the complexity of your code.", self.pos)
+                    raise generic.ScriptError(
+                        "There are not enough registers available "
+                        + "to perform all required computations in switch blocks. "
+                        + "Please reduce the complexity of your code.",
+                        self.pos,
+                    )
                 location = self.tmp_locations[0]
                 self.remove_tmp_location(location, False)
                 var.set_register(location)
@@ -81,8 +86,8 @@ class Action2Var(action2.Action2):
             self.default_result = self.default_result.value | 0x8000
 
     def write(self, file):
-        #type_byte, num_ranges, default_result = 4
-        #2 bytes for the result, 8 bytes for the min/max range.
+        # type_byte, num_ranges, default_result = 4
+        # 2 bytes for the result, 8 bytes for the min/max range.
         size = 4 + (2 + 8) * len(self.ranges)
         for var in self.var_list:
             if isinstance(var, nmlop.Operator):
@@ -110,6 +115,7 @@ class Action2Var(action2.Action2):
         file.print_wordx(self.default_result)
         file.comment(self.default_comment)
         file.end_sprite()
+
 
 class VarAction2Var:
     """
@@ -140,7 +146,8 @@ class VarAction2Var:
     @ivar comment: Textual description of this variable.
     @type comment: C{basestr}
     """
-    def __init__(self, var_num, shift, mask, parameter = None):
+
+    def __init__(self, var_num, shift, mask, parameter=None):
         self.var_num = var_num
         self.shift = shift
         self.mask = mask
@@ -167,19 +174,22 @@ class VarAction2Var:
             elif self.mod is not None:
                 file.print_varx(self.mod, size)
             else:
-                #no div or add, just divide by 1
+                # no div or add, just divide by 1
                 file.print_varx(1, size)
 
     def get_size(self):
-        #var number (1) [+ parameter (1)] + shift num (1) + and mask (4) [+ add (4) + div/mod (4)]
+        # var number (1) [+ parameter (1)] + shift num (1) + and mask (4) [+ add (4) + div/mod (4)]
         size = 6
-        if self.parameter is not None: size += 1
-        if self.add is not None or self.div is not None or self.mod is not None: size += 8
+        if self.parameter is not None:
+            size += 1
+        if self.add is not None or self.div is not None or self.mod is not None:
+            size += 8
         return size
 
     def supported_by_actionD(self, raise_error):
         assert not raise_error
         return False
+
 
 # Class for var 7E procedure calls
 class VarAction2ProcCallVar(VarAction2Var):
@@ -203,12 +213,13 @@ class VarAction2ProcCallVar(VarAction2Var):
         self.mask = get_mask(size)
         VarAction2Var.write(self, file, size)
 
+
 # General load and store class for temp parameters
 # Register is allocated at the store operation
 class VarAction2StoreTempVar(VarAction2Var):
     def __init__(self):
         VarAction2Var.__init__(self, 0x1A, 0, 0)
-        #mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
+        # mask holds the number, it's resolved in Action2Var.resolve_tmp_storage
         self.load_vars = []
 
     def set_register(self, register):
@@ -219,10 +230,14 @@ class VarAction2StoreTempVar(VarAction2Var):
     def get_size(self):
         return 6
 
+
 def get_mask(size):
-    if size == 1: return 0xFF
-    elif size == 2: return 0xFFFF
+    if size == 1:
+        return 0xFF
+    elif size == 2:
+        return 0xFFFF
     return 0xFFFFFFFF
+
 
 class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
     def __init__(self, tmp_var):
@@ -238,7 +253,7 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
     def get_size(self):
         return 7
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         return self
 
     def supported_by_action2(self, raise_error):
@@ -247,6 +262,7 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
     def supported_by_actionD(self, raise_error):
         assert not raise_error
         return False
+
 
 # Temporary load and store classes used for spritelayout parameters
 # Register is allocated in a separate entity
@@ -263,6 +279,7 @@ class VarAction2CallParam:
             store_var.mask = register
         for load_var in self.load_vars:
             load_var.parameter = register
+
 
 class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
     def __init__(self, param, name):
@@ -281,7 +298,7 @@ class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
     def get_size(self):
         return 7
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         return self
 
     def supported_by_action2(self, raise_error):
@@ -294,6 +311,7 @@ class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
     def __str__(self):
         return self.name
 
+
 class VarAction2StoreCallParam(VarAction2Var):
     def __init__(self, param):
         VarAction2Var.__init__(self, 0x1A, 0, 0)
@@ -304,6 +322,7 @@ class VarAction2StoreCallParam(VarAction2Var):
     def get_size(self):
         return 6
 
+
 class VarAction2Range:
     def __init__(self, min, max, result, comment):
         self.min = min
@@ -311,21 +330,22 @@ class VarAction2Range:
         self.result = result
         self.comment = comment
 
+
 class Modification:
     def __init__(self, param, size, offset):
         self.param = param
         self.size = size
         self.offset = offset
 
+
 class Varaction2Parser:
     def __init__(self, feature):
-        self.feature = feature # Depends on feature and var_range
+        self.feature = feature  # Depends on feature and var_range
         self.extra_actions = []
         self.mods = []
         self.var_list = []
         self.var_list_size = 0
         self.proc_call_list = []
-
 
     def preprocess_binop(self, expr):
         """
@@ -337,36 +357,36 @@ class Varaction2Parser:
         """
         assert isinstance(expr, expression.BinOp)
         if expr.op == nmlop.CMP_LT:
-            #return value is 0, 1 or 2, we want to map 0 to 1 and the others to 0
+            # return value is 0, 1 or 2, we want to map 0 to 1 and the others to 0
             expr = nmlop.VACT2_CMP(expr.expr1, expr.expr2)
-            #reduce the problem to 0/1
+            # reduce the problem to 0/1
             expr = nmlop.MIN(expr, 1)
-            #and invert the result
+            # and invert the result
             expr = nmlop.XOR(expr, 1)
         elif expr.op == nmlop.CMP_GT:
-            #return value is 0, 1 or 2, we want to map 2 to 1 and the others to 0
+            # return value is 0, 1 or 2, we want to map 2 to 1 and the others to 0
             expr = nmlop.VACT2_CMP(expr.expr1, expr.expr2)
-            #subtract one
+            # subtract one
             expr = nmlop.SUB(expr, 1)
-            #map -1 and 0 to 0
+            # map -1 and 0 to 0
             expr = nmlop.MAX(expr, 0)
         elif expr.op == nmlop.CMP_LE:
-            #return value is 0, 1 or 2, we want to map 2 to 0 and the others to 1
+            # return value is 0, 1 or 2, we want to map 2 to 0 and the others to 1
             expr = nmlop.VACT2_CMP(expr.expr1, expr.expr2)
-            #swap 0 and 2
+            # swap 0 and 2
             expr = nmlop.XOR(expr, 2)
-            #map 1/2 to 1
+            # map 1/2 to 1
             expr = nmlop.MIN(expr, 1)
         elif expr.op == nmlop.CMP_GE:
-            #return value is 0, 1 or 2, we want to map 1/2 to 1
+            # return value is 0, 1 or 2, we want to map 1/2 to 1
             expr = nmlop.VACT2_CMP(expr.expr1, expr.expr2)
             expr = nmlop.MIN(expr, 1)
         elif expr.op == nmlop.CMP_EQ:
-            #return value is 0, 1 or 2, we want to map 1 to 1, other to 0
+            # return value is 0, 1 or 2, we want to map 1 to 1, other to 0
             expr = nmlop.VACT2_CMP(expr.expr1, expr.expr2)
             expr = nmlop.AND(expr, 1)
         elif expr.op == nmlop.CMP_NEQ:
-            #same as CMP_EQ but invert the result
+            # same as CMP_EQ but invert the result
             expr = nmlop.VACT2_CMP(expr.expr1, expr.expr2)
             expr = nmlop.AND(expr, 1)
             expr = nmlop.XOR(expr, 1)
@@ -382,7 +402,6 @@ class Varaction2Parser:
             expr = nmlop.XOR(expr, 1)
 
         return expr.reduce()
-
 
     def preprocess_ternaryop(self, expr):
         assert isinstance(expr, expression.TernaryOp)
@@ -417,22 +436,26 @@ class Varaction2Parser:
             expr2 = nmlop.MUL(expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
             return nmlop.ADD(expr1, expr2)
 
-
     def preprocess_storageop(self, expr):
         assert isinstance(expr, expression.StorageOp)
-        if expr.info['perm'] and self.feature not in (0x08, 0x0A, 0x0D):
-            raise generic.ScriptError("Persistent storage is not supported for feature '{}'".format(general.feature_name(self.feature)), expr.pos)
+        if expr.info["perm"] and self.feature not in (0x08, 0x0A, 0x0D):
+            raise generic.ScriptError(
+                "Persistent storage is not supported for feature '{}'".format(general.feature_name(self.feature)),
+                expr.pos,
+            )
 
-        if expr.info['store']:
-            op = nmlop.STO_PERM if expr.info['perm'] else nmlop.STO_TMP
+        if expr.info["store"]:
+            op = nmlop.STO_PERM if expr.info["perm"] else nmlop.STO_TMP
             ret = expression.BinOp(op, expr.value, expr.register, expr.pos)
         else:
-            var_num = 0x7C if expr.info['perm'] else 0x7D
+            var_num = 0x7C if expr.info["perm"] else 0x7D
             ret = expression.Variable(expression.ConstantNumeric(var_num), param=expr.register, pos=expr.pos)
 
-        if expr.info['perm'] and self.feature == 0x08:
+        if expr.info["perm"] and self.feature == 0x08:
             # store grfid in register 0x100 for town persistent storage
-            grfid = expression.ConstantNumeric(0xFFFFFFFF if expr.grfid is None else expression.parse_string_to_dword(expr.grfid))
+            grfid = expression.ConstantNumeric(
+                0xFFFFFFFF if expr.grfid is None else expression.parse_string_to_dword(expr.grfid)
+            )
             store_op = nmlop.STO_TMP(grfid, 0x100, expr.pos)
             ret = nmlop.VAL2(store_op, ret)
         elif expr.grfid is not None:
@@ -440,7 +463,8 @@ class Varaction2Parser:
         return ret
 
     def parse_expr_to_constant(self, expr, offset):
-        if isinstance(expr, expression.ConstantNumeric): return expr.value
+        if isinstance(expr, expression.ConstantNumeric):
+            return expr.value
 
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
         self.extra_actions.extend(tmp_param_actions)
@@ -471,8 +495,8 @@ class Varaction2Parser:
                 self.var_list.append(nmlop.VAL2)
                 self.var_list_size += value_backup.get_size() + 1
 
-            #Last value == 0, and this is right before we're going to use
-            #the extra parameters. Set them to their correct value here.
+            # Last value == 0, and this is right before we're going to use
+            # the extra parameters. Set them to their correct value here.
             for extra_param in expr.extra_params:
                 self.parse(extra_param[1])
                 self.var_list.append(nmlop.STO_TMP)
@@ -510,42 +534,43 @@ class Varaction2Parser:
         self.parse_binop(nmlop.XOR(expr.expr, 1))
 
     def parse_binop(self, expr):
-        if expr.op.act2_num is None: expr.supported_by_action2(True)
+        if expr.op.act2_num is None:
+            expr.supported_by_action2(True)
 
-        if isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable)) or \
-                isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadCallParam)) or \
-                (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric)) or \
-                expr.op == nmlop.VAL2:
+        if (
+            isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable))
+            or isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadCallParam))
+            or (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric))
+            or expr.op == nmlop.VAL2
+        ):
             expr2 = expr.expr2
         elif expr.expr2.supported_by_actionD(False):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr.expr2)
             self.extra_actions.extend(tmp_param_actions)
             expr2 = expression.Parameter(expression.ConstantNumeric(tmp_param))
         else:
-            #The expression is so complex we need to compute it first, store the
-            #result and load it back later.
+            # The expression is so complex we need to compute it first, store the
+            # result and load it back later.
             self.parse(expr.expr2)
             tmp_var = VarAction2StoreTempVar()
             self.var_list.append(nmlop.STO_TMP)
             self.var_list.append(tmp_var)
             self.var_list.append(nmlop.VAL2)
-            #the +2 is for both operators
+            # the +2 is for both operators
             self.var_list_size += tmp_var.get_size() + 2
             expr2 = VarAction2LoadTempVar(tmp_var)
 
-        #parse expr1
+        # parse expr1
         self.parse(expr.expr1)
         self.var_list.append(expr.op)
         self.var_list_size += 1
 
         self.parse(expr2)
 
-
     def parse_constant(self, expr):
         var = VarAction2Var(0x1A, 0, expr.value)
         self.var_list.append(var)
         self.var_list_size += var.get_size()
-
 
     def parse_param(self, expr):
         self.mods.append(Modification(expr.num.value, 4, self.var_list_size + 2))
@@ -554,19 +579,16 @@ class Varaction2Parser:
         self.var_list.append(var)
         self.var_list_size += var.get_size()
 
-
     def parse_string(self, expr):
         str_id, actions = action4.get_string_action4s(0, 0xD0, expr)
         self.extra_actions.extend(actions)
         self.parse_constant(expression.ConstantNumeric(str_id))
-
 
     def parse_via_actionD(self, expr):
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(expr)
         self.extra_actions.extend(tmp_param_actions)
         num = expression.ConstantNumeric(tmp_param)
         self.parse(expression.Parameter(num))
-
 
     def parse_proc_call(self, expr):
         assert isinstance(expr, expression.SpriteGroupRef)
@@ -577,7 +599,7 @@ class Varaction2Parser:
         # Fill param registers for the call
         tmp_vars = []
         for i, param in enumerate(expr.param_list):
-            if i > 0: # No operator before first param as per advanced VarAct2 syntax
+            if i > 0:  # No operator before first param as per advanced VarAct2 syntax
                 self.var_list.append(nmlop.VAL2)
                 self.var_list_size += 1
             if refs != [expr]:
@@ -590,7 +612,7 @@ class Varaction2Parser:
             self.parse_expr(reduce_varaction2_expr(param, self.feature))
             self.var_list.append(nmlop.STO_TMP)
             self.var_list.append(store_tmp)
-            self.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
+            self.var_list_size += store_tmp.get_size() + 1  # Add 1 for operator
 
         # Fill param registers with temporary variables if needed
         for (src, dest) in tmp_vars:
@@ -598,7 +620,7 @@ class Varaction2Parser:
             self.var_list.append(src)
             self.var_list.append(nmlop.STO_TMP)
             self.var_list.append(dest)
-            self.var_list_size += src.get_size() + dest.get_size() + 2 # Add 2 for operators
+            self.var_list_size += src.get_size() + dest.get_size() + 2  # Add 2 for operators
 
         if expr.param_list:
             self.var_list.append(nmlop.VAL2)
@@ -606,7 +628,6 @@ class Varaction2Parser:
         self.var_list.append(var_access)
         self.var_list_size += var_access.get_size()
         self.proc_call_list.append(expr)
-
 
     def parse_expr(self, expr):
         if isinstance(expr, expression.Array):
@@ -621,9 +642,9 @@ class Varaction2Parser:
             self.parse(expr)
 
     def parse(self, expr):
-        #Preprocess the expression
+        # Preprocess the expression
         if isinstance(expr, expression.SpecialParameter):
-            #do this first, since it may evaluate to a BinOp
+            # do this first, since it may evaluate to a BinOp
             expr = expr.to_reading()
 
         if isinstance(expr, expression.BinOp):
@@ -641,7 +662,7 @@ class Varaction2Parser:
         elif isinstance(expr, expression.StorageOp):
             expr = self.preprocess_storageop(expr)
 
-        #Try to parse the expression to a list of variables+operators
+        # Try to parse the expression to a list of variables+operators
         if isinstance(expr, expression.ConstantNumeric):
             self.parse_constant(expr)
 
@@ -672,44 +693,61 @@ class Varaction2Parser:
 
         else:
             expr.supported_by_action2(True)
-            assert False #supported_by_action2 should have raised the correct error already
+            assert False  # supported_by_action2 should have raised the correct error already
+
 
 def parse_var(name, info, pos):
-    if 'replaced_by' in info:
-        generic.print_warning("'{}' is deprecated, consider using '{}' instead".format(name, info['replaced_by']), pos)
-    param = expression.ConstantNumeric(info['param']) if 'param' in info else None
-    res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']),
-                              expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
-    if 'value_function' in info:
-        return info['value_function'](res, info)
+    if "replaced_by" in info:
+        generic.print_warning("'{}' is deprecated, consider using '{}' instead".format(name, info["replaced_by"]), pos)
+    param = expression.ConstantNumeric(info["param"]) if "param" in info else None
+    res = expression.Variable(
+        expression.ConstantNumeric(info["var"]),
+        expression.ConstantNumeric(info["start"]),
+        expression.ConstantNumeric((1 << info["size"]) - 1),
+        param,
+        pos,
+    )
+    if "value_function" in info:
+        return info["value_function"](res, info)
     return res
 
 
 def parse_60x_var(name, args, pos, info):
-    if 'param_function' in info:
+    if "param_function" in info:
         # Special function to extract parameters if there is more than one
-        param, extra_params = info['param_function'](name, args, pos, info)
+        param, extra_params = info["param_function"](name, args, pos, info)
     else:
         # Default function to extract parameters
         param, extra_params = action2var_variables.default_60xvar(name, args, pos, info)
 
     if isinstance(param, expression.ConstantNumeric) and (0 <= param.value <= 255):
-        res = expression.Variable(expression.ConstantNumeric(info['var']), expression.ConstantNumeric(info['start']), \
-                expression.ConstantNumeric((1 << info['size']) - 1), param, pos)
+        res = expression.Variable(
+            expression.ConstantNumeric(info["var"]),
+            expression.ConstantNumeric(info["start"]),
+            expression.ConstantNumeric((1 << info["size"]) - 1),
+            param,
+            pos,
+        )
 
         res.extra_params.extend(extra_params)
     else:
         # Make use of var 7B to pass non-constant parameters
-        var = expression.Variable(expression.ConstantNumeric(0x7B), expression.ConstantNumeric(info['start']), \
-                expression.ConstantNumeric((1 << info['size']) - 1), expression.ConstantNumeric(info['var']), pos)
+        var = expression.Variable(
+            expression.ConstantNumeric(0x7B),
+            expression.ConstantNumeric(info["start"]),
+            expression.ConstantNumeric((1 << info["size"]) - 1),
+            expression.ConstantNumeric(info["var"]),
+            pos,
+        )
 
         var.extra_params.extend(extra_params)
         # Set the param in the accumulator beforehand
         res = nmlop.VAL2(param, var, pos)
 
-    if 'value_function' in info:
-        res = info['value_function'](res, info)
+    if "value_function" in info:
+        res = info["value_function"](res, info)
     return res
+
 
 def parse_minmax(value, unit_str, action_list, act6, offset):
     """
@@ -741,7 +779,9 @@ def parse_minmax(value, unit_str, action_list, act6, offset):
     check_range = isinstance(value, expression.ConstantNumeric)
     return (result, offset, check_range)
 
+
 return_action_id = 0
+
 
 def create_return_action(expr, feature, name, var_range):
     """
@@ -761,19 +801,22 @@ def create_return_action(expr, feature, name, var_range):
                 - Reference to the created varaction2
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
-    varact2parser = Varaction2Parser(feature if var_range == 0x89 else action2var_variables.varact2parent_scope[feature])
+    varact2parser = Varaction2Parser(
+        feature if var_range == 0x89 else action2var_variables.varact2parent_scope[feature]
+    )
     varact2parser.parse_expr(expr)
 
     action_list = varact2parser.extra_actions
     extra_act6 = action6.Action6()
     for mod in varact2parser.mods:
         extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
-    if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
+    if len(extra_act6.modifications) > 0:
+        action_list.append(extra_act6)
 
     varaction2 = Action2Var(feature, name, expr.pos, var_range)
     varaction2.var_list = varact2parser.var_list
-    varaction2.default_result = expression.ConstantNumeric(0) # Bogus result, it's the nvar == 0 that matters
-    varaction2.default_comment = 'Return computed value'
+    varaction2.default_result = expression.ConstantNumeric(0)  # Bogus result, it's the nvar == 0 that matters
+    varaction2.default_comment = "Return computed value"
 
     for proc in varact2parser.proc_call_list:
         action2.add_ref(proc, varaction2, True)
@@ -782,7 +825,9 @@ def create_return_action(expr, feature, name, var_range):
     action_list.append(varaction2)
     return (action_list, ref)
 
+
 failed_cb_results = {}
+
 
 def get_failed_cb_result(feature, action_list, parent_action, pos):
     """
@@ -810,6 +855,7 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
         # Create action2 (+ action1, if needed)
         # Import here to avoid circular imports
         from nml.actions import action1, action2layout, action2production, action2real
+
         if feature == 0x0A:
             # Industries -> production action2
             act2 = action2production.make_empty_production_action2(pos)
@@ -820,17 +866,28 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
             # Normal action2
             act1_actions, act1_index = action1.make_cb_failure_action1(feature)
             action_list.extend(act1_actions)
-            act2 = action2real.make_simple_real_action2(feature, "@CB_FAILED_REAL{:02X}".format(feature), pos, act1_index)
+            act2 = action2real.make_simple_real_action2(
+                feature, "@CB_FAILED_REAL{:02X}".format(feature), pos, act1_index
+            )
         action_list.append(act2)
 
         # Create varaction2, to choose between returning graphics and 0, depending on CB
         varact2parser = Varaction2Parser(feature)
-        varact2parser.parse_expr(expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF)))
+        varact2parser.parse_expr(
+            expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF))
+        )
 
         varaction2 = Action2Var(feature, "@CB_FAILED{:02X}".format(feature), pos, 0x89)
         varaction2.var_list = varact2parser.var_list
 
-        varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), expression.ConstantNumeric(0), "graphics callback -> return 0"))
+        varaction2.ranges.append(
+            VarAction2Range(
+                expression.ConstantNumeric(0),
+                expression.ConstantNumeric(0),
+                expression.ConstantNumeric(0),
+                "graphics callback -> return 0",
+            )
+        )
         varaction2.default_result = expression.SpriteGroupRef(expression.Identifier(act2.name), [], None, act2)
         varaction2.default_comment = "Non-graphics callback, return graphics result"
         action2.add_ref(varaction2.default_result, varaction2)
@@ -841,6 +898,7 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
     ref = expression.SpriteGroupRef(expression.Identifier(varaction2.name), [], None, varaction2)
     action2.add_ref(ref, parent_action)
     return ref
+
 
 def parse_sg_ref_result(result, action_list, parent_action, var_range):
     """
@@ -870,7 +928,9 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
 
     # Result is parametrized
     # Insert an intermediate varaction2 to store expressions in registers
-    var_feature = parent_action.feature if var_range == 0x89 else action2var_variables.varact2parent_scope[parent_action.feature]
+    var_feature = (
+        parent_action.feature if var_range == 0x89 else action2var_variables.varact2parent_scope[parent_action.feature]
+    )
     varact2parser = Varaction2Parser(var_feature)
     layout = action2.resolve_spritegroup(result.name)
     for i, param in enumerate(result.param_list):
@@ -881,13 +941,14 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
         varact2parser.var_list.append(nmlop.STO_TMP)
         store_tmp = VarAction2StoreCallParam(layout.register_map[parent_action.feature][i])
         varact2parser.var_list.append(store_tmp)
-        varact2parser.var_list_size += store_tmp.get_size() + 1 # Add 1 for operator
+        varact2parser.var_list_size += store_tmp.get_size() + 1  # Add 1 for operator
 
     action_list.extend(varact2parser.extra_actions)
     extra_act6 = action6.Action6()
     for mod in varact2parser.mods:
         extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
-    if len(extra_act6.modifications) > 0: action_list.append(extra_act6)
+    if len(extra_act6.modifications) > 0:
+        action_list.append(extra_act6)
 
     global return_action_id
     name = "@return_action_{:d}".format(return_action_id)
@@ -895,7 +956,9 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     return_action_id += 1
     varaction2.var_list = varact2parser.var_list
     ref = expression.SpriteGroupRef(result.name, [], result.pos)
-    varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, result.name.value))
+    varaction2.ranges.append(
+        VarAction2Range(expression.ConstantNumeric(0), expression.ConstantNumeric(0), ref, result.name.value)
+    )
     varaction2.default_result = ref
     varaction2.default_comment = result.name.value
     # Add the references as procs, to make sure, that any intermediate registers
@@ -910,7 +973,8 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
 
     return ref
 
-def parse_result(value, action_list, act6, offset, parent_action, none_result, var_range, repeat_result = 1):
+
+def parse_result(value, action_list, act6, offset, parent_action, none_result, var_range, repeat_result=1):
     """
     Parse a result (another switch or CB result) in a switch block.
 
@@ -952,13 +1016,15 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
             result = none_result
     elif isinstance(value, expression.SpriteGroupRef):
         result = parse_sg_ref_result(value, action_list, parent_action, var_range)
-        comment = result.name.value + ';'
+        comment = result.name.value + ";"
     elif isinstance(value, expression.ConstantNumeric):
         comment = "return {:d};".format(value.value)
         result = value
-        if not(-16384 <= value.value <= 32767):
-            msg = ("Callback results are limited to -16384..16383 (when the result is a signed number)"
-                   " or 0..32767 (unsigned), encountered {:d}.").format(value.value)
+        if not (-16384 <= value.value <= 32767):
+            msg = (
+                "Callback results are limited to -16384..16383 (when the result is a signed number)"
+                " or 0..32767 (unsigned), encountered {:d}."
+            ).format(value.value)
             raise generic.ScriptError(msg, value.pos)
 
     elif isinstance(value, expression.String):
@@ -971,27 +1037,33 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
         comment = "return param[{:d}];".format(tmp_param)
         action_list.extend(tmp_param_actions)
         for i in range(repeat_result):
-            act6.modify_bytes(tmp_param, 2, offset + 2*i)
+            act6.modify_bytes(tmp_param, 2, offset + 2 * i)
         result = expression.ConstantNumeric(0)
     else:
         global return_action_id
-        extra_actions, result = create_return_action(value, parent_action.feature, "@return_action_{:d}".format(return_action_id), var_range)
+        extra_actions, result = create_return_action(
+            value, parent_action.feature, "@return_action_{:d}".format(return_action_id), var_range
+        )
         return_action_id += 1
         action2.add_ref(result, parent_action)
         action_list.extend(extra_actions)
         comment = "return {}".format(value)
     return (result, comment)
 
+
 def get_feature(switch_block):
     feature = next(iter(switch_block.feature_set))
     if switch_block.var_range == 0x8A:
         feature = action2var_variables.varact2parent_scope[feature]
         if feature is None:
-            raise generic.ScriptError("Parent scope for this feature not available, feature: " + str(feature), switch_block.pos)
+            raise generic.ScriptError(
+                "Parent scope for this feature not available, feature: " + str(feature), switch_block.pos
+            )
 
     return feature
 
-def reduce_varaction2_expr(expr, feature, extra_dicts = []):
+
+def reduce_varaction2_expr(expr, feature, extra_dicts=[]):
     # 'normal' and 60+x variables to use
     vars_normal = action2var_variables.varact2vars[feature]
     vars_60x = action2var_variables.varact2vars60x[feature]
@@ -999,13 +1071,14 @@ def reduce_varaction2_expr(expr, feature, extra_dicts = []):
     def func60x(name, value, pos):
         return expression.FunctionPtr(expression.Identifier(name, pos), parse_60x_var, value)
 
-    id_dicts = extra_dicts + [
-        (action2var_variables.varact2_globalvars, parse_var),
-        (vars_normal, parse_var),
-        (vars_60x, func60x)
-    ] + global_constants.const_list
+    id_dicts = (
+        extra_dicts
+        + [(action2var_variables.varact2_globalvars, parse_var), (vars_normal, parse_var), (vars_60x, func60x)]
+        + global_constants.const_list
+    )
 
     return expr.reduce(id_dicts)
+
 
 def parse_varaction2(switch_block):
     global return_action_id
@@ -1016,11 +1089,17 @@ def parse_varaction2(switch_block):
     action_list = action2real.create_spriteset_actions(switch_block)
 
     feature = next(iter(switch_block.feature_set))
-    varaction2 = Action2Var(feature, switch_block.name.value, switch_block.pos, switch_block.var_range, switch_block.register_map[get_feature(switch_block)])
+    varaction2 = Action2Var(
+        feature,
+        switch_block.name.value,
+        switch_block.pos,
+        switch_block.var_range,
+        switch_block.register_map[get_feature(switch_block)],
+    )
 
     expr = reduce_varaction2_expr(switch_block.expr, get_feature(switch_block))
 
-    offset = 4 #first var
+    offset = 4  # first var
 
     parser = Varaction2Parser(get_feature(switch_block))
     parser.parse_expr(expr)
@@ -1028,29 +1107,38 @@ def parse_varaction2(switch_block):
     for mod in parser.mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = parser.var_list
-    offset += parser.var_list_size + 1 # +1 for the byte num-ranges
+    offset += parser.var_list_size + 1  # +1 for the byte num-ranges
     for proc in parser.proc_call_list:
         action2.add_ref(proc, varaction2, True)
 
     none_result = None
-    if any(x is not None and x.value is None for x in [r.result for r in switch_block.body.ranges] + [switch_block.body.default]):
+    if any(
+        x is not None and x.value is None
+        for x in [r.result for r in switch_block.body.ranges] + [switch_block.body.default]
+    ):
         # Computed result is returned in at least one result
         if len(switch_block.body.ranges) == 0:
             # There is only a default, which is 'return computed result', so we're fine
-            none_result = expression.ConstantNumeric(0) # Return value does not matter
+            none_result = expression.ConstantNumeric(0)  # Return value does not matter
         else:
             # Add an extra action to return the computed value
-            extra_actions, none_result = create_return_action(expression.Variable(expression.ConstantNumeric(0x1C)),
-                    feature, switch_block.name.value + "@return", 0x89)
+            extra_actions, none_result = create_return_action(
+                expression.Variable(expression.ConstantNumeric(0x1C)),
+                feature,
+                switch_block.name.value + "@return",
+                0x89,
+            )
             action_list.extend(extra_actions)
 
     used_ranges = []
     for r in switch_block.body.ranges:
         comment = str(r.min) + " .. " + str(r.max) + ": "
 
-        range_result, range_comment = parse_result(r.result.value, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
+        range_result, range_comment = parse_result(
+            r.result.value, action_list, act6, offset, varaction2, none_result, switch_block.var_range
+        )
         comment += range_comment
-        offset += 2 # size of result
+        offset += 2  # size of result
 
         range_min, offset, check_min = parse_minmax(r.min, r.unit, action_list, act6, offset)
         range_max, offset, check_max = parse_minmax(r.max, r.unit, action_list, act6, offset)
@@ -1076,13 +1164,20 @@ def parse_varaction2(switch_block):
         if not range_overlap:
             varaction2.ranges.append(VarAction2Range(range_min, range_max, range_result, comment))
 
-    if len(switch_block.body.ranges) == 0 and \
-            (switch_block.body.default is None or switch_block.body.default.value is not None):
+    if len(switch_block.body.ranges) == 0 and (
+        switch_block.body.default is None or switch_block.body.default.value is not None
+    ):
         # Computed result is not returned, but there are no ranges
         # Add one range, to avoid the nvar == 0 bear trap
         offset += 10
-        varaction2.ranges.append(VarAction2Range(expression.ConstantNumeric(1), expression.ConstantNumeric(0),
-                expression.ConstantNumeric(0), "Bogus range to avoid nvar == 0"))
+        varaction2.ranges.append(
+            VarAction2Range(
+                expression.ConstantNumeric(1),
+                expression.ConstantNumeric(0),
+                expression.ConstantNumeric(0),
+                "Bogus range to avoid nvar == 0",
+            )
+        )
 
     # Handle default result
     if switch_block.body.default is not None:
@@ -1090,21 +1185,21 @@ def parse_varaction2(switch_block):
         default_result = switch_block.body.default.value
     else:
         # Default to CB_FAILED
-        default_result = expression.SpriteGroupRef(expression.Identifier('CB_FAILED', None), [], None)
+        default_result = expression.SpriteGroupRef(expression.Identifier("CB_FAILED", None), [], None)
 
-    default, default_comment = parse_result(default_result, action_list, act6, offset, varaction2, none_result, switch_block.var_range)
+    default, default_comment = parse_result(
+        default_result, action_list, act6, offset, varaction2, none_result, switch_block.var_range
+    )
     varaction2.default_result = default
     if switch_block.body.default is None:
-        varaction2.default_comment = 'No default specified -> fail callback'
+        varaction2.default_comment = "No default specified -> fail callback"
     elif switch_block.body.default.value is None:
-        varaction2.default_comment = 'Return computed value'
+        varaction2.default_comment = "Return computed value"
     else:
-        varaction2.default_comment = 'default: ' + default_comment
+        varaction2.default_comment = "default: " + default_comment
 
-
-
-
-    if len(act6.modifications) > 0: action_list.append(act6)
+    if len(act6.modifications) > 0:
+        action_list.append(act6)
 
     action_list.append(varaction2)
     switch_block.set_action2(varaction2, feature)

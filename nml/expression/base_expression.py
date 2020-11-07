@@ -15,15 +15,18 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import generic
 
+
 class Type:
     """
     Enum-type class of the various value types possible in NML
     """
+
     INTEGER = 0
     FLOAT = 1
     STRING_LITERAL = 2
     FUNCTION_PTR = 3
     SPRITEGROUP_REF = 4
+
 
 class Expression:
     """
@@ -32,6 +35,7 @@ class Expression:
     @ivar pos: Position of the data in the original file.
     @type pos: :L{Position}
     """
+
     def __init__(self, pos):
         self.pos = pos
 
@@ -42,7 +46,7 @@ class Expression:
         @param indentation: Indent all printed lines with at least
             C{indentation} spaces.
         """
-        raise NotImplementedError('debug_print must be implemented in expression-subclass {!r}'.format(type(self)))
+        raise NotImplementedError("debug_print must be implemented in expression-subclass {!r}".format(type(self)))
 
     def __str__(self):
         """
@@ -50,9 +54,9 @@ class Expression:
 
         @return: A string representation of this expression.
         """
-        raise NotImplementedError('__str__ must be implemented in expression-subclass {!r}'.format(type(self)))
+        raise NotImplementedError("__str__ must be implemented in expression-subclass {!r}".format(type(self)))
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         """
         Reduce this expression to the simplest representation possible.
 
@@ -63,9 +67,9 @@ class Expression:
 
         @return: A deep copy of this expression simplified as much as possible.
         """
-        raise NotImplementedError('reduce must be implemented in expression-subclass {!r}'.format(type(self)))
+        raise NotImplementedError("reduce must be implemented in expression-subclass {!r}".format(type(self)))
 
-    def reduce_constant(self, id_dicts = []):
+    def reduce_constant(self, id_dicts=[]):
         """
         Reduce this expression and make sure the result is a constant number.
 
@@ -87,7 +91,8 @@ class Expression:
 
         @return: True if this expression can be calculated by advanced varaction2.
         """
-        if raise_error: raise generic.ScriptError("This expression is not supported in a switch-block", self.pos)
+        if raise_error:
+            raise generic.ScriptError("This expression is not supported in a switch-block", self.pos)
         return False
 
     def supported_by_actionD(self, raise_error):
@@ -98,7 +103,8 @@ class Expression:
 
         @return: True if this expression can be calculated by actionD.
         """
-        if raise_error: raise generic.ScriptError("This expression can not be assigned to a parameter", self.pos)
+        if raise_error:
+            raise generic.ScriptError("This expression can not be assigned to a parameter", self.pos)
         return False
 
     def collect_references(self):
@@ -134,15 +140,17 @@ class Expression:
         """
         return Type.INTEGER
 
+
 class ConstantNumeric(Expression):
-    def __init__(self, value, pos = None):
+    def __init__(self, value, pos=None):
         Expression.__init__(self, pos)
         self.value = generic.truncate_int32(value)
         self.uvalue = self.value
-        if self.uvalue < 0: self.uvalue += 2**32
+        if self.uvalue < 0:
+            self.uvalue += 2 ** 32
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Int:', self.value)
+        generic.print_dbg(indentation, "Int:", self.value)
 
     def write(self, file, size):
         file.print_varx(self.value, size)
@@ -150,7 +158,7 @@ class ConstantNumeric(Expression):
     def __str__(self):
         return str(self.value)
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         return self
 
     def supported_by_action2(self, raise_error):
@@ -168,18 +176,19 @@ class ConstantNumeric(Expression):
     def __hash__(self):
         return self.value
 
+
 class ConstantFloat(Expression):
     def __init__(self, value, pos):
         Expression.__init__(self, pos)
         self.value = float(value)
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Float:', self.value)
+        generic.print_dbg(indentation, "Float:", self.value)
 
     def __str__(self):
         return str(self.value)
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         return self
 
     def type(self):

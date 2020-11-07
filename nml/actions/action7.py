@@ -16,14 +16,24 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import expression, nmlop, free_number_list, generic
 from nml.actions import base_action, action6, actionD, action10
 
-free_labels = free_number_list.FreeNumberList(list(range(0xFF, 0x0F, -1)), "No label available to use for large if-blocks and loops.", "No unique label available to use for large if-blocks and loops.")
+free_labels = free_number_list.FreeNumberList(
+    list(range(0xFF, 0x0F, -1)),
+    "No label available to use for large if-blocks and loops.",
+    "No unique label available to use for large if-blocks and loops.",
+)
+
 
 def print_stats():
     """
     Print statistics about used ids.
     """
     if free_labels.stats[0] > 0:
-        generic.print_info("Concurrent Action10 labels: {}/{} ({})".format(free_labels.stats[0], free_labels.total_amount, str(free_labels.stats[1])))
+        generic.print_info(
+            "Concurrent Action10 labels: {}/{} ({})".format(
+                free_labels.stats[0], free_labels.total_amount, str(free_labels.stats[1])
+            )
+        )
+
 
 class SkipAction(base_action.BaseAction):
     def __init__(self, action_type, var, varsize, condtype, value, label):
@@ -45,7 +55,7 @@ class SkipAction(base_action.BaseAction):
         file.print_bytex(self.varsize)
         file.print_bytex(self.condtype[0], self.condtype[1])
         if self.varsize == 8:
-            #grfid + mask
+            # grfid + mask
             file.print_dwordx(self.value & 0xFFFFFFFF)
             file.print_dwordx(self.value >> 32)
         else:
@@ -60,20 +70,27 @@ class SkipAction(base_action.BaseAction):
     def skip_action9(self):
         return self.action_type == 9 or self.label == 0
 
+
 class UnconditionalSkipAction(SkipAction):
     def __init__(self, action_type, label):
-        SkipAction.__init__(self, action_type, 0x9A, 1, (0, r'\71'), 0, label)
+        SkipAction.__init__(self, action_type, 0x9A, 1, (0, r"\71"), 0, label)
+
 
 def op_to_cond_op(op):
-    #The operators are reversed as we want to skip if the expression is true
-    #while the nml-syntax wants to execute the block if the expression is true
-    if op == nmlop.CMP_NEQ: return (2, r'\7=')
-    if op == nmlop.CMP_EQ: return (3, r'\7!')
-    if op == nmlop.CMP_GE: return (4, r'\7<')
-    if op == nmlop.CMP_LE: return (5, r'\7>')
+    # The operators are reversed as we want to skip if the expression is true
+    # while the nml-syntax wants to execute the block if the expression is true
+    if op == nmlop.CMP_NEQ:
+        return (2, r"\7=")
+    if op == nmlop.CMP_EQ:
+        return (3, r"\7!")
+    if op == nmlop.CMP_GE:
+        return (4, r"\7<")
+    if op == nmlop.CMP_LE:
+        return (5, r"\7>")
+
 
 def parse_conditional(expr):
-    '''
+    """
     Parse an expression and return enough information to use
     that expression as a conditional statement.
     Return value is a tuple with the following elements:
@@ -82,9 +99,9 @@ def parse_conditional(expr):
     - The type of comparison to be done
     - The value to compare against (as integer)
     - The size of the value (as integer)
-    '''
+    """
     if expr is None:
-        return (None, [], (2, r'\7='), 0, 4)
+        return (None, [], (2, r"\7="), 0, 4)
     if isinstance(expr, expression.BinOp):
         if expr.op == nmlop.HASBIT or expr.op == nmlop.NOTHASBIT:
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
@@ -95,7 +112,9 @@ def parse_conditional(expr):
             if isinstance(expr.expr2, expression.ConstantNumeric):
                 bit_num = expr.expr2.value
             else:
-                if isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric):
+                if isinstance(expr.expr2, expression.Parameter) and isinstance(
+                    expr.expr2.num, expression.ConstantNumeric
+                ):
                     param = expr.expr2.num.value
                 else:
                     param, tmp_action_list = actionD.get_tmp_parameter(expr.expr2)
@@ -104,10 +123,11 @@ def parse_conditional(expr):
                 act6.modify_bytes(param, 1, 4)
                 actions.append(act6)
                 bit_num = 0
-            comp_type = (1, r'\70') if expr.op == nmlop.HASBIT else (0, r'\71')
-            return (param, actions, comp_type, bit_num , 1)
-        elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LE, nmlop.CMP_GE) \
-                and isinstance(expr.expr2, expression.ConstantNumeric):
+            comp_type = (1, r"\70") if expr.op == nmlop.HASBIT else (0, r"\71")
+            return (param, actions, comp_type, bit_num, 1)
+        elif expr.op in (nmlop.CMP_EQ, nmlop.CMP_NEQ, nmlop.CMP_LE, nmlop.CMP_GE) and isinstance(
+            expr.expr2, expression.ConstantNumeric
+        ):
             if isinstance(expr.expr1, expression.Parameter) and isinstance(expr.expr1.num, expression.ConstantNumeric):
                 param = expr.expr1.num.value
                 actions = []
@@ -121,13 +141,15 @@ def parse_conditional(expr):
 
     if isinstance(expr, expression.Not):
         param, actions = actionD.get_tmp_parameter(expr.expr)
-        return (param, actions, (3, r'\7!'), 0, 4)
+        return (param, actions, (3, r"\7!"), 0, 4)
 
     param, actions = actionD.get_tmp_parameter(expr)
-    return (param, actions, (2, r'\7='), 0, 4)
+    return (param, actions, (2, r"\7="), 0, 4)
+
 
 def cond_skip_actions(action_list, param, condtype, value, value_size, pos):
-    if len(action_list) == 0: return []
+    if len(action_list) == 0:
+        return []
     actions = []
     start, length = 0, 0
     # Whether to allow not-skipping, using action7 or using action9
@@ -155,7 +177,7 @@ def cond_skip_actions(action_list, param, condtype, value, value_size, pos):
         # We need to create a new block
         if skip_opts[0]:
             # We can just choose to not skip the preceeding actions without harm
-            actions.extend(action_list[start:start+length])
+            actions.extend(action_list[start : start + length])
         else:
             action_type = 7 if skip_opts[1] else 9
             if length < 0x10:
@@ -166,8 +188,9 @@ def cond_skip_actions(action_list, param, condtype, value, value_size, pos):
                 target = free_labels.pop(pos)
                 label = action10.Action10(target)
             actions.append(SkipAction(action_type, param, value_size, condtype, value, target))
-            actions.extend(action_list[start:start+length])
-            if label is not None: actions.append(label)
+            actions.extend(action_list[start : start + length])
+            if label is not None:
+                actions.append(label)
 
         start = start + length
         length = 1
@@ -176,7 +199,9 @@ def cond_skip_actions(action_list, param, condtype, value, value_size, pos):
 
     return actions
 
+
 recursive_cond_blocks = 0
+
 
 def parse_conditional_block(cond_list):
     global recursive_cond_blocks
@@ -195,15 +220,15 @@ def parse_conditional_block(cond_list):
             if cond.expr.value == 0:
                 continue
             else:
-                blocks.append({'expr': None, 'statements': cond.statements})
+                blocks.append({"expr": None, "statements": cond.statements})
                 break
-        blocks.append({'expr': cond.expr, 'statements': cond.statements})
+        blocks.append({"expr": cond.expr, "statements": cond.statements})
     if blocks:
-        blocks[-1]['last_block'] = True
+        blocks[-1]["last_block"] = True
 
-    if len(blocks) == 1 and blocks[0]['expr'] is None:
+    if len(blocks) == 1 and blocks[0]["expr"] is None:
         action_list = []
-        for stmt in blocks[0]['statements']:
+        for stmt in blocks[0]["statements"]:
             action_list.extend(stmt.get_action_list())
         return action_list
 
@@ -221,13 +246,27 @@ def parse_conditional_block(cond_list):
     # use parse_conditional here, we also need to know if all generated
     # actions (like action6) can be skipped safely
     for block in blocks:
-        block['param_dst'], block['cond_actions'], block['cond_type'], block['cond_value'], block['cond_value_size'] = parse_conditional(block['expr'])
-        if 'last_block' not in block:
-            block['action_list'] = [actionD.ActionD(expression.ConstantNumeric(param_skip_all), expression.ConstantNumeric(0xFF), nmlop.ASSIGN, expression.ConstantNumeric(0), expression.ConstantNumeric(0))]
+        (
+            block["param_dst"],
+            block["cond_actions"],
+            block["cond_type"],
+            block["cond_value"],
+            block["cond_value_size"],
+        ) = parse_conditional(block["expr"])
+        if "last_block" not in block:
+            block["action_list"] = [
+                actionD.ActionD(
+                    expression.ConstantNumeric(param_skip_all),
+                    expression.ConstantNumeric(0xFF),
+                    nmlop.ASSIGN,
+                    expression.ConstantNumeric(0),
+                    expression.ConstantNumeric(0),
+                )
+            ]
         else:
-            block['action_list'] = []
-        for stmt in block['statements']:
-            block['action_list'].extend(stmt.get_action_list())
+            block["action_list"] = []
+        for stmt in block["statements"]:
+            block["action_list"].extend(stmt.get_action_list())
 
     # Main problem: action10 can't be skipped by action9, so we're
     # nearly forced to use action7, but action7 can't safely skip action6
@@ -236,21 +275,41 @@ def parse_conditional_block(cond_list):
     # action7 or action9, depending on which of the two works.
 
     for i, block in enumerate(blocks):
-        param = block['param_dst']
-        if i == 0: action_list.extend(block['cond_actions'])
+        param = block["param_dst"]
+        if i == 0:
+            action_list.extend(block["cond_actions"])
         else:
-            action_list.extend(cond_skip_actions(block['cond_actions'], param_skip_all, (2, r'\7='), 0, 4, cond_list.pos))
+            action_list.extend(
+                cond_skip_actions(block["cond_actions"], param_skip_all, (2, r"\7="), 0, 4, cond_list.pos)
+            )
             if param is None:
                 param = param_skip_all
             else:
-                action_list.append(actionD.ActionD(expression.ConstantNumeric(block['param_dst']), expression.ConstantNumeric(block['param_dst']), nmlop.AND, expression.ConstantNumeric(param_skip_all)))
-        action_list.extend(cond_skip_actions(block['action_list'], param, block['cond_type'], block['cond_value'], block['cond_value_size'], cond_list.pos))
+                action_list.append(
+                    actionD.ActionD(
+                        expression.ConstantNumeric(block["param_dst"]),
+                        expression.ConstantNumeric(block["param_dst"]),
+                        nmlop.AND,
+                        expression.ConstantNumeric(param_skip_all),
+                    )
+                )
+        action_list.extend(
+            cond_skip_actions(
+                block["action_list"],
+                param,
+                block["cond_type"],
+                block["cond_value"],
+                block["cond_value_size"],
+                cond_list.pos,
+            )
+        )
 
     if recursive_cond_blocks == 1:
         free_labels.restore()
     recursive_cond_blocks -= 1
     action6.free_parameters.restore()
     return action_list
+
 
 def parse_loop_block(loop):
     global recursive_cond_blocks

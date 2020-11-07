@@ -20,6 +20,7 @@ import os
 from nml import generic
 from nml.actions import base_action, action0
 
+
 class Action11(base_action.BaseAction):
     def __init__(self, num_sounds):
         self.num_sounds = num_sounds
@@ -32,9 +33,10 @@ class Action11(base_action.BaseAction):
 
 
 class LoadBinaryFile(base_action.BaseAction):
-    '''
+    """
     <sprite-number> * <length> FF <name-len> <name> 00 <data>
-    '''
+    """
+
     def __init__(self, fname, pos):
         self.fname = fname
         self.pos = pos
@@ -45,11 +47,15 @@ class LoadBinaryFile(base_action.BaseAction):
             raise generic.ScriptError("Sound file '{}' does not exist.".format(self.fname), self.pos)
         size = os.path.getsize(self.fname)
         if size == 0:
-            raise generic.ScriptError("Expected sound file '{}' to have a non-zero length.".format(self.fname), self.pos)
+            raise generic.ScriptError(
+                "Expected sound file '{}' to have a non-zero length.".format(self.fname), self.pos
+            )
 
     def write(self, file):
         file.print_named_filedata(self.fname)
-        if self.last: file.newline()
+        if self.last:
+            file.newline()
+
 
 class ImportSound(base_action.BaseAction):
     """
@@ -66,6 +72,7 @@ class ImportSound(base_action.BaseAction):
     @ivar pos: Position information
     @type pos: L{Position}
     """
+
     def __init__(self, grfid, number, pos):
         self.grfid = grfid
         self.number = number
@@ -74,16 +81,19 @@ class ImportSound(base_action.BaseAction):
 
     def write(self, file):
         file.start_sprite(8)
-        file.print_bytex(0xfe)
+        file.print_bytex(0xFE)
         file.print_bytex(0)
         file.print_dwordx(self.grfid)
         file.print_wordx(self.number)
         file.end_sprite()
-        if self.last: file.newline()
+        if self.last:
+            file.newline()
+
 
 registered_sounds = {}
-SOUND_OFFSET = 73 # No of original sounds
-NUM_ANIMATION_SOUNDS = 0x80 - SOUND_OFFSET # Number of custom sound ids, which can be returned by animation callbacks.
+SOUND_OFFSET = 73  # No of original sounds
+NUM_ANIMATION_SOUNDS = 0x80 - SOUND_OFFSET  # Number of custom sound ids, which can be returned by animation callbacks.
+
 
 def print_stats():
     """
@@ -93,10 +103,12 @@ def print_stats():
         # Currently NML does not optimise the order of sound effects. So we assume NUM_ANIMATION_SOUNDS as the maximum.
         generic.print_info("Sound effects: {}/{}".format(len(registered_sounds), NUM_ANIMATION_SOUNDS))
 
+
 def add_sound(args, pos):
     if args not in registered_sounds:
         registered_sounds[args] = (len(registered_sounds), pos)
     return registered_sounds[args][0] + SOUND_OFFSET
+
 
 def get_sound_actions():
     """
@@ -117,10 +129,9 @@ def get_sound_actions():
         else:
             action_list.append(LoadBinaryFile(args[0], pos))
         if args[-1] != 100:
-            volume_list.append( (i + SOUND_OFFSET, int(args[-1] * 128 / 100)) )
+            volume_list.append((i + SOUND_OFFSET, int(args[-1] * 128 / 100)))
 
     if volume_list:
         action_list.extend(action0.get_volume_actions(volume_list))
 
     return action_list
-

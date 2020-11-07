@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml.editors import extract_tables
 
-#Define parts of np++ xml file
+# Define parts of np++ xml file
 string1 = """\
 <NotepadPlus>
     <UserLang name="nml" ext="nml pnml">
@@ -48,7 +48,7 @@ string4 = """\
             <!-- callbacks and constants -->
             <Keywords name="Words4">"""
 
-string5="""\
+string5 = """\
 </Keywords>
         </KeywordLists>
         <Styles>
@@ -87,6 +87,6 @@ def write_file(fname):
     handle.write(string5)
     handle.close()
 
+
 def run():
     write_file("nml_notepadpp.xml")
-

@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 from nml import generic
 from .base_expression import Type, Expression, ConstantNumeric
 
+
 class TernaryOp(Expression):
     def __init__(self, guard, expr1, expr2, pos):
         Expression.__init__(self, pos)
@@ -24,15 +25,15 @@ class TernaryOp(Expression):
         self.expr2 = expr2
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Ternary operator')
-        generic.print_dbg(indentation, 'Guard:')
+        generic.print_dbg(indentation, "Ternary operator")
+        generic.print_dbg(indentation, "Guard:")
         self.guard.debug_print(indentation + 2)
-        generic.print_dbg(indentation, 'Expression 1:')
+        generic.print_dbg(indentation, "Expression 1:")
         self.expr1.debug_print(indentation + 2)
-        generic.print_dbg(indentation, 'Expression 2:')
+        generic.print_dbg(indentation, "Expression 2:")
         self.expr2.debug_print(indentation + 2)
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         guard = self.guard.reduce(id_dicts)
         expr1 = self.expr1.reduce(id_dicts)
         expr2 = self.expr2.reduce(id_dicts)
@@ -46,10 +47,18 @@ class TernaryOp(Expression):
         return TernaryOp(guard, expr1, expr2, self.pos)
 
     def supported_by_action2(self, raise_error):
-        return self.guard.supported_by_action2(raise_error) and self.expr1.supported_by_action2(raise_error) and self.expr2.supported_by_action2(raise_error)
+        return (
+            self.guard.supported_by_action2(raise_error)
+            and self.expr1.supported_by_action2(raise_error)
+            and self.expr2.supported_by_action2(raise_error)
+        )
 
     def supported_by_actionD(self, raise_error):
-        return self.guard.supported_by_actionD(raise_error) and self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
+        return (
+            self.guard.supported_by_actionD(raise_error)
+            and self.expr1.supported_by_actionD(raise_error)
+            and self.expr2.supported_by_actionD(raise_error)
+        )
 
     def collect_references(self):
         return self.guard.collect_references() + self.expr1.collect_references() + self.expr2.collect_references()
@@ -61,7 +70,13 @@ class TernaryOp(Expression):
         return self.expr1.is_boolean() and self.expr2.is_boolean()
 
     def __eq__(self, other):
-        return other is not None and isinstance(other, TernaryOp) and self.guard == other.guard and self.expr1 == other.expr1 and self.expr2 == other.expr2
+        return (
+            other is not None
+            and isinstance(other, TernaryOp)
+            and self.guard == other.guard
+            and self.expr1 == other.expr1
+            and self.expr2 == other.expr2
+        )
 
     def __ne__(self, other):
         return not self.__eq__(other)

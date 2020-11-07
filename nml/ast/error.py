@@ -17,6 +17,7 @@ from nml import generic, expression
 from nml.actions import actionB
 from nml.ast import base_statement
 
+
 class Error(base_statement.BaseStatement):
     """
     An error has occured while parsing the GRF. This can be anything ranging from
@@ -40,38 +41,42 @@ class Error(base_statement.BaseStatement):
                 {STRING}-code of msg.
     @type data: C{None} or L{String} or L{StringLiteral}
     """
+
     def __init__(self, param_list, pos):
         base_statement.BaseStatement.__init__(self, "error()", pos)
         if not 2 <= len(param_list) <= 5:
-            raise generic.ScriptError("'error' expects between 2 and 5 parameters, got " + str(len(param_list)), self.pos)
+            raise generic.ScriptError(
+                "'error' expects between 2 and 5 parameters, got " + str(len(param_list)), self.pos
+            )
         self.severity = param_list[0]
-        self.msg      = param_list[1]
-        self.data     = param_list[2] if len(param_list) >= 3 else None
+        self.msg = param_list[1]
+        self.data = param_list[2] if len(param_list) >= 3 else None
         self.params = param_list[3:]
 
     def pre_process(self):
         self.severity = self.severity.reduce([actionB.error_severity])
-        self.msg      = self.msg.reduce([actionB.default_error_msg])
+        self.msg = self.msg.reduce([actionB.default_error_msg])
         if self.data:
             self.data = self.data.reduce()
         self.params = [x.reduce() for x in self.params]
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Error message')
-        generic.print_dbg(indentation + 2, 'Message:')
+        generic.print_dbg(indentation, "Error message")
+        generic.print_dbg(indentation + 2, "Message:")
         self.msg.debug_print(indentation + 4)
 
-        generic.print_dbg(indentation + 2, 'Severity:')
+        generic.print_dbg(indentation + 2, "Severity:")
         self.severity.debug_print(indentation + 4)
 
-        generic.print_dbg(indentation, 'Data: ')
-        if self.data is not None: self.data.debug_print(indentation + 4)
+        generic.print_dbg(indentation, "Data: ")
+        if self.data is not None:
+            self.data.debug_print(indentation + 4)
 
         if len(self.params) > 0:
-            generic.print_dbg(indentation + 2, 'Param1: ')
+            generic.print_dbg(indentation + 2, "Param1: ")
             self.params[0].debug_print(indentation + 4)
         if len(self.params) > 1:
-            generic.print_dbg(indentation + 2, 'Param2: ')
+            generic.print_dbg(indentation + 2, "Param2: ")
             self.params[1].debug_print(indentation + 4)
 
     def get_action_list(self):
@@ -84,12 +89,12 @@ class Error(base_statement.BaseStatement):
                 if self.severity.value == actionB.error_severity[s]:
                     sev = s
                     break
-        res = 'error({}, {}'.format(sev, self.msg)
+        res = "error({}, {}".format(sev, self.msg)
         if self.data is not None:
-            res += ', {}'.format(self.data)
+            res += ", {}".format(self.data)
         if len(self.params) > 0:
-            res += ', {}'.format(self.params[0])
+            res += ", {}".format(self.params[0])
         if len(self.params) > 1:
-            res += ', {}'.format(self.params[1])
-        res += ');\n'
+            res += ", {}".format(self.params[1])
+        res += ");\n"
         return res

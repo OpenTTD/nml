@@ -19,6 +19,7 @@ from nml.ast import base_statement
 
 produce_base_class = action2.make_sprite_group_class(False, True, True)
 
+
 class ProduceOld(produce_base_class):
     """
     AST node for a 'produce'-block, which is basically equivalent to the production callback.
@@ -29,10 +30,13 @@ class ProduceOld(produce_base_class):
                        - 5:    Run the production CB again if nonzero
     @type param_list: C{list} of L{Expression}
     """
+
     def __init__(self, param_list, pos):
         base_statement.BaseStatement.__init__(self, "produce-block", pos, False, False)
         if not (6 <= len(param_list) <= 7):
-            raise generic.ScriptError("produce-block requires 6 or 7 parameters, encountered {:d}".format(len(param_list)), self.pos)
+            raise generic.ScriptError(
+                "produce-block requires 6 or 7 parameters, encountered {:d}".format(len(param_list)), self.pos
+            )
         name = param_list[0]
         if not isinstance(name, expression.Identifier):
             raise generic.ScriptError("produce parameter 1 'name' should be an identifier.", name.pos)
@@ -51,23 +55,24 @@ class ProduceOld(produce_base_class):
         return []
 
     def __str__(self):
-        return 'produce({});\n'.format(', '.join(str(x) for x in [self.name] + self.param_list))
+        return "produce({});\n".format(", ".join(str(x) for x in [self.name] + self.param_list))
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Produce, name =', self.name)
-        generic.print_dbg(indentation + 2, 'Subtract from input:')
+        generic.print_dbg(indentation, "Produce, name =", self.name)
+        generic.print_dbg(indentation + 2, "Subtract from input:")
         for expr in self.param_list[0:3]:
             expr.debug_print(indentation + 4)
-        generic.print_dbg(indentation + 2, 'Add to output:')
+        generic.print_dbg(indentation + 2, "Add to output:")
         for expr in self.param_list[3:5]:
             expr.debug_print(indentation + 4)
-        generic.print_dbg(indentation + 2, 'Again:')
+        generic.print_dbg(indentation + 2, "Again:")
         self.param_list[5].debug_print(indentation + 4)
 
     def get_action_list(self):
         if self.prepare_act2_output():
             return action2production.get_production_actions(self)
         return []
+
 
 class Produce(produce_base_class):
     """
@@ -89,6 +94,7 @@ class Produce(produce_base_class):
     @ivar again: Production CB is repeated if this is a register evaluating to nonzero
     @type again: L{Expression}
     """
+
     def __init__(self, name, subtract_in, add_out, again, pos):
         if not isinstance(name, expression.Identifier):
             raise generic.ScriptError("produce parameter 1 'name' should be an identifier.", name.pos)
@@ -110,17 +116,22 @@ class Produce(produce_base_class):
         return []
 
     def __str__(self):
-        return 'produce({0}, [{1}], [{2}], {3})\n'.format(str(self.name), ' '.join(str(x) for x in self.subtract_in), ' '.join(str(x) for x in self.add_out), str(self.again))
+        return "produce({0}, [{1}], [{2}], {3})\n".format(
+            str(self.name),
+            " ".join(str(x) for x in self.subtract_in),
+            " ".join(str(x) for x in self.add_out),
+            str(self.again),
+        )
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Produce, name =', self.name)
+        generic.print_dbg(indentation, "Produce, name =", self.name)
         for cargopair in self.subtract_in:
-            generic.print_dbg(indentation + 2, 'Subtract from input {0}:'.format(cargopair.name.value))
+            generic.print_dbg(indentation + 2, "Subtract from input {0}:".format(cargopair.name.value))
             cargopair.value.debug_print(indentation + 4)
         for cargopair in self.add_out:
-            generic.print_dbg(indentation + 2, 'Add to output {0}:'.format(cargopair.name.value))
+            generic.print_dbg(indentation + 2, "Add to output {0}:".format(cargopair.name.value))
             cargopair.value.debug_print(indentation + 4)
-        generic.print_dbg(indentation + 2, 'Again:')
+        generic.print_dbg(indentation + 2, "Again:")
         self.again.debug_print(indentation + 4)
 
     def get_action_list(self):

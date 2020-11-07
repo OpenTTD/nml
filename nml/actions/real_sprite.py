@@ -18,20 +18,20 @@ from nml.actions import base_action
 from nml.ast import assignment
 from PIL import Image
 
-FLAG_NOCROP  = 0x0040
+FLAG_NOCROP = 0x0040
 FLAG_NOALPHA = 0x0100
-FLAG_WHITE   = 0x0200
-FLAG_ANIM    = 0x0400
+FLAG_WHITE = 0x0200
+FLAG_ANIM = 0x0400
 
 real_sprite_flags = {
-    'CROP'         : 0,            # Allow cropping
-    'NOCROP'       : FLAG_NOCROP,  # Disallow cropping
-    'ALPHA'        : 0,            # Allow semi-transparency
-    'NOALPHA'      : FLAG_NOALPHA, # Warn about semi-transparency
-    'WHITE'        : FLAG_WHITE,   # Allow pure-white
-    'NOWHITE'      : 0,            # Warn about pure-white
-    'ANIM'         : FLAG_ANIM,    # Allow anim colours
-    'NOANIM'       : 0,            # Warn about anim colours
+    "CROP": 0,  # Allow cropping
+    "NOCROP": FLAG_NOCROP,  # Disallow cropping
+    "ALPHA": 0,  # Allow semi-transparency
+    "NOALPHA": FLAG_NOALPHA,  # Warn about semi-transparency
+    "WHITE": FLAG_WHITE,  # Allow pure-white
+    "NOWHITE": 0,  # Warn about pure-white
+    "ANIM": FLAG_ANIM,  # Allow anim colours
+    "NOANIM": 0,  # Warn about anim colours
 }
 
 # fmt: off
@@ -109,15 +109,19 @@ palmap_w2d = [
 translate_w2d = bytearray(v for v in palmap_w2d)
 translate_d2w = bytearray(v for v in palmap_d2w)
 
+
 def convert_palette(pal):
     ret = 256 * [0]
     for idx, colour in enumerate(pal):
         if 0xD7 <= idx <= 0xE2:
             if idx != colour:
-                raise generic.ScriptError("Indices 0xD7..0xE2 are not allowed in recolour sprites when the output is in the WIN palette")
+                raise generic.ScriptError(
+                    "Indices 0xD7..0xE2 are not allowed in recolour sprites when the output is in the WIN palette"
+                )
             continue
         ret[palmap_d2w[idx]] = palmap_d2w[colour]
     return ret
+
 
 class RealSprite:
     """
@@ -164,7 +168,7 @@ class RealSprite:
     @type poslist: C{list} of L{Position}
     """
 
-    def __init__(self, param_list = None, label = None, poslist = None):
+    def __init__(self, param_list=None, label=None, poslist=None):
         self.param_list = param_list
         self.label = label
         self.is_empty = False
@@ -178,7 +182,7 @@ class RealSprite:
             self.poslist = poslist
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Real sprite, parameters:')
+        generic.print_dbg(indentation, "Real sprite, parameters:")
         for param in self.param_list:
             param.debug_print(indentation + 2)
 
@@ -192,10 +196,10 @@ class RealSprite:
         return [parse_real_sprite(self, default_file, default_mask_file, poslist, id_dict)]
 
     def check_sprite_size(self):
-        generic.check_range(self.xpos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'xpos'", self.xpos.pos)
-        generic.check_range(self.ypos.value,  0, 0x7fffFFFF,   "Real sprite paramater 'ypos'", self.ypos.pos)
-        generic.check_range(self.xsize.value, 1, 0xFFFF,       "Real sprite paramater 'xsize'", self.xsize.pos)
-        generic.check_range(self.ysize.value, 1, 0xFFFF,       "Real sprite paramater 'ysize'", self.ysize.pos)
+        generic.check_range(self.xpos.value, 0, 0x7FFFFFFF, "Real sprite paramater 'xpos'", self.xpos.pos)
+        generic.check_range(self.ypos.value, 0, 0x7FFFFFFF, "Real sprite paramater 'ypos'", self.ypos.pos)
+        generic.check_range(self.xsize.value, 1, 0xFFFF, "Real sprite paramater 'xsize'", self.xsize.pos)
+        generic.check_range(self.ysize.value, 1, 0xFFFF, "Real sprite paramater 'ysize'", self.ysize.pos)
 
     def validate_size(self):
         """
@@ -249,10 +253,15 @@ class RealSprite:
             mask_x = self.mask_pos[0].value
             mask_y = self.mask_pos[1].value
 
-        rgb_file, rgb_rect = (filename_32bpp.value, (x, y, size_x, size_y)) if filename_32bpp is not None else (None, None)
-        mask_file, mask_rect = (filename_8bpp.value, (mask_x, mask_y, size_x, size_y)) if filename_8bpp is not None else (None, None)
+        rgb_file, rgb_rect = (
+            (filename_32bpp.value, (x, y, size_x, size_y)) if filename_32bpp is not None else (None, None)
+        )
+        mask_file, mask_rect = (
+            (filename_8bpp.value, (mask_x, mask_y, size_x, size_y)) if filename_8bpp is not None else (None, None)
+        )
         do_crop = crop_sprites and ((self.flags.value & FLAG_NOCROP) == 0)
         return (rgb_file, rgb_rect, mask_file, mask_rect, do_crop)
+
 
 class SpriteAction(base_action.BaseAction):
     """
@@ -262,6 +271,7 @@ class SpriteAction(base_action.BaseAction):
     @ivar last: Whether this sprite action is the last of a series.
     @type last: C{bool}
     """
+
     def __init__(self):
         self.sprite_num = None
         self.last = False
@@ -271,6 +281,7 @@ class SpriteAction(base_action.BaseAction):
             msg = "Sprite number {:d} given in base_graphics-block, but it doesn't match output sprite number {:d}"
             msg = msg.format(self.sprite_num.value, sprite_num)
             raise generic.ScriptError(msg)
+
 
 class RealSpriteAction(SpriteAction):
     def __init__(self):
@@ -285,10 +296,12 @@ class RealSpriteAction(SpriteAction):
             file.print_empty_realsprite()
         else:
             file.print_sprite([s for s in self.sprite_list if not s.is_empty])
-        if self.last: file.newline()
+        if self.last:
+            file.newline()
+
 
 class RecolourSprite:
-    def __init__(self, mapping, label = None, poslist = None):
+    def __init__(self, mapping, label=None, poslist=None):
         self.mapping = mapping
         self.label = label
         if poslist is None:
@@ -297,9 +310,9 @@ class RecolourSprite:
             self.poslist = poslist
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Recolour sprite, mapping:')
+        generic.print_dbg(indentation, "Recolour sprite, mapping:")
         for recolour in self.mapping:
-            generic.print_dbg(indentation + 2, '{}: {};'.format(recolour.name, recolour.value))
+            generic.print_dbg(indentation + 2, "{}: {};".format(recolour.name, recolour.value))
 
     def get_labels(self):
         labels = {}
@@ -312,19 +325,32 @@ class RecolourSprite:
         new_mapping = []
         for old_assignment in self.mapping:
             from_min_value = old_assignment.name.min.reduce_constant([id_dict])
-            from_max_value = from_min_value if old_assignment.name.max is None else old_assignment.name.max.reduce_constant([id_dict])
+            from_max_value = (
+                from_min_value
+                if old_assignment.name.max is None
+                else old_assignment.name.max.reduce_constant([id_dict])
+            )
             to_min_value = old_assignment.value.min.reduce_constant([id_dict])
-            to_max_value = None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
-            new_mapping.append(assignment.Assignment(assignment.Range(from_min_value, from_max_value), assignment.Range(to_min_value, to_max_value), old_assignment.pos))
-        return [RecolourSprite(new_mapping, poslist = poslist)]
+            to_max_value = (
+                None if old_assignment.value.max is None else old_assignment.value.max.reduce_constant([id_dict])
+            )
+            new_mapping.append(
+                assignment.Assignment(
+                    assignment.Range(from_min_value, from_max_value),
+                    assignment.Range(to_min_value, to_max_value),
+                    old_assignment.pos,
+                )
+            )
+        return [RecolourSprite(new_mapping, poslist=poslist)]
 
     def __str__(self):
         ret = "" if self.label is None else str(self.label) + ": "
         ret += "recolour_sprite {\n"
         for recolour in self.mapping:
-            ret += '{}: {};'.format(recolour.name, recolour.value)
+            ret += "{}: {};".format(recolour.name, recolour.value)
         ret += "}"
         return ret
+
 
 class RecolourSpriteAction(SpriteAction):
     def __init__(self, sprite):
@@ -336,8 +362,14 @@ class RecolourSpriteAction(SpriteAction):
         SpriteAction.prepare_output(self, sprite_num)
         colour_mapping = {}
         for recolour in self.sprite.mapping:
-            if recolour.value.max is not None and recolour.name.max.value - recolour.name.min.value != recolour.value.max.value - recolour.value.min.value:
-                raise generic.ScriptError("From and to ranges in a recolour block need to have the same size", recolour.pos)
+            if (
+                recolour.value.max is not None
+                and recolour.name.max.value - recolour.name.min.value
+                != recolour.value.max.value - recolour.value.min.value
+            ):
+                raise generic.ScriptError(
+                    "From and to ranges in a recolour block need to have the same size", recolour.pos
+                )
             for i in range(recolour.name.max.value - recolour.name.min.value + 1):
                 idx = recolour.name.min.value + i
                 val = recolour.value.min.value
@@ -364,8 +396,10 @@ class RecolourSpriteAction(SpriteAction):
             if idx % 16 == 0:
                 file.newline()
             file.print_bytex(colour)
-        if self.last: file.newline()
+        if self.last:
+            file.newline()
         file.end_sprite()
+
 
 class TemplateUsage:
     def __init__(self, name, param_list, label, pos):
@@ -375,8 +409,8 @@ class TemplateUsage:
         self.pos = pos
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Template used:', self.name.value)
-        generic.print_dbg(indentation + 2, 'Parameters:')
+        generic.print_dbg(indentation, "Template used:", self.name.value)
+        generic.print_dbg(indentation + 2, "Parameters:")
         for param in self.param_list:
             param.debug_print(indentation + 4)
 
@@ -388,7 +422,9 @@ class TemplateUsage:
         # Add (possibly) label applied to ourselves
         if self.label is not None:
             if self.label.value in labels:
-                raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(self.label.value), self.pos)
+                raise generic.ScriptError(
+                    "Duplicate label encountered; '{}' already exists.".format(self.label.value), self.pos
+                )
             labels[self.label.value] = 0
         return labels, offset
 
@@ -397,7 +433,13 @@ class TemplateUsage:
             raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
         template = sprite_template_map[self.name.value]
         if len(self.param_list) != len(template.param_list):
-            raise generic.ScriptError("Incorrect number of template arguments. Expected " + str(len(template.param_list)) + ", got " + str(len(self.param_list)), self.pos)
+            raise generic.ScriptError(
+                "Incorrect number of template arguments. Expected "
+                + str(len(template.param_list))
+                + ", got "
+                + str(len(self.param_list)),
+                self.pos,
+            )
         param_dict = {}
         for i, param in enumerate(self.param_list):
             param = param.reduce([real_sprite_flags, parameters])
@@ -405,7 +447,9 @@ class TemplateUsage:
                 raise generic.ScriptError("Template parameters should be compile-time constants", param.pos)
             param_dict[template.param_list[i].value] = param.value
 
-        return parse_sprite_list(template.sprite_list, default_file, default_mask_file, poslist + [self.pos], param_dict)
+        return parse_sprite_list(
+            template.sprite_list, default_file, default_mask_file, poslist + [self.pos], param_dict
+        )
 
     def __str__(self):
         return "{}({})".format(self.name, ", ".join(str(param) for param in self.param_list))
@@ -418,18 +462,20 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
         sprite.is_empty = True
         return sprite
     elif not (2 <= num_param <= 9):
-        raise generic.ScriptError("Invalid number of arguments for real sprite. Expected 2..9.", sprite.param_list[0].pos)
+        raise generic.ScriptError(
+            "Invalid number of arguments for real sprite. Expected 2..9.", sprite.param_list[0].pos
+        )
 
     # create new sprite struct, needed for template expansion
-    new_sprite = RealSprite(poslist = poslist + sprite.poslist)
+    new_sprite = RealSprite(poslist=poslist + sprite.poslist)
 
     param_offset = 0
 
     if num_param >= 6:
         # xpos, ypos, xsize and ysize are all optional. If not specified they'll default
         # to 0, 0, image_width, image_height
-        new_sprite.xpos  = sprite.param_list[0].reduce_constant([id_dict])
-        new_sprite.ypos  = sprite.param_list[1].reduce_constant([id_dict])
+        new_sprite.xpos = sprite.param_list[0].reduce_constant([id_dict])
+        new_sprite.ypos = sprite.param_list[1].reduce_constant([id_dict])
         new_sprite.xsize = sprite.param_list[2].reduce_constant([id_dict])
         new_sprite.ysize = sprite.param_list[3].reduce_constant([id_dict])
         new_sprite.check_sprite_size()
@@ -437,8 +483,20 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
 
     new_sprite.xrel = sprite.param_list[param_offset].reduce_constant([id_dict])
     new_sprite.yrel = sprite.param_list[param_offset + 1].reduce_constant([id_dict])
-    generic.check_range(new_sprite.xrel.value, -0x8000, 0x7fff,  "Real sprite paramater {:d} 'xrel'".format(param_offset + 1), new_sprite.xrel.pos)
-    generic.check_range(new_sprite.yrel.value, -0x8000, 0x7fff,  "Real sprite paramater {:d} 'yrel'".format(param_offset + 2), new_sprite.yrel.pos)
+    generic.check_range(
+        new_sprite.xrel.value,
+        -0x8000,
+        0x7FFF,
+        "Real sprite paramater {:d} 'xrel'".format(param_offset + 1),
+        new_sprite.xrel.pos,
+    )
+    generic.check_range(
+        new_sprite.yrel.value,
+        -0x8000,
+        0x7FFF,
+        "Real sprite paramater {:d} 'yrel'".format(param_offset + 2),
+        new_sprite.yrel.pos,
+    )
     param_offset += 2
 
     # Next may follow any combination of (flags, filename, mask), but always in that order
@@ -455,7 +513,10 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
         new_sprite.file = sprite.param_list[param_offset].reduce([id_dict])
         param_offset += 1
         if not isinstance(new_sprite.file, expression.StringLiteral):
-            raise generic.ScriptError("Real sprite parameter {:d} 'file' should be a string literal".format(param_offset + 1), new_sprite.file.pos)
+            raise generic.ScriptError(
+                "Real sprite parameter {:d} 'file' should be a string literal".format(param_offset + 1),
+                new_sprite.file.pos,
+            )
 
     if new_sprite.file is None:
         raise generic.ScriptError("No image file specified for real sprite", sprite.param_list[0].pos)
@@ -469,7 +530,10 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
         #   or array (empty => no mask, 1 value => file only, 2 => offsets only, 3 => file + offsets)
         if isinstance(mask, expression.Array):
             if not (0 <= len(mask.values) <= 3):
-                raise generic.ScriptError("Real sprite mask should be an array with 0 to 3 values, encountered {:d}".format(len(mask.values)), mask.pos)
+                raise generic.ScriptError(
+                    "Real sprite mask should be an array with 0 to 3 values, encountered {:d}".format(len(mask.values)),
+                    mask.pos,
+                )
             if len(mask.values) == 0:
                 # disable any default mask
                 new_sprite.mask_file = None
@@ -477,29 +541,44 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
                 if len(mask.values) & 1:
                     new_sprite.mask_file = mask.values[0].reduce([id_dict])
                     if not isinstance(new_sprite.mask_file, expression.StringLiteral):
-                        raise generic.ScriptError("Real sprite parameter 'mask_file' should be a string literal", new_sprite.file.pos)
+                        raise generic.ScriptError(
+                            "Real sprite parameter 'mask_file' should be a string literal", new_sprite.file.pos
+                        )
                 if len(mask.values) & 2:
                     new_sprite.mask_pos = tuple(mask.values[i].reduce_constant([id_dict]) for i in range(-2, 0))
                     # Check that there is also a mask specified, else the offsets make no sense
                     if new_sprite.mask_file is None:
-                        raise generic.ScriptError("Mask offsets are specified, but there is no mask file set.", new_sprite.mask_pos[0].pos)
+                        raise generic.ScriptError(
+                            "Mask offsets are specified, but there is no mask file set.", new_sprite.mask_pos[0].pos
+                        )
         else:
             new_sprite.mask_file = mask.reduce([id_dict])
             if not isinstance(new_sprite.mask_file, expression.StringLiteral):
-                raise generic.ScriptError("Real sprite parameter {:d} 'mask' should be an array or string literal".format(param_offset + 1), new_sprite.file.pos)
+                raise generic.ScriptError(
+                    "Real sprite parameter {:d} 'mask' should be an array or string literal".format(param_offset + 1),
+                    new_sprite.file.pos,
+                )
 
     if num_param > param_offset:
-        raise generic.ScriptError("Real sprite has too many parameters, the last {:d} parameter(s) cannot be parsed.".format(num_param - param_offset), sprite.param_list[param_offset].pos)
+        raise generic.ScriptError(
+            "Real sprite has too many parameters, the last {:d} parameter(s) cannot be parsed.".format(
+                num_param - param_offset
+            ),
+            sprite.param_list[param_offset].pos,
+        )
 
     return new_sprite
 
+
 sprite_template_map = {}
 
-def parse_sprite_list(sprite_list, default_file, default_mask_file, poslist, parameters = {}):
+
+def parse_sprite_list(sprite_list, default_file, default_mask_file, poslist, parameters={}):
     real_sprite_list = []
     for sprite in sprite_list:
         real_sprite_list.extend(sprite.expand(default_file, default_mask_file, poslist, parameters))
     return real_sprite_list
+
 
 def parse_sprite_data(sprite_container):
     """
@@ -518,13 +597,20 @@ def parse_sprite_data(sprite_container):
         new_sprite_list = parse_sprite_list(sprite_list, default_file, default_mask_file, [pos])
         if not first and len(new_sprite_list) != len(action_list):
             msg = "Expected {:d} alternative sprites for {} '{}', got {:d}."
-            msg = msg.format(len(action_list), sprite_container.block_type, sprite_container.block_name.value, len(new_sprite_list))
+            msg = msg.format(
+                len(action_list), sprite_container.block_type, sprite_container.block_name.value, len(new_sprite_list)
+            )
             raise generic.ScriptError(msg, sprite_container.pos)
 
         for i, sprite in enumerate(new_sprite_list):
             sprite.zoom_level = zoom_level
             sprite.bit_depth = bit_depth
-            if bit_depth == 8 and isinstance(sprite, RealSprite) and (not sprite.is_empty) and sprite.mask_file is not None:
+            if (
+                bit_depth == 8
+                and isinstance(sprite, RealSprite)
+                and (not sprite.is_empty)
+                and sprite.mask_file is not None
+            ):
                 raise generic.ScriptError("Mask file may only be specified for 32bpp sprites.", sprite.mask_file.pos)
             if first:
                 if isinstance(sprite, RealSprite):
@@ -535,13 +621,19 @@ def parse_sprite_data(sprite_container):
             else:
                 # Not the first sprite, so an alternative sprite
                 if isinstance(sprite, RecolourSprite) or isinstance(action_list[i], RecolourSpriteAction):
-                    raise generic.ScriptError("Alternative sprites may only be provided for and contain real sprites, not recolour sprites.", sprite_container.pos)
+                    raise generic.ScriptError(
+                        "Alternative sprites may only be provided for and contain real sprites, not recolour sprites.",
+                        sprite_container.pos,
+                    )
                 if action_list[i].sprite_list[0].is_empty and not sprite.is_empty:
                     # if the first sprite is empty, all others are ignored
-                    generic.print_warning("Alternative sprites for an empty real sprite are ignored.", sprite_container.pos)
-            if isinstance(sprite, RealSprite): action_list[i].add_sprite(sprite)
+                    generic.print_warning(
+                        "Alternative sprites for an empty real sprite are ignored.", sprite_container.pos
+                    )
+            if isinstance(sprite, RealSprite):
+                action_list[i].add_sprite(sprite)
         first = False
 
-    if len(action_list) != 0: action_list[-1].last = True
+    if len(action_list) != 0:
+        action_list[-1].last = True
     return action_list
-

@@ -17,21 +17,25 @@ from nml import generic, grfstrings
 from .base_expression import Type, Expression, ConstantNumeric
 from .string_literal import StringLiteral
 
+
 class Parameter(Expression):
-    def __init__(self, num, pos = None, by_user = False):
+    def __init__(self, num, pos=None, by_user=False):
         Expression.__init__(self, pos)
         self.num = num
         if by_user and isinstance(num, ConstantNumeric) and not (0 <= num.value <= 63):
-            generic.print_warning("Accessing parameters out of the range 0..63 is not supported and may lead to unexpected behaviour.", pos)
+            generic.print_warning(
+                "Accessing parameters out of the range 0..63 is not supported and may lead to unexpected behaviour.",
+                pos,
+            )
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'Parameter:')
+        generic.print_dbg(indentation, "Parameter:")
         self.num.debug_print(indentation + 2)
 
     def __str__(self):
-        return 'param[{}]'.format(self.num)
+        return "param[{}]".format(self.num)
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         num = self.num.reduce(id_dicts)
         if num.type() != Type.INTEGER:
             raise generic.ScriptError("Parameter number must be an integer.", num.pos)
@@ -40,7 +44,9 @@ class Parameter(Expression):
     def supported_by_action2(self, raise_error):
         supported = isinstance(self.num, ConstantNumeric)
         if not supported and raise_error:
-            raise generic.ScriptError("Parameter acessess with non-constant numbers are not supported in a switch-block.", self.pos)
+            raise generic.ScriptError(
+                "Parameter acessess with non-constant numbers are not supported in a switch-block.", self.pos
+            )
         return supported
 
     def supported_by_actionD(self, raise_error):
@@ -55,23 +61,24 @@ class Parameter(Expression):
     def __hash__(self):
         return hash((self.num,))
 
+
 class OtherGRFParameter(Expression):
-    def __init__(self, grfid, num, pos = None):
+    def __init__(self, grfid, num, pos=None):
         Expression.__init__(self, pos)
         self.grfid = grfid
         self.num = num
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'OtherGRFParameter:')
+        generic.print_dbg(indentation, "OtherGRFParameter:")
         self.grfid.debug_print(indentation + 2)
         self.num.debug_print(indentation + 2)
 
     def __str__(self):
-        return 'param[{}, {}]'.format(self.grfid, self.num)
+        return "param[{}, {}]".format(self.grfid, self.num)
 
-    def reduce(self, id_dicts = [], unknown_id_fatal = True):
+    def reduce(self, id_dicts=[], unknown_id_fatal=True):
         grfid = self.grfid.reduce(id_dicts)
-        #Test validity
+        # Test validity
         parse_string_to_dword(grfid)
         num = self.num.reduce(id_dicts)
         if num.type() != Type.INTEGER:
@@ -80,11 +87,14 @@ class OtherGRFParameter(Expression):
 
     def supported_by_action2(self, raise_error):
         if raise_error:
-            raise generic.ScriptError("Reading parameters from another GRF is not supported in a switch-block.", self.pos)
+            raise generic.ScriptError(
+                "Reading parameters from another GRF is not supported in a switch-block.", self.pos
+            )
         return False
 
     def supported_by_actionD(self, raise_error):
         return True
+
 
 def parse_string_to_dword(string):
     """
@@ -105,8 +115,8 @@ def parse_string_to_dword(string):
     i = 0
     try:
         while len(bytes) < 4:
-            if string[i] == '\\':
-                bytes.append(int(string[i+1:i+3], 16))
+            if string[i] == "\\":
+                bytes.append(int(string[i + 1 : i + 3], 16))
                 i += 3
             else:
                 bytes.append(ord(string[i]))
