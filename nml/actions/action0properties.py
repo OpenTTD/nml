@@ -247,14 +247,17 @@ def cargo_list(value, max_num_cargos):
 # General vehicle properties that apply to feature 0x00 .. 0x03
 #
 
+# fmt: off
 general_veh_props = {
-    'reliability_decay'  : {'size': 1, 'num': 0x02},
-    'vehicle_life'       : {'size': 1, 'num': 0x03},
-    'model_life'         : {'size': 1, 'num': 0x04},
-    'climates_available' : {'size': 1, 'num': 0x06},
-    'loading_speed'      : {'size': 1, 'num': 0x07},
-    'name'               : {'num': -1, 'string': None},
+    "reliability_decay":  {"size": 1, "num": 0x02},
+    "vehicle_life":       {"size": 1, "num": 0x03},
+    "model_life":         {"size": 1, "num": 0x04},
+    "climates_available": {"size": 1, "num": 0x06},
+    "loading_speed":      {"size": 1, "num": 0x07},
+    "name":               {"num": -1, "string": None},
 }
+# fmt: on
+
 
 def ottd_display_speed(value, mul, div, unit):
     # Convert value to km/h-ish.
@@ -332,48 +335,67 @@ def zero_refit_mask(prop_num):
 # Feature 0x00 (Trains)
 #
 
+# fmt: off
 properties[0x00] = {
-    'track_type'                   : {'size': 1, 'num': 0x05},
-    'ai_special_flag'              : {'size': 1, 'num': 0x08},
-    'speed'                        : {'size': 2, 'num': 0x09, 'unit_type': 'speed', 'unit_conversion': (5000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 1, unit)},
-    # 09 doesn't exist
-    'power'                        : {'size': 2, 'num': 0x0B, 'unit_type': 'power'},
-    # 0A doesn't exist
-    'running_cost_factor'          : {'size': 1, 'num': 0x0D},
-    'running_cost_base'            : {'size': 4, 'num': 0x0E},
-    # 0F -11 don't exist
-    'sprite_id'                    : {'size': 1, 'num': 0x12},
-    'dual_headed'                  : {'size': 1, 'num': 0x13},
-    'cargo_capacity'               : {'size': 1, 'num': 0x14},
-    'default_cargo_type'           : {'size': 1, 'num': 0x15},
-    'weight'                       : two_byte_property(0x16, 0x24, {'unit_type': 'weight'}, {'unit_type': 'weight'}),
-    'cost_factor'                  : {'size': 1, 'num': 0x17},
-    'ai_engine_rank'               : {'size': 1, 'num': 0x18},
-    'engine_class'                 : {'size': 1, 'num': 0x19},
+    **general_veh_props,
+    "track_type":                     {"size": 1, "num": 0x05},
+    "ai_special_flag":                {"size": 1, "num": 0x08},
+    "speed": {
+        "size": 2,
+        "num": 0x09,
+        "unit_type": "speed",
+        "unit_conversion": (5000, 1397),
+        "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 1, unit)
+    },
+    # 09 doesn"t exist
+    "power":                          {"size": 2, "num": 0x0B, "unit_type": "power"},
+    # 0A doesn"t exist
+    "running_cost_factor":            {"size": 1, "num": 0x0D},
+    "running_cost_base":              {"size": 4, "num": 0x0E},
+    # 0F -11 don"t exist
+    "sprite_id":                      {"size": 1, "num": 0x12},
+    "dual_headed":                    {"size": 1, "num": 0x13},
+    "cargo_capacity":                 {"size": 1, "num": 0x14},
+    "default_cargo_type":             {"size": 1, "num": 0x15},
+    "weight": two_byte_property(
+        0x16,
+        0x24,
+        {"unit_type": "weight"},
+        {"unit_type": "weight"}
+    ),
+    "cost_factor":                    {"size": 1, "num": 0x17},
+    "ai_engine_rank":                 {"size": 1, "num": 0x18},
+    "engine_class":                   {"size": 1, "num": 0x19},
     # 1A (sort purchase list) is implemented elsewhere
-    'extra_power_per_wagon'        : {'size': 2, 'num': 0x1B, 'unit_type': 'power'},
-    'refit_cost'                   : {'size': 1, 'num': 0x1C},
+    "extra_power_per_wagon":          {"size": 2, "num": 0x1B, "unit_type": "power"},
+    "refit_cost":                     {"size": 1, "num": 0x1C},
     # 1D (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 1E (callback flags) is not set by user
-    'tractive_effort_coefficient'  : {'size': 1, 'num': 0x1F, 'unit_conversion': 255},
-    'air_drag_coefficient'         : {'size': 1, 'num': 0x20, 'unit_conversion': 255},
-    'length'                       : {'size': 1, 'num': 0x21, 'value_function': vehicle_length},
+    "tractive_effort_coefficient":    {"size": 1, "num": 0x1F, "unit_conversion": 255},
+    "air_drag_coefficient":           {"size": 1, "num": 0x20, "unit_conversion": 255},
+    "length":                         {"size": 1, "num": 0x21, "value_function": vehicle_length},
     # 22 has two names, to simplify docs
-    'visual_effect_and_powered'    : {'size': 1, 'num': 0x22},
-    'effect_spawn_model_and_powered': {'size': 1, 'num': 0x22},
-    'extra_weight_per_wagon'       : {'size': 1, 'num': 0x23, 'unit_type': 'weight'},
+    "visual_effect_and_powered":      {"size": 1, "num": 0x22},
+    "effect_spawn_model_and_powered": {"size": 1, "num": 0x22},
+    "extra_weight_per_wagon":         {"size": 1, "num": 0x23, "unit_type": "weight"},
     # 24 is high byte of 16 (weight)
-    'bitmask_vehicle_info'         : {'size': 1, 'num': 0x25},
-    'retire_early'                 : {'size': 1, 'num': 0x26},
-    'misc_flags'                   : {'size': 1, 'num': 0x27},
-    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x28}, zero_refit_mask(0x1D)],
-    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x29}, zero_refit_mask(0x1D)],
-    'introduction_date'            : {'size': 4, 'num': 0x2A},
-    'cargo_age_period'             : {'size': 2, 'num': 0x2B},
-    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x2C, value)}, zero_refit_mask(0x1D)],
-    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x2D, value)}, zero_refit_mask(0x1D)],
+    "bitmask_vehicle_info":           {"size": 1, "num": 0x25},
+    "retire_early":                   {"size": 1, "num": 0x26},
+    "misc_flags":                     {"size": 1, "num": 0x27},
+    "refittable_cargo_classes":       [{"size": 2, "num": 0x28}, zero_refit_mask(0x1D)],
+    "non_refittable_cargo_classes":   [{"size": 2, "num": 0x29}, zero_refit_mask(0x1D)],
+    "introduction_date":              {"size": 4, "num": 0x2A},
+    "cargo_age_period":               {"size": 2, "num": 0x2B},
+    "cargo_allow_refit": [
+        {"custom_function": lambda value: ctt_list(0x2C, value)},
+        zero_refit_mask(0x1D)
+    ],
+    "cargo_disallow_refit": [
+        {"custom_function": lambda value: ctt_list(0x2D, value)}
+        , zero_refit_mask(0x1D)
+    ],
 }
-properties[0x00].update(general_veh_props)
+# fmt: on
 
 #
 # Feature 0x01 (Road Vehicles)
@@ -399,41 +421,55 @@ def roadveh_speed_prop(prop_info):
         prop08[key] = prop15[key] = prop_info[key]
     return [prop08, prop15]
 
+# fmt: off
 properties[0x01] = {
-    'road_type'                    : {'size': 1, 'num': 0x05},
-    'tram_type'                    : {'size': 1, 'num': 0x05},
-    'speed'                        : roadveh_speed_prop({'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 2, unit)}),
-    'running_cost_factor'          : {'size': 1, 'num': 0x09},
-    'running_cost_base'            : {'size': 4, 'num': 0x0A},
-    # 0B -0D don't exist
-    'sprite_id'                    : {'size': 1, 'num': 0x0E},
-    'cargo_capacity'               : {'size': 1, 'num': 0x0F},
-    'default_cargo_type'           : {'size': 1, 'num': 0x10},
-    'cost_factor'                  : {'size': 1, 'num': 0x11},
-    'sound_effect'                 : {'size': 1, 'num': 0x12},
-    'power'                        : {'size': 1, 'num': 0x13, 'unit_type': 'power', 'unit_conversion': (1, 10)},
-    'weight'                       : {'size': 1, 'num': 0x14, 'unit_type': 'weight', 'unit_conversion': 4},
+    **general_veh_props,
+    "road_type":                    {"size": 1, "num": 0x05},
+    "tram_type":                    {"size": 1, "num": 0x05},
+    "speed": roadveh_speed_prop(
+        {
+            "unit_type": "speed",
+            "unit_conversion": (10000, 1397),
+            "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 2, unit),
+        }
+    ),
+    "running_cost_factor":          {"size": 1, "num": 0x09},
+    "running_cost_base":            {"size": 4, "num": 0x0A},
+    # 0B -0D don"t exist
+    "sprite_id":                    {"size": 1, "num": 0x0E},
+    "cargo_capacity":               {"size": 1, "num": 0x0F},
+    "default_cargo_type":           {"size": 1, "num": 0x10},
+    "cost_factor":                  {"size": 1, "num": 0x11},
+    "sound_effect":                 {"size": 1, "num": 0x12},
+    "power":                        {"size": 1, "num": 0x13, "unit_type": "power", "unit_conversion": (1, 10)},
+    "weight":                       {"size": 1, "num": 0x14, "unit_type": "weight", "unit_conversion": 4},
     # 15 is set together with 08 (see above)
     # 16 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 17 (callback flags) is not set by user
-    'tractive_effort_coefficient'  : {'size': 1, 'num': 0x18, 'unit_conversion': 255},
-    'air_drag_coefficient'         : {'size': 1, 'num': 0x19, 'unit_conversion': 255},
-    'refit_cost'                   : {'size': 1, 'num': 0x1A},
-    'retire_early'                 : {'size': 1, 'num': 0x1B},
-    'misc_flags'                   : {'size': 1, 'num': 0x1C},
-    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x1D}, zero_refit_mask(0x16)],
-    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x1E}, zero_refit_mask(0x16)],
-    'introduction_date'            : {'size': 4, 'num': 0x1F},
+    "tractive_effort_coefficient":  {"size": 1, "num": 0x18, "unit_conversion": 255},
+    "air_drag_coefficient":         {"size": 1, "num": 0x19, "unit_conversion": 255},
+    "refit_cost":                   {"size": 1, "num": 0x1A},
+    "retire_early":                 {"size": 1, "num": 0x1B},
+    "misc_flags":                   {"size": 1, "num": 0x1C},
+    "refittable_cargo_classes":     [{"size": 2, "num": 0x1D}, zero_refit_mask(0x16)],
+    "non_refittable_cargo_classes": [{"size": 2, "num": 0x1E}, zero_refit_mask(0x16)],
+    "introduction_date":            {"size": 4, "num": 0x1F},
     # 20 (sort purchase list) is implemented elsewhere
     # 21 has two names, to simplify docs
-    'visual_effect'                : {'size': 1, 'num': 0x21},
-    'effect_spawn_model'           : {'size': 1, 'num': 0x21},
-    'cargo_age_period'             : {'size': 2, 'num': 0x22},
-    'length'                       : {'size': 1, 'num': 0x23, 'value_function': vehicle_length},
-    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x24, value)}, zero_refit_mask(0x16)],
-    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x25, value)}, zero_refit_mask(0x16)],
+    "visual_effect":                {"size": 1, "num": 0x21},
+    "effect_spawn_model":           {"size": 1, "num": 0x21},
+    "cargo_age_period":             {"size": 2, "num": 0x22},
+    "length":                       {"size": 1, "num": 0x23, "value_function": vehicle_length},
+    "cargo_allow_refit": [
+        {"custom_function": lambda value: ctt_list(0x24, value)},
+        zero_refit_mask(0x16),
+    ],
+    "cargo_disallow_refit": [
+        {"custom_function": lambda value: ctt_list(0x25, value)},
+        zero_refit_mask(0x16),
+    ],
 }
-properties[0x01].update(general_veh_props)
+# fmt: on
 
 #
 # Feature 0x02 (Ships)
@@ -446,35 +482,59 @@ def speed_fraction(value):
         raise generic.ScriptError("speed fraction must be in range 0 .. 1", value.pos)
     return nmlop.SUB(255, value).reduce()
 
+# fmt: off
 properties[0x02] = {
-    'sprite_id'                    : {'size': 1, 'num': 0x08},
-    'is_refittable'                : {'size': 1, 'num': 0x09},
-    'cost_factor'                  : {'size': 1, 'num': 0x0A},
-    'speed'                        : {'size': 1, 'num': 0x0B, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 2, unit)},
-    'default_cargo_type'           : {'size': 1, 'num': 0x0C},
-    'cargo_capacity'               : {'size': 2, 'num': 0x0D},
+    **general_veh_props,
+    "sprite_id":                    {"size": 1, "num": 0x08},
+    "is_refittable":                {"size": 1, "num": 0x09},
+    "cost_factor":                  {"size": 1, "num": 0x0A},
+    "speed": {
+        "size": 1,
+        "num": 0x0B,
+        "unit_type": "speed",
+        "unit_conversion": (10000, 1397),
+        "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 2, unit),
+    },
+    "default_cargo_type":           {"size": 1, "num": 0x0C},
+    "cargo_capacity":               {"size": 2, "num": 0x0D},
     # 0E does not exist
-    'running_cost_factor'          : {'size': 1, 'num': 0x0F},
-    'sound_effect'                 : {'size': 1, 'num': 0x10},
+    "running_cost_factor":          {"size": 1, "num": 0x0F},
+    "sound_effect":                 {"size": 1, "num": 0x10},
     # 11 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 12 (callback flags) is not set by user
-    'refit_cost'                   : {'size': 1, 'num': 0x13},
-    'ocean_speed_fraction'         : {'size': 1, 'num': 0x14, 'unit_conversion': 255, 'value_function': speed_fraction},
-    'canal_speed_fraction'         : {'size': 1, 'num': 0x15, 'unit_conversion': 255, 'value_function': speed_fraction},
-    'retire_early'                 : {'size': 1, 'num': 0x16},
-    'misc_flags'                   : {'size': 1, 'num': 0x17},
-    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x18}, zero_refit_mask(0x11)],
-    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x19}, zero_refit_mask(0x11)],
-    'introduction_date'            : {'size': 4, 'num': 0x1A},
+    "refit_cost":                   {"size": 1, "num": 0x13},
+    "ocean_speed_fraction": {
+        "size": 1,
+        "num": 0x14,
+        "unit_conversion": 255,
+        "value_function": speed_fraction,
+    },
+    "canal_speed_fraction": {
+        "size": 1,
+        "num": 0x15,
+        "unit_conversion": 255,
+        "value_function": speed_fraction,
+    },
+    "retire_early":                 {"size": 1, "num": 0x16},
+    "misc_flags":                   {"size": 1, "num": 0x17},
+    "refittable_cargo_classes":     [{"size": 2, "num": 0x18}, zero_refit_mask(0x11)],
+    "non_refittable_cargo_classes": [{"size": 2, "num": 0x19}, zero_refit_mask(0x11)],
+    "introduction_date":            {"size": 4, "num": 0x1A},
     # 1B (sort purchase list) is implemented elsewhere
     # 1C has two names, to simplify docs
-    'visual_effect'                : {'size': 1, 'num': 0x1C},
-    'effect_spawn_model'           : {'size': 1, 'num': 0x1C},
-    'cargo_age_period'             : {'size': 2, 'num': 0x1D},
-    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x1E, value)}, zero_refit_mask(0x11)],
-    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x1F, value)}, zero_refit_mask(0x11)],
+    "visual_effect":                {"size": 1, "num": 0x1C},
+    "effect_spawn_model":           {"size": 1, "num": 0x1C},
+    "cargo_age_period":             {"size": 2, "num": 0x1D},
+    "cargo_allow_refit": [
+        {"custom_function": lambda value: ctt_list(0x1E, value)},
+        zero_refit_mask(0x11),
+    ],
+    "cargo_disallow_refit": [
+        {"custom_function": lambda value: ctt_list(0x1F, value)},
+        zero_refit_mask(0x11),
+    ],
 }
-properties[0x02].update(general_veh_props)
+# fmt: on
 
 #
 # Feature 0x03 (Aircraft)
@@ -488,34 +548,51 @@ def aircraft_is_heli(value):
 def aircraft_is_large(value):
     return nmlop.AND(value, 1).reduce()
 
+# fmt: off
 properties[0x03] = {
-    'sprite_id'                    : {'size': 1, 'num': 0x08},
-    'aircraft_type'                : [{'size': 1, 'num': 0x09, 'value_function': aircraft_is_heli}, {'size': 1, 'num': 0x0A, 'value_function': aircraft_is_large}],
-    'cost_factor'                  : {'size': 1, 'num': 0x0B},
-    'speed'                        : {'size': 1, 'num': 0x0C, 'unit_type': 'speed', 'unit_conversion': (701, 2507), 'adjust_value': lambda val, unit: ottd_display_speed(val, 128, 10, unit)},
-    'acceleration'                 : {'size': 1, 'num': 0x0D},
-    'running_cost_factor'          : {'size': 1, 'num': 0x0E},
-    'passenger_capacity'           : {'size': 2, 'num': 0x0F},
+    **general_veh_props,
+    "sprite_id":                    {"size": 1, "num": 0x08},
+    "aircraft_type": [
+        {"size": 1, "num": 0x09, "value_function": aircraft_is_heli},
+        {"size": 1, "num": 0x0A, "value_function": aircraft_is_large}
+    ],
+    "cost_factor":                  {"size": 1, "num": 0x0B},
+    "speed": {
+        "size": 1,
+        "num": 0x0C,
+        "unit_type": "speed",
+        "unit_conversion": (701, 2507),
+        "adjust_value": lambda val, unit: ottd_display_speed(val, 128, 10, unit)
+    },
+    "acceleration":                 {"size": 1, "num": 0x0D},
+    "running_cost_factor":          {"size": 1, "num": 0x0E},
+    "passenger_capacity":           {"size": 2, "num": 0x0F},
     # 10 does not exist
-    'mail_capacity'                : {'size': 1, 'num': 0x11},
-    'sound_effect'                 : {'size': 1, 'num': 0x12},
+    "mail_capacity":                {"size": 1, "num": 0x11},
+    "sound_effect":                 {"size": 1, "num": 0x12},
     # 13 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 14 (callback flags) is not set by user
-    'refit_cost'                   : {'size': 1, 'num': 0x15},
-    'retire_early'                 : {'size': 1, 'num': 0x16},
-    'misc_flags'                   : {'size': 1, 'num': 0x17},
-    'refittable_cargo_classes'     : [{'size': 2, 'num': 0x18}, zero_refit_mask(0x13)],
-    'non_refittable_cargo_classes' : [{'size': 2, 'num': 0x19}, zero_refit_mask(0x13)],
-    'introduction_date'            : {'size': 4, 'num': 0x1A},
+    "refit_cost":                   {"size": 1, "num": 0x15},
+    "retire_early":                 {"size": 1, "num": 0x16},
+    "misc_flags":                   {"size": 1, "num": 0x17},
+    "refittable_cargo_classes":     [{"size": 2, "num": 0x18}, zero_refit_mask(0x13)],
+    "non_refittable_cargo_classes": [{"size": 2, "num": 0x19}, zero_refit_mask(0x13)],
+    "introduction_date":            {"size": 4, "num": 0x1A},
     # 1B (sort purchase list) is implemented elsewhere
-    'cargo_age_period'             : {'size': 2, 'num': 0x1C},
-    'cargo_allow_refit'            : [{'custom_function': lambda value: ctt_list(0x1D, value)}, zero_refit_mask(0x13)],
-    'cargo_disallow_refit'         : [{'custom_function': lambda value: ctt_list(0x1E, value)}, zero_refit_mask(0x13)],
-    'range'                        : {'size': 2, 'num': 0x1F},
+    "cargo_age_period":             {"size": 2, "num": 0x1C},
+    "cargo_allow_refit": [
+        {"custom_function": lambda value: ctt_list(0x1D, value)},
+        zero_refit_mask(0x13),
+    ],
+    "cargo_disallow_refit": [
+        {"custom_function": lambda value: ctt_list(0x1E, value)},
+        zero_refit_mask(0x13),
+    ],
+    "range":                        {"size": 2, "num": 0x1F},
 }
-properties[0x03].update(general_veh_props)
+# fmt: on
 
-# TODO: Feature 0x04
+# TODO: Feature 0x04 (Stations)
 
 #
 # Feature 0x05 (Canals)
@@ -523,7 +600,7 @@ properties[0x03].update(general_veh_props)
 
 properties[0x05] = {
     # 08 (callback flags) not set by user
-    'graphic_flags'  : {'size': 1, 'num': 0x09},
+    "graphic_flags": {"size": 1, "num": 0x09},
 }
 
 # TODO: Feature 0x06
@@ -637,35 +714,75 @@ def mt_house_class(value, num_ids, size_bit):
     # Set class to 0xFF for additional tiles
     return [value] + (num_ids - 1) * [ConstantNumeric(0xFF, value.pos)]
 
+# fmt: off
 properties[0x07] = {
-    'substitute'              : {'size': 1, 'num': 0x08, 'multitile_function': mt_house_old_id, 'first': None},
-    'building_flags'          : two_byte_property(0x09, 0x19, {'multitile_function': mt_house_prop09}, {'multitile_function': lambda *args: mt_house_mask(0xFE, *args)}),
-    'years_available'         : [{'size': 2, 'num': 0x0A, 'multitile_function': mt_house_zero, 'value_function': house_prop_0A},
-                                 {'size': 2, 'num': 0x21, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 0)},
-                                 {'size': 2, 'num': 0x22, 'multitile_function': mt_house_zero, 'value_function': lambda value: house_prop_21_22(value, 1)}],
-    'population'              : {'size': 1, 'num': 0x0B, 'multitile_function': mt_house_zero},
-    'mail_multiplier'         : {'size': 1, 'num': 0x0C, 'multitile_function': mt_house_zero},
+    "substitute":              {"size": 1, "num": 0x08, "multitile_function": mt_house_old_id, "first": None},
+    "building_flags": two_byte_property(
+        0x09,
+        0x19,
+        {"multitile_function": mt_house_prop09},
+        {"multitile_function": lambda *args: mt_house_mask(0xFE, *args)}
+    ),
+    "years_available": [
+        {"size": 2, "num": 0x0A, "multitile_function": mt_house_zero, "value_function": house_prop_0A},
+        {
+            "size": 2,
+            "num": 0x21,
+            "multitile_function": mt_house_zero,
+            "value_function": lambda value: house_prop_21_22(value, 0),
+        },
+        {
+            "size": 2,
+            "num": 0x22,
+            "multitile_function": mt_house_zero,
+            "value_function": lambda value: house_prop_21_22(value, 1),
+        },
+    ],
+    "population":              {"size": 1, "num": 0x0B, "multitile_function": mt_house_zero},
+    "mail_multiplier":         {"size": 1, "num": 0x0C, "multitile_function": mt_house_zero},
     # prop 0D - 0F are replaced by prop 23
-    'local_authority_impact'  : {'size': 2, 'num': 0x10, 'multitile_function': mt_house_same},
-    'removal_cost_multiplier' : {'size': 1, 'num': 0x11, 'multitile_function': mt_house_same},
-    'name'                    : {'size': 2, 'num': 0x12, 'string': 0xDC, 'multitile_function': mt_house_same},
-    'availability_mask'       : {'size': 2, 'num': 0x13, 'multitile_function': mt_house_zero, 'value_function': house_available_mask},
+    "local_authority_impact":  {"size": 2, "num": 0x10, "multitile_function": mt_house_same},
+    "removal_cost_multiplier": {"size": 1, "num": 0x11, "multitile_function": mt_house_same},
+    "name":                    {"size": 2, "num": 0x12, "string": 0xDC, "multitile_function": mt_house_same},
+    "availability_mask": {
+        "size": 2,
+        "num": 0x13,
+        "multitile_function": mt_house_zero,
+        "value_function": house_available_mask,
+    },
     # prop 14 (callback flags 1) is not set by user
-    'override'                : {'size': 1, 'num': 0x15, 'multitile_function': mt_house_old_id},
-    'refresh_multiplier'      : {'size': 1, 'num': 0x16, 'multitile_function': mt_house_same},
-    'random_colours'          : {'size': 4, 'num': 0x17, 'multitile_function': mt_house_same, 'value_function': house_random_colours},
-    'probability'             : {'size': 1, 'num': 0x18, 'multitile_function': mt_house_zero, 'unit_conversion': 16},
+    "override":                {"size": 1, "num": 0x15, "multitile_function": mt_house_old_id},
+    "refresh_multiplier":      {"size": 1, "num": 0x16, "multitile_function": mt_house_same},
+    "random_colours": {
+        "size": 4,
+        "num": 0x17,
+        "multitile_function": mt_house_same,
+        "value_function": house_random_colours,
+    },
+    "probability":             {"size": 1, "num": 0x18, "multitile_function": mt_house_zero, "unit_conversion": 16},
     # prop 19 is the high byte of prop 09
-    'animation_info'          : {'size': 1, 'num': 0x1A, 'multitile_function': mt_house_same, 'value_function': lambda value: animation_info(value, 7, 128)},
-    'animation_speed'         : {'size': 1, 'num': 0x1B, 'multitile_function': mt_house_same},
-    'building_class'          : {'size': 1, 'num': 0x1C, 'multitile_function': mt_house_class},
+    "animation_info": {
+        "size": 1,
+        "num": 0x1A,
+        "multitile_function": mt_house_same,
+        "value_function": lambda value: animation_info(value, 7, 128),
+    },
+    "animation_speed":         {"size": 1, "num": 0x1B, "multitile_function": mt_house_same},
+    "building_class":          {"size": 1, "num": 0x1C, "multitile_function": mt_house_class},
     # prop 1D (callback flags 2) is not set by user
     # prop 1E is replaced by prop 23
-    'minimum_lifetime'        : {'size': 1, 'num': 0x1F, 'multitile_function': mt_house_zero},
-    'watched_cargo_types'     : {'multitile_function': mt_house_same, 'custom_function': lambda *values: ctt_list(0x20, *values)},
+    "minimum_lifetime":        {"size": 1, "num": 0x1F, "multitile_function": mt_house_zero},
+    "watched_cargo_types": {
+        "multitile_function": mt_house_same,
+        "custom_function": lambda *values: ctt_list(0x20, *values),
+    },
     # prop 21 -22 see above (years_available, prop 0A)
-    'accepted_cargos'         : {'multitile_function': mt_house_same, 'custom_function': lambda *values: accepted_cargos(0x23, *values)},
+    "accepted_cargos": {
+        "multitile_function": mt_house_same,
+        "custom_function": lambda *values: accepted_cargos(0x23, *values),
+    },
 }
+# fmt: on
 
 # Feature 0x08 (General Vars) is implemented elsewhere (e.g. basecost, snowline)
 
@@ -673,18 +790,20 @@ properties[0x07] = {
 # Feature 0x09 (Industry Tiles)
 #
 
+# fmt: off
 properties[0x09] = {
-    'substitute'         : {'size': 1, 'num': 0x08, 'first': None},
-    'override'           : {'size': 1, 'num': 0x09},
+    "substitute":          {"size": 1, "num": 0x08, "first": None},
+    "override":            {"size": 1, "num": 0x09},
     # prop 0A - 0C are replaced by prop 13
-    'land_shape_flags'   : {'size': 1, 'num': 0x0D},
+    "land_shape_flags":    {"size": 1, "num": 0x0D},
     # prop 0E (callback flags) is not set by user
-    'animation_info'     : {'size': 2, 'num': 0x0F, 'value_function': animation_info},
-    'animation_speed'    : {'size': 1, 'num': 0x10},
-    'animation_triggers' : {'size': 1, 'num': 0x11},
-    'special_flags'      : {'size': 1, 'num': 0x12},
-    'accepted_cargos'    : {'custom_function': lambda value: accepted_cargos(0x13, value)},
+    "animation_info":      {"size": 2, "num": 0x0F, "value_function": animation_info},
+    "animation_speed":     {"size": 1, "num": 0x10},
+    "animation_triggers":  {"size": 1, "num": 0x11},
+    "special_flags":       {"size": 1, "num": 0x12},
+    "accepted_cargos":     {"custom_function": lambda value: accepted_cargos(0x13, value)},
 }
+# fmt: on
 
 #
 # Feature 0x0A (Industries)
@@ -873,65 +992,94 @@ def industry_cargo_types(value):
         IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else [])
     ]
 
+# fmt: off
 properties[0x0A] = {
-    'substitute'             : {'size': 1, 'num': 0x08, 'first': None},
-    'override'               : {'size': 1, 'num': 0x09},
-    'layouts'                : {'custom_function': industry_layouts}, # = prop 0A
-    'life_type'              : {'size': 1, 'num': 0x0B},
-    'closure_msg'            : {'size': 2, 'num': 0x0C, 'string': 0xDC},
-    'prod_increase_msg'      : {'size': 2, 'num': 0x0D, 'string': 0xDC},
-    'prod_decrease_msg'      : {'size': 2, 'num': 0x0E, 'string': 0xDC},
-    'fund_cost_multiplier'   : {'size': 1, 'num': 0x0F},
-    'prod_cargo_types'       : {'size': 2, 'num': 0x10, 'value_function': lambda value: cargo_list(value, 2), 'replaced_by': 'cargo_types'},
-    'accept_cargo_types'     : {'size': 4, 'num': 0x11, 'value_function': lambda value: cargo_list(value, 3), 'replaced_by': 'cargo_types'},
-    'prod_multiplier'        : {'custom_function': industry_prod_multiplier, 'replaced_by': 'cargo_types'}, # = prop 12,13
-    'min_cargo_distr'        : {'size': 1, 'num': 0x14},
-    'random_sound_effects'   : {'custom_function': random_sounds}, # = prop 15
-    'conflicting_ind_types'  : {'custom_function': industry_conflicting_types}, # = prop 16
-    'prob_random'            : {'size': 1, 'num': 0x17}, # Obsolete, ambiguous name, use 'prob_map_gen' instead
-    'prob_map_gen'           : {'size': 1, 'num': 0x17},
-    'prob_in_game'           : {'size': 1, 'num': 0x18},
-    'map_colour'             : {'size': 1, 'num': 0x19},
-    'spec_flags'             : {'size': 4, 'num': 0x1A},
-    'new_ind_msg'            : {'size': 2, 'num': 0x1B, 'string': 0xDC},
-    'input_multiplier_1'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1C), 'replaced_by': 'cargo_types'},
-    'input_multiplier_2'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1D), 'replaced_by': 'cargo_types'},
-    'input_multiplier_3'     : {'custom_function': lambda value: industry_input_multiplier(value, 0x1E), 'replaced_by': 'cargo_types'},
-    'name'                   : {'size': 2, 'num': 0x1F, 'string': 0xDC},
-    'prospect_chance'        : {'size': 4, 'num': 0x20, 'unit_conversion': 0xFFFFFFFF},
+    "substitute":             {"size": 1, "num": 0x08, "first": None},
+    "override":               {"size": 1, "num": 0x09},
+    "layouts":                {"custom_function": industry_layouts},  # = prop 0A
+    "life_type":              {"size": 1, "num": 0x0B},
+    "closure_msg":            {"size": 2, "num": 0x0C, "string": 0xDC},
+    "prod_increase_msg":      {"size": 2, "num": 0x0D, "string": 0xDC},
+    "prod_decrease_msg":      {"size": 2, "num": 0x0E, "string": 0xDC},
+    "fund_cost_multiplier":   {"size": 1, "num": 0x0F},
+    "prod_cargo_types": {
+        "size": 2,
+        "num": 0x10,
+        "value_function": lambda value: cargo_list(value, 2),
+        "replaced_by": "cargo_types",
+    },
+    "accept_cargo_types": {
+        "size": 4,
+        "num": 0x11,
+        "value_function": lambda value: cargo_list(value, 3),
+        "replaced_by": "cargo_types",
+    },
+    # prop 12,13
+    "prod_multiplier": {
+        "custom_function": industry_prod_multiplier,
+        "replaced_by": "cargo_types",
+    },
+    "min_cargo_distr":        {"size": 1, "num": 0x14},
+    "random_sound_effects":   {"custom_function": random_sounds},  # = prop 15
+    "conflicting_ind_types":  {"custom_function": industry_conflicting_types},  # = prop 16
+    "prob_random":            {"size": 1, "num": 0x17},  # Obsolete, ambiguous name, use "prob_map_gen" instead
+    "prob_map_gen":           {"size": 1, "num": 0x17},
+    "prob_in_game":           {"size": 1, "num": 0x18},
+    "map_colour":             {"size": 1, "num": 0x19},
+    "spec_flags":             {"size": 4, "num": 0x1A},
+    "new_ind_msg":            {"size": 2, "num": 0x1B, "string": 0xDC},
+    "input_multiplier_1": {
+        "custom_function": lambda value: industry_input_multiplier(value, 0x1C),
+        "replaced_by": "cargo_types",
+    },
+    "input_multiplier_2": {
+        "custom_function": lambda value: industry_input_multiplier(value, 0x1D),
+        "replaced_by": "cargo_types",
+    },
+    "input_multiplier_3": {
+        "custom_function": lambda value: industry_input_multiplier(value, 0x1E),
+        "replaced_by": "cargo_types",
+    },
+    "name":                   {"size": 2, "num": 0x1F, "string": 0xDC},
+    "prospect_chance":        {"size": 4, "num": 0x20, "unit_conversion": 0xFFFFFFFF},
     # prop 21, 22 (callback flags) are not set by user
-    'remove_cost_multiplier' : {'size': 4, 'num': 0x23},
-    'nearby_station_name'    : {'size': 2, 'num': 0x24, 'string': 0xDC},
-    'cargo_types'            : {'custom_function': industry_cargo_types}, # = prop 25+26+27+28 combined in one structure
+    "remove_cost_multiplier": {"size": 4, "num": 0x23},
+    "nearby_station_name":    {"size": 2, "num": 0x24, "string": 0xDC},
+    # prop 25+26+27+28 combined in one structure
+    "cargo_types":            {"custom_function": industry_cargo_types},
 }
+# fmt: on
 
 #
 # Feature 0x0B (Cargos)
 #
 
+# fmt: off
 properties[0x0B] = {
-    'number'                    : {'num' : 0x08, 'size' : 1},
-    'type_name'                 : {'num' : 0x09, 'size' : 2, 'string' : 0xDC},
-    'unit_name'                 : {'num' : 0x0A, 'size' : 2, 'string' : 0xDC},
+    "number":                    {"num": 0x08, "size": 1},
+    "type_name":                 {"num": 0x09, "size": 2, "string": 0xDC},
+    "unit_name":                 {"num": 0x0A, "size": 2, "string": 0xDC},
     # Properties 0B, 0C are not used by OpenTTD
-    'type_abbreviation'         : {'num' : 0x0D, 'size' : 2, 'string' : 0xDC},
-    'sprite'                    : {'num' : 0x0E, 'size' : 2},
-    'weight'                    : {'num' : 0x0F, 'size' : 1, 'unit_type' : 'weight', 'unit_conversion' : 16},
-    'penalty_lowerbound'        : {'num' : 0x10, 'size' : 1},
-    'single_penalty_length'     : {'num' : 0x11, 'size' : 1},
-    'price_factor'              : {'num' : 0x12, 'size' : 4, 'unit_conversion' : (1 << 21, 10 * 20 * 255)}, # 10 units of cargo across 20 tiles, with time factor = 255
-    'station_list_colour'       : {'num' : 0x13, 'size' : 1},
-    'cargo_payment_list_colour' : {'num' : 0x14, 'size' : 1},
-    'is_freight'                : {'num' : 0x15, 'size' : 1},
-    'cargo_classes'             : {'num' : 0x16, 'size' : 2},
-    'cargo_label'               : {'num' : 0x17, 'size' : 4, 'string_literal': 4},
-    'town_growth_effect'        : {'num' : 0x18, 'size' : 1},
-    'town_growth_multiplier'    : {'num' : 0x19, 'size' : 2, 'unit_conversion' : 0x100},
+    "type_abbreviation":         {"num": 0x0D, "size": 2, "string": 0xDC},
+    "sprite":                    {"num": 0x0E, "size": 2},
+    "weight":                    {"num": 0x0F, "size": 1, "unit_type": "weight", "unit_conversion": 16},
+    "penalty_lowerbound":        {"num": 0x10, "size": 1},
+    "single_penalty_length":     {"num": 0x11, "size": 1},
+    # 10 units of cargo across 20 tiles, with time factor = 255
+    "price_factor":              {"num": 0x12, "size": 4, "unit_conversion": (1 << 21, 10 * 20 * 255)},
+    "station_list_colour":       {"num": 0x13, "size": 1},
+    "cargo_payment_list_colour": {"num": 0x14, "size": 1},
+    "is_freight":                {"num": 0x15, "size": 1},
+    "cargo_classes":             {"num": 0x16, "size": 2},
+    "cargo_label":               {"num": 0x17, "size": 4, "string_literal": 4},
+    "town_growth_effect":        {"num": 0x18, "size": 1},
+    "town_growth_multiplier":    {"num": 0x19, "size": 2, "unit_conversion": 0x100},
     # 1A (callback flags) is not set by user
-    'units_of_cargo'            : {'num' : 0x1B, 'size' : 2, 'string' : 0xDC},
-    'items_of_cargo'            : {'num' : 0x1C, 'size' : 2, 'string' : 0xDC},
-    'capacity_multiplier'       : {'num' : 0x1D, 'size' : 2, 'unit_conversion' : 0x100},
+    "units_of_cargo":            {"num": 0x1B, "size": 2, "string": 0xDC},
+    "items_of_cargo":            {"num": 0x1C, "size": 2, "string": 0xDC},
+    "capacity_multiplier":       {"num": 0x1D, "size": 2, "unit_conversion": 0x100},
 }
+# fmt: on
 
 # Feature 0x0C (Sound Effects) is implemented differently
 
@@ -982,18 +1130,20 @@ def airport_layouts(value):
         layouts.append(layout)
     return [AirportLayoutProp(layouts)]
 
+# fmt: off
 properties[0x0D] = {
-    'override'         : {'size': 1, 'num': 0x08, 'first':None},
+    "override":         {"size": 1, "num": 0x08, "first": None},
     # 09 does not exist
-    'layouts'          : {'custom_function': airport_layouts}, # = prop 0A
+    "layouts":          {"custom_function": airport_layouts},  # = prop 0A
     # 0B does not exist
-    'years_available'  : {'custom_function': airport_years}, # = prop 0C
-    'ttd_airport_type' : {'size': 1, 'num': 0x0D},
-    'catchment_area'   : {'size': 1, 'num': 0x0E},
-    'noise_level'      : {'size': 1, 'num': 0x0F},
-    'name'             : {'size': 2, 'num': 0x10, 'string': 0xDC},
-    'maintenance_cost' : {'size': 2, 'num': 0x11},
+    "years_available":  {"custom_function": airport_years},  # = prop 0C
+    "ttd_airport_type": {"size": 1, "num": 0x0D},
+    "catchment_area":   {"size": 1, "num": 0x0E},
+    "noise_level":      {"size": 1, "num": 0x0F},
+    "name":             {"size": 2, "num": 0x10, "string": 0xDC},
+    "maintenance_cost": {"size": 2, "num": 0x11},
 }
+# fmt: on
 
 # Feature 0x0E (Signals) doesn't currently have any action0
 
@@ -1010,26 +1160,28 @@ def object_size(value):
         raise generic.ScriptError("The size of an object must be at least 1x1 and at most 15x15 tiles", value.pos)
     return [Action0Property(0x0C, ConstantNumeric(sizey.value << 4 | sizex.value), 1)]
 
+# fmt: off
 properties[0x0F] = {
-    'class'                  : {'size': 4, 'num': 0x08, 'first': None, 'string_literal': 4},
+    "class":                  {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
     # strings might be according to specs be either 0xD0 or 0xD4
-    'classname'              : {'size': 2, 'num': 0x09, 'string': 0xD0},
-    'name'                   : {'size': 2, 'num': 0x0A, 'string': 0xD0},
-    'climates_available'     : {'size': 1, 'num': 0x0B},
-    'size'                   : {'custom_function': object_size}, # = prop 0C
-    'build_cost_multiplier'  : {'size': 1, 'num': 0x0D},
-    'introduction_date'      : {'size': 4, 'num': 0x0E},
-    'end_of_life_date'       : {'size': 4, 'num': 0x0F},
-    'object_flags'           : {'size': 2, 'num': 0x10},
-    'animation_info'         : {'size': 2, 'num': 0x11, 'value_function': animation_info},
-    'animation_speed'        : {'size': 1, 'num': 0x12},
-    'animation_triggers'     : {'size': 2, 'num': 0x13},
-    'remove_cost_multiplier' : {'size': 1, 'num': 0x14},
+    "classname":              {"size": 2, "num": 0x09, "string": 0xD0},
+    "name":                   {"size": 2, "num": 0x0A, "string": 0xD0},
+    "climates_available":     {"size": 1, "num": 0x0B},
+    "size":                   {"custom_function": object_size},  # = prop 0C
+    "build_cost_multiplier":  {"size": 1, "num": 0x0D},
+    "introduction_date":      {"size": 4, "num": 0x0E},
+    "end_of_life_date":       {"size": 4, "num": 0x0F},
+    "object_flags":           {"size": 2, "num": 0x10},
+    "animation_info":         {"size": 2, "num": 0x11, "value_function": animation_info},
+    "animation_speed":        {"size": 1, "num": 0x12},
+    "animation_triggers":     {"size": 2, "num": 0x13},
+    "remove_cost_multiplier": {"size": 1, "num": 0x14},
     # 15 (callback flags) is not set by user
-    'height'                 : {'size': 1, 'num': 0x16},
-    'num_views'              : {'size': 1, 'num': 0x17},
-    'count_per_map256'       : {'size': 1, 'num': 0x18},
+    "height":                 {"size": 1, "num": 0x16},
+    "num_views":              {"size": 1, "num": 0x17},
+    "count_per_map256":       {"size": 1, "num": 0x18},
 }
+# fmt: on
 
 #
 # General tracktype properties that apply to features 0x10 & 0x12/13 (rail/road/tramtypes)
@@ -1057,19 +1209,21 @@ def label_list(value, prop_num, description):
         raise generic.ScriptError(description + " list must be an array of literal strings", value.pos)
     return [LabelListProp(prop_num, value.values)]
 
+# fmt: off
 common_tracktype_props = {
-    'label'                    : {'size': 4, 'num': 0x08, 'string_literal': 4}, # is allocated during reservation stage, setting label first is thus not needed
-    'toolbar_caption'          : {'size': 2, 'num': 0x09, 'string': 0xDC},
-    'menu_text'                : {'size': 2, 'num': 0x0A, 'string': 0xDC},
-    'build_window_caption'     : {'size': 2, 'num': 0x0B, 'string': 0xDC},
-    'autoreplace_text'         : {'size': 2, 'num': 0x0C, 'string': 0xDC},
-    'new_engine_text'          : {'size': 2, 'num': 0x0D, 'string': 0xDC},
-    'construction_cost'        : {'size': 2, 'num': 0x13},
-    'map_colour'               : {'size': 1, 'num': 0x16},
-    'introduction_date'        : {'size': 4, 'num': 0x17},
-    'sort_order'               : {'size': 1, 'num': 0x1A},
-    'name'                     : {'size': 2, 'num': 0x1B, 'string': 0xDC},
-    'maintenance_cost'         : {'size': 2, 'num': 0x1C},
+    # label allocated during reservation stage, so doesn't need to be set first.
+    "label":                {"size": 4, "num": 0x08, "string_literal": 4},
+    "toolbar_caption":      {"size": 2, "num": 0x09, "string": 0xDC},
+    "menu_text":            {"size": 2, "num": 0x0A, "string": 0xDC},
+    "build_window_caption": {"size": 2, "num": 0x0B, "string": 0xDC},
+    "autoreplace_text":     {"size": 2, "num": 0x0C, "string": 0xDC},
+    "new_engine_text":      {"size": 2, "num": 0x0D, "string": 0xDC},
+    "construction_cost":    {"size": 2, "num": 0x13},
+    "map_colour":           {"size": 1, "num": 0x16},
+    "introduction_date":    {"size": 4, "num": 0x17},
+    "sort_order":           {"size": 1, "num": 0x1A},
+    "name":                 {"size": 2, "num": 0x1B, "string": 0xDC},
+    "maintenance_cost":     {"size": 2, "num": 0x1C},
 }
 
 #
@@ -1078,16 +1232,22 @@ common_tracktype_props = {
 
 properties[0x10] = {
     **common_tracktype_props,
-    'compatible_railtype_list' : {'custom_function': lambda x: label_list(x, 0x0E, "Railtype")},
-    'powered_railtype_list'    : {'custom_function': lambda x: label_list(x, 0x0F, "Railtype")},
-    'railtype_flags'           : {'size': 1, 'num': 0x10},
-    'curve_speed_multiplier'   : {'size': 1, 'num': 0x11},
-    'station_graphics'         : {'size': 1, 'num': 0x12},
-    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (5000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 1, unit)},
-    'acceleration_model'       : {'size': 1, 'num': 0x15},
-    'requires_railtype_list'   : {'custom_function': lambda x: label_list(x, 0x18, "Railtype")},
-    'introduces_railtype_list' : {'custom_function': lambda x: label_list(x, 0x19, "Railtype")},
-    'alternative_railtype_list': {'custom_function': lambda x: label_list(x, 0x1D, "Railtype")},
+    "compatible_railtype_list":  {"custom_function": lambda x: label_list(x, 0x0E, "Railtype")},
+    "powered_railtype_list":     {"custom_function": lambda x: label_list(x, 0x0F, "Railtype")},
+    "railtype_flags":            {"size": 1, "num": 0x10},
+    "curve_speed_multiplier":    {"size": 1, "num": 0x11},
+    "station_graphics":          {"size": 1, "num": 0x12},
+    "speed_limit": {
+        "size": 2,
+        "num": 0x14,
+        "unit_type": "speed",
+        "unit_conversion": (5000, 1397),
+        "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 1, unit),
+    },
+    "acceleration_model":        {"size": 1, "num": 0x15},
+    "requires_railtype_list":    {"custom_function": lambda x: label_list(x, 0x18, "Railtype")},
+    "introduces_railtype_list":  {"custom_function": lambda x: label_list(x, 0x19, "Railtype")},
+    "alternative_railtype_list": {"custom_function": lambda x: label_list(x, 0x1D, "Railtype")},
 }
 
 #
@@ -1095,13 +1255,13 @@ properties[0x10] = {
 #
 
 properties[0x11] = {
-    'substitute'         : {'size': 1, 'num': 0x08, 'first': None},
-    'override'           : {'size': 1, 'num': 0x09},
-    # 0A - 0D don't exist (yet?)
+    "substitute":         {"size": 1, "num": 0x08, "first": None},
+    "override":           {"size": 1, "num": 0x09},
+    # 0A - 0D don"t exist (yet?)
     # 0E (callback flags) is not set by user
-    'animation_info'     : {'size': 2, 'num': 0x0F, 'value_function': animation_info},
-    'animation_speed'    : {'size': 1, 'num': 0x10},
-    'animation_triggers' : {'size': 1, 'num': 0x11},
+    "animation_info":     {"size": 2, "num": 0x0F, "value_function": animation_info},
+    "animation_speed":    {"size": 1, "num": 0x10},
+    "animation_triggers": {"size": 1, "num": 0x11},
 }
 
 #
@@ -1110,12 +1270,18 @@ properties[0x11] = {
 
 properties[0x12] = {
     **common_tracktype_props,
-    'powered_roadtype_list'    : {'custom_function': lambda x: label_list(x, 0x0F, "Roadtype")},
-    'roadtype_flags'           : {'size': 1, 'num': 0x10},
-    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 2, unit)},
-    'requires_roadtype_list'   : {'custom_function': lambda x: label_list(x, 0x18, "Roadtype")},
-    'introduces_roadtype_list' : {'custom_function': lambda x: label_list(x, 0x19, "Roadtype")},
-    'alternative_roadtype_list': {'custom_function': lambda x: label_list(x, 0x1D, "Roadtype")},
+    "powered_roadtype_list":     {"custom_function": lambda x: label_list(x, 0x0F, "Roadtype")},
+    "roadtype_flags":            {"size": 1, "num": 0x10},
+    "speed_limit": {
+        "size": 2,
+        "num": 0x14,
+        "unit_type": "speed",
+        "unit_conversion": (10000, 1397),
+        "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 2, unit)
+    },
+    "requires_roadtype_list":    {"custom_function": lambda x: label_list(x, 0x18, "Roadtype")},
+    "introduces_roadtype_list":  {"custom_function": lambda x: label_list(x, 0x19, "Roadtype")},
+    "alternative_roadtype_list": {"custom_function": lambda x: label_list(x, 0x1D, "Roadtype")},
 }
 
 #
@@ -1124,10 +1290,16 @@ properties[0x12] = {
 
 properties[0x13] = {
     **common_tracktype_props,
-    'powered_tramtype_list'    : {'custom_function': lambda x: label_list(x, 0x0F, "Tramtype")},
-    'tramtype_flags'           : {'size': 1, 'num': 0x10},
-    'speed_limit'              : {'size': 2, 'num': 0x14, 'unit_type': 'speed', 'unit_conversion': (10000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, 2, unit)},
-    'requires_tramtype_list'   : {'custom_function': lambda x: label_list(x, 0x18, "Tramtype")},
-    'introduces_tramtype_list' : {'custom_function': lambda x: label_list(x, 0x19, "Tramtype")},
-    'alternative_tramtype_list': {'custom_function': lambda x: label_list(x, 0x1D, "Tramtype")},
+    "powered_tramtype_list":     {"custom_function": lambda x: label_list(x, 0x0F, "Tramtype")},
+    "tramtype_flags":            {"size": 1, "num": 0x10},
+    "speed_limit": {
+        "size": 2,
+        "num": 0x14,
+        "unit_type": "speed",
+        "unit_conversion": (10000, 1397),
+        "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 2, unit),
+    },
+    "requires_tramtype_list":    {"custom_function": lambda x: label_list(x, 0x18, "Tramtype")},
+    "introduces_tramtype_list":  {"custom_function": lambda x: label_list(x, 0x19, "Tramtype")},
+    "alternative_tramtype_list": {"custom_function": lambda x: label_list(x, 0x1D, "Tramtype")},
 }
