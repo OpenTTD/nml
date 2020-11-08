@@ -41,7 +41,7 @@ class SortVehicles(base_statement.BaseStatement):
     def pre_process(self):
         self.vehid_list = self.vehid_list.reduce(global_constants.const_list)
         if not isinstance(self.vehid_list, expression.Array) or not all(
-            [isinstance(x, expression.ConstantNumeric) for x in self.vehid_list.values]
+            isinstance(x, expression.ConstantNumeric) for x in self.vehid_list.values
         ):
             raise generic.ScriptError(
                 "Second parameter is not an array of one of the items in it could not be reduced to a constant number",

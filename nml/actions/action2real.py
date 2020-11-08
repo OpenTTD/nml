@@ -58,7 +58,7 @@ def get_real_action2s(spritegroup, feature):
         spriteset_list.extend([action2.resolve_spritegroup(sg_ref.name) for sg_ref in view.spriteset_list])
     actions.extend(action1.add_to_action1(spriteset_list, feature, spritegroup.pos))
 
-    view_names = sorted([view.name.value for view in spritegroup.spriteview_list])
+    view_names = sorted(view.name.value for view in spritegroup.spriteview_list)
     if feature in (0x00, 0x01, 0x02, 0x03):
         if view_names != sorted(["loading", "loaded"]):
             raise generic.ScriptError("Expected a 'loading' and a 'loaded' (list of) sprite set(s).", spritegroup.pos)

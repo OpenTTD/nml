@@ -325,7 +325,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             self._referenced_nodes = set()
             self._prepared = False
             self._action2 = {}
-            self.feature_set = set([feature]) if feature is not None else set()
+            self.feature_set = {feature} if feature is not None else set()
             self.name = name
             self.num_params = num_params
             self.used_sprite_sets = []

@@ -449,7 +449,7 @@ def nml(
     generic.print_progress("Collecting real sprites ...")
 
     # Collect all sprite files, and put them into buckets of same image and mask files
-    sprite_files = dict()
+    sprite_files = {}
     for action in actions:
         if isinstance(action, real_sprite.RealSpriteAction):
             for sprite in action.sprite_list:

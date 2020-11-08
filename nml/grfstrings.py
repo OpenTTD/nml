@@ -856,8 +856,8 @@ LANG_INFOS = [
     ("zh_CN", 0x56, 1),
     ("zh_TW", 0x0C, 1),
 ]
-LANG_NAMES = dict((lng[0], lng[1]) for lng in LANG_INFOS)
-LANG_PLURALS = dict((lng[1], lng[2]) for lng in LANG_INFOS)
+LANG_NAMES = {lng[0]: lng[1] for lng in LANG_INFOS}
+LANG_PLURALS = {lng[1]: lng[2] for lng in LANG_INFOS}
 
 
 class Language:

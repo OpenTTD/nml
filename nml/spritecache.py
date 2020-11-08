@@ -154,7 +154,7 @@ class SpriteCache:
 
         # cache_file is closed by `with` block, but index_file is still open.
 
-        source_mtime = dict()
+        source_mtime = {}
 
         try:
             # Just assert and print a generic message on errors, as the cache data should be correct
