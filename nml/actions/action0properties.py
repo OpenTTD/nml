@@ -1069,8 +1069,8 @@ def industry_cargo_types(value):
         )
 
     # prepare lists for the remaining output properties
-    prod_multipliers = [0 for cargo in output_cargos]
-    input_multipliers = [[0 for outcargo in output_cargos] for incargo in input_cargos]
+    prod_multipliers = [0] * len(output_cargos)
+    input_multipliers = [[0] * len(output_cargos) for _ in input_cargos]
     has_inpmult = False
 
     # populate prod_multipliers and input_multipliers
