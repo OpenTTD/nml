@@ -191,10 +191,18 @@ def two_byte_property(low_prop, high_prop, low_prop_info={}, high_prop_info={}):
     @return: Sequence of two dictionaries with property information (low part, high part).
     @rtype:  C{list} of C{dict}
     """
-    low_byte_info = {"num": low_prop, "size": 1, "value_function": lambda value: nmlop.AND(value, 0xFF).reduce()}
-    high_byte_info = {"num": high_prop, "size": 1, "value_function": lambda value: nmlop.SHIFT_RIGHT(value, 8).reduce()}
-    low_byte_info.update(low_prop_info)
-    high_byte_info.update(high_prop_info)
+    low_byte_info = {
+        **low_prop_info,
+        "num": low_prop,
+        "size": 1,
+        "value_function": lambda value: nmlop.AND(value, 0xFF).reduce(),
+    }
+    high_byte_info = {
+        **high_prop_info,
+        "num": high_prop,
+        "size": 1,
+        "value_function": lambda value: nmlop.SHIFT_RIGHT(value, 8).reduce(),
+    }
     return [low_byte_info, high_byte_info]
 
 
