@@ -259,13 +259,17 @@ class SpriteOutputBase(OutputBase):
         """
         raise NotImplementedError("Implement comment() in {}".format(type(self)))
 
-    def start_sprite(self, expected_size):
+    def start_sprite(self, expected_size, is_real_sprite=False):
         """
         Note to the output stream that a sprite is about to be written.
 
         @param expected_size: Expected size of the sprite data.
         @type  expected_size: C{int}
+
+        @param is_real_sprite: Self-explanatory.
+        @type  is_real_sprite: C{bool}
         """
+        del is_real_sprite  # unused in base impl.
         assert not self.in_sprite
         self.in_sprite = True
         self.expected_count = expected_size
