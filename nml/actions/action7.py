@@ -256,7 +256,8 @@ def parse_conditional_block(cond_list):
         if "last_block" not in block:
             block["action_list"] = [
                 actionD.ActionD(
-                    expression.ConstantNumeric(param_skip_all),
+                    # If this isn't the last block, len(blocks) > 1 so param_skip_all is initialized.
+                    expression.ConstantNumeric(param_skip_all),  # lgtm [py/uninitialized-local-variable]
                     expression.ConstantNumeric(0xFF),
                     nmlop.ASSIGN,
                     expression.ConstantNumeric(0),

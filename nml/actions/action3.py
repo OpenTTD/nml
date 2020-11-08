@@ -492,10 +492,11 @@ def parse_graphics_block_single_id(
     if len(act6.modifications) > 0:
         action_list.append(act6)
     action_list.append(act3)
+
     if livery_override is not None:
         if len(act6livery.modifications) > 0:
             action_list.append(act6livery)
-        action_list.append(act3livery)
+        action_list.append(act3livery)  # lgtm[py/uninitialized-local-variable]
     action6.free_parameters.restore()
 
     return prepend_action_list + action_list

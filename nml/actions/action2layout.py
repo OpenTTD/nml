@@ -495,7 +495,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
             varact2parser.var_list_size += reg.get_size() + 2
 
     # Only continue if we actually needed any new registers
-    if temp_registers and varact2parser.var_list:
+    if temp_registers and varact2parser.var_list:  # lgtm[py/uninitialized-local-variable]
         # Remove the last VAL2 operator
         varact2parser.var_list.pop()
         varact2parser.var_list_size -= 1
