@@ -116,7 +116,7 @@ class OutputNFO(output_base.SpriteOutputBase):
         self.file.write("// " + msg + "\n")
 
     def start_sprite(self, size, is_real_sprite=False):
-        output_base.SpriteOutputBase.start_sprite(self, size)
+        output_base.SpriteOutputBase.start_sprite(self, size, is_real_sprite)
         self.print_decimal(self.sprite_num)
         self.sprite_num += 1
         if not is_real_sprite:

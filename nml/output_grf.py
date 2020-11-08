@@ -114,12 +114,8 @@ class OutputGRF(output_base.BinaryOutputBase):
     def comment(self, msg):
         pass
 
-    def start_sprite(self, size, type=0xFF):
-        if type == 0xFF:
-            output_base.BinaryOutputBase.start_sprite(self, size + 5)
-            self.print_dword(size)
-            self.print_byte(type)
-        elif type == 0xFD:
+    def start_sprite(self, size, is_real_sprite=False):
+        if is_real_sprite:
             # Real sprite, this means no data is written to the data section
             # This call is still needed to open 'output mode'
             assert size == 0
@@ -128,14 +124,16 @@ class OutputGRF(output_base.BinaryOutputBase):
             self.print_byte(0xFD)
             self.print_dword(self.sprite_num)
         else:
-            assert False, "Unexpected info byte encountered."
+            output_base.BinaryOutputBase.start_sprite(self, size + 5)
+            self.print_dword(size)
+            self.print_byte(0xFF)
 
     def print_sprite(self, sprite_list):
         """
         @param sprite_list: List of non-empty real sprites for various bit depths / zoom levels
         @type  sprite_list: C{list} of L{RealSprite}
         """
-        self.start_sprite(0, 0xFD)
+        self.start_sprite(0, True)
         for sprite in sprite_list:
             self.print_single_sprite(sprite)
         self.end_sprite()
@@ -181,7 +179,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         name = os.path.split(filename)[1]
         size = os.path.getsize(filename)
 
-        self.start_sprite(0, 0xFD)
+        self.start_sprite(0, True)
         self.sprite_output.start_sprite(8 + 3 + len(name) + 1 + size)
 
         self.sprite_output.print_dword(self.sprite_num)
