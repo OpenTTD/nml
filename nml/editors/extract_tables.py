@@ -13,11 +13,19 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import unit, tokens, global_constants
-from nml.ast import general, switch, basecost
+from nml import global_constants, tokens, unit
+from nml.actions import (
+    action0properties,
+    action2layout,
+    action2var_variables,
+    action3_callbacks,
+    action5,
+    action12,
+    actionB,
+    real_sprite,
+)
+from nml.ast import basecost, general, switch
 from nml.expression import functioncall
-from nml.actions import action0properties, action2layout, action2var_variables
-from nml.actions import action3_callbacks, action5, action12, actionB, real_sprite
 
 # Create list of blocks, functions and units
 units = set(unit.units.keys())

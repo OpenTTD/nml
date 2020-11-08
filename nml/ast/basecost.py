@@ -14,8 +14,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, global_constants, nmlop
-from nml.ast import assignment, base_statement
 from nml.actions import action0
+from nml.ast import assignment, base_statement
 
 
 class BaseCost(base_statement.BaseStatement):

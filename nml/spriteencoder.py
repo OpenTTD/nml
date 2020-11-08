@@ -14,7 +14,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import array
-from nml import generic, palette, lz77, spritecache
+
+from nml import generic, lz77, palette, spritecache
 from nml.actions import real_sprite
 
 try:

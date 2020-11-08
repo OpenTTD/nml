@@ -13,9 +13,9 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml.actions.action0properties import BaseAction0Property, Action0Property, properties, two_byte_property
-from nml import generic, expression, nmlop, grfstrings
-from nml.actions import base_action, action4, action6, actionD, action7
+from nml import expression, generic, grfstrings, nmlop
+from nml.actions import action4, action6, action7, actionD, base_action
+from nml.actions.action0properties import Action0Property, BaseAction0Property, properties, two_byte_property
 from nml.ast import general
 
 

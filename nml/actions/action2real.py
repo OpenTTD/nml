@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic
-from nml.actions import action2, action1
+from nml.actions import action1, action2
 from nml.ast import general
 
 

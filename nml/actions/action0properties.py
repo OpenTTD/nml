@@ -14,15 +14,16 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import itertools
+
 from nml import generic, nmlop
 from nml.expression import (
-    ConstantNumeric,
-    ConstantFloat,
+    AcceptCargo,
     Array,
-    StringLiteral,
+    ConstantFloat,
+    ConstantNumeric,
     Identifier,
     ProduceCargo,
-    AcceptCargo,
+    StringLiteral,
     parse_string_to_dword,
 )
 

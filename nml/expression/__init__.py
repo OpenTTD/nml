@@ -16,17 +16,17 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import re
 
 from .array import Array
-from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
+from .base_expression import ConstantFloat, ConstantNumeric, Expression, Type
 from .bin_not import BinNot, Not
 from .binop import BinOp
 from .bitmask import BitMask
 from .boolean import Boolean
-from .cargo import ProduceCargo, AcceptCargo
-from .functioncall import FunctionCall, SpecialCheck, GRMOp
+from .cargo import AcceptCargo, ProduceCargo
+from .functioncall import FunctionCall, GRMOp, SpecialCheck
 from .functionptr import FunctionPtr
 from .identifier import Identifier
+from .parameter import OtherGRFParameter, Parameter, parse_string_to_dword
 from .patch_variable import PatchVariable
-from .parameter import Parameter, OtherGRFParameter, parse_string_to_dword
 from .special_parameter import SpecialParameter
 from .spritegroup_ref import SpriteGroupRef
 from .storage_op import StorageOp

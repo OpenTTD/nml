@@ -14,9 +14,11 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import operator
-from .expression import binop
-from .expression.base_expression import Type, ConstantNumeric, ConstantFloat
+
 from nml import generic
+
+from .expression import binop
+from .expression.base_expression import ConstantFloat, ConstantNumeric, Type
 
 
 class Operator:

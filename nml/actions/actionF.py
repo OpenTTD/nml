@@ -16,7 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 """
 Code for storing and generating action F
 """
-from nml import expression, grfstrings, generic
+from nml import expression, generic, grfstrings
 from nml.actions import base_action
 
 # Helper functions to allocate townname IDs

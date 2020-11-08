@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, nmlop, free_number_list, generic
-from nml.actions import base_action, action6, actionD, action10
+from nml import expression, free_number_list, generic, nmlop
+from nml.actions import action6, action10, actionD, base_action
 
 free_labels = free_number_list.FreeNumberList(
     list(range(0xFF, 0x0F, -1)),
