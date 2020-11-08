@@ -31,6 +31,10 @@ def get_git_version():
     # Refresh the index to make sure file stat info is in sync
     try:
         get_child_output(["git", "-C", path, "update-index", "--refresh"], env=env)
+    except FileNotFoundError:
+        # Bail early if `git` isn't available (we know `path` exists)
+        print("Git checkout found but `git` isn't installed; cannot determine version.")
+        return None
     except subprocess.CalledProcessError:
         # Not an issue if this fails
         pass
