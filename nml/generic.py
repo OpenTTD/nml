@@ -460,7 +460,7 @@ def print_dbg(indent, *args):
 Paths already resolved to correct paths on the system.
 The key is the path as specified in the sources. The value is the validated path on the system.
 """
-_paths = dict()
+_paths = {}
 
 
 def find_file(filepath):

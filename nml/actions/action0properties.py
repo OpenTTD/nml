@@ -719,9 +719,9 @@ def house_available_mask(value):
 # List of valid IDs of old house types
 old_houses = {
     0: set(),  # 1x1, see below
-    2: set([74, 76, 87]),  # 2x1
-    3: set([7, 66, 68, 99]),  # 1x2
-    4: set([20, 32, 40]),  # 2x2
+    2: {74, 76, 87},  # 2x1
+    3: {7, 66, 68, 99},  # 1x2
+    4: {20, 32, 40},  # 2x2
 }
 # All houses not part of a multitile-house, are 1x1 houses
 old_houses[0] = set(range(110)).difference(

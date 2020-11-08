@@ -26,7 +26,7 @@ functions = set(functioncall.function_table.keys())
 layouts = set(action2layout.layout_sprite_types.keys())
 
 # No easy way to get action14 stuff
-temp1 = units | keywords | functions | layouts | set(["int", "bool"])
+temp1 = units | keywords | functions | layouts | {"int", "bool"}
 block_names_table = sorted(temp1)
 
 
@@ -119,21 +119,19 @@ for d in cb_tables:
         callbacks.add(key)
 
 # No easy way to get action14 stuff
-act14_vars = set(
-    [
-        "grfid",
-        "name",
-        "desc",
-        "version",
-        "min_compatible_version",
-        "type",
-        "bit",
-        "min_value",
-        "max_value",
-        "def_value",
-        "names",
-    ]
-)
+act14_vars = {
+    "grfid",
+    "name",
+    "desc",
+    "version",
+    "min_compatible_version",
+    "type",
+    "bit",
+    "min_value",
+    "max_value",
+    "def_value",
+    "names",
+}
 
 temp2 = variables | properties | layout_sprites | callbacks | act14_vars
 variables_names_table = sorted(temp2)

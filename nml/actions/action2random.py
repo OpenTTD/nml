@@ -285,7 +285,7 @@ def parse_randomswitch(random_switch):
     feature = next(iter(random_switch.feature_set))
     type_byte, count, count_expr, start_bit, bits_available = parse_randomswitch_type(random_switch)
 
-    total_prob = sum([choice.probability.value for choice in random_switch.choices])
+    total_prob = sum(choice.probability.value for choice in random_switch.choices)
     assert total_prob > 0
     nrand = 1
     while nrand < total_prob:
@@ -317,7 +317,7 @@ def parse_randomswitch(random_switch):
 
     # divide the 'extra' probabilities in an even manner
     i = 0
-    resulting_prob = dict((c, c.probability.value) for c in random_switch.choices)
+    resulting_prob = {c: c.probability.value for c in random_switch.choices}
     while i < (nrand - total_prob):
         best_choice = None
         best_ratio = 0
