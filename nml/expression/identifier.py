@@ -14,7 +14,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, global_constants
-from .base_expression import Expression, ConstantNumeric
+
+from .base_expression import ConstantNumeric, Expression
 from .string_literal import StringLiteral
 
 ignore_all_invalid_ids = False

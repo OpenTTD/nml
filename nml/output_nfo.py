@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 # -*- coding: utf-8 -*-
 import io
+
 from nml import generic, grfstrings, output_base
 from nml.actions import real_sprite
 

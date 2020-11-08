@@ -13,9 +13,14 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic, expression, tokens, nmlop, unit
+import ply.yacc as yacc
+
+from nml import expression, generic, nmlop, tokens, unit
+from nml.actions import actionD, real_sprite
 from nml.ast import (
+    alt_sprites,
     assignment,
+    base_graphics,
     basecost,
     cargotable,
     conditional,
@@ -27,22 +32,18 @@ from nml.ast import (
     grf,
     item,
     loop,
+    override,
     produce,
-    tracktypetable,
     replace,
+    skipall,
+    snowline,
+    sort_vehicles,
     spriteblock,
     switch,
-    townnames,
-    snowline,
-    skipall,
     tilelayout,
-    alt_sprites,
-    base_graphics,
-    override,
-    sort_vehicles,
+    townnames,
+    tracktypetable,
 )
-from nml.actions import actionD, real_sprite
-import ply.yacc as yacc
 
 
 class NMLParser:

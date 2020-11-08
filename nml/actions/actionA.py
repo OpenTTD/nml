@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import nmlop
-from nml.actions import base_action, real_sprite, actionD, action6
+from nml.actions import action6, actionD, base_action, real_sprite
 
 
 class ActionA(base_action.BaseAction):

@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic
-from nml.actions import action2, action2var, action2production
+from nml.actions import action2, action2production, action2var
 from nml.ast import base_statement
 
 produce_base_class = action2.make_sprite_group_class(False, True, True)

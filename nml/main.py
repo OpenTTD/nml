@@ -20,34 +20,34 @@ import sys
 
 from nml import (
     generic,
-    grfstrings,
-    parser,
-    version_info,
-    output_nml,
-    output_nfo,
-    output_grf,
-    output_dep,
-    palette,
-    spriteencoder,
-    spritecache,
     global_constants,
+    grfstrings,
+    output_dep,
+    output_grf,
+    output_nfo,
+    output_nml,
+    palette,
+    parser,
+    spritecache,
+    spriteencoder,
+    version_info,
 )
 from nml.actions import (
-    action2layout,
-    action2var,
-    action8,
-    sprite_count,
-    real_sprite,
-    action4,
     action0,
     action1,
     action2,
+    action2layout,
+    action2var,
+    action4,
     action6,
     action7,
+    action8,
     action11,
     actionF,
+    real_sprite,
+    sprite_count,
 )
-from nml.ast import grf, alt_sprites
+from nml.ast import alt_sprites, grf
 
 try:
     from PIL import Image

@@ -14,7 +14,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import datetime
-from nml import generic, expression, nmlop
+
+from nml import expression, generic, nmlop
 from nml.actions import action0
 from nml.ast import base_statement
 

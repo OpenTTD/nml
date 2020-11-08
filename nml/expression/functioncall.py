@@ -19,14 +19,15 @@ import math
 from functools import reduce
 
 from nml import generic, global_constants, nmlop
-from .base_expression import Type, Expression, ConstantNumeric, ConstantFloat
+
+from . import identifier
+from .base_expression import ConstantFloat, ConstantNumeric, Expression, Type
 from .bitmask import BitMask
-from .cargo import ProduceCargo, AcceptCargo
+from .cargo import AcceptCargo, ProduceCargo
 from .parameter import parse_string_to_dword
 from .storage_op import StorageOp
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
-from . import identifier
 
 
 class FunctionCall(Expression):

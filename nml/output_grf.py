@@ -15,7 +15,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import hashlib
 import os
-from nml import generic, output_base, grfstrings
+
+from nml import generic, grfstrings, output_base
 
 
 class OutputGRF(output_base.BinaryOutputBase):

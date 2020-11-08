@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, global_constants
-from nml.actions import action2, action2var, action2random
+from nml.actions import action2, action2random, action2var
 from nml.ast import base_statement, general
 
 var_ranges = {"SELF": 0x89, "PARENT": 0x8A}

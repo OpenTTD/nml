@@ -14,10 +14,11 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, nmlop
-from .base_expression import Expression, ConstantNumeric, ConstantFloat
+
+from .base_expression import ConstantFloat, ConstantNumeric, Expression
+from .boolean import Boolean
 from .string_literal import StringLiteral
 from .variable import Variable
-from .boolean import Boolean
 
 
 class BinOp(Expression):

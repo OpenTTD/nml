@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic, expression, global_constants, nmlop
-from nml.actions import base_action, action0, action2, action2real, action2var, action3_callbacks, action6, actionD
+from nml import expression, generic, global_constants, nmlop
+from nml.actions import action0, action2, action2real, action2var, action3_callbacks, action6, actionD, base_action
 
 
 class Action3(base_action.BaseAction):

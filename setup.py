@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, Extension, find_packages
+from setuptools import Extension, find_packages, setup
 from setuptools.command.build_py import build_py
 
 try:
