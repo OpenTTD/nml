@@ -380,13 +380,7 @@ class Action2LayoutSprite:
         return expression.ConstantNumeric(0)
 
     def _validate_hide_sprite(self, name, value):
-        value = expression.Not(value)
-        try:
-            value = value.reduce()
-        except generic.ScriptError:
-            pass
-        self.create_register(name, value)
-        return None
+        self.create_register(name, expression.Not(value).reduce())
 
 
 def get_layout_action2s(spritelayout, feature, spr_pos):
