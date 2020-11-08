@@ -147,7 +147,7 @@ class VarAction2Var:
     @type comment: C{basestr}
     """
 
-    def __init__(self, var_num, shift, mask, parameter=None):
+    def __init__(self, var_num, shift, mask, parameter=None, comment=""):
         self.var_num = var_num
         self.shift = shift
         self.mask = mask
@@ -155,7 +155,7 @@ class VarAction2Var:
         self.add = None
         self.div = None
         self.mod = None
-        self.comment = ""
+        self.comment = comment
 
     def write(self, file, size):
         file.print_bytex(self.var_num)
@@ -198,10 +198,9 @@ class VarAction2ProcCallVar(VarAction2Var):
             raise generic.ScriptError("Block with name '{}' is not a valid procedure".format(sg_ref.name), sg_ref.pos)
         if not sg_ref.is_procedure:
             raise generic.ScriptError("Unexpected identifier encountered: '{}'".format(sg_ref.name), sg_ref.pos)
-        VarAction2Var.__init__(self, 0x7E, 0, 0)
+        VarAction2Var.__init__(self, 0x7E, 0, 0, comment=str(sg_ref))
         # Reference to the called action2
         self.sg_ref = sg_ref
-        self.comment = str(sg_ref)
 
     def resolve_parameter(self, feature):
         self.parameter = self.sg_ref.get_action2_id(feature)
@@ -283,12 +282,12 @@ class VarAction2CallParam:
 
 class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
     def __init__(self, param, name):
-        VarAction2Var.__init__(self, 0x7D, 0, 0)
+        assert isinstance(param, VarAction2CallParam)
+        VarAction2Var.__init__(self, 0x7D, 0, 0, comment=param.name)
         expression.Expression.__init__(self, None)
         assert isinstance(param, VarAction2CallParam)
         param.load_vars.append(self)
         self.name = name
-        self.comment = param.name
         # Register is stored in parameter
 
     def write(self, file, size):
