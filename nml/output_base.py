@@ -79,9 +79,8 @@ class OutputBase:
         """
         Close the memory file, copy collected output to the real file.
         """
-        real_file = self.open_file()
-        self.assemble_file(real_file)
-        real_file.close()
+        with self.open_file() as real_file:
+            self.assemble_file(real_file)
         self.discard()
 
     def skip_sprite_checks(self):

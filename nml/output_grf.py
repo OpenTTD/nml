@@ -190,14 +190,13 @@ class OutputGRF(output_base.BinaryOutputBase):
         self.print_string(
             name, force_ascii=True, final_zero=True, stream=self.sprite_output
         )  # ASCII filenames seems sufficient.
-        fp = open(generic.find_file(filename), "rb")
-        while True:
-            data = fp.read(1024)
-            if len(data) == 0:
-                break
-            for d in data:
-                self.sprite_output.print_byte(d)
-        fp.close()
+        with open(generic.find_file(filename), "rb") as file:
+            while True:
+                data = file.read(1024)
+                if len(data) == 0:
+                    break
+                for d in data:
+                    self.sprite_output.print_byte(d)
 
         self.sprite_output.end_sprite()
         self.end_sprite()

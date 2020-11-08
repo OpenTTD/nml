@@ -160,26 +160,24 @@ tail_text = """\
 
 
 def write_file(fname):
-    handle = open(fname, "w")
+    with open(fname, "w") as file:
+        file.write(header_text)
+        for word in extract_tables.keywords:
+            file.write("      <item> {} </item>\n".format(word))
 
-    handle.write(header_text)
-    for word in extract_tables.keywords:
-        handle.write("      <item> {} </item>\n".format(word))
+        file.write(feature_text)
+        for word in extract_tables.features:
+            file.write("      <item> {} </item>\n".format(word))
 
-    handle.write(feature_text)
-    for word in extract_tables.features:
-        handle.write("      <item> {} </item>\n".format(word))
+        file.write(builtin_text)
+        for word in extract_tables.functions:
+            file.write("      <item> {} </item>\n".format(word))
 
-    handle.write(builtin_text)
-    for word in extract_tables.functions:
-        handle.write("      <item> {} </item>\n".format(word))
+        file.write(constant_text)
+        for word in extract_tables.callback_names_table:
+            file.write("      <item> {} </item>\n".format(word))
 
-    handle.write(constant_text)
-    for word in extract_tables.callback_names_table:
-        handle.write("      <item> {} </item>\n".format(word))
-
-    handle.write(tail_text)
-    handle.close()
+        file.write(tail_text)
 
 
 def run():

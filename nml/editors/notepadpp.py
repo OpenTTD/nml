@@ -74,18 +74,16 @@ string5 = """\
 
 # Build np++ xml file
 def write_file(fname):
-    handle = open(fname, "w")
-
-    handle.write(string1)
-    handle.write(" ".join(extract_tables.block_names_table))
-    handle.write(string2)
-    handle.write(" ".join(extract_tables.variables_names_table))
-    handle.write(string3)
-    handle.write(" ".join(extract_tables.feature_names_table))
-    handle.write(string4)
-    handle.write(" ".join(extract_tables.callback_names_table))
-    handle.write(string5)
-    handle.close()
+    with open(fname, "w") as file:
+        file.write(string1)
+        file.write(" ".join(extract_tables.block_names_table))
+        file.write(string2)
+        file.write(" ".join(extract_tables.variables_names_table))
+        file.write(string3)
+        file.write(" ".join(extract_tables.feature_names_table))
+        file.write(string4)
+        file.write(" ".join(extract_tables.callback_names_table))
+        file.write(string5)
 
 
 def run():

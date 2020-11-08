@@ -141,18 +141,25 @@ class SpriteCache:
 
         try:
             with generic.open_cache_file(self.sources, ".cache", "rb") as cache_file:
-                index_file = generic.open_cache_file(self.sources, ".cacheindex", "r")
-
                 cache_data = array.array("B")
                 cache_size = os.fstat(cache_file.fileno()).st_size
                 cache_data.fromfile(cache_file, cache_size)
                 assert cache_size == len(cache_data)
                 self.cache_time = os.path.getmtime(cache_file.name)
+
+            with generic.open_cache_file(self.sources, ".cacheindex", "r") as index_file:
+                index_file_name = index_file.name
+                sprite_index = json.load(index_file)
         except OSError:
             # Cache files don't exist (or otherwise aren't readable)
             return
-
-        # cache_file is closed by `with` block, but index_file is still open.
+        except json.JSONDecodeError:
+            generic.print_warning(
+                "{} contains invalid data, ignoring.".format(index_file_name)
+                + " Please remove the file and file a bug report if this warning keeps appearing"
+            )
+            self.cached_sprites = {}
+            return
 
         source_mtime = {}
 
@@ -160,7 +167,6 @@ class SpriteCache:
             # Just assert and print a generic message on errors, as the cache data should be correct
             # Not asserting could lead to errors later on
             # Also, it doesn't make sense to inform the user about things he shouldn't know about and can't fix
-            sprite_index = json.load(index_file)
             assert isinstance(sprite_index, list)
             for sprite in sprite_index:
                 assert isinstance(sprite, dict)
@@ -244,12 +250,10 @@ class SpriteCache:
                     self.cached_sprites[key] = value
         except Exception:
             generic.print_warning(
-                "{} contains invalid data, ignoring.".format(index_file.name)
+                "{} contains invalid data, ignoring.".format(index_file_name)
                 + " Please remove the file and file a bug report if this warning keeps appearing"
             )
             self.cached_sprites = {}  # Clear cache
-
-        index_file.close()
 
     def write_cache(self):
         """
