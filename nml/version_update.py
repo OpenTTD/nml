@@ -24,55 +24,57 @@ def get_child_output(cmd, env=None, stderr=None):
 def get_git_version():
     # method adopted shamelessly from OpenTTD's findversion.sh
     path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    version = ""
     env = dict(os.environ, LC_ALL="C")
-    if os.path.isdir(os.path.join(path, ".git")):
-        # Refresh the index to make sure file stat info is in sync
-        try:
-            get_child_output(["git", "-C", path, "update-index", "--refresh"], env=env)
-        except subprocess.CalledProcessError:
-            # Not an issue if this fails
-            pass
+    if not os.path.isdir(os.path.join(path, ".git")):
+        return None
 
-        # Look for modifications
-        try:
-            modified = len(get_child_output(["git", "-C", path, "diff-index", "HEAD"], env=env)) > 0
-            isodate = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
-            # git describe output is <tag>-<commits since tag>-<hash>, and <tag> may contain '-'
-            describe = get_child_output(["git", "-C", path, "describe", "--tags", "--long"], env=env)[0].rsplit("-", 2)
-            tag = describe[0]
-            release = describe[1] == "0"
-            changeset = describe[2]
-        except OSError as e:
-            print("Git checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
-            return version
-        except subprocess.CalledProcessError as e:
-            print("Git checkout found but cannot determine its version. Error: ", e)
-            return version
-        # A detached head will make the command fail, but it's uncritical
+    # Refresh the index to make sure file stat info is in sync
+    try:
+        get_child_output(["git", "-C", path, "update-index", "--refresh"], env=env)
+    except subprocess.CalledProcessError:
+        # Not an issue if this fails
+        pass
+
+    # Look for modifications
+    try:
+        modified = len(get_child_output(["git", "-C", path, "diff-index", "HEAD"], env=env)) > 0
+        isodate = get_child_output(["git", "-C", path, "show", "-s", "--pretty=%ci", "HEAD"], env=env)[0]
+        # git describe output is <tag>-<commits since tag>-<hash>, and <tag> may contain '-'
+        describe = get_child_output(["git", "-C", path, "describe", "--tags", "--long"], env=env)[0].rsplit("-", 2)
+        tag = describe[0]
+        release = describe[1] == "0"
+        changeset = describe[2]
+    except OSError as e:
+        print("Git checkout found but cannot determine its version. Error({0}): {1}".format(e.errno, e.strerror))
+        return None
+    except subprocess.CalledProcessError as e:
+        print("Git checkout found but cannot determine its version. Error: ", e)
+        return None
+
+    try:
+        branch = get_child_output(["git", "-C", path, "symbolic-ref", "-q", "HEAD"], env=env)[0].split("/")[-1]
+    except subprocess.CalledProcessError:
+        # A detached head will make the command fail, but it's not critical.
         # Treat it like branch 'master'.
-        try:
-            branch = get_child_output(["git", "-C", path, "symbolic-ref", "-q", "HEAD"], env=env)[0].split("/")[-1]
-        except subprocess.CalledProcessError:
-            branch = "master"
+        branch = "master"
 
-        # Compose the actual version string following PEP440
-        version = tag.replace("-", "").lower()
-        local_parts = []
+    # Compose the actual version string following PEP440
+    version = tag.replace("-", "").lower()
+    local_parts = []
 
-        if modified or not release:
-            version += ".post" + isodate.replace("-", "")
-            if branch != "master":
-                local_parts.append(branch.replace("-", "."))
+    if modified or not release:
+        version += ".post" + isodate.replace("-", "")
+        if branch != "master":
+            local_parts.append(branch.replace("-", "."))
 
-        if not release:
-            local_parts.append(changeset)
+    if not release:
+        local_parts.append(changeset)
 
-        if modified:
-            local_parts.append("m")
+    if modified:
+        local_parts.append("m")
 
-        if local_parts:
-            version += "+" + ".".join(local_parts)
+    if local_parts:
+        version += "+" + ".".join(local_parts)
 
     return version
 
