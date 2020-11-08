@@ -13,6 +13,7 @@ per-file-ignores =
     nml/palette.py:E126,E131
 
 exclude =
+    build
     generated
     nml/actions/action2var_variables.py
     nml/actions/action3_callbacks.py
