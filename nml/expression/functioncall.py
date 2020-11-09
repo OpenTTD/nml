@@ -303,90 +303,52 @@ def builtin_version_openttd(name, args, pos):
     return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
 
 
-def builtin_cargotype_available(name, args, pos):
+def builtin_typelabel_available(name, args, pos):
     """
-    cargotype_available(cargo_label) builtin function.
+    {cargo|rail|road|tram}type_available(label) builtin functions.
 
-    @return 1 if the cargo label is available, 0 otherwise.
+    @return 1 if the label is available, 0 otherwise.
     """
+    op = {
+        "cargotype_available": (0x0B, r"\7c"),
+        "railtype_available": (0x0D, None),
+        "roadtype_available": (0x0F, None),
+        "tramtype_available": (0x11, None),
+    }[name]
+
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck(
-        (0x0B, r"\7c"), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
-    )
-
-
-def builtin_railtype_available(name, args, pos):
-    """
-    railtype_available(railtype_label) builtin function.
-
-    @return 1 if the railtype label is available, 0 otherwise.
-    """
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
-    label = args[0].reduce()
-    return SpecialCheck(
-        (0x0D, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
-    )
-
-
-def builtin_roadtype_available(name, args, pos):
-    """
-    roadtype_available(roadtype_label) builtin function.
-
-    @return 1 if the roadtype label is available, 0 otherwise.
-    """
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
-    label = args[0].reduce()
-    return SpecialCheck(
-        (0x0F, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
-    )
-
-
-def builtin_tramtype_available(name, args, pos):
-    """
-    tramtype_available(tramtype_label) builtin function.
-
-    @return 1 if the roadtype label is available, 0 otherwise.
-    """
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
-    label = args[0].reduce()
-    return SpecialCheck(
-        (0x11, None), 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, str(label)), pos=args[0].pos
-    )
+    return SpecialCheck(op, 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, label), pos=args[0].pos)
 
 
 def builtin_grf_status(name, args, pos):
     """
-    grf_(current_status|future_status|order_behind)(grfid[, mask]) builtin function.
+    grf_{current_status|future_status|order_behind}(grfid[, mask]) builtin functions.
 
     @return 1 if the grf is, or will be, active, 0 otherwise.
     """
-    if len(args) not in (1, 2):
-        raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
-    labels = [label.reduce() for label in args]
-    mask = parse_string_to_dword(labels[1]) if len(labels) > 1 else None
-    if name == "grf_current_status":
-        op = (0x06, r"\7G")
-        results = (1, 0)
-    elif name == "grf_future_status":
-        op = (0x0A, r"\7gg")
-        results = (0, 1)
-    elif name == "grf_order_behind":
-        op = (0x08, r"\7gG")
-        results = (0, 1)
-    else:
-        assert False, "Unknown grf status function"
-    if mask is None:
-        string = "{}({})".format(name, str(labels))
+    op, results = {
+        # can't use \7g (0, 1), because that's false when the queried grf isn't present at all.
+        "grf_current_status": ((0x06, r"\7G"), (1, 0)),
+        "grf_future_status": ((0x0A, r"\7gg"), (0, 1)),
+        "grf_order_behind": ((0x08, r"\7gG"), (0, 1)),
+    }[name]
+
+    if len(args) == 1:
+        grfid = args[0].reduce()
+        mask = None
+        string = "{}({})".format(name, grfid)
         varsize = 4
-    else:
-        string = "{}({}, {})".format(name, str(labels), str(mask))
+    elif len(args) == 2:
+        grfid = args[0].reduce()
+        mask = parse_string_to_dword(args[1].reduce())
+        string = "{}({}, {})".format(name, grfid, mask)
         varsize = 8
-    return SpecialCheck(op, 0x88, results, parse_string_to_dword(labels[0]), string, varsize, mask, args[0].pos)
+    else:
+        raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
+
+    return SpecialCheck(op, 0x88, results, parse_string_to_dword(grfid), string, varsize, mask, args[0].pos)
 
 
 def builtin_visual_effect_and_powered(name, args, pos):
@@ -447,44 +409,33 @@ def builtin_str2number(name, args, pos):
     return ConstantNumeric(parse_string_to_dword(args[0]))
 
 
-def builtin_cargotype(name, args, pos):
+def builtin_resolve_typelabel(name, args, pos):
+    """
+    {cargo,rail,road,tram}type(label) builtin functions.
+
+    Also used from some Action2Var variables to resolve cargo labels.
+    """
+    tracktype_funcs = {
+        "railtype": global_constants.railtype_table,
+        "roadtype": global_constants.roadtype_table,
+        "tramtype": global_constants.tramtype_table,
+    }
+    if name in tracktype_funcs:
+        table = tracktype_funcs[name]
+        table_name = name
+    else:
+        # Resolve cargo ID for all other names: either `cargotype(label)`
+        #  or action2var_variables such as `this_month_production(label)`.
+        table = global_constants.cargo_numbers
+        table_name = "cargo"
+
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
+    if not isinstance(args[0], StringLiteral) or args[0].value not in table:
         raise generic.ScriptError(
-            "Parameter for " + name + "() must be a string literal that is also in your cargo table", pos
+            "Parameter for {}() must be a string literal that is also in your {} table".format(name, table_name), pos
         )
-    return ConstantNumeric(global_constants.cargo_numbers[args[0].value])
-
-
-def builtin_railtype(name, args, pos):
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.railtype_table:
-        raise generic.ScriptError(
-            "Parameter for " + name + "() must be a string literal that is also in your railtype table", pos
-        )
-    return ConstantNumeric(global_constants.railtype_table[args[0].value])
-
-
-def builtin_roadtype(name, args, pos):
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.roadtype_table:
-        raise generic.ScriptError(
-            "Parameter for " + name + "() must be a string literal that is also in your roadtype table", pos
-        )
-    return ConstantNumeric(global_constants.roadtype_table[args[0].value])
-
-
-def builtin_tramtype(name, args, pos):
-    if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.tramtype_table:
-        raise generic.ScriptError(
-            "Parameter for " + name + "() must be a string literal that is also in your tramtype table", pos
-        )
-    return ConstantNumeric(global_constants.tramtype_table[args[0].value])
+    return ConstantNumeric(table[args[0].value])
 
 
 def builtin_reserve_sprites(name, args, pos):
@@ -760,10 +711,10 @@ function_table = {
     "hasbit": builtin_hasbit,
     "getbits": builtin_getbits,
     "version_openttd": builtin_version_openttd,
-    "cargotype_available": builtin_cargotype_available,
-    "railtype_available": builtin_railtype_available,
-    "roadtype_available": builtin_roadtype_available,
-    "tramtype_available": builtin_tramtype_available,
+    "cargotype_available": builtin_typelabel_available,
+    "railtype_available": builtin_typelabel_available,
+    "roadtype_available": builtin_typelabel_available,
+    "tramtype_available": builtin_typelabel_available,
     "grf_current_status": builtin_grf_status,
     "grf_future_status": builtin_grf_status,
     "grf_order_behind": builtin_grf_status,
@@ -771,10 +722,10 @@ function_table = {
     "visual_effect_and_powered": builtin_visual_effect_and_powered,
     "create_effect": builtin_create_effect,
     "str2number": builtin_str2number,
-    "cargotype": builtin_cargotype,
-    "railtype": builtin_railtype,
-    "roadtype": builtin_roadtype,
-    "tramtype": builtin_tramtype,
+    "cargotype": builtin_resolve_typelabel,
+    "railtype": builtin_resolve_typelabel,
+    "roadtype": builtin_resolve_typelabel,
+    "tramtype": builtin_resolve_typelabel,
     "reserve_sprites": builtin_reserve_sprites,
     "industry_type": builtin_industry_type,
     "accept_cargo": builtin_cargoexpr,
