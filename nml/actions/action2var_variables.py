@@ -562,8 +562,7 @@ def industry_town_count(name, args, pos, info):
     return (args[0], extra_params)
 
 def industry_cargotype(name, args, pos, info):
-    from nml.expression.functioncall import builtin_cargotype
-    return (builtin_cargotype(name, args, pos), [])
+    return (expression.functioncall.builtin_resolve_typelabel(name, args, pos), [])
 
 varact2vars60x_industries = {
     'nearby_tile_industry_tile_id' : {'var': 0x60, 'start':  0, 'size': 16, 'param_function': unsigned_tile_offset},
