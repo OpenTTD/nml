@@ -137,9 +137,36 @@ class GRMOp(Expression):
         return True
 
 
+function_table = {}
+
+
+def builtin(func):
+    """
+    Decorator that adds a function named `builtin_func` to the function table as `func`.
+    """
+    assert func.__name__.startswith("builtin_")
+    name = func.__name__[8:]  # Strip the "builtin_". str.removeprefix() is only added in py3.9.
+    function_table[name] = func
+    return func
+
+
+def builtins(*names):
+    """
+    Decorator that adds a function to the function table with one or more custom names.
+    """
+
+    def dec(func):
+        for name in names:
+            function_table[name] = func
+        return func
+
+    return dec
+
+
 # { Builtin functions
 
 
+@builtin
 def builtin_min(name, args, pos):
     """
     min(...) builtin function.
@@ -151,6 +178,7 @@ def builtin_min(name, args, pos):
     return reduce(lambda x, y: nmlop.MIN(x, y, pos), args)
 
 
+@builtin
 def builtin_max(name, args, pos):
     """
     max(...) builtin function.
@@ -162,6 +190,7 @@ def builtin_max(name, args, pos):
     return reduce(lambda x, y: nmlop.MAX(x, y, pos), args)
 
 
+@builtin
 def builtin_date(name, args, pos):
     """
     date(year, month, day) builtin function.
@@ -207,6 +236,7 @@ def builtin_date(name, args, pos):
     return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + day_in_year - 1, pos)
 
 
+@builtin
 def builtin_day_of_year(name, args, pos):
     """
     day_of_year(month, day) builtin function.
@@ -234,6 +264,7 @@ def builtin_day_of_year(name, args, pos):
     return ConstantNumeric(datetime.date(1, month.value, day.value).toordinal(), pos)
 
 
+@builtins("STORE_TEMP", "STORE_PERM", "LOAD_TEMP", "LOAD_PERM")
 def builtin_storage(name, args, pos):
     """
     Accesses to temporary / persistent storage
@@ -241,24 +272,33 @@ def builtin_storage(name, args, pos):
     return StorageOp(name, args, pos)
 
 
-def builtin_ucmp(name, args, pos):
+@builtin
+def builtin_UCMP(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return nmlop.VACT2_UCMP(args[0], args[1], pos)
 
 
-def builtin_cmp(name, args, pos):
+@builtin
+def builtin_CMP(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return nmlop.VACT2_CMP(args[0], args[1], pos)
 
 
+@builtin
 def builtin_rotate(name, args, pos):
     if len(args) != 2:
         raise generic.ScriptError(name + "() must have exactly two parameters", pos)
     return nmlop.ROT_RIGHT(args[0], args[1], pos)
 
 
+@builtin
+def builtin_bitmask(name, args, pos):
+    return BitMask(args, pos)
+
+
+@builtin
 def builtin_hasbit(name, args, pos):
     """
     hasbit(value, bit_num) builtin function.
@@ -270,6 +310,7 @@ def builtin_hasbit(name, args, pos):
     return nmlop.HASBIT(args[0], args[1], pos)
 
 
+@builtin
 def builtin_getbits(name, args, pos):
     """
     getbits(value, first, amount) builtin function.
@@ -288,6 +329,7 @@ def builtin_getbits(name, args, pos):
     return nmlop.AND(part1, part3, pos)
 
 
+@builtin
 def builtin_version_openttd(name, args, pos):
     """
     version_openttd(major, minor, revision[, build]) builtin function.
@@ -303,6 +345,7 @@ def builtin_version_openttd(name, args, pos):
     return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
 
 
+@builtins("cargotype_available", "railtype_available", "roadtype_available", "tramtype_available")
 def builtin_typelabel_available(name, args, pos):
     """
     {cargo|rail|road|tram}type_available(label) builtin functions.
@@ -322,6 +365,7 @@ def builtin_typelabel_available(name, args, pos):
     return SpecialCheck(op, 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, label), pos=args[0].pos)
 
 
+@builtins("grf_current_status", "grf_future_status", "grf_order_behind")
 def builtin_grf_status(name, args, pos):
     """
     grf_{current_status|future_status|order_behind}(grfid[, mask]) builtin functions.
@@ -351,6 +395,7 @@ def builtin_grf_status(name, args, pos):
     return SpecialCheck(op, 0x88, results, parse_string_to_dword(grfid), string, varsize, mask, args[0].pos)
 
 
+@builtin
 def builtin_visual_effect_and_powered(name, args, pos):
     """
     Builtin function, used in two forms:
@@ -379,6 +424,7 @@ def builtin_visual_effect_and_powered(name, args, pos):
     return ConstantNumeric(effect | offset | powered)
 
 
+@builtin
 def builtin_create_effect(name, args, pos):
     """
     Builtin function:
@@ -403,12 +449,14 @@ def builtin_create_effect(name, args, pos):
     return ConstantNumeric(sprite | (offset1 & 0xFF) << 8 | (offset2 & 0xFF) << 16 | (offset3 & 0xFF) << 24)
 
 
+@builtin
 def builtin_str2number(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     return ConstantNumeric(parse_string_to_dword(args[0]))
 
 
+@builtins("cargotype", "railtype", "roadtype", "tramtype")
 def builtin_resolve_typelabel(name, args, pos):
     """
     {cargo,rail,road,tram}type(label) builtin functions.
@@ -438,6 +486,7 @@ def builtin_resolve_typelabel(name, args, pos):
     return ConstantNumeric(table[args[0].value])
 
 
+@builtin
 def builtin_reserve_sprites(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
@@ -445,6 +494,7 @@ def builtin_reserve_sprites(name, args, pos):
     return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, lambda x: "{}({:d})".format(name, count.value), pos)
 
 
+@builtin
 def builtin_industry_type(name, args, pos):
     """
     industry_type(IND_TYPE_OLD | IND_TYPE_NEW, id) builtin function
@@ -466,6 +516,7 @@ def builtin_industry_type(name, args, pos):
     return ConstantNumeric(type << 7 | id)
 
 
+@builtins("accept_cargo", "produce_cargo")
 def builtin_cargoexpr(name, args, pos):
     if len(args) < 1:
         raise generic.ScriptError(name + "() must have 1 or more parameters", pos)
@@ -484,6 +535,7 @@ def builtin_cargoexpr(name, args, pos):
         assert False
 
 
+@builtins("acos", "asin", "atan", "cos", "sin", "tan")
 def builtin_trigonometric(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
@@ -501,6 +553,7 @@ def builtin_trigonometric(name, args, pos):
     return ConstantFloat(trigonometric_func_table[name](val.value), val.pos)
 
 
+@builtin
 def builtin_int(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
@@ -510,6 +563,7 @@ def builtin_int(name, args, pos):
     return ConstantNumeric(int(val.value), val.pos)
 
 
+@builtin
 def builtin_abs(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
@@ -517,7 +571,8 @@ def builtin_abs(name, args, pos):
     return TernaryOp(guard, nmlop.SUB(0, args[0]), args[0], args[0].pos).reduce()
 
 
-def builtin_sound_file(name, args, pos):
+@builtin
+def builtin_sound(name, args, pos):
     if len(args) not in (1, 2):
         raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
     if not isinstance(args[0], StringLiteral):
@@ -529,7 +584,8 @@ def builtin_sound_file(name, args, pos):
     return ConstantNumeric(action11.add_sound((args[0].value, volume), pos), pos)
 
 
-def builtin_sound_import(name, args, pos):
+@builtin
+def builtin_import_sound(name, args, pos):
     if len(args) not in (2, 3):
         raise generic.ScriptError(name + "() must have 2 or 3 parameters", pos)
     grfid = parse_string_to_dword(args[0].reduce())
@@ -541,6 +597,7 @@ def builtin_sound_import(name, args, pos):
     return ConstantNumeric(action11.add_sound((grfid, sound_num, volume), pos), pos)
 
 
+@builtin
 def builtin_relative_coord(name, args, pos):
     """
     relative_coord(x, y) builtin function.
@@ -563,6 +620,7 @@ def builtin_relative_coord(name, args, pos):
     return nmlop.OR(x_coord, y_coord, pos)
 
 
+@builtin
 def builtin_num_corners_raised(name, args, pos):
     """
     num_corners_raised(slope) builtin function.
@@ -587,6 +645,7 @@ def builtin_num_corners_raised(name, args, pos):
     return nmlop.MOD(slope, 0xF)
 
 
+@builtin
 def builtin_slope_to_sprite_offset(name, args, pos):
     """
     builtin function slope_to_sprite_offset(slope)
@@ -612,6 +671,7 @@ def builtin_slope_to_sprite_offset(name, args, pos):
     return expr
 
 
+@builtin
 def builtin_palette_1cc(name, args, pos):
     """
     palette_1cc(colour) builtin function.
@@ -627,6 +687,7 @@ def builtin_palette_1cc(name, args, pos):
     return nmlop.ADD(args[0], 775, pos)
 
 
+@builtin
 def builtin_palette_2cc(name, args, pos):
     """
     palette_2cc(colour1, colour2) builtin function.
@@ -648,6 +709,7 @@ def builtin_palette_2cc(name, args, pos):
     return nmlop.ADD(col12, base)
 
 
+@builtin
 def builtin_vehicle_curv_info(name, args, pos):
     """
     vehicle_curv_info(prev_cur, cur_next) builtin function
@@ -666,6 +728,7 @@ def builtin_vehicle_curv_info(name, args, pos):
     return nmlop.OR(args[0], cur_next)
 
 
+@builtin
 def builtin_format_string(name, args, pos):
     """
     format_string(format, ... args ..) builtin function
@@ -697,57 +760,3 @@ def builtin_format_string(name, args, pos):
 
 
 # }
-
-function_table = {
-    "min": builtin_min,
-    "max": builtin_max,
-    "date": builtin_date,
-    "day_of_year": builtin_day_of_year,
-    "bitmask": lambda name, args, pos: BitMask(args, pos),
-    "STORE_TEMP": builtin_storage,
-    "STORE_PERM": builtin_storage,
-    "LOAD_TEMP": builtin_storage,
-    "LOAD_PERM": builtin_storage,
-    "hasbit": builtin_hasbit,
-    "getbits": builtin_getbits,
-    "version_openttd": builtin_version_openttd,
-    "cargotype_available": builtin_typelabel_available,
-    "railtype_available": builtin_typelabel_available,
-    "roadtype_available": builtin_typelabel_available,
-    "tramtype_available": builtin_typelabel_available,
-    "grf_current_status": builtin_grf_status,
-    "grf_future_status": builtin_grf_status,
-    "grf_order_behind": builtin_grf_status,
-    "visual_effect": builtin_visual_effect_and_powered,
-    "visual_effect_and_powered": builtin_visual_effect_and_powered,
-    "create_effect": builtin_create_effect,
-    "str2number": builtin_str2number,
-    "cargotype": builtin_resolve_typelabel,
-    "railtype": builtin_resolve_typelabel,
-    "roadtype": builtin_resolve_typelabel,
-    "tramtype": builtin_resolve_typelabel,
-    "reserve_sprites": builtin_reserve_sprites,
-    "industry_type": builtin_industry_type,
-    "accept_cargo": builtin_cargoexpr,
-    "produce_cargo": builtin_cargoexpr,
-    "int": builtin_int,
-    "abs": builtin_abs,
-    "acos": builtin_trigonometric,
-    "asin": builtin_trigonometric,
-    "atan": builtin_trigonometric,
-    "cos": builtin_trigonometric,
-    "sin": builtin_trigonometric,
-    "tan": builtin_trigonometric,
-    "UCMP": builtin_ucmp,
-    "CMP": builtin_cmp,
-    "rotate": builtin_rotate,
-    "sound": builtin_sound_file,
-    "import_sound": builtin_sound_import,
-    "relative_coord": builtin_relative_coord,
-    "num_corners_raised": builtin_num_corners_raised,
-    "slope_to_sprite_offset": builtin_slope_to_sprite_offset,
-    "palette_1cc": builtin_palette_1cc,
-    "palette_2cc": builtin_palette_2cc,
-    "vehicle_curv_info": builtin_vehicle_curv_info,
-    "format_string": builtin_format_string,
-}
