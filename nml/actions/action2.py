@@ -329,6 +329,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             self.name = name
             self.num_params = num_params
             self.used_sprite_sets = []
+            self.optimised = None
 
         def register_names(self):
             if cls_is_relocatable and cls_is_referenced:
@@ -383,7 +384,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                         # Add the features from all calling blocks to the set
                         self.feature_set.update(n.feature_set)
 
-                if len(self._referencing_nodes) == 0:
+                if len(self._referencing_nodes) == 0 and not self.optimised:
                     # if we can be 'not used', there ought to be a way to refer to this block
                     assert self.name is not None
                     generic.print_warning("Block '{}' is not referenced, ignoring.".format(self.name.value), self.pos)
@@ -410,6 +411,15 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             """
 
             return self._referencing_nodes
+
+        def optimise(self):
+            """
+            Optimise this sprite group.
+
+            @return: True iff this sprite group has been optimised
+            @rtype: C{bool}
+            """
+            return False
 
         def collect_references(self):
             """
