@@ -75,6 +75,20 @@ class Switch(switch_base_class):
         self.body.reduce_expressions(var_feature, [param_map])
         switch_base_class.pre_process(self)
 
+    def optimise(self):
+        if self.optimised:
+            return True
+        if (
+            self.expr.is_read_only()
+            and self.body.default is not None
+            and self.body.default.value is not None
+            and len(self.body.ranges) == 0
+        ):
+            generic.print_warning("Block '{}' returns a constant, optimising.".format(self.name.value), self.pos)
+            self.optimised = self.body.default.value
+            return True
+        return False
+
     def collect_references(self):
         all_refs = self.expr.collect_references()
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
@@ -322,6 +336,15 @@ class RandomSwitch(switch_base_class):
             )
 
         switch_base_class.pre_process(self)
+
+    def optimise(self):
+        if self.optimised:
+            return True
+        if len(self.choices) == 1:
+            generic.print_warning("Block '{}' returns a constant, optimising.".format(self.name.value), self.pos)
+            self.optimised = self.choices[0].result.value
+            return True
+        return False
 
     def collect_references(self):
         all_refs = []
