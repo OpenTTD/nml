@@ -88,7 +88,7 @@ def get_and_write_version():
     #  the current version from git and update __version__.py
     version = get_git_version()
     if not version:
-        return
+        return None
     try:
         path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         with open(os.path.join(path, "nml", "__version__.py"), "w") as file:
@@ -97,3 +97,4 @@ def get_and_write_version():
         return version.split()[0]
     except IOError:
         print("Version file NOT written")
+        return None

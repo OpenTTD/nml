@@ -87,6 +87,8 @@ def op_to_cond_op(op):
         return (4, r"\7<")
     if op == nmlop.CMP_LE:
         return (5, r"\7>")
+    # Not reached
+    raise ValueError("Unexpected operator '{}'".format(op.token))
 
 
 def parse_conditional(expr):

@@ -521,6 +521,8 @@ class StringCommand:
                 ret += arg
             ret += CHOICE_LIST_END[str_type]
             return ret
+        # Not reached
+        raise ValueError("Unexpected string command '{}'".format(self.name))
 
     def get_type(self):
         if self.name in commands:
