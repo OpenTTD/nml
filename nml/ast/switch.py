@@ -78,11 +78,19 @@ class Switch(switch_base_class):
     def optimise(self):
         if self.optimised:
             return True
+        if isinstance(self.expr, expression.ConstantNumeric):
+            for r in self.body.ranges[:]:
+                if r.min.value <= self.expr.value <= r.max.value:
+                    generic.print_warning(
+                        "Block '{}' returns a constant, optimising.".format(self.name.value), self.pos
+                    )
+                    self.optimised = r.result.value
+                    return True
         if (
             self.expr.is_read_only()
             and self.body.default is not None
             and self.body.default.value is not None
-            and len(self.body.ranges) == 0
+            and (len(self.body.ranges) == 0 or isinstance(self.expr, expression.ConstantNumeric))
         ):
             generic.print_warning("Block '{}' returns a constant, optimising.".format(self.name.value), self.pos)
             self.optimised = self.body.default.value
