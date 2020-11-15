@@ -38,6 +38,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         try:
             os.unlink(self.filename)
         except OSError:
+            # Ignore
             pass
         return open(self.filename, "wb")
 

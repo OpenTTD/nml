@@ -21,6 +21,7 @@ from nml.actions import real_sprite
 try:
     from PIL import Image
 except ImportError:
+    # Image is required only when using graphics
     pass
 
 # Some constants for the 'info' byte

@@ -507,6 +507,7 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
             new_sprite.flags = sprite.param_list[param_offset].reduce_constant([real_sprite_flags, id_dict])
             param_offset += 1
         except generic.ConstError:
+            # No flags
             pass
 
     new_sprite.file = default_file

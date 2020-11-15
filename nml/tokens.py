@@ -265,6 +265,7 @@ class NMLLexer:
 
                 os.remove(os.path.normpath(os.path.join(os.path.dirname(__file__), "generated", "lextab.py")))
             except FileNotFoundError:
+                # Tried to remove a non existing file
                 pass
         self.lexer = lex.lex(module=self, optimize=1, lextab="nml.generated.lextab")
 
