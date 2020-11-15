@@ -96,6 +96,9 @@ class Switch(switch_base_class):
                 all_refs += result.value.collect_references()
         return all_refs
 
+    def is_read_only(self):
+        return self.expr.is_read_only()
+
     def debug_print(self, indentation):
         generic.print_dbg(
             indentation, "Switch, Feature = {:d}, name = {}".format(next(iter(self.feature_set)), self.name.value)

@@ -92,6 +92,12 @@ class SpriteGroupRef(Expression):
     def collect_references(self):
         return list(chain([self], *(p.collect_references() for p in self.param_list)))
 
+    def is_read_only(self):
+        if self.name.value != "CB_FAILED":
+            spritegroup = action2.resolve_spritegroup(self.name)
+            return spritegroup.is_read_only()
+        return True
+
     def type(self):
         if self.is_procedure:
             return Type.INTEGER
