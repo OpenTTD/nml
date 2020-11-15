@@ -65,6 +65,7 @@ class NMLParser:
 
                 os.remove(os.path.normpath(os.path.join(os.path.dirname(__file__), "generated", "parsetab.py")))
             except FileNotFoundError:
+                # Tried to remove a non existing file
                 pass
         self.lexer = tokens.NMLLexer()
         self.lexer.build(rebuild or debug)

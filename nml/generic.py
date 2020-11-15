@@ -40,6 +40,7 @@ if os.name == "nt":
         if (mode.value & ENABLE_VIRTUAL_TERMINAL_PROCESSING) == 0:
             kernel32.SetConsoleMode(h, mode.value | ENABLE_VIRTUAL_TERMINAL_PROCESSING)
     except Break:
+        # Early exit
         pass
 
 

@@ -52,6 +52,7 @@ from nml.ast import alt_sprites, grf
 try:
     from PIL import Image
 except ImportError:
+    # Image is required only when using graphics
     pass
 
 developmode = False  # Give 'nice' error message instead of a stack dump.
