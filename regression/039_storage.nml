@@ -1,0 +1,32 @@
+grf {
+    grfid: "NML\39";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+switch(FEAT_INDUSTRIES, PARENT, switch_storage2, [
+    STORE_PERM(LOAD_PERM(0x00) + LOAD_PERM(0x01, "GRID"), 0x00)
+]) {
+    return 0;
+}
+
+
+switch(FEAT_INDUSTRIES, SELF, switch_storage1, [
+    STORE_PERM(LOAD_PERM(0x00) + 1, 0x00)
+]) {
+    return switch_storage2;
+}
+
+item(FEAT_INDUSTRIES, coal_mine) {
+    property {
+        substitute: INDUSTRYTYPE_COAL_MINE;
+        override: INDUSTRYTYPE_COAL_MINE;
+    }
+    graphics {
+        monthly_prod_change: switch_storage1;
+    }
+}
+
+
