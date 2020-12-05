@@ -50,6 +50,12 @@ To install NML you'll need these 3rd party packages:
 - gcc (or possibly another c++ compiler).
   Needed to compile the cython version of the lz77 module for grf encoding.
 
+Running `make test` requires these code formatters and checkers. You don't need these to use NML, only to test or help improve it.
+
+- `flake8`
+  Minimal version is 3.7.
+- `black`
+
 ## 3) Installation
 
 The easiest way to install NML is by using pip:
