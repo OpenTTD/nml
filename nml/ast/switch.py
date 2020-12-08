@@ -213,7 +213,7 @@ class SwitchRange:
 
     def __str__(self):
         ret = str(self.min)
-        if (
+        if self.min is not self.max and (
             not isinstance(self.min, expression.ConstantNumeric)
             or not isinstance(self.max, expression.ConstantNumeric)
             or self.max.value != self.min.value
