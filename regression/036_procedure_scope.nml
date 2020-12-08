@@ -1,0 +1,34 @@
+grf {
+    grfid: "NML\36";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+switch(FEAT_INDUSTRIES, SELF, dumb_add, a, b, a + b) { return; }
+
+/* some computation that requires registers for intermediate values */
+switch(FEAT_INDUSTRIES, PARENT, callee, a, (population+(has_church?500:1))*(num_houses-4*has_stadium)+a) {
+    0..5: return a + dumb_add(5, a);
+    default: return a + dumb_add(6, a);
+}
+
+switch(FEAT_INDUSTRIES, SELF, caller2, dumb_add(1,dumb_add(founder_colour2, build_date))*(water_distance+founder_colour1)*(random_bits+callee(1))*(founder_type+layout_num)*(build_type+counter)) {
+    return;
+}
+
+switch(FEAT_INDUSTRIES, SELF, caller1, (founder_colour2+build_date)*dumb_add(random_bits, callee(0))*(build_type+counter)) {
+    return;
+}
+
+item(FEAT_INDUSTRIES, coal_mine) {
+    property {
+        substitute: INDUSTRYTYPE_COAL_MINE;
+        override: INDUSTRYTYPE_COAL_MINE;
+    }
+    graphics {
+        build_prod_change: return caller1;
+        control_special: return caller2;
+    }
+}

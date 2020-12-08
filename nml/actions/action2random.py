@@ -354,11 +354,11 @@ def parse_randomswitch(random_switch):
     if count_expr is None:
         random_switch.set_action2(random_action2, feature)
     else:
-        # Create intermediate varaction2
+        # Create intermediate varaction2 to compute parameter for type 0x84
         varaction2 = action2var.Action2Var(
             feature, "{}@registers".format(random_switch.name.value), random_switch.pos, 0x89
         )
-        varact2parser = action2var.Varaction2Parser(feature)
+        varact2parser = action2var.Varaction2Parser(feature, feature)
         varact2parser.parse_expr(count_expr)
         varaction2.var_list = varact2parser.var_list
         action_list.extend(varact2parser.extra_actions)
