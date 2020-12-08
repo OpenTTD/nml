@@ -47,6 +47,8 @@ class Switch(switch_base_class):
         self.expr = param_list[-1]
         self.body = body
         self.param_list = param_list[3:-1]
+        # register_map is a dict to be duck-compatible with spritelayouts.
+        # But because feature_set has only one item for switches, register_map also has at most one item.
         self.register_map = {}
 
     def pre_process(self):
@@ -59,6 +61,7 @@ class Switch(switch_base_class):
                 raise generic.ScriptError("Duplicate parameter name '{}' encountered.".format(param.value), param.pos)
             seen_names.add(param.value)
 
+        feature = next(iter(self.feature_set))
         var_feature = action2var.get_feature(self)  # Feature of the accessed variables
 
         # Allocate registers
@@ -69,7 +72,7 @@ class Switch(switch_base_class):
             param_registers.append(reg)
             param_map[param.value] = reg
         param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))
-        self.register_map[var_feature] = param_registers
+        self.register_map[feature] = param_registers
 
         self.expr = action2var.reduce_varaction2_expr(self.expr, var_feature, [param_map])
         self.body.reduce_expressions(var_feature, [param_map])
