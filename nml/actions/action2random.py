@@ -334,7 +334,14 @@ def parse_randomswitch(random_switch):
     for choice in random_switch.choices:
         res_prob = resulting_prob[choice]
         result, comment = action2var.parse_result(
-            choice.result.value, action_list, act6, offset, random_action2, None, 0x89, res_prob
+            choice.result.value,
+            action_list,
+            act6,
+            offset,
+            random_action2,
+            None,
+            0x8A if type_byte == 0x83 else 0x89,
+            res_prob,
         )
         offset += res_prob * 2
         comment = "({:d}/{:d}) -> ({:d}/{:d}): ".format(choice.probability.value, total_prob, res_prob, nrand) + comment

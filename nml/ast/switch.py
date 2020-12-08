@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, global_constants
-from nml.actions import action2, action2random, action2var
+from nml.actions import action2, action2random, action2var, action2var_variables
 from nml.ast import base_statement, general
 
 var_ranges = {"SELF": 0x89, "PARENT": 0x8A}
@@ -319,8 +319,13 @@ class RandomSwitch(switch_base_class):
         self.random_act2 = None  # Set during action generation to resolve dependent/independent chains
 
     def pre_process(self):
+        feature = next(iter(self.feature_set))
+        # var_feature is really weird for type=BACKWARD/FORWARD.
+        # Expressions in cases will still refer to the origin vehicle.
+        var_feature = action2var_variables.varact2parent_scope[feature] if self.type.value == "PARENT" else feature
+
         for choice in self.choices:
-            choice.reduce_expressions(next(iter(self.feature_set)))
+            choice.reduce_expressions(var_feature)
 
         for dep_list in (self.dependent, self.independent):
             for i, dep in enumerate(dep_list[:]):
