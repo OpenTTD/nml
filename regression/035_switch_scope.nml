@@ -1,0 +1,40 @@
+grf {
+    grfid: "NML\35";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+random_switch(FEAT_INDUSTRYTILES, SELF, random1, bitmask(TRIGGER_INDUSTRYTILE_TILELOOP)) {
+    2: relative_x < 2;
+    1: relative_y > 5;
+}
+
+switch(FEAT_INDUSTRYTILES, SELF, var1, town_zone) {
+    0: relative_x < 2;
+    default: relative_y > 5;
+}
+
+random_switch(FEAT_INDUSTRYTILES, PARENT, random2, bitmask(TRIGGER_INDUSTRYTILE_TILELOOP)) {
+    2: founder_colour1 < 2;
+    1: founder_colour2 > 5;
+}
+
+switch(FEAT_INDUSTRYTILES, PARENT, var2, production_level) {
+    0: founder_colour1 < 2;
+    default: founder_colour2 > 5;
+}
+
+item(FEAT_INDUSTRYTILES, coal_mine) {
+    property {
+        substitute: 0;
+        override: 0;
+    }
+    graphics {
+        foundations: random1;
+        autoslope: random2;
+        anim_speed: var1;
+        anim_control: var2;
+    }
+}
