@@ -359,6 +359,9 @@ class RandomSwitch(switch_base_class):
     def optimise(self):
         if self.optimised:
             return True
+        if self.triggers.value != 0:
+            # Triggers have side-effects, and can't be skipped.
+            return False
         if len(self.choices) == 1:
             generic.print_warning("Block '{}' returns a constant, optimising.".format(self.name.value), self.pos)
             self.optimised = self.choices[0].result.value

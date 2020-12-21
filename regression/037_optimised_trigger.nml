@@ -1,0 +1,22 @@
+grf {
+    grfid: "NML\37";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+random_switch(FEAT_TRAINS, SELF, unconditional_switch) {
+    8: return 5;
+}
+
+random_switch(FEAT_TRAINS, SELF, trigger_only, bitmask(TRIGGER_VEHICLE_NEW_LOAD)) {
+    8: return 7;
+}
+
+item(FEAT_TRAINS, colored_train, 100) {
+    graphics {
+        colour_mapping: unconditional_switch;
+        default: trigger_only;
+    }
+}
