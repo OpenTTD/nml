@@ -28,7 +28,7 @@ class BitMask(Expression):
         for value in self.values:
             value.debug_print(indentation + 2)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         ret = ConstantNumeric(0, self.pos)
         for orig_expr in self.values:
             val = orig_expr.reduce(id_dicts)

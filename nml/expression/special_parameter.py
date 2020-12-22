@@ -65,7 +65,7 @@ class SpecialParameter(Expression):
     def __str__(self):
         return self.name
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def is_boolean(self):

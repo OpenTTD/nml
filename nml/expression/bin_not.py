@@ -29,7 +29,7 @@ class BinNot(Expression):
         generic.print_dbg(indentation, "Binary not:")
         self.expr.debug_print(indentation + 2)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         expr = self.expr.reduce(id_dicts)
         if expr.type() != Type.INTEGER:
             raise generic.ScriptError("Not-operator (~) requires an integer argument.", expr.pos)
@@ -64,7 +64,7 @@ class Not(Expression):
         generic.print_dbg(indentation, "Logical not:")
         self.expr.debug_print(indentation + 2)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         expr = self.expr.reduce(id_dicts)
         if expr.type() != Type.INTEGER:
             raise generic.ScriptError("Not-operator (!) requires an integer argument.", expr.pos)

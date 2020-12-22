@@ -252,7 +252,7 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
     def get_size(self):
         return 7
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def supported_by_action2(self, raise_error):
@@ -297,7 +297,7 @@ class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
     def get_size(self):
         return 7
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def supported_by_action2(self, raise_error):
@@ -1062,7 +1062,7 @@ def get_feature(switch_block):
     return feature
 
 
-def reduce_varaction2_expr(expr, feature, extra_dicts=[]):
+def reduce_varaction2_expr(expr, feature, extra_dicts=None):
     # 'normal' and 60+x variables to use
     vars_normal = action2var_variables.varact2vars[feature]
     vars_60x = action2var_variables.varact2vars60x[feature]
@@ -1071,7 +1071,7 @@ def reduce_varaction2_expr(expr, feature, extra_dicts=[]):
         return expression.FunctionPtr(expression.Identifier(name, pos), parse_60x_var, value)
 
     id_dicts = (
-        extra_dicts
+        (extra_dicts or [])
         + [(action2var_variables.varact2_globalvars, parse_var), (vars_normal, parse_var), (vars_60x, func60x)]
         + global_constants.const_list
     )

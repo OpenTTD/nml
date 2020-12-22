@@ -65,7 +65,7 @@ class BinOp(Expression):
             return 1
         return -1
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         # Reducing a BinOp expression is done in several phases:
         # - Reduce both subexpressions.
         # - If both subexpressions are constant, compute the result and return it.

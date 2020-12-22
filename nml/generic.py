@@ -166,8 +166,8 @@ class LinePosition(Position):
     @type line_start: C{int}
     """
 
-    def __init__(self, filename, line_start, includes=[]):
-        Position.__init__(self, filename, includes)
+    def __init__(self, filename, line_start, includes=None):
+        Position.__init__(self, filename, includes or [])
         self.line_start = line_start
 
     def __str__(self):

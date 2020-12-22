@@ -98,7 +98,7 @@ class StorageOp(Expression):
             args.append(str(self.grfid))
         return "{}({})".format(self.name, ", ".join(args))
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         args = []
         if self.value is not None:
             value = self.value.reduce(id_dicts)

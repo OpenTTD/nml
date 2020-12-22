@@ -34,7 +34,7 @@ class TernaryOp(Expression):
         generic.print_dbg(indentation, "Expression 2:")
         self.expr2.debug_print(indentation + 2)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         guard = self.guard.reduce(id_dicts)
         expr1 = self.expr1.reduce(id_dicts)
         expr2 = self.expr2.reduce(id_dicts)

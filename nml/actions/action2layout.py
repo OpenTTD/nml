@@ -105,11 +105,11 @@ layout_sprite_types = {
 
 
 class Action2LayoutSprite:
-    def __init__(self, feature, type, pos=None, extra_dicts=[]):
+    def __init__(self, feature, type, pos=None, extra_dicts=None):
         self.feature = feature
         self.type = type
         self.pos = pos
-        self.extra_dicts = extra_dicts
+        self.extra_dicts = extra_dicts or []
         self.params = {
             "sprite": {"value": None, "validator": self._validate_sprite},
             "recolour_mode": {"value": 0, "validator": self._validate_recolour_mode},
