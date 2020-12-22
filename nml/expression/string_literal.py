@@ -40,7 +40,7 @@ class StringLiteral(Expression):
         assert len(self.value) == size
         file.print_string(self.value, final_zero=False, force_ascii=True)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def type(self):

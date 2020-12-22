@@ -56,7 +56,7 @@ class Expression:
         """
         raise NotImplementedError("__str__ must be implemented in expression-subclass {!r}".format(type(self)))
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         """
         Reduce this expression to the simplest representation possible.
 
@@ -69,7 +69,7 @@ class Expression:
         """
         raise NotImplementedError("reduce must be implemented in expression-subclass {!r}".format(type(self)))
 
-    def reduce_constant(self, id_dicts=[]):
+    def reduce_constant(self, id_dicts=None):
         """
         Reduce this expression and make sure the result is a constant number.
 
@@ -158,7 +158,7 @@ class ConstantNumeric(Expression):
     def __str__(self):
         return str(self.value)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def supported_by_action2(self, raise_error):
@@ -188,7 +188,7 @@ class ConstantFloat(Expression):
     def __str__(self):
         return str(self.value)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def type(self):

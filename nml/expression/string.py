@@ -45,7 +45,7 @@ class String(Expression):
         ret += ")"
         return ret
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         params = [p.reduce(id_dicts) for p in self.params]
         return String([self.name] + params, self.pos)
 

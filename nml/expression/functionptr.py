@@ -49,7 +49,7 @@ class FunctionPtr(Expression):
     def __str__(self):
         assert False, "Function pointers should not appear inside expressions."
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         raise generic.ScriptError(
             "'{}' is a function and should be called using the function call syntax.".format(str(self.name)),
             self.name.pos,

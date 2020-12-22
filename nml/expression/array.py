@@ -31,7 +31,7 @@ class Array(Expression):
     def __str__(self):
         return "[" + ", ".join([str(expr) for expr in self.values]) + "]"
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return Array([val.reduce(id_dicts, unknown_id_fatal) for val in self.values], self.pos)
 
     def collect_references(self):

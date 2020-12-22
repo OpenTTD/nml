@@ -58,7 +58,7 @@ class Variable(Expression):
             ret = "({} % {})".format(ret, self.mod)
         return ret
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         num = self.num.reduce(id_dicts)
         shift = self.shift.reduce(id_dicts)
         mask = self.mask.reduce(id_dicts)

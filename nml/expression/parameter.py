@@ -36,7 +36,7 @@ class Parameter(Expression):
     def __str__(self):
         return "param[{}]".format(self.num)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         num = self.num.reduce(id_dicts)
         if num.type() != Type.INTEGER:
             raise generic.ScriptError("Parameter number must be an integer.", num.pos)
@@ -77,7 +77,7 @@ class OtherGRFParameter(Expression):
     def __str__(self):
         return "param[{}, {}]".format(self.grfid, self.num)
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         grfid = self.grfid.reduce(id_dicts)
         # Test validity
         parse_string_to_dword(grfid)

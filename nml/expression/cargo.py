@@ -41,7 +41,7 @@ class CargoExpression(Expression):
     def __str__(self):
         return "{0}({1}, {2})".format(self._fnname, self.cargolabel(), str(self.value))
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
 

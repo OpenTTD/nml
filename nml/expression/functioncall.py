@@ -46,7 +46,7 @@ class FunctionCall(Expression):
         ret = "{}({})".format(self.name, ", ".join(str(param) for param in self.params))
         return ret
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         # At this point we don't care about invalid arguments, they'll be handled later.
         identifier.ignore_all_invalid_ids = True
         params = [param.reduce(id_dicts, unknown_id_fatal=False) for param in self.params]
@@ -109,7 +109,7 @@ class SpecialCheck(Expression):
         self.varsize = varsize
         self.mask = mask
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def __str__(self):
@@ -127,7 +127,7 @@ class GRMOp(Expression):
         self.count = count
         self.to_string = to_string
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True):
+    def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
 
     def __str__(self):

@@ -59,8 +59,8 @@ class Identifier(Expression):
     def __str__(self):
         return self.value
 
-    def reduce(self, id_dicts=[], unknown_id_fatal=True, search_func_ptr=False):
-        for id_dict in id_dicts:
+    def reduce(self, id_dicts=None, unknown_id_fatal=True, search_func_ptr=False):
+        for id_dict in id_dicts or []:
             if isinstance(id_dict, tuple):
                 id_d, func = id_dict
             else:
