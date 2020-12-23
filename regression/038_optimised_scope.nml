@@ -1,0 +1,43 @@
+grf {
+    grfid: "NML\38";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+switch (FEAT_TRAINS, SELF, color_conditional, vehicle_is_flipped) {
+    1: return base_sprite_2cc + 16 * company_colour1 + company_colour2;
+    return base_sprite_2cc + 16 * company_colour2 + company_colour1;
+}
+
+switch (FEAT_TRAINS, SELF, color_unconditional, 0) {
+    1: return base_sprite_2cc + 16 * company_colour1 + company_colour2;
+    return base_sprite_2cc + 16 * company_colour2 + company_colour1;
+}
+
+switch (FEAT_TRAINS, SELF, color_indirect1, 1) {
+    1: return color_conditional;
+    return color_unconditional;
+}
+
+switch (FEAT_TRAINS, SELF, color_indirect0, 0) {
+    1: return color_conditional;
+    return color_unconditional;
+}
+
+switch (FEAT_TRAINS, SELF, color_indirect, 0) {
+    1: return color_indirect1;
+    return color_indirect0;
+}
+
+switch (FEAT_TRAINS, PARENT, color_override, vehicle_type_id) {
+    3000: return color_conditional;
+    return color_indirect;
+}
+
+item(FEAT_TRAINS, colored_train, 100) {
+    graphics {
+        colour_mapping: color_override;
+    }
+}
