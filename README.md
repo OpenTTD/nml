@@ -22,7 +22,6 @@ your option, any later version. For more information, see [LICENSE](https://gith
 5. [Reporting bugs and contributing](#5-reporting-bugs-and-contributing)
     * 5.1 [Reporting bugs](#51-reporting-bugs)
     * 5.2 [Making an NML release](#52-making-an-nml-release)
-6. [Credits](#6-credits)
 
 ## 1) Contact
 
@@ -148,19 +147,3 @@ Example: https://github.com/OpenTTD/nml/blob/master/docs/changelog.txt
 5. GitHub Actions will build the release, publish to PyPI (the Python package index) and also to the GitHub release.
 6. GitHub Actions will publish the Windows binary to the GitHub release.
 7. (Optional) announce the release in places such as https://www.tt-forums.net/viewforum.php?f=68
-
-
-## 6) Credits
-
-Active developers (in alphabetical order):
-
-- Christoph Elsenhans (frosch)
-- Ingo von Borstel (planetmaker)
-
-Inactive developers:
-
-- Albert Hofkamp (Alberth)
-- Jasper Reichardt (Hirundo)
-- Remko Bijker (Rubidium)
-- José Soler (Terkhen)
-- Thijs Marinussen (Yexo)
