@@ -839,9 +839,13 @@ constant_numbers = {
     "TTD_STR_CARGO_PLURAL_RUBBER"                           : 0x0023,
     "TTD_STR_CARGO_PLURAL_SUGAR"                            : 0x0024,
     "TTD_STR_CARGO_PLURAL_TOYS"                             : 0x0025,
+    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_PLURAL_SWEETS
     "TTD_STR_CARGO_PLURAL_CANDY"                            : 0x0026,
+    "TTD_STR_CARGO_PLURAL_SWEETS"                           : 0x0026,
     "TTD_STR_CARGO_PLURAL_COLA"                             : 0x0027,
+    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_PLURAL_CANDYFLOSS
     "TTD_STR_CARGO_PLURAL_COTTON_CANDY"                     : 0x0028,
+    "TTD_STR_CARGO_PLURAL_CANDYFLOSS"                       : 0x0028,
     "TTD_STR_CARGO_PLURAL_BUBBLES"                          : 0x0029,
     "TTD_STR_CARGO_PLURAL_TOFFEE"                           : 0x002A,
     "TTD_STR_CARGO_PLURAL_BATTERIES"                        : 0x002B,
@@ -871,9 +875,13 @@ constant_numbers = {
     "TTD_STR_CARGO_SINGULAR_RUBBER"                         : 0x0043,
     "TTD_STR_CARGO_SINGULAR_SUGAR"                          : 0x0044,
     "TTD_STR_CARGO_SINGULAR_TOY"                            : 0x0045,
+    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_SINGULAR_SWEETS
     "TTD_STR_CARGO_SINGULAR_CANDY"                          : 0x0046,
+    "TTD_STR_CARGO_SINGULAR_SWEETS"                         : 0x0046,
     "TTD_STR_CARGO_SINGULAR_COLA"                           : 0x0047,
+    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_SINGULAR_CANDYFLOSS
     "TTD_STR_CARGO_SINGULAR_COTTON_CANDY"                   : 0x0048,
+    "TTD_STR_CARGO_SINGULAR_CANDYFLOSS"                     : 0x0048,
     "TTD_STR_CARGO_SINGULAR_BUBBLE"                         : 0x0049,
     "TTD_STR_CARGO_SINGULAR_TOFFEE"                         : 0x004A,
     "TTD_STR_CARGO_SINGULAR_BATTERY"                        : 0x004B,
