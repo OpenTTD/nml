@@ -148,6 +148,7 @@ varact2vars_vehicles = {
     'vehicle_is_offered'               : {'var': 0x48, 'start':  2, 'size':  1},
     'build_year'                       : {'var': 0x49, 'start':  0, 'size': 32},
     'vehicle_is_potentially_powered'   : {'var': 0x4A, 'start':  8, 'size':  1},
+    'tile_has_catenary'                : {'var': 0x4A, 'start':  9, 'size':  1},
     'date_of_last_service'             : {'var': 0x4B, 'start':  0, 'size': 32},
     'position_in_articulated_veh'          : {'var': 0x4D, 'start':  0, 'size':  8},
     'position_in_articulated_veh_from_end' : {'var': 0x4D, 'start':  8, 'size':  8},
