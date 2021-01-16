@@ -457,25 +457,24 @@ def builtin_str2number(name, args, pos):
 
 
 @builtins("cargotype", "railtype", "roadtype", "tramtype")
-def builtin_resolve_typelabel(name, args, pos):
+def builtin_resolve_typelabel(name, args, pos, table_name=None):
     """
     {cargo,rail,road,tram}type(label) builtin functions.
 
     Also used from some Action2Var variables to resolve cargo labels.
     """
     tracktype_funcs = {
+        "cargotype": global_constants.cargo_numbers,
         "railtype": global_constants.railtype_table,
         "roadtype": global_constants.roadtype_table,
         "tramtype": global_constants.tramtype_table,
     }
-    if name in tracktype_funcs:
-        table = tracktype_funcs[name]
+
+    if not table_name:
         table_name = name
-    else:
-        # Resolve cargo ID for all other names: either `cargotype(label)`
-        #  or action2var_variables such as `this_month_production(label)`.
-        table = global_constants.cargo_numbers
-        table_name = "cargo"
+    table = tracktype_funcs[table_name]
+    if table_name == "cargotype":
+        table_name = "cargo"  # NML syntax uses "cargotable" and "railtypetable"
 
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
