@@ -1224,6 +1224,7 @@ config_flags = {
     "dynamic_engines"         : 0x78,
     "variable_runningcosts"   : 0x7E,
     "256_persistent_registers": 0x80,
+    "inflation"               : 0x81,
 }
 # fmt: on
 
