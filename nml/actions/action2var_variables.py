@@ -231,6 +231,15 @@ def signed_byte_parameter(name, args, pos, info):
     ret = nmlop.AND(args[0], 0xFF, pos).reduce()
     return (ret, [])
 
+def vehicle_railtype(name, args, pos, info):
+    return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="railtype"), [])
+
+def vehicle_roadtype(name, args, pos, info):
+    return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="roadtype"), [])
+
+def vehicle_tramtype(name, args, pos, info):
+    return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="tramtype"), [])
+
 varact2vars60x_vehicles = {
     'count_veh_id'        : {'var': 0x60, 'start':  0, 'size': 8},
     'other_veh_curv_info' : {'var': 0x62, 'start':  0, 'size': 4, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
@@ -238,6 +247,25 @@ varact2vars60x_vehicles = {
     'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
     'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
     'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
+}
+
+varact2vars60x_trains = {
+    **varact2vars60x_vehicles,
+    # Var 0x63 bit 0 is only useful when testing multiple bits at once. On its own it is already covered by railtype_available().
+    'tile_supports_railtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function':vehicle_railtype},
+    'tile_powers_railtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function':vehicle_railtype},
+    'tile_is_railtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function':vehicle_railtype},
+}
+
+varact2vars60x_roadvehs = {
+    **varact2vars60x_vehicles,
+    # Var 0x63 bit 0 is only useful when testing multiple bits at once. On its own it is already covered by road/tramtype_available().
+    'tile_supports_roadtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function':vehicle_roadtype},
+    'tile_supports_tramtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function':vehicle_tramtype},
+    'tile_powers_roadtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function':vehicle_roadtype},
+    'tile_powers_tramtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function':vehicle_tramtype},
+    'tile_is_roadtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function':vehicle_roadtype},
+    'tile_is_tramtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function':vehicle_tramtype},
 }
 
 #
@@ -752,9 +780,9 @@ varact2vars_towns = {
 
 
 varact2vars[0x00] = varact2vars_trains
-varact2vars60x[0x00] = varact2vars60x_vehicles
+varact2vars60x[0x00] = varact2vars60x_trains
 varact2vars[0x01] = varact2vars_roadvehs
-varact2vars60x[0x01] = varact2vars60x_vehicles
+varact2vars60x[0x01] = varact2vars60x_roadvehs
 varact2vars[0x02] = varact2vars_ships
 varact2vars60x[0x02] = varact2vars60x_vehicles
 varact2vars[0x03] = varact2vars_aircraft
