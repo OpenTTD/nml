@@ -1,3 +1,10 @@
+grf {
+    grfid: "NML\7";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
 
 // named town-name
 town_names(A) {
@@ -22,6 +29,45 @@ town_names(1) {
     }
 }
 
+// complex construct
+town_names(prefixes) {
+    {
+        text("1", 1),
+        text("2", 1),
+        text("3", 1),
+        text("4", 1),
+        text("5", 1),
+    }
+}
+
+town_names(bodies) {
+    {
+        text("A", 1),
+        text("B", 1),
+        text("C", 1),
+        text("D", 1),
+        text("E", 1),
+    }
+}
+
+town_names(simple) {
+    {
+      town_names(bodies, 1),
+    }
+}
+
+town_names(complex) {
+    {
+        town_names(prefixes, 1),
+    }
+    {
+        text("-", 1),
+    }
+    {
+        town_names(bodies, 1),
+    }
+}
+
 // main
 town_names {
     styles: string(STR_STATIONS);
@@ -29,7 +75,9 @@ town_names {
     {
       text("MainCapital", 10),
       town_names(A,  5),
-      town_names(1,  1)
+      town_names(1,  1),
+      town_names(simple, 1),
+      town_names(complex, 8),
     }
 }
 
