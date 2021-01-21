@@ -247,7 +247,8 @@ class TownNamesPart:
         assert len(self.pieces) <= 255
         total = sum(piece.probability.value for piece in self.pieces)
 
-        self.startbit = startbit
+        if self.startbit is None or self.startbit < startbit:
+            self.startbit = startbit
         if self.num_bits is None:
             n = 1
             while total > (1 << n):

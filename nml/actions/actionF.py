@@ -86,11 +86,11 @@ class ActionF(base_action.BaseAction):
     @ivar parts: Parts of the names.
     @type parts: C{list} of L{TownNamesPart}
 
-    @ivar free_bit: First available bit above the bits used by this block.
-    @type free_bit: C{None} if unset, else C{int}
-
     @ivar pos: Position information of the 'town_names' block.
     @type pos: L{Position}
+
+    @ivar deps: List of ID numbers of action F dependant on this node.
+    @type deps: C{list} of C{int}
     """
 
     def __init__(self, name, id_number, style_name, parts, pos):
@@ -99,14 +99,16 @@ class ActionF(base_action.BaseAction):
         self.style_name = style_name
         self.style_names = []
         self.parts = parts
-        self.free_bit = None
         self.pos = pos
+        self.deps = []
 
     def prepare_output(self, sprite_num):
         # Resolve references to earlier townname actions
-        blocks = set()
+        referenced_blocks = []
         for part in self.parts:
-            blocks.update(part.resolve_townname_id())
+            part_blocks = part.resolve_townname_id()
+            if part_blocks:
+                referenced_blocks.append(part_blocks)
 
         # Allocate a number for this action F.
         if self.name is None or isinstance(self.name, expression.Identifier):
@@ -120,21 +122,38 @@ class ActionF(base_action.BaseAction):
         else:
             numbered_numbers.add(self.id_number)  # Add number to the set of 'safe' numbers.
 
-        # Ask existing action F for the lowest available bit.
-        if len(town_names_blocks) == 0:
-            startbit = 0
-        else:
-            startbit = max(block.free_bit for block in town_names_blocks.values())
-
         town_names_blocks[self.id_number] = self  # Add self to the available blocks.
 
-        # Allocate random bits to all parts.
-        for part in self.parts:
+        def assign_bits(part, startbit):
             num_bits = part.assign_bits(startbit)
             # Prevent overlap if really needed
             if len(part.pieces) > 1:
                 startbit += num_bits
-        self.free_bit = startbit
+            return startbit
+
+        def update_block(block, startbit):
+            for part in block.parts:
+                startbit = assign_bits(part, startbit)
+                # Update dependant Action F
+                for dep in block.deps:
+                    update_block(town_names_blocks[dep], startbit)
+            return startbit
+
+        # Determine lowest available bit, and prevent overlap when needed.
+        # referenced_blocks is a list of sets, each set contains references that can share the same bits,
+        # but different sets can't share bits.
+        startbit = 0
+        for part_blocks in referenced_blocks:
+            freebit = startbit
+            for part_block in part_blocks:
+                block = town_names_blocks[part_block]
+                startbit = max(startbit, update_block(block, freebit))
+                if self.id_number not in block.deps:
+                    block.deps.append(self.id_number)
+
+        # Allocate random bits to all parts.
+        for part in self.parts:
+            startbit = assign_bits(part, startbit)
 
         if startbit > 32:
             raise generic.ScriptError(
