@@ -177,8 +177,16 @@ def get_string_action4s(feature, string_range, string, id=None):
             if (feature, string) in used_strings[string_range]:
                 id_val = used_strings[string_range][(feature, string)]
             else:
-                id_val = string_ranges[string_range]["ids"].pop()
-                used_strings[string_range][(feature, string)] = id_val
+                try:
+                    id_val = string_ranges[string_range]["ids"].pop()
+                    used_strings[string_range][(feature, string)] = id_val
+                except IndexError:
+                    raise generic.ScriptError(
+                        "Unable to allocate ID for string, no more free IDs available (maximum is {:d})".format(
+                            string_ranges[string_range]["total"]
+                        ),
+                        string.pos,
+                    )
         else:
             # ID must be supplied
             assert id is not None
