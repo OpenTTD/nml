@@ -48,7 +48,7 @@ class Action2Random(action2.Action2):
         file.newline()
 
         for choice in self.choices:
-            for i in range(0, choice.prob):
+            for _ in range(0, choice.prob):
                 file.print_wordx(choice.result)
             file.comment(choice.comment)
         file.end_sprite()

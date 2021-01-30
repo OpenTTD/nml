@@ -158,7 +158,7 @@ def get_production_actions(produce):
             result_list.append(result.value)
     else:
         version = 1
-        for i, param in enumerate(produce.param_list):
+        for param in produce.param_list:
             result_list.append(resolve_prodcb_register(param, varact2parser))
 
     if len(act6.modifications) > 0:

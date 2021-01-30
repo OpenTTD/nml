@@ -67,7 +67,7 @@ class Action2Layout(action2.Action2):
         file.newline()
         if len(self.sprite_list) == 0:
             file.print_dwordx(0)  # sprite number 0 == no sprite
-            for i in range(0, 5):
+            for _ in range(0, 5):
                 file.print_byte(0)  # empty bounding box. Note that number of zeros is 5, not 6
         else:
             for sprite in self.sprite_list:
@@ -400,7 +400,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     # Allocate registers
     param_map = {}
     param_registers = []
-    for i, param in enumerate(spritelayout.param_list):
+    for param in spritelayout.param_list:
         reg = action2var.VarAction2CallParam(param.value)
         param_registers.append(reg)
         param_map[param.value] = reg

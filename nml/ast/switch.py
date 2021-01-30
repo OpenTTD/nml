@@ -67,7 +67,7 @@ class Switch(switch_base_class):
         # Allocate registers
         param_map = {}
         param_registers = []
-        for i, param in enumerate(self.param_list):
+        for param in self.param_list:
             reg = action2var.VarAction2CallParam(param.value)
             param_registers.append(reg)
             param_map[param.value] = reg

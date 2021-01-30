@@ -462,7 +462,7 @@ def get_property_info_list(feature, name):
         if not isinstance(prop_info_list, list):
             prop_info_list = [prop_info_list]
     elif isinstance(name, expression.ConstantNumeric):
-        for prop_name, prop_info_list in properties[feature].items():
+        for prop_info_list in properties[feature].values():
             if not isinstance(prop_info_list, list):
                 prop_info_list = [prop_info_list]
             # Only non-compound properties may be set by number
