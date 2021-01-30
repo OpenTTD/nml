@@ -172,7 +172,7 @@ properties = 0x14 * [None]
 #
 
 
-def two_byte_property(low_prop, high_prop, low_prop_info={}, high_prop_info={}):
+def two_byte_property(low_prop, high_prop, low_prop_info=None, high_prop_info=None):
     """
     Decode a two byte value into two action 0 properties.
 
@@ -192,13 +192,13 @@ def two_byte_property(low_prop, high_prop, low_prop_info={}, high_prop_info={}):
     @rtype:  C{list} of C{dict}
     """
     low_byte_info = {
-        **low_prop_info,
+        **(low_prop_info or {}),
         "num": low_prop,
         "size": 1,
         "value_function": lambda value: nmlop.AND(value, 0xFF).reduce(),
     }
     high_byte_info = {
-        **high_prop_info,
+        **(high_prop_info or {}),
         "num": high_prop,
         "size": 1,
         "value_function": lambda value: nmlop.SHIFT_RIGHT(value, 8).reduce(),

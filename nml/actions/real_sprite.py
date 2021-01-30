@@ -575,10 +575,10 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
 sprite_template_map = {}
 
 
-def parse_sprite_list(sprite_list, default_file, default_mask_file, poslist, parameters={}):
+def parse_sprite_list(sprite_list, default_file, default_mask_file, poslist, parameters=None):
     real_sprite_list = []
     for sprite in sprite_list:
-        real_sprite_list.extend(sprite.expand(default_file, default_mask_file, poslist, parameters))
+        real_sprite_list.extend(sprite.expand(default_file, default_mask_file, poslist, parameters or {}))
     return real_sprite_list
 
 
