@@ -531,7 +531,7 @@ def builtin_cargoexpr(name, args, pos):
     elif name == "accept_cargo":
         return AcceptCargo(cargotype, args[1:], pos)
     else:
-        assert False
+        raise AssertionError()
 
 
 @builtins("acos", "asin", "atan", "cos", "sin", "tan")

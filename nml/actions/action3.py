@@ -326,7 +326,7 @@ def parse_graphics_block_single_id(
                         assert livery_override is None
                         livery_override = graphics.result.value
                     else:
-                        assert False
+                        raise AssertionError()
                 continue
 
         # Not a callback, so it must be a 'normal' cargo (vehicles/stations only)

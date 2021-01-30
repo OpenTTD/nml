@@ -54,7 +54,7 @@ def feature_name(feature):
     for name, num in feature_ids.items():
         if num == feature:
             return name
-    assert False, "Invalid feature number"
+    raise AssertionError("Invalid feature number")
 
 
 def parse_feature(expr):

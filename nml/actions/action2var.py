@@ -693,7 +693,7 @@ class Varaction2Parser:
 
         else:
             expr.supported_by_action2(True)
-            assert False  # supported_by_action2 should have raised the correct error already
+            raise AssertionError("supported_by_action2 should have raised the correct error already")
 
 
 def parse_var(name, info, pos):

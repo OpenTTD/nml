@@ -44,10 +44,10 @@ class FunctionPtr(Expression):
         self.extra_args = extra_args
 
     def debug_print(self, indentation):
-        assert False, "Function pointers should not appear inside expressions."
+        raise AssertionError("Function pointers should not appear inside expressions.")
 
     def __str__(self):
-        assert False, "Function pointers should not appear inside expressions."
+        raise AssertionError("Function pointers should not appear inside expressions.")
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         raise generic.ScriptError(

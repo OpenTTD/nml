@@ -46,7 +46,7 @@ class Action2Production(action2.Action2):
             self.sub_in = sub_in
             self.add_out = add_out
         else:
-            assert False
+            raise AssertionError()
         self.again = again
 
     def prepare_output(self, sprite_num):

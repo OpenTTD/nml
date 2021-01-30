@@ -471,7 +471,7 @@ def get_property_info_list(feature, name):
         else:
             raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
     else:
-        assert False
+        raise AssertionError()
 
     for prop_info in prop_info_list:
         if "replaced_by" in prop_info:
