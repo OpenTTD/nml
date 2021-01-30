@@ -1057,7 +1057,7 @@ def industry_cargo_types(value):
         elif isinstance(item, AcceptCargo):
             check_accept(item)
         else:
-            assert False
+            raise AssertionError()
 
     if len(input_cargos) > 16:
         raise generic.ScriptError(

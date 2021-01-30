@@ -205,7 +205,7 @@ class SpriteOutputBase(OutputBase):
         elif size == 4:
             self.print_dwordx(value)
         else:
-            assert False
+            raise AssertionError()
 
     def print_bytex(self, byte, pretty_print=None):
         """

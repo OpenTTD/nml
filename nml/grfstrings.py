@@ -1021,7 +1021,7 @@ class Language:
             if (val >= 3 and val <= 10) or (val >= 13 and val <= 19):
                 return 3
             return 4
-        assert False, "Unknown plural type"
+        raise AssertionError("Unknown plural type")
 
     def get_string(self, string, lang_id):
         """
