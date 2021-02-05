@@ -57,7 +57,7 @@ setup(
     ext_modules=[Extension("nml_lz77", ["nml/_lz77.c"], optional=True)],
     python_requires=">=3.5",
     install_requires=[
-        "Pillow>=3.4,<8.1.0",
+        "Pillow>=3.4",
         "ply",
     ],
     cmdclass={"build_py": NMLBuildPy},
