@@ -301,7 +301,11 @@ class SpriteEncoder:
             if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
                 pos = generic.build_position(sprite_info.poslist)
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), pos)
-            sprite = im.crop((x, y, x + size_x, y + size_y))
+            try:
+                sprite = im.crop((x, y, x + size_x, y + size_y))
+            except OSError:
+                pos = generic.build_position(sprite_info.poslist)
+                raise generic.ImageError("Failed to crop 32bpp {} image".format(im.format), filename_32bpp.value, pos)
             rgb_sprite_data = sprite.tobytes()
 
             if (info_byte & INFO_ALPHA) != 0:
@@ -320,8 +324,13 @@ class SpriteEncoder:
             if mask_x < 0 or mask_y < 0 or mask_x + size_x > im_width or mask_y + size_y > im_height:
                 pos = generic.build_position(sprite_info.poslist)
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), pos)
-            mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
-
+            try:
+                mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
+            except OSError:
+                pos = generic.build_position(sprite_info.poslist)
+                raise generic.ImageError(
+                    "Failed to crop 8bpp {} image".format(mask_im.format), filename_8bpp.value, pos
+                )
             mask_sprite_data = self.palconvert(mask_sprite.tobytes(), im_mask_pal)
 
             # Check for white pixels; those that cause "artefacts" when shading
