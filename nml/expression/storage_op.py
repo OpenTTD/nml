@@ -19,10 +19,10 @@ from .base_expression import ConstantNumeric, Expression, Type
 from .parameter import parse_string_to_dword
 
 storage_op_info = {
-    "STORE_PERM": {"store": True, "perm": True, "grfid": False, "max": 0xFF},
-    "STORE_TEMP": {"store": True, "perm": False, "grfid": False, "max": 0x10F},
-    "LOAD_PERM": {"store": False, "perm": True, "grfid": True, "max": 0xFF},
-    "LOAD_TEMP": {"store": False, "perm": False, "grfid": False, "max": 0xFF},
+    "STORE_PERM": {"store": True, "perm": True, "grfid": False, "max": 0xFF, "reserved": ()},
+    "STORE_TEMP": {"store": True, "perm": False, "grfid": False, "max": 0x10F, "reserved": range(0x80, 0xFF + 1)},
+    "LOAD_PERM": {"store": False, "perm": True, "grfid": True, "max": 0xFF, "reserved": ()},
+    "LOAD_TEMP": {"store": False, "perm": False, "grfid": False, "max": 0xFF, "reserved": range(0x80, 0xFF + 1)},
 }
 
 
@@ -111,6 +111,10 @@ class StorageOp(Expression):
             raise generic.ScriptError("Register to access must be an integer.", register.pos)
         if isinstance(register, ConstantNumeric) and register.value > self.info["max"]:
             raise generic.ScriptError("Maximum register for {} is {:d}".format(self.name, self.info["max"]), self.pos)
+        if isinstance(register, ConstantNumeric) and register.value in self.info["reserved"]:
+            raise generic.ScriptError(
+                "Temporary registers from 128 to 255 are reserved for NML's internal calculations.", self.pos
+            )
         args.append(register)
 
         if self.grfid is not None:
