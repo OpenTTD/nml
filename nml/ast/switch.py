@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, global_constants
-from nml.actions import action2, action2random, action2var, action2var_variables
+from nml.actions import action2, action2random, action2var
 from nml.ast import base_statement, general
 
 var_ranges = {"SELF": 0x89, "PARENT": 0x8A}
@@ -62,7 +62,9 @@ class Switch(switch_base_class):
             seen_names.add(param.value)
 
         feature = next(iter(self.feature_set))
-        var_feature = action2var.get_feature(self)  # Feature of the accessed variables
+        var_scope = action2var.get_scope(feature, self.var_range)
+        if var_scope is None:
+            raise generic.ScriptError("Requested scope not available for this feature.", self.pos)
 
         # Allocate registers
         param_map = {}
@@ -74,8 +76,8 @@ class Switch(switch_base_class):
         param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))
         self.register_map[feature] = param_registers
 
-        self.expr = action2var.reduce_varaction2_expr(self.expr, var_feature, [param_map])
-        self.body.reduce_expressions(var_feature, [param_map])
+        self.expr = action2var.reduce_varaction2_expr(self.expr, var_scope, [param_map])
+        self.body.reduce_expressions(var_scope, [param_map])
         switch_base_class.pre_process(self)
 
     def optimise(self):
@@ -168,7 +170,7 @@ class SwitchBody:
         self.ranges = ranges
         self.default = default
 
-    def reduce_expressions(self, var_feature, extra_dicts=None):
+    def reduce_expressions(self, var_scope, extra_dicts=None):
         if extra_dicts is None:
             extra_dicts = []
         for r in self.ranges[:]:
@@ -180,10 +182,10 @@ class SwitchBody:
                 self.default = r.result
                 self.ranges.remove(r)
             else:
-                r.reduce_expressions(var_feature, extra_dicts)
+                r.reduce_expressions(var_scope, extra_dicts)
         if self.default is not None:
             if self.default.value is not None:
-                self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_feature, extra_dicts)
+                self.default.value = action2var.reduce_varaction2_expr(self.default.value, var_scope, extra_dicts)
             if len(self.ranges) != 0:
                 if any(self.default.value != r.result.value for r in self.ranges):
                     return
@@ -211,13 +213,13 @@ class SwitchRange:
         self.result = result
         self.unit = unit
 
-    def reduce_expressions(self, var_feature, extra_dicts=None):
+    def reduce_expressions(self, var_scope, extra_dicts=None):
         if extra_dicts is None:
             extra_dicts = []
         self.min = self.min.reduce(global_constants.const_list)
         self.max = self.max.reduce(global_constants.const_list)
         if self.result.value is not None:
-            self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature, extra_dicts)
+            self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_scope, extra_dicts)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Min:")
@@ -336,12 +338,12 @@ class RandomSwitch(switch_base_class):
 
     def pre_process(self):
         feature = next(iter(self.feature_set))
-        # var_feature is really weird for type=BACKWARD/FORWARD.
+        # var_scope is really weird for type=BACKWARD/FORWARD.
         # Expressions in cases will still refer to the origin vehicle.
-        var_feature = action2var_variables.varact2parent_scope[feature] if self.type.value == "PARENT" else feature
+        var_scope = action2var.get_scope(feature, 0x8A if self.type.value == "PARENT" else 0x89)
 
         for choice in self.choices:
-            choice.reduce_expressions(var_feature)
+            choice.reduce_expressions(var_scope)
 
         for dep_list in (self.dependent, self.independent):
             for i, dep in enumerate(dep_list[:]):
@@ -455,11 +457,11 @@ class RandomChoice:
             )
         self.result = result
 
-    def reduce_expressions(self, var_feature):
+    def reduce_expressions(self, var_scope):
         self.probability = self.probability.reduce_constant(global_constants.const_list)
         if self.probability.value <= 0:
             raise generic.ScriptError("Random probability must be higher than 0", self.probability.pos)
-        self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
+        self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_scope)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Probability:")
