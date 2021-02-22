@@ -395,7 +395,7 @@ def builtin_grf_status(name, args, pos):
     return SpecialCheck(op, 0x88, results, parse_string_to_dword(grfid), string, varsize, mask, args[0].pos)
 
 
-@builtin
+@builtins("visual_effect", "visual_effect_and_powered")
 def builtin_visual_effect_and_powered(name, args, pos):
     """
     Builtin function, used in two forms:
