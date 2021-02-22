@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, global_constants, nmlop
 from nml.actions import action2, action2real, action2var_variables, action4, action6, actionD
-from nml.ast import general, switch
+from nml.ast import switch
 
 
 class Action2Var(action2.Action2):
@@ -438,9 +438,9 @@ class Varaction2Parser:
 
     def preprocess_storageop(self, expr):
         assert isinstance(expr, expression.StorageOp)
-        if expr.info["perm"] and self.var_scope not in (0x08, 0x0A, 0x0D):
+        if expr.info["perm"] and not self.var_scope.has_persistent_storage:
             raise generic.ScriptError(
-                "Persistent storage is not supported for feature '{}'".format(general.feature_name(self.var_scope)),
+                "Persistent storage is not supported for feature '{}'".format(self.var_scope.name),
                 expr.pos,
             )
 
@@ -451,7 +451,7 @@ class Varaction2Parser:
             var_num = 0x7C if expr.info["perm"] else 0x7D
             ret = expression.Variable(expression.ConstantNumeric(var_num), param=expr.register, pos=expr.pos)
 
-        if expr.info["perm"] and self.var_scope == 0x08:
+        if expr.info["perm"] and self.var_scope is action2var_variables.scope_towns:
             # store grfid in register 0x100 for town persistent storage
             grfid = expression.ConstantNumeric(
                 0xFFFFFFFF if expr.grfid is None else expression.parse_string_to_dword(expr.grfid)
@@ -1048,16 +1048,13 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
 
 
 def get_scope(action_feature, var_range=0x89):
-    if var_range == 0x8A:
-        return action2var_variables.varact2parent_scope[action_feature]
-    else:
-        return action_feature
+    return action2var_variables.varact2features[action_feature].get_scope(var_range)
 
 
 def reduce_varaction2_expr(expr, var_scope, extra_dicts=None):
     # 'normal' and 60+x variables to use
-    vars_normal = action2var_variables.varact2vars[var_scope]
-    vars_60x = action2var_variables.varact2vars60x[var_scope]
+    vars_normal = var_scope.vars_normal
+    vars_60x = var_scope.vars_60x
 
     def func60x(name, value, pos):
         return expression.FunctionPtr(expression.Identifier(name, pos), parse_60x_var, value)

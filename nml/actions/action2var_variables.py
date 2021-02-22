@@ -15,12 +15,6 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, nmlop
 
-# Use feature 0x14 for towns (accessible via station/house/industry parent scope)
-varact2vars = 0x15 * [{}]
-varact2vars60x = 0x15 * [{}]
-# feature number:      0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13
-varact2parent_scope = [0x00, 0x01, 0x02, 0x03, 0x14, None, 0x14, 0x14, None, 0x0A, 0x14, None, None, None, None, 0x14, None, None, None, None]
-
 def default_60xvar(name, args, pos, info):
     """
     Function to convert arguments into a variable parameter.
@@ -779,30 +773,64 @@ varact2vars_towns = {
 }
 
 
-varact2vars[0x00] = varact2vars_trains
-varact2vars60x[0x00] = varact2vars60x_trains
-varact2vars[0x01] = varact2vars_roadvehs
-varact2vars60x[0x01] = varact2vars60x_roadvehs
-varact2vars[0x02] = varact2vars_ships
-varact2vars60x[0x02] = varact2vars60x_vehicles
-varact2vars[0x03] = varact2vars_aircraft
-varact2vars60x[0x03] = varact2vars60x_vehicles
-varact2vars[0x04] = varact2vars_stations
-varact2vars60x[0x04] = varact2vars60x_stations
-varact2vars[0x05] = varact2vars_canals
-varact2vars[0x07] = varact2vars_houses
-varact2vars60x[0x07] = varact2vars60x_houses
-varact2vars[0x09] = varact2vars_industrytiles
-varact2vars60x[0x09] = varact2vars60x_industrytiles
-varact2vars[0x0A] = varact2vars_industries
-varact2vars60x[0x0A] = varact2vars60x_industries
-varact2vars[0x0D] = varact2vars_airports
-varact2vars60x[0x0D] = varact2vars60x_airports
-varact2vars[0x0F] = varact2vars_objects
-varact2vars60x[0x0F] = varact2vars60x_objects
-varact2vars[0x10] = varact2vars_railtype
-varact2vars[0x11] = varact2vars_airporttiles
-varact2vars60x[0x11] = varact2vars60x_airporttiles
-varact2vars[0x12] = varact2vars_roadtype
-varact2vars[0x13] = varact2vars_tramtype
-varact2vars[0x14] = varact2vars_towns
+class VarAct2Scope:
+    def __init__(self, name, vars_normal, vars_60x, has_persistent_storage=False):
+        self.name = name
+        self.vars_normal = vars_normal
+        self.vars_60x = vars_60x
+        self.has_persistent_storage = has_persistent_storage
+
+
+class VarAct2Feature:
+    def __init__(self, self_scope, parent_scope):
+        self.self_scope = self_scope
+        self.parent_scope = parent_scope
+
+    def get_scope(self, var_range):
+        assert var_range in (0x89, 0x8A)
+        return self.self_scope if var_range == 0x89 else self.parent_scope
+
+
+scope_towns = VarAct2Scope("Towns", varact2vars_towns, {}, has_persistent_storage=True)
+scope_trains = VarAct2Scope("Trains", varact2vars_trains, varact2vars60x_trains)
+scope_roadvehs = VarAct2Scope("RoadVehs", varact2vars_roadvehs, varact2vars60x_roadvehs)
+scope_ships = VarAct2Scope("Ships", varact2vars_ships, varact2vars60x_vehicles)
+scope_aircraft = VarAct2Scope("Aircraft", varact2vars_aircraft, varact2vars60x_vehicles)
+scope_stations = VarAct2Scope("Stations", varact2vars_stations, varact2vars60x_stations)
+scope_canals = VarAct2Scope("Canals", varact2vars_canals, {})
+scope_houses = VarAct2Scope("Houses", varact2vars_houses, varact2vars60x_houses)
+scope_industrytiles = VarAct2Scope("IndustryTiles", varact2vars_industrytiles, varact2vars60x_industrytiles)
+scope_industries = VarAct2Scope(
+    "Industries", varact2vars_industries, varact2vars60x_industries, has_persistent_storage=True
+)
+scope_cargos = VarAct2Scope("Cargos", {}, {})
+scope_soundeffects = VarAct2Scope("SoundEffects", {}, {})
+scope_airports = VarAct2Scope("Airports", varact2vars_airports, varact2vars60x_airports, has_persistent_storage=True)
+scope_objects = VarAct2Scope("Objects", varact2vars_objects, varact2vars60x_objects)
+scope_railtypes = VarAct2Scope("RailTypes", varact2vars_railtype, {})
+scope_airporttiles = VarAct2Scope("AirportTiles", varact2vars_airporttiles, varact2vars60x_airporttiles)
+scope_roadtypes = VarAct2Scope("RoadTypes", varact2vars_roadtype, {})
+scope_tramtypes = VarAct2Scope("TramTypes", varact2vars_tramtype, {})
+
+varact2features = [
+    VarAct2Feature(scope_trains, scope_trains),
+    VarAct2Feature(scope_roadvehs, scope_roadvehs),
+    VarAct2Feature(scope_ships, scope_ships),
+    VarAct2Feature(scope_aircraft, scope_aircraft),
+    VarAct2Feature(scope_stations, scope_towns),
+    VarAct2Feature(scope_canals, None),
+    None,  # bridges
+    VarAct2Feature(scope_houses, scope_towns),
+    None,  # globalvars
+    VarAct2Feature(scope_industrytiles, scope_industries),
+    VarAct2Feature(scope_industries, scope_towns),
+    VarAct2Feature(scope_cargos, None),
+    VarAct2Feature(scope_soundeffects, None),
+    VarAct2Feature(scope_airports, None),
+    None,  # signals
+    VarAct2Feature(scope_objects, scope_towns),
+    VarAct2Feature(scope_railtypes, None),
+    VarAct2Feature(scope_airporttiles, None),
+    VarAct2Feature(scope_roadtypes, None),
+    VarAct2Feature(scope_tramtypes, None),
+]
