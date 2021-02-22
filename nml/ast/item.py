@@ -233,14 +233,16 @@ class GraphicsBlock(graphics_base_class):
 
     def pre_process(self):
         for graphics_def in self.graphics_list:
-            graphics_def.reduce_expressions(item_feature)
+            graphics_def.reduce_expressions(action2var.get_scope(item_feature))
         if self.default_graphics is not None:
             if self.default_graphics.value is None:
                 raise generic.ScriptError(
                     "Returning the computed value is not possible in a graphics-block, as there is no computed value.",
                     self.pos,
                 )
-            self.default_graphics.value = action2var.reduce_varaction2_expr(self.default_graphics.value, item_feature)
+            self.default_graphics.value = action2var.reduce_varaction2_expr(
+                self.default_graphics.value, action2var.get_scope(item_feature)
+            )
 
         # initialize base class and pre_process it as well (in that order)
         self.initialize(None, item_feature)
@@ -283,14 +285,14 @@ class GraphicsDefinition:
         self.result = result
         self.unit = unit
 
-    def reduce_expressions(self, var_feature):
+    def reduce_expressions(self, var_scope):
         # Do not reduce cargo-id (yet)
         if self.result.value is None:
             raise generic.ScriptError(
                 "Returning the computed value is not possible in a graphics-block, as there is no computed value.",
                 self.result.pos,
             )
-        self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_feature)
+        self.result.value = action2var.reduce_varaction2_expr(self.result.value, var_scope)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Cargo ID:")

@@ -338,9 +338,9 @@ class Modification:
 
 
 class Varaction2Parser:
-    def __init__(self, action_feature, var_feature):
+    def __init__(self, action_feature, var_scope):
         self.action_feature = action_feature
-        self.var_feature = var_feature  # Depends on action_feature and var_range
+        self.var_scope = var_scope  # Depends on action_feature and var_range
         self.extra_actions = []
         self.mods = []
         self.var_list = []
@@ -438,9 +438,9 @@ class Varaction2Parser:
 
     def preprocess_storageop(self, expr):
         assert isinstance(expr, expression.StorageOp)
-        if expr.info["perm"] and self.var_feature not in (0x08, 0x0A, 0x0D):
+        if expr.info["perm"] and self.var_scope not in (0x08, 0x0A, 0x0D):
             raise generic.ScriptError(
-                "Persistent storage is not supported for feature '{}'".format(general.feature_name(self.var_feature)),
+                "Persistent storage is not supported for feature '{}'".format(general.feature_name(self.var_scope)),
                 expr.pos,
             )
 
@@ -451,7 +451,7 @@ class Varaction2Parser:
             var_num = 0x7C if expr.info["perm"] else 0x7D
             ret = expression.Variable(expression.ConstantNumeric(var_num), param=expr.register, pos=expr.pos)
 
-        if expr.info["perm"] and self.var_feature == 0x08:
+        if expr.info["perm"] and self.var_scope == 0x08:
             # store grfid in register 0x100 for town persistent storage
             grfid = expression.ConstantNumeric(
                 0xFFFFFFFF if expr.grfid is None else expression.parse_string_to_dword(expr.grfid)
@@ -609,7 +609,7 @@ class Varaction2Parser:
                 tmp_vars.append((store_tmp, VarAction2StoreCallParam(target.register_map[self.action_feature][i])))
             else:
                 store_tmp = VarAction2StoreCallParam(target.register_map[self.action_feature][i])
-            self.parse_expr(reduce_varaction2_expr(param, self.var_feature))
+            self.parse_expr(reduce_varaction2_expr(param, self.var_scope))
             self.var_list.append(nmlop.STO_TMP)
             self.var_list.append(store_tmp)
             self.var_list_size += store_tmp.get_size() + 1  # Add 1 for operator
@@ -801,9 +801,7 @@ def create_return_action(expr, feature, name, var_range):
                 - Reference to the created varaction2
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
-    varact2parser = Varaction2Parser(
-        feature, feature if var_range == 0x89 else action2var_variables.varact2parent_scope[feature]
-    )
+    varact2parser = Varaction2Parser(feature, get_scope(feature, var_range))
     varact2parser.parse_expr(expr)
 
     action_list = varact2parser.extra_actions
@@ -872,7 +870,7 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
         action_list.append(act2)
 
         # Create varaction2, to choose between returning graphics and 0, depending on CB
-        varact2parser = Varaction2Parser(feature, feature)
+        varact2parser = Varaction2Parser(feature, get_scope(feature))
         varact2parser.parse_expr(
             expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF))
         )
@@ -928,16 +926,14 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
 
     # Result is parametrized
     # Insert an intermediate varaction2 to store expressions in registers
-    var_feature = (
-        parent_action.feature if var_range == 0x89 else action2var_variables.varact2parent_scope[parent_action.feature]
-    )
-    varact2parser = Varaction2Parser(parent_action.feature, var_feature)
+    var_scope = get_scope(parent_action.feature, var_range)
+    varact2parser = Varaction2Parser(parent_action.feature, var_scope)
     layout = action2.resolve_spritegroup(result.name)
     for i, param in enumerate(result.param_list):
         if i > 0:
             varact2parser.var_list.append(nmlop.VAL2)
             varact2parser.var_list_size += 1
-        varact2parser.parse_expr(reduce_varaction2_expr(param, var_feature))
+        varact2parser.parse_expr(reduce_varaction2_expr(param, var_scope))
         varact2parser.var_list.append(nmlop.STO_TMP)
         store_tmp = VarAction2StoreCallParam(layout.register_map[parent_action.feature][i])
         varact2parser.var_list.append(store_tmp)
@@ -1051,22 +1047,17 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
     return (result, comment)
 
 
-def get_feature(switch_block):
-    feature = next(iter(switch_block.feature_set))
-    if switch_block.var_range == 0x8A:
-        feature = action2var_variables.varact2parent_scope[feature]
-        if feature is None:
-            raise generic.ScriptError(
-                "Parent scope for this feature not available, feature: " + str(feature), switch_block.pos
-            )
-
-    return feature
+def get_scope(action_feature, var_range=0x89):
+    if var_range == 0x8A:
+        return action2var_variables.varact2parent_scope[action_feature]
+    else:
+        return action_feature
 
 
-def reduce_varaction2_expr(expr, feature, extra_dicts=None):
+def reduce_varaction2_expr(expr, var_scope, extra_dicts=None):
     # 'normal' and 60+x variables to use
-    vars_normal = action2var_variables.varact2vars[feature]
-    vars_60x = action2var_variables.varact2vars60x[feature]
+    vars_normal = action2var_variables.varact2vars[var_scope]
+    vars_60x = action2var_variables.varact2vars60x[var_scope]
 
     def func60x(name, value, pos):
         return expression.FunctionPtr(expression.Identifier(name, pos), parse_60x_var, value)
@@ -1089,6 +1080,7 @@ def parse_varaction2(switch_block):
     action_list = action2real.create_spriteset_actions(switch_block)
 
     feature = next(iter(switch_block.feature_set))
+    var_scope = get_scope(feature, switch_block.var_range)
     varaction2 = Action2Var(
         feature,
         switch_block.name.value,
@@ -1097,11 +1089,11 @@ def parse_varaction2(switch_block):
         switch_block.register_map[feature],
     )
 
-    expr = reduce_varaction2_expr(switch_block.expr, get_feature(switch_block))
+    expr = reduce_varaction2_expr(switch_block.expr, var_scope)
 
     offset = 4  # first var
 
-    parser = Varaction2Parser(feature, get_feature(switch_block))
+    parser = Varaction2Parser(feature, var_scope)
     parser.parse_expr(expr)
     action_list.extend(parser.extra_actions)
     for mod in parser.mods:

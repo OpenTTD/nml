@@ -47,8 +47,9 @@ class ProduceOld(produce_base_class):
 
     def pre_process(self):
         generic.print_warning("Consider using the new produce() syntax for '{}'".format(self.name), self.name.pos)
+        var_scope = action2var.get_scope(0x0A)
         for i, param in enumerate(self.param_list):
-            self.param_list[i] = action2var.reduce_varaction2_expr(param, 0x0A)
+            self.param_list[i] = action2var.reduce_varaction2_expr(param, var_scope)
         produce_base_class.pre_process(self)
 
     def collect_references(self):
@@ -105,11 +106,12 @@ class Produce(produce_base_class):
         self.again = again
 
     def pre_process(self):
+        var_scope = action2var.get_scope(0x0A)
         for i, param in enumerate(self.subtract_in):
-            self.subtract_in[i].value = action2var.reduce_varaction2_expr(param.value, 0x0A)
+            self.subtract_in[i].value = action2var.reduce_varaction2_expr(param.value, var_scope)
         for i, param in enumerate(self.add_out):
-            self.add_out[i].value = action2var.reduce_varaction2_expr(param.value, 0x0A)
-        self.again = action2var.reduce_varaction2_expr(self.again, 0x0A)
+            self.add_out[i].value = action2var.reduce_varaction2_expr(param.value, var_scope)
+        self.again = action2var.reduce_varaction2_expr(self.again, var_scope)
         produce_base_class.pre_process(self)
 
     def collect_references(self):

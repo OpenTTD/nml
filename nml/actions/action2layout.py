@@ -273,7 +273,9 @@ class Action2LayoutSprite:
             offset = None
         elif len(sg_ref.param_list) == 1:
             id_dicts = [(spriteset.labels, lambda name, val, pos: expression.ConstantNumeric(val, pos))]
-            offset = action2var.reduce_varaction2_expr(sg_ref.param_list[0], self.feature, self.extra_dicts + id_dicts)
+            offset = action2var.reduce_varaction2_expr(
+                sg_ref.param_list[0], action2var.get_scope(self.feature), self.extra_dicts + id_dicts
+            )
             if isinstance(offset, expression.ConstantNumeric):
                 generic.check_range(
                     offset.value,
@@ -414,7 +416,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
         param_list = []
         layout_sprite_list.append((layout_sprite.type, layout_sprite.pos, param_list))
         for param in layout_sprite.param_list:
-            param_val = action2var.reduce_varaction2_expr(param.value, feature, [param_map])
+            param_val = action2var.reduce_varaction2_expr(param.value, action2var.get_scope(feature), [param_map])
             param_list.append((param.name, param_val))
             if isinstance(param_val, expression.SpriteGroupRef):
                 spriteset = action2.resolve_spritegroup(param_val.name)
@@ -483,7 +485,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     actions.append(layout_action)
 
     if temp_registers:
-        varact2parser = action2var.Varaction2Parser(feature, feature)
+        varact2parser = action2var.Varaction2Parser(feature, action2var.get_scope(feature))
         for register_info in temp_registers:
             reg, expr = register_info[1], register_info[2]
             if reg is None:
