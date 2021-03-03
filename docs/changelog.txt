@@ -1,3 +1,29 @@
+0.6.0 (2021-03-XX)
+------------------------------------------------------------------------
+This release adds major enhancements to switches:
+- Switches can now be used as functions inside expressions.
+- Switches can now define parameters, which are passed by callers for usage inside the switch.
+- NML now applies optimisations to switches and chains of switches.
+
+Support for NewGRF additions of OpenTTD 1.11:
+- Update: Increase number of OTTD_GUI sprites to 186. (#183)
+- Add: Industry spec_flag 'IND_FLAG_DO_NOT_CLAMP_PASSENGER_PRODUCTION'. (#183)
+- Add: Vehicle variables 'tile_(supports|powers|is)_(rail|road|tram)type'. (#183)
+- Add: Vehicle variable 'tile_has_catenary'. (#183)
+- Add: General variable 'inflation', which reports the game setting. (#183)
+- Add: Alternative string constants introduced in OpenTTD/OpenTTD#8392. (#176)
+
+Other changes and fixes:
+- Change: Check that user code doesn't try to use reserved registers (#189)
+- Fix #184: Share townname bits when possible (#185)
+- Fix: Compatibility with Pillow 8.1.0 (#182)
+- Fix #180: No proper error message was given, if an unreferenced String was unable to allocate an id (#181)
+- Fix: Access to persistent-storage of towns.  (#173)
+- Fix: Don't suppress errors for incorrect `hide_sprite` values. (#168)
+- Fix: Remove trailing whitespaces in NFO output (#164)
+- Add: More-obvious error for trailing '.' in a string id. (#145)
+
+
 0.5.3 (2020-09-15)
 ------------------------------------------------------------------------
 This release primarily restores legacy industry properties and vars which were removed in NML 0.5.0.  This is done for compatibility, so that older industry grfs can still be compiled with NML 0.5.3.  
