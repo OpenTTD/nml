@@ -534,22 +534,33 @@ def builtin_cargoexpr(name, args, pos):
         raise AssertionError()
 
 
-@builtins("acos", "asin", "atan", "cos", "sin", "tan")
-def builtin_trigonometric(name, args, pos):
+@builtins("acos", "asin", "atan", "cos", "sin", "sqrt", "tan")
+def builtin_math(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     val = args[0].reduce()
     if not isinstance(val, (ConstantNumeric, ConstantFloat)):
         raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
-    trigonometric_func_table = {
+    math_func_table = {
         "acos": math.acos,
         "asin": math.asin,
         "atan": math.atan,
         "cos": math.cos,
         "sin": math.sin,
+        "sqrt": math.sqrt,
         "tan": math.tan,
     }
-    return ConstantFloat(trigonometric_func_table[name](val.value), val.pos)
+    return ConstantFloat(math_func_table[name](val.value), val.pos)
+
+
+@builtin
+def builtin_round(name, args, pos):
+    if len(args) != 1:
+        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+    val = args[0].reduce()
+    if not isinstance(val, (ConstantNumeric, ConstantFloat)):
+        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
+    return ConstantNumeric(round(val.value), pos)
 
 
 @builtin
