@@ -2,13 +2,13 @@
 
 import sys
 
-from nml.editors import kate, notepadpp, visualstudio
+from nml.editors import kate, notepadpp, visualstudiocode
 
 
 def run():
-    if len(sys.argv) != 2 or sys.argv[1] not in ('kate', 'notepadpp', 'visualstudio', 'vs'):
+    if len(sys.argv) != 2 or sys.argv[1] not in ('kate', 'notepadpp', 'visualstudiocode', 'vs'):
         print("gen_editor: Incorrect arguments found.")
-        print("Usage: gen_editor [ kate | notepadpp | visualstudio (or vs) ]")
+        print("Usage: gen_editor [ kate | notepadpp | visualstudiocode (or vs) ]")
         sys.exit(1)
 
     if sys.argv[1] == 'kate':
@@ -17,8 +17,8 @@ def run():
     elif sys.argv[1] == 'notepadpp':
         notepadpp.run()
         print("gen_editor: Created Notepad++ XML file")
-    elif sys.argv[1] == 'visualstudio' or sys.argv[1] == 'vs':
-        visualstudio.run()
+    elif sys.argv[1] == 'visualstudiocode' or sys.argv[1] == 'vs':
+        visualstudiocode.run()
         print("gen_editor: Created Visual Studio Text Mark file")
     else:
         assert False, "Unknown editor name encountered."
