@@ -15,6 +15,14 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, nmlop
 
+
+def constant_number(name, info, pos):
+    if isinstance(info, str):
+        generic.print_warning("'{}' is deprecated, consider using '{}' instead".format(name, info), pos)
+        info = constant_numbers[info]
+    return expression.ConstantNumeric(info, pos)
+
+
 # fmt: off
 constant_numbers = {
     # climates
@@ -845,12 +853,10 @@ constant_numbers = {
     "TTD_STR_CARGO_PLURAL_RUBBER"                           : 0x0023,
     "TTD_STR_CARGO_PLURAL_SUGAR"                            : 0x0024,
     "TTD_STR_CARGO_PLURAL_TOYS"                             : 0x0025,
-    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_PLURAL_SWEETS
-    "TTD_STR_CARGO_PLURAL_CANDY"                            : 0x0026,
+    "TTD_STR_CARGO_PLURAL_CANDY"                            : "TTD_STR_CARGO_PLURAL_SWEETS",
     "TTD_STR_CARGO_PLURAL_SWEETS"                           : 0x0026,
     "TTD_STR_CARGO_PLURAL_COLA"                             : 0x0027,
-    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_PLURAL_CANDYFLOSS
-    "TTD_STR_CARGO_PLURAL_COTTON_CANDY"                     : 0x0028,
+    "TTD_STR_CARGO_PLURAL_COTTON_CANDY"                     : "TTD_STR_CARGO_PLURAL_CANDYFLOSS",
     "TTD_STR_CARGO_PLURAL_CANDYFLOSS"                       : 0x0028,
     "TTD_STR_CARGO_PLURAL_BUBBLES"                          : 0x0029,
     "TTD_STR_CARGO_PLURAL_TOFFEE"                           : 0x002A,
@@ -881,12 +887,10 @@ constant_numbers = {
     "TTD_STR_CARGO_SINGULAR_RUBBER"                         : 0x0043,
     "TTD_STR_CARGO_SINGULAR_SUGAR"                          : 0x0044,
     "TTD_STR_CARGO_SINGULAR_TOY"                            : 0x0045,
-    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_SINGULAR_SWEETS
-    "TTD_STR_CARGO_SINGULAR_CANDY"                          : 0x0046,
+    "TTD_STR_CARGO_SINGULAR_CANDY"                          : "TTD_STR_CARGO_SINGULAR_SWEETS",
     "TTD_STR_CARGO_SINGULAR_SWEETS"                         : 0x0046,
     "TTD_STR_CARGO_SINGULAR_COLA"                           : 0x0047,
-    # Deprecated, kept for compatibility reasons. Use TTD_STR_CARGO_SINGULAR_CANDYFLOSS
-    "TTD_STR_CARGO_SINGULAR_COTTON_CANDY"                   : 0x0048,
+    "TTD_STR_CARGO_SINGULAR_COTTON_CANDY"                   : "TTD_STR_CARGO_SINGULAR_CANDYFLOSS",
     "TTD_STR_CARGO_SINGULAR_CANDYFLOSS"                     : 0x0048,
     "TTD_STR_CARGO_SINGULAR_BUBBLE"                         : 0x0049,
     "TTD_STR_CARGO_SINGULAR_TOFFEE"                         : 0x004A,
@@ -1292,7 +1296,7 @@ named_parameters = {}
 spritegroups = {"CB_FAILED": "CB_FAILED"}
 
 const_list = [
-    constant_numbers,
+    (constant_numbers, constant_number),
     (global_parameters, param_from_info),
     (misc_grf_bits, misc_grf_bit),
     (patch_variables, patch_variable),
