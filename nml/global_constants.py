@@ -651,7 +651,8 @@ constant_numbers = {
 
     # map types (ttdp variable 0x13)
     "MAP_TYPE_X_BIGGER"                     : 0,  # bit 0 and 1 clear
-    "MAP_TYPE_RECTANGULAR"                  : 1,  # bit 0 set
+    "MAP_TYPE_RECTANGULAR"                  : "MAP_TYPE_SQUARE",
+    "MAP_TYPE_SQUARE"                       : 1,  # bit 0 set
     "MAP_TYPE_Y_BIGGER"                     : 2,  # bit 0 clear, bit 1 set
 
     # Platform types (platform_xx station variables)
