@@ -378,7 +378,7 @@ def nml(
     """
     generic.OnlyOnce.clear()
 
-    generic.print_progress("Reading ...")
+    generic.print_progress("Reading {} ...".format(input_filename or "standard input"))
 
     try:
         script = inputfile.read()
