@@ -100,6 +100,7 @@ class Switch(switch_base_class):
             self.optimised
             and not isinstance(self.optimised, expression.ConstantNumeric)
             and not isinstance(self.optimised, expression.SpriteGroupRef)
+            and not isinstance(self.optimised, expression.String)
         ):
             self.expr = self.optimised
             self.body.ranges = []
@@ -381,6 +382,7 @@ class RandomSwitch(switch_base_class):
             and (
                 isinstance(self.choices[0].result.value, expression.ConstantNumeric)
                 or isinstance(self.choices[0].result.value, expression.SpriteGroupRef)
+                or isinstance(self.choices[0].result.value, expression.String)
             )
         ):
             generic.print_warning("Block '{}' returns a constant, optimising.".format(self.name.value), self.pos)
