@@ -605,7 +605,7 @@ varact2vars60x_industries = {
     'nearby_tile_animation_frame'  : {'var': 0x63, 'start':  0, 'size':  8, 'param_function': unsigned_tile_offset},
     'town_manhattan_dist'          : {'var': 0x65, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
     'town_zone'                    : {'var': 0x65, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
-    'town_euclidean_dist'          : {'var': 0x66, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'town_euclidean_dist'          : {'var': 0x66, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
     'industry_count'               : {'var': 0x67, 'start': 16, 'size':  8, 'param_function': industry_count},
     'industry_distance'            : {'var': 0x67, 'start':  0, 'size': 16, 'param_function': industry_count},
     'industry_layout_count'        : {'var': 0x68, 'start': 16, 'size':  8, 'param_function': industry_layout_count},
@@ -665,7 +665,7 @@ varact2vars_objects = {
     'town_manhattan_dist'    : {'var': 0x45, 'start':  0, 'size': 16},
     'town_zone'              : {'var': 0x45, 'start': 16, 'size':  8},
 
-    'town_euclidean_dist'    : {'var': 0x46, 'start':  0, 'size': 32},
+    'town_euclidean_dist'    : {'var': 0x46, 'start':  0, 'size': 16},
     'view'                   : {'var': 0x48, 'start':  0, 'size':  8},
     'random_bits'            : {'var': 0x5F, 'start':  8, 'size':  8},
 }
