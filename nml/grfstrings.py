@@ -860,7 +860,6 @@ LANG_INFOS = [
     ("zh_TW", 0x0C, 1),
 ]
 LANG_NAMES = {lng[0]: lng[1] for lng in LANG_INFOS}
-LANG_PLURALS = {lng[1]: lng[2] for lng in LANG_INFOS}
 
 
 class Language:
@@ -1090,7 +1089,6 @@ class Language:
         if value < 0 or value >= 0x7F:
             raise generic.ScriptError("Invalid grflangid", pos)
         self.langid = value
-        self.check_expected_plural(None)
 
     def handle_plural(self, data, pos):
         """
@@ -1109,26 +1107,6 @@ class Language:
         if value < 0 or value > NUM_PLURAL_FORMS:
             raise generic.ScriptError("Invalid plural form", pos)
         self.plural = value
-        self.check_expected_plural(pos)
-
-    def check_expected_plural(self, pos):
-        """
-        Check whether the provided plural form of the language file
-        matches with the expected value for that language.
-
-        If not, raise an error.
-
-        @param pos: Position of the ##plural line, if position is available.
-        @type  pos: L{Position}
-        """
-        if self.plural is None or self.langid is None:
-            return
-
-        expected = LANG_PLURALS.get(self.langid)
-        if expected is not None and self.plural != expected:
-            msg = "Language with language id 0x{:02x} has plural form {:d} while the language uses plural form {:d}."
-            msg = msg.format(self.langid, self.plural, expected)
-            raise generic.ScriptError(msg, pos)
 
     def handle_gender(self, data, pos):
         """
