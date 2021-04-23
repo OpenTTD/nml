@@ -778,7 +778,7 @@ def isint(x, base=10):
         return False
 
 
-NUM_PLURAL_FORMS = 13
+NUM_PLURAL_FORMS = 14
 
 CHOICE_LIST_ITEM = {"unicode": r"\UE09A\10", "ascii": r"\9A\10"}
 CHOICE_LIST_DEFAULT = {"unicode": r"\UE09A\11", "ascii": r"\9A\11"}
@@ -844,7 +844,7 @@ LANG_INFOS = [
     ("pl_PL", 0x30, 7),
     ("pt_BR", 0x37, 2),
     ("pt_PT", 0x36, 0),
-    ("ro_RO", 0x28, 0),
+    ("ro_RO", 0x28, 14),
     ("ru_RU", 0x07, 6),
     ("sk_SK", 0x16, 10),
     ("sl_SI", 0x2C, 8),
@@ -918,6 +918,7 @@ class Language:
             11: 2,
             12: 4,
             13: 4,
+            14: 3,
         }
         return num_plurals[self.plural]
 
@@ -1021,6 +1022,12 @@ class Language:
             if (val >= 3 and val <= 10) or (val >= 13 and val <= 19):
                 return 3
             return 4
+        if self.plural == 14:
+            if val == 1:
+                return 1
+            if val == 0 or 1 <= (val % 100) <= 19:
+                return 2
+            return 3
         raise AssertionError("Unknown plural type")
 
     def get_string(self, string, lang_id):
