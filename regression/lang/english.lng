@@ -1,4 +1,4 @@
-##grflangid en_GB
+##grflangid 0x01
 STR_NULL                       :
 STR_REGRESSION_NAME            :NML regression test
 STR_REGRESSION_DESC            :A test newgrf testing NML
