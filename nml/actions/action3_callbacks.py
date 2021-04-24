@@ -216,6 +216,9 @@ def cargo_profit_value(value):
     # (amount * price_factor * (cb_result * 329 / 256)) / 256
     # This allows us to report a factor of 256 in the documentation, which makes a lot more sense than 199.804...
     # Not doing the division here would improve accuracy, but limits the range of the return value too much
+    # As cb_result is a 15bit signed value, we need to sign-extend it to 32bit before applying our math
+    value = nmlop.SHIFT_LEFT(value, 17)
+    value = nmlop.SHIFT_RIGHT(value, 17)
     value = nmlop.MUL(value, 329)
     return nmlop.DIV(value, 256)
 
