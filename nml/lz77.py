@@ -26,7 +26,7 @@ def _encode(data):
     @return: Compressed data.
     @rtype:  C{bytearray}
     """
-    stream = data.tostring()
+    stream = data.tobytes()
     position = 0
     output = array.array("B")
     literal_bytes = array.array("B")
