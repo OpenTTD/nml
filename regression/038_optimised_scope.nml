@@ -36,8 +36,20 @@ switch (FEAT_TRAINS, PARENT, color_override, vehicle_type_id) {
     return color_indirect;
 }
 
+switch (FEAT_TRAINS, PARENT, text, 0) {
+    return string(STR_REGRESSION_DESC);
+}
+
+switch (FEAT_TRAINS, SELF, scope_capacity, cap, cargo_capacity + cap) { return; }
+
+switch (FEAT_TRAINS, PARENT, mixed_scope_capacity, 0) {
+    return scope_capacity(cargo_capacity);
+}
+
 item(FEAT_TRAINS, colored_train, 100) {
     graphics {
         colour_mapping: color_override;
+        cargo_capacity: mixed_scope_capacity;
+        additional_text: text;
     }
 }
