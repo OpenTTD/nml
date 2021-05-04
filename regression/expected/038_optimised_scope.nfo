@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d19
+0 * 4 \d25
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -16,15 +16,17 @@
 00
 00
 2 * 52 08 08 "NML\38" "NML regression test" 00 "A test newgrf testing NML" 00
-// param[127] = param[17]
-3 * 9 0D 7F \D= 11 FE \dx0000FFFF
+3 * 32 04 00 FF 01 \wxD000 "A test newgrf testing NML" 00
 
-4 * 7 06
+// param[127] = param[17]
+4 * 9 0D 7F \D= 11 FE \dx0000FFFF
+
+5 * 7 06
 7F 04 FF \wx0014
 FF
 
 // Name: @return_action_0
-5 * 34 02 00 FF 89
+6 * 34 02 00 FF 89
 43 38 \dx0000000F
 \2* 1A 20 \dx00000010
 \2+ 1A 20 \dx00000000 	// param[127]
@@ -33,14 +35,14 @@ FF
 \wx8000 // Return computed value
 
 // param[126] = param[17]
-6 * 9 0D 7E \D= 11 FE \dx0000FFFF
+7 * 9 0D 7E \D= 11 FE \dx0000FFFF
 
-7 * 7 06
+8 * 7 06
 7E 04 FF \wx0014
 FF
 
 // Name: @return_action_1
-8 * 34 02 00 FE 89
+9 * 34 02 00 FE 89
 43 3C \dx0000000F
 \2* 1A 20 \dx00000010
 \2+ 1A 20 \dx00000000 	// param[126]
@@ -49,21 +51,21 @@ FF
 \wx8000 // Return computed value
 
 // Name: color_conditional
-9 * 23 02 00 FE 89
+10 * 23 02 00 FE 89
 C8 01 \dx00000001
 \b1
 \wx00FF \dx00000001 \dx00000001 	// 1 .. 1: return (((var[0x43, 24, 15] * 16) + base_sprite_2cc) + var[0x43, 28, 15])
 \wx00FE // default: return (((var[0x43, 28, 15] * 16) + base_sprite_2cc) + var[0x43, 24, 15])
 
 // param[127] = param[17]
-10 * 9 0D 7F \D= 11 FE \dx0000FFFF
+11 * 9 0D 7F \D= 11 FE \dx0000FFFF
 
-11 * 7 06
+12 * 7 06
 7F 04 FF \wx0014
 FF
 
 // Name: color_unconditional
-12 * 34 02 00 FF 89
+13 * 34 02 00 FF 89
 43 3C \dx0000000F
 \2* 1A 20 \dx00000010
 \2+ 1A 20 \dx00000000 	// param[127]
@@ -72,36 +74,78 @@ FF
 \wx8000 // Return computed value
 
 // Name: color_override
-13 * 23 02 00 FF 8A
+14 * 23 02 00 FF 8A
 C6 00 \dx0000FFFF
 \b1
 \wx00FE \dx00000BB8 \dx00000BB8 	// 3000 .. 3000: color_conditional;
 \wx00FF // default: color_unconditional;
 
-14 * 9 00 00 \b1 01 FF \wx0064
-1E 40
+// Name: scope_capacity
+// cap : register 80
+15 * 21 02 00 FE 89
+7D 80 20 \dxFFFFFFFF 	// cap
+\2+ BA 00 \dx0000FFFF
+\b0
+\wx8000 // Return computed value
 
-15 * 6 01 00 \b1 FF \wx0000
+// Name: mixed_scope_capacity
+16 * 28 02 00 FE 8A
+BA 20 \dx0000FFFF
+\2sto 1A 20 \dx00000080
+\2r 7E FE 00 \dxFFFFFFFF 	// scope_capacity(var[0xBA, 0, 65535])
+\b0
+\wx8000 // Return computed value
+
+17 * 9 00 00 \b1 01 FF \wx0064
+1E 48
+
+18 * 6 01 00 \b1 FF \wx0000
 
 // Name: @CB_FAILED_REAL00
-16 * 9 02 00 FE \b1 \b1
+19 * 9 02 00 FD \b1 \b1
 \w0
 \w0
 
 // Name: @CB_FAILED00
-17 * 23 02 00 FE 89
+20 * 23 02 00 FD 89
 0C 00 \dx0000FFFF
 \b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FE // Non-graphics callback, return graphics result
+\wx00FD // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-18 * 23 02 00 FE 89
-0C 00 \dx0000FFFF
+21 * 23 02 00 FC 89
+10 00 \dx000000FF
 \b1
-\wx00FF \dx0000002D \dx0000002D 	// color_override;
-\wx00FE // @CB_FAILED00;
+\wx00FE \dx00000014 \dx00000014 	// mixed_scope_capacity;
+\wx00FD // @CB_FAILED00;
 
-19 * 9 03 00 01 FF \wx0064 \b0
-\wx00FE 	// @action3_0;
+// Name: @action3_1
+22 * 23 02 00 FB 89
+10 00 \dx000000FF
+\b1
+\wx00FE \dx00000014 \dx00000014 	// mixed_scope_capacity;
+\wx00FD // @CB_FAILED00;
+
+// Name: @action3_2
+23 * 43 02 00 FC 89
+0C 00 \dx0000FFFF
+\b3
+\wx00FE \dx00000015 \dx00000015 	// mixed_scope_capacity;
+\wx00FF \dx0000002D \dx0000002D 	// color_override;
+\wx00FC \dx00000036 \dx00000036 	// @action3_0;
+\wx00FD // @CB_FAILED00;
+
+// Name: @action3_3
+24 * 43 02 00 FD 89
+0C 00 \dx0000FFFF
+\b3
+\wx8000 \dx00000023 \dx00000023 	// return string(STR_REGRESSION_DESC);
+\wx00FF \dx0000002D \dx0000002D 	// color_override;
+\wx00FB \dx00000036 \dx00000036 	// @action3_1;
+\wx00FD // @CB_FAILED00;
+
+25 * 12 03 00 01 FF \wx0064 \b1
+FF \wx00FD 	// @action3_3;
+\wx00FC 	// @action3_2;
 

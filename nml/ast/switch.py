@@ -99,7 +99,7 @@ class Switch(switch_base_class):
         if (
             self.optimised
             and not isinstance(self.optimised, expression.ConstantNumeric)
-            and not isinstance(self.optimised, expression.SpriteGroupRef)
+            and not (isinstance(self.optimised, expression.SpriteGroupRef) and not self.optimised.is_procedure)
             and not isinstance(self.optimised, expression.String)
         ):
             self.expr = self.optimised
@@ -376,18 +376,16 @@ class RandomSwitch(switch_base_class):
 
         # Triggers have side-effects, and can't be skipped.
         # Scope for expressions can be different in referencing location, so don't optimise them.
-        if (
-            self.triggers.value == 0
-            and len(self.choices) == 1
-            and (
-                isinstance(self.choices[0].result.value, expression.ConstantNumeric)
-                or isinstance(self.choices[0].result.value, expression.SpriteGroupRef)
-                or isinstance(self.choices[0].result.value, expression.String)
-            )
-        ):
-            generic.print_warning("Block '{}' returns a constant, optimising.".format(self.name.value), self.pos)
-            self.optimised = self.choices[0].result.value
-            return True
+        if self.triggers.value == 0 and len(self.choices) == 1:
+            optimised = self.choices[0].result.value
+            if (
+                isinstance(optimised, expression.ConstantNumeric)
+                or (isinstance(optimised, expression.SpriteGroupRef) and not optimised.is_procedure)
+                or isinstance(optimised, expression.String)
+            ):
+                generic.print_warning("Block '{}' returns a constant, optimising.".format(self.name.value), self.pos)
+                self.optimised = optimised
+                return True
 
         self.optimised = self  # Prevent multiple run on the same non optimisable RandomSwitch
         return False
