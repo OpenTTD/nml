@@ -142,7 +142,7 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default, pos
                     )
                 else:
                     extra_actions, result, comment = create_proc_call_varaction2(
-                        feature, return_value, ret_value_function, pos
+                        feature, return_value, ret_value_function, varaction2, pos
                     )
                     action_list.extend(extra_actions)
             else:
@@ -168,7 +168,7 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default, pos
     return (action_list, return_ref)
 
 
-def create_proc_call_varaction2(feature, proc, ret_value_function, pos):
+def create_proc_call_varaction2(feature, proc, ret_value_function, parent_action, pos):
     """
     Create a varaction2 that executes a procedure call and applies a function on the result
 
@@ -194,6 +194,7 @@ def create_proc_call_varaction2(feature, proc, ret_value_function, pos):
     mapping = {0xFFFF: (expression.SpriteGroupRef(expression.Identifier("CB_FAILED"), [], None), None)}
     default = ret_value_function(expression.Variable(expression.ConstantNumeric(0x1C)))
     action_list, result = create_intermediate_varaction2(feature, varact2parser, mapping, default, pos)
+    action2.add_ref(result, parent_action)
     comment = result.name.value + ";"
     return (action_list, result, comment)
 
