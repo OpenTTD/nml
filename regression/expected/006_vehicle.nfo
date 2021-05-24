@@ -129,7 +129,7 @@ FF
 \wx8000 // Return computed value
 
 // Name: @action3_1
-25 * 38 02 01 00 89
+25 * 38 02 01 FC 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx00000080
 \2r 7E FF 00 \dxFFFFFFFF 	// switch_length(0)
@@ -141,7 +141,7 @@ FF
 26 * 23 02 01 FC 89
 10 00 \dx000000FF
 \b1
-\wx0000 \dx00000023 \dx00000023 	// @action3_1;
+\wx00FC \dx00000023 \dx00000023 	// @action3_1;
 \wx00FE // foster_express_set;
 
 // Name: @action3_2
