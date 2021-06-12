@@ -442,6 +442,7 @@ properties[0x00] = {
         {"custom_function": lambda value: ctt_list(0x2D, value)}
         , zero_refit_mask(0x1D)
     ],
+    "curve_speed_mod":                {"size": 2, "num": 0x2E, "unit_conversion": 256},
 }
 # fmt: on
 
