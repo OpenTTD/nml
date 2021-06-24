@@ -759,6 +759,7 @@ varact2vars_tramtype = {
 varact2vars_towns = {
     'is_city'                        : {'var': 0x40, 'start': 0, 'size': 1},
     'cities_enabled'                 : {'var': 0x40, 'start': 1, 'size': 1, 'value_function': lambda var, info: expression.Not(var, var.pos)},
+    'town_index'                     : {'var': 0x41, 'start': 0, 'size': 16},
     'population'                     : {'var': 0x82, 'start': 0, 'size': 16},
     'has_church'                     : {'var': 0x92, 'start': 1, 'size': 1},
     'has_stadium'                    : {'var': 0x92, 'start': 2, 'size': 1},
