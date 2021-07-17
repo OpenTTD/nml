@@ -479,9 +479,9 @@ class Varaction2Parser:
         @type  expr: L{expression.Variable}
         """
         if not isinstance(expr.num, expression.ConstantNumeric):
-            raise generic.ScriptError("Variable number must be a constant number", expr.num.pos)
+            raise generic.ScriptError("Variable number must be a constant number", expr.pos)
         if not (expr.param is None or isinstance(expr.param, expression.ConstantNumeric)):
-            raise generic.ScriptError("Variable parameter must be a constant number", expr.param.pos)
+            raise generic.ScriptError("Variable parameter must be a constant number", expr.pos)
 
         if len(expr.extra_params) > 0:
             first_var = len(self.var_list) == 0
