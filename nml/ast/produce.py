@@ -53,7 +53,10 @@ class ProduceOld(produce_base_class):
         produce_base_class.pre_process(self)
 
     def collect_references(self):
-        return []
+        all_refs = []
+        for expr in self.param_list:
+            all_refs += expr.collect_references()
+        return all_refs
 
     def __str__(self):
         return "produce({});\n".format(", ".join(str(x) for x in [self.name] + self.param_list))
@@ -115,7 +118,10 @@ class Produce(produce_base_class):
         produce_base_class.pre_process(self)
 
     def collect_references(self):
-        return []
+        all_refs = []
+        for cargopair in self.subtract_in + self.add_out:
+            all_refs += cargopair.value.collect_references()
+        return all_refs
 
     def __str__(self):
         return "produce({0}, [{1}], [{2}], {3})\n".format(
