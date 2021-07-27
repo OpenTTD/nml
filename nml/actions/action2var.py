@@ -606,7 +606,12 @@ class Varaction2Parser:
                 # For f(x, g(y)), x can be overwritten by y if f and g share the same param registers
                 # Use temporary variables as an intermediate step
                 store_tmp = VarAction2StoreTempVar()
-                tmp_vars.append((store_tmp, VarAction2StoreCallParam(target.register_map[self.action_feature][i])))
+                tmp_vars.append(
+                    (
+                        VarAction2LoadTempVar(store_tmp),
+                        VarAction2StoreCallParam(target.register_map[self.action_feature][i]),
+                    )
+                )
             else:
                 store_tmp = VarAction2StoreCallParam(target.register_map[self.action_feature][i])
             self.parse_expr(reduce_varaction2_expr(param, self.var_scope))

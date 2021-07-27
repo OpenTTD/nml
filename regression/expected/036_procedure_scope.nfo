@@ -17,62 +17,62 @@
 00
 2 * 52 08 08 "NML\36" "NML regression test" 00 "A test newgrf testing NML" 00
 // Name: dumb_add
-// a : register 8A
-// b : register 8B
+// a : register 88
+// b : register 89
 3 * 22 02 0A FF 89
-7D 8A 20 \dxFFFFFFFF 	// a
-\2+ 7D 8B 00 \dxFFFFFFFF 	// b
+7D 88 20 \dxFFFFFFFF 	// a
+\2+ 7D 89 00 \dxFFFFFFFF 	// b
 \b0
 \wx8000 // Return computed value
 
 // Name: @return_action_0
 4 * 66 02 0A FE 8A
 1A 20 \dx00000005
-\2sto 1A 20 \dx0000008A
-\2r 7D 88 20 \dxFFFFFFFF 	// a
-\2sto 1A 20 \dx0000008B
-\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(5, a)
+\2sto 1A 20 \dx00000088
+\2r 7D 86 20 \dxFFFFFFFF 	// a
 \2sto 1A 20 \dx00000089
-\2r 7D 88 20 \dxFFFFFFFF 	// a
-\2+ 7D 89 00 \dxFFFFFFFF
+\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(5, a)
+\2sto 1A 20 \dx00000087
+\2r 7D 86 20 \dxFFFFFFFF 	// a
+\2+ 7D 87 00 \dxFFFFFFFF
 \b0
 \wx8000 // Return computed value
 
 // Name: @return_action_1
 5 * 66 02 0A FD 8A
 1A 20 \dx00000006
-\2sto 1A 20 \dx0000008A
-\2r 7D 88 20 \dxFFFFFFFF 	// a
-\2sto 1A 20 \dx0000008B
-\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(6, a)
+\2sto 1A 20 \dx00000088
+\2r 7D 86 20 \dxFFFFFFFF 	// a
 \2sto 1A 20 \dx00000089
-\2r 7D 88 20 \dxFFFFFFFF 	// a
-\2+ 7D 89 00 \dxFFFFFFFF
+\2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(6, a)
+\2sto 1A 20 \dx00000087
+\2r 7D 86 20 \dxFFFFFFFF 	// a
+\2+ 7D 87 00 \dxFFFFFFFF
 \b0
 \wx8000 // Return computed value
 
 // Name: callee
-// a : register 88
+// a : register 86
 6 * 110 02 0A FD 8A
 92 22 \dx00000001
 \2* 1A 20 \dx00000004
-\2sto 1A 20 \dx00000089
+\2sto 1A 20 \dx00000087
 \2r B6 20 \dx0000FFFF
-\2- 7D 89 20 \dxFFFFFFFF
-\2sto 1A 20 \dx0000008A
+\2- 7D 87 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000088
 \2r 92 21 \dx00000001
 \2u< 1A 20 \dx00000001
 \2* 1A 20 \dx000001F3 	// expr1 - expr2
 \2+ 1A 20 \dx00000001
 \2+ 82 20 \dx0000FFFF
-\2* 7D 8A 20 \dxFFFFFFFF
-\2+ 7D 88 00 \dxFFFFFFFF 	// a
+\2* 7D 88 20 \dxFFFFFFFF
+\2+ 7D 86 00 \dxFFFFFFFF 	// a
 \b1
 \wx00FE \dx00000000 \dx00000005 	// 0 .. 5: return (a + dumb_add(5, a))
 \wx00FD // default: return (a + dumb_add(6, a))
 
 // Name: caller2
-7 * 230 02 0A FE 89
+7 * 232 02 0A FE 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
@@ -80,7 +80,7 @@ B3 20 \dx00000003
 \2+ 44 20 \dx000000FF
 \2sto 1A 20 \dx00000081
 \2r 1A 20 \dx00000001
-\2sto 1A 20 \dx00000088
+\2sto 1A 20 \dx00000086
 \2r 7E FD 20 \dxFFFFFFFF 	// callee(1)
 \2+ 5F 28 \dx0000FFFF
 \2sto 1A 20 \dx00000082
@@ -88,17 +88,17 @@ B3 20 \dx00000003
 \2+ 45 38 \dx0000000F
 \2sto 1A 20 \dx00000083
 \2r 1A 20 \dx00000001
-\2sto 1A 20 \dx00000086
+\2sto 1A 20 \dx00000084
 \2r 45 3C \dx0000000F
-\2sto 1A 20 \dx0000008A
+\2sto 1A 20 \dx00000088
 \2r 46 20 \dxFFFFFFFF
-\2sto 1A 20 \dx0000008B
+\2sto 1A 20 \dx00000089
 \2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(var[0x45, 28, 15], var[0x46, 0, -1])
-\2sto 1A 20 \dx00000087
-\2r 1A 20 \dx00000086
-\2sto 1A 20 \dx0000008A
-\2r 1A 20 \dx00000087
-\2sto 1A 20 \dx0000008B
+\2sto 1A 20 \dx00000085
+\2r 7D 84 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000088
+\2r 7D 85 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000089
 \2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(1, dumb_add(var[0x45, 28, 15], var[0x46, 0, -1]))
 \2* 7D 83 20 \dxFFFFFFFF
 \2* 7D 82 20 \dxFFFFFFFF
@@ -108,25 +108,25 @@ B3 20 \dx00000003
 \wx8000 // Return computed value
 
 // Name: caller1
-8 * 143 02 0A FF 89
+8 * 145 02 0A FF 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
 \2r 5F 28 \dx0000FFFF
-\2sto 1A 20 \dx00000083
+\2sto 1A 20 \dx00000081
 \2r 1A 20 \dx00000000
-\2sto 1A 20 \dx00000088
+\2sto 1A 20 \dx00000086
 \2r 7E FD 20 \dxFFFFFFFF 	// callee(0)
-\2sto 1A 20 \dx00000084
-\2r 1A 20 \dx00000083
-\2sto 1A 20 \dx0000008A
-\2r 1A 20 \dx00000084
-\2sto 1A 20 \dx0000008B
+\2sto 1A 20 \dx00000082
+\2r 7D 81 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000088
+\2r 7D 82 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000089
 \2r 7E FF 20 \dxFFFFFFFF 	// dumb_add(var[0x5F, 8, 65535], callee(0))
-\2sto 1A 20 \dx00000085
+\2sto 1A 20 \dx00000083
 \2r 45 3C \dx0000000F
 \2+ 46 20 \dxFFFFFFFF
-\2* 7D 85 20 \dxFFFFFFFF
+\2* 7D 83 20 \dxFFFFFFFF
 \2* 7D 80 00 \dxFFFFFFFF
 \b0
 \wx8000 // Return computed value
