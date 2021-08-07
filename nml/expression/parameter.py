@@ -25,6 +25,7 @@ class Parameter(Expression):
         self.num = num
         if by_user and isinstance(num, ConstantNumeric) and not (0 <= num.value <= 63):
             generic.print_warning(
+                generic.Warning.GENERIC,
                 "Accessing parameters out of the range 0..63 is not supported and may lead to unexpected behaviour.",
                 pos,
             )

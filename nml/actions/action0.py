@@ -476,10 +476,12 @@ def get_property_info_list(feature, name):
     for prop_info in prop_info_list:
         if "replaced_by" in prop_info:
             generic.print_warning(
-                "'{}' is deprecated, consider using '{}' instead".format(prop_name, prop_info["replaced_by"]), name.pos
+                generic.Warning.DEPRECATION,
+                "'{}' is deprecated, consider using '{}' instead".format(prop_name, prop_info["replaced_by"]),
+                name.pos,
             )
         if "warning" in prop_info:
-            generic.print_warning(prop_info["warning"], name.pos)
+            generic.print_warning(generic.Warning.GENERIC, prop_info["warning"], name.pos)
     return prop_info_list
 
 
@@ -667,7 +669,9 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
         for prop_name, prop_info in properties[feature].items():
             if info == prop_info or (isinstance(prop_info, list) and info in prop_info):
                 generic.print_warning(
-                    "Property '{}' should be set before all other properties and graphics.".format(prop_name), pos
+                    generic.Warning.GENERIC,
+                    "Property '{}' should be set before all other properties and graphics.".format(prop_name),
+                    pos,
                 )
                 break
 

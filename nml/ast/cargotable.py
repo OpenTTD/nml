@@ -32,7 +32,11 @@ class CargoTable(base_statement.BaseStatement):
                 self.cargo_list[i]
             )  # we don't care about the result, only validate the input
             if self.cargo_list[i].value in global_constants.cargo_numbers:
-                generic.print_warning("Duplicate entry in cargo table: {}".format(self.cargo_list[i].value), cargo.pos)
+                generic.print_warning(
+                    generic.Warning.GENERIC,
+                    "Duplicate entry in cargo table: {}".format(self.cargo_list[i].value),
+                    cargo.pos,
+                )
             else:
                 global_constants.cargo_numbers[self.cargo_list[i].value] = i
 

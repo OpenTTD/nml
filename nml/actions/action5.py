@@ -105,7 +105,7 @@ def parse_action5(replaces):
                 "Too many sprites specified for sprite replacement type '{}',"
                 " expected {:d}, got {:d}, extra sprites may be ignored"
             ).format(replaces.type, num_required, num_sprites)
-            generic.print_warning(msg, replaces.pos)
+            generic.print_warning(generic.Warning.GENERIC, msg, replaces.pos)
 
         if replaces.offset != 0:
             msg = "replacenew parameter 'offset' must be zero for sprite replacement type '{}'".format(replaces.type)
@@ -120,7 +120,7 @@ def parse_action5(replaces):
         if num_sprites + replaces.offset > num_required:
             msg = "Exceeding the limit of {:d} sprites for sprite replacement type '{}', extra sprites may be ignored"
             msg = msg.format(num_required, replaces.type)
-            generic.print_warning(msg, replaces.pos)
+            generic.print_warning(generic.Warning.GENERIC, msg, replaces.pos)
 
         if replaces.offset != 0 or num_sprites != num_required:
             offset = replaces.offset

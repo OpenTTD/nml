@@ -18,7 +18,9 @@ from nml import expression, generic, nmlop
 
 def constant_number(name, info, pos):
     if isinstance(info, str):
-        generic.print_warning("'{}' is deprecated, consider using '{}' instead".format(name, info), pos)
+        generic.print_warning(
+            generic.Warning.DEPRECATION, "'{}' is deprecated, consider using '{}' instead".format(name, info), pos
+        )
         info = constant_numbers[info]
     return expression.ConstantNumeric(info, pos)
 

@@ -296,6 +296,13 @@ class OnlyOnce:
         cls.seen = {}
 
 
+class Warning:
+    GENERIC = 0
+    DEPRECATION = 1
+    OPTIMISATION = 2
+    disabled = None
+
+
 VERBOSITY_WARNING = 1  # Verbosity level for warnings
 VERBOSITY_INFO = 2  # Verbosity level for info messages
 VERBOSITY_PROGRESS = 3  # Verbosity level for progress feedback
@@ -409,11 +416,13 @@ def print_info(msg):
     show_progress()
 
 
-def print_warning(msg, pos=None):
+def print_warning(type, msg, pos=None):
     """
     Output a warning message to the user.
     """
     if verbosity_level < VERBOSITY_WARNING:
+        return
+    if Warning.disabled and type in Warning.disabled:
         return
     if pos:
         msg = str(pos) + ": " + msg
@@ -524,7 +533,7 @@ def find_file(filepath):
                     'Path "{}" at the file system does not match path "{}" given in the input'
                     " (case mismatch in the last component)"
                 ).format(real_path, given_path)
-                print_warning(msg)
+                print_warning(Warning.GENERIC, msg)
         elif os.access(path, os.X_OK):
             # Path is only accessible, cannot inspect the file system.
             matches = [comp]
@@ -593,6 +602,7 @@ def open_cache_file(sources, extension, mode):
     except OSError:
         if "w" in mode:
             print_warning(
-                "Can't create cache file {}. Check permissions, or use --cache-dir or --no-cache.".format(path)
+                Warning.GENERIC,
+                "Can't create cache file {}. Check permissions, or use --cache-dir or --no-cache.".format(path),
             )
         raise

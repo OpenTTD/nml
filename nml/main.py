@@ -204,10 +204,25 @@ def parse_cli(argv):
     opt_parser.add_option(
         "-D", "--debug-parser", action="store_true", dest="debug_parser", help="Enable debug mode for parser."
     )
+    opt_parser.add_option(
+        "--no-optimisation-warning",
+        action="append_const",
+        dest="disable_warning",
+        const=generic.Warning.OPTIMISATION,
+        help="Disable optimisation warnings",
+    )
+    opt_parser.add_option(
+        "--no-deprecation-warning",
+        action="append_const",
+        dest="disable_warning",
+        const=generic.Warning.DEPRECATION,
+        help="Disable deprecation warnings",
+    )
 
     opts, args = opt_parser.parse_args(argv)
 
     generic.set_verbosity(0 if opts.quiet else opts.verbosity)
+    generic.Warning.disabled = opts.disable_warning
     generic.set_cache_root_dir(None if opts.no_cache else opts.cache_dir)
     spritecache.keep_orphaned = opts.keep_orphaned
 

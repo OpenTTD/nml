@@ -264,7 +264,10 @@ def param_desc_actions(root, params):
                 max_val = setting.max_val.uvalue if setting.max_val is not None else 0xFFFFFFFF
                 def_val = setting.def_val.uvalue if setting.def_val is not None else 0
                 if min_val > max_val or def_val < min_val or def_val > max_val:
-                    generic.print_warning("Limits for GRF parameter {} are incoherent, ignoring.".format(param_num))
+                    generic.print_warning(
+                        generic.Warning.GENERIC,
+                        "Limits for GRF parameter {} are incoherent, ignoring.".format(param_num),
+                    )
                     min_val = 0
                     max_val = 0xFFFFFFFF
                 setting_node.subnodes.append(LimitNode(min_val, max_val))

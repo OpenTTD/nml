@@ -67,7 +67,7 @@ def get_real_action2s(spritegroup, feature):
             "Sprite groups for feature {:02X} will not be supported in the future, as they are no longer needed."
             " Directly refer to sprite sets instead."
         ).format(feature)
-        generic.print_warning(msg, spritegroup.pos)
+        generic.print_warning(generic.Warning.GENERIC, msg, spritegroup.pos)
         if view_names != ["default"]:
             raise generic.ScriptError("Expected only a 'default' (list of) sprite set(s).", spritegroup.pos)
 

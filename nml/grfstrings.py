@@ -311,7 +311,9 @@ def read_extra_commands(custom_tags_file):
             value = line[i + 1 :]
             if name in commands:
                 generic.print_warning(
-                    'Overwriting existing tag "' + name + '".', generic.LinePosition(custom_tags_file, line_no)
+                    generic.Warning.GENERIC,
+                    'Overwriting existing tag "' + name + '".',
+                    generic.LinePosition(custom_tags_file, line_no),
                 )
             commands[name] = {"unicode": value}
             if is_ascii_string(value):
@@ -653,7 +655,9 @@ class NewGRFString:
                 raise generic.ScriptError('Undefined command "{}"'.format(command_name), pos)
             if command_name in commands and "deprecated" in commands[command_name]:
                 generic.print_warning(
-                    "String code '{}' has been deprecated and will be removed soon".format(command_name), pos
+                    generic.Warning.DEPRECATION,
+                    "String code '{}' has been deprecated and will be removed soon".format(command_name),
+                    pos,
                 )
                 del commands[command_name]["deprecated"]
             #
@@ -1121,13 +1125,17 @@ class Language:
             self.strings[string].remove_non_default_commands()
         else:
             if string not in default_lang.strings:
-                generic.print_warning('String name "{}" does not exist in master file'.format(string), pos)
+                generic.print_warning(
+                    generic.Warning.GENERIC, 'String name "{}" does not exist in master file'.format(string), pos
+                )
                 return
 
             newgrf_string = NewGRFString(value, self, pos)
             if not default_lang.strings[string].match_commands(newgrf_string):
                 generic.print_warning(
-                    'String commands don\'t match with master file "{}"'.format(DEFAULT_LANGNAME), pos
+                    generic.Warning.GENERIC,
+                    'String commands don\'t match with master file "{}"'.format(DEFAULT_LANGNAME),
+                    pos,
                 )
                 return
 
@@ -1135,15 +1143,17 @@ class Language:
                 self.strings[string] = newgrf_string
             else:
                 if string not in self.strings:
-                    generic.print_warning("String with case used before the base string", pos)
+                    generic.print_warning(generic.Warning.GENERIC, "String with case used before the base string", pos)
                     return
                 if self.cases is None or case not in self.cases:
-                    generic.print_warning('Invalid case name "{}"'.format(case), pos)
+                    generic.print_warning(generic.Warning.GENERIC, 'Invalid case name "{}"'.format(case), pos)
                     return
                 if case in self.strings[string].cases:
                     raise generic.ScriptError('String name "{}.{}" is used multiple times'.format(string, case), pos)
                 if newgrf_string.gender:
-                    generic.print_warning("Case-strings can't set the gender, only the base string can", pos)
+                    generic.print_warning(
+                        generic.Warning.GENERIC, "Case-strings can't set the gender, only the base string can", pos
+                    )
                     return
                 self.strings[string].cases[case] = newgrf_string
 
@@ -1228,15 +1238,19 @@ def parse_file(filename, default):
         pos = generic.LanguageFilePosition(filename)
         if default:
             raise generic.ScriptError("The default language file contains non-utf8 characters.", pos)
-        generic.print_warning("Language file contains non-utf8 characters. Ignoring (part of) the contents.", pos)
+        generic.print_warning(
+            generic.Warning.GENERIC, "Language file contains non-utf8 characters. Ignoring (part of) the contents.", pos
+        )
     except generic.ScriptError as err:
         if default:
             raise
-        generic.print_warning(err.value, err.pos)
+        generic.print_warning(generic.Warning.GENERIC, err.value, err.pos)
     else:
         if lang.langid is None:
             generic.print_warning(
-                "Language file does not contain a ##grflangid pragma", generic.LanguageFilePosition(filename)
+                generic.Warning.GENERIC,
+                "Language file does not contain a ##grflangid pragma",
+                generic.LanguageFilePosition(filename),
             )
         else:
             for lng in langs:
@@ -1266,7 +1280,8 @@ def read_lang_files(lang_dir, default_lang_file):
     DEFAULT_LANGNAME = default_lang_file
     if not os.path.exists(lang_dir + os.sep + default_lang_file):
         generic.print_warning(
-            'Default language file "{}" doesn\'t exist'.format(os.path.join(lang_dir, default_lang_file))
+            generic.Warning.GENERIC,
+            'Default language file "{}" doesn\'t exist'.format(os.path.join(lang_dir, default_lang_file)),
         )
         return
     parse_file(lang_dir + os.sep + default_lang_file, True)
