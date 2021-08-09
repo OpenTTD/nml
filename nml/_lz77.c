@@ -20,6 +20,7 @@
  * Loaded by lz77.py if available, to replace the universal python code if possible.
  */
 
+#define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
 /**
