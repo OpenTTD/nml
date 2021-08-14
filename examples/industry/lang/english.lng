@@ -1,5 +1,7 @@
 ##grflangid 0x01
+##plural 0
+
 STR_GRF_NAME                                                    :NML Example NewGRF: Industry
 STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Industry{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.
 
-STR_INDUSTRY_EXTRA_TEXT                                         :{}Goods produced this month: {YELLOW}{SIGNED_WORD}
+STR_INDUSTRY_EXTRA_TEXT                                         :{}Goods produced this month: {YELLOW}{SIGNED_WORD}{}{BLACK}Test pluralisation: {YELLOW}{SIGNED_WORD} unit{P 1 "" s}, {SIGNED_WORD} unit{P 2 "" s}, {SIGNED_WORD} unit{P 3 "" s}{}

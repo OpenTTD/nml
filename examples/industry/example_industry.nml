@@ -68,7 +68,18 @@ switch(FEAT_INDUSTRIES, SELF, factory_production_switch, [
 switch(FEAT_INDUSTRIES, SELF, extra_text_switch,
         // Put the production amount on the textstack for use in a string parameter.
         // See https://newgrf-specs.tt-wiki.net/wiki/NML:Language_files#String_parameters
-        [STORE_TEMP(this_month_production("GOOD"), 256)]) {
+        [
+            STORE_TEMP(
+                this_month_production("GOOD")
+                | 0 << 16, // shift 16 bits to store a second value in the same stack register
+                256
+            ),
+            STORE_TEMP(
+                1
+                | 2 << 16, // shift 16 bits to store a second value in the same stack register
+                257
+            )
+        ]) {
         return string(STR_INDUSTRY_EXTRA_TEXT);
 }
 
