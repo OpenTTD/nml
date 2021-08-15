@@ -1,6 +1,50 @@
+0.6.0 (2021-08-15)
+------------------------------------------------------------------------
+This release adds major enhancements to switches:
+- Switches can now be used as functions inside expressions
+- Switches can now define parameters, which are passed by callers for usage inside the switch
+- NML now applies optimisations to switches and chains of switches
+- optimisation and deprecation warnings can be suppressed with nmlc flags, see 'nmlc --help' (#230)
+
+Support for NewGRF additions of OpenTTD 12.0:
+- Add: rail vehicle property and callback 'curve_speed_mod' (rail vehicle property 0x2E) (#222)
+
+Support for NewGRF additions of OpenTTD 1.11:
+- Update: Increase number of OTTD_GUI sprites to 186 (#183)
+- Add: Industry spec_flag 'IND_FLAG_DO_NOT_CLAMP_PASSENGER_PRODUCTION' (#183)
+- Add: Vehicle variables 'tile_(supports|powers|is)_(rail|road|tram)type' (#183)
+- Add: Vehicle variable 'tile_has_catenary' (#183)
+- Add: General variable 'inflation', which reports the game setting (#183)
+- Add: Alternative string constants introduced in OpenTTD/OpenTTD#8392 (#176)
+
+Other changes and fixes:
+- Add: industry variable for 'town_index' (var 0x41)
+- Add: constants GROUNDSPRITE_GRASS, GROUNDSPRITE_DESERT_2_2, GROUNDSPRITE_GRASS_1_3, GROUNDSPRITE_GRASS_2_3, GROUNDSPRITE_GRASS_3_3
+- Add: builtin functions for round() and sqrt()
+- Add: plural form 14 for Romanian
+- Change: Check that user code doesn't try to use reserved registers (#189)
+- Change: warn when a deprecated constant is used
+- Change: progress display shows input filename when reading files
+- Change: improve error message when invalid features are used
+- Add: More-obvious error for trailing '.' in a string id (#145)
+- Change: Clean up language definitions (#208)
+- Fix #184: Share townname bits when possible (#185)
+- Fix: Compatibility with Pillow 8.1.0 (#182)
+- Fix #180: No proper error message was given, if an unreferenced String was unable to allocate an id (#181)
+- Fix: Access to persistent-storage of towns  (#173)
+- Fix: Don't suppress errors for incorrect `hide_sprite` values (#168)
+- Fix: Remove trailing whitespaces in NFO output (#164)
+- Fix: town_euclidean_dist was returning incorrect value (#206)
+- Fix: rename MAP_TYPE_RECTANGULAR to MAP_TYPE_SQUARE (#201)
+- Fix: LZ77 compatibility with Python 3.9+ (#215, #228)
+- Fix: access to persistent-storage of towns was broken (#173)
+- Fix: use most likely defined position when reporting error (#226)
+- Update: VS generation script syntax (#233)
+
+
 0.5.3 (2020-09-15)
 ------------------------------------------------------------------------
-This release primarily restores legacy industry properties and vars which were removed in NML 0.5.0.  This is done for compatibility, so that older industry grfs can still be compiled with NML 0.5.3.  
+This release primarily restores legacy industry properties and vars which were removed in NML 0.5.0.  This is done for compatibility, so that older industry grfs can still be compiled with NML 0.5.3.
 
 See the NML 0.5.0 changelog entry for a list of the legacy industry properties and vars that were removed, and are restored in NML 0.5.3. A warning will be shown when these are used, and they may be removed again in some future version.
 
