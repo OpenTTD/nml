@@ -630,7 +630,9 @@ def parse_sprite_data(sprite_container):
                 if action_list[i].sprite_list[0].is_empty and not sprite.is_empty:
                     # if the first sprite is empty, all others are ignored
                     generic.print_warning(
-                        "Alternative sprites for an empty real sprite are ignored.", sprite_container.pos
+                        generic.Warning.OPTIMISATION,
+                        "Alternative sprites for an empty real sprite are ignored.",
+                        sprite_container.pos,
                     )
             if isinstance(sprite, RealSprite):
                 action_list[i].add_sprite(sprite)

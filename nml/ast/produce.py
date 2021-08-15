@@ -46,7 +46,11 @@ class ProduceOld(produce_base_class):
             self.param_list.append(expression.ConstantNumeric(0))
 
     def pre_process(self):
-        generic.print_warning("Consider using the new produce() syntax for '{}'".format(self.name), self.name.pos)
+        generic.print_warning(
+            generic.Warning.DEPRECATION,
+            "Consider using the new produce() syntax for '{}'".format(self.name),
+            self.name.pos,
+        )
         var_scope = action2var.get_scope(0x0A)
         for i, param in enumerate(self.param_list):
             self.param_list[i] = action2var.reduce_varaction2_expr(param, var_scope)

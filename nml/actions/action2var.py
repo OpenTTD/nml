@@ -703,7 +703,11 @@ class Varaction2Parser:
 
 def parse_var(name, info, pos):
     if "replaced_by" in info:
-        generic.print_warning("'{}' is deprecated, consider using '{}' instead".format(name, info["replaced_by"]), pos)
+        generic.print_warning(
+            generic.Warning.DEPRECATION,
+            "'{}' is deprecated, consider using '{}' instead".format(name, info["replaced_by"]),
+            pos,
+        )
     param = expression.ConstantNumeric(info["param"]) if "param" in info else None
     res = expression.Variable(
         expression.ConstantNumeric(info["var"]),
@@ -1141,7 +1145,11 @@ def parse_varaction2(switch_block):
         if check_min and check_max:
             for existing_range in used_ranges:
                 if existing_range[0] <= range_min.value and range_max.value <= existing_range[1]:
-                    generic.print_warning("Range overlaps with existing ranges so it'll never be reached", r.min.pos)
+                    generic.print_warning(
+                        generic.Warning.GENERIC,
+                        "Range overlaps with existing ranges so it'll never be reached",
+                        r.min.pos,
+                    )
                     range_overlap = True
                     break
             if not range_overlap:

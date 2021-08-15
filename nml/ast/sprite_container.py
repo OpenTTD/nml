@@ -58,7 +58,7 @@ class SpriteContainer:
                 + "level / bit depth combination. This data will be overridden."
             )
             msg = msg.format(self.block_type, self.block_name.value)
-            generic.print_warning(msg, pos)
+            generic.print_warning(generic.Warning.GENERIC, msg, pos)
         self.sprite_data[key] = (sprite_list, default_file, default_mask_file, pos)
 
     def get_all_sprite_data(self):

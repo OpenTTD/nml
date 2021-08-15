@@ -235,7 +235,8 @@ class NMLLexer:
             else:
                 # But of course user input can never be trusted
                 generic.print_warning(
-                    "Information about included files is inconsistent, position information for errors may be wrong."
+                    generic.Warning.GENERIC,
+                    "Information about included files is inconsistent, position information for errors may be wrong.",
                 )
 
         self.set_position(fname, line)

@@ -154,7 +154,7 @@ class OutputGRF(output_base.BinaryOutputBase):
         )
 
         for w in warnings:
-            generic.print_warning(w, pos_warning)
+            generic.print_warning(generic.Warning.GENERIC, w, pos_warning)
 
         self.sprite_output.start_sprite(len(compressed_data) + 18)
         self.wsprite_header(size_x, size_y, len(compressed_data), xoffset, yoffset, info_byte, sprite_info.zoom_level)

@@ -387,7 +387,11 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                 if len(self._referencing_nodes) == 0 and (not self.optimised or self.optimised is self):
                     # if we can be 'not used', there ought to be a way to refer to this block
                     assert self.name is not None
-                    generic.print_warning("Block '{}' is not referenced, ignoring.".format(self.name.value), self.pos)
+                    generic.print_warning(
+                        generic.Warning.OPTIMISATION,
+                        "Block '{}' is not referenced, ignoring.".format(self.name.value),
+                        self.pos,
+                    )
 
             return len(self._referencing_nodes) != 0
 

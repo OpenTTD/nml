@@ -103,7 +103,9 @@ class ParameterAssignment(base_statement.BaseStatement):
         elif isinstance(self.param, expression.Identifier):
             if global_constants.identifier_refcount[self.param.value] == 0:
                 generic.print_warning(
-                    "Named parameter '{}' is not referenced, ignoring.".format(self.param.value), self.param.pos
+                    generic.Warning.OPTIMISATION,
+                    "Named parameter '{}' is not referenced, ignoring.".format(self.param.value),
+                    self.param.pos,
                 )
                 return
             num = action6.free_parameters.pop_unique(self.pos)

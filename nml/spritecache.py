@@ -155,8 +155,9 @@ class SpriteCache:
             return
         except json.JSONDecodeError:
             generic.print_warning(
+                generic.Warning.GENERIC,
                 "{} contains invalid data, ignoring.".format(index_file_name)
-                + " Please remove the file and file a bug report if this warning keeps appearing"
+                + " Please remove the file and file a bug report if this warning keeps appearing",
             )
             self.cached_sprites = {}
             return
@@ -250,8 +251,9 @@ class SpriteCache:
                     self.cached_sprites[key] = value
         except Exception:
             generic.print_warning(
+                generic.Warning.GENERIC,
                 "{} contains invalid data, ignoring.".format(index_file_name)
-                + " Please remove the file and file a bug report if this warning keeps appearing"
+                + " Please remove the file and file a bug report if this warning keeps appearing",
             )
             self.cached_sprites = {}  # Clear cache
 
