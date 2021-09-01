@@ -717,7 +717,7 @@ def parse_property_block(prop_list, feature, id, size):
         value_list_list.extend(
             parse_property_value(prop_info, prop.value, prop.unit, size_bit) for prop_info in new_prop_info_list
         )
-        pos_list.extend(prop.name.pos for i in prop_info_list)
+        pos_list.extend(prop.name.pos for i in new_prop_info_list)
 
     validate_prop_info_list(prop_info_list, pos_list, feature)
 
