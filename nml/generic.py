@@ -437,18 +437,23 @@ def print_warning(type, msg, pos=None):
     show_progress()
 
 
-def print_error(msg):
+def print_error(msg, pos=None):
     """
     Output an error message to the user.
     """
-    clear_progress()
+    if pos:
+        msg = str(pos) + ": " + msg
+    else:
+        clear_progress()
 
     msg = " nmlc ERROR: " + msg
 
     if sys.stderr.isatty():
         msg = "\033[91m" + msg + "\033[0m"
 
+    hide_progress()
     print(msg, file=sys.stderr)
+    show_progress()
 
 
 def print_dbg(indent, *args):
