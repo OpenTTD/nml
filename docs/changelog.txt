@@ -1,3 +1,9 @@
+0.6.1 (2021-09-15)
+------------------------------------------------------------------------
+Support for NewGRF additions of OpenTTD 12.0:
+- Update: Increase number of OTTD_GUI sprites to 191 (#253)
+
+
 0.6.0 (2021-08-15)
 ------------------------------------------------------------------------
 This release adds major enhancements to switches:
