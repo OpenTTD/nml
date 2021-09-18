@@ -78,16 +78,6 @@ constant_numbers = {
     "RUNNING_COST_ROADVEH"  : 0x4C48,
     "RUNNING_COST_NONE"     : 0x0000,
 
-    # shorten factor
-    "SHORTEN_TO_8_8" : 0x00,
-    "SHORTEN_TO_7_8" : 0x01,
-    "SHORTEN_TO_6_8" : 0x02,
-    "SHORTEN_TO_5_8" : 0x03,
-    "SHORTEN_TO_4_8" : 0x04,
-    "SHORTEN_TO_3_8" : 0x05,
-    "SHORTEN_TO_2_8" : 0x06,
-    "SHORTEN_TO_1_8" : 0x07,
-
     # vehicle length
     "VEHICLE_LENGTH" : 8,
 
