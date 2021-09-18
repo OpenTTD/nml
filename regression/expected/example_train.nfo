@@ -250,20 +250,20 @@ C6 00 \dx0000FFFF
 \wx8401 \dx00000074 \dx00000074 	// 116 .. 116: return 1025;
 \wx8003 // default: return string(STR_ICM_CANNOT_ATTACH_OTHER);
 
-// Name: sw_icm_shorten_3_part_vehicle
+// Name: sw_icm_length_3_part_vehicle
 73 * 41 02 00 F8 89
 40 80 \dx000000FF \dx00000000 \dx00000004
 \b2
-\wx8007 \dx00000001 \dx00000001 	// 1 .. 1: return 7;
-\wx8001 \dx00000002 \dx00000002 	// 2 .. 2: return 1;
-\wx8000 // default: return 0;
+\wx8001 \dx00000001 \dx00000001 	// 1 .. 1: return 1;
+\wx8007 \dx00000002 \dx00000002 	// 2 .. 2: return 7;
+\wx8008 // default: return 8;
 
 // Name: sw_icm_length
 74 * 23 02 00 F8 89
 F2 00 \dx000000FF
 \b1
-\wx00F8 \dx00000000 \dx00000000 	// 0 .. 0: sw_icm_shorten_3_part_vehicle;
-\wx8000 // default: return 0;
+\wx00F8 \dx00000000 \dx00000000 	// 0 .. 0: sw_icm_length_3_part_vehicle;
+\wx8008 // default: return 8;
 
 // Name: sw_icm_power
 75 * 23 02 00 F7 89

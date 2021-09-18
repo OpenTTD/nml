@@ -186,18 +186,18 @@ switch(FEAT_TRAINS, SELF, sw_icm_can_attach_wagon, vehicle_type_id) {
     return string(STR_ICM_CANNOT_ATTACH_OTHER);
 }
 
-/* --- Shorten vehicle callback  --- */
-switch(FEAT_TRAINS, SELF, sw_icm_shorten_3_part_vehicle, position_in_consist % 4) {
+/* --- Vehicle length callback  --- */
+switch(FEAT_TRAINS, SELF, sw_icm_length_3_part_vehicle, position_in_consist % 4) {
     /* In the three part version, shorten the 2nd vehicle to 1/8 and the 3rd to 7/8
      * The rear (7/8) part is then made invisisble */
-    1: return SHORTEN_TO_1_8;
-    2: return SHORTEN_TO_7_8;
-    return SHORTEN_TO_8_8;
+    1: return 1;
+    2: return 7;
+    return 8;
 }
 
 switch(FEAT_TRAINS, SELF, sw_icm_length, cargo_subtype) {
-    0: sw_icm_shorten_3_part_vehicle;
-    return SHORTEN_TO_8_8; // 4-part vehicle needs no shortening
+    0: sw_icm_length_3_part_vehicle;
+    return 8; // 4-part vehicle needs no shortening
 }
 
 /* Power, weight and TE are all applied to the front vehicle only */
