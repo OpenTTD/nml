@@ -282,7 +282,7 @@ item(FEAT_TRAINS, icm) {
         running_cost_factor: (cargo_subtype == 1) ? 150 : 100;
         purchase_running_cost_factor: return 100;
         /* Capacity is per part */
-        cargo_capacity: return (cargo_subtype == 0) && ((position_in_consist % 4) == 2) ? 0 : 36;
+        cargo_capacity: return 36 * (cargo_subtype + 3) / 4;
         /* In the purchase menu, we want to show the capacity for the three-part version,
          * i.e. divide the capacity of three cars across four */
         purchase_cargo_capacity: return 36 * 3 / 4;

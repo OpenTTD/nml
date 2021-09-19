@@ -361,17 +361,10 @@ F2 20 \dx000000FF
 \wx8000 // Return computed value
 
 // Name: @return_action_1
-89 * 85 02 00 F2 89
-40 A0 \dx000000FF \dx00000000 \dx00000004
-\2cmp 1A 20 \dx00000002
-\2& 1A 20 \dx00000001
-\2sto 1A 20 \dx00000080
-\2r F2 20 \dx000000FF
-\2cmp 1A 20 \dx00000000
-\2& 1A 20 \dx00000001
-\2& 7D 80 20 \dxFFFFFFFF
-\2* 1A 20 \dxFFFFFFDC 	// expr1 - expr2
-\2+ 1A 00 \dx00000024
+89 * 35 02 00 F2 89
+F2 60 \dx000000FF \dx00000003 \dx00000001
+\2* 1A 20 \dx00000024
+\2/ 1A 00 \dx00000004
 \b0
 \wx8000 // Return computed value
 
@@ -395,7 +388,7 @@ F2 20 \dx000000FF
 \b6
 \wx00F7 \dx0000000B \dx0000000B 	// sw_icm_power;
 \wx00F3 \dx0000000D \dx0000000D 	// return ((var[0xF2, 0, 255] == 1) ? 150 : 100)
-\wx00F2 \dx00000014 \dx00000014 	// return (((var[0xF2, 0, 255] == 0) & (((var[0x40, 0, 255] + 0) % 4) == 2)) ? 0 : 36)
+\wx00F2 \dx00000014 \dx00000014 	// return (((var[0xF2, 0, 255] + 3) * 36) / 4)
 \wx00F6 \dx00000016 \dx00000016 	// sw_icm_weight;
 \wx00F5 \dx0000001F \dx0000001F 	// sw_icm_te;
 \wx00F1 \dx00000021 \dx00000021 	// @action3_1;
@@ -423,17 +416,10 @@ F2 20 \dx000000FF
 \wx8000 // Return computed value
 
 // Name: @return_action_4
-95 * 85 02 00 F2 89
-40 A0 \dx000000FF \dx00000000 \dx00000004
-\2cmp 1A 20 \dx00000002
-\2& 1A 20 \dx00000001
-\2sto 1A 20 \dx00000080
-\2r F2 20 \dx000000FF
-\2cmp 1A 20 \dx00000000
-\2& 1A 20 \dx00000001
-\2& 7D 80 20 \dxFFFFFFFF
-\2* 1A 20 \dxFFFFFFDC 	// expr1 - expr2
-\2+ 1A 00 \dx00000024
+95 * 35 02 00 F2 89
+F2 60 \dx000000FF \dx00000003 \dx00000001
+\2* 1A 20 \dx00000024
+\2/ 1A 00 \dx00000004
 \b0
 \wx8000 // Return computed value
 
@@ -442,7 +428,7 @@ F2 20 \dx000000FF
 0C 00 \dx0000FFFF
 \b8
 \wx00F6 \dx00000010 \dx00000010 	// return ((((var[0x40, 0, 255] + 0) % 4) == 0) ? 186 : 200)
-\wx00F2 \dx00000015 \dx00000015 	// return (((var[0xF2, 0, 255] == 0) & (((var[0x40, 0, 255] + 0) % 4) == 2)) ? 0 : 36)
+\wx00F2 \dx00000015 \dx00000015 	// return (((var[0xF2, 0, 255] + 3) * 36) / 4)
 \wx00FA \dx00000016 \dx00000016 	// sw_icm_articulated_part;
 \wx00FC \dx00000019 \dx00000019 	// sw_icm_cargo_subtype_text;
 \wx00F9 \dx0000001D \dx0000001D 	// sw_icm_can_attach_wagon;
