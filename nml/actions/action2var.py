@@ -418,6 +418,10 @@ class Varaction2Parser:
             self.var_list_size += 2 + diff_var.get_size()
             return expr.expr2
         else:
+            if not expr.is_read_only() and guard.is_read_only():
+                generic.print_warning(
+                    generic.Warning.GENERIC, "Ternary operator may have unexpected side effects", expr.pos
+                )
             guard_var = VarAction2StoreTempVar()
             guard_var.comment = "guard"
             inverted_guard_var = VarAction2StoreTempVar()
