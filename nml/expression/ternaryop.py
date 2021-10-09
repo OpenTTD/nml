@@ -65,7 +65,7 @@ class TernaryOp(Expression):
         return self.guard.collect_references() + self.expr1.collect_references() + self.expr2.collect_references()
 
     def is_read_only(self):
-        return self.expr1.is_read_only() and self.expr2.is_read_only()
+        return self.guard.is_read_only() and self.expr1.is_read_only() and self.expr2.is_read_only()
 
     def is_boolean(self):
         return self.expr1.is_boolean() and self.expr2.is_boolean()
