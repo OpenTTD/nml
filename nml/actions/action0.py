@@ -654,6 +654,7 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
     """
     Perform various checks on a list of properties in a property-block
         - make sure that properties that should appear first (substitute type) appear first
+        - make sure that required properties are set
 
     @param prop_info_list: List of dictionaries with property information
     @type prop_info_list: C{list} of C{dict}
@@ -665,15 +666,23 @@ def validate_prop_info_list(prop_info_list, pos_list, feature):
     @type feature: C{int}
     """
     first_warnings = [(info, pos_list[i]) for i, info in enumerate(prop_info_list) if "first" in info and i != 0]
-    for info, pos in first_warnings:
-        for prop_name, prop_info in properties[feature].items():
-            if info == prop_info or (isinstance(prop_info, list) and info in prop_info):
+    for prop_name, prop_info in properties[feature].items():
+        if not isinstance(prop_info, list):
+            prop_info = [prop_info]
+        for info, pos in first_warnings:
+            if info in prop_info:
                 generic.print_warning(
                     generic.Warning.GENERIC,
                     "Property '{}' should be set before all other properties and graphics.".format(prop_name),
                     pos,
                 )
                 break
+        for info in prop_info:
+            if "required" in info and info not in prop_info_list:
+                generic.print_error(
+                    "Property '{}' is not set. Item will be invalid.".format(prop_name),
+                    pos_list[-1],
+                )
 
 
 def parse_property_block(prop_list, feature, id, size):
@@ -717,7 +726,7 @@ def parse_property_block(prop_list, feature, id, size):
         value_list_list.extend(
             parse_property_value(prop_info, prop.value, prop.unit, size_bit) for prop_info in new_prop_info_list
         )
-        pos_list.extend(prop.name.pos for i in prop_info_list)
+        pos_list.extend(prop.name.pos for i in new_prop_info_list)
 
     validate_prop_info_list(prop_info_list, pos_list, feature)
 

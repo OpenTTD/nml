@@ -163,7 +163,9 @@ class Action0Property(BaseAction0Property):
 # 'warning' is a string (optional) containing a warning message that will be
 # shown if a property is used. Use for deprecating properties.
 #
-# 'first' (value doesn't matter) if the property should be set first (generally a substitute type)
+# 'first' (value doesn't matter) if the property should be set first (generally a substitute type).
+#
+# 'required' (value doesn't matter) if the property is required for the item to be valid.
 
 properties = 0x14 * [None]
 
@@ -1274,9 +1276,9 @@ properties[0x0F] = {
     "class":                  {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
     # strings might be according to specs be either 0xD0 or 0xD4
     "classname":              {"size": 2, "num": 0x09, "string": 0xD0},
-    "name":                   {"size": 2, "num": 0x0A, "string": 0xD0},
-    "climates_available":     {"size": 1, "num": 0x0B},
-    "size":                   {"custom_function": object_size},  # = prop 0C
+    "name":                   {"size": 2, "num": 0x0A, "string": 0xD0, "required": True},
+    "climates_available":     {"size": 1, "num": 0x0B, "required": True},
+    "size":                   {"custom_function": object_size, "required": True},  # = prop 0C
     "build_cost_multiplier":  {"size": 1, "num": 0x0D},
     "introduction_date":      {"size": 4, "num": 0x0E},
     "end_of_life_date":       {"size": 4, "num": 0x0F},
