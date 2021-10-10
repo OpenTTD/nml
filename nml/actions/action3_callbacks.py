@@ -209,19 +209,8 @@ callbacks[0x0A] = {
 }
 
 # Cargos
-def cargo_profit_value(value):
-    # In NFO, calculation is (amount * price_factor * cb_result) / 8192
-    # Units of the NML price factor differ by about 41.12, i.e. 1 NML unit = 41 NFO units
-    # That'd make the formula (amount * price_factor * cb_result) / (8192 / 41)
-    # This is almost (error 0.01%) equivalent to the following, which is what this calculation does
-    # (amount * price_factor * (cb_result * 329 / 256)) / 256
-    # This allows us to report a factor of 256 in the documentation, which makes a lot more sense than 199.804...
-    # Not doing the division here would improve accuracy, but limits the range of the return value too much
-    value = nmlop.MUL(value, 329)
-    return nmlop.DIV(value, 256)
-
 callbacks[0x0B] = {
-    'profit'         : {'type': 'cb', 'num':  0x39, 'flag_bit': 0, 'value_function': cargo_profit_value},
+    'profit'         : {'type': 'cb', 'num':  0x39, 'flag_bit': 0},
     'station_rating' : {'type': 'cb', 'num': 0x145, 'flag_bit': 1},
     'default'        : {'type': 'cargo', 'num': None},
 }
