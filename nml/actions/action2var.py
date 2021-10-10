@@ -640,6 +640,8 @@ class Varaction2Parser:
 
     def parse_expr(self, expr):
         if isinstance(expr, expression.Array):
+            if len(expr.values) == 0:
+                raise generic.ScriptError("An array of expressions cannot be empty", expr.pos)
             for expr2 in expr.values:
                 self.parse(expr2)
                 self.var_list.append(nmlop.VAL2)
