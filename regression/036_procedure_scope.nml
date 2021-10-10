@@ -6,6 +6,13 @@ grf {
     min_compatible_version: 0;
 }
 
+switch(FEAT_INDUSTRIES, PARENT, proc_call_optimisation, population) {
+    0: return 0;
+    return STORE_TEMP(0,0);
+}
+
+switch(FEAT_INDUSTRIES, SELF, ternary_optimisation, proc_call_optimisation() ? 1 : 0) { return 5; }
+
 switch(FEAT_INDUSTRIES, SELF, dumb_add, a, b, a + b) { return; }
 
 /* some computation that requires registers for intermediate values */
@@ -30,5 +37,6 @@ item(FEAT_INDUSTRIES, coal_mine) {
     graphics {
         build_prod_change: return caller1;
         control_special: return caller2;
+        construction_probability: return ternary_optimisation;
     }
 }

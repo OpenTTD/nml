@@ -128,6 +128,10 @@ class Switch(switch_base_class):
         return all_refs
 
     def is_read_only(self):
+        for result in [r.result for r in self.body.ranges] + [self.body.default]:
+            if result is not None and result.value is not None:
+                if not result.value.is_read_only():
+                    return False
         return self.expr.is_read_only()
 
     def debug_print(self, indentation):
