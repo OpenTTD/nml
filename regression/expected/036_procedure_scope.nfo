@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d17
+0 * 4 \d18
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -30,12 +30,16 @@
 \wx8000 \dx00000000 \dx00000000 	// 0 .. 0: return 0;
 \wx00FF // default: return STORE_TEMP(0, 0)
 
+// Name: @ternary_action_0
+5 * 24 02 0A FF 89
+7E FF 00 \dxFFFFFFFF 	// proc_call_optimisation
+\b1
+\wx00FF \dx00000000 \dx00000000 	// proc_call_optimisation;
+\wx8001 // return 1;
+
 // Name: ternary_optimisation
-5 * 45 02 0A FF 89
-7E FF 20 \dxFFFFFFFF 	// proc_call_optimisation
-\2u< 1A 20 \dx00000001
-\2* 1A 20 \dx00000001 	// expr1 - expr2
-\2+ 1A 00 \dx00000000
+6 * 24 02 0A FF 89
+7E FF 00 \dxFFFFFFFF 	// @ternary_action_0
 \b1
 \wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx8005 // default: return 5;
@@ -43,14 +47,14 @@
 // Name: dumb_add
 // a : register 88
 // b : register 89
-6 * 22 02 0A FE 89
+7 * 22 02 0A FE 89
 7D 88 20 \dxFFFFFFFF 	// a
 \2+ 7D 89 00 \dxFFFFFFFF 	// b
 \b0
 \wx8000 // Return computed value
 
 // Name: @return_action_0
-7 * 66 02 0A FD 8A
+8 * 66 02 0A FD 8A
 1A 20 \dx00000005
 \2sto 1A 20 \dx00000088
 \2r 7D 86 20 \dxFFFFFFFF 	// a
@@ -63,7 +67,7 @@
 \wx8000 // Return computed value
 
 // Name: @return_action_1
-8 * 66 02 0A FC 8A
+9 * 66 02 0A FC 8A
 1A 20 \dx00000006
 \2sto 1A 20 \dx00000088
 \2r 7D 86 20 \dxFFFFFFFF 	// a
@@ -77,7 +81,7 @@
 
 // Name: callee
 // a : register 86
-9 * 110 02 0A FC 8A
+10 * 110 02 0A FC 8A
 92 22 \dx00000001
 \2* 1A 20 \dx00000004
 \2sto 1A 20 \dx00000087
@@ -96,7 +100,7 @@
 \wx00FC // default: return (a + dumb_add(6, a))
 
 // Name: caller2
-10 * 232 02 0A FD 89
+11 * 232 02 0A FD 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
@@ -132,7 +136,7 @@ B3 20 \dx00000003
 \wx8000 // Return computed value
 
 // Name: caller1
-11 * 145 02 0A FE 89
+12 * 145 02 0A FE 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
@@ -155,26 +159,26 @@ B3 20 \dx00000003
 \b0
 \wx8000 // Return computed value
 
-12 * 11 00 0A \b2 01 FF \wx0000
+13 * 11 00 0A \b2 01 FF \wx0000
 08 00
 09 00
 
-13 * 11 00 0A \b2 01 FF \wx0000
+14 * 11 00 0A \b2 01 FF \wx0000
 21 01
 22 42
 
 // Name: @CB_FAILED_PROD
-14 * 15 02 0A FC 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
+15 * 15 02 0A FC 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
 
 // Name: @CB_FAILED0A
-15 * 23 02 0A FC 89
+16 * 23 02 0A FC 89
 0C 00 \dx0000FFFF
 \b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00FC // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-16 * 43 02 0A FC 89
+17 * 43 02 0A FC 89
 0C 00 \dx0000FFFF
 \b3
 \wx00FF \dx00000022 \dx00000022 	// ternary_optimisation;
@@ -182,6 +186,6 @@ B3 20 \dx00000003
 \wx00FE \dx0000015F \dx0000015F 	// caller1;
 \wx00FC // @CB_FAILED0A;
 
-17 * 7 03 0A 01 00 \b0
+18 * 7 03 0A 01 00 \b0
 \wx00FC 	// @action3_0;
 

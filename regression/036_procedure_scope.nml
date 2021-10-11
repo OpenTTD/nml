@@ -11,7 +11,7 @@ switch(FEAT_INDUSTRIES, PARENT, proc_call_optimisation, population) {
     return STORE_TEMP(0,0);
 }
 
-switch(FEAT_INDUSTRIES, SELF, ternary_optimisation, proc_call_optimisation() ? 1 : 0) { return 5; }
+switch(FEAT_INDUSTRIES, SELF, ternary_optimisation, proc_call_optimisation() ? 1 : proc_call_optimisation()) { return 5; }
 
 switch(FEAT_INDUSTRIES, SELF, dumb_add, a, b, a + b) { return; }
 
