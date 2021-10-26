@@ -1,0 +1,15 @@
+grf {
+    grfid: "NML\40";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+item (FEAT_STATIONS, basic_station) {
+    property {
+        class    : "TEST";
+        classname: string(STR_STATION_TEST_CLASS);
+        name     : string(STR_STATION_BASIC);
+    }
+}

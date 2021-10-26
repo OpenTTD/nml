@@ -650,7 +650,18 @@ properties[0x03] = {
 }
 # fmt: on
 
-# TODO: Feature 0x04 (Stations)
+#
+# Feature 0x04 (Stations)
+#
+
+# fmt: off
+properties[0x04] = {
+    "class":                  {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
+
+    "classname":              {"num": -1, "string": 0xC4},
+    "name":                   {"num": -1, "string": 0xC5, "required": True},
+}
+# fmt: on
 
 #
 # Feature 0x05 (Canals)
