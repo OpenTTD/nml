@@ -27,6 +27,9 @@ STR_PARAM_LANDSCAPE_TOYLAND    :toyland (not implemented)
 
 STR_STATIONS                   :Teßt Stätiöµſ
 
+STR_STATION_TEST_CLASS         :Test
+STR_STATION_BASIC              :Basic station
+
 STR_OBJ_MISC_CLASS             :Miscellaneous
 STR_OBJ_BASIC                  :Basic object
 
