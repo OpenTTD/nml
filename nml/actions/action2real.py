@@ -56,12 +56,19 @@ def get_real_action2s(spritegroup, feature):
     spriteset_list = []
     for view in spritegroup.spriteview_list:
         spriteset_list.extend([action2.resolve_spritegroup(sg_ref.name) for sg_ref in view.spriteset_list])
+        if feature == 0x04:
+            if view.name.value not in ["little", "lots"]:
+                raise generic.ScriptError("Unexpected '{}' (list of) sprite set(s).".format(view.name), view.pos)
+            view.name.value = "loading" if view.name.value == "lots" else "loaded"
     actions.extend(action1.add_to_action1(spriteset_list, feature, spritegroup.pos))
 
     view_names = sorted(view.name.value for view in spritegroup.spriteview_list)
     if feature in (0x00, 0x01, 0x02, 0x03):
         if view_names != sorted(["loading", "loaded"]):
             raise generic.ScriptError("Expected a 'loading' and a 'loaded' (list of) sprite set(s).", spritegroup.pos)
+    elif feature == 0x04:
+        if "loading" not in view_names:
+            raise generic.ScriptError("Expected at least a 'lots' (list of) sprite set(s).", spritegroup.pos)
     elif feature in (0x05, 0x0B, 0x0D, 0x10):
         msg = (
             "Sprite groups for feature {:02X} will not be supported in the future, as they are no longer needed."
@@ -114,7 +121,9 @@ def make_simple_real_action2(feature, name, pos, action1_index):
     @return: The created real action2
     @rtype: L{Action2Real}
     """
-    return Action2Real(feature, name, pos, [action1_index], [action1_index] if feature <= 0x03 else [])
+    return Action2Real(
+        feature, name, pos, [action1_index] if feature != 0x04 else [], [action1_index] if feature <= 0x04 else []
+    )
 
 
 def create_spriteset_actions(spritegroup):

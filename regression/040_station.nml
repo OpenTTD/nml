@@ -6,10 +6,24 @@ grf {
     min_compatible_version: 0;
 }
 
+spriteset(station_spriteset, "station.png") {
+    [  1,  1,  5,  5,  -2,  -2]
+    [  7,  1,  5,  5,  -2,  -2]
+}
+spriteset(station_spriteset2, "station.png") {
+    [  2,  2,  3,  3,  -1,  -1]
+    [  8,  2,  3,  3,  -1,  -1]
+}
+
 item (FEAT_STATIONS, basic_station) {
     property {
         class    : "TEST";
         classname: string(STR_STATION_TEST_CLASS);
         name     : string(STR_STATION_BASIC);
+    }
+    graphics {
+        1: station_spriteset;
+        0: station_spriteset2;
+        station_spriteset;
     }
 }
