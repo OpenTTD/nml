@@ -19,11 +19,9 @@ from nml.ast import general
 
 
 class Action2Layout(action2.Action2):
-    def __init__(self, feature, name, pos, ground_sprite, sprite_list, param_registers):
+    def __init__(self, feature, name, pos, layout, param_registers):
         action2.Action2.__init__(self, feature, name, pos)
-        assert ground_sprite.type == Action2LayoutSpriteType.GROUND
-        self.ground_sprite = ground_sprite
-        self.sprite_list = sprite_list
+        self.layout = layout
         self.param_registers = param_registers
 
     def resolve_tmp_storage(self):
@@ -40,53 +38,10 @@ class Action2Layout(action2.Action2):
             reg.set_register(location)
 
     def write(self, file):
-        advanced = any(x.is_advanced_sprite() for x in self.sprite_list + [self.ground_sprite])
-        size = 5
-        if advanced:
-            size += self.ground_sprite.get_registers_size()
-        for sprite in self.sprite_list:
-            if sprite.type == Action2LayoutSpriteType.CHILD:
-                size += 7
-            else:
-                size += 10
-            if advanced:
-                size += sprite.get_registers_size()
-        if len(self.sprite_list) == 0 and not advanced:
-            size += 9
-
+        size = self.layout.get_size()
         regs = ["{} : register {:X}".format(reg.name, reg.register) for reg in self.param_registers]
         action2.Action2.write_sprite_start(self, file, size, regs)
-        if advanced:
-            file.print_byte(0x40 | len(self.sprite_list))
-        else:
-            file.print_byte(len(self.sprite_list))
-        self.ground_sprite.write_sprite_number(file)
-        if advanced:
-            self.ground_sprite.write_flags(file)
-            self.ground_sprite.write_registers(file)
-        file.newline()
-        if len(self.sprite_list) == 0 and not advanced:
-            file.print_dwordx(0)  # sprite number 0 == no sprite
-            for _ in range(0, 5):
-                file.print_byte(0)  # empty bounding box. Note that number of zeros is 5, not 6
-        else:
-            for sprite in self.sprite_list:
-                sprite.write_sprite_number(file)
-                if advanced:
-                    sprite.write_flags(file)
-                file.print_byte(sprite.get_param("xoffset").value)
-                file.print_byte(sprite.get_param("yoffset").value)
-                if sprite.type == Action2LayoutSpriteType.CHILD:
-                    file.print_bytex(0x80)
-                else:
-                    # normal building sprite
-                    file.print_byte(sprite.get_param("zoffset").value)
-                    file.print_byte(sprite.get_param("xextent").value)
-                    file.print_byte(sprite.get_param("yextent").value)
-                    file.print_byte(sprite.get_param("zextent").value)
-                if advanced:
-                    sprite.write_registers(file)
-                file.newline()
+        self.layout.write(file)
         file.end_sprite()
 
 
@@ -385,13 +340,137 @@ class Action2LayoutSprite:
         self.create_register(name, expression.Not(value).reduce())
 
 
-def get_layout_action2s(spritelayout, feature, spr_pos):
-    """
-    @param spr_pos: Position information of the sprite view.
-    @type  spr_pos: L{Position}
-    """
-    ground_sprite = None
-    building_sprites = []
+class ParsedSpriteLayout:
+    def __init__(self):
+        self.ground_sprite = None
+        self.building_sprites = []
+        self.registers = []
+        self.advanced = False
+
+    def get_size(self):
+        size = 5
+        if self.advanced:
+            size += self.ground_sprite.get_registers_size()
+        for sprite in self.building_sprites:
+            if sprite.type == Action2LayoutSpriteType.CHILD:
+                size += 7
+            else:
+                size += 10
+            if self.advanced:
+                size += sprite.get_registers_size()
+        if len(self.building_sprites) == 0 and not self.advanced:
+            size += 9
+        return size
+
+    def write(self, file):
+        if self.advanced:
+            file.print_byte(0x40 | len(self.building_sprites))
+        else:
+            file.print_byte(len(self.building_sprites))
+        self.ground_sprite.write_sprite_number(file)
+        if self.advanced:
+            self.ground_sprite.write_flags(file)
+            self.ground_sprite.write_registers(file)
+        file.newline()
+        if len(self.building_sprites) == 0 and not self.advanced:
+            file.print_dwordx(0)  # sprite number 0 == no sprite
+            for _ in range(0, 5):
+                file.print_byte(0)  # empty bounding box. Note that number of zeros is 5, not 6
+        else:
+            for sprite in self.building_sprites:
+                sprite.write_sprite_number(file)
+                if self.advanced:
+                    sprite.write_flags(file)
+                file.print_byte(sprite.get_param("xoffset").value)
+                file.print_byte(sprite.get_param("yoffset").value)
+                if sprite.type == Action2LayoutSpriteType.CHILD:
+                    file.print_bytex(0x80)
+                else:
+                    # normal building sprite
+                    file.print_byte(sprite.get_param("zoffset").value)
+                    file.print_byte(sprite.get_param("xextent").value)
+                    file.print_byte(sprite.get_param("yextent").value)
+                    file.print_byte(sprite.get_param("zextent").value)
+                if self.advanced:
+                    sprite.write_registers(file)
+                file.newline()
+
+    def process(self, spritelayout, feature, param_map, actions):
+        # Reduce all expressions, can't do that earlier as feature is not known
+        all_sprite_sets = []
+        layout_sprite_list = []  # Create a new structure
+        for layout_sprite in spritelayout.layout_sprite_list:
+            param_list = []
+            layout_sprite_list.append((layout_sprite.type, layout_sprite.pos, param_list))
+            for param in layout_sprite.param_list:
+                param_val = action2var.reduce_varaction2_expr(param.value, action2var.get_scope(feature), [param_map])
+                param_list.append((param.name, param_val))
+                if isinstance(param_val, expression.SpriteGroupRef):
+                    spriteset = action2.resolve_spritegroup(param_val.name)
+                    if not spriteset.is_spriteset():
+                        raise generic.ScriptError("Expected a reference to a spriteset.", param_val.pos)
+                    all_sprite_sets.append(spriteset)
+
+        actions.extend(action1.add_to_action1(all_sprite_sets, feature, spritelayout.pos))
+
+        for type, pos, param_list in layout_sprite_list:
+            if type.value not in layout_sprite_types:
+                raise generic.ScriptError(
+                    "Invalid sprite type '{}' encountered. Expected 'ground', 'building', or 'childsprite'.".format(
+                        type.value
+                    ),
+                    type.pos,
+                )
+            sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos, [param_map])
+            for name, value in param_list:
+                sprite.set_param(name, value)
+            self.registers.extend(sprite.get_all_registers())
+            if sprite.type == Action2LayoutSpriteType.GROUND:
+                if self.ground_sprite is not None:
+                    raise generic.ScriptError("Sprite layout can have no more than one ground sprite", spritelayout.pos)
+                self.ground_sprite = sprite
+            else:
+                self.building_sprites.append(sprite)
+
+        if self.ground_sprite is None:
+            if len(self.building_sprites) == 0:
+                # no sprites defined at all, that's not very much.
+                raise generic.ScriptError("Sprite layout requires at least one sprite", spritelayout.pos)
+            # set to 0 for no ground sprite
+            self.ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
+            self.ground_sprite.set_param(expression.Identifier("sprite"), expression.ConstantNumeric(0))
+
+        self.advanced = any(x.is_advanced_sprite() for x in self.building_sprites + [self.ground_sprite])
+
+    def write_action_value(self, actions, act6, offset):
+        sprite_num = self.ground_sprite.get_sprite_number()
+        sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
+        if self.advanced:
+            offset += self.ground_sprite.get_registers_size()
+
+        for sprite in self.building_sprites:
+            sprite_num = sprite.get_sprite_number()
+            sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
+            if self.advanced:
+                offset += sprite.get_registers_size()
+            offset += 3 if sprite.type == Action2LayoutSpriteType.CHILD else 6
+
+        return offset
+
+    def parse_registers(self, varact2parser):
+        if self.registers:
+            for register_info in self.registers:
+                reg, expr = register_info[1], register_info[2]
+                if reg is None:
+                    continue
+                varact2parser.parse_expr(expr)
+                varact2parser.var_list.append(nmlop.STO_TMP)
+                varact2parser.var_list.append(reg)
+                varact2parser.var_list.append(nmlop.VAL2)
+                varact2parser.var_list_size += reg.get_size() + 2
+
+
+def get_layout_action2s(spritelayout, feature):
     actions = []
 
     if feature not in action2.features_sprite_layout:
@@ -409,67 +488,13 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))
     spritelayout.register_map[feature] = param_registers
 
-    # Reduce all expressions, can't do that earlier as feature is not known
-    all_sprite_sets = []
-    layout_sprite_list = []  # Create a new structure
-    for layout_sprite in spritelayout.layout_sprite_list:
-        param_list = []
-        layout_sprite_list.append((layout_sprite.type, layout_sprite.pos, param_list))
-        for param in layout_sprite.param_list:
-            param_val = action2var.reduce_varaction2_expr(param.value, action2var.get_scope(feature), [param_map])
-            param_list.append((param.name, param_val))
-            if isinstance(param_val, expression.SpriteGroupRef):
-                spriteset = action2.resolve_spritegroup(param_val.name)
-                if not spriteset.is_spriteset():
-                    raise generic.ScriptError("Expected a reference to a spriteset.", param_val.pos)
-                all_sprite_sets.append(spriteset)
-    actions.extend(action1.add_to_action1(all_sprite_sets, feature, spritelayout.pos))
-
-    temp_registers = []
-    for type, pos, param_list in layout_sprite_list:
-        if type.value not in layout_sprite_types:
-            raise generic.ScriptError(
-                "Invalid sprite type '{}' encountered. Expected 'ground', 'building', or 'childsprite'.".format(
-                    type.value
-                ),
-                type.pos,
-            )
-        sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos, [param_map])
-        for name, value in param_list:
-            sprite.set_param(name, value)
-        temp_registers.extend(sprite.get_all_registers())
-        if sprite.type == Action2LayoutSpriteType.GROUND:
-            if ground_sprite is not None:
-                raise generic.ScriptError("Sprite layout can have no more than one ground sprite", spritelayout.pos)
-            ground_sprite = sprite
-        else:
-            building_sprites.append(sprite)
-
-    if ground_sprite is None:
-        if len(building_sprites) == 0:
-            # no sprites defined at all, that's not very much.
-            raise generic.ScriptError("Sprite layout requires at least one sprite", spr_pos)
-        # set to 0 for no ground sprite
-        ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
-        ground_sprite.set_param(expression.Identifier("sprite"), expression.ConstantNumeric(0))
+    layout = ParsedSpriteLayout()
+    layout.process(spritelayout, feature, param_map, actions)
 
     action6.free_parameters.save()
     act6 = action6.Action6()
 
-    advanced = any(x.is_advanced_sprite() for x in building_sprites + [ground_sprite])
-
-    offset = 4
-    sprite_num = ground_sprite.get_sprite_number()
-    sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
-    if advanced:
-        offset += ground_sprite.get_registers_size()
-
-    for sprite in building_sprites:
-        sprite_num = sprite.get_sprite_number()
-        sprite_num, offset = actionD.write_action_value(sprite_num, actions, act6, offset, 4)
-        if advanced:
-            offset += sprite.get_registers_size()
-        offset += 3 if sprite.type == Action2LayoutSpriteType.CHILD else 6
+    layout.write_action_value(actions, act6, 4)
 
     if len(act6.modifications) > 0:
         actions.append(act6)
@@ -478,26 +503,16 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
         feature,
         spritelayout.name.value + " - feature {:02X}".format(feature),
         spritelayout.pos,
-        ground_sprite,
-        building_sprites,
+        layout,
         param_registers,
     )
     actions.append(layout_action)
 
-    if temp_registers:
-        varact2parser = action2var.Varaction2Parser(feature)
-        for register_info in temp_registers:
-            reg, expr = register_info[1], register_info[2]
-            if reg is None:
-                continue
-            varact2parser.parse_expr(expr)
-            varact2parser.var_list.append(nmlop.STO_TMP)
-            varact2parser.var_list.append(reg)
-            varact2parser.var_list.append(nmlop.VAL2)
-            varact2parser.var_list_size += reg.get_size() + 2
+    varact2parser = action2var.Varaction2Parser(feature)
+    layout.parse_registers(varact2parser)
 
     # Only continue if we actually needed any new registers
-    if temp_registers and varact2parser.var_list:  # lgtm[py/uninitialized-local-variable]
+    if varact2parser.var_list:
         # Remove the last VAL2 operator
         varact2parser.var_list.pop()
         varact2parser.var_list_size -= 1
@@ -547,6 +562,7 @@ def make_empty_layout_action2(feature, pos):
     @return: The created sprite layout action2
     @rtype: L{Action2Layout}
     """
-    ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
-    ground_sprite.set_param(expression.Identifier("sprite"), expression.ConstantNumeric(0))
-    return Action2Layout(feature, "@CB_FAILED_LAYOUT{:02X}".format(feature), pos, ground_sprite, [], [])
+    layout = ParsedSpriteLayout()
+    layout.ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
+    layout.ground_sprite.set_param(expression.Identifier("sprite"), expression.ConstantNumeric(0))
+    return Action2Layout(feature, "@CB_FAILED_LAYOUT{:02X}".format(feature), pos, layout, [])
