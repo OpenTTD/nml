@@ -5,13 +5,13 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d5
+0 * 4 \d13
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
 "B" "MINV" \w4 \dx00000000
 "B" "NPAR" \w1 00
-"B" "PALS" \w1 "A"
+"B" "PALS" \w1 "W"
 "B" "BLTR" \w1 "8"
 00
 00
@@ -22,4 +22,27 @@
 4 * 11 04 04 FF 01 \wxC400 "Test" 00
 
 5 * 20 04 04 FF 01 \wxC500 "Basic station" 00
+
+6 * 6 01 04 \b2 FF \wx0002
+
+7 station.png 8bpp 1 1 5 5 -2 -2 normal
+8 station.png 8bpp 7 1 5 5 -2 -2 normal
+
+9 station.png 8bpp 2 2 3 3 -1 -1 normal
+10 station.png 8bpp 8 2 3 3 -1 -1 normal
+
+// Name: station_spriteset - feature 04
+11 * 7 02 04 FF \b0 \b1
+
+\w0
+
+// Name: station_spriteset2 - feature 04
+12 * 7 02 04 FE \b0 \b1
+
+\w1
+
+13 * 13 03 04 01 00 \b2
+00 \wx00FE 	// station_spriteset2;
+01 \wx00FF 	// station_spriteset;
+\wx00FF 	// station_spriteset;
 

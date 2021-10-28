@@ -656,10 +656,11 @@ properties[0x03] = {
 
 # fmt: off
 properties[0x04] = {
-    "class":                  {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
+    "class":            {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
+    "cargo_threshold":  {"size": 2, "num": 0x10},
 
-    "classname":              {"num": -1, "string": 0xC4},
-    "name":                   {"num": -1, "string": 0xC5, "required": True},
+    "classname":        {"num": -1, "string": 0xC4},
+    "name":             {"num": -1, "string": 0xC5, "required": True},
 }
 # fmt: on
 
