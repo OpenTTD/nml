@@ -134,13 +134,21 @@ callbacks[0x03] = {
 }
 callbacks[0x03].update(general_vehicle_cbs)
 
-# Stations (0x04) are not yet fully implemented
+# Stations
 callbacks[0x04] = {
-    'sprite_layouts'          : {'type': 'layout'},
-    'prepare_layout'          : {'type': 'prepare_layout'},
-    'purchase_prepare_layout' : {'type': 'prepare_layout', 'purchase': 2},
-    'default'                 : {'type': 'cargo', 'num': None},
-    'purchase'                : {'type': 'cargo', 'num': 0xFF},
+    'availability'                  : {'type': 'cb', 'num':  0x13, 'flag_bit': 0},
+    'select_sprite_layout'          : {'type': 'cb', 'num':  0x14, 'flag_bit': 1, 'purchase': 'purchase_select_sprite_layout'},
+    'purchase_select_sprite_layout' : {'type': 'cb', 'num':  0x14, 'flag_bit': 1, 'purchase': 2},
+    'select_tile_type'              : {'type': 'cb', 'num':  0x24, 'purchase': 2},
+    'anim_control'                  : {'type': 'cb', 'num': 0x140},
+    'anim_next_frame'               : {'type': 'cb', 'num': 0x141, 'flag_bit': 2},
+    'anim_speed'                    : {'type': 'cb', 'num': 0x142, 'flag_bit': 3},
+    'tile_check'                    : {'type': 'cb', 'num': 0x149, 'flag_bit': 4, 'purchase': 2},
+    'sprite_layouts'                : {'type': 'layout'},
+    'prepare_layout'                : {'type': 'prepare_layout'},
+    'purchase_prepare_layout'       : {'type': 'prepare_layout', 'purchase': 2},
+    'default'                       : {'type': 'cargo', 'num': None},
+    'purchase'                      : {'type': 'cargo', 'num': 0xFF},
 }
 
 # Canals

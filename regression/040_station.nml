@@ -110,6 +110,7 @@ item (FEAT_STATIONS, basic_station) {
             station_sprite_layout_0,
             station_sprite_layout_1(1)
         ];
+        anim_speed: company_colour1 + company_colour2;
         1: station_spriteset;
         0: station_spriteset2;
         station_spriteset;

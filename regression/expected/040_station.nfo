@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d26
+0 * 4 \d33
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -94,42 +94,89 @@
 \wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
 \wx00FF // station_spriteset;
 
-18 * 13 03 04 01 00 \b2
-00 \wx00FB 	// @action3_1;
-01 \wx00FA 	// @action3_2;
-\wx00FC 	// @action3_0;
+18 * 9 00 04 \b1 01 FF \wx0000
+0B 08
 
-19 * 12 00 04 \b1 01 FF \wx0001
+// Name: @return_action_0
+19 * 20 02 04 F9 89
+43 38 \dx0000000F
+\2+ 43 1C \dx0000000F
+\b0
+\wx8000 // Return computed value
+
+// Name: @action3_3
+20 * 23 02 04 F9 89
+0C 00 \dx0000FFFF
+\b1
+\wx00F9 \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
+\wx00FC // @action3_0;
+
+// Name: @return_action_1
+21 * 20 02 04 F8 89
+43 38 \dx0000000F
+\2+ 43 1C \dx0000000F
+\b0
+\wx8000 // Return computed value
+
+// Name: @action3_4
+22 * 33 02 04 F8 89
+0C 00 \dx0000FFFF
+\b2
+\wx00FB \dx00000000 \dx00000000 	// @action3_1;
+\wx00F8 \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
+\wx00FC // @action3_0;
+
+// Name: @return_action_2
+23 * 20 02 04 FB 89
+43 38 \dx0000000F
+\2+ 43 1C \dx0000000F
+\b0
+\wx8000 // Return computed value
+
+// Name: @action3_5
+24 * 33 02 04 FC 89
+0C 00 \dx0000FFFF
+\b2
+\wx00FA \dx00000000 \dx00000000 	// @action3_2;
+\wx00FB \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
+\wx00FC // @action3_0;
+
+25 * 13 03 04 01 00 \b2
+00 \wx00F8 	// @action3_4;
+01 \wx00FC 	// @action3_5;
+\wx00F9 	// @action3_3;
+
+26 * 12 00 04 \b1 01 FF \wx0001
 08 "TEST"
 
-20 * 11 04 04 FF 01 \wxC401 "Test" 00
+27 * 11 04 04 FF 01 \wxC401 "Test" 00
 
-21 * 22 04 04 FF 01 \wxC501 "Basic station 2" 00
+28 * 22 04 04 FF 01 \wxC501 "Basic station 2" 00
 
-22 * 9 00 04 \b1 01 FF \wx0001
+29 * 9 00 04 \b1 01 FF \wx0001
 0A 00
 
 // Name: @CB_FAILED_REAL04
-23 * 7 02 04 FC \b0 \b1
+30 * 7 02 04 F9 \b0 \b1
 
 \w0
 
 // Name: @CB_FAILED04
-24 * 23 02 04 FC 89
+31 * 23 02 04 F9 89
 0C 00 \dx0000FFFF
 \b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FC // Non-graphics callback, return graphics result
+\wx00F9 // Non-graphics callback, return graphics result
 
-// Name: @action3_3
-25 * 41 02 04 FC 89
+// Name: @action3_6
+32 * 41 02 04 F9 89
 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
 \b2
 \wx00FF \dx00000001 \dx00000001 	// station_spriteset;
 \wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
-\wx00FC // @CB_FAILED04;
+\wx00F9 // @CB_FAILED04;
 
-26 * 7 03 04 01 01 \b0
-\wx00FC 	// @action3_3;
+33 * 7 03 04 01 01 \b0
+\wx00F9 	// @action3_6;
 
