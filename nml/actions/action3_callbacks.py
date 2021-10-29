@@ -136,7 +136,11 @@ callbacks[0x03].update(general_vehicle_cbs)
 
 # Stations (0x04) are not yet fully implemented
 callbacks[0x04] = {
-    'default' : {'type': 'cargo', 'num': None},
+    'sprite_layouts'          : {'type': 'layout'},
+    'prepare_layout'          : {'type': 'prepare_layout'},
+    'purchase_prepare_layout' : {'type': 'prepare_layout', 'purchase': 2},
+    'default'                 : {'type': 'cargo', 'num': None},
+    'purchase'                : {'type': 'cargo', 'num': 0xFF},
 }
 
 # Canals

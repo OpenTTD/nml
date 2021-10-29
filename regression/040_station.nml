@@ -7,12 +7,96 @@ grf {
 }
 
 spriteset(station_spriteset, "station.png") {
-    [  1,  1,  5,  5,  -2,  -2]
+    lbl:[  1,  1,  5,  5,  -2,  -2]
     [  7,  1,  5,  5,  -2,  -2]
 }
 spriteset(station_spriteset2, "station.png") {
     [  2,  2,  3,  3,  -1,  -1]
-    [  8,  2,  3,  3,  -1,  -1]
+    lbl:[  8,  2,  3,  3,  -1,  -1]
+}
+
+spritelayout station_sprite_layout_0 {
+    ground {
+        sprite: 0x3F4;
+    }
+    building {
+        sprite: 0x42E;
+        xoffset: 0;
+        yoffset: 0;
+        zoffset: 0;
+        xextent: 16;
+        yextent: 5;
+        zextent: 2;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+    childsprite {
+        sprite: SPRITESET(0);
+        xoffset: 17;
+        yoffset: 11;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+    building {
+        sprite: 0x430;
+        xoffset: 0;
+        yoffset: 11;
+        zoffset: 0;
+        xextent: 16;
+        yextent: 5;
+        zextent: 2;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+    childsprite {
+        sprite: station_spriteset(lbl);
+        xoffset: 17;
+        yoffset: 10;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+}
+
+spritelayout station_sprite_layout_1(a) {
+    ground {
+        sprite: 0x3F3;
+    }
+    building {
+        sprite: 0x42F;
+        xoffset: 0;
+        yoffset: 0;
+        zoffset: 0;
+        xextent: 5;
+        yextent: 16;
+        zextent: 2;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+    childsprite {
+        sprite: station_spriteset(a);
+        xoffset: 20;
+        yoffset: 11;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+    building {
+        sprite: 0x42D;
+        xoffset: 11;
+        yoffset: 0;
+        zoffset: 0;
+        xextent: 5;
+        yextent: 16;
+        zextent: 2;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+    childsprite {
+        sprite: station_spriteset2(lbl);
+        xoffset: 20;
+        yoffset: 10;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
 }
 
 item (FEAT_STATIONS, basic_station) {
@@ -22,8 +106,23 @@ item (FEAT_STATIONS, basic_station) {
         name     : string(STR_STATION_BASIC);
     }
     graphics {
+        sprite_layouts: [
+            station_sprite_layout_0,
+            station_sprite_layout_1(1)
+        ];
         1: station_spriteset;
         0: station_spriteset2;
         station_spriteset;
+    }
+}
+
+item (FEAT_STATIONS, basic_station_copied_layout) {
+    property {
+        class    : "TEST";
+        classname: string(STR_STATION_TEST_CLASS);
+        name     : string(STR_STATION_BASIC2);
+    }
+    graphics {
+        sprite_layouts: basic_station;
     }
 }

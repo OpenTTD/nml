@@ -55,6 +55,8 @@ class Action2Var(action2.Action2):
 
         for var in self.param_registers + self.var_list:  # Allocate param registers first
             if isinstance(var, (VarAction2StoreTempVar, VarAction2CallParam)):
+                if isinstance(var, VarAction2CallParam) and var.register:
+                    continue
                 if not self.tmp_locations:
                     raise generic.ScriptError(
                         "There are not enough registers available "
