@@ -659,6 +659,7 @@ properties[0x04] = {
     "class":            {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
     # 09 (sprite layout) is implemented elsewhere
     # 0A (copy sprite layout) is implemented elsewhere
+    # 0B (callback flags) is not set by user
     "cargo_threshold":  {"size": 2, "num": 0x10},
     # 1A (advanced sprite layout) is implemented elsewhere
 

@@ -1083,6 +1083,7 @@ callback_flag_properties = {
     0x01: {"size": 1, "num": 0x17},
     0x02: {"size": 1, "num": 0x12},
     0x03: {"size": 1, "num": 0x14},
+    0x04: {"size": 1, "num": 0x0B},
     0x05: {"size": 1, "num": 0x08},
     0x07: two_byte_property(0x14, 0x1D),
     0x09: {"size": 1, "num": 0x0E},
