@@ -14,7 +14,17 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, global_constants, nmlop
-from nml.actions import action0, action2, action2real, action2var, action3_callbacks, action6, actionD, base_action
+from nml.actions import (
+    action0,
+    action2,
+    action2layout,
+    action2real,
+    action2var,
+    action3_callbacks,
+    action6,
+    actionD,
+    base_action,
+)
 
 
 class Action3(base_action.BaseAction):
@@ -280,6 +290,9 @@ def parse_graphics_block(graphics_block, feature, id, size, is_livery_override=F
     return action_list
 
 
+station_sprite_layouts = {}
+
+
 def parse_graphics_block_single_id(
     graphics_block, feature, id, is_livery_override, house_tile=None, house_north_tile_id=None
 ):
@@ -293,6 +306,9 @@ def parse_graphics_block_single_id(
     seen_callbacks = set()
     callbacks = []
     livery_override = None  # Used for rotor graphics
+    layouts = []
+    prepare_layout = None
+    purchase_prepare_layout = None
 
     for graphics in graphics_block.graphics_list:
         cargo_id = graphics.cargo_id
@@ -326,6 +342,32 @@ def parse_graphics_block_single_id(
                     elif info["type"] == "override":
                         assert livery_override is None
                         livery_override = graphics.result.value
+                    elif info["type"] == "layout":
+                        layouts = graphics.result.value
+                        if isinstance(layouts, expression.ConstantNumeric):
+                            if layouts.value not in station_sprite_layouts:
+                                raise generic.ScriptError("Unknown station", cargo_id.pos)
+                            actions = action0.get_copy_layout_action0(feature, id, layouts)
+                            layouts = station_sprite_layouts[layouts.value]
+                        elif isinstance(layouts, expression.Array) and len(layouts.values) % 2 == 0:
+                            actions, var10map, registers_ref = action2layout.parse_station_layouts(
+                                feature, id, layouts.values
+                            )
+                            layouts = (var10map, registers_ref)
+                        else:
+                            raise generic.ScriptError(
+                                "'{}' must be an array of even length, or the ID of a station".format(cb_name),
+                                cargo_id.pos,
+                            )
+                        prepend_action_list.extend(actions)
+                        station_sprite_layouts[id.value] = layouts
+                    elif info["type"] == "prepare_layout":
+                        if "purchase" in info:
+                            assert purchase_prepare_layout is None
+                            purchase_prepare_layout = graphics.result.value
+                        else:
+                            assert prepare_layout is None
+                            prepare_layout = graphics.result.value
                     else:
                         raise AssertionError()
                 continue
@@ -352,6 +394,51 @@ def parse_graphics_block_single_id(
         if None in cargo_gfx:
             raise generic.ScriptError("Default graphics are defined twice.", graphics_block.default_graphics.pos)
         cargo_gfx[None] = graphics_block.default_graphics.value
+
+    if layouts:
+        if None not in cargo_gfx:
+            cargo_gfx[None] = expression.SpriteGroupRef(expression.Identifier("CB_FAILED", None), [], None)
+
+        if purchase_prepare_layout and 0xFF not in cargo_gfx:
+            cargo_gfx[0xFF] = cargo_gfx[None]
+
+        var10map, registers_ref = layouts or (None, None)
+
+        for cargo in sorted(cargo_gfx, key=lambda x: -1 if x is None else x):
+            default = cargo_gfx[cargo]
+            varact2parser = action2var.Varaction2Parser(feature)
+            # Prepare registers for sprite layout
+            if cargo == 0xFF and purchase_prepare_layout:
+                varact2parser.parse(purchase_prepare_layout)
+                varact2parser.var_list.append(nmlop.VAL2)
+                varact2parser.var_list_size += 1
+            elif prepare_layout:
+                varact2parser.parse(prepare_layout)
+                varact2parser.var_list.append(nmlop.VAL2)
+                varact2parser.var_list_size += 1
+            # Call the registers procedure
+            if registers_ref:
+                var_access = action2var.VarAction2ProcCallVar(registers_ref)
+                varact2parser.var_list.append(var_access)
+                varact2parser.var_list.append(nmlop.VAL2)
+                varact2parser.var_list_size += var_access.get_size() + 1
+                varact2parser.proc_call_list.append(registers_ref)
+
+            # Fill var10 dependant choices
+            mapping = var10map.get_mapping(feature, prepend_action_list, default)
+            # No need for in-between varaction2 if there are no registers to set and no var10 dependant choices
+            if len(mapping) == 0:
+                if not varact2parser.var_list:
+                    continue
+                # mapping must not be empty
+                mapping[0x00] = (default, None)
+            expr = expression.Variable(expression.ConstantNumeric(0x10), mask=expression.ConstantNumeric(0xFF))
+            varact2parser.parse(expr)
+            actions, cb_ref = create_intermediate_varaction2(
+                feature, varact2parser, mapping, default, graphics_block.pos
+            )
+            prepend_action_list.extend(actions)
+            cargo_gfx[cargo] = cb_ref
 
     # An in-between varaction2 is always needed for houses
     if len(callbacks) != 0 or feature == 0x07:

@@ -14,8 +14,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, nmlop
-from nml.actions import action1, action2, action2var, action6, actionD, real_sprite
-from nml.ast import general
+from nml.actions import action0, action1, action2, action2real, action2var, action6, actionD, real_sprite
+from nml.ast import general, spriteblock
 
 
 class Action2Layout(action2.Action2):
@@ -83,8 +83,12 @@ class Action2LayoutSprite:
             self.params[i]["register"] = None
         self.sprite_from_action1 = False
         self.palette_from_action1 = False
+        self.var10_for_sprite = None
+        self.var10_for_palette = None
 
     def is_advanced_sprite(self):
+        if self.feature == 0x04:
+            return True
         if self.palette_from_action1:
             return True
         return len(self.get_all_registers()) != 0
@@ -92,6 +96,12 @@ class Action2LayoutSprite:
     def get_registers_size(self):
         # Number of registers to write
         size = len(self.get_all_registers())
+        # Add station specific registers
+        if self.feature == 0x04:
+            if self.var10_for_sprite:
+                size += 1
+            if self.var10_for_palette:
+                size += 1
         # Add 2 for the flags
         size += 2
         return size
@@ -115,6 +125,11 @@ class Action2LayoutSprite:
         nextreg = "zoffset" if self.type == Action2LayoutSpriteType.BUILDING else "yoffset"
         if self.get_register(nextreg) is not None:
             flags |= 1 << 5
+        if self.feature == 0x04:
+            if self.var10_for_sprite is not None:
+                flags |= 1 << 6
+            if self.var10_for_palette is not None:
+                flags |= 1 << 7
         file.print_wordx(flags)
 
     def write_register(self, file, name):
@@ -134,6 +149,11 @@ class Action2LayoutSprite:
             self.write_register(file, "yoffset")
         if self.get_register("zoffset") is not None:
             self.write_register(file, "zoffset")
+        if self.feature == 0x04:
+            if self.var10_for_sprite is not None:
+                file.print_bytex(self.var10_for_sprite)
+            if self.var10_for_palette is not None:
+                file.print_bytex(self.var10_for_palette)
 
     def write_sprite_number(self, file):
         num = self.get_sprite_number()
@@ -212,6 +232,28 @@ class Action2LayoutSprite:
         self.params[name]["value"] = self.params[name]["validator"](name, value)
         self.params[name]["is_set"] = True
 
+    def _validate_offset(self, offset, spriteset, pos):
+        if len(offset) == 0:
+            offset = None
+        elif len(offset) == 1:
+            id_dicts = [
+                (spriteset.labels if spriteset else {}, lambda name, val, pos: expression.ConstantNumeric(val, pos))
+            ]
+            offset = action2var.reduce_varaction2_expr(
+                offset[0], action2var.get_scope(self.feature), self.extra_dicts + id_dicts
+            )
+            if spriteset and isinstance(offset, expression.ConstantNumeric):
+                generic.check_range(
+                    offset.value,
+                    0,
+                    len(real_sprite.parse_sprite_data(spriteset)) - 1,
+                    "offset within spriteset",
+                    pos,
+                )
+        else:
+            raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(offset)), pos)
+        return offset
+
     def resolve_spritegroup_ref(self, sg_ref):
         """
         Resolve a reference to a (sprite/palette) sprite group
@@ -223,36 +265,28 @@ class Action2LayoutSprite:
         @rtype: L{Expression}
         """
         spriteset = action2.resolve_spritegroup(sg_ref.name)
-
-        if len(sg_ref.param_list) == 0:
-            offset = None
-        elif len(sg_ref.param_list) == 1:
-            id_dicts = [(spriteset.labels, lambda name, val, pos: expression.ConstantNumeric(val, pos))]
-            offset = action2var.reduce_varaction2_expr(
-                sg_ref.param_list[0], action2var.get_scope(self.feature), self.extra_dicts + id_dicts
-            )
-            if isinstance(offset, expression.ConstantNumeric):
-                generic.check_range(
-                    offset.value,
-                    0,
-                    len(real_sprite.parse_sprite_data(spriteset)) - 1,
-                    "offset within spriteset",
-                    sg_ref.pos,
-                )
-        else:
-            raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(sg_ref.param_list)), sg_ref.pos)
-
+        offset = self._validate_offset(sg_ref.param_list, spriteset, sg_ref.pos)
         num = action1.get_action1_index(spriteset)
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", sg_ref.pos)
         return expression.ConstantNumeric(num), offset
 
     def _validate_sprite(self, name, value):
         if isinstance(value, expression.SpriteGroupRef):
+            assert self.feature != 0x04
             self.sprite_from_action1 = True
             val, offset = self.resolve_spritegroup_ref(value)
             if offset is not None:
                 self.create_register(name, offset)
             return val
+        elif isinstance(value, StationSpriteset):
+            assert self.feature == 0x04
+            self.sprite_from_action1 = True
+            if value.offset is not None:
+                offset = self._validate_offset(value.offset, value.spriteset, value.pos)
+                if offset is not None:
+                    self.create_register(name, offset)
+            self.var10_for_sprite = value.var10
+            return expression.ConstantNumeric(0x42D)
         else:
             self.sprite_from_action1 = False
             if isinstance(value, expression.ConstantNumeric):
@@ -275,11 +309,21 @@ class Action2LayoutSprite:
 
     def _validate_palette(self, name, value):
         if isinstance(value, expression.SpriteGroupRef):
+            assert self.feature != 0x04
             self.palette_from_action1 = True
             val, offset = self.resolve_spritegroup_ref(value)
             if offset is not None:
                 self.create_register(name, offset)
             return val
+        elif isinstance(value, StationSpriteset):
+            assert self.feature == 0x04
+            self.palette_from_action1 = True
+            if value.offset is not None:
+                offset = self._validate_offset(value.offset, value.spriteset, value.pos)
+                if offset is not None:
+                    self.create_register(name, offset)
+            self.var10_for_palette = value.var10
+            return expression.ConstantNumeric(0x42D)
         else:
             self.palette_from_action1 = False
             if isinstance(value, expression.ConstantNumeric):
@@ -341,10 +385,10 @@ class Action2LayoutSprite:
 
 
 class ParsedSpriteLayout:
-    def __init__(self):
+    def __init__(self, registers=None):
         self.ground_sprite = None
         self.building_sprites = []
-        self.registers = []
+        self.registers = registers or []
         self.advanced = False
 
     def get_size(self):
@@ -395,7 +439,10 @@ class ParsedSpriteLayout:
                     sprite.write_registers(file)
                 file.newline()
 
-    def process(self, spritelayout, feature, param_map, actions):
+    def process(self, spritelayout, feature, param_map, actions, var10map=None):
+        if not isinstance(param_map, list):
+            param_map = [param_map]
+
         # Reduce all expressions, can't do that earlier as feature is not known
         all_sprite_sets = []
         layout_sprite_list = []  # Create a new structure
@@ -403,13 +450,16 @@ class ParsedSpriteLayout:
             param_list = []
             layout_sprite_list.append((layout_sprite.type, layout_sprite.pos, param_list))
             for param in layout_sprite.param_list:
-                param_val = action2var.reduce_varaction2_expr(param.value, action2var.get_scope(feature), [param_map])
-                param_list.append((param.name, param_val))
+                param_val = action2var.reduce_varaction2_expr(param.value, action2var.get_scope(feature), param_map)
                 if isinstance(param_val, expression.SpriteGroupRef):
                     spriteset = action2.resolve_spritegroup(param_val.name)
                     if not spriteset.is_spriteset():
                         raise generic.ScriptError("Expected a reference to a spriteset.", param_val.pos)
                     all_sprite_sets.append(spriteset)
+                    if feature == 0x04:
+                        assert var10map is not None
+                        param_val = var10map.translate(spriteset, param_val.param_list, param_val.pos)
+                param_list.append((param.name, param_val))
 
         actions.extend(action1.add_to_action1(all_sprite_sets, feature, spritelayout.pos))
 
@@ -421,7 +471,7 @@ class ParsedSpriteLayout:
                     ),
                     type.pos,
                 )
-            sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos, [param_map])
+            sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos, param_map)
             for name, value in param_list:
                 sprite.set_param(name, value)
             self.registers.extend(sprite.get_all_registers())
@@ -566,3 +616,119 @@ def make_empty_layout_action2(feature, pos):
     layout.ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
     layout.ground_sprite.set_param(expression.Identifier("sprite"), expression.ConstantNumeric(0))
     return Action2Layout(feature, "@CB_FAILED_LAYOUT{:02X}".format(feature), pos, layout, [])
+
+
+class StationSpriteset(expression.Expression):
+    def __init__(self, spriteset, args, var10, pos=None):
+        expression.Expression.__init__(self, pos)
+        self.spriteset = spriteset
+        self.offset = args
+        self.var10 = var10
+
+
+class StationSpritesetVar10Map:
+    def __init__(self):
+        self.spritesets = {}
+        self.var10 = 1  # Reserving 0 for SPRITESET() (basic action2)
+
+    def is_empty(self):
+        return self.var10 == 1
+
+    def translate(self, spriteset, args, pos):
+        if spriteset not in self.spritesets:
+            if self.var10 == 8:
+                raise generic.ScriptError("A station can't use more than 6 different sprite sets", pos)
+            self.spritesets[spriteset] = self.var10
+            self.var10 += 1 if self.var10 != 1 else 2  # Reserving 2 for custom foundations
+        return StationSpriteset(spriteset, args, self.spritesets[spriteset], pos)
+
+    def get_mapping(self, feature, actions, default):
+        mapping = {}
+        for spriteset in self.spritesets:
+            if not spriteset.has_action2(feature):
+                real_action2 = action2real.make_simple_real_action2(
+                    feature,
+                    spriteset.name.value + " - feature {:02X}".format(feature),
+                    None,
+                    action1.get_action1_index(spriteset),
+                )
+                actions.append(real_action2)
+                spriteset.set_action2(real_action2, feature)
+            ref = expression.SpriteGroupRef(spriteset.name, [], None, spriteset.get_action2(feature))
+            # Skip default result
+            if ref == default:
+                continue
+            mapping[self.spritesets[spriteset]] = (ref, None)
+        return mapping
+
+
+def parse_station_layouts(feature, id, layouts):
+    # Add SPRITESET() to reference active spriteset, selected by basic action2
+    def parse_spriteset(name, args, pos, info):
+        return StationSpriteset(None, args, None, pos)
+
+    default_param = [
+        (
+            {"SPRITESET": None},
+            lambda name, value, pos: expression.FunctionPtr(expression.Identifier(name, pos), parse_spriteset, value),
+        )
+    ]
+
+    actions = []
+    var10map = StationSpritesetVar10Map()
+    param_registers = []
+    parsed_layouts = []
+    varact2parser = action2var.Varaction2Parser(feature)
+
+    for layout in layouts:
+        spritelayout = (
+            action2.resolve_spritegroup(layout.name) if isinstance(layout, expression.SpriteGroupRef) else None
+        )
+        if not spritelayout or not isinstance(spritelayout, spriteblock.SpriteLayout):
+            raise generic.ScriptError("Expected a SpriteLayout", layout.pos)
+
+        # Allocate registers
+        registers = []
+        param_map = {}
+        for i, param in enumerate(spritelayout.param_list):
+            reg = action2var.VarAction2CallParam(param.value)
+            param_registers.append(reg)
+            param_map[param.value] = reg
+            store_tmp = action2var.VarAction2StoreCallParam(reg)
+            registers.append((reg, store_tmp, layout.param_list[i]))
+        param_map = [(param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))]
+        param_map.extend(default_param)
+
+        layout = ParsedSpriteLayout(registers)
+        layout.process(spritelayout, feature, param_map, actions, var10map)
+        layout.parse_registers(varact2parser)
+        parsed_layouts.append(layout)
+
+    actions.extend(action0.get_layout_action0(feature, id, parsed_layouts))
+
+    registers_ref = None
+
+    # Create a procedure only if needed
+    if varact2parser.var_list:
+        # Remove the last VAL2 operator
+        varact2parser.var_list.pop()
+        varact2parser.var_list_size -= 1
+
+        actions.extend(varact2parser.extra_actions)
+        extra_act6 = action6.Action6()
+        for mod in varact2parser.mods:
+            extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
+        if len(extra_act6.modifications) > 0:
+            actions.append(extra_act6)
+
+        varaction2 = action2var.Action2Var(
+            feature, "Station Layout@registers - Id {:02X}".format(id.value), None, 0x89, param_registers
+        )
+        varaction2.var_list = varact2parser.var_list
+        varaction2.default_result = expression.ConstantNumeric(0)
+        varaction2.default_comment = "Return computed value"
+
+        actions.append(varaction2)
+        registers_ref = expression.SpriteGroupRef(expression.Identifier(varaction2.name), [], None, varaction2)
+
+    return (actions, var10map, registers_ref)

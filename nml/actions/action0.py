@@ -1161,3 +1161,48 @@ def get_volume_actions(volume_list):
                 value_series = [volume]
 
     return action_list
+
+
+class StationLayoutProp(BaseAction0Property):
+    def __init__(self, layouts):
+        self.layouts = layouts
+
+    def write(self, file):
+        file.print_bytex(0x1A)
+        file.print_byte(len(self.layouts))
+        file.newline()
+        for layout in self.layouts:
+            layout.write(file)
+
+    def get_size(self):
+        size = 2
+        for layout in self.layouts:
+            size += layout.get_size()
+        return size
+
+
+def get_layout_action0(feature, id, layouts):
+    action_list = []
+    act0, offset = create_action0(feature, id, None, None)
+    action6.free_parameters.save()
+    act6 = action6.Action6()
+
+    for layout in layouts:
+        layout.write_action_value(action_list, act6, offset)
+
+    if len(act6.modifications) > 0:
+        action_list.append(act6)
+
+    act0.num_ids = 1
+    act0.prop_list.append(StationLayoutProp(layouts))
+    action_list.append(act0)
+
+    action6.free_parameters.restore()
+    return action_list
+
+
+def get_copy_layout_action0(feature, id, source_id):
+    act0, offset = create_action0(feature, id, None, None)
+    act0.num_ids = 1
+    act0.prop_list.append(Action0Property(0x0A, source_id, 1))
+    return [act0]
