@@ -654,17 +654,40 @@ properties[0x03] = {
 # Feature 0x04 (Stations)
 #
 
+
+def station_flags(value):
+    # bit 4 (extended foundations) can't be set without bit 3 (custom foundations)
+    cust_found = nmlop.SHIFT_RIGHT(value, 4, value.pos)
+    cust_found = nmlop.AND(cust_found, 1)
+    cust_found = nmlop.MUL(cust_found, 0x08)
+    return nmlop.OR(value, cust_found).reduce()
+
+
 # fmt: off
 properties[0x04] = {
-    "class":            {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
+    "class":                 {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
     # 09 (sprite layout) is implemented elsewhere
     # 0A (copy sprite layout) is implemented elsewhere
     # 0B (callback flags) is not set by user
-    "cargo_threshold":  {"size": 2, "num": 0x10},
+    "disabled_platforms":    {"size": 1, "num": 0x0B},
+    "disabled_length":       {"size": 1, "num": 0x0C},
+    # 0E (station layout) callback 24 should be enough
+    # 0F (copy station layout)
+    "cargo_threshold":       {"size": 2, "num": 0x10},
+    "draw_pylon_tiles":      {"size": 1, "num": 0x11},
+    "cargo_random_triggers": {"size": 4, "num": 0x12},
+    "general_flags":         {"size": 1, "num": 0x13, "value_function": station_flags},
+    "hide_wire_tiles":       {"size": 1, "num": 0x14},
+    "non_traversable_tiles": {"size": 1, "num": 0x15},
+    "animation_info":        {"size": 2, "num": 0x16, "value_function": animation_info},
+    "animation_speed":       {"size": 1, "num": 0x17},
+    "animation_triggers":    {"size": 2, "num": 0x18},
+    # 19 (road routing) reserved for future use
     # 1A (advanced sprite layout) is implemented elsewhere
+    # 1B (minimum bridge height) JGR only
 
-    "classname":        {"num": -1, "string": 0xC4},
-    "name":             {"num": -1, "string": 0xC5, "required": True},
+    "classname":             {"num": -1, "string": 0xC4},
+    "name":                  {"num": -1, "string": 0xC5, "required": True},
 }
 # fmt: on
 
