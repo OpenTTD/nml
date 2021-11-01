@@ -1,0 +1,9 @@
+##grflangid 0x01
+STR_GRF_NAME                                                    :NML Example NewGRF: Station
+STR_GRF_DESCRIPTION                                             :{ORANGE}NML Example NewGRF: Station{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}Conversion of CHIPS Cow pens.
+
+STR_VERSION_22723                                               :1.2.0 (r22723)
+
+STR_NAME_STATCLASS                                              :NML Example
+
+STR_NAME_STATION                                                :CHIPS Cow pens
