@@ -16,8 +16,9 @@
 00
 00
 2 * 52 08 08 "NML\40" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 12 00 04 \b1 01 FF \wx0000
+3 * 14 00 04 \b2 01 FF \wx0000
 08 "TEST"
+13 18
 
 4 * 11 04 04 FF 01 \wxC400 "Test" 00
 
@@ -71,26 +72,29 @@
 \wx8000 // Return computed value
 
 // Name: @action3_0
-15 * 31 02 04 FC 89
+15 * 41 02 04 FC 89
 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
-\b1
+\b2
+\wx8000 \dx00000002 \dx00000002 	// return 0;
 \wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
 \wx00FF // station_spriteset;
 
 // Name: @action3_1
-16 * 31 02 04 FB 89
+16 * 41 02 04 FB 89
 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
-\b1
+\b2
 \wx00FF \dx00000001 \dx00000001 	// station_spriteset;
+\wx8000 \dx00000002 \dx00000002 	// return 0;
 \wx00FE // station_spriteset2;
 
 // Name: @action3_2
-17 * 31 02 04 FA 89
+17 * 41 02 04 FA 89
 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
-\b1
+\b2
+\wx8000 \dx00000002 \dx00000002 	// return 0;
 \wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
 \wx00FF // station_spriteset;
 
