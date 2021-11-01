@@ -339,6 +339,8 @@ constant_numbers = {
     "AIRCRAFT_TYPE_LARGE"      : 0x03,
 
     # ground sprite IDs
+    "GROUNDSPRITE_RAIL_Y"      : 1011,
+    "GROUNDSPRITE_RAIL_X"      : 1012,
     "GROUNDSPRITE_CONCRETE"    : 1420,
     "GROUNDSPRITE_CLEARED"     : 3924,
     "GROUNDSPRITE_GRASS_1_3"   : 3943,
@@ -358,6 +360,21 @@ constant_numbers = {
 
     # general CB for rerandomizing
     "CB_RANDOM_TRIGGER"        : 0x01,
+
+    # station general flags
+    "STAT_FLAG_DISTRIBUTED_CARGO"     : 1,
+    "STAT_FLAG_RANDOM_ANIMATION"      : 2,
+    "STAT_FLAG_CUSTOM_FOUNDATIONS"    : 3,
+    "STAT_FLAG_EXTENDED_FOUNDATIONS"  : 4,
+
+    # station animation triggers
+    "STAT_ANIM_IS_BUILT"              : 0,
+    "STAT_ANIM_CARGO_ARRIVES"         : 1,
+    "STAT_ANIM_CARGO_REMOVED"         : 2,
+    "STAT_ANIM_TRAIN_ENTERS"          : 3,
+    "STAT_ANIM_TRAIN_LEAVES"          : 4,
+    "STAT_ANIM_TRAIN_LOAD_UNLOAD"     : 5,
+    "STAT_ANIM_256_TICKS"             : 6,
 
     # house flags
     "HOUSE_FLAG_NOT_SLOPED"         : 1,
