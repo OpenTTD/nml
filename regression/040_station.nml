@@ -17,7 +17,7 @@ spriteset(station_spriteset2, "station.png") {
 
 spritelayout station_sprite_layout_0 {
     ground {
-        sprite: 0x3F4;
+        sprite: GROUNDSPRITE_RAIL_X;
     }
     building {
         sprite: 0x42E;
@@ -59,7 +59,7 @@ spritelayout station_sprite_layout_0 {
 
 spritelayout station_sprite_layout_1(a) {
     ground {
-        sprite: 0x3F3;
+        sprite: GROUNDSPRITE_RAIL_Y;
     }
     building {
         sprite: 0x42F;
@@ -104,7 +104,7 @@ item (FEAT_STATIONS, basic_station) {
         class    : "TEST";
         classname: string(STR_STATION_TEST_CLASS);
         name     : string(STR_STATION_BASIC);
-        general_flags: 0x10;
+        general_flags: bitmask(STAT_FLAG_EXTENDED_FOUNDATIONS);
     }
     graphics {
         foundations: 0;
