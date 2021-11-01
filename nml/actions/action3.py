@@ -309,6 +309,7 @@ def parse_graphics_block_single_id(
     layouts = []
     prepare_layout = None
     purchase_prepare_layout = None
+    foundations = None
 
     for graphics in graphics_block.graphics_list:
         cargo_id = graphics.cargo_id
@@ -368,6 +369,9 @@ def parse_graphics_block_single_id(
                         else:
                             assert prepare_layout is None
                             prepare_layout = graphics.result.value
+                    elif info["type"] == "foundations":
+                        assert foundations is None
+                        foundations = graphics.result.value
                     else:
                         raise AssertionError()
                 continue
@@ -395,7 +399,7 @@ def parse_graphics_block_single_id(
             raise generic.ScriptError("Default graphics are defined twice.", graphics_block.default_graphics.pos)
         cargo_gfx[None] = graphics_block.default_graphics.value
 
-    if layouts:
+    if layouts or foundations:
         if None not in cargo_gfx:
             cargo_gfx[None] = expression.SpriteGroupRef(expression.Identifier("CB_FAILED", None), [], None)
 
@@ -425,7 +429,9 @@ def parse_graphics_block_single_id(
                 varact2parser.proc_call_list.append(registers_ref)
 
             # Fill var10 dependant choices
-            mapping = var10map.get_mapping(feature, prepend_action_list, default)
+            mapping = {0x02: (foundations, None)} if foundations else {}
+            if var10map:
+                var10map.append_mapping(mapping, feature, prepend_action_list, default)
             # No need for in-between varaction2 if there are no registers to set and no var10 dependant choices
             if len(mapping) == 0:
                 if not varact2parser.var_list:

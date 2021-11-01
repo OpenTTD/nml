@@ -642,8 +642,7 @@ class StationSpritesetVar10Map:
             self.var10 += 1 if self.var10 != 1 else 2  # Reserving 2 for custom foundations
         return StationSpriteset(spriteset, args, self.spritesets[spriteset], pos)
 
-    def get_mapping(self, feature, actions, default):
-        mapping = {}
+    def append_mapping(self, mapping, feature, actions, default):
         for spriteset in self.spritesets:
             if not spriteset.has_action2(feature):
                 real_action2 = action2real.make_simple_real_action2(
