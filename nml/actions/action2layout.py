@@ -455,10 +455,11 @@ class ParsedSpriteLayout:
                     spriteset = action2.resolve_spritegroup(param_val.name)
                     if not spriteset.is_spriteset():
                         raise generic.ScriptError("Expected a reference to a spriteset.", param_val.pos)
-                    all_sprite_sets.append(spriteset)
                     if feature == 0x04:
                         assert var10map is not None
                         param_val = var10map.translate(spriteset, param_val.param_list, param_val.pos)
+                    else:
+                        all_sprite_sets.append(spriteset)
                 param_list.append((param.name, param_val))
 
         actions.extend(action1.add_to_action1(all_sprite_sets, feature, spritelayout.pos))
@@ -645,6 +646,7 @@ class StationSpritesetVar10Map:
     def append_mapping(self, mapping, feature, actions, default):
         for spriteset in self.spritesets:
             if not spriteset.has_action2(feature):
+                actions.extend(action1.add_to_action1([spriteset], feature, None))
                 real_action2 = action2real.make_simple_real_action2(
                     feature,
                     spriteset.name.value + " - feature {:02X}".format(feature),
