@@ -148,6 +148,7 @@ callbacks[0x04] = {
     'prepare_layout'                : {'type': 'prepare_layout'},
     'purchase_prepare_layout'       : {'type': 'prepare_layout', 'purchase': 2},
     'foundations'                   : {'type': 'foundations'},
+    'custom_spritesets'             : {'type': 'custom_spritesets'},
     'default'                       : {'type': 'cargo', 'num': None},
     'purchase'                      : {'type': 'cargo', 'num': 0xFF},
 }
