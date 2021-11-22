@@ -632,51 +632,63 @@ class StationSpritesetVar10Map:
         self.spritesets = {}
         self.var10 = 1  # Reserving 0 for SPRITESET() (basic action2)
 
-    def is_empty(self):
-        return self.var10 == 1
-
     def translate(self, spriteset, args, pos):
         if spriteset not in self.spritesets:
             if self.var10 == 8:
                 raise generic.ScriptError("A station can't use more than 6 different sprite sets", pos)
             self.spritesets[spriteset] = self.var10
             self.var10 += 1 if self.var10 != 1 else 2  # Reserving 2 for custom foundations
-        return StationSpriteset(spriteset, args, self.spritesets[spriteset], pos)
+        return StationSpriteset(
+            None if isinstance(spriteset, int) else spriteset, args, self.spritesets[spriteset], pos
+        )
 
-    def append_mapping(self, mapping, feature, actions, default):
-        for spriteset in self.spritesets:
-            if not spriteset.has_action2(feature):
-                actions.extend(action1.add_to_action1([spriteset], feature, None))
-                real_action2 = action2real.make_simple_real_action2(
-                    feature,
-                    spriteset.name.value + " - feature {:02X}".format(feature),
-                    None,
-                    action1.get_action1_index(spriteset),
-                )
-                actions.append(real_action2)
-                spriteset.set_action2(real_action2, feature)
-            ref = expression.SpriteGroupRef(spriteset.name, [], None, spriteset.get_action2(feature))
+    def append_mapping(self, mapping, feature, actions, default, custom_spritesets):
+        for spriteset, var10 in self.spritesets.items():
+            if not isinstance(spriteset, int):
+                if not spriteset.has_action2(feature):
+                    actions.extend(action1.add_to_action1([spriteset], feature, None))
+                    real_action2 = action2real.make_simple_real_action2(
+                        feature,
+                        spriteset.name.value + " - feature {:02X}".format(feature),
+                        None,
+                        action1.get_action1_index(spriteset),
+                    )
+                    actions.append(real_action2)
+                    spriteset.set_action2(real_action2, feature)
+                ref = expression.SpriteGroupRef(spriteset.name, [], None, spriteset.get_action2(feature))
+            else:
+                if spriteset > len(custom_spritesets):
+                    raise generic.ScriptError("Index out of range")
+                ref = custom_spritesets[spriteset]
             # Skip default result
             if ref == default:
                 continue
-            mapping[self.spritesets[spriteset]] = (ref, None)
+            mapping[var10] = (ref, None)
         return mapping
 
 
 def parse_station_layouts(feature, id, layouts):
-    # Add SPRITESET() to reference active spriteset, selected by basic action2
+    var10map = StationSpritesetVar10Map()
+
+    # Add DEFAULT([offset]) to reference active spriteset, selected by basic action2
+    # and CUSTOM(index, [offset]) to reference a spriteset from the custom list
     def parse_spriteset(name, args, pos, info):
-        return StationSpriteset(None, args, None, pos)
+        if info:
+            if len(args) < 1:
+                raise generic.ScriptError("'{}' expects 1 or 2 parameters".format(name), pos)
+            if not isinstance(args[0], expression.ConstantNumeric):
+                raise generic.ScriptError("First parameter for '{}' must be a constant".format(name), pos)
+            return var10map.translate(args[0].value, args[1:], pos)
+        return StationSpriteset(None, args, info, pos)
 
     default_param = [
         (
-            {"SPRITESET": None},
+            {"DEFAULT": None, "CUSTOM": True},
             lambda name, value, pos: expression.FunctionPtr(expression.Identifier(name, pos), parse_spriteset, value),
         )
     ]
 
     actions = []
-    var10map = StationSpritesetVar10Map()
     param_registers = []
     parsed_layouts = []
     varact2parser = action2var.Varaction2Parser(feature)

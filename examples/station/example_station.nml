@@ -65,7 +65,7 @@ spritelayout cow_pen_X(a) {
 		sprite: 2022 + a; // prevent railtype offset
 	}
 	building {
-		sprite: SPRITESET(0); // first sprite in active spriteset
+		sprite: DEFAULT(0); // first sprite in active spriteset
 		zextent: 36;
 		recolour_mode: RECOLOUR_REMAP;
 		palette:       PALETTE_USE_DEFAULT;
@@ -77,7 +77,7 @@ spritelayout cow_pen_Y(a) {
 		sprite: 2022 + a; // prevent railtype offset
 	}
 	building {
-		sprite: SPRITESET(1); // second sprite in active spriteset
+		sprite: DEFAULT(1); // second sprite in active spriteset
 		zextent: 36;
 		recolour_mode: RECOLOUR_REMAP;
 		palette:       PALETTE_USE_DEFAULT;

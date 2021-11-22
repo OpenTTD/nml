@@ -31,7 +31,7 @@ spritelayout station_sprite_layout_0 {
         palette: PALETTE_USE_DEFAULT;
     }
     childsprite {
-        sprite: SPRITESET(0);
+        sprite: DEFAULT(0);
         xoffset: 17;
         yoffset: 11;
         recolour_mode: RECOLOUR_REMAP;
