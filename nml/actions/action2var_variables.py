@@ -268,6 +268,7 @@ varact2vars60x_roadvehs = {
 
 # 'Base station' variables are shared between stations and airports
 varact2vars_base_stations = {
+    'random_bits_station' : {'var': 0x5F, 'start': 8, 'size': 16},
     # Var 48 doesn't work with newcargos, do not use
     'had_vehicle_of_type' : {'var': 0x8A, 'start': 1, 'size': 5}, # Only read bits 1-5
     'is_waypoint'         : {'var': 0x8A, 'start': 6, 'size': 1},
@@ -310,6 +311,7 @@ varact2vars_stations = {
     'rail_continuation'        : {'var': 0x45, 'start':  0, 'size': 8},
     'rail_present'             : {'var': 0x45, 'start':  8, 'size': 8},
     'animation_frame'          : {'var': 0x4A, 'start':  0, 'size': 8},
+    'random_bits_tile'         : {'var': 0x5F, 'start': 24, 'size': 4},
 }
 
 # Mapping of param values for platform_xx vars to variable numbers
@@ -706,12 +708,14 @@ varact2vars_railtype = {
 #
 
 varact2vars_airporttiles = {
-    'terrain_type'      : {'var': 0x41, 'start': 0, 'size':  8},
-    'town_radius_group' : {'var': 0x42, 'start': 0, 'size':  3},
-    'relative_x'        : {'var': 0x43, 'start': 0, 'size':  8},
-    'relative_y'        : {'var': 0x43, 'start': 8, 'size':  8},
-    'relative_pos'      : {'var': 0x43, 'start': 0, 'size': 16},
-    'animation_frame'   : {'var': 0x44, 'start': 0, 'size':  8},
+    'terrain_type'        : {'var': 0x41, 'start':  0, 'size':  8},
+    'town_radius_group'   : {'var': 0x42, 'start':  0, 'size':  3},
+    'relative_x'          : {'var': 0x43, 'start':  0, 'size':  8},
+    'relative_y'          : {'var': 0x43, 'start':  8, 'size':  8},
+    'relative_pos'        : {'var': 0x43, 'start':  0, 'size': 16},
+    'animation_frame'     : {'var': 0x44, 'start':  0, 'size':  8},
+    'random_bits_station' : {'var': 0x5F, 'start':  8, 'size': 16},
+    'random_bits_tile'    : {'var': 0x5F, 'start': 24, 'size':  4},
 }
 
 varact2vars60x_airporttiles = {
