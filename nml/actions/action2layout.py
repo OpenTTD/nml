@@ -51,7 +51,7 @@ class Action2Layout(action2.Action2):
                 size += 10
             if advanced:
                 size += sprite.get_registers_size()
-        if len(self.sprite_list) == 0:
+        if len(self.sprite_list) == 0 and not advanced:
             size += 9
 
         regs = ["{} : register {:X}".format(reg.name, reg.register) for reg in self.param_registers]
@@ -65,7 +65,7 @@ class Action2Layout(action2.Action2):
             self.ground_sprite.write_flags(file)
             self.ground_sprite.write_registers(file)
         file.newline()
-        if len(self.sprite_list) == 0:
+        if len(self.sprite_list) == 0 and not advanced:
             file.print_dwordx(0)  # sprite number 0 == no sprite
             for _ in range(0, 5):
                 file.print_byte(0)  # empty bounding box. Note that number of zeros is 5, not 6
