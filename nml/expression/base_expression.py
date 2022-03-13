@@ -147,7 +147,7 @@ class ConstantNumeric(Expression):
         self.value = generic.truncate_int32(value)
         self.uvalue = self.value
         if self.uvalue < 0:
-            self.uvalue += 2 ** 32
+            self.uvalue += 2**32
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Int:", self.value)
