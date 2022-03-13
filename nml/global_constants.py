@@ -1196,6 +1196,7 @@ patch_variables = {
     "max_height_level":        {"num": 0x14, "start":  0, "size": 32},
     "base_sprite_foundations": {"num": 0x15, "start":  0, "size": 32},
     "base_sprite_shores":      {"num": 0x16, "start":  0, "size": 32},
+    "map_seed":                {"num": 0x17, "start":  0, "size": 32},
 }
 # fmt: on
 
