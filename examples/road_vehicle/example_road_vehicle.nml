@@ -185,7 +185,7 @@ item(FEAT_ROADVEHS, flatbed_truck_1) {
         weight: 9.5 ton;
         /* TE and air drag coefficient is left at default */
         cargo_capacity: 20; // Changed by callback
-        sound_effect: SOUND_BUS_START_PULL_AWAY;
+        sound_effect: SOUND_DEPARTURE_OLD_RV_1;
         /* Visual effect is left at default (no effect) */
     }
 
@@ -236,7 +236,7 @@ item(FEAT_ROADVEHS, flatbed_truck_2) {
         weight: 9.5 ton;
         /* TE and air drag coefficient is left at default */
         cargo_capacity: 20; // Changed by callback
-        sound_effect: SOUND_BUS_START_PULL_AWAY;
+        sound_effect: SOUND_DEPARTURE_OLD_RV_1;
         /* Visual effect is left at default (no effect) */
     }
 
@@ -287,7 +287,7 @@ item(FEAT_ROADVEHS, flatbed_truck_3) {
         weight: 9.5 ton;
         /* TE and air drag coefficient is left at default */
         cargo_capacity: 20; // Changed by callback
-        sound_effect: SOUND_BUS_START_PULL_AWAY;
+        sound_effect: SOUND_DEPARTURE_OLD_RV_1;
         /* Visual effect is left at default (no effect) */
     }
 
