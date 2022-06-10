@@ -67,9 +67,14 @@ def parse_cli(argv):
     @return: Options, and input filename (if not supplied, use C{sys.stdin}).
     @rtype:  C{tuple} (C{Object}, C{str} or C{None})
     """
-    usage = "Usage: %prog [options] <filename>\n" "Where <filename> is the nml file to parse"
+    usage = (
+        "Usage: %prog [options] <filename>\n"
+        "Where <filename> is the nml file to parse"
+    )
 
-    opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
+    opt_parser = optparse.OptionParser(
+        usage=usage, version=version_info.get_cli_version()
+    )
     opt_parser.set_defaults(
         debug=False,
         crop=False,
@@ -88,13 +93,38 @@ def parse_cli(argv):
         rebuild_parser=False,
         debug_parser=False,
     )
-    opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
-    opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
-    opt_parser.add_option("--grf", dest="grf_filename", metavar="<file>", help="write the resulting grf to <file>")
     opt_parser.add_option(
-        "--md5", dest="md5_filename", metavar="<file>", help="Write an md5sum of the resulting grf to <file>"
+        "-d",
+        "--debug",
+        action="store_true",
+        dest="debug",
+        help="write the AST to stdout",
     )
-    opt_parser.add_option("--nfo", dest="nfo_filename", metavar="<file>", help="write nfo output to <file>")
+    opt_parser.add_option(
+        "-s",
+        "--stack",
+        action="store_true",
+        dest="stack",
+        help="Dump stack when an error occurs",
+    )
+    opt_parser.add_option(
+        "--grf",
+        dest="grf_filename",
+        metavar="<file>",
+        help="write the resulting grf to <file>",
+    )
+    opt_parser.add_option(
+        "--md5",
+        dest="md5_filename",
+        metavar="<file>",
+        help="Write an md5sum of the resulting grf to <file>",
+    )
+    opt_parser.add_option(
+        "--nfo",
+        dest="nfo_filename",
+        metavar="<file>",
+        help="write nfo output to <file>",
+    )
     opt_parser.add_option(
         "-M",
         action="store_true",
@@ -117,12 +147,30 @@ def parse_cli(argv):
         help="target of the rule emitted by dependency generation (requires -M)",
     )
     opt_parser.add_option(
-        "-c", action="store_true", dest="crop", help="crop extraneous transparent blue from real sprites"
+        "-c",
+        action="store_true",
+        dest="crop",
+        help="crop extraneous transparent blue from real sprites",
     )
-    opt_parser.add_option("-u", action="store_false", dest="compress", help="save uncompressed data in the grf file")
-    opt_parser.add_option("--nml", dest="nml_filename", metavar="<file>", help="write optimized nml to <file>")
     opt_parser.add_option(
-        "-o", "--output", dest="outputs", action="append", metavar="<file>", help="write output(nfo/grf) to <file>"
+        "-u",
+        action="store_false",
+        dest="compress",
+        help="save uncompressed data in the grf file",
+    )
+    opt_parser.add_option(
+        "--nml",
+        dest="nml_filename",
+        metavar="<file>",
+        help="write optimized nml to <file>",
+    )
+    opt_parser.add_option(
+        "-o",
+        "--output",
+        dest="outputs",
+        action="append",
+        metavar="<file>",
+        help="write output(nfo/grf) to <file>",
     )
     opt_parser.add_option(
         "-t",
@@ -164,7 +212,10 @@ def parse_cli(argv):
         help="Force nml to use the palette <pal> [default: %default]. Valid values are 'DEFAULT', 'LEGACY', 'ANY'",
     )
     opt_parser.add_option(
-        "--quiet", action="store_true", dest="quiet", help="Disable all warnings. Errors will be printed normally."
+        "--quiet",
+        action="store_true",
+        dest="quiet",
+        help="Disable all warnings. Errors will be printed normally.",
     )
     opt_parser.add_option(
         "-n",
@@ -202,7 +253,11 @@ def parse_cli(argv):
         help="Force regeneration of parser tables.",
     )
     opt_parser.add_option(
-        "-D", "--debug-parser", action="store_true", dest="debug_parser", help="Enable debug mode for parser."
+        "-D",
+        "--debug-parser",
+        action="store_true",
+        dest="debug_parser",
+        help="Enable debug mode for parser.",
     )
     opt_parser.add_option(
         "--no-optimisation-warning",
@@ -227,7 +282,11 @@ def parse_cli(argv):
     spritecache.keep_orphaned = opts.keep_orphaned
 
     opts.outputfile_given = (
-        opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.dep_filename or opts.outputs
+        opts.grf_filename
+        or opts.nfo_filename
+        or opts.nml_filename
+        or opts.dep_filename
+        or opts.outputs
     )
 
     if not args:
@@ -240,7 +299,9 @@ def parse_cli(argv):
     else:
         input_filename = args[0]
         if not os.access(input_filename, os.R_OK):
-            raise generic.ScriptError('Input file "{}" does not exist'.format(input_filename))
+            raise generic.ScriptError(
+                'Input file "{}" does not exist'.format(input_filename)
+            )
 
     return opts, input_filename
 
@@ -460,7 +521,9 @@ def nml(
             lang_actions.extend(action0.get_language_translation_tables(lang))
         # Add global strings
         lang_actions.extend(action4.get_global_string_actions())
-        actions = actions[: action8_index + 1] + lang_actions + actions[action8_index + 1 :]
+        actions = (
+            actions[: action8_index + 1] + lang_actions + actions[action8_index + 1 :]
+        )
 
     generic.print_progress("Collecting real sprites ...")
 
@@ -502,43 +565,68 @@ def nml(
         return 0
 
     if not Image and len(sprite_files) > 0:
-        generic.print_error("PIL (python-imaging) wasn't found, no support for using graphics")
+        generic.print_error(
+            "PIL (python-imaging) wasn't found, no support for using graphics"
+        )
         sys.exit(3)
 
-    generic.print_progress("Checking palette of source images ...")
-
     used_palette = forced_palette
-    last_file = None
-    for f_pair in sprite_files:
-        # Palette is defined by mask_file, if present. Otherwise by the main file.
-        f = f_pair[1]
-        if f is None:
-            f = f_pair[0]
+    validate_palettes = True
+    # skip palette validation iff we're not going to be encoding realsprites
+    #     AND we know what palette to set for action 14
+    if (
+        any(isinstance(f, output_nfo.OutputNFO) for f in outputfiles)
+        and forced_palette != "ANY"
+    ):
+        validate_palettes = False
 
-        try:
-            with Image.open(generic.find_file(f)) as im:
-                # Verify the image is running in Palette mode, if not, skip this file.
-                if im.mode != "P":
-                    continue
-                pal = palette.validate_palette(im, f)
-        except IOError as ex:
-            raise generic.ImageError(str(ex), f)
+    if validate_palettes:
+        generic.print_progress("Checking palette of source images ...")
 
-        if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DEFAULT" and pal == "LEGACY"):
-            raise generic.ImageError(
-                "Image has '{}' palette, but you forced the '{}' palette".format(pal, used_palette), f
-            )
+        last_file = None
+        for f_pair in sprite_files:
+            # Palette is defined by mask_file, if present. Otherwise by the main file.
+            f = f_pair[1]
+            if f is None:
+                f = f_pair[0]
 
-        if used_palette == "ANY":
-            used_palette = pal
-        elif pal != used_palette:
-            if used_palette in ("LEGACY", "DEFAULT") and pal in ("LEGACY", "DEFAULT"):
-                used_palette = "DEFAULT"
-            else:
+            try:
+                with Image.open(generic.find_file(f)) as im:
+                    # Verify the image is running in Palette mode, if not, skip this file.
+                    if im.mode != "P":
+                        continue
+                    pal = palette.validate_palette(im, f)
+            except IOError as ex:
+                raise generic.ImageError(str(ex), f)
+
+            if (
+                forced_palette != "ANY"
+                and pal != forced_palette
+                and not (forced_palette == "DEFAULT" and pal == "LEGACY")
+            ):
                 raise generic.ImageError(
-                    "Image has '{}' palette, but \"{}\" has the '{}' palette".format(pal, last_file, used_palette), f
+                    "Image has '{}' palette, but you forced the '{}' palette".format(
+                        pal, used_palette
+                    ),
+                    f,
                 )
-        last_file = f
+
+            if used_palette == "ANY":
+                used_palette = pal
+            elif pal != used_palette:
+                if used_palette in ("LEGACY", "DEFAULT") and pal in (
+                    "LEGACY",
+                    "DEFAULT",
+                ):
+                    used_palette = "DEFAULT"
+                else:
+                    raise generic.ImageError(
+                        "Image has '{}' palette, but \"{}\" has the '{}' palette".format(
+                            pal, last_file, used_palette
+                        ),
+                        f,
+                    )
+            last_file = f
 
     palette_bytes = {"LEGACY": "W", "DEFAULT": "D", "ANY": "A"}
     if used_palette in palette_bytes:
@@ -548,7 +636,9 @@ def nml(
         outputfile.palette = used_palette  # used by RecolourSpriteAction
         if isinstance(outputfile, output_grf.OutputGRF):
             if encoder is None:
-                encoder = spriteencoder.SpriteEncoder(compress_grf, crop_sprites, used_palette)
+                encoder = spriteencoder.SpriteEncoder(
+                    compress_grf, crop_sprites, used_palette
+                )
             outputfile.encoder = encoder
 
     generic.clear_progress()
