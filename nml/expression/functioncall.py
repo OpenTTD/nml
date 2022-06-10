@@ -27,7 +27,7 @@ from .cargo import AcceptCargo, ProduceCargo
 from .parameter import parse_string_to_dword
 from .storage_op import StorageOp
 from .string_literal import StringLiteral
-from .ternaryop import TernaryOp
+from .abs_op import AbsOp
 
 
 class FunctionCall(Expression):
@@ -577,8 +577,7 @@ def builtin_int(name, args, pos):
 def builtin_abs(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
-    guard = nmlop.CMP_LT(args[0], 0)
-    return TernaryOp(guard, nmlop.SUB(0, args[0]), args[0], args[0].pos).reduce()
+    return AbsOp(args[0], args[0].pos).reduce()
 
 
 @builtin
