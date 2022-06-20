@@ -33,6 +33,7 @@ from .storage_op import StorageOp
 from .string import String
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
+from .abs_op import AbsOp
 from .variable import Variable
 
 is_valid_id = re.compile("[a-zA-Z_][a-zA-Z0-9_]{3}$")

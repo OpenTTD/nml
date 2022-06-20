@@ -192,6 +192,18 @@ def parse_ternary_op(assignment):
     return actions
 
 
+def parse_abs_op(assignment):
+    assert isinstance(assignment.value, expression.AbsOp)
+    actions = parse_actionD(ParameterAssignment(assignment.param, assignment.value.expr))
+    cond_block = conditional.Conditional(
+        nmlop.CMP_LT(assignment.value.expr, 0),
+        [ParameterAssignment(assignment.param, nmlop.SUB(0, assignment.value.expr))],
+        None,
+    )
+    actions.extend(conditional.ConditionalList([cond_block]).get_action_list())
+    return actions
+
+
 def parse_special_check(assignment):
     check = assignment.value
     assert isinstance(check, expression.SpecialCheck)
@@ -367,6 +379,9 @@ def parse_actionD(assignment):
 
     if isinstance(assignment.value, expression.TernaryOp):
         return parse_ternary_op(assignment)
+
+    if isinstance(assignment.value, expression.AbsOp):
+        return parse_abs_op(assignment)
 
     if isinstance(assignment.value, expression.SpecialCheck):
         return parse_special_check(assignment)

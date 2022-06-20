@@ -440,6 +440,24 @@ class Varaction2Parser:
             expr2 = nmlop.MUL(expr.expr2, VarAction2LoadTempVar(inverted_guard_var))
             return nmlop.ADD(expr1, expr2)
 
+    def preprocess_absop(self, expr):
+        assert isinstance(expr, expression.AbsOp)
+        self.parse(expr.expr.reduce())
+        input_var = VarAction2StoreTempVar()
+        input_var.comment = "input"
+        self.var_list.append(nmlop.STO_TMP)
+        self.var_list.append(input_var)
+        self.var_list.append(nmlop.VACT2_CMP)
+        var = VarAction2Var(0x1A, 0, 0)
+        self.var_list.append(var)
+        self.var_list.append(nmlop.SUB)
+        var2 = VarAction2Var(0x1A, 0, 1)
+        self.var_list.append(var2)
+        self.var_list.append(nmlop.MUL)
+        # the +4 is for the 4 operators added above (STO_TMP, VACT2_CMP, SUB, MUL)
+        self.var_list_size += 4 + input_var.get_size() + var.get_size() + var2.get_size()
+        return VarAction2LoadTempVar(input_var)
+
     def preprocess_storageop(self, expr):
         assert isinstance(expr, expression.StorageOp)
         if expr.info["perm"] and not self.var_scope.has_persistent_storage:
@@ -669,6 +687,9 @@ class Varaction2Parser:
 
         elif isinstance(expr, expression.TernaryOp) and not expr.supported_by_actionD(False):
             expr = self.preprocess_ternaryop(expr)
+
+        elif isinstance(expr, expression.AbsOp) and not expr.supported_by_actionD(False):
+            expr = self.preprocess_absop(expr)
 
         elif isinstance(expr, expression.StorageOp):
             expr = self.preprocess_storageop(expr)
