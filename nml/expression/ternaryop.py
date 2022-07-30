@@ -44,6 +44,12 @@ class TernaryOp(Expression):
             else:
                 return expr2
         if guard.type() != Type.INTEGER or expr1.type() != Type.INTEGER or expr2.type() != Type.INTEGER:
+            if guard.type() == Type.SPRITEGROUP_REF:
+                raise generic.ProcCallSyntaxError(guard.name, guard.pos)
+            if expr1.type() == Type.SPRITEGROUP_REF:
+                raise generic.ProcCallSyntaxError(expr1.name, expr1.pos)
+            if expr2.type() == Type.SPRITEGROUP_REF:
+                raise generic.ProcCallSyntaxError(expr2.name, expr2.pos)
             raise generic.ScriptError("All parts of the ternary operator (?:) must be integers.", self.pos)
         return TernaryOp(guard, expr1, expr2, self.pos)
 
