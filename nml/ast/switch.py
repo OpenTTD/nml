@@ -311,7 +311,9 @@ class RandomSwitch(switch_base_class):
             if len(self.type.params) == 0:
                 self.type_count = None
             elif len(self.type.params) == 1:
-                self.type_count = action2var.reduce_varaction2_expr(self.type.params[0], feature)
+                # var_scope is really weird for type=BACKWARD/FORWARD.
+                var_scope = action2var.get_scope(feature, 0x89)
+                self.type_count = action2var.reduce_varaction2_expr(self.type.params[0], var_scope)
             else:
                 raise generic.ScriptError(
                     "Value for random_switch parameter 2 'type' can have only one parameter.", self.type.pos
