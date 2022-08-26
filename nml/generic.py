@@ -252,6 +252,11 @@ class RangeError(ScriptError):
         )
 
 
+class ProcCallSyntaxError(ScriptError):
+    def __init__(self, name, pos=None):
+        ScriptError.__init__(self, "Missing '()' after '{}'.".format(name), pos)
+
+
 class ImageError(ScriptError):
     def __init__(self, value, filename, pos=None):
         ScriptError.__init__(self, value, ImageFilePosition(filename, pos))

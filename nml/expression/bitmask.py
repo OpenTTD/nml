@@ -33,6 +33,8 @@ class BitMask(Expression):
         for orig_expr in self.values:
             val = orig_expr.reduce(id_dicts)
             if val.type() != Type.INTEGER:
+                if val.type() == Type.SPRITEGROUP_REF:
+                    raise generic.ProcCallSyntaxError(val.name, val.pos)
                 raise generic.ScriptError("Parameters of 'bitmask' must be integers.", orig_expr.pos)
             if isinstance(val, ConstantNumeric) and val.value >= 32:
                 raise generic.ScriptError("Parameters of 'bitmask' cannot be greater than 31", orig_expr.pos)

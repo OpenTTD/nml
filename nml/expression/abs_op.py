@@ -30,6 +30,8 @@ class AbsOp(Expression):
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         expr = self.expr.reduce(id_dicts)
         if expr.type() != Type.INTEGER:
+            if expr.type() == Type.SPRITEGROUP_REF:
+                raise generic.ProcCallSyntaxError(expr.name, expr.pos)
             raise generic.ScriptError("abs() requires an integer argument.", expr.pos)
         if isinstance(expr, ConstantNumeric):
             if expr.value < 0:

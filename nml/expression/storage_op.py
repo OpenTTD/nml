@@ -103,11 +103,15 @@ class StorageOp(Expression):
         if self.value is not None:
             value = self.value.reduce(id_dicts)
             if value.type() != Type.INTEGER:
+                if value.type() == Type.SPRITEGROUP_REF:
+                    raise generic.ProcCallSyntaxError(value.name, value.pos)
                 raise generic.ScriptError("Value to store must be an integer.", value.pos)
             args.append(value)
 
         register = self.register.reduce(id_dicts)
         if register.type() != Type.INTEGER:
+            if register.type() == Type.SPRITEGROUP_REF:
+                raise generic.ProcCallSyntaxError(register.name, register.pos)
             raise generic.ScriptError("Register to access must be an integer.", register.pos)
         if isinstance(register, ConstantNumeric) and register.value > self.info["max"]:
             raise generic.ScriptError("Maximum register for {} is {:d}".format(self.name, self.info["max"]), self.pos)
