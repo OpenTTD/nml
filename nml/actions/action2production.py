@@ -149,7 +149,7 @@ def get_production_actions(produce):
     action6.free_parameters.save()
 
     result_list = []
-    varact2parser = action2var.Varaction2Parser(0x0A, action2var.get_scope(0x0A))
+    varact2parser = action2var.Varaction2Parser(0x0A)
     if all(x.supported_by_actionD(False) for x in produce.param_list):
         version = 0
         offset = 4
@@ -180,7 +180,7 @@ def get_production_v2_actions(produce):
     action_list = []
     action6.free_parameters.save()
 
-    varact2parser = action2var.Varaction2Parser(0x0A, action2var.get_scope(0x0A))
+    varact2parser = action2var.Varaction2Parser(0x0A)
 
     def resolve_cargoitem(item):
         cargolabel = item.name.value

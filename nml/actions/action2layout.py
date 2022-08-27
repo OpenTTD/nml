@@ -485,7 +485,7 @@ def get_layout_action2s(spritelayout, feature, spr_pos):
     actions.append(layout_action)
 
     if temp_registers:
-        varact2parser = action2var.Varaction2Parser(feature, action2var.get_scope(feature))
+        varact2parser = action2var.Varaction2Parser(feature)
         for register_info in temp_registers:
             reg, expr = register_info[1], register_info[2]
             if reg is None:

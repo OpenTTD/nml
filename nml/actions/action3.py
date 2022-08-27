@@ -188,7 +188,7 @@ def create_proc_call_varaction2(feature, proc, ret_value_function, parent_action
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef}, C{str})
     """
     proc.is_procedure = True
-    varact2parser = action2var.Varaction2Parser(feature, action2var.get_scope(feature))
+    varact2parser = action2var.Varaction2Parser(feature)
     varact2parser.parse_proc_call(proc)
 
     mapping = {0xFFFF: (expression.SpriteGroupRef(expression.Identifier("CB_FAILED"), [], None), None)}
@@ -222,7 +222,7 @@ def create_cb_choice_varaction2(feature, expr, mapping, default, pos):
     @return: A tuple containing the action list and a reference to the created action2
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
-    varact2parser = action2var.Varaction2Parser(feature, action2var.get_scope(feature))
+    varact2parser = action2var.Varaction2Parser(feature)
     varact2parser.parse_expr(expr)
     return create_intermediate_varaction2(feature, varact2parser, mapping, default, pos)
 
