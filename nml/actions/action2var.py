@@ -338,9 +338,10 @@ class Modification:
 
 
 class Varaction2Parser:
-    def __init__(self, action_feature, var_scope):
+    def __init__(self, action_feature, var_range=0x89):
         self.action_feature = action_feature
-        self.var_scope = var_scope  # Depends on action_feature and var_range
+        self.var_range = var_range
+        self.var_scope = get_scope(action_feature, var_range)  # Depends on action_feature and var_range
         self.extra_actions = []
         self.mods = []
         self.var_list = []
@@ -837,7 +838,7 @@ def create_return_action(expr, feature, name, var_range):
                 - Reference to the created varaction2
     @rtype: C{tuple} of (C{list} of L{BaseAction}, L{SpriteGroupRef})
     """
-    varact2parser = Varaction2Parser(feature, get_scope(feature, var_range))
+    varact2parser = Varaction2Parser(feature, var_range)
     varact2parser.parse_expr(expr)
 
     action_list = varact2parser.extra_actions
@@ -906,7 +907,7 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
         action_list.append(act2)
 
         # Create varaction2, to choose between returning graphics and 0, depending on CB
-        varact2parser = Varaction2Parser(feature, get_scope(feature))
+        varact2parser = Varaction2Parser(feature)
         varact2parser.parse_expr(
             expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF))
         )
@@ -963,7 +964,7 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     # Result is parametrized
     # Insert an intermediate varaction2 to store expressions in registers
     var_scope = get_scope(parent_action.feature, var_range)
-    varact2parser = Varaction2Parser(parent_action.feature, var_scope)
+    varact2parser = Varaction2Parser(parent_action.feature, var_range)
     layout = action2.resolve_spritegroup(result.name)
     for i, param in enumerate(result.param_list):
         if i > 0:
@@ -1126,7 +1127,7 @@ def parse_varaction2(switch_block):
 
     offset = 4  # first var
 
-    parser = Varaction2Parser(feature, var_scope)
+    parser = Varaction2Parser(feature, switch_block.var_range)
     parser.parse_expr(expr)
     action_list.extend(parser.extra_actions)
     for mod in parser.mods:
