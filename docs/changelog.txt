@@ -1,3 +1,25 @@
+0.7.0 (2022-08-29)
+------------------------------------------------------------------------
+This release adds the long awaited support for stations.
+
+Support for NewGRF additions of OpenTTD 13.0:
+- Add: Map seed in patch variable 0x17.
+
+Support for NewGRF additions of OpenTTD 1.11:
+- Change: provide nml vars for industry var 0x47 - GameScript control status
+
+Other changes and fixes:
+- Codechange: improve error reporting for procedure calls missing '()' (#257)
+- Add: show an error if a required property is not set for objects (feature 0F) (#236)
+- Fix: Reject empty arrays of expressions (#224)
+- Fix #209: Cargo 'profit' callback applied a unit conversion, when there was no unit. (#220)
+- Change: adjust sound name constants to match OpenTTD
+- Cleanup 8a03613: also remove now useless SHORTEN_TO_X_8 constants
+- Fix #253: Produce a more efficient NFO code for abs() builtin function (#255)
+- Add: Prevent side effects when ternary operator results are not read only (#247)
+- Change: Export keyword JSON for VSCode (#245)
+
+
 0.6.1 (2021-09-15)
 ------------------------------------------------------------------------
 Support for NewGRF additions of OpenTTD 12.0:
