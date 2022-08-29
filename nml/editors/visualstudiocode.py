@@ -11,9 +11,8 @@ GNU General Public License for more details.
 with nmlL; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import json
 from nml.editors import extract_tables
-
-output_file = "newgrfml.tmLanguage.json"
 
 text1 = """\
 {
@@ -168,11 +167,10 @@ text6 = """\
 """
 
 
-# Build VS .tmLanguage file
-def write_file(fname):
+def run():
     line = r"(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))("
     lineend = r")(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
-    with open(fname, "w") as file:
+    with open("newgrfml.tmLanguage.json", "w") as file:
         file.write(text1)
         file.write(text2.replace("blocks", line + "|".join(extract_tables.block_names_table) + lineend))
         file.write(text3.replace("variables", line + "|".join(extract_tables.variables_names_table) + lineend))
@@ -180,6 +178,11 @@ def write_file(fname):
         file.write(text5.replace("callbacks", line + "|".join(extract_tables.callback_names_table) + lineend))
         file.write(text6)
 
-
-def run():
-    write_file(output_file)
+    # Simple JSON that contains all keywords for suggestion purposes.
+    with open("providers.json", "w") as file:
+        output = {}
+        output["block"] = extract_tables.block_names_table
+        output["variables"] = extract_tables.variables_names_table
+        output["features"] = extract_tables.feature_names_table
+        output["callbacks"] = extract_tables.callback_names_table
+        file.write(json.dumps(output, separators=(",", ":")))
