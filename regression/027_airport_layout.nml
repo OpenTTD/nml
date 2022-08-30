@@ -1,43 +1,43 @@
-spriteset(small_airport_tile_set) {	[] }
+spriteset(small_airport_tile_set) { [] }
 
 spritelayout small_airport_tile_layout {
-	ground { sprite: small_airport_tile_set; }
-	childsprite {
-		sprite: small_airport_tile_set;
-		always_draw: 1;
-		xoffset: 32;
-		yoffset: 16;
-		recolour_mode: RECOLOUR_REMAP;
-		palette: PALETTE_USE_DEFAULT;
-	}
-	building {
-		sprite: small_airport_tile_set;
-	}
+    ground { sprite: small_airport_tile_set; }
+    childsprite {
+        sprite: small_airport_tile_set;
+        always_draw: 1;
+        xoffset: 32;
+        yoffset: 16;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+    }
+    building {
+        sprite: small_airport_tile_set;
+    }
 }
 
 item(FEAT_AIRPORTTILES, small_airport_tiles) {
-	property {
-		substitute: 0;
-		animation_info: [1, 4]; // loop, 4 frames
-		animation_speed: 1;
-		animation_triggers: 1;
-	}
-	graphics {
-		small_airport_tile_layout;
-	}
+    property {
+        substitute: 0;
+        animation_info: [1, 4]; // loop, 4 frames
+        animation_speed: 1;
+        animation_triggers: 1;
+    }
+    graphics {
+        small_airport_tile_layout;
+    }
 }
 
 tilelayout small_airport_layout_north {
-	rotation: DIRECTION_NORTH;
-	0, 0: small_airport_tiles;
-	1, 0: small_airport_tiles;
-	2, 0: small_airport_tiles;
-	3, 0: 70; // original airport tile
+    rotation: DIRECTION_NORTH;
+    0, 0: small_airport_tiles;
+    1, 0: small_airport_tiles;
+    2, 0: small_airport_tiles;
+    3, 0: 70; // original airport tile
 }
 
 item(FEAT_AIRPORTS, small_airport) {
-	property {
-		override: 0;
-		layouts: [small_airport_layout_north];
-	}
+    property {
+        override: 0;
+        layouts: [small_airport_layout_north];
+    }
 }

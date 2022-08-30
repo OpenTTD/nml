@@ -9,15 +9,15 @@ grf
 
 
 item (FEAT_AIRCRAFT, Boeing_2707, 0x14) {
-	property
-	{
-		name: string(STR_NAME_PLANE);
-		introduction_date: date(1978,01,01); // Introduction two years after Concorde
-		model_life: 30;
-		vehicle_life: 30;
-		climates_available: bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPICAL);
-		speed: 805 km/h;
-		range: 1024; // same as concorde with typical max payload
-		passenger_capacity: 277; // would have cruised 6480 km at M2.7 with this load
-	}
+    property
+    {
+        name: string(STR_NAME_PLANE);
+        introduction_date: date(1978,01,01); // Introduction two years after Concorde
+        model_life: 30;
+        vehicle_life: 30;
+        climates_available: bitmask(CLIMATE_TEMPERATE, CLIMATE_ARCTIC, CLIMATE_TROPICAL);
+        speed: 805 km/h;
+        range: 1024; // same as concorde with typical max payload
+        passenger_capacity: 277; // would have cruised 6480 km at M2.7 with this load
+    }
 }

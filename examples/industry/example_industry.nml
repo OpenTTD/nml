@@ -35,7 +35,7 @@ grf {
 
 /* this example assumes we're just matching to the default temperate cargos, this wouldn't be the usual case */
 cargotable {
- 	PASS, COAL, MAIL, OIL_, LVST, GOOD, GRAI, WOOD, IORE, STEL, VALU
+    PASS, COAL, MAIL, OIL_, LVST, GOOD, GRAI, WOOD, IORE, STEL, VALU
 }
 
 /*

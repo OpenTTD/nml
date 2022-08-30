@@ -1,41 +1,41 @@
 grf {
-	grfid: "NML\32";
-	name: string(STR_REGRESSION_NAME);
-	desc: string(STR_REGRESSION_DESC);
-	version: 0;
-	min_compatible_version: 0;
+    grfid: "NML\32";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
 }
 
 spriteset (spriteset_townhouse, "nlhs.png") {
-	[98, 8, 44, 36, -22, 0, NOCROP]
+    [98, 8, 44, 36, -22, 0, NOCROP]
 }
 
 spritelayout spritelayout_townhouse {
-	ground {
-		sprite: GROUNDSPRITE_NORMAL;
-	}
-	building {
-		sprite: spriteset_townhouse;
-		recolour_mode: RECOLOUR_REMAP;
-		palette: PALETTE_USE_DEFAULT;
-		xextent: 8;
-		yextent: 16;
-		zextent: 27;
-		xoffset: 4;
-		yoffset: 2;
-		zoffset: 0;
-		hide_sprite: 0;
-	}
+    ground {
+        sprite: GROUNDSPRITE_NORMAL;
+    }
+    building {
+        sprite: spriteset_townhouse;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: PALETTE_USE_DEFAULT;
+        xextent: 8;
+        yextent: 16;
+        zextent: 27;
+        xoffset: 4;
+        yoffset: 2;
+        zoffset: 0;
+        hide_sprite: 0;
+    }
 }
 item (FEAT_HOUSES, item_townhouse, -1, HOUSE_SIZE_1X1) {
-	property {
-		substitute: 2;
-		override: 2;
-		probability: 10;
-		name: string(STR_032_HOUSE);
-	}
+    property {
+        substitute: 2;
+        override: 2;
+        probability: 10;
+        name: string(STR_032_HOUSE);
+    }
 
-	graphics {
-		default: spritelayout_townhouse;
-	}
+    graphics {
+        default: spritelayout_townhouse;
+    }
 }

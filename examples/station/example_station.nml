@@ -19,8 +19,8 @@ grf {
     /* This grf is part of NML, therefore "NML" is chosen as the first three
      * characters of the GRFID. It is the seventh real grf defined as part of
      * NML (the first is the train example), therefore the last character is
-	 * set to 6. Successive grfs will have 7, 8, etc. there, to make sure each
-	 * example grf has a unique GRFID.
+     * set to 6. Successive grfs will have 7, 8, etc. there, to make sure each
+     * example grf has a unique GRFID.
      */
     grfid: "NML\06";
     /* GRF name and description strings are defined in the lang files */
@@ -29,94 +29,94 @@ grf {
     /* This is the first version, start numbering at 1. */
     version: 1;
     min_compatible_version: 1;
-	/* This NewGRF has no parameters. See the train example NewGRF for parameter
-	 * usage
-	 */
+    /* This NewGRF has no parameters. See the train example NewGRF for parameter
+     * usage
+     */
 }
 
 /* Using parametrized sprite layouts are only valid in OpenTTD r22723 or later.
  * Earlier versions will choke on those and otherwise disable the NewGRF.
  */
 if (version_openttd(1,2,0,22723) > openttd_version) {
-	error(FATAL, REQUIRES_OPENTTD, string(STR_VERSION_22723));
+    error(FATAL, REQUIRES_OPENTTD, string(STR_VERSION_22723));
 }
 
 cargotable {
-	LVST
+    LVST
 }
 
 spriteset (cow_pen_empty, "cows_cargo.png") {
-	[  10, 10, 64, 65, -31, -34 ]
-	[ 220, 10, 64, 65, -31, -34 ]
+    [  10, 10, 64, 65, -31, -34 ]
+    [ 220, 10, 64, 65, -31, -34 ]
 }
 
 spriteset (cow_pen_half, "cows_cargo.png") {
-	[  80, 10, 64, 65, -31, -34 ]
-	[ 290, 10, 64, 65, -31, -34 ]
+    [  80, 10, 64, 65, -31, -34 ]
+    [ 290, 10, 64, 65, -31, -34 ]
 }
 
 spriteset (cow_pen_full, "cows_cargo.png") {
-	[ 150, 10, 64, 65, -31, -34 ]
-	[ 360, 10, 64, 65, -31, -34 ]
+    [ 150, 10, 64, 65, -31, -34 ]
+    [ 360, 10, 64, 65, -31, -34 ]
 }
 
 spritelayout cow_pen_X(a) {
-	ground {
-		sprite: 2022 + a; // prevent railtype offset
-	}
-	building {
-		sprite: DEFAULT(0); // first sprite in active spriteset
-		zextent: 36;
-		recolour_mode: RECOLOUR_REMAP;
-		palette:       PALETTE_USE_DEFAULT;
-	}
+    ground {
+        sprite: 2022 + a; // prevent railtype offset
+    }
+    building {
+        sprite: DEFAULT(0); // first sprite in active spriteset
+        zextent: 36;
+        recolour_mode: RECOLOUR_REMAP;
+        palette:       PALETTE_USE_DEFAULT;
+    }
 }
 
 spritelayout cow_pen_Y(a) {
-	ground {
-		sprite: 2022 + a; // prevent railtype offset
-	}
-	building {
-		sprite: DEFAULT(1); // second sprite in active spriteset
-		zextent: 36;
-		recolour_mode: RECOLOUR_REMAP;
-		palette:       PALETTE_USE_DEFAULT;
-	}
+    ground {
+        sprite: 2022 + a; // prevent railtype offset
+    }
+    building {
+        sprite: DEFAULT(1); // second sprite in active spriteset
+        zextent: 36;
+        recolour_mode: RECOLOUR_REMAP;
+        palette:       PALETTE_USE_DEFAULT;
+    }
 }
 
 spritegroup cow_pen_1 {
-	little: [cow_pen_empty, cow_pen_half];
-	lots:   cow_pen_full;
+    little: [cow_pen_empty, cow_pen_half];
+    lots:   cow_pen_full;
 }
 
 spritegroup cow_pen_2 {
-	little: [cow_pen_empty, cow_pen_half, cow_pen_full];
-	lots:   cow_pen_full;
+    little: [cow_pen_empty, cow_pen_half, cow_pen_full];
+    lots:   cow_pen_full;
 }
 
 random_switch(FEAT_STATIONS, TILE, random_cow_pen) {
-	1: cow_pen_1;
-	1: cow_pen_2;
+    1: cow_pen_1;
+    1: cow_pen_2;
 }
 
 /* Define the station itself */
 item(FEAT_STATIONS, cow_pen) {
-	property {
-		/* The class allows to sort stations into categories. */
-		class:                  "NML_";
-		/* If no other NewGRF provides this class before us, we have to name it */
-		classname:              string(STR_NAME_STATCLASS);
-		/* Name of this particular station */
-		name:                   string(STR_NAME_STATION);
-		cargo_threshold: 160;
-		draw_pylon_tiles: 0;
-		hide_wire_tiles: 0xFF;
-		non_traversable_tiles: 0xFF;
-	}
-	graphics {
-		sprite_layouts: [cow_pen_X(0), cow_pen_Y(0)];
-		purchase: cow_pen_half;
-		LVST: random_cow_pen;
-		cow_pen_empty;
-	}
+    property {
+        /* The class allows to sort stations into categories. */
+        class:                  "NML_";
+        /* If no other NewGRF provides this class before us, we have to name it */
+        classname:              string(STR_NAME_STATCLASS);
+        /* Name of this particular station */
+        name:                   string(STR_NAME_STATION);
+        cargo_threshold: 160;
+        draw_pylon_tiles: 0;
+        hide_wire_tiles: 0xFF;
+        non_traversable_tiles: 0xFF;
+    }
+    graphics {
+        sprite_layouts: [cow_pen_X(0), cow_pen_Y(0)];
+        purchase: cow_pen_half;
+        LVST: random_cow_pen;
+        cow_pen_empty;
+    }
 }
