@@ -8,8 +8,8 @@
 0 * 4 \d146
 
 1 * 54 14 "C" "INFO"
-"B" "VRSN" \w4 \dx00000000
-"B" "MINV" \w4 \dx00000000
+"B" "VRSN" \w4 \dx00000001
+"B" "MINV" \w4 \dx00000001
 "B" "NPAR" \w1 00
 "B" "PALS" \w1 "W"
 "B" "BLTR" \w1 "8"
