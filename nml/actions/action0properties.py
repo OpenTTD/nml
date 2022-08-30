@@ -669,8 +669,8 @@ properties[0x04] = {
     # 09 (sprite layout) is implemented elsewhere
     # 0A (copy sprite layout) is implemented elsewhere
     # 0B (callback flags) is not set by user
-    "disabled_platforms":    {"size": 1, "num": 0x0B},
-    "disabled_length":       {"size": 1, "num": 0x0C},
+    "disabled_platforms":    {"size": 1, "num": 0x0C},
+    "disabled_length":       {"size": 1, "num": 0x0D},
     # 0E (station layout) callback 24 should be enough
     # 0F (copy station layout)
     "cargo_threshold":       {"size": 2, "num": 0x10},
