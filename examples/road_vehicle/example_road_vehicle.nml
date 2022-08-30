@@ -34,9 +34,9 @@ grf {
     /* GRF name and description strings are defined in the lang files */
     name: string(STR_GRF_NAME);
     desc: string(STR_GRF_DESC);
-    /* This is the first version, start numbering at 0. */
-    version: 0;
-    min_compatible_version: 0;
+    /* This is the first version, start numbering at 1. */
+    version: 1;
+    min_compatible_version: 1;
 }
 
 /* Check for engine pool */

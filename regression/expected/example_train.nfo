@@ -10,8 +10,8 @@
 1 * 665 14 "C" "INFO"
 "T" "NAME" 1F "NML Voorbeeld NewGRF: Trein" 00
 "T" "DESC" 1F "\8ENML Voorbeeld NewGRF: Trein\0D\98Deze NewGRF is bedoeld als voorbeeld van de hogere NewGRF-programmeertaal NML.\0DOriginele graphics door \89Purno, \98geprogrammeerd door \89DJNekkid.\0D\98Deze NewGRF voegt een Nederlands treinstel toe, de ICM 'Koploper'." 00
-"B" "VRSN" \w4 \dx00000000
-"B" "MINV" \w4 \dx00000000
+"B" "VRSN" \w4 \dx00000001
+"B" "MINV" \w4 \dx00000001
 "B" "NPAR" \w1 01
 "C" "PARA"
 "C" \d0

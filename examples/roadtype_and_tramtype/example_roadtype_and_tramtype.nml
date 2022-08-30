@@ -21,8 +21,9 @@ grf {
     grfid : "NML\04";
     name : string(STR_GRF_NAME);
     desc : string(STR_GRF_DESCRIPTION);
-    version : 0; // must be numeric
-    min_compatible_version : 0;
+    /* This is the first version, start numbering at 1. */
+    version: 1;
+    min_compatible_version: 1;
 }
 
 /* Default ground tile template (re-use as needed) */
