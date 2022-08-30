@@ -14,21 +14,20 @@ template tmpl_mono(x, y)          { [x, y, 7,     13, 0,  0, NOCROP] }
 // U+007D: Right Curly Bracket
 // U+007E: Tilde
 font_glyph(NORMAL, 0x007B, "font_addl.png") {
-	tmpl_normal(10, 10, 5)
-	tmpl_normal(30, 10, 3)
-	tmpl_normal(50, 10, 5)
-	tmpl_normal(70, 10, 7)
+    tmpl_normal(10, 10, 5)
+    tmpl_normal(30, 10, 3)
+    tmpl_normal(50, 10, 5)
+    tmpl_normal(70, 10, 7)
 }
 font_glyph(SMALL, 0x007B, "font_addl.png") {
-	tmpl_small(10, 30, 3)
-	tmpl_small(30, 30, 1)
-	tmpl_small(50, 30, 3)
-	tmpl_small(70, 30, 4)
+    tmpl_small(10, 30, 3)
+    tmpl_small(30, 30, 1)
+    tmpl_small(50, 30, 3)
+    tmpl_small(70, 30, 4)
 }
 font_glyph(LARGE, 0x007B, "font_addl.png") {
-	tmpl_large(10, 40, 7)
-	tmpl_large(30, 40, 2)
-	tmpl_large(50, 40, 7)
-	tmpl_large(70, 40, 11)
+    tmpl_large(10, 40, 7)
+    tmpl_large(30, 40, 2)
+    tmpl_large(50, 40, 7)
+    tmpl_large(70, 40, 11)
 }
-

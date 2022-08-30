@@ -24,7 +24,7 @@ cargotable {
 
 /* Sprite templates for both ground and building sprites */
 template tmpl_ground_tile(x, y, filename) {
- [x, y, 64, 31, -31, 0, filename]
+    [x, y, 64, 31, -31, 0, filename]
 }
 
 template tmpl_building_sprite(x, y, h, dy, filename) {
@@ -54,7 +54,7 @@ default_palette = PALETTE_USE_DEFAULT;
 /* Generic sprite layout that is used for all tiles of the building. Parmaeters:
  * - building_sprite: offset in the brewery_spriteset_building spriteset to use. -1 to skip building sprite.
  * - with_smoke: Show smoke above the tile (also depends on animation state) */
-spritelayout brewery_sprite_layout(building_sprite, with_smoke) { 
+spritelayout brewery_sprite_layout(building_sprite, with_smoke) {
     /* First: Draw the normal ground sprite as a base layer */
     ground {
         sprite: GROUNDSPRITE_NORMAL;
@@ -67,21 +67,21 @@ spritelayout brewery_sprite_layout(building_sprite, with_smoke) {
         always_draw: 1; // Draw this sprite even in transparent mode
     }
     /* Now draw the building sprite, assuming the building is fully constructed */
-    building { 
-        sprite: brewery_spriteset_building((terrain_type == TILETYPE_SNOW) * 3 + building_sprite); 
+    building {
+        sprite: brewery_spriteset_building((terrain_type == TILETYPE_SNOW) * 3 + building_sprite);
         /* Enable recolouring for the flag on top, it will get a random colour */
         recolour_mode: RECOLOUR_REMAP;
         palette: default_palette;
         zextent: 48;
         hide_sprite: building_sprite == -1 || construction_state != 3;
     }
-    building { 
+    building {
         /* 3079 .. 3083 are steam smoke sprites
          * Draw one of them, assuming the animation frame != 0 */
         sprite: 3079 + (animation_frame - 1) / 4;
         xoffset: 8;
-        yoffset: 0; 
-        zoffset: 55 + (animation_frame - 1); 
+        yoffset: 0;
+        zoffset: 55 + (animation_frame - 1);
         xextent: 11;
         zextent: 7;
         hide_sprite: !with_smoke || animation_frame == 0;

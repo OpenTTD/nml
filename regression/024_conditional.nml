@@ -1,11 +1,11 @@
 if (param[0]) {
-	param[1] = 1;
+    param[1] = 1;
 }
 
 if (0) {
-	param[2] = 1;
+    param[2] = 1;
 }
 
 if (1) {
-	param[3] = 1;
+    param[3] = 1;
 }

@@ -308,11 +308,11 @@ item(FEAT_TRAINS, icm) {
  * Earlier versions will choke on those and otherwise disable the NewGRF.
  */
 if (version_openttd(1,2,0,22713) < openttd_version) {
-	item(FEAT_TRAINS, icm) {
-		property {
-			cargo_age_period: 185; // default value
-		}
-	}
+    item(FEAT_TRAINS, icm) {
+        property {
+            cargo_age_period: 185; // default value
+        }
+    }
 }
 
 /* ------------------ Cargo Wagons Example ------------------ */

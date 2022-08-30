@@ -21,8 +21,8 @@ grf {
     /* This grf is part of NML, therefore "NML" is chosen as the first three
      * characters of the GRFID. It is the second real grf defined as part of
      * NML (the first is the train example), therefore the last character is
-	 * set to 1. Successive grfs will have 2, 3, etc. there, to make sure each
-	 * example grf has a unique GRFID.
+     * set to 1. Successive grfs will have 2, 3, etc. there, to make sure each
+     * example grf has a unique GRFID.
      */
     grfid: "NML\01";
     /* GRF name and description strings are defined in the lang files */
@@ -31,16 +31,16 @@ grf {
     /* This is the first version, start numbering at 1. */
     version: 1;
     min_compatible_version: 1;
-	/* This NewGRF has no parameters. See the train example NewGRF for parameter
-	 * usage
-	 */
+    /* This NewGRF has no parameters. See the train example NewGRF for parameter
+     * usage
+     */
 }
 
 /* Using parametrized sprite layouts are only valid in OpenTTD r22723 or later.
  * Earlier versions will choke on those and otherwise disable the NewGRF.
  */
 if (version_openttd(1,2,0,22723) > openttd_version) {
-	error(FATAL, REQUIRES_OPENTTD, string(STR_VERSION_22723));
+    error(FATAL, REQUIRES_OPENTTD, string(STR_VERSION_22723));
 }
 
 
@@ -75,80 +75,80 @@ template tmpl_groundsprites(x, y) {
 spriteset (cc_frame, "cc_grid.png") { tmpl_groundsprites(1, 1) }
 
 spritelayout company_land_layout {
-	ground {
-		/* normal ground sprite - always draw */
-		sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
-	}
-	childsprite {
-		/* company-coloured border - always draw */
-		sprite:        cc_frame(LOAD_TEMP(0));
-		always_draw:   1;
-		recolour_mode: RECOLOUR_REMAP;
-		palette:       PALETTE_USE_DEFAULT;
-	}
-	childsprite {
-		/* again the normal ground sprite. Thus in non-transparent view
-		 * only the normal ground sprite is shown. In transparent view
-		 * this acts as sprite which darkens the other two sprites via
-		 * a translation to transparency.
-		 */
-		sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
-	}
+    ground {
+        /* normal ground sprite - always draw */
+        sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
+    }
+    childsprite {
+        /* company-coloured border - always draw */
+        sprite:        cc_frame(LOAD_TEMP(0));
+        always_draw:   1;
+        recolour_mode: RECOLOUR_REMAP;
+        palette:       PALETTE_USE_DEFAULT;
+    }
+    childsprite {
+        /* again the normal ground sprite. Thus in non-transparent view
+         * only the normal ground sprite is shown. In transparent view
+         * this acts as sprite which darkens the other two sprites via
+         * a translation to transparency.
+         */
+        sprite: LOAD_TEMP(0) + LOAD_TEMP(1);
+    }
 }
 
 /* A pseudo-switch which sets the temporary parameters for the sprite layout */
 switch (FEAT_OBJECTS, SELF, company_land_terrain_switch, [
-			/* We store the offset into the spriteset due to the tile slope into the 1st temporary variable
-			 * (= storage register 0)
-			 */
-			STORE_TEMP(slope_to_sprite_offset(tile_slope), 0),
+            /* We store the offset into the spriteset due to the tile slope into the 1st temporary variable
+             * (= storage register 0)
+             */
+            STORE_TEMP(slope_to_sprite_offset(tile_slope), 0),
 
-			/* We store the offset to the flat groundsprite we use into the 2nd temporary variable
-			 * (= storage register 1)
-			 */
-			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
-			STORE_TEMP(terrain_type == TILETYPE_DESERT      ? GROUNDSPRITE_DESERT : LOAD_TEMP(1), 1),
-			STORE_TEMP(terrain_type == TILETYPE_SNOW        ? GROUNDSPRITE_SNOW   : LOAD_TEMP(1), 1),
-			]) {
-	company_land_layout;
+            /* We store the offset to the flat groundsprite we use into the 2nd temporary variable
+             * (= storage register 1)
+             */
+            STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
+            STORE_TEMP(terrain_type == TILETYPE_DESERT      ? GROUNDSPRITE_DESERT : LOAD_TEMP(1), 1),
+            STORE_TEMP(terrain_type == TILETYPE_SNOW        ? GROUNDSPRITE_SNOW   : LOAD_TEMP(1), 1),
+            ]) {
+    company_land_layout;
 }
 
 /* Pseudo switch for the purchase list branch: we want to display the flat ground tile */
 switch (FEAT_OBJECTS, SELF, company_land_purchase_switch, [
-			STORE_TEMP(0, 0),
-			STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
+            STORE_TEMP(0, 0),
+            STORE_TEMP(GROUNDSPRITE_NORMAL, 1),
 
-			1
-			]) {
-	company_land_layout;
+            1
+            ]) {
+    company_land_layout;
 }
 
 /* Define the object itself */
 item(FEAT_OBJECTS, company_land) {
-	property {
-		/* The class allows to sort objects into categories. This is 'infrastructure' */
-		class:                  "INFR";
-		/* If no other NewGRF provides this class before us, we have to name it */
-		classname:              string(STR_NAME_OBJCLASS_INFRASTRUCTURE);
-		/* Name of this particular object */
-		name:                   string(STR_NAME_COMPANY_LAND);
-		climates_available:     ALL_CLIMATES;
-		size:                   [1, 1];
-		build_cost_multiplier:  1;
-		remove_cost_multiplier: 1;
-		introduction_date:      date(1,1,1);        // available from day 1
-		end_of_life_date:       date(10000,1,1);    // available till year 10000
-		/* Anything can overbuild the object, removing returns the money, we don't want foundations and we want to allow bridges */
-		object_flags:           bitmask(OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_REMOVE_IS_INCOME, OBJ_FLAG_NO_FOUNDATIONS, OBJ_FLAG_ALLOW_BRIDGE);
-		height:                 0;                  // it's only a ground tile
-		num_views:              1;
-	}
-	graphics {
-		purchase:            company_land_purchase_switch;
-		// Allow placement on any land tile (the default prevents building on 'steep' slopes).
-		// The object cannot be placed on water despite this, because OBJ_FLAG_ON_WATER isn't set.
-		tile_check:          return CB_RESULT_LOCATION_ALLOW;
-		additional_text:     return string(STR_NAME_COMPANY_LAND);
-		company_land_terrain_switch;
-	}
+    property {
+        /* The class allows to sort objects into categories. This is 'infrastructure' */
+        class:                  "INFR";
+        /* If no other NewGRF provides this class before us, we have to name it */
+        classname:              string(STR_NAME_OBJCLASS_INFRASTRUCTURE);
+        /* Name of this particular object */
+        name:                   string(STR_NAME_COMPANY_LAND);
+        climates_available:     ALL_CLIMATES;
+        size:                   [1, 1];
+        build_cost_multiplier:  1;
+        remove_cost_multiplier: 1;
+        introduction_date:      date(1,1,1);        // available from day 1
+        end_of_life_date:       date(10000,1,1);    // available till year 10000
+        /* Anything can overbuild the object, removing returns the money, we don't want foundations and we want to allow bridges */
+        object_flags:           bitmask(OBJ_FLAG_ANYTHING_REMOVE, OBJ_FLAG_REMOVE_IS_INCOME, OBJ_FLAG_NO_FOUNDATIONS, OBJ_FLAG_ALLOW_BRIDGE);
+        height:                 0;                  // it's only a ground tile
+        num_views:              1;
+    }
+    graphics {
+        purchase:            company_land_purchase_switch;
+        // Allow placement on any land tile (the default prevents building on 'steep' slopes).
+        // The object cannot be placed on water despite this, because OBJ_FLAG_ON_WATER isn't set.
+        tile_check:          return CB_RESULT_LOCATION_ALLOW;
+        additional_text:     return string(STR_NAME_COMPANY_LAND);
+        company_land_terrain_switch;
+    }
 }
