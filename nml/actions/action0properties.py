@@ -19,6 +19,7 @@ from nml import generic, nmlop
 from nml.expression import (
     AcceptCargo,
     Array,
+    BitMask,
     ConstantFloat,
     ConstantNumeric,
     Identifier,
@@ -663,6 +664,12 @@ def station_flags(value):
     return nmlop.OR(value, cust_found).reduce()
 
 
+def cargo_bitmask(value):
+    if not isinstance(value, Array):
+        raise generic.ScriptError("Cargo list must be an array", value.pos)
+    return BitMask(value.values, value.pos).reduce()
+
+
 # fmt: off
 properties[0x04] = {
     "class":                 {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
@@ -675,7 +682,7 @@ properties[0x04] = {
     # 0F (copy station layout)
     "cargo_threshold":       {"size": 2, "num": 0x10},
     "draw_pylon_tiles":      {"size": 1, "num": 0x11},
-    "cargo_random_triggers": {"size": 4, "num": 0x12},
+    "cargo_random_triggers": {"size": 4, "num": 0x12, "value_function": cargo_bitmask},
     "general_flags":         {"size": 1, "num": 0x13, "value_function": station_flags},
     "hide_wire_tiles":       {"size": 1, "num": 0x14},
     "non_traversable_tiles": {"size": 1, "num": 0x15},
