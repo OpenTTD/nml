@@ -6,6 +6,10 @@ grf {
     min_compatible_version: 0;
 }
 
+cargotable {
+    COAL, LVST
+}
+
 spriteset(station_spriteset, "station.png") {
     lbl:[  1,  1,  5,  5,  -2,  -2]
     [  7,  1,  5,  5,  -2,  -2]
@@ -105,6 +109,8 @@ item (FEAT_STATIONS, basic_station) {
         classname: string(STR_STATION_TEST_CLASS);
         name     : string(STR_STATION_BASIC);
         general_flags: bitmask(STAT_FLAG_EXTENDED_FOUNDATIONS);
+        cargo_random_triggers: [LVST];
+
     }
     graphics {
         foundations: 0;
@@ -113,8 +119,8 @@ item (FEAT_STATIONS, basic_station) {
             station_sprite_layout_1(1)
         ];
         anim_speed: company_colour1 + company_colour2;
-        1: station_spriteset;
-        0: station_spriteset2;
+        LVST: station_spriteset;
+        COAL: station_spriteset2;
         station_spriteset;
     }
 }
