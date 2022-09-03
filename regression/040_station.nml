@@ -110,6 +110,7 @@ item (FEAT_STATIONS, basic_station) {
         name     : string(STR_STATION_BASIC);
         general_flags: bitmask(STAT_FLAG_EXTENDED_FOUNDATIONS);
         cargo_random_triggers: [LVST];
+        disabled_platforms: bitmask(5, 6, 7, 8);
 
     }
     graphics {
