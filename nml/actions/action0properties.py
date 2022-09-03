@@ -656,6 +656,12 @@ properties[0x03] = {
 #
 
 
+def station_platforms_length(value):
+    # Writing bitmask(2) to disable platform/length 3 is not very intuitive.
+    # Instead we expect the user will write bitmask(3) and we shift the result.
+    return nmlop.SHIFT_RIGHT(value, 1, value.pos).reduce()
+
+
 def station_flags(value):
     # bit 4 (extended foundations) can't be set without bit 3 (custom foundations)
     cust_found = nmlop.SHIFT_RIGHT(value, 4, value.pos)
@@ -676,8 +682,8 @@ properties[0x04] = {
     # 09 (sprite layout) is implemented elsewhere
     # 0A (copy sprite layout) is implemented elsewhere
     # 0B (callback flags) is not set by user
-    "disabled_platforms":    {"size": 1, "num": 0x0C},
-    "disabled_length":       {"size": 1, "num": 0x0D},
+    "disabled_platforms":    {"size": 1, "num": 0x0C, "value_function": station_platforms_length},
+    "disabled_length":       {"size": 1, "num": 0x0D, "value_function": station_platforms_length},
     # 0E (station layout) callback 24 should be enough
     # 0F (copy station layout)
     "cargo_threshold":       {"size": 2, "num": 0x10},
