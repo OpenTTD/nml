@@ -358,7 +358,7 @@ varact2vars60x_stations = {
     'nearby_tile_original_gfx'      : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(2)},
     'nearby_tile_same_station'      : {'var': 0x68, 'start': 10, 'size':  1, 'param_function': signed_tile_offset},
     'nearby_tile_perpendicular'     : {'var': 0x68, 'start': 11, 'size':  1, 'param_function': signed_tile_offset},
-    'nearby_tile_platform_type'     : {'var': 0x68, 'start': 12, 'size':  2, 'param_function': signed_tile_offset},
+    'nearby_tile_tile_type'         : {'var': 0x68, 'start': 11, 'size':  3, 'param_function': signed_tile_offset},
     'nearby_tile_grfid'             : {'var': 0x6A, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
     # 'var' will be set in the value_function, depending on parameter
     'platform_length'               : {'var': 0x00, 'start': 16, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
