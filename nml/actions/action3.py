@@ -423,10 +423,15 @@ def parse_graphics_block_single_id(
             varact2parser = action2var.Varaction2Parser(feature)
             # Prepare registers for sprite layout
             if cargo == 0xFF and purchase_prepare_layout:
-                varact2parser.parse(purchase_prepare_layout)
+                varact2parser.parse_expr(purchase_prepare_layout)
                 varact2parser.var_list.append(nmlop.VAL2)
                 varact2parser.var_list_size += 1
             elif prepare_layout:
+                if not isinstance(prepare_layout, expression.SpriteGroupRef):
+                    actions, prepare_layout = action2var.create_return_action(
+                        prepare_layout, feature, "Station Layout@prepare - Id {:02X}".format(id.value), 0x89
+                    )
+                    prepend_action_list.extend(actions)
                 varact2parser.parse(prepare_layout)
                 varact2parser.var_list.append(nmlop.VAL2)
                 varact2parser.var_list_size += 1

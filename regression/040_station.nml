@@ -115,6 +115,8 @@ item (FEAT_STATIONS, basic_station) {
     }
     graphics {
         foundations: 0;
+        prepare_layout: [STORE_TEMP(0,0), STORE_TEMP(1,1)];
+        purchase_prepare_layout: STORE_TEMP(3,3);
         sprite_layouts: [
             station_sprite_layout_0,
             station_sprite_layout_1(1)
