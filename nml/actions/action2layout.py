@@ -208,7 +208,9 @@ class Action2LayoutSprite:
 
     def create_register(self, name, value):
         if (
-            isinstance(value, expression.StorageOp)
+            # Always copy values from "prepare_layout" into new registers, to prevent "default" from modifying them.
+            self.feature != 0x04
+            and isinstance(value, expression.StorageOp)
             and value.name == "LOAD_TEMP"
             and isinstance(value.register, expression.ConstantNumeric)
         ):
