@@ -655,16 +655,14 @@ varact2vars_objects = {
     'tile_slope'             : {'var': 0x41, 'start':  8, 'size':  5},
 
     'build_date'             : {'var': 0x42, 'start':  0, 'size': 32},
-
     'animation_frame'        : {'var': 0x43, 'start':  0, 'size':  8},
-    'company_colour'         : {'var': 0x43, 'start':  0, 'size':  8},
-
     'owner'                  : {'var': 0x44, 'start':  0, 'size':  8},
 
     'town_manhattan_dist'    : {'var': 0x45, 'start':  0, 'size': 16},
     'town_zone'              : {'var': 0x45, 'start': 16, 'size':  8},
 
     'town_euclidean_dist'    : {'var': 0x46, 'start':  0, 'size': 16},
+    'colour'                 : {'var': 0x47, 'start':  0, 'size':  8},
     'view'                   : {'var': 0x48, 'start':  0, 'size':  8},
     'random_bits'            : {'var': 0x5F, 'start':  8, 'size':  8},
 }
