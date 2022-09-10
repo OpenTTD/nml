@@ -374,7 +374,7 @@ constant_numbers = {
     "STAT_ANIM_TRAIN_ENTERS"          : 3,
     "STAT_ANIM_TRAIN_LEAVES"          : 4,
     "STAT_ANIM_TRAIN_LOAD_UNLOAD"     : 5,
-    "STAT_ANIM_256_TICKS"             : 6,
+    "STAT_ANIM_250_TICKS"             : 6,
 
     # house flags
     "HOUSE_FLAG_NOT_SLOPED"         : 1,
