@@ -210,6 +210,7 @@ used_ids = [
     BlockAllocation(0, 255, "Airport Tile"),
     BlockAllocation(0, 62, "Roadtype"),
     BlockAllocation(0, 62, "Tramtype"),
+    BlockAllocation(0, 255, "RoadStop"),
 ]
 
 
@@ -1091,6 +1092,7 @@ callback_flag_properties = {
     0x0B: {"size": 1, "num": 0x1A},
     0x0F: {"size": 2, "num": 0x15},
     0x11: {"size": 1, "num": 0x0E},
+    0x14: {"size": 1, "num": 0x11},
 }
 
 

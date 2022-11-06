@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import nmlop
 
-callbacks = 0x14 * [{}]
+callbacks = 0x15 * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -306,4 +306,14 @@ callbacks[0x13] = {
     'catenary_back'   : {'type': 'cargo', 'num': 0x05},
     'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
     'depots'          : {'type': 'cargo', 'num': 0x08},
+}
+
+# Roadstops
+callbacks[0x14] = {
+    'availability'    : {'type': 'cb', 'num':  0x13, 'flag_bit': 0},
+    'anim_control'    : {'type': 'cb', 'num': 0x140},
+    'anim_next_frame' : {'type': 'cb', 'num': 0x141, 'flag_bit': 1},
+    'anim_speed'      : {'type': 'cb', 'num': 0x142, 'flag_bit': 2},
+    'default'         : {'type': 'cargo', 'num': None},
+    'purchase'        : {'type': 'cargo', 'num': 0xFF},
 }
