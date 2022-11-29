@@ -1,3 +1,21 @@
+0.7.1 (2022-12-03)
+------------------------------------------------------------------------
+While writing documentation for stations, we made some small changes to the syntax.
+
+Stations changes:
+- Codechange: always use intermediate registers for station sprite layouts
+- Change: allow any expression for station (purchase_)prepare_layout
+- Fix: Station animation triggers every 250 ticks, not 256. (#266)
+- Change: replace nearby_tile_platform_type with nearby_tile_tile_type. (#265)
+- Change: disabled_platforms/length is now bitmask(1-8) (#264)
+- Change: use an array of cargoes for cargo_random_triggers (#263)
+- Fix 16eb0035: disabled_platforms and disabled_length properties used a wrong number
+
+Other changes and fixes:
+- Fix #256: Objects have a 'colour' in var 47. (#267)
+- Fix: Versioning of NewGRF is supposed to start at 1.
+
+
 0.7.0 (2022-08-29)
 ------------------------------------------------------------------------
 This release adds the long awaited support for stations.
