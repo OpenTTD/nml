@@ -446,6 +446,7 @@ properties[0x00] = {
         , zero_refit_mask(0x1D)
     ],
     "curve_speed_mod":                {"size": 2, "num": 0x2E, "unit_conversion": 256},
+    "variant_group":                  {"size": 2, "num": 0x2F},
 }
 # fmt: on
 
@@ -522,6 +523,7 @@ properties[0x01] = {
         {"custom_function": lambda value: ctt_list(0x25, value)},
         zero_refit_mask(0x16),
     ],
+    "variant_group":                {"size": 2, "num": 0x26},
 }
 # fmt: on
 
@@ -589,6 +591,7 @@ properties[0x02] = {
         {"custom_function": lambda value: ctt_list(0x1F, value)},
         zero_refit_mask(0x11),
     ],
+    "variant_group":                {"size": 2, "num": 0x20},
 }
 # fmt: on
 
@@ -648,6 +651,7 @@ properties[0x03] = {
         zero_refit_mask(0x13),
     ],
     "range":                        {"size": 2, "num": 0x1F},
+    "variant_group":                {"size": 2, "num": 0x20},
 }
 # fmt: on
 
