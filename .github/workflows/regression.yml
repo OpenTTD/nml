@@ -15,50 +15,24 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10', pypy3]
+        python-version: ['3.7', '3.8', '3.9', '3.10', 'pypy3.7']
         exclude:
           # Prebuilt pillow wheels aren't always available for the relevant PyPy version.
           # The Ubuntu runner has zlib headers and can build it locally, but these can't without more work.
           - os: macOS-latest
-            python-version: pypy3
+            python-version: pypy3.7
           - os: windows-latest
-            python-version: pypy3
+            python-version: pypy3.7
 
     steps:
-    - uses: actions/checkout@v1
-
-    - name: Ubuntu cache
-      uses: actions/cache@v1
-      if: startsWith(matrix.os, 'ubuntu')
-      with:
-        path: ~/.cache/pip
-        key:
-          ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/setup.py') }}
-        restore-keys: |
-          ${{ matrix.os }}-${{ matrix.python-version }}-
-    - name: macOS cache
-      uses: actions/cache@v1
-      if: startsWith(matrix.os, 'macOS')
-      with:
-        path: ~/Library/Caches/pip
-        key:
-          ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**/setup.py') }}
-        restore-keys: |
-          ${{ matrix.os }}-${{ matrix.python-version }}-
-    - name: Windows cache
-      uses: actions/cache@v1
-      if: startsWith(matrix.os, 'windows')
-      with:
-        path: ~\AppData\Local\pip\Cache
-        key:
-          ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('**\setup.py') }}
-        restore-keys: |
-          ${{ matrix.os }}-${{ matrix.python-version }}-
+    - uses: actions/checkout@v3
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+        cache-dependency-path: setup.py
 
     - name: Install dependencies
       run: |

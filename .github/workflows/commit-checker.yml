@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 4
 
@@ -32,7 +32,7 @@ jobs:
         git log --oneline HEAD^..HEAD^2
 
     - name: Checkout commit-checker
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: OpenTTD/OpenTTD-git-hooks
         path: git-hooks
