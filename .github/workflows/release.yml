@@ -84,7 +84,7 @@ jobs:
         twine upload --username __token__ dist/*.whl dist/*.tar.gz
         version=`python setup.py --version`
         archive=`echo "nml-$version.tar.gz"`
-        echo "::set-output name=archive::$archive"
+        echo "archive=$archive" >> $GITHUB_OUTPUT
       id: nml_source_archive
 
     - name: Publish source tarball
@@ -137,7 +137,7 @@ jobs:
         $version = python setup.py --version
         $archive = echo "nml-standalone-$version-win64.zip"
         Compress-Archive -Path dist/nmlc.exe, LICENSE, README.md, docs/changelog.txt -DestinationPath $archive
-        echo "::set-output name=archive::$archive"
+        echo "archive=$archive" >> $GITHUB_OUTPUT
       id: nml_archive
 
     - name: Publish standalone executable
