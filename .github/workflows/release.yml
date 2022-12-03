@@ -41,7 +41,7 @@ jobs:
       env:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        twine upload --username __token__ wheelhouse/*-manylinux*.whl
+        twine upload --username __token__ dist/*-manylinux*.whl
 
 
   release-osx:
