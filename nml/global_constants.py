@@ -130,7 +130,7 @@ constant_numbers = {
     "SHIP_FLAG_NO_BREAKDOWN_SMOKE": 6,
     "SHIP_FLAG_SPRITE_STACK": 7,
 
-    # aircrafts misc flags
+    # aircraft misc flags
     "AIRCRAFT_FLAG_2CC"  : 1,
     "AIRCRAFT_FLAG_AUTOREFIT": 4,
     "AIRCRAFT_FLAG_NO_BREAKDOWN_SMOKE": 6,
@@ -140,6 +140,12 @@ constant_numbers = {
     "VEHICLE_FLAG_2CC" : 1,
     "VEHICLE_FLAG_AUTOREFIT": 4,
     "VEHICLE_FLAG_NO_BREAKDOWN_SMOKE": 6,
+
+    # vehicle extra flags
+    "VEHICLE_FLAG_DISABLE_NEW_VEHICLE_MESSAGE"    : 0,
+    "VEHICLE_FLAG_DISABLE_EXCLUSIVE_PREVIEW"      : 1,
+    "VEHICLE_FLAG_SYNC_VARIANT_EXCLUSIVE_PREVIEW" : 2,
+    "VEHICLE_FLAG_SYNC_VARIANT_RELIABILITY"       : 3,
 
     # Graphic flags for waterfeatures
     "WATERFEATURE_ALTERNATIVE_SPRITES" : 0,
