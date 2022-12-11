@@ -447,6 +447,7 @@ properties[0x00] = {
     ],
     "curve_speed_mod":                {"size": 2, "num": 0x2E, "unit_conversion": 256},
     "variant_group":                  {"size": 2, "num": 0x2F},
+    "extra_flags":                    {"size": 4, "num": 0x30},
 }
 # fmt: on
 
@@ -524,6 +525,7 @@ properties[0x01] = {
         zero_refit_mask(0x16),
     ],
     "variant_group":                {"size": 2, "num": 0x26},
+    "extra_flags":                  {"size": 4, "num": 0x27},
 }
 # fmt: on
 
@@ -592,6 +594,7 @@ properties[0x02] = {
         zero_refit_mask(0x11),
     ],
     "variant_group":                {"size": 2, "num": 0x20},
+    "extra_flags":                  {"size": 4, "num": 0x21},
 }
 # fmt: on
 
@@ -652,6 +655,7 @@ properties[0x03] = {
     ],
     "range":                        {"size": 2, "num": 0x1F},
     "variant_group":                {"size": 2, "num": 0x20},
+    "extra_flags":                  {"size": 4, "num": 0x21},
 }
 # fmt: on
 
