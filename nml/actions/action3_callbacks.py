@@ -284,15 +284,16 @@ callbacks[0x11] = {
 # Roadtypes
 callbacks[0x12] = {
     # No default here, it makes no sense
-    'gui'             : {'type': 'cargo', 'num': 0x00},
-    'track_overlay'   : {'type': 'cargo', 'num': 0x01},
-    'underlay'        : {'type': 'cargo', 'num': 0x02},
-    'tunnels'         : {'type': 'cargo', 'num': 0x03},
-    'catenary_front'  : {'type': 'cargo', 'num': 0x04},
-    'catenary_back'   : {'type': 'cargo', 'num': 0x05},
-    'bridge_surfaces' : {'type': 'cargo', 'num': 0x06},
-    'depots'          : {'type': 'cargo', 'num': 0x08},
-    'roadstops'       : {'type': 'cargo', 'num': 0x0A},
+    'gui'                : {'type': 'cargo', 'num': 0x00},
+    'track_overlay'      : {'type': 'cargo', 'num': 0x01},
+    'underlay'           : {'type': 'cargo', 'num': 0x02},
+    'tunnels'            : {'type': 'cargo', 'num': 0x03},
+    'catenary_front'     : {'type': 'cargo', 'num': 0x04},
+    'catenary_back'      : {'type': 'cargo', 'num': 0x05},
+    'bridge_surfaces'    : {'type': 'cargo', 'num': 0x06},
+    'depots'             : {'type': 'cargo', 'num': 0x08},
+    'roadstops'          : {'type': 'cargo', 'num': 0x0A},
+    'direction_markings' : {'type': 'cargo', 'num': 0x0B},
 }
 
 # Tramtypes
