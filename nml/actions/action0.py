@@ -1119,11 +1119,9 @@ def get_callback_flags_actions(feature, id, flags):
     if not isinstance(prop_info_list, list):
         prop_info_list = [prop_info_list]
     for prop_info in prop_info_list:
-        act0.prop_list.append(
-            Action0Property(
-                prop_info["num"], parse_property_value(prop_info, expression.ConstantNumeric(flags)), prop_info["size"]
-            )
-        )
+        parsed_value = parse_property_value(prop_info, expression.ConstantNumeric(flags))
+        if parsed_value[0].value != 0:
+            act0.prop_list.append(Action0Property(prop_info["num"], parsed_value, prop_info["size"]))
 
     return [act0]
 
