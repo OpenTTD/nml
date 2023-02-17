@@ -655,7 +655,7 @@ class Varaction2Parser:
             self.var_list_size += store_tmp.get_size() + 1  # Add 1 for operator
 
         # Fill param registers with temporary variables if needed
-        for (src, dest) in tmp_vars:
+        for src, dest in tmp_vars:
             self.var_list.append(nmlop.VAL2)
             self.var_list.append(src)
             self.var_list.append(nmlop.STO_TMP)
