@@ -442,7 +442,7 @@ class StringCommand:
                 return commands[self.name][str_type]
             # Compute position of the argument in the stack.
             stack_pos = 0
-            for (pos, size) in stack:
+            for pos, size in stack:
                 if pos == self.str_pos:
                     break
                 stack_pos += size

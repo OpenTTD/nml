@@ -633,7 +633,6 @@ def run():
         sys.exit(1)
 
     except Exception as ex:  # Other/internal error.
-
         if developmode:
             raise  # Reraise exception in developmode
 

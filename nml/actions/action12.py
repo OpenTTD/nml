@@ -18,7 +18,6 @@ from nml.actions import base_action, real_sprite
 
 
 class Action12(base_action.BaseAction):
-
     # sets: list of (font_size, num_char, base_char) tuples
     def __init__(self, sets):
         self.sets = sets
