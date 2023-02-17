@@ -1354,8 +1354,8 @@ def create_spritegroup_ref(name, info, pos):
 cargo_numbers = {}
 
 is_default_railtype_table = True
-# if no railtype_table is provided, OpenTTD assumes these 4 railtypes
-railtype_table = {"RAIL": 0, "ELRL": 1, "MONO": 1, "MGLV": 2}
+# if no railtype_table is provided, OpenTTD assumes these 3 railtypes
+railtype_table = {"RAIL": 0, "MONO": 1, "MGLV": 2}
 
 is_default_roadtype_table = True
 # if no roadtype_table is provided, OpenTTD sets all vehicles to ROAD
