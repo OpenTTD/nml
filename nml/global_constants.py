@@ -810,6 +810,14 @@ constant_numbers = {
     "ANIM_TRIGGER_APT_250_TICKS"            : 4,
     "ANIM_TRIGGER_APT_AIRPLANE_LANDS"       : 5,
 
+    "ANIM_TRIGGER_ROAD_STOP_BUILT"          : 0,
+    "ANIM_TRIGGER_ROAD_STOP_NEW_CARGO"      : 1,
+    "ANIM_TRIGGER_ROAD_STOP_CARGO_TAKEN"    : 2,
+    "ANIM_TRIGGER_ROAD_STOP_VEH_ENTER"      : 3,
+    "ANIM_TRIGGER_ROAD_STOP_VEH_LEAVE"      : 4,
+    "ANIM_TRIGGER_ROAD_STOP_VEH_LOAD"       : 5,
+    "ANIM_TRIGGER_ROAD_STOP_250_TICKS"      : 6,
+
     # Animation looping
     "ANIMATION_NON_LOOPING"                 : 0,
     "ANIMATION_LOOPING"                     : 1,
@@ -1126,6 +1134,31 @@ constant_numbers = {
     "TTD_STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY"           : 0x4830,
     "TTD_STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED"              : 0x4831,
     "TTD_STR_ERROR_CAN_ONLY_BE_POSITIONED"                  : 0x483B,
+
+    # Road stops
+    "RST_AVAILABILITY_TYPE_PASSENGER"           : 0,
+    "RST_AVAILABILITY_TYPE_FREIGHT"             : 1,
+    "RST_AVAILABILITY_TYPE_ALL"                 : 2,
+
+    "RST_TYPE_BUS"                              : 0,
+    "RST_TYPE_TRUCK"                            : 1,
+
+    "RST_DRAW_FLAG_BAY_ROAD"                    : 0,
+    "RST_DRAW_FLAG_DRIVE_THROUGH_ROAD_OVERLAY"  : 1,
+
+    "RST_GENERAL_FLAG_RANDOM_ANIMATION"         : 0,
+    "RST_GENERAL_FLAG_NO_CATENARY"              : 2,
+    "RST_GENERAL_FLAG_DRIVE_THROUGH_ONLY"       : 3,
+    "RST_GENERAL_FLAG_NO_AUTO_ROAD_CONNECTION"  : 4,
+    "RST_GENERAL_FLAG_BUILD_MENU_ROAD_ONLY"     : 5,
+    "RST_GENERAL_FLAG_BUILD_MENU_TRAM_ONLY"     : 6,
+
+    "RST_VIEW_BAY_NE"                           : 0,
+    "RST_VIEW_BAY_SE"                           : 1,
+    "RST_VIEW_BAY_SW"                           : 2,
+    "RST_VIEW_BAY_NW"                           : 3,
+    "RST_VIEW_DRIVE_THROUGH_X"                  : 4,
+    "RST_VIEW_DRIVE_THROUGH_Y"                  : 5,
 }
 # fmt: on
 

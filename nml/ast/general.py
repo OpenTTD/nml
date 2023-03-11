@@ -37,6 +37,7 @@ feature_ids = {
     "FEAT_AIRPORTTILES": 0x11,
     "FEAT_ROADTYPES": 0x12,
     "FEAT_TRAMTYPES": 0x13,
+    "FEAT_ROADSTOPS": 0x14,
 }
 
 

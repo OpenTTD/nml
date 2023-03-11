@@ -168,7 +168,7 @@ class Action0Property(BaseAction0Property):
 #
 # 'required' (value doesn't matter) if the property is required for the item to be valid.
 
-properties = 0x14 * [None]
+properties = 0x15 * [None]
 
 #
 # Some helper functions that are used for multiple features
@@ -1475,4 +1475,50 @@ properties[0x13] = {
     "requires_tramtype_list":    {"custom_function": lambda x: label_list(x, 0x18, "Tramtype")},
     "introduces_tramtype_list":  {"custom_function": lambda x: label_list(x, 0x19, "Tramtype")},
     "alternative_tramtype_list": {"custom_function": lambda x: label_list(x, 0x1D, "Tramtype")},
+}
+
+#
+# Feature 0x14 (Road stops)
+#
+
+
+class ByteSequenceProp(BaseAction0Property):
+    def __init__(self, prop_num, items, description, pos):
+        self.prop_num = prop_num
+        self.items = items
+        self.description = description
+        self.pos = pos
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        for item in self.items:
+            val = item.reduce_constant().value
+            if val > 0xFF or val < 0:
+                raise generic.ScriptError(self.description + " items must be bytes", self.pos)
+            file.print_byte(val)
+        file.newline()
+
+    def get_size(self):
+        return 1 + len(self.items)
+
+
+def byte_sequence_list(value, prop_num, description, expected_count):
+    if not isinstance(value, Array) or len(value.values) != expected_count:
+        raise generic.ScriptError(description + " must be an array of " + str(expected_count) + " bytes", value.pos)
+    return [ByteSequenceProp(prop_num, value.values, description, value.pos)]
+
+
+properties[0x14] = {
+    'class':                     {'size': 4, 'num': 0x08, "first": None, "string_literal": 4},
+    'availability_type':         {'size': 1, 'num': 0x09},
+    'name':                      {'size': 2, 'num': 0x0A, "string": 0xDC, "required": True},
+    'classname':                 {'size': 2, 'num': 0x0B, "string": 0xDC},
+    'draw_mode':                 {'size': 1, 'num': 0x0C},
+    "cargo_random_triggers":     {"size": 4, "num": 0x0D},
+    "animation_info":            {"size": 2, "num": 0x0E, "value_function": animation_info},
+    "animation_speed":           {"size": 1, "num": 0x0F},
+    "animation_triggers":        {"size": 2, "num": 0x10},
+    # 11 (callback flags) is not set by user
+    "general_flags":             {"size": 4, "num": 0x12},
+    "cost_multipliers":          {"custom_function": lambda x: byte_sequence_list(x, 0x15, "Cost multipliers", 2)},
 }

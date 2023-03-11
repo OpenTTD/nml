@@ -778,6 +778,64 @@ varact2vars_towns = {
     'percent_transported_mail'       : {'var': 0xCB, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
 }
 
+#
+# Roadstops (feature road_stops)
+#
+
+varact2vars_roadstop = {
+    **varact2vars_base_stations,
+    'view'                  : {'var': 0x40, 'start':  0, 'size':  8},
+
+    'stop_type'             : {'var': 0x41, 'start':  0, 'size':  8},
+
+    'terrain_type'          : {'var': 0x42, 'start':  0, 'size':  8},
+    'tile_slope'            : {'var': 0x42, 'start':  8, 'size':  5},
+
+    'has_road'              : {'var': 0x43, 'start':  0, 'size': 32, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
+    'has_tram'              : {'var': 0x44, 'start':  0, 'size': 32, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
+    'road_type'             : {'var': 0x43, 'start':  8, 'size':  8}, # The roadtype of this tile
+    'tram_type'             : {'var': 0x44, 'start':  8, 'size':  8}, # The tramtype of this tile
+
+    'town_manhattan_dist'   : {'var': 0x45, 'start':  0, 'size': 16},
+    'town_zone'             : {'var': 0x45, 'start': 16, 'size':  8},
+    'town_euclidean_dist'   : {'var': 0x46, 'start':  0, 'size': 32},
+
+    'company_num'           : {'var': 0x47, 'start':  0, 'size':  8}, # 0..14 company number
+    'company_type'          : {'var': 0x47, 'start': 16, 'size':  2}, # PLAYERTYPE_HUMAN, PLAYERTYPE_AI etc.
+    'company_colour1'       : {'var': 0x47, 'start': 24, 'size':  4}, # COLOUR_XXX. See https://newgrf-specs.tt-wiki.net/wiki/NML:List_of_default_colour_translation_palettes#Company_colour_helper_functions
+    'company_colour2'       : {'var': 0x47, 'start': 28, 'size':  4}, # Same as above
+
+    'animation_frame'       : {'var': 0x49, 'start':  0, 'size':  8},
+
+    'waiting_triggers'      : {'var': 0x5F, 'start':  0, 'size':  8},
+    'random_bits'           : {'var': 0x5F, 'start':  8, 'size': 24},
+    'random_bits_tile'      : {'var': 0x5F, 'start': 24, 'size':  8},
+}
+
+varact2vars60x_roadstop = {
+    **varact2vars60x_base_stations,
+    'nearby_tile_animation_frame'       : {'var': 0x66, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_info'                  : {'var': 0x67, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_slope'                 : {'var': 0x67, 'start':  0, 'size':  5, 'param_function': signed_tile_offset},
+    'nearby_tile_is_water'              : {'var': 0x67, 'start':  9, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_terrain_type'          : {'var': 0x67, 'start': 10, 'size':  3, 'param_function': signed_tile_offset},
+    'nearby_tile_water_class'           : {'var': 0x67, 'start': 13, 'size':  2, 'param_function': signed_tile_offset},
+    'nearby_tile_height'                : {'var': 0x67, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
+    'nearby_tile_class'                 : {'var': 0x67, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
+    'nearby_tile_road_stop_info'        : {'var': 0x68, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_is_road_stop'          : {'var': 0x68, 'start':  0, 'size': 32, 'param_function': signed_tile_offset, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
+    'nearby_tile_road_stop_id'          : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
+    'nearby_tile_same_grf'              : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(0)},
+    'nearby_tile_other_grf'             : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(1)},
+    'nearby_tile_original_gfx'          : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(2)},
+    'nearby_tile_same_station'          : {'var': 0x68, 'start': 10, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_different_view'        : {'var': 0x68, 'start': 11, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_view'                  : {'var': 0x68, 'start': 12, 'size':  4, 'param_function': signed_tile_offset},
+    'nearby_tile_is_drive_through'      : {'var': 0x68, 'start': 12, 'size':  4, 'param_function': signed_tile_offset, 'value_function': lambda var, info: nmlop.CMP_GE(var, 4)},
+    'nearby_tile_stop_type'             : {'var': 0x68, 'start': 16, 'size':  4, 'param_function': signed_tile_offset},
+    'nearby_tile_same_stop_type'        : {'var': 0x68, 'start': 20, 'size':  1, 'param_function': signed_tile_offset},
+    'nearby_tile_grfid'                 : {'var': 0x6A, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+}
 
 class VarAct2Scope:
     def __init__(self, name, vars_normal, vars_60x, has_persistent_storage=False):
@@ -817,6 +875,7 @@ scope_railtypes = VarAct2Scope("RailTypes", varact2vars_railtype, {})
 scope_airporttiles = VarAct2Scope("AirportTiles", varact2vars_airporttiles, varact2vars60x_airporttiles)
 scope_roadtypes = VarAct2Scope("RoadTypes", varact2vars_roadtype, {})
 scope_tramtypes = VarAct2Scope("TramTypes", varact2vars_tramtype, {})
+scope_roadstops = VarAct2Scope("RoadStops", varact2vars_roadstop, varact2vars60x_roadstop)
 
 varact2features = [
     VarAct2Feature(scope_trains, scope_trains),
@@ -839,4 +898,5 @@ varact2features = [
     VarAct2Feature(scope_airporttiles, None),
     VarAct2Feature(scope_roadtypes, None),
     VarAct2Feature(scope_tramtypes, None),
+    VarAct2Feature(scope_roadstops, scope_towns),
 ]

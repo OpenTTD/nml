@@ -945,7 +945,7 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
         if feature == 0x0A:
             # Industries -> production action2
             act2 = action2production.make_empty_production_action2(pos)
-        elif feature in (0x07, 0x09, 0x0F, 0x11):
+        elif feature in (0x07, 0x09, 0x0F, 0x11, 0x14):
             # Tile layout action2
             act2 = action2layout.make_empty_layout_action2(feature, pos)
         else:
