@@ -186,6 +186,24 @@ class BinOp(Expression):
                 expr1.mask = nmlop.SHIFT_LEFT(expr1.mask, expr2).reduce()
                 return expr1
 
+            if (
+                (
+                    op == nmlop.SHIFTU_RIGHT
+                    or (
+                        op == nmlop.SHIFT_RIGHT
+                        and isinstance(expr1.mask, ConstantNumeric)
+                        and expr1.mask.uvalue < 0x80000000
+                    )
+                )
+                and isinstance(expr2, ConstantNumeric)
+                and expr2.value >= 0
+                and expr1.shift.value >= 0
+                and (expr1.shift.value + expr2.value) < 32
+            ):
+                expr1.shift.value += expr2.value
+                expr1.mask = nmlop.SHIFTU_RIGHT(expr1.mask, expr2).reduce()
+                return expr1
+
         # - Try to merge multiple additions/subtractions with constant numbers
         if (
             op in (nmlop.ADD, nmlop.SUB)
