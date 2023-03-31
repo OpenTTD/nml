@@ -505,10 +505,8 @@ FF \wx00FD 	// @action3_4;
 \wx00FD // default: set_cargo_wagon_load;
 
 // Name: cargo_wagon_switch_graphics
-117 * 37 02 00 FD 89
-10 20 \dxFFFFFFFF
-\2u>> 1A 20 \dx00000008
-\2& 1A 00 \dx000000FF
+117 * 23 02 00 FD 89
+10 08 \dx000000FF
 \b1
 \wx00F1 \dx00000000 \dx00000000 	// 0 .. 0: cargo_wagon_switch_vehicle;
 \wx00FD // default: cargo_wagon_switch_load;
