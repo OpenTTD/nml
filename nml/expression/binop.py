@@ -123,7 +123,22 @@ class BinOp(Expression):
         if op in (nmlop.DIV, nmlop.DIVU, nmlop.MUL) and isinstance(expr2, ConstantNumeric) and expr2.value == 1:
             return expr1
 
-        if op in (nmlop.ADD, nmlop.SUB) and isinstance(expr2, ConstantNumeric) and expr2.value == 0:
+        if (
+            op
+            in (
+                nmlop.ADD,
+                nmlop.SUB,
+                nmlop.SHIFTU_LEFT,
+                nmlop.SHIFT_LEFT,
+                nmlop.SHIFTU_RIGHT,
+                nmlop.SHIFT_RIGHT,
+                nmlop.OR,
+                nmlop.XOR,
+                nmlop.ROT_RIGHT,
+            )
+            and isinstance(expr2, ConstantNumeric)
+            and expr2.value == 0
+        ):
             return expr1
 
         # - Variables (as used in action2var) can have some computations attached to
