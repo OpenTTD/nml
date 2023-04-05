@@ -1,3 +1,23 @@
+0.7.2 (2023-04-17)
+------------------------------------------------------------------------
+This release adds support for vehicle variants and the road stops.
+
+Support for NewGRF additions of OpenTTD 14:
+- Feature: Engine name callback
+- Add: Road stops (feature 0x14) (#279)
+
+Support for NewGRF additions of OpenTTD 13:
+- Add: 'tunnels' callback for road- and tramtypes (#273)
+- Feature: support extra_flags for vehicles
+- Feature: support for variant_group action 0 prop for vehicles
+
+Other changes and fixes:
+- Change: Optimise trivial right shift operations on variables
+- Change: Drop binary operations with constant 0 for more operators
+- Fix: By default there is no ELRL railtype. (#277)
+- Change: Don't output callback flag props that are zero.
+
+
 0.7.1 (2022-12-03)
 ------------------------------------------------------------------------
 While writing documentation for stations, we made some small changes to the syntax.
