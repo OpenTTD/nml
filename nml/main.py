@@ -87,6 +87,8 @@ def parse_cli(argv):
         verbosity=generic.verbosity_level,
         rebuild_parser=False,
         debug_parser=False,
+        allow_extra_zoom=True,
+        allow_32bpp=True,
     )
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
@@ -218,6 +220,10 @@ def parse_cli(argv):
         const=generic.Warning.DEPRECATION,
         help="Disable deprecation warnings",
     )
+    opt_parser.add_option(
+        "--no-extra-zoom", action="store_false", dest="allow_extra_zoom", help="Skip extra zoom alternative sprites"
+    )
+    opt_parser.add_option("--no-32bpp", action="store_false", dest="allow_32bpp", help="Skip 32bpp alternative sprites")
 
     opts, args = opt_parser.parse_args(argv)
 
@@ -225,6 +231,8 @@ def parse_cli(argv):
     generic.Warning.disabled = opts.disable_warning
     generic.set_cache_root_dir(None if opts.no_cache else opts.cache_dir)
     spritecache.keep_orphaned = opts.keep_orphaned
+    alt_sprites.allow_extra_zoom = opts.allow_extra_zoom
+    alt_sprites.allow_32bpp = opts.allow_32bpp
 
     opts.outputfile_given = (
         opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.dep_filename or opts.outputs
