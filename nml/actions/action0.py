@@ -194,7 +194,7 @@ used_ids = [
     BlockAllocation(88, 0xFFFF, "Road Vehicle"),
     BlockAllocation(11, 0xFFFF, "Ship"),
     BlockAllocation(41, 0xFFFF, "Aircraft"),
-    BlockAllocation(0, 255, "Station"),
+    BlockAllocation(0, 0xFFFE, "Station"),  # UINT16_MAX - 1
     BlockAllocation(0, 8, "Canal", False),
     BlockAllocation(0, 15, "Bridge", False),
     BlockAllocation(0, 255, "House"),
@@ -205,12 +205,12 @@ used_ids = [
     BlockAllocation(0, -1, "Sound"),
     BlockAllocation(0, 127, "Airport"),
     BlockAllocation(0, -1, "Signal", False),
-    BlockAllocation(0, 255, "Object"),
+    BlockAllocation(0, 64000, "Object"),
     BlockAllocation(0, 63, "Railtype"),
     BlockAllocation(0, 255, "Airport Tile"),
     BlockAllocation(0, 62, "Roadtype"),
     BlockAllocation(0, 62, "Tramtype"),
-    BlockAllocation(0, 255, "RoadStop"),
+    BlockAllocation(0, 0xFFFE, "RoadStop"),  # UINT16_MAX - 1
 ]
 
 
