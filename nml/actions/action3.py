@@ -74,13 +74,13 @@ class Action3(base_action.BaseAction):
 
     def write(self, file):
         size = 7 + 3 * len(self.cid_mappings)
-        if self.feature <= 3:
-            size += 2  # Vehicles use extended byte
+        if self.feature <= 3 or self.id >= 0xFF:
+            size += 2  # Vehicles or IDs >= 255 use extended byte
         file.start_sprite(size)
         file.print_bytex(3)
         file.print_bytex(self.feature)
         file.print_bytex(1 if not self.is_livery_override else 0x81)  # a single id
-        file.print_varx(self.id, 3 if self.feature <= 3 else 1)
+        file.print_varx(self.id, 3 if self.feature <= 3 or self.id >= 0xFF else 1)
         file.print_byte(len(self.cid_mappings))
         file.newline()
         for cargo, cid, comment in self.cid_mappings:
