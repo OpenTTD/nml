@@ -147,7 +147,7 @@ varact2vars_vehicles = {
     'position_in_articulated_veh'          : {'var': 0x4D, 'start':  0, 'size':  8},
     'position_in_articulated_veh_from_end' : {'var': 0x4D, 'start':  8, 'size':  8},
     'waiting_triggers'                 : {'var': 0x5F, 'start':  0, 'size':  8},
-    'random_bits'                      : {'var': 0x5F, 'start':  8, 'size':  8},
+    'random_bits'                      : {'var': 0x5F, 'start':  8, 'size': 16},
     'direction'                        : {'var': 0x9F, 'start':  0, 'size':  8},
     'vehicle_is_hidden'                : {'var': 0xB2, 'start':  0, 'size':  1},
     'vehicle_is_stopped'               : {'var': 0xB2, 'start':  1, 'size':  1},

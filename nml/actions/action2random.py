@@ -62,13 +62,13 @@ class RandomAction2Choice:
 
 
 vehicle_random_types = {
-    "SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 8, "triggers": True},
-    "PARENT": {"type": 0x83, "param": 0, "first_bit": 0, "num_bits": 8, "triggers": False},
-    "TILE": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 8, "triggers": False},
-    "BACKWARD_SELF": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 8, "triggers": False, "value": 0x00},
-    "FORWARD_SELF": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 8, "triggers": False, "value": 0x40},
-    "BACKWARD_ENGINE": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 8, "triggers": False, "value": 0x80},
-    "BACKWARD_SAMEID": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 8, "triggers": False, "value": 0xC0},
+    "SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 16, "triggers": True},
+    "PARENT": {"type": 0x83, "param": 0, "first_bit": 0, "num_bits": 16, "triggers": False},
+    "TILE": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 16, "triggers": False},
+    "BACKWARD_SELF": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 16, "triggers": False, "value": 0x00},
+    "FORWARD_SELF": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 16, "triggers": False, "value": 0x40},
+    "BACKWARD_ENGINE": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 16, "triggers": False, "value": 0x80},
+    "BACKWARD_SAMEID": {"type": 0x84, "param": 1, "first_bit": 0, "num_bits": 16, "triggers": False, "value": 0xC0},
 }
 random_types = {
     0x00: vehicle_random_types,
