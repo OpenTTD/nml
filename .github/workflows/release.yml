@@ -79,23 +79,11 @@ jobs:
     - name: Build and publish wheel and source distribution
       env:
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         python setup.py sdist bdist_wheel
         twine upload --username __token__ dist/*.whl dist/*.tar.gz
-        version=`python setup.py --version`
-        archive=`echo "nml-$version.tar.gz"`
-        echo "archive=$archive" >> $GITHUB_OUTPUT
-      id: nml_source_archive
-
-    - name: Publish source tarball
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./dist/${{ steps.nml_source_archive.outputs.archive }}
-        asset_name: ${{ steps.nml_source_archive.outputs.archive }}
-        asset_content_type: application/gzip
+        gh release upload ${{ github.event.release.tag_name }} dist/*.tar.gz
 
   release-windows:
     name: Windows release
@@ -131,21 +119,11 @@ jobs:
         python setup.py bdist_wheel
         twine upload --username __token__ dist/*.whl
 
-    - name: Build standalone executable
-      run: |
-        pyinstaller nmlc.spec
-        $version = python setup.py --version
-        $archive = echo "nml-standalone-$version-win64.zip"
-        Compress-Archive -Path dist/nmlc.exe, LICENSE, README.md, docs/changelog.txt -DestinationPath $archive
-        echo "archive=$archive" >> $GITHUB_OUTPUT
-      id: nml_archive
-
-    - name: Publish standalone executable
-      uses: actions/upload-release-asset@v1
+    - name: Build and publish standalone executable
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./${{ steps.nml_archive.outputs.archive }}
-        asset_name: ${{ steps.nml_archive.outputs.archive }}
-        asset_content_type: application/zip
+      run: |
+        pyinstaller nmlc.spec
+        $archive = "nml-standalone-${{ github.event.release.tag_name }}-win64.zip"
+        Compress-Archive -Path dist/nmlc.exe, LICENSE, README.md, docs/changelog.txt -DestinationPath $archive
+        gh release upload ${{ github.event.release.tag_name }} $archive
