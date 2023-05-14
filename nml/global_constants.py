@@ -373,6 +373,9 @@ constant_numbers = {
     "STAT_FLAG_CUSTOM_FOUNDATIONS"    : 3,
     "STAT_FLAG_EXTENDED_FOUNDATIONS"  : 4,
 
+    # station tiles
+    "STAT_ALL_TILES"     : 0xFF,
+
     # station animation triggers
     "STAT_ANIM_IS_BUILT"              : 0,
     "STAT_ANIM_CARGO_ARRIVES"         : 1,
