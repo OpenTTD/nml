@@ -30,8 +30,10 @@ zoom_levels = {
     "ZOOM_LEVEL_OUT_4X": 4,
     "ZOOM_LEVEL_OUT_8X": 5,
 }
+allow_extra_zoom = True
 
 bit_depths = {"BIT_DEPTH_8BPP": 8, "BIT_DEPTH_32BPP": 32.0}
+allow_32bpp = True
 
 
 class AltSpritesBlock(base_statement.BaseStatement):
@@ -86,7 +88,7 @@ class AltSpritesBlock(base_statement.BaseStatement):
             )
         global any_32bpp_sprites
         if self.bit_depth == 32:
-            any_32bpp_sprites = True
+            any_32bpp_sprites = allow_32bpp
 
         if len(param_list) >= 4:
             self.image_file = param_list[3].reduce()
@@ -111,6 +113,8 @@ class AltSpritesBlock(base_statement.BaseStatement):
         self.sprite_list = sprite_list
 
     def pre_process(self):
+        if (self.bit_depth == 32 and not allow_32bpp) or (self.zoom_level != 0 and not allow_extra_zoom):
+            return
         block = sprite_container.SpriteContainer.resolve_sprite_block(self.name)
         block.add_sprite_data(
             self.sprite_list, self.image_file, self.pos, self.zoom_level, self.bit_depth, self.mask_file
