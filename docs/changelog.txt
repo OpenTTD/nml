@@ -1,3 +1,18 @@
+0.7.3 (2023-05-21)
+------------------------------------------------------------------------
+This release adds support for more objects, stations and roadstops.
+
+Support for NewGRF additions of OpenTTD 14:
+ - Change: Support extended object/station/roadstop limits.
+ - Change: Write extended bytes in Action 3 if ID is >= 0xFF.
+ - Change: Extend vehicle random bits to 16. (#288)
+ - Add: Support for {FORCE} string command (#289)
+
+Other changes and fixes:
+ - Add: STAT_ALL_TILES constant (for draw_pylon_tiles, hide_wire_tiles and non_traversable_tiles) (#283)
+ - Add: --no-32bpp and --no-extra-zoom options to skip some alternative sprites (#286)
+
+
 0.7.2 (2023-04-17)
 ------------------------------------------------------------------------
 This release adds support for vehicle variants and the road stops.
