@@ -416,6 +416,12 @@ class RandomSwitch(switch_base_class):
             all_refs += choice.result.value.collect_references()
         return all_refs
 
+    def is_read_only(self):
+        for choice in self.choices:
+            if not choice.result.value.is_read_only():
+                return False
+        return True
+
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Random")
         generic.print_dbg(indentation + 2, "Feature:", next(iter(self.feature_set)))
