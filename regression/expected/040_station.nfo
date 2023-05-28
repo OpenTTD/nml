@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d36
+0 * 4 \d35
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -16,16 +16,18 @@
 00
 00
 2 * 52 08 08 "NML\40" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 16 00 08 \b1 02 FF \wx0000
+3 * 11 04 04 FF 01 \wxDC00 "Test" 00
+
+4 * 16 00 08 \b1 02 FF \wx0000
 09 "COAL" "LVST"
 
-4 * 21 00 04 \b4 01 FF \wx0000
+5 * 27 00 04 \b6 01 FF \wx0000
 08 "TEST"
+1D \wxDC00
+1C \wxC500
 13 18
 12 \dx00000002
 0C F0
-
-5 * 11 04 04 FF 01 \wxC400 "Test" 00
 
 6 * 20 04 04 FF 01 \wxC500 "Basic station" 00
 
@@ -179,30 +181,30 @@
 FF \wx00F9 	// @action3_3;
 \wx00F8 	// @action3_4;
 
-29 * 12 00 04 \b1 01 FF \wx0001
+29 * 18 00 04 \b3 01 FF \wx0001
 08 "TEST"
+1D \wxDC00
+1C \wxC501
 
-30 * 11 04 04 FF 01 \wxC401 "Test" 00
+30 * 22 04 04 FF 01 \wxC501 "Basic station 2" 00
 
-31 * 22 04 04 FF 01 \wxC501 "Basic station 2" 00
-
-32 * 9 00 04 \b1 01 FF \wx0001
+31 * 9 00 04 \b1 01 FF \wx0001
 0A 00
 
 // Name: @CB_FAILED_REAL04
-33 * 7 02 04 F8 \b0 \b1
+32 * 7 02 04 F8 \b0 \b1
 
 \w0
 
 // Name: @CB_FAILED04
-34 * 23 02 04 F8 89
+33 * 23 02 04 F8 89
 0C 00 \dx0000FFFF
 \b1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
 \wx00F8 // Non-graphics callback, return graphics result
 
 // Name: @action3_7
-35 * 41 02 04 F8 89
+34 * 41 02 04 F8 89
 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
 \b2
@@ -210,6 +212,6 @@ FF \wx00F9 	// @action3_3;
 \wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
 \wx00F8 // @CB_FAILED04;
 
-36 * 7 03 04 01 01 \b0
+35 * 7 03 04 01 01 \b0
 \wx00F8 	// @action3_7;
 

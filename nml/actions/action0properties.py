@@ -706,9 +706,8 @@ properties[0x04] = {
     # 19 (road routing) reserved for future use
     # 1A (advanced sprite layout) is implemented elsewhere
     # 1B (minimum bridge height) JGR only
-
-    "classname":             {"num": -1, "string": 0xC4},
-    "name":                  {"num": -1, "string": 0xC5, "required": True},
+    "name":                  {"size": 2, "num": 0x1C, "string": (256, 0xC5, 0xDC), "required": True},
+    "classname":             {"size": 2, "num": 0x1D, "string": 0xDC},
 }
 # fmt: on
 

@@ -630,6 +630,9 @@ def parse_property(prop_info, value_list, feature, id):
                         "String used as value for non-string property: " + str(prop_info["num"]), value.pos
                     )
                 string_range = prop_info["string"]
+                if isinstance(string_range, tuple):
+                    threshold, below, above = string_range
+                    string_range = below if id.value < threshold else above
                 stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
                 value = expression.ConstantNumeric(stringid)
                 action_list_append.extend(string_actions)

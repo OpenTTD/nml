@@ -16,56 +16,58 @@
 00
 00
 2 * 193 08 08 "NML\06" "NML Example NewGRF: Station" 00 "\8ENML Example NewGRF: Station\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DConversion of CHIPS Cow pens." 00
+3 * 18 04 04 FF 01 \wxDC00 "NML Example" 00
+
 // param[126] = param[161]
-3 * 5 0D 7E \D= A1 00
+4 * 5 0D 7E \D= A1 00
 
 // param[127] = (param[126] - 302012611)
-4 * 9 0D 7F \D- 7E FF \dx120058C3
+5 * 9 0D 7F \D- 7E FF \dx120058C3
 
 // param[127] = (param[127] << -31)
-5 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
+6 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-6 * 9 09 7F 04 \7= \dx00000000 01
+7 * 9 09 7F 04 \7= \dx00000000 01
 
-7 * 19 0B 03 7F 06 "1.2.0 (r22723)" 00
+8 * 19 0B 03 7F 06 "1.2.0 (r22723)" 00
 
-8 * 12 00 08 \b1 01 FF \wx0000
+9 * 12 00 08 \b1 01 FF \wx0000
 09 "LVST"
 
-9 * 6 01 04 \b3 FF \wx0002
+10 * 6 01 04 \b3 FF \wx0002
 
-10 cows_cargo.png 8bpp 10 10 64 65 -31 -34 normal
-11 cows_cargo.png 8bpp 220 10 64 65 -31 -34 normal
+11 cows_cargo.png 8bpp 10 10 64 65 -31 -34 normal
+12 cows_cargo.png 8bpp 220 10 64 65 -31 -34 normal
 
-12 cows_cargo.png 8bpp 80 10 64 65 -31 -34 normal
-13 cows_cargo.png 8bpp 290 10 64 65 -31 -34 normal
+13 cows_cargo.png 8bpp 80 10 64 65 -31 -34 normal
+14 cows_cargo.png 8bpp 290 10 64 65 -31 -34 normal
 
-14 cows_cargo.png 8bpp 150 10 64 65 -31 -34 normal
-15 cows_cargo.png 8bpp 360 10 64 65 -31 -34 normal
+15 cows_cargo.png 8bpp 150 10 64 65 -31 -34 normal
+16 cows_cargo.png 8bpp 360 10 64 65 -31 -34 normal
 
 // Name: cow_pen_1 - feature 04
-16 * 11 02 04 FF \b2 \b1
+17 * 11 02 04 FF \b2 \b1
 \w0 \w1
 \w2
 
 // Name: cow_pen_2 - feature 04
-17 * 13 02 04 FE \b3 \b1
+18 * 13 02 04 FE \b3 \b1
 \w0 \w1 \w2
 \w2
 
 // Name: random_cow_pen
-18 * 11 02 04 FE 80 00 \b16 02
+19 * 11 02 04 FE 80 00 \b16 02
 \wx00FF // (1/2) -> (1/2): cow_pen_1;
 \wx00FE // (1/2) -> (1/2): cow_pen_2;
 
-19 * 21 00 04 \b5 01 FF \wx0000
+20 * 27 00 04 \b7 01 FF \wx0000
 08 "NML_"
+1D \wxDC00
+1C \wxC500
 10 \wx00A0
 11 00
 14 FF
 15 FF
-
-20 * 18 04 04 FF 01 \wxC400 "NML Example" 00
 
 21 * 21 04 04 FF 01 \wxC500 "CHIPS Cow pens" 00
 
