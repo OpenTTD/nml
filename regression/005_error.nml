@@ -1,3 +1,15 @@
 // Regression test for error(..) statements (ActionB)
 error(NOTICE, USED_WITH, string(STR_REGRESSION_CARE));
 error(FATAL, string(STR_REGRESSION_ERROR), string(STR_ANSWER), 14, param[1] + 12 * param[2]);
+
+if (version_openttd(1,11,0) > openttd_version) {
+    error(FATAL, REQUIRES_OPENTTD, string(STR_REGRESSION_ERROR));
+}
+
+if (version_openttd(12,0) > openttd_version) {
+    error(FATAL, REQUIRES_OPENTTD, string(STR_REGRESSION_ERROR));
+}
+
+if (version_openttd(16,0) > openttd_version) {
+    error(FATAL, REQUIRES_OPENTTD, string(STR_REGRESSION_ERROR));
+}
