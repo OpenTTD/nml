@@ -22,3 +22,48 @@
 
 6 * 42 0B 03 7F FF "Something bad (tm) has happened." 00 "42" 00 7F 7E
 
+// param[126] = param[161]
+7 * 5 0D 7E \D= A1 00
+
+// param[127] = (param[126] - 453509120)
+8 * 9 0D 7F \D- 7E FF \dx1B080000
+
+// param[127] = (param[127] << -31)
+9 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
+
+10 * 9 09 7F 04 \7= \dx00000000 02
+
+11 * 61 0B 03 1F 06 "De wissels zijn bevroren, onze excuses voor het ongemak." 00
+
+12 * 37 0B 03 7F 06 "Something bad (tm) has happened." 00
+
+// param[126] = param[161]
+13 * 5 0D 7E \D= A1 00
+
+// param[127] = (param[126] - 469762048)
+14 * 9 0D 7F \D- 7E FF \dx1C000000
+
+// param[127] = (param[127] << -31)
+15 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
+
+16 * 9 09 7F 04 \7= \dx00000000 02
+
+17 * 61 0B 03 1F 06 "De wissels zijn bevroren, onze excuses voor het ongemak." 00
+
+18 * 37 0B 03 7F 06 "Something bad (tm) has happened." 00
+
+// param[126] = param[161]
+19 * 5 0D 7E \D= A1 00
+
+// param[127] = (param[126] - 536870912)
+20 * 9 0D 7F \D- 7E FF \dx20000000
+
+// param[127] = (param[127] << -31)
+21 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
+
+22 * 9 09 7F 04 \7= \dx00000000 02
+
+23 * 61 0B 03 1F 06 "De wissels zijn bevroren, onze excuses voor het ongemak." 00
+
+24 * 37 0B 03 7F 06 "Something bad (tm) has happened." 00
+

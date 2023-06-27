@@ -332,17 +332,31 @@ def builtin_getbits(name, args, pos):
 @builtin
 def builtin_version_openttd(name, args, pos):
     """
-    version_openttd(major, minor, revision[, build]) builtin function.
+    version_openttd(major, minor[, revision[, build]]) builtin function.
+
+    For OpenTTD >= 12.0 only 2 parameters may be passed.
+    For OpenTTD < 12.0 3 to 4 parameters may be passed.
 
     @return The version information encoded in a double-word.
     """
-    if len(args) > 4 or len(args) < 3:
-        raise generic.ScriptError(name + "() must have 3 or 4 parameters", pos)
+    if len(args) < 2:
+        raise generic.ScriptError(name + "() must have at least 2 parameters", pos)
+
     major = args[0].reduce_constant().value
     minor = args[1].reduce_constant().value
-    revision = args[2].reduce_constant().value
-    build = args[3].reduce_constant().value if len(args) == 4 else 0x80000
-    return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
+
+    if major >= 12:
+        if len(args) != 2:
+            raise generic.ScriptError(name + "() must have at exactly 2 parameters for OpenTTD >= 12.0", pos)
+
+        return ConstantNumeric(((16 + major) << 24) | (minor << 20))
+    else:
+        if len(args) > 4:
+            raise generic.ScriptError(name + "() must have at most 4 parameters", pos)
+
+        revision = args[2].reduce_constant().value if len(args) >= 3 else 0
+        build = args[3].reduce_constant().value if len(args) >= 4 else 0x80000
+        return ConstantNumeric((major << 28) | (minor << 24) | (revision << 20) | build)
 
 
 @builtins("cargotype_available", "railtype_available", "roadtype_available", "tramtype_available")
