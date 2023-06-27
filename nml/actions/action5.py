@@ -55,9 +55,10 @@ class Action5BlockType:
 
 
 action5_table = {
-    "PRE_SIGNAL": (0x04, 48, Action5BlockType.FIXED),
-    "PRE_SIGNAL_SEMAPHORE": (0x04, 112, Action5BlockType.FIXED),
-    "PRE_SIGNAL_SEMAPHORE_PBS": (0x04, 240, Action5BlockType.OFFSET),
+    "PRE_SIGNAL": (0x04, 48, Action5BlockType.OFFSET),  # deprecated, use "SIGNALS" in all cases
+    "PRE_SIGNAL_SEMAPHORE": (0x04, 112, Action5BlockType.OFFSET),  # deprecated, use "SIGNALS" in all cases
+    "PRE_SIGNAL_SEMAPHORE_PBS": (0x04, 240, Action5BlockType.OFFSET),  # deprecated, use "SIGNALS" in all cases
+    "SIGNALS": (0x04, 240, Action5BlockType.OFFSET),
     "CATENARY": (0x05, 48, Action5BlockType.OFFSET),
     "FOUNDATIONS_SLOPES": (0x06, 74, Action5BlockType.FIXED),
     "FOUNDATIONS_SLOPES_HALFTILES": (0x06, 90, Action5BlockType.OFFSET),
