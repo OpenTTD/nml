@@ -1,3 +1,20 @@
+0.7.4 (2023-06-28)
+------------------------------------------------------------------------
+This release adds support for more strings and sloped one-way road markers.
+
+Support for NewGRF additions of OpenTTD 14:
+ - Change: Use station properties 1C and 1D for names
+ - Change: extend DCxx string range up to FFFF
+
+Support for NewGRF additions of OpenTTD 13:
+ - Add: Support for roadtype direction markings (#274)
+
+Other changes and fixes:
+ - Fix dfb4499: incomplete read only checks (again) (#292)
+ - Fix #295: Adjust version_openttd for OpenTTD >= 12.0. (#296)
+ - Change: Use a single replacenew-type 'SIGNALS' instead of 3 different spellings of pre-signals, semaphores and path-signals. (#297)
+
+
 0.7.3 (2023-05-21)
 ------------------------------------------------------------------------
 This release adds support for more objects, stations and roadstops.
