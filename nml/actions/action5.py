@@ -65,7 +65,7 @@ action5_table = {
     "TTDP_GUI_25": (0x07, 73, Action5BlockType.FIXED),
     "TTDP_GUI": (0x07, 93, Action5BlockType.FIXED),
     "CANALS": (0x08, 65, Action5BlockType.OFFSET),
-    "ONE_WAY_ROAD": (0x09, 6, Action5BlockType.OFFSET),
+    "ONE_WAY_ROAD": (0x09, 18, Action5BlockType.OFFSET),
     "COLOURMAP_2CC": (0x0A, 256, Action5BlockType.OFFSET),
     "TRAMWAY": (0x0B, 119, Action5BlockType.OFFSET),
     "SNOWY_TEMPERATE_TREES": (0x0C, 133, Action5BlockType.FIXED),

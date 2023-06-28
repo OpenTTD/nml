@@ -21,7 +21,7 @@
 4 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal
 5 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 4 normal
 
-6 * 5 05 09 FF \w6
+6 * 8 05 89 FF \w6 FF \w0
 
 7 oneway.png 8bpp 18 8 24 16 -12 -8 normal
 8 oneway.png 8bpp 50 8 24 16 -12 -8 normal
