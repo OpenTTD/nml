@@ -39,18 +39,17 @@ class DisableItem(base_statement.BaseStatement):
                 "disable_item() requires between 1 and 3 parameters, encountered {:d}.".format(len(param_list)), pos
             )
         self.feature = general.parse_feature(param_list[0])
+        self.first_id = param_list[1] if len(param_list) > 1 else None
+        self.last_id = param_list[2] if len(param_list) > 2 else None
 
-        if len(param_list) > 1:
-            self.first_id = param_list[1].reduce_constant(global_constants.const_list)
-        else:
-            self.first_id = None
+    def pre_process(self):
+        if self.first_id is not None:
+            self.first_id = self.first_id.reduce_constant(global_constants.const_list)
 
-        if len(param_list) > 2:
-            self.last_id = param_list[2].reduce_constant(global_constants.const_list)
+        if self.last_id is not None:
+            self.last_id = self.last_id.reduce_constant(global_constants.const_list)
             if self.last_id.value < self.first_id.value:
-                raise generic.ScriptError("Last id to disable may not be lower than the first id.", pos)
-        else:
-            self.last_id = None
+                raise generic.ScriptError("Last id to disable may not be lower than the first id.", self.last_id.pos)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Disable items, feature=" + str(self.feature.value))
