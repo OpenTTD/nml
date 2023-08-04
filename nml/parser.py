@@ -24,6 +24,7 @@ from nml.ast import (
     basecost,
     cargotable,
     conditional,
+    constant,
     deactivate,
     disable_item,
     error,
@@ -153,7 +154,8 @@ class NMLParser:
         | snowline
         | engine_override
         | sort_vehicles
-        | basecost"""
+        | basecost
+        | constant"""
         t[0] = t[1]
 
     #
@@ -839,3 +841,7 @@ class NMLParser:
     def p_tilelayout_item_prop(self, t):
         "tilelayout_item : assignment"
         t[0] = t[1]
+
+    def p_constant(self, t):
+        "constant : CONST expression EQ expression SEMICOLON"
+        t[0] = constant.Constant(t[2], t[4])
