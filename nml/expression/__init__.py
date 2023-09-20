@@ -38,7 +38,6 @@ from .variable import Variable
 
 is_valid_id = re.compile("[a-zA-Z_][a-zA-Z0-9_]{3}$")
 
-
 def identifier_to_print(name):
     """
     Check whether the given name is a valid 4 letter identifier to print
@@ -50,3 +49,4 @@ def identifier_to_print(name):
     if is_valid_id.match(name):
         return name
     return '"{}"'.format(name)
+
