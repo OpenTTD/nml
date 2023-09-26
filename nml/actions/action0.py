@@ -597,6 +597,14 @@ def parse_property(prop_info, value_list, feature, id):
     if "custom_function" in prop_info:
         props = prop_info["custom_function"](*value_list)
     else:
+
+        def apply_threshold(value):
+            if not isinstance(value, tuple):
+                return value
+            assert len(value) == 3
+            threshold, below, above = value
+            return below if id.value < threshold else above
+
         # First process each element in the value_list
         final_values = []
         for i, value in enumerate(value_list):
@@ -629,10 +637,7 @@ def parse_property(prop_info, value_list, feature, id):
                     raise generic.ScriptError(
                         "String used as value for non-string property: " + str(prop_info["num"]), value.pos
                     )
-                string_range = prop_info["string"]
-                if isinstance(string_range, tuple):
-                    threshold, below, above = string_range
-                    string_range = below if id.value < threshold else above
+                string_range = apply_threshold(prop_info["string"])
                 stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
                 value = expression.ConstantNumeric(stringid)
                 action_list_append.extend(string_actions)
@@ -646,8 +651,9 @@ def parse_property(prop_info, value_list, feature, id):
             final_values.append(value)
 
         # Now, write a single Action0 Property with all of these values
-        if prop_info["num"] != -1:
-            props = [Action0Property(prop_info["num"], final_values, prop_info["size"])]
+        prop_num = apply_threshold(prop_info["num"])
+        if prop_num != -1:
+            props = [Action0Property(prop_num, final_values, prop_info["size"])]
         else:
             props = []
 
