@@ -55,26 +55,24 @@
 \dx0000842E \wx0000 \b0 \b0 \b0 \b16 \b5 \b2
 \dx8000842D \wx0002 \b17 \b11 80 81
 \dx00008430 \wx0000 \b0 \b11 \b0 \b16 \b5 \b2
-\dx8000842D \wx0042 \b17 \b10 80 82 01
+\dx8000842D \wx0042 \b17 \b10 80 81 01
 \b68 \dx000003F3 \wx0000
 \dx0000842F \wx0000 \b0 \b0 \b0 \b5 \b16 \b2
-\dx8000842D \wx0042 \b20 \b11 80 83 01
+\dx8000842D \wx0042 \b20 \b11 80 82 01
 \dx0000842D \wx0000 \b11 \b0 \b0 \b5 \b16 \b2
-\dx8000842D \wx0042 \b20 \b10 80 84 03
+\dx8000842D \wx0042 \b20 \b10 80 83 03
 
 // Name: Station Layout@registers - Id FF
 // a : register 80
-16 * 77 02 04 FD 89
-1A 20 \dx00000000
-\2sto 1A 20 \dx00000081
+16 * 63 02 04 FD 89
+1A 20 \dx00000001
+\2sto 1A 20 \dx00000080
 \2r 1A 20 \dx00000000
+\2sto 1A 20 \dx00000081
+\2r 7D 80 20 \dxFFFFFFFF 	// a
 \2sto 1A 20 \dx00000082
 \2r 1A 20 \dx00000001
-\2sto 1A 20 \dx00000080
-\2r 7D 80 20 \dxFFFFFFFF 	// a
-\2sto 1A 20 \dx00000083
-\2r 1A 20 \dx00000001
-\2sto 1A 00 \dx00000084
+\2sto 1A 00 \dx00000083
 \b0
 \wx8000 // Return computed value
 
