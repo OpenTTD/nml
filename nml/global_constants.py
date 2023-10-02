@@ -347,6 +347,8 @@ constant_numbers = {
     # ground sprite IDs
     "GROUNDSPRITE_RAIL_Y"      : 1011,
     "GROUNDSPRITE_RAIL_X"      : 1012,
+    "GROUNDSPRITE_ROAD_Y"      : 1332,
+    "GROUNDSPRITE_ROAD_X"      : 1333,
     "GROUNDSPRITE_CONCRETE"    : 1420,
     "GROUNDSPRITE_CLEARED"     : 3924,
     "GROUNDSPRITE_GRASS_1_3"   : 3943,
