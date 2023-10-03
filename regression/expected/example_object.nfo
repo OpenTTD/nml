@@ -56,22 +56,18 @@
 29 cc_grid.png 8bpp 1437 1 64 31 -31 -8 normal
 
 // Name: company_land_layout - feature 0F
-30 * 31 02 0F FF \b66 \dx00000000 \wx0002 81
+30 * 31 02 0F FF \b66 \dx00000000 \wx0002 80
 \dxC0008000 \wx0002 \b0 \b0 80 00
-\dx00000000 \wx0002 \b0 \b0 80 83
+\dx00000000 \wx0002 \b0 \b0 80 81
 
 // Name: company_land_layout@registers - feature 0F
-31 * 92 02 0F FF 89
-7D 01 20 \dxFFFFFFFF
+31 * 62 02 0F FF 89
+7D 00 20 \dxFFFFFFFF
+\2+ 7D 01 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000080
 \2r 7D 00 20 \dxFFFFFFFF
-\2+ 7D 80 20 \dxFFFFFFFF
-\2sto 1A 20 \dx00000081
-\2r 7D 01 20 \dxFFFFFFFF
-\2sto 1A 20 \dx00000082
-\2r 7D 00 20 \dxFFFFFFFF
-\2+ 7D 82 20 \dxFFFFFFFF
-\2sto 1A 00 \dx00000083
+\2+ 7D 01 20 \dxFFFFFFFF
+\2sto 1A 00 \dx00000081
 \b1
 \wx00FF \dx00000000 \dx00000000
 \wx00FF //
