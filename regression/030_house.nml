@@ -50,8 +50,8 @@ spriteset(brewery_spriteset_building) {
     tmpl_building_sprite(150, 60, 91, -60, "brewery_snow.png")
 }
 
-default_palette = PALETTE_USE_DEFAULT;
-/* Generic sprite layout that is used for all tiles of the building. Parmaeters:
+const default_palette = PALETTE_USE_DEFAULT;
+/* Generic sprite layout that is used for all tiles of the building. Parameters:
  * - building_sprite: offset in the brewery_spriteset_building spriteset to use. -1 to skip building sprite.
  * - with_smoke: Show smoke above the tile (also depends on animation state) */
 spritelayout brewery_sprite_layout(building_sprite, with_smoke) {
