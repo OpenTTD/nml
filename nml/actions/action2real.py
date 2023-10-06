@@ -83,7 +83,7 @@ def get_real_action2s(spritegroup, feature):
             raise generic.ScriptError("Expected at least one sprite set, encountered 0.", view.pos)
         for set_ref in view.spriteset_list:
             spriteset = action2.resolve_spritegroup(set_ref.name)
-            action1_index = action1.get_action1_index(spriteset)
+            action1_index = action1.get_action1_index(spriteset, feature)
             if view.name.value == "loading":
                 loading_list.append(action1_index)
             else:
@@ -152,7 +152,7 @@ def create_spriteset_actions(spritegroup):
                 feature,
                 spriteset.name.value + " - feature {:02X}".format(feature),
                 spritegroup.pos,
-                action1.get_action1_index(spriteset),
+                action1.get_action1_index(spriteset, feature),
             )
             action_list.append(real_action2)
             spriteset.set_action2(real_action2, feature)

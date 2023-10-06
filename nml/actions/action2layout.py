@@ -272,7 +272,7 @@ class Action2LayoutSprite:
         """
         spriteset = action2.resolve_spritegroup(sg_ref.name)
         offset = self._validate_offset(sg_ref.param_list, spriteset, sg_ref.pos)
-        num = action1.get_action1_index(spriteset)
+        num = action1.get_action1_index(spriteset, self.feature)
         generic.check_range(num, 0, (1 << 14) - 1, "sprite", sg_ref.pos)
         return expression.ConstantNumeric(num), offset
 
@@ -662,7 +662,7 @@ class StationSpritesetVar10Map:
                         feature,
                         spriteset.name.value + " - feature {:02X}".format(feature),
                         None,
-                        action1.get_action1_index(spriteset),
+                        action1.get_action1_index(spriteset, feature),
                     )
                     actions.append(real_action2)
                     spriteset.set_action2(real_action2, feature)

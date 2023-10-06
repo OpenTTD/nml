@@ -13,14 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic
-from nml.actions import base_action, real_sprite
-
-"""
-Maximum number of sprites per block.
-This can be increased by switching to extended Action1.
-"""
-max_sprite_block_size = 0xFF
+from nml.actions import base_action, real_sprite, action2
 
 
 class Action1(base_action.BaseAction):
@@ -30,6 +23,9 @@ class Action1(base_action.BaseAction):
     @ivar feature: Feature of this action1
     @type feature: C{int}
 
+    @ivar first_set: Number of the first sprite set in this action 1.
+    @type first_set: C{int}
+
     @ivar num_sets: Number of (sprite) sets that follow this action 1.
     @type num_sets: C{int}
 
@@ -37,20 +33,33 @@ class Action1(base_action.BaseAction):
     @type num_ent: C{int}
     """
 
-    def __init__(self, feature, num_sets, num_ent):
+    def __init__(self, feature, first_set, num_sets, num_ent):
         self.feature = feature
+        self.first_set = first_set
         self.num_sets = num_sets
         self.num_ent = num_ent
 
     def write(self, file):
-        # <Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
-        file.start_sprite(6)
-        file.print_bytex(1)
-        file.print_bytex(self.feature)
-        file.print_byte(self.num_sets)
-        file.print_varx(self.num_ent, 3)
-        file.newline()
-        file.end_sprite()
+        if self.first_set == 0 and self.num_sets < 256:
+            # <Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
+            file.start_sprite(6)
+            file.print_bytex(1)
+            file.print_bytex(self.feature)
+            file.print_byte(self.num_sets)
+            file.print_varx(self.num_ent, 3)
+            file.newline()
+            file.end_sprite()
+        else:
+            # <Sprite-number> * <Length> 01 <feature> 00 <first_set> <num-sets> <num-ent>
+            file.start_sprite(12)
+            file.print_bytex(1)
+            file.print_bytex(self.feature)
+            file.print_bytex(0)
+            file.print_varx(self.first_set, 3)
+            file.print_varx(self.num_sets, 3)
+            file.print_varx(self.num_ent, 3)
+            file.newline()
+            file.end_sprite()
 
 
 class SpritesetCollection(base_action.BaseAction):
@@ -60,6 +69,9 @@ class SpritesetCollection(base_action.BaseAction):
 
     @ivar feature: The feature number the action1 will get.
     @type feature: C{int}
+
+    @ivar first_set: Number of the first sprite set in this action 1.
+    @type first_set: C{int}
 
     @ivar num_sprites_per_spriteset: The number of sprites in each spriteset.
     @type num_sprites_per_spriteset: C{int}
@@ -71,10 +83,12 @@ class SpritesetCollection(base_action.BaseAction):
     @type spritesets: C{dict} mapping L{SpriteSet} to C{int}.
     """
 
-    def __init__(self, feature, num_sprites_per_spriteset):
+    def __init__(self, feature, first_set, num_sprites_per_spriteset):
         self.feature = feature
+        self.first_set = first_set
         self.num_sprites_per_spriteset = num_sprites_per_spriteset
         self.spritesets = {}
+        self.max_id = 0x3FFF if feature in action2.features_sprite_layout else 0xFFFF
 
     def skip_action7(self):
         return False
@@ -85,41 +99,33 @@ class SpritesetCollection(base_action.BaseAction):
     def skip_needed(self):
         return False
 
-    def can_add(self, spritesets, feature):
+    def can_add(self, spriteset):
         """
         Test whether the given list of spritesets can be added to this collection.
 
-        @param spritesets: The list of spritesets to test for addition.
-        @type spritesets: C{list} of L{SpriteSet}
+        @param spriteset: The spriteset to test for addition.
+        @type spriteset: L{SpriteSet}
 
-        @param feature: The feature of the given spritesets.
-        @type feature: C{int}
-
-        @return: True iff the given spritesets can be added to this collection.
+        @return: True iff the given spriteset can be added to this collection.
         @rtype: C{bool}
         """
-        assert len(spritesets) <= max_sprite_block_size
-        if feature != self.feature:
+        assert self.first_set + 1 <= self.max_id
+        if len(real_sprite.parse_sprite_data(spriteset)) != self.num_sprites_per_spriteset:
             return False
-        for spriteset in spritesets:
-            if len(real_sprite.parse_sprite_data(spriteset)) != self.num_sprites_per_spriteset:
-                return False
-        num_new_sets = sum(1 for x in spritesets if x not in self.spritesets)
-        return len(self.spritesets) + num_new_sets <= max_sprite_block_size
+        return self.first_set + len(self.spritesets) + (1 if spriteset not in self.spritesets else 0) <= self.max_id
 
-    def add(self, spritesets):
+    def add(self, spriteset):
         """
-        Add a list of spritesets to this collection.
+        Add a spriteset to this collection.
 
-        @param spritesets: The list of spritesets to add.
-        @type spritesets: C{list} of L{SpriteSet}
+        @param spriteset: The spriteset to add.
+        @type spriteset: L{SpriteSet}
 
-        @pre: can_add(spritesets, self.feature).
+        @pre: can_add(spriteset).
         """
-        assert self.can_add(spritesets, self.feature)
-        for spriteset in spritesets:
-            if spriteset not in self.spritesets:
-                self.spritesets[spriteset] = len(self.spritesets)
+        assert self.can_add(spriteset)
+        if spriteset not in self.spritesets:
+            self.spritesets[spriteset] = len(self.spritesets)
 
     def get_index(self, spriteset):
         """
@@ -132,7 +138,7 @@ class SpritesetCollection(base_action.BaseAction):
               collection via #add.
         """
         assert spriteset in self.spritesets
-        return self.spritesets[spriteset]
+        return self.first_set + self.spritesets[spriteset]
 
     def get_action_list(self):
         """
@@ -142,7 +148,7 @@ class SpritesetCollection(base_action.BaseAction):
         @return: A list of actions needed to represet this collection in a GRF.
         @rtype: C{list} of L{BaseAction}
         """
-        actions = [Action1(self.feature, len(self.spritesets), self.num_sprites_per_spriteset)]
+        actions = [Action1(self.feature, self.first_set, len(self.spritesets), self.num_sprites_per_spriteset)]
         for idx in range(len(self.spritesets)):
             for spriteset, spriteset_offset in self.spritesets.items():
                 if idx == spriteset_offset:
@@ -152,34 +158,12 @@ class SpritesetCollection(base_action.BaseAction):
 
 
 """
-Statistics about spritesets.
-The 1st field of type C{int} contains the largest block of consecutive spritesets.
-The 2nd field of type L{Position} contains a positional reference to the largest block of consecutive spritesets.
-"""
-spriteset_stats = (0, None)
-
-
-def print_stats():
-    """
-    Print statistics about used ids.
-    """
-    if spriteset_stats[0] > 0:
-        # NML uses as many concurrent spritesets as possible to prevent sprite duplication.
-        # So, instead of the actual amount, we rather print the biggest unsplittable block, since that is what matters.
-        generic.print_info(
-            "Concurrent spritesets: {}/{} ({})".format(
-                spriteset_stats[0], max_sprite_block_size, str(spriteset_stats[1])
-            )
-        )
-
-
-"""
 The collection which was previoulsy used. add_to_action1 will try to reuse this
 collection as long as possible to reduce the duplication of sprites. As soon
 as a spriteset with a different feature or amount of sprites is added a new
 collection will be created.
 """
-last_spriteset_collection = None
+spriteset_collections = {}
 
 
 def add_to_action1(spritesets, feature, pos):
@@ -202,29 +186,36 @@ def add_to_action1(spritesets, feature, pos):
     if not spritesets:
         return []
 
-    setsize = len(real_sprite.parse_sprite_data(spritesets[0]))
-    for spriteset in spritesets:
-        if setsize != len(real_sprite.parse_sprite_data(spriteset)):
-            raise generic.ScriptError(
-                "Using spritesets with different sizes in a single sprite group / layout is not possible", pos
-            )
-
-    global spriteset_stats
-    if spriteset_stats[0] < len(spritesets):
-        spriteset_stats = (len(spritesets), pos)
-
-    global last_spriteset_collection
     actions = []
-    if last_spriteset_collection is None or not last_spriteset_collection.can_add(spritesets, feature):
-        last_spriteset_collection = SpritesetCollection(feature, len(real_sprite.parse_sprite_data(spritesets[0])))
-        actions.append(last_spriteset_collection)
 
-    last_spriteset_collection.add(spritesets)
+    global spriteset_collections
+    if feature not in spriteset_collections:
+        spriteset_collections[feature] = [
+            SpritesetCollection(feature, 0, len(real_sprite.parse_sprite_data(spritesets[0])))
+        ]
+        actions.append(spriteset_collections[feature][-1])
+
+    current_collection = spriteset_collections[feature][-1]
+    for spriteset in spritesets:
+        for spriteset_collection in spriteset_collections[feature]:
+            if spriteset in spriteset_collection.spritesets:
+                continue
+        if not current_collection.can_add(spriteset):
+            spriteset_collections[feature].append(
+                SpritesetCollection(
+                    feature,
+                    current_collection.first_set + len(current_collection.spritesets),
+                    len(real_sprite.parse_sprite_data(spriteset)),
+                )
+            )
+            current_collection = spriteset_collections[feature][-1]
+            actions.append(current_collection)
+        current_collection.add(spriteset)
 
     return actions
 
 
-def get_action1_index(spriteset):
+def get_action1_index(spriteset, feature):
     """
     Get the index of a spriteset in the action1. The given spriteset must have
     been added in the last call to #add_to_action1. Any new calls to
@@ -234,11 +225,17 @@ def get_action1_index(spriteset):
     @param spriteset: The spriteset to get the index of.
     @type spriteset: L{SpriteSet}.
 
+    @param feature: Feature of the spriteset.
+    @type feature: C{int}
+
     @return: The index in the action1 of the given spriteset.
     @rtype: C{int}
     """
-    assert last_spriteset_collection is not None
-    return last_spriteset_collection.get_index(spriteset)
+    assert feature in spriteset_collections
+    for spriteset_collection in spriteset_collections[feature]:
+        if spriteset in spriteset_collection.spritesets:
+            return spriteset_collection.get_index(spriteset)
+    assert False
 
 
 def make_cb_failure_action1(feature):
@@ -253,10 +250,8 @@ def make_cb_failure_action1(feature):
     @return: List of actions to append (if any) and action1 index to use
     @rtype: C{tuple} of (C{list} of L{BaseAction}, C{int})
     """
-    global last_spriteset_collection
-    if last_spriteset_collection is not None and last_spriteset_collection.feature == feature:
+    if feature in spriteset_collections:
         actions = []
     else:
-        last_spriteset_collection = None
-        actions = [Action1(feature, 1, 0)]
+        actions = [Action1(feature, 0, 1, 0)]
     return (actions, 0)  # Index is currently always 0, but will change with ext. A1
