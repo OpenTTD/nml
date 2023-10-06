@@ -18,7 +18,7 @@
 2 * 52 08 08 "NML\32" "NML regression test" 00 "A test newgrf testing NML" 00
 3 * 20 04 07 FF 01 \wxDC00 "Example house" 00
 
-4 * 6 01 07 \b1 FF \wx0001
+4 * 12 01 07 00 FF \wx0000 FF \wx0001 FF \wx0001
 
 5 nlhs.png 8bpp 98 8 44 36 -22 0 normal nocrop
 

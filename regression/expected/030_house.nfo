@@ -21,7 +21,7 @@
 4 * 24 00 08 \b1 04 FF \wx0000
 09 "PASS" "MAIL" "GRAI" "WHEA"
 
-5 * 6 01 07 \b2 FF \wx0006
+5 * 12 01 07 00 FF \wx0000 FF \wx0002 FF \wx0006
 
 6 groundtiles.png 8bpp 10 10 64 31 -31 0 normal
 7 groundtiles.png 8bpp 150 10 64 31 -31 0 normal
