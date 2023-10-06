@@ -144,7 +144,7 @@
 \w4
 
 
-71 * 6 01 10 \b1 FF \wx0010
+71 * 12 01 10 00 FF \wx0005 FF \wx0001 FF \wx0010
 
 72 gfx/rails_overlays.png 8bpp 75 0 64 31 -31 0 normal
 73 gfx/rails_overlays.png 8bpp 0 0 64 31 -31 0 normal
@@ -165,10 +165,10 @@
 
 // Name: track_underlays - feature 10
 88 * 7 02 10 FF \b1 \b0
-\w0
+\w5
 
 
-89 * 6 01 10 \b1 FF \wx0004
+89 * 12 01 10 00 FF \wx0006 FF \wx0001 FF \wx0004
 
 90 gfx/tunnel_track.png 8bpp 75 0 64 31 -31 0 normal
 91 gfx/tunnel_track.png 8bpp 0 0 64 31 -31 0 normal
@@ -177,10 +177,10 @@
 
 // Name: tunnel_overlays - feature 10
 94 * 7 02 10 FC \b1 \b0
-\w0
+\w6
 
 
-95 * 6 01 10 \b1 FF \wx0006
+95 * 12 01 10 00 FF \wx0007 FF \wx0001 FF \wx0006
 
 96 gfx/depot_normal.png 8bpp 200 10 16 8 17 7 normal
 97 gfx/depot_normal.png 8bpp 118 8 64 47 -9 -31 normal
@@ -191,10 +191,10 @@
 
 // Name: depot_normal_rail - feature 10
 102 * 7 02 10 FB \b1 \b0
-\w0
+\w7
 
 
-103 * 6 01 10 \b1 FF \wx000A
+103 * 12 01 10 00 FF \wx0008 FF \wx0001 FF \wx000A
 
 104 gfx/rails_overlays.png 8bpp 75 0 64 31 -31 0 normal
 105 gfx/rails_overlays.png 8bpp 0 0 64 31 -31 0 normal
@@ -209,10 +209,10 @@
 
 // Name: bridge_underlay - feature 10
 114 * 7 02 10 FA \b1 \b0
-\w0
+\w8
 
 
-115 * 6 01 10 \b1 FF \wx0008
+115 * 12 01 10 00 FF \wx0009 FF \wx0001 FF \wx0008
 
 116 gfx/fences.png 8bpp 0 0 32 20 -30 -4 normal
 117 gfx/fences.png 8bpp 48 0 32 20 0 -3 normal
@@ -225,10 +225,10 @@
 
 // Name: fencesCC - feature 10
 124 * 7 02 10 F9 \b1 \b0
-\w0
+\w9
 
 
-125 * 6 01 10 \b1 FF \wx0010
+125 * 12 01 10 00 FF \wx000A FF \wx0001 FF \wx0010
 
 126 gfx/gui_rail.png 8bpp 0 0 20 20 0 0 normal
 127 gfx/gui_rail.png 8bpp 25 0 20 20 0 0 normal
@@ -249,7 +249,7 @@
 
 // Name: gui_normal - feature 10
 142 * 7 02 10 F8 \b1 \b0
-\w0
+\w10
 
 
 143 * 31 03 10 01 00 \b8
@@ -268,7 +268,7 @@
 0E \b17 "RAIL" "ELRL" "_040" "_080" "RLOW" "RMED" "RHIG" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNN" "DBNE" "DBHN" "DBHE"
 0F \b9 "ELRL" "E040" "E080" "ELOW" "EMED" "EHIG" "HSTR" "DBNE" "DBHE"
 
-145 * 6 01 10 \b1 FF \wx0006
+145 * 12 01 10 00 FF \wx000B FF \wx0001 FF \wx0006
 
 146 gfx/depot_electric.png 8bpp 200 10 16 8 17 7 normal
 147 gfx/depot_electric.png 8bpp 118 8 64 47 -9 -31 normal
@@ -279,10 +279,10 @@
 
 // Name: depot_electric_rail - feature 10
 152 * 7 02 10 FB \b1 \b0
-\w0
+\w11
 
 
-153 * 6 01 10 \b1 FF \wx0010
+153 * 12 01 10 00 FF \wx000C FF \wx0001 FF \wx0010
 
 154 gfx/gui_erail.png 8bpp 0 0 20 20 0 0 normal
 155 gfx/gui_erail.png 8bpp 25 0 20 20 0 0 normal
@@ -303,7 +303,7 @@
 
 // Name: gui_electric - feature 10
 170 * 7 02 10 F8 \b1 \b0
-\w0
+\w12
 
 
 171 * 31 03 10 01 01 \b8

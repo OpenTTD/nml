@@ -116,16 +116,16 @@
 \wx00FF \dx00000000 \dx00000000 	// 0 .. 0: set_icm_rear_lighted;
 \wx00FD // default: set_icm_rear;
 
-45 * 6 01 00 \b1 FF \wx0001
+45 * 12 01 00 00 FF \wx0004 FF \wx0001 FF \wx0001
 
 46 icm.png 8bpp 1 193 1 1 0 0 normal
 
 // Name: set_icm_invisible - feature 00
 47 * 9 02 00 FF \b1 \b1
-\w0
-\w0
+\w4
+\w4
 
-48 * 6 01 00 \b1 FF \wx0004
+48 * 12 01 00 00 FF \wx0005 FF \wx0001 FF \wx0004
 
 49 icm.png 8bpp 1 129 8 24 -3 -12 normal
 50 icm.png 8bpp 10 129 22 20 -14 -12 normal
@@ -134,8 +134,8 @@
 
 // Name: set_icm_middle - feature 00
 53 * 9 02 00 FC \b1 \b1
-\w0
-\w0
+\w5
+\w5
 
 // Name: sw_icm_graphics_middle
 54 * 81 02 00 FC 89
@@ -338,14 +338,14 @@ F2 00 \dx000000FF
 
 83 * 35 04 00 1F 01 FF \wx0074 "ICM 'Koploper' (Electrisch)" 00
 
-84 * 6 01 00 \b1 FF \wx0001
+84 * 12 01 00 00 FF \wx0006 FF \wx0001 FF \wx0001
 
 85 icm.png 8bpp 1 161 53 14 -25 -10 normal
 
 // Name: set_icm_purchase - feature 00
 86 * 9 02 00 F4 \b1 \b1
-\w0
-\w0
+\w6
+\w6
 
 87 * 9 00 00 \b1 01 FF \wx0074
 1E 79
@@ -466,7 +466,7 @@ FF \wx00FD 	// @action3_4;
 103 * 10 00 00 \b1 01 FF \wx0074
 2B \wx00B9
 
-104 * 6 01 00 \b2 FF \wx0004
+104 * 12 01 00 00 FF \wx0007 FF \wx0002 FF \wx0004
 
 105 cargo_wagons.png 8bpp 1 1 8 24 -3 -12 normal
 106 cargo_wagons.png 8bpp 10 1 22 20 -14 -12 normal
@@ -480,8 +480,8 @@ FF \wx00FD 	// @action3_4;
 
 // Name: set_cargo_wagon - feature 00
 113 * 9 02 00 F1 \b1 \b1
-\w0
-\w0
+\w7
+\w7
 
 // Name: cargo_wagon_switch_vehicle
 114 * 30 02 00 F1 89
@@ -493,8 +493,8 @@ FF \wx00FD 	// @action3_4;
 
 // Name: set_cargo_wagon_load - feature 00
 115 * 9 02 00 FD \b1 \b1
-\w1
-\w1
+\w8
+\w8
 
 // Name: cargo_wagon_switch_load
 116 * 30 02 00 FD 89
