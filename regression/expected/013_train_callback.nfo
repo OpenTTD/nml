@@ -35,7 +35,7 @@
 6 * 28 00 08 \b1 05 FF \wx0000
 12 "RAIL" "ELRL" "MONO" "MGLV" "TRPD"
 
-7 * 6 01 00 \b8 FF \wx0004
+7 * 12 01 00 00 FF \wx0000 FF \wx0008 FF \wx0004
 
 8 temperate_railwagons.png 8bpp 0 25 8 24 -3 -12 normal
 9 temperate_railwagons.png 8bpp 16 25 22 17 -14 -9 normal

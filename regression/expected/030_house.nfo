@@ -24,7 +24,7 @@
 // param[127] = 0
 5 * 9 0D 7F \D= FF 00 \dx00000000
 
-6 * 6 01 07 \b2 FF \wx0006
+6 * 12 01 07 00 FF \wx0000 FF \wx0002 FF \wx0006
 
 7 groundtiles.png 8bpp 10 10 64 31 -31 0 normal
 8 groundtiles.png 8bpp 150 10 64 31 -31 0 normal

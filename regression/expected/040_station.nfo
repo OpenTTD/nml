@@ -31,7 +31,7 @@
 
 7 * 20 04 04 FF 01 \wxC5FF "Basic station" 00
 
-8 * 6 01 04 \b2 FF \wx0002
+8 * 12 01 04 00 FF \wx0000 FF \wx0002 FF \wx0002
 
 9 station.png 8bpp 1 1 5 5 -2 -2 normal
 10 station.png 8bpp 7 1 5 5 -2 -2 normal
