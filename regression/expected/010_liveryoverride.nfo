@@ -16,7 +16,7 @@
 00
 00
 2 * 52 08 08 "NML\10" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 6 01 00 \b3 FF \wx0008
+3 * 12 01 00 00 FF \wx0000 FF \wx0003 FF \wx0008
 
 4 opengfx_trains_start.pcx 8bpp 142 112 8 22 -3 -10 normal
 5 opengfx_trains_start.pcx 8bpp 158 112 21 15 -14 -7 normal

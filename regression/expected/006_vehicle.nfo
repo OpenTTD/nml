@@ -69,7 +69,7 @@ FF
 
 11 * 23 04 01 1F 01 FF \wx0059 "Foster Sneltram" 00
 
-12 * 6 01 01 \b1 FF \wx0008
+12 * 12 01 01 00 FF \wx0000 FF \wx0001 FF \wx0008
 
 13 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal
 |	opengfx_generic_trams1.png 32bpp 48 56 8 18 -3 -10 normal

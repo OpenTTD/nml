@@ -99,7 +99,7 @@ BA 20 \dx0000FFFF
 17 * 9 00 00 \b1 01 FF \wx0064
 1E 48
 
-18 * 6 01 00 \b1 FF \wx0000
+18 * 12 01 00 00 FF \wx0000 FF \wx0001 FF \wx0000
 
 // Name: @CB_FAILED_REAL00
 19 * 9 02 00 FD \b1 \b1
