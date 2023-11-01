@@ -91,16 +91,9 @@ class ParameterAssignment(base_statement.BaseStatement):
         self.param = param
         self.value = value
 
-    def pre_process(self):
-        self.value = self.value.reduce(global_constants.const_list)
-
+    def register_names(self):
         self.param = self.param.reduce(global_constants.const_list, unknown_id_fatal=False)
-        if isinstance(self.param, expression.SpecialParameter):
-            if not self.param.can_assign():
-                raise generic.ScriptError(
-                    "Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos
-                )
-        elif isinstance(self.param, expression.Identifier):
+        if isinstance(self.param, expression.Identifier):
             if global_constants.identifier_refcount[self.param.value] == 0:
                 generic.print_warning(
                     generic.Warning.OPTIMISATION,
@@ -110,6 +103,17 @@ class ParameterAssignment(base_statement.BaseStatement):
                 return
             num = action6.free_parameters.pop_unique(self.pos)
             global_constants.named_parameters[self.param.value] = num
+
+    def pre_process(self):
+        self.value = self.value.reduce(global_constants.const_list)
+
+        if isinstance(self.param, expression.SpecialParameter):
+            if not self.param.can_assign():
+                raise generic.ScriptError(
+                    "Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos
+                )
+        elif isinstance(self.param, expression.Identifier):
+            return
         elif not isinstance(self.param, expression.Parameter):
             raise generic.ScriptError("Left side of an assignment must be a parameter.", self.param.pos)
 
