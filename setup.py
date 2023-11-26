@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-from setuptools import Extension, find_packages, setup
-from setuptools.command.build_py import build_py
+from setuptools import Distribution, Extension, find_packages, setup
 
 try:
     # Update the version by querying git if possible.
@@ -15,8 +14,11 @@ except ImportError:
 
     NML_VERSION = version_info.get_nml_version()
 
+default_dist = Distribution()
+default_build_py = default_dist.get_command_class('build_py')
 
-class NMLBuildPy(build_py):
+
+class NMLBuildPy(default_build_py):
     def run(self):
         # Create a parser so that nml/generated/{parse,lex}tab.py are generated.
         from nml import parser
