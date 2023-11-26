@@ -17,6 +17,8 @@ extensions:
 
 clean:
 	$(MAKE) -C regression clean
+	# Clean extension put into root dir by --inplace
+	rm -f *.so
 
 flake:
 	$(PYTHON) -m black --check $(BLACK_OPTIONS) nml
