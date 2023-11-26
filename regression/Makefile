@@ -50,4 +50,4 @@ $(EXAMPLES):
 	$(_V) diff expected/example_$@.grf output2/example_$@.grf
 
 clean:
-	$(_V) rm -rf output nml_output output2
+	$(_V) rm -rf output nml_output output2 .nmlcache
