@@ -71,6 +71,7 @@ callbacks[0x00] = {
     'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x2B},
     'curve_speed_mod'                      : {'type': 'cb', 'num': 0x36, 'var10': 0x2E},
     'create_effect'                        : {'type': 'cb', 'num': 0x160},
+    'reverse_build_probability'            : {'type': 'cb', 'num': 0x162, 'var10': 0x00},
 }
 callbacks[0x00].update(general_vehicle_cbs)
 
