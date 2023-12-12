@@ -1,0 +1,63 @@
+/*
+A simple articulated tram, graphics from OpenGFX+rv
+Code is modified in some places for testing reasons.
+*/
+
+grf {
+    grfid: "NML\41";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+template tmpl_tram(x, y) {
+    [  x,     y,  8, 18,   -3, -10]
+    [ 16 + x, y, 20, 18,  -14,  -5]
+    [ 48 + x, y, 28, 15,  -14,  -8]
+    [ 96 + x, y, 20, 18,   -6,  -7]
+    [128 + x, y,  8, 18,   -3, -10]
+    [144 + x, y, 20, 18,  -14,  -9]
+    [176 + x, y, 28, 15,  -14,  -8]
+    [224 + x, y, 20, 18,   -6,  -7]
+}
+spriteset(foster_express_set, ZOOM_LEVEL_NORMAL, BIT_DEPTH_32BPP, "tram_foster_express.32.png") {
+    tmpl_tram(48,1)
+}
+
+switch(FEAT_ROADVEHS, SELF, foster_express_articulated_parts, extra_callback_info1) {
+    1..3: return foster_express_tram;
+    return 0xFF;
+}
+
+
+item(FEAT_ROADVEHS, foster_express_tram, 88) {
+    property {
+        name:                         string(STR_NAME_FOSTER_TURBO_TRAM);
+        climates_available:           ALL_CLIMATES;
+        model_life:                   40;                         // years
+        vehicle_life:                 30;                         // years
+        introduction_date:            date(1965,1,1);
+        reliability_decay:            1;
+        running_cost_base:            RUNNING_COST_ROADVEH;       // Default road vehicle running cost base
+        running_cost_factor:          135;
+        cost_factor:                  143;
+        speed:                        317 mph;
+        power:                        220 hp;
+        weight:                       22 ton;
+        sprite_id:                    SPRITE_ID_NEW_ROADVEH;      // We have our own sprites
+        loading_speed:                16;                         // loading speed
+        tractive_effort_coefficient:  0.3;
+        air_drag_coefficient:         0.5;
+        cargo_capacity:               45;                         // passengers
+        refittable_cargo_classes:     bitmask(CC_PASSENGERS); // Allow passengers (and tourists)
+        non_refittable_cargo_classes: NO_CARGO_CLASS;         // Disallow other cargos
+        cargo_allow_refit:            [];
+        default_cargo_type:           DEFAULT_CARGO_FIRST_REFITTABLE;
+        misc_flags:                   bitmask(ROADVEH_FLAG_TRAM); // This is a tram
+    }
+    graphics {
+        articulated_part: foster_express_articulated_parts;
+        foster_express_set;
+    }
+}
