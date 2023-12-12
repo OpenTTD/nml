@@ -87,26 +87,62 @@ spriteset_base_class = action2.make_sprite_group_class(True, True, False, cls_is
 class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
     def __init__(self, param_list, sprite_list, pos):
         base_statement.BaseStatement.__init__(self, "spriteset", pos, False, False)
-        if not (1 <= len(param_list) <= 2):
-            raise generic.ScriptError("Spriteset requires 1 or 2 parameters, encountered " + str(len(param_list)), pos)
+        if not (1 <= len(param_list) <= 5):
+            raise generic.ScriptError("Spriteset requires 1 to 5 parameters, encountered " + str(len(param_list)), pos)
         name = param_list[0]
         if not isinstance(name, expression.Identifier):
             raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", name.pos)
         sprite_container.SpriteContainer.__init__(self, "spriteset", name)
         self.initialize(name)
+        self.zoom_level = 0
+        self.bit_depth = 8
+        self.image_file = None
 
-        if len(param_list) >= 2:
+        if len(param_list) >= 3:
+            if isinstance(param_list[1], expression.Identifier) and param_list[1].value in global_constants.zoom_levels:
+                self.zoom_level = global_constants.zoom_levels[param_list[1].value]
+            else:
+                raise generic.ScriptError(
+                    "value for Spriteset-block parameter 2 'zoom level' is not a valid zoom level", param_list[1].pos
+                )
+            if isinstance(param_list[2], expression.Identifier) and param_list[2].value in global_constants.bit_depths:
+                self.bit_depth = global_constants.bit_depths[param_list[2].value]
+            else:
+                raise generic.ScriptError(
+                    "value for Spriteset-block parameter 3 'bit depth' is not a valid bit depth", param_list[2].pos
+                )
+
+            if len(param_list) >= 4:
+                self.image_file = param_list[3].reduce()
+                if not isinstance(self.image_file, expression.StringLiteral):
+                    raise generic.ScriptError(
+                        "Spriteset-block parameter 4 'file' must be a string literal", self.image_file.pos
+                    )
+        elif len(param_list) >= 2:
             self.image_file = param_list[1].reduce()
             if not isinstance(self.image_file, expression.StringLiteral):
                 raise generic.ScriptError(
                     "Spriteset-block parameter 2 'file' must be a string literal", self.image_file.pos
                 )
+
+        if self.bit_depth == 32:
+            global_constants.any_32bpp_sprites = global_constants.allow_32bpp
+
+        if len(param_list) >= 5:
+            self.mask_file = param_list[4].reduce()
+            if not isinstance(self.mask_file, expression.StringLiteral):
+                raise generic.ScriptError(
+                    "Spriteset-block parameter 5 'mask_file' must be a string literal", self.mask_file.pos
+                )
+            if not self.bit_depth == 32:
+                raise generic.ScriptError("A mask file may only be specified for 32 bpp sprites.", self.mask_file.pos)
         else:
-            self.image_file = None
+            self.mask_file = None
+
         self.sprite_list = sprite_list
         self.action1_num = None  # set number in action1
         self.labels = {}  # mapping of real sprite labels to offsets
-        self.add_sprite_data(self.sprite_list, self.image_file, pos)
+        self.add_sprite_data(self.sprite_list, self.image_file, pos, self.zoom_level, self.bit_depth, self.mask_file)
 
     def pre_process(self):
         spriteset_base_class.pre_process(self)
@@ -137,8 +173,16 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
         return []
 
     def __str__(self):
-        filename = (", " + str(self.image_file)) if self.image_file is not None else ""
-        ret = "spriteset({}{}) {{\n".format(self.name, filename)
+        params = [
+            self.name,
+            generic.reverse_lookup(global_constants.zoom_levels, self.zoom_level),
+            generic.reverse_lookup(global_constants.bit_depths, self.bit_depth),
+        ]
+        if self.image_file is not None:
+            params.append(self.image_file)
+        if self.mask_file is not None:
+            params.append(self.mask_file)
+        ret = "spriteset({}) {{\n".format(", ".join(str(p) for p in params))
         for sprite in self.sprite_list:
             ret += "\t{}\n".format(str(sprite))
         ret += "}\n"
