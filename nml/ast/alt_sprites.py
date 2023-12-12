@@ -13,27 +13,8 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, generic
+from nml import expression, generic, global_constants
 from nml.ast import base_statement, sprite_container
-
-"""
-Store if there are any 32bpp sprites,
-if so ask to enable the 32bpp blitter via action14
-"""
-any_32bpp_sprites = False
-
-zoom_levels = {
-    "ZOOM_LEVEL_NORMAL": 0,
-    "ZOOM_LEVEL_IN_4X": 1,
-    "ZOOM_LEVEL_IN_2X": 2,
-    "ZOOM_LEVEL_OUT_2X": 3,
-    "ZOOM_LEVEL_OUT_4X": 4,
-    "ZOOM_LEVEL_OUT_8X": 5,
-}
-allow_extra_zoom = True
-
-bit_depths = {"BIT_DEPTH_8BPP": 8, "BIT_DEPTH_32BPP": 32.0}
-allow_32bpp = True
 
 
 class AltSpritesBlock(base_statement.BaseStatement):
@@ -73,22 +54,21 @@ class AltSpritesBlock(base_statement.BaseStatement):
         if not isinstance(self.name, expression.Identifier):
             raise generic.ScriptError("alternative_sprites parameter 1 'name' must be an identifier", self.name.pos)
 
-        if isinstance(param_list[1], expression.Identifier) and param_list[1].value in zoom_levels:
-            self.zoom_level = zoom_levels[param_list[1].value]
+        if isinstance(param_list[1], expression.Identifier) and param_list[1].value in global_constants.zoom_levels:
+            self.zoom_level = global_constants.zoom_levels[param_list[1].value]
         else:
             raise generic.ScriptError(
                 "value for alternative_sprites parameter 2 'zoom level' is not a valid zoom level", param_list[1].pos
             )
 
-        if isinstance(param_list[2], expression.Identifier) and param_list[2].value in bit_depths:
-            self.bit_depth = bit_depths[param_list[2].value]
+        if isinstance(param_list[2], expression.Identifier) and param_list[2].value in global_constants.bit_depths:
+            self.bit_depth = global_constants.bit_depths[param_list[2].value]
         else:
             raise generic.ScriptError(
                 "value for alternative_sprites parameter 3 'bit depth' is not a valid bit depthl", param_list[2].pos
             )
-        global any_32bpp_sprites
         if self.bit_depth == 32:
-            any_32bpp_sprites = allow_32bpp
+            global_constants.any_32bpp_sprites = global_constants.allow_32bpp
 
         if len(param_list) >= 4:
             self.image_file = param_list[3].reduce()
@@ -113,7 +93,9 @@ class AltSpritesBlock(base_statement.BaseStatement):
         self.sprite_list = sprite_list
 
     def pre_process(self):
-        if (self.bit_depth == 32 and not allow_32bpp) or (self.zoom_level != 0 and not allow_extra_zoom):
+        if (self.bit_depth == 32 and not global_constants.allow_32bpp) or (
+            self.zoom_level != 0 and not global_constants.allow_extra_zoom
+        ):
             return
         block = sprite_container.SpriteContainer.resolve_sprite_block(self.name)
         block.add_sprite_data(
@@ -140,8 +122,8 @@ class AltSpritesBlock(base_statement.BaseStatement):
     def __str__(self):
         params = [
             self.name,
-            generic.reverse_lookup(zoom_levels, self.zoom_level),
-            generic.reverse_lookup(bit_depths, self.bit_depth),
+            generic.reverse_lookup(global_constants.zoom_levels, self.zoom_level),
+            generic.reverse_lookup(global_constants.bit_depths, self.bit_depth),
         ]
         if self.image_file is not None:
             params.append(self.image_file)
