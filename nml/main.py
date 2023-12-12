@@ -47,7 +47,7 @@ from nml.actions import (
     real_sprite,
     sprite_count,
 )
-from nml.ast import alt_sprites, grf
+from nml.ast import grf
 
 try:
     from PIL import Image
@@ -231,8 +231,8 @@ def parse_cli(argv):
     generic.Warning.disabled = opts.disable_warning
     generic.set_cache_root_dir(None if opts.no_cache else opts.cache_dir)
     spritecache.keep_orphaned = opts.keep_orphaned
-    alt_sprites.allow_extra_zoom = opts.allow_extra_zoom
-    alt_sprites.allow_32bpp = opts.allow_32bpp
+    global_constants.allow_extra_zoom = opts.allow_extra_zoom
+    global_constants.allow_32bpp = opts.allow_32bpp
 
     opts.outputfile_given = (
         opts.grf_filename or opts.nfo_filename or opts.nml_filename or opts.dep_filename or opts.outputs
@@ -566,7 +566,7 @@ def nml(
         encoder.open(sprite_files)
 
     # If there are any 32bpp sprites hint to openttd that we'd like a 32bpp blitter
-    if alt_sprites.any_32bpp_sprites:
+    if global_constants.any_32bpp_sprites:
         grf.set_preferred_blitter("3")
 
     generic.print_progress("Linking actions ...")

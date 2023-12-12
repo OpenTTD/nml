@@ -1409,6 +1409,27 @@ settings = {}
 named_parameters = {}
 spritegroups = {"CB_FAILED": "CB_FAILED"}
 
+zoom_levels = {
+    "ZOOM_LEVEL_NORMAL": 0,
+    "ZOOM_LEVEL_IN_4X": 1,
+    "ZOOM_LEVEL_IN_2X": 2,
+    "ZOOM_LEVEL_OUT_2X": 3,
+    "ZOOM_LEVEL_OUT_4X": 4,
+    "ZOOM_LEVEL_OUT_8X": 5,
+}
+
+bit_depths = {"BIT_DEPTH_8BPP": 8, "BIT_DEPTH_32BPP": 32.0}
+
+"""
+Store if there are any 32bpp sprites,
+if so ask to enable the 32bpp blitter via action14
+"""
+any_32bpp_sprites = False
+
+allow_extra_zoom = True
+
+allow_32bpp = True
+
 const_list = [
     (constant_numbers, constant_number),
     (global_parameters, param_from_info),
@@ -1424,6 +1445,8 @@ const_list = [
     (config_flags, config_flag),
     (unified_maglev_var, unified_maglev),
     (spritegroups, create_spritegroup_ref),
+    zoom_levels,
+    bit_depths,
 ]
 
 
