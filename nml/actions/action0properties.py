@@ -116,6 +116,7 @@ class Action0Property(BaseAction0Property):
 # 'string', if set, means that the value of the property should be a string.
 # The value of characteristic indicates the string range to use (usually 0xD0 or 0xDC)
 # If set to None, the string will use the ID of the item (used for vehicle names)
+# It can also be a (threshold, below, above) tuple to select range depending on ID
 #
 # 'string_literal', if set, indicates that the value of the property should
 # be a literal (quoted) string. The value of the characteristic is equal to
@@ -155,6 +156,7 @@ class Action0Property(BaseAction0Property):
 # 'num' is the Action0 property number of the action 0 property, as given by the
 # nfo specs. If set to -1, no action0 property will be generated. If
 # 'custom_function' is set, this value is not needed and can be left out.
+# It can also be a (threshold, below, above) tuple to set 'num' depending on ID.
 #
 # 'size' is the size (in bytes) of the resulting action 0 property. Valid
 # values are 1 (byte), 2 (word) or 4 (dword). For other (or variable) sizes,
@@ -706,8 +708,8 @@ properties[0x04] = {
     # 19 (road routing) reserved for future use
     # 1A (advanced sprite layout) is implemented elsewhere
     # 1B (minimum bridge height) JGR only
-    "name":                  {"size": 2, "num": 0x1C, "string": (256, 0xC5, 0xDC), "required": True},
-    "classname":             {"size": 2, "num": 0x1D, "string": 0xDC},
+    "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
+    "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
 }
 # fmt: on
 

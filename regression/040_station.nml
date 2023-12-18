@@ -103,7 +103,7 @@ spritelayout station_sprite_layout_1(a) {
     }
 }
 
-item (FEAT_STATIONS, basic_station) {
+item (FEAT_STATIONS, basic_station, 255) {
     property {
         class    : "TEST";
         classname: string(STR_STATION_TEST_CLASS);
@@ -128,7 +128,7 @@ item (FEAT_STATIONS, basic_station) {
     }
 }
 
-item (FEAT_STATIONS, basic_station_copied_layout) {
+item (FEAT_STATIONS, basic_station_copied_layout, 256) {
     property {
         class    : "TEST";
         classname: string(STR_STATION_TEST_CLASS);
