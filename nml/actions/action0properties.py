@@ -1263,6 +1263,8 @@ properties[0x0B] = {
     "units_of_cargo":            {"num": 0x1B, "size": 2, "string": 0xDC},
     "items_of_cargo":            {"num": 0x1C, "size": 2, "string": 0xDC},
     "capacity_multiplier":       {"num": 0x1D, "size": 2, "unit_conversion": 0x100},
+    "town_production_effect":    {"num": 0x1E, "size": 1},
+    "town_production_multiplier": {"num": 0x1F, "size": 2, "unit_conversion": 0x100},
 }
 # fmt: on
 
