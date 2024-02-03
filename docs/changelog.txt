@@ -1,3 +1,18 @@
+0.7.5 (2024-02-03)
+------------------------------------------------------------------------
+This release restores compatibility for stations in OpenTTD <14.
+
+Support for NewGRF additions of OpenTTD 14:
+ - Change: add constants GROUNDSPRITE_ROAD_X and GROUNDSPRITE_ROAD_Y (#307)
+ - Add: Support for build probability action CB 162 var10 0 (reverse rail vehicle). (#313)
+ - Add: Support for faster ship speed 23 and acceleration 24 (#315)
+
+Other changes and fixes:
+ - Fix: Register named parameters earlier (#301)
+ - Fix a9a1a3e: Don't use station properties 1C/1D for IDs 00-FF (#305)
+ - Change: Allow creating 32bpp-only NewGRFs (#314)
+
+
 0.7.4 (2023-06-28)
 ------------------------------------------------------------------------
 This release adds support for more strings and sloped one-way road markers.
