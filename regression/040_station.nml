@@ -115,7 +115,7 @@ item (FEAT_STATIONS, basic_station, 255) {
     }
     graphics {
         foundations: 0;
-        prepare_layout: [STORE_TEMP(0,0), STORE_TEMP(1,1)];
+        prepare_layout: [STORE_TEMP(0,nearby_tile_station_id(-1,2)), STORE_TEMP(1,1)];
         purchase_prepare_layout: STORE_TEMP(3,3);
         sprite_layouts: [
             station_sprite_layout_0,
