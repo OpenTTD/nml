@@ -907,6 +907,11 @@ constant_numbers = {
     "TOWNGROWTH_FOOD"                       : 0x0B,
     "TOWNGROWTH_NONE"                       : 0xFF,
 
+    # Town production effect on cargo
+    "TOWNPRODUCTION_PASSENGERS"             : 0x00,
+    "TOWNPRODUCTION_MAIL"                   : 0x02,
+    "TOWNPRODUCTION_NONE"                   : 0xFF,
+
     # Cargo callbacks
     "CARGO_CB_PROFIT"                       : 0x01,
     "CARGO_CB_STATION_RATING"               : 0x02,
