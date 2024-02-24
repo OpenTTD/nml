@@ -89,6 +89,7 @@ def parse_cli(argv):
         debug_parser=False,
         allow_extra_zoom=True,
         allow_32bpp=True,
+        disable_palette_validation=False,
     )
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
@@ -224,6 +225,12 @@ def parse_cli(argv):
         "--no-extra-zoom", action="store_false", dest="allow_extra_zoom", help="Skip extra zoom alternative sprites"
     )
     opt_parser.add_option("--no-32bpp", action="store_false", dest="allow_32bpp", help="Skip 32bpp alternative sprites")
+    opt_parser.add_option(
+        "--no-palette-validation",
+        action="store_true",
+        dest="disable_palette_validation",
+        help="Disable palette validation for sprites",
+    )
 
     opts, args = opt_parser.parse_args(argv)
 
@@ -348,6 +355,7 @@ def main(argv):
         opts.md5_filename,
         opts.rebuild_parser,
         opts.debug_parser,
+        opts.disable_palette_validation,
     )
 
     input.close()
@@ -370,6 +378,7 @@ def nml(
     md5_filename,
     rebuild_parser,
     debug_parser,
+    disable_palette_validation,
 ):
     """
     Compile an NML file.
@@ -513,40 +522,47 @@ def nml(
         generic.print_error("PIL (python-imaging) wasn't found, no support for using graphics")
         sys.exit(3)
 
-    generic.print_progress("Checking palette of source images ...")
-
     used_palette = forced_palette
-    last_file = None
-    for f_pair in sprite_files:
-        # Palette is defined by mask_file, if present. Otherwise by the main file.
-        f = f_pair[1]
-        if f is None:
-            f = f_pair[0]
 
-        try:
-            with Image.open(generic.find_file(f)) as im:
-                # Verify the image is running in Palette mode, if not, skip this file.
-                if im.mode != "P":
-                    continue
-                pal = palette.validate_palette(im, f)
-        except IOError as ex:
-            raise generic.ImageError(str(ex), f)
+    if not disable_palette_validation:
+        generic.print_progress("Checking palette of source images ...")
 
-        if forced_palette != "ANY" and pal != forced_palette and not (forced_palette == "DEFAULT" and pal == "LEGACY"):
-            raise generic.ImageError(
-                "Image has '{}' palette, but you forced the '{}' palette".format(pal, used_palette), f
-            )
+        last_file = None
+        for f_pair in sprite_files:
+            # Palette is defined by mask_file, if present. Otherwise by the main file.
+            f = f_pair[1]
+            if f is None:
+                f = f_pair[0]
 
-        if used_palette == "ANY":
-            used_palette = pal
-        elif pal != used_palette:
-            if used_palette in ("LEGACY", "DEFAULT") and pal in ("LEGACY", "DEFAULT"):
-                used_palette = "DEFAULT"
-            else:
+            try:
+                with Image.open(generic.find_file(f)) as im:
+                    # Verify the image is running in Palette mode, if not, skip this file.
+                    if im.mode != "P":
+                        continue
+                    pal = palette.validate_palette(im, f)
+            except IOError as ex:
+                raise generic.ImageError(str(ex), f)
+
+            if (
+                forced_palette != "ANY"
+                and pal != forced_palette
+                and not (forced_palette == "DEFAULT" and pal == "LEGACY")
+            ):
                 raise generic.ImageError(
-                    "Image has '{}' palette, but \"{}\" has the '{}' palette".format(pal, last_file, used_palette), f
+                    "Image has '{}' palette, but you forced the '{}' palette".format(pal, used_palette), f
                 )
-        last_file = f
+
+            if used_palette == "ANY":
+                used_palette = pal
+            elif pal != used_palette:
+                if used_palette in ("LEGACY", "DEFAULT") and pal in ("LEGACY", "DEFAULT"):
+                    used_palette = "DEFAULT"
+                else:
+                    raise generic.ImageError(
+                        "Image has '{}' palette, but \"{}\" has the '{}' palette".format(pal, last_file, used_palette),
+                        f,
+                    )
+            last_file = f
 
     palette_bytes = {"LEGACY": "W", "DEFAULT": "D", "ANY": "A"}
     if used_palette in palette_bytes:
