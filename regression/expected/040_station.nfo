@@ -79,9 +79,22 @@
 \wx8000 // Return computed value
 
 // Name: Station Layout@prepare - Id FF
-17 * 34 02 04 FC 89
-1A 20 \dx00000000
-\2sto 1A 20 \dx00000000
+17 * 131 02 04 FC 89
+21 20 \dxFFFFFFFF
+\2cmp 1A 20 \dx1E000000
+\2< 1A 20 \dx00000001
+\2sto 1A 20 \dx00000080 	// guard
+\2^ 1A 20 \dx00000001
+\2sto 1A 20 \dx00000081 	// !guard
+\2r 7D 81 20 \dxFFFFFFFF
+\2* 68 2F 20 \dx000000FF
+\2sto 1A 20 \dx00000082
+\2r 7D 80 20 \dxFFFFFFFF
+\2* 6B 2F 20 \dx0000FFFF
+\2+ 7D 82 20 \dxFFFFFFFF
+\2sto 1A 20 \dx00000083
+\2r 1A 20 \dx00000000
+\2sto 7D 83 20 \dxFFFFFFFF
 \2r 1A 20 \dx00000001
 \2sto 1A 00 \dx00000001
 \b0
