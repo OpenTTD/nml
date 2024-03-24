@@ -32,7 +32,7 @@
 8 * 12 00 08 \b1 01 FF \wx0000
 09 "LVST"
 
-9 * 6 01 04 \b3 FF \wx0002
+9 * 12 01 04 00 FF \wx0000 FF \wx0003 FF \wx0002
 
 10 cows_cargo.png 8bpp 10 10 64 65 -31 -34 normal
 11 cows_cargo.png 8bpp 220 10 64 65 -31 -34 normal

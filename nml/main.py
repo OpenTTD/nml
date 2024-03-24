@@ -598,7 +598,6 @@ def nml(
     action0.print_stats()
     actionF.print_stats()
     action7.print_stats()
-    action1.print_stats()
     action2.print_stats()
     action6.print_stats()
     grf.print_stats()
