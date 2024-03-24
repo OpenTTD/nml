@@ -51,10 +51,7 @@ class Item(base_statement.BaseStatementList):
         if self.feature.value in (0x08, 0x0C, 0x0E):
             raise generic.ScriptError("Defining item blocks for this feature is not allowed.", self.pos)
         self.name = params[1] if len(params) >= 2 else None
-
-        self.id = params[2].reduce_constant(global_constants.const_list) if len(params) >= 3 else None
-        if isinstance(self.id, expression.ConstantNumeric) and self.id.value == -1:
-            self.id = None  # id == -1 means default
+        self.id = params[2] if len(params) >= 3 else None
 
         if len(params) >= 4:
             if self.feature.value != 0x07:
@@ -66,6 +63,11 @@ class Item(base_statement.BaseStatementList):
             self.size = None
 
     def register_names(self):
+        if self.id is not None:
+            self.id = self.id.reduce_constant(global_constants.const_list)
+            if isinstance(self.id, expression.ConstantNumeric) and self.id.value == -1:
+                self.id = None  # id == -1 means default
+
         if self.name:
             if not isinstance(self.name, expression.Identifier):
                 raise generic.ScriptError("Item parameter 2 'name' should be an identifier", self.pos)
