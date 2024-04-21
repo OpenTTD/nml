@@ -352,6 +352,7 @@ class Varaction2Parser:
         self.var_list = []
         self.var_list_size = 0
         self.proc_call_list = []
+        self.in_store_op = False
 
     def preprocess_binop(self, expr):
         """
@@ -571,6 +572,9 @@ class Varaction2Parser:
         if expr.op.act2_num is None:
             expr.supported_by_action2(True)
 
+        if expr.op == nmlop.STO_TMP:
+            self.in_store_op = True
+
         if (
             isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable))
             or isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadCallParam))
@@ -601,6 +605,9 @@ class Varaction2Parser:
 
         self.parse(expr2)
 
+        if expr.op == nmlop.STO_TMP:
+            self.in_store_op = False
+
     def parse_constant(self, expr):
         var = VarAction2Var(0x1A, 0, expr.value)
         self.var_list.append(var)
@@ -614,7 +621,7 @@ class Varaction2Parser:
         self.var_list_size += var.get_size()
 
     def parse_string(self, expr):
-        str_id, actions = action4.get_string_action4s(0, 0xD0, expr)
+        str_id, actions = action4.get_string_action4s(0, 0xDC if self.in_store_op else 0xD0, expr)
         self.extra_actions.extend(actions)
         self.parse_constant(expression.ConstantNumeric(str_id))
 
