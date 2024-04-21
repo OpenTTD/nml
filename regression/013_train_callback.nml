@@ -103,6 +103,9 @@ switch (FEAT_TRAINS, SELF, bulk_wagon_cb_weight_switch, cargo_type_in_veh) {
     // no default: instead fail CB and use weight set in properties (25t)
 }
 
+switch (FEAT_TRAINS, SELF, bulk_wagon_cb_name_switch, STORE_TEMP(string(STR_NAME_BULK_WAGON), 0x100)) {
+    return string(STR_JUST_STRING);
+}
 
 item(FEAT_TRAINS, bulk_wagon) {
     property {
@@ -144,6 +147,7 @@ item(FEAT_TRAINS, bulk_wagon) {
         purchase_weight: return 25;
         cargo_capacity: bulk_wagon_cb_capacity_switch;
         purchase_cargo_capacity: return 30;
+        name: bulk_wagon_cb_name_switch;
         default: bulk_wagon_graphics_switch;
     }
 }
