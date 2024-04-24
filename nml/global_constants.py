@@ -1152,9 +1152,11 @@ constant_numbers = {
 
     "RST_TYPE_BUS"                              : 0,
     "RST_TYPE_TRUCK"                            : 1,
+    "RST_TYPE_WAYPOINT"                         : 2,
 
     "RST_DRAW_FLAG_BAY_ROAD"                    : 0,
     "RST_DRAW_FLAG_DRIVE_THROUGH_ROAD_OVERLAY"  : 1,
+    "RST_DRAW_FLAG_WAYPOINT_GROUND"             : 2,
 
     "RST_GENERAL_FLAG_RANDOM_ANIMATION"         : 0,
     "RST_GENERAL_FLAG_NO_CATENARY"              : 2,
@@ -1162,6 +1164,7 @@ constant_numbers = {
     "RST_GENERAL_FLAG_NO_AUTO_ROAD_CONNECTION"  : 4,
     "RST_GENERAL_FLAG_BUILD_MENU_ROAD_ONLY"     : 5,
     "RST_GENERAL_FLAG_BUILD_MENU_TRAM_ONLY"     : 6,
+    "RST_GENERAL_FLAG_DRAW_MODE_REGISTER"       : 8,
 
     "RST_VIEW_BAY_NE"                           : 0,
     "RST_VIEW_BAY_SE"                           : 1,

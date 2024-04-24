@@ -807,6 +807,8 @@ varact2vars_roadstop = {
 
     'animation_frame'       : {'var': 0x49, 'start':  0, 'size':  8},
 
+    'drawn_in_gui'          : {'var': 0x50, 'start':  4, 'size':  1},
+
     'waiting_triggers'      : {'var': 0x5F, 'start':  0, 'size':  8},
     'random_bits'           : {'var': 0x5F, 'start':  8, 'size': 24},
     'random_bits_tile'      : {'var': 0x5F, 'start': 24, 'size':  8},
