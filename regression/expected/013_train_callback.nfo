@@ -149,7 +149,7 @@ FF
 \wx00FD // No default specified -> fail callback
 
 // Name: bulk_wagon_cb_weight_switch
-52 * 53 02 00 FD 89
+52 * 53 02 00 FF 89
 47 00 \dx000000FF
 \b4
 \wx8012 \dx00000013 \dx00000013 	// 19 .. 19: return 18;
@@ -159,11 +159,11 @@ FF
 \wx00FD // No default specified -> fail callback
 
 // Name: bulk_wagon_cb_name_switch
-53 * 30 02 00 FF 89
+53 * 30 02 00 FD 89
 1A 20 \dx0000DC00
 \2sto 1A 00 \dx00000100
 \b1
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FD \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx8000 // default: return string(STR_JUST_STRING);
 
 // param[125] = (param[1] * 5000)
@@ -263,11 +263,11 @@ FF
 31 01
 
 // Name: @action3_0
-74 * 33 02 00 FD 89
+74 * 33 02 00 FF 89
 10 00 \dx000000FF
 \b2
 \wx00FE \dx00000014 \dx00000014 	// bulk_wagon_cb_capacity_switch;
-\wx00FD \dx00000016 \dx00000016 	// bulk_wagon_cb_weight_switch;
+\wx00FF \dx00000016 \dx00000016 	// bulk_wagon_cb_weight_switch;
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_1
@@ -279,11 +279,11 @@ FF
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_2
-76 * 33 02 00 FD 89
+76 * 33 02 00 FF 89
 0C 00 \dx0000FFFF
 \b2
 \wx00FE \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch;
-\wx00FD \dx00000036 \dx00000036 	// @action3_0;
+\wx00FF \dx00000036 \dx00000036 	// @action3_0;
 \wx00FC // bulk_wagon_graphics_switch;
 
 // Name: @action3_3
@@ -291,10 +291,10 @@ FF
 0C 00 \dx0000FFFF
 \b2
 \wx00FB \dx00000036 \dx00000036 	// @action3_1;
-\wx00FF \dx00000161 \dx00000161 	// bulk_wagon_cb_name_switch;
+\wx00FD \dx00000161 \dx00000161 	// bulk_wagon_cb_name_switch;
 \wx00FC // bulk_wagon_graphics_switch;
 
 78 * 12 03 00 01 FF \wx0074 \b1
 FF \wx00FC 	// @action3_3;
-\wx00FD 	// @action3_2;
+\wx00FF 	// @action3_2;
 
