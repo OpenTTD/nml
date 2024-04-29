@@ -65,15 +65,25 @@
 \wx00FE \dx00000000 \dx00000000 	// 0 .. 0: do_nothing_prod;
 \wx00FF // default: consume_all_prod;
 
+// Name: @CB_FAILED_PROD
+10 * 15 02 0A FE 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
+
+// Name: @CB_FAILED0A
+11 * 23 02 0A FE 89
+0C 00 \dx0000FFFF
+\b1
+\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
+\wx00FE // Non-graphics callback, return graphics result
+
 // Name: extra_text_switch
-10 * 31 02 0A FE 89
+12 * 31 02 0A FD 89
 6A 05 20 \dxFFFFFFFF
 \2sto 1A 00 \dx00000100
 \b1
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx8000 // default: return string(STR_INDUSTRY_EXTRA_TEXT);
 
-11 * 27 00 0A \b6 01 FF \wx0000
+13 * 27 00 0A \b6 01 FF \wx0000
 08 06
 09 06
 25 \b2
@@ -83,37 +93,27 @@
 27 \b2
 00 00
 28 \b0 \b0
-12 * 11 00 0A \b2 01 FF \wx0000
+14 * 11 00 0A \b2 01 FF \wx0000
 21 02
 22 01
-
-// Name: @CB_FAILED_PROD
-13 * 15 02 0A FD 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
-
-// Name: @CB_FAILED0A
-14 * 23 02 0A FD 89
-0C 00 \dx0000FFFF
-\b1
-\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FD // Non-graphics callback, return graphics result
 
 // Name: @action3_0
 15 * 23 02 0A FF 89
 18 00 \dx000000FF
 \b1
 \wx00FF \dx00000000 \dx00000000 	// factory_production_switch;
-\wx00FD // @CB_FAILED0A;
+\wx00FE // @CB_FAILED0A;
 
 // Name: @action3_1
-16 * 33 02 0A FD 89
+16 * 33 02 0A FE 89
 0C 00 \dx0000FFFF
 \b2
 \wx00FF \dx00000000 \dx00000000 	// @action3_0;
-\wx00FE \dx0000003A \dx0000003A 	// extra_text_switch;
-\wx00FD // @CB_FAILED0A;
+\wx00FD \dx0000003A \dx0000003A 	// extra_text_switch;
+\wx00FE // @CB_FAILED0A;
 
 17 * 7 03 0A 01 00 \b0
-\wx00FD 	// @action3_1;
+\wx00FE 	// @action3_1;
 
 18 * 13 00 09 \b3 01 FF \wx0000
 08 27
