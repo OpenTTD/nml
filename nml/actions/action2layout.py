@@ -60,9 +60,10 @@ layout_sprite_types = {
 
 
 class Action2LayoutSprite:
-    def __init__(self, feature, type, pos=None, extra_dicts=None):
+    def __init__(self, feature, type, layout_registers=None, pos=None, extra_dicts=None):
         self.feature = feature
         self.type = type
+        self.layout_registers = layout_registers
         self.pos = pos
         self.extra_dicts = extra_dicts or []
         self.params = {
@@ -217,7 +218,10 @@ class Action2LayoutSprite:
             store_tmp = None
             load_tmp = action2var.VarAction2Var(0x7D, 0, 0xFFFFFFFF, value.register.value)
         else:
-            store_tmp = action2var.VarAction2StoreTempVar()
+            if self.layout_registers is None:
+                store_tmp = action2var.VarAction2StoreTempVar()
+            else:
+                store_tmp = self.layout_registers.add(value)
             load_tmp = action2var.VarAction2LoadTempVar(store_tmp)
         self.params[name]["register"] = (load_tmp, store_tmp, value)
 
@@ -387,10 +391,9 @@ class Action2LayoutSprite:
 
 
 class ParsedSpriteLayout:
-    def __init__(self, registers=None):
+    def __init__(self):
         self.ground_sprite = None
         self.building_sprites = []
-        self.registers = registers or []
         self.advanced = False
 
     def get_size(self):
@@ -441,7 +444,7 @@ class ParsedSpriteLayout:
                     sprite.write_registers(file)
                 file.newline()
 
-    def process(self, spritelayout, feature, param_map, actions, var10map=None):
+    def process(self, spritelayout, feature, param_map, actions, layout_registers, var10map=None):
         if not isinstance(param_map, list):
             param_map = [param_map]
 
@@ -474,10 +477,9 @@ class ParsedSpriteLayout:
                     ),
                     type.pos,
                 )
-            sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], pos, param_map)
+            sprite = Action2LayoutSprite(feature, layout_sprite_types[type.value], layout_registers, pos, param_map)
             for name, value in param_list:
                 sprite.set_param(name, value)
-            self.registers.extend(sprite.get_all_registers())
             if sprite.type == Action2LayoutSpriteType.GROUND:
                 if self.ground_sprite is not None:
                     raise generic.ScriptError("Sprite layout can have no more than one ground sprite", spritelayout.pos)
@@ -490,7 +492,7 @@ class ParsedSpriteLayout:
                 # no sprites defined at all, that's not very much.
                 raise generic.ScriptError("Sprite layout requires at least one sprite", spritelayout.pos)
             # set to 0 for no ground sprite
-            self.ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
+            self.ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND, layout_registers)
             self.ground_sprite.set_param(expression.Identifier("sprite"), expression.ConstantNumeric(0))
 
         self.advanced = any(x.is_advanced_sprite() for x in self.building_sprites + [self.ground_sprite])
@@ -510,17 +512,23 @@ class ParsedSpriteLayout:
 
         return offset
 
-    def parse_registers(self, varact2parser):
-        if self.registers:
-            for register_info in self.registers:
-                reg, expr = register_info[1], register_info[2]
-                if reg is None:
-                    continue
-                varact2parser.parse_expr(expr)
-                varact2parser.var_list.append(nmlop.STO_TMP)
-                varact2parser.var_list.append(reg)
-                varact2parser.var_list.append(nmlop.VAL2)
-                varact2parser.var_list_size += reg.get_size() + 2
+
+class LayoutRegisters:
+    def __init__(self):
+        self.registers = {}
+
+    def add(self, value):
+        if value not in self.registers:
+            self.registers[value] = action2var.VarAction2StoreTempVar()
+        return self.registers[value]
+
+    def parse(self, varact2parser):
+        for expr, reg in self.registers.items():
+            varact2parser.parse_expr(expr)
+            varact2parser.var_list.append(nmlop.STO_TMP)
+            varact2parser.var_list.append(reg)
+            varact2parser.var_list.append(nmlop.VAL2)
+            varact2parser.var_list_size += reg.get_size() + 2
 
 
 def get_layout_action2s(spritelayout, feature):
@@ -541,8 +549,9 @@ def get_layout_action2s(spritelayout, feature):
     param_map = (param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))
     spritelayout.register_map[feature] = param_registers
 
+    layout_registers = LayoutRegisters()
     layout = ParsedSpriteLayout()
-    layout.process(spritelayout, feature, param_map, actions)
+    layout.process(spritelayout, feature, param_map, actions, layout_registers)
 
     action6.free_parameters.save()
     act6 = action6.Action6()
@@ -562,7 +571,7 @@ def get_layout_action2s(spritelayout, feature):
     actions.append(layout_action)
 
     varact2parser = action2var.Varaction2Parser(feature)
-    layout.parse_registers(varact2parser)
+    layout_registers.parse(varact2parser)
 
     # Only continue if we actually needed any new registers
     if varact2parser.var_list:
@@ -694,6 +703,7 @@ def parse_station_layouts(feature, id, layouts):
     param_registers = []
     parsed_layouts = []
     varact2parser = action2var.Varaction2Parser(feature)
+    layout_registers = LayoutRegisters()
 
     for layout in layouts:
         spritelayout = (
@@ -703,21 +713,25 @@ def parse_station_layouts(feature, id, layouts):
             raise generic.ScriptError("Expected a SpriteLayout", layout.pos)
 
         # Allocate registers
-        registers = []
         param_map = {}
         for i, param in enumerate(spritelayout.param_list):
             reg = action2var.VarAction2CallParam(param.value)
             param_registers.append(reg)
             param_map[param.value] = reg
             store_tmp = action2var.VarAction2StoreCallParam(reg)
-            registers.append((reg, store_tmp, layout.param_list[i]))
+            varact2parser.parse_expr(layout.param_list[i])
+            varact2parser.var_list.append(nmlop.STO_TMP)
+            varact2parser.var_list.append(store_tmp)
+            varact2parser.var_list.append(nmlop.VAL2)
+            varact2parser.var_list_size += store_tmp.get_size() + 2
         param_map = [(param_map, lambda name, value, pos: action2var.VarAction2LoadCallParam(value, name))]
         param_map.extend(default_param)
 
-        layout = ParsedSpriteLayout(registers)
-        layout.process(spritelayout, feature, param_map, actions, var10map)
-        layout.parse_registers(varact2parser)
+        layout = ParsedSpriteLayout()
+        layout.process(spritelayout, feature, param_map, actions, layout_registers, var10map)
         parsed_layouts.append(layout)
+
+    layout_registers.parse(varact2parser)
 
     actions.extend(action0.get_layout_action0(feature, id, parsed_layouts))
 
