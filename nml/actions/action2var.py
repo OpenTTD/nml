@@ -579,6 +579,7 @@ class Varaction2Parser:
             isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable))
             or isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadCallParam))
             or (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric))
+            or (isinstance(expr.expr2, expression.StorageOp) and expr.expr2.name == "LOAD_TEMP")
             or expr.op == nmlop.VAL2
         ):
             expr2 = expr.expr2
