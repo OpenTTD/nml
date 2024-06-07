@@ -488,7 +488,7 @@ FF \wx00FD 	// @action3_4;
 1A 20 \dx80000000
 \2sto 1A 00 \dx00000100
 \b1
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00F1 // default: set_cargo_wagon;
 
 // Name: set_cargo_wagon_load - feature 00
@@ -501,7 +501,7 @@ FF \wx00FD 	// @action3_4;
 1A 20 \dx00000000
 \2sto 1A 00 \dx00000100
 \b1
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00FD // default: set_cargo_wagon_load;
 
 // Name: cargo_wagon_switch_graphics
