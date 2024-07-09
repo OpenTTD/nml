@@ -352,7 +352,6 @@ varact2vars60x_stations = {
     'nearby_tile_height'            : {'var': 0x67, 'start': 16, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_class'             : {'var': 0x67, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
     'nearby_tile_is_station'        : {'var': 0x68, 'start':  0, 'size': 32, 'param_function': signed_tile_offset, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
-    'nearby_tile_station_id'        : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_original_gfx'      : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(0)},
     'nearby_tile_same_grf'          : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(1)},
     'nearby_tile_other_grf'         : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(2)},
@@ -360,6 +359,7 @@ varact2vars60x_stations = {
     'nearby_tile_perpendicular'     : {'var': 0x68, 'start': 11, 'size':  1, 'param_function': signed_tile_offset},
     'nearby_tile_tile_type'         : {'var': 0x68, 'start': 11, 'size':  3, 'param_function': signed_tile_offset},
     'nearby_tile_grfid'             : {'var': 0x6A, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_station_id'        : {'var': 0x6B, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
     # 'var' will be set in the value_function, depending on parameter
     'platform_length'               : {'var': 0x00, 'start': 16, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
     'platform_count'                : {'var': 0x00, 'start': 20, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
@@ -823,7 +823,6 @@ varact2vars60x_roadstop = {
     'nearby_tile_class'                 : {'var': 0x67, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
     'nearby_tile_road_stop_info'        : {'var': 0x68, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
     'nearby_tile_is_road_stop'          : {'var': 0x68, 'start':  0, 'size': 32, 'param_function': signed_tile_offset, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
-    'nearby_tile_road_stop_id'          : {'var': 0x68, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_same_grf'              : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(0)},
     'nearby_tile_other_grf'             : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(1)},
     'nearby_tile_original_gfx'          : {'var': 0x68, 'start':  8, 'size':  2, 'param_function': signed_tile_offset, 'value_function': value_equals(2)},
@@ -834,6 +833,7 @@ varact2vars60x_roadstop = {
     'nearby_tile_stop_type'             : {'var': 0x68, 'start': 16, 'size':  4, 'param_function': signed_tile_offset},
     'nearby_tile_same_stop_type'        : {'var': 0x68, 'start': 20, 'size':  1, 'param_function': signed_tile_offset},
     'nearby_tile_grfid'                 : {'var': 0x6A, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_road_stop_id'          : {'var': 0x6B, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
 }
 
 class VarAct2Scope:
