@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d37
+0 * 4 \d39
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000001
@@ -72,8 +72,18 @@
 \wx00FF \dx00000000 \dx00000000
 \wx00FF //
 
+// Name: @CB_FAILED_LAYOUT0F
+32 * 17 02 0F FE \b0 \dx00000000
+\dx00000000 \b0 \b0 \b0 \b0 \b0
+// Name: @CB_FAILED0F
+33 * 23 02 0F FE 89
+0C 00 \dx0000FFFF
+\b1
+\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
+\wx00FE // Non-graphics callback, return graphics result
+
 // Name: company_land_terrain_switch
-32 * 470 02 0F FE 89
+34 * 470 02 0F FD 89
 41 28 \dx0000001F
 \2cmp 1A 20 \dx0000001E
 \2& 1A 20 \dx00000001
@@ -138,21 +148,21 @@
 \2+ 7D 8A 20 \dxFFFFFFFF
 \2sto 1A 00 \dx00000001
 \b1
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00FF // default: company_land_layout;
 
 // Name: company_land_purchase_switch
-33 * 51 02 0F FF 89
+35 * 51 02 0F FF 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx00000000
 \2r 1A 20 \dx00000F8D
 \2sto 1A 20 \dx00000001
 \2r 1A 00 \dx00000001
 \b1
-\wx8000 \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00FF // default: company_land_layout;
 
-34 * 43 00 0F \b12 01 FF \wx0000
+36 * 43 00 0F \b12 01 FF \wx0000
 08 "INFR"
 09 \wxD000
 0A \wxD001
@@ -166,19 +176,19 @@
 16 00
 17 01
 
-35 * 10 00 0F \b1 01 FF \wx0000
+37 * 10 00 0F \b1 01 FF \wx0000
 15 \wx0011
 
 // Name: @action3_0
-36 * 43 02 0F FF 89
+38 * 43 02 0F FF 89
 0C 00 \dx0000FFFF
 \b3
 \wx00FF \dx00000000 \dx00000000 	// company_land_purchase_switch;
 \wx8400 \dx00000157 \dx00000157 	// return 1024;
 \wx8002 \dx0000015C \dx0000015C 	// return string(STR_NAME_COMPANY_LAND);
-\wx00FE // company_land_terrain_switch;
+\wx00FD // company_land_terrain_switch;
 
-37 * 10 03 0F 01 00 \b1
+39 * 10 03 0F 01 00 \b1
 FF \wx00FF 	// @action3_0;
-\wx00FE 	// company_land_terrain_switch;
+\wx00FD 	// company_land_terrain_switch;
 

@@ -1259,11 +1259,20 @@ def parse_varaction2(switch_block):
         # Computed result is not returned, but there are no ranges
         # Add one range, to avoid the nvar == 0 bear trap
         offset += 10
+        range_result, range_comment = parse_result(
+            expression.SpriteGroupRef(expression.Identifier("CB_FAILED", None), [], None),
+            action_list,
+            act6,
+            offset,
+            varaction2,
+            none_result,
+            switch_block.var_range,
+        )
         varaction2.ranges.append(
             VarAction2Range(
                 expression.ConstantNumeric(1),
                 expression.ConstantNumeric(0),
-                expression.ConstantNumeric(0),
+                range_result,
                 "Bogus range to avoid nvar == 0",
             )
         )
