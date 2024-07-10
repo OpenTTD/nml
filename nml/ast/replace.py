@@ -54,6 +54,14 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
 
     def pre_process(self):
         self.start_id = self.start_id.reduce(global_constants.const_list)
+        if isinstance(self.start_id, expression.ConstantNumeric):
+            generic.check_range(
+                self.start_id.value,
+                0,
+                4895 - len(self.sprite_list),
+                "replace-block parameter 1 'start'",
+                self.start_id.pos,
+            )
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Replace sprites starting at")
