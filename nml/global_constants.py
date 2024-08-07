@@ -375,6 +375,11 @@ constant_numbers = {
     "STAT_FLAG_CUSTOM_FOUNDATIONS"    : 3,
     "STAT_FLAG_EXTENDED_FOUNDATIONS"  : 4,
 
+    # station tile flags
+    "STAT_TILE_PYLON"   : 0,
+    "STAT_TILE_NOWIRE"  : 1,
+    "STAT_TILE_BLOCKED" : 2,
+
     # station tiles
     "STAT_ALL_TILES"     : 0xFF,
 

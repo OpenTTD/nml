@@ -111,7 +111,18 @@ item (FEAT_STATIONS, basic_station, 255) {
         general_flags: bitmask(STAT_FLAG_EXTENDED_FOUNDATIONS);
         cargo_random_triggers: [LVST];
         disabled_platforms: bitmask(5, 6, 7, 8);
-
+        tile_flags: [
+            0,
+            bitmask(STAT_TILE_PYLON),
+            bitmask(STAT_TILE_NOWIRE),
+            bitmask(STAT_TILE_PYLON, STAT_TILE_NOWIRE),
+            bitmask(STAT_TILE_BLOCKED),
+            bitmask(STAT_TILE_PYLON, STAT_TILE_BLOCKED),
+            bitmask(STAT_TILE_NOWIRE, STAT_TILE_BLOCKED),
+            bitmask(STAT_TILE_PYLON, STAT_TILE_NOWIRE, STAT_TILE_BLOCKED),
+            bitmask(STAT_TILE_NOWIRE),
+            bitmask(STAT_TILE_PYLON, STAT_TILE_BLOCKED),
+        ];
     }
     graphics {
         foundations: 0;

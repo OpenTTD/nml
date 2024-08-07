@@ -109,12 +109,14 @@ item(FEAT_STATIONS, cow_pen) {
         /* Name of this particular station */
         name:                   string(STR_NAME_STATION);
         cargo_threshold: 160;
-        draw_pylon_tiles: 0;
-        hide_wire_tiles: 0xFF;
-        non_traversable_tiles: 0xFF;
+        tile_flags: [
+            bitmask(STAT_TILE_NOWIRE, STAT_TILE_BLOCKED),
+            bitmask(STAT_TILE_NOWIRE, STAT_TILE_BLOCKED)
+        ];
     }
     graphics {
         sprite_layouts: [cow_pen_X(0), cow_pen_Y(0)];
+        select_tile_type: 0;
         purchase: cow_pen_half;
         LVST: random_cow_pen;
         cow_pen_empty;
