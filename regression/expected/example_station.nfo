@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d29
+0 * 4 \d30
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000001
@@ -62,8 +62,8 @@
 08 "NML_"
 10 \wx00A0
 11 00
-14 FF
-15 FF
+14 03
+15 03
 
 20 * 18 04 04 FF 01 \wxC400 "NML Example" 00
 
@@ -131,8 +131,16 @@
 \wx00FF \dx00000000 \dx00000000 	// cow_pen_half;
 \wx00FF // cow_pen_half;
 
-29 * 13 03 04 01 00 \b2
+// Name: @action3_3
+29 * 33 02 04 FF 89
+0C 00 \dx0000FFFF
+\b2
+\wx00FF \dx00000000 \dx00000000 	// @action3_2;
+\wx8000 \dx00000024 \dx00000024 	// return 0;
+\wx00FD // @action3_0;
+
+30 * 13 03 04 01 00 \b2
 00 \wx00FE 	// @action3_1;
-FF \wx00FF 	// @action3_2;
+FF \wx00FF 	// @action3_3;
 \wx00FD 	// @action3_0;
 

@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 
-from nml import generic, nmlop
+from nml import generic, nmlop, global_constants
 from nml.expression import (
     AcceptCargo,
     Array,
@@ -305,17 +305,22 @@ class VariableListProp(BaseAction0Property):
     Property value that is a variable-length list of variable sized values, the list length is written before the data.
     """
 
-    def __init__(self, prop_num, data, size):
+    def __init__(self, prop_num, data, size, extended):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
         self.prop_num = prop_num
         self.data = data
         self.size = size
+        self.extended = extended
 
     def write(self, file):
         file.print_bytex(self.prop_num)
         for elem in self.data:
-            file.print_byte(len(elem))
+            if self.extended:
+                file.print_bytex(0xFF)
+                file.print_word(len(elem))
+            else:
+                file.print_byte(len(elem))
             for i, val in enumerate(elem):
                 if i % 8 == 0:
                     file.newline()
@@ -325,13 +330,13 @@ class VariableListProp(BaseAction0Property):
     def get_size(self):
         total_len = 1  # Prop number
         for elem in self.data:
-            # For each item ID to set, make space for all values + 1 for the length
-            total_len += len(elem) * self.size + 1
+            # For each item ID to set, make space for all values + 3 or 1 for the length
+            total_len += len(elem) * self.size + (3 if self.extended else 1)
         return total_len
 
 
-def VariableByteListProp(prop_num, data):
-    return VariableListProp(prop_num, data, 1)
+def VariableByteListProp(prop_num, data, extended=False):
+    return VariableListProp(prop_num, data, 1, extended)
 
 
 def ctt_list(prop_num, *values):
@@ -348,8 +353,8 @@ def ctt_list(prop_num, *values):
     ]
 
 
-def VariableWordListProp(num_prop, data):
-    return VariableListProp(num_prop, data, 2)
+def VariableWordListProp(num_prop, data, extended=False):
+    return VariableListProp(num_prop, data, 2, extended)
 
 
 def accepted_cargos(prop_num, *values):
@@ -707,6 +712,29 @@ def cargo_bitmask(value):
     return BitMask(value.values, value.pos).reduce()
 
 
+def station_tile_flags(value):
+    if not isinstance(value, Array) or len(value.values) % 2 != 0:
+        raise generic.ScriptError("Flag list must be an array of even length", value.pos)
+    if len(value.values) > 8:
+        return [VariableByteListProp(0x1E, [[flags.reduce_constant().value for flags in value.values]], True)]
+    pylons = 0
+    wires = 0
+    blocked = 0
+    for i, val in enumerate(value.values):
+        flag = val.value
+        if flag & 1 << global_constants.constant_numbers["STAT_TILE_PYLON"]:
+            pylons = pylons | 1 << i
+        if flag & 1 << global_constants.constant_numbers["STAT_TILE_NOWIRE"]:
+            wires = wires | 1 << i
+        if flag & 1 << global_constants.constant_numbers["STAT_TILE_BLOCKED"]:
+            blocked = blocked | 1 << i
+    return [
+        Action0Property(0x11, ConstantNumeric(pylons), 1),
+        Action0Property(0x14, ConstantNumeric(wires), 1),
+        Action0Property(0x15, ConstantNumeric(blocked), 1),
+    ]
+
+
 # fmt: off
 properties[0x04] = {
     "class":                 {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
@@ -718,11 +746,11 @@ properties[0x04] = {
     # 0E (station layout) callback 24 should be enough
     # 0F (copy station layout)
     "cargo_threshold":       {"size": 2, "num": 0x10},
-    "draw_pylon_tiles":      {"size": 1, "num": 0x11},
+    "draw_pylon_tiles":      {"size": 1, "num": 0x11, "replaced_by": "tile_flags"},
     "cargo_random_triggers": {"size": 4, "num": 0x12, "value_function": cargo_bitmask},
     "general_flags":         {"size": 1, "num": 0x13, "value_function": station_flags},
-    "hide_wire_tiles":       {"size": 1, "num": 0x14},
-    "non_traversable_tiles": {"size": 1, "num": 0x15},
+    "hide_wire_tiles":       {"size": 1, "num": 0x14, "replaced_by": "tile_flags"},
+    "non_traversable_tiles": {"size": 1, "num": 0x15, "replaced_by": "tile_flags"},
     "animation_info":        {"size": 2, "num": 0x16, "value_function": animation_info},
     "animation_speed":       {"size": 1, "num": 0x17},
     "animation_triggers":    {"size": 2, "num": 0x18},
@@ -731,6 +759,7 @@ properties[0x04] = {
     # 1B (minimum bridge height) JGR only
     "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
+    "tile_flags":            {"custom_function": station_tile_flags},
 }
 # fmt: on
 
