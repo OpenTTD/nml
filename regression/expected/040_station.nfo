@@ -187,8 +187,8 @@ FF \wx00F9 	// @action3_3;
 1D \wxDC00
 1C \wxDC01
 
-31 * 9 00 04 \b1 01 FF \wx0100
-0A FF
+31 * 11 00 04 \b1 01 FF \wx0100
+0A FF \wx00FF
 
 // Name: @CB_FAILED_REAL04
 32 * 7 02 04 F8 \b0 \b1
