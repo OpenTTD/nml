@@ -1214,5 +1214,5 @@ def get_layout_action0(feature, id, layouts):
 def get_copy_layout_action0(feature, id, source_id):
     act0, offset = create_action0(feature, id, None, None)
     act0.num_ids = 1
-    act0.prop_list.append(Action0Property(0x0A, source_id, 1))
+    act0.prop_list.append(Action0Property(0x0A, source_id, 1 if source_id.value < 0xFF else 3))
     return [act0]
