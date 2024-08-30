@@ -138,7 +138,7 @@ callbacks[0x03].update(general_vehicle_cbs)
 
 # Stations
 callbacks[0x04] = {
-    'availability'                  : {'type': 'cb', 'num':  0x13, 'flag_bit': 0},
+    'availability'                  : {'type': 'cb', 'num':  0x13, 'flag_bit': 0, 'purchase': 2},
     'select_sprite_layout'          : {'type': 'cb', 'num':  0x14, 'flag_bit': 1, 'purchase': 'purchase_select_sprite_layout'},
     'purchase_select_sprite_layout' : {'type': 'cb', 'num':  0x14, 'flag_bit': 1, 'purchase': 2},
     'select_tile_type'              : {'type': 'cb', 'num':  0x24, 'purchase': 2},
