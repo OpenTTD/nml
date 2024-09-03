@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import nmlop
 
-callbacks = 0x15 * [{}]
+callbacks = 0x16 * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -319,4 +319,8 @@ callbacks[0x14] = {
     'anim_speed'      : {'type': 'cb', 'num': 0x142, 'flag_bit': 2},
     'default'         : {'type': 'cargo', 'num': None},
     'purchase'        : {'type': 'cargo', 'num': 0xFF},
+}
+
+# Badges
+callbacks[0x15] = {
 }
