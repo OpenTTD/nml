@@ -20,6 +20,7 @@ from nml.actions import actionD, real_sprite
 from nml.ast import (
     alt_sprites,
     assignment,
+    badgetable,
     base_graphics,
     basecost,
     cargotable,
@@ -120,6 +121,7 @@ class NMLParser:
         | template_declaration
         | tilelayout
         | town_names
+        | badgetable
         | cargotable
         | railtype
         | roadtype
@@ -740,6 +742,21 @@ class NMLParser:
     def p_disable_item(self, t):
         "disable_item : DISABLE_ITEM LPAREN expression_list RPAREN SEMICOLON"
         t[0] = disable_item.DisableItem(t[3], t.lineno(1))
+
+    def p_badgetable(self, t):
+        """badgetable : BADGETABLE LBRACE badgetable_list RBRACE
+        | BADGETABLE LBRACE badgetable_list COMMA RBRACE"""
+        t[0] = badgetable.BadgeTable(t[3], t.lineno(1))
+
+    def p_badgetable_list(self, t):
+        """badgetable_list : ID
+        | STRING_LITERAL
+        | badgetable_list COMMA ID
+        | badgetable_list COMMA STRING_LITERAL"""
+        if len(t) == 2:
+            t[0] = [t[1]]
+        else:
+            t[0] = t[1] + [t[3]]
 
     def p_cargotable(self, t):
         """cargotable : CARGOTABLE LBRACE cargotable_list RBRACE

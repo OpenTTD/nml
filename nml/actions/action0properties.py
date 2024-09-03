@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 
-from nml import generic, nmlop, global_constants
+from nml import generic, grfstrings, nmlop, global_constants
 from nml.expression import (
     AcceptCargo,
     Array,
@@ -170,7 +170,7 @@ class Action0Property(BaseAction0Property):
 #
 # 'required' (value doesn't matter) if the property is required for the item to be valid.
 
-properties = 0x15 * [None]
+properties = 0x16 * [None]
 
 #
 # Some helper functions that are used for multiple features
@@ -335,6 +335,24 @@ def VariableByteListProp(prop_num, data, len_size=1):
     return VariableListProp(prop_num, data, 1, len_size)
 
 
+class StringProp(BaseAction0Property):
+    """
+    Property value that is zero-terminated string.
+    """
+
+    def __init__(self, prop_num, string):
+        self.prop_num = prop_num
+        self.string = string
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        file.print_string(self.string.value, True, True)
+        file.newline()
+
+    def get_size(self):
+        return grfstrings.get_string_size(self.string.value) + 1
+
+
 def ctt_list(prop_num, *values):
     # values may have multiple entries, if more than one item ID is set (e.g. multitile houses)
     # Each value is an expression.Array of cargo types
@@ -351,6 +369,38 @@ def ctt_list(prop_num, *values):
 
 def VariableWordListProp(num_prop, data, len_size=1):
     return VariableListProp(num_prop, data, 2, len_size)
+
+
+def badge_list(prop_num, *values):
+    # values may have multiple entries, if more than one item ID is set
+    # Each value is an expression.Array of badge labels
+
+    table = global_constants.badge_numbers
+
+    for value in values:
+        if not isinstance(value, Array):
+            raise generic.ScriptError("Value of badgelist property must be an array", value.pos)
+
+        for badge in value.values:
+            if not isinstance(badge, StringLiteral) or badge.value not in table:
+                raise generic.ScriptError(
+                    "Parameter for badges must be a string literal that is also in your badge table", value.pos
+                )
+
+    return [
+        VariableListProp(
+            prop_num,
+            [[table[badge.value] for badge in single_item_array.values] for single_item_array in values],
+            2,
+            2,
+        )
+    ]
+
+
+def string_property(prop_num, value):
+    if not isinstance(value, StringLiteral):
+        raise generic.ScriptError("Value of label property must be a StringLiteral", value.pos)
+    return [StringProp(prop_num, value)]
 
 
 def accepted_cargos(prop_num, *values):
@@ -486,6 +536,7 @@ properties[0x00] = {
     "curve_speed_mod":                {"size": 2, "num": 0x2E, "unit_conversion": 256},
     "variant_group":                  {"size": 2, "num": 0x2F},
     "extra_flags":                    {"size": 4, "num": 0x30},
+    "badges":                         {"custom_function": lambda value: badge_list(0x33, value)},
 }
 # fmt: on
 
@@ -564,6 +615,7 @@ properties[0x01] = {
     ],
     "variant_group":                {"size": 2, "num": 0x26},
     "extra_flags":                  {"size": 4, "num": 0x27},
+    "badges":                       {"custom_function": lambda value: badge_list(0x2A, value)},
 }
 # fmt: on
 
@@ -654,6 +706,7 @@ properties[0x02] = {
     "variant_group":                {"size": 2, "num": 0x20},
     "extra_flags":                  {"size": 4, "num": 0x21},
     "acceleration":                 {"size": 1, "num": 0x24},
+    "badges":                       {"custom_function": lambda value: badge_list(0x26, value)},
 }
 # fmt: on
 
@@ -715,6 +768,7 @@ properties[0x03] = {
     "range":                        {"size": 2, "num": 0x1F},
     "variant_group":                {"size": 2, "num": 0x20},
     "extra_flags":                  {"size": 4, "num": 0x21},
+    "badges":                       {"custom_function": lambda value: badge_list(0x24, value)},
 }
 # fmt: on
 
@@ -857,6 +911,7 @@ properties[0x04] = {
     "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
     "tile_flags":            {"custom_function": station_tile_flags},  # = prop 1E
+    "badges":                {"custom_function": lambda value: badge_list(0x1F, value)},
     "heights":               {"custom_function": lambda x: station_tile_list(x, 0x20, "Station height")},
     "blocked_pillars":       {"custom_function": lambda x: station_tile_list(x, 0x21, "Station blocked pillar")},
 }
@@ -1067,6 +1122,7 @@ properties[0x07] = {
         "multitile_function": mt_house_same,
         "custom_function": lambda *values: accepted_cargos(0x23, *values),
     },
+    "badges":                  {"custom_function": lambda value: badge_list(0x24, value)},
 }
 # fmt: on
 
@@ -1088,6 +1144,7 @@ properties[0x09] = {
     "animation_triggers":  {"size": 1, "num": 0x11},
     "special_flags":       {"size": 1, "num": 0x12},
     "accepted_cargos":     {"custom_function": lambda value: accepted_cargos(0x13, value)},
+    "badges":              {"custom_function": lambda value: badge_list(0x14, value)},
 }
 # fmt: on
 
@@ -1360,6 +1417,7 @@ properties[0x0A] = {
     "nearby_station_name":    {"size": 2, "num": 0x24, "string": 0xDC},
     # prop 25+26+27+28 combined in one structure
     "cargo_types":            {"custom_function": industry_cargo_types},
+    "badges":                 {"custom_function": lambda value: badge_list(0x29, value)},
 }
 # fmt: on
 
@@ -1463,6 +1521,7 @@ properties[0x0D] = {
     "noise_level":      {"size": 1, "num": 0x0F},
     "name":             {"size": 2, "num": 0x10, "string": 0xDC},
     "maintenance_cost": {"size": 2, "num": 0x11},
+    "badges":           {"custom_function": lambda value: badge_list(0x12, value)},
 }
 # fmt: on
 
@@ -1503,6 +1562,7 @@ properties[0x0F] = {
     "height":                 {"size": 1, "num": 0x16},
     "num_views":              {"size": 1, "num": 0x17},
     "count_per_map256":       {"size": 1, "num": 0x18},
+    "badges":                 {"custom_function": lambda value: badge_list(0x19, value)},
 }
 # fmt: on
 
@@ -1549,6 +1609,7 @@ common_tracktype_props = {
     "sort_order":           {"size": 1, "num": 0x1A},
     "name":                 {"size": 2, "num": 0x1B, "string": 0xDC},
     "maintenance_cost":     {"size": 2, "num": 0x1C},
+    "badges":               {"custom_function": lambda value: badge_list(0x1E, value)},
 }
 
 #
@@ -1587,6 +1648,7 @@ properties[0x11] = {
     "animation_info":     {"size": 2, "num": 0x0F, "value_function": animation_info},
     "animation_speed":    {"size": 1, "num": 0x10},
     "animation_triggers": {"size": 1, "num": 0x11},
+    "badges":             {"custom_function": lambda value: badge_list(0x12, value)},
 }
 
 #
@@ -1675,4 +1737,15 @@ properties[0x14] = {
     "heights":                   {"custom_function": lambda x: station_tile_list(x, 0x13, "Station height")},
     "blocked_pillars":           {"custom_function": lambda x: station_tile_list(x, 0x14, "Station blocked pillar")},
     "cost_multipliers":          {"custom_function": lambda x: byte_sequence_list(x, 0x15, "Cost multipliers", 2)},
+    "badges":                    {"custom_function": lambda value: badge_list(0x16, value)},
+}
+
+#
+# Feature 0x15 (Badges)
+#
+
+properties[0x15] = {
+    'label':                     {'custom_function': lambda x: string_property(0x08, x), "required": True},
+    'flags':                     {'size': 4, 'num': 0x09},
+    'name':                      {'num': -1, 'string': None},
 }
