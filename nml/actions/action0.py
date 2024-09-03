@@ -211,6 +211,7 @@ used_ids = [
     BlockAllocation(0, 62, "Roadtype"),
     BlockAllocation(0, 62, "Tramtype"),
     BlockAllocation(0, 0xFFFE, "RoadStop"),  # UINT16_MAX - 1
+    BlockAllocation(0, 64000, "Badge"),
 ]
 
 
@@ -780,10 +781,37 @@ class IDListProp(BaseAction0Property):
         return len(self.id_list) * 4 + 1
 
 
+class StringListProp(BaseAction0Property):
+    def __init__(self, prop_num, string_list):
+        self.prop_num = prop_num
+        self.string_list = string_list
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        for i, string_val in enumerate(self.string_list):
+            if i > 0 and i % 5 == 0:
+                file.newline()
+            file.print_string(string_val.value, True, True)
+        file.newline()
+
+    def get_size(self):
+        size = 1
+        for i, string_val in enumerate(self.string_list):
+            size += grfstrings.get_string_size(string_val.value, True, True)
+        return size
+
+
 def get_cargolist_action(cargo_list):
     action0 = Action0(0x08, 0)
     action0.prop_list.append(IDListProp(0x09, cargo_list))
     action0.num_ids = len(cargo_list)
+    return [action0]
+
+
+def get_badgelist_action(badge_list):
+    action0 = Action0(0x08, 0)
+    action0.prop_list.append(StringListProp(0x18, badge_list))
+    action0.num_ids = len(badge_list)
     return [action0]
 
 
