@@ -1,0 +1,72 @@
+grf {
+    grfid: "NML\42";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+badgetable {
+    "flag/GB",
+    "flag/US",
+    "power/steam",
+    "power/diesel",
+    "power/electric",
+}
+
+switch (FEAT_TRAINS, SELF, sw_can_attach_wagon, has_badge("power/electric")) {
+    1: return CB_RESULT_ATTACH_ALLOW;
+    return string(STR_NO_BADGE);
+}
+
+item (FEAT_TRAINS, default_train, 8) {
+    property {
+        badges: ["flag/GB", "power/steam"];
+    }
+    graphics {
+        can_attach_wagon: sw_can_attach_wagon;
+    }
+}
+
+item (FEAT_ROADVEHS, default_roadveh, 0) {
+    property {
+        badges: ["flag/US", "power/diesel"];
+    }
+}
+
+item (FEAT_BADGES, power) {
+    property {
+        label: "power";
+        name: string(STR_POWER);
+    }
+}
+
+template tmpl_truck(x) {
+    [ 96,56, 28,15,  -14, -8]
+}
+
+spriteset(sprite_steam, ZOOM_LEVEL_NORMAL, BIT_DEPTH_32BPP, "opengfx_generic_trams1.png") { tmpl_truck(0) }
+
+item (FEAT_BADGES, steam) {
+    property {
+        label: "power/steam";
+        name: string(STR_POWER_STEAM);
+    }
+    graphics {
+        default: sprite_steam;
+    }
+}
+
+item (FEAT_BADGES, diesel) {
+    property {
+        label: "power/diesel";
+        name: string(STR_POWER_DIESEL);
+    }
+}
+
+item (FEAT_BADGES, electric) {
+    property {
+        label: "power/electric";
+        name: string(STR_POWER_ELECTRIC);
+    }
+}
