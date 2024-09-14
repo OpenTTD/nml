@@ -298,7 +298,7 @@ varact2vars_stations = {
     **varact2vars_base_stations,
     # Vars 40, 41, 46, 47, 49 are implemented as 60+x vars,
     # except for the 'tile type' part which is always the same anyways
-    'tile_type'                : {'var': 0x40, 'start': 24, 'size': 4},
+    'tile_type'                : {'var': 0x40, 'start': 24, 'size': 8},
     'terrain_type'             : {'var': 0x42, 'start':  0, 'size': 8},
     'track_type'               : {'var': 0x42, 'start':  8, 'size': 8},
     'company_num'              : {'var': 0x43, 'start':  0, 'size': 8},
