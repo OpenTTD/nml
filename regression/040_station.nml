@@ -123,6 +123,18 @@ item (FEAT_STATIONS, basic_station, 255) {
             bitmask(STAT_TILE_NOWIRE),
             bitmask(STAT_TILE_PYLON, STAT_TILE_BLOCKED),
         ];
+        station_layouts: [
+            [
+                [0],
+            ],
+            [
+                [2],
+            ],
+            [
+                [4, 5],
+                [6, 7]
+            ],
+        ];
     }
     graphics {
         foundations: 0;
@@ -144,6 +156,7 @@ item (FEAT_STATIONS, basic_station_copied_layout, 256) {
         class    : "TEST";
         classname: string(STR_STATION_TEST_CLASS);
         name     : string(STR_STATION_BASIC2);
+        station_layouts: basic_station;
     }
     graphics {
         sprite_layouts: basic_station;

@@ -712,6 +712,66 @@ def cargo_bitmask(value):
     return BitMask(value.values, value.pos).reduce()
 
 
+class StationLayoutProp(BaseAction0Property):
+    def __init__(self, prop_num, data):
+        self.prop_num = prop_num
+        self.data = data
+
+    def write(self, file):
+        file.print_bytex(self.prop_num)
+        for (length, number), layout in self.data.items():
+            file.print_byte(length)
+            file.print_byte(number)
+            file.newline()
+            for platform in layout:
+                for type in platform:
+                    file.print_bytex(type)
+                file.newline()
+        file.print_byte(0)
+        file.print_byte(0)
+        file.newline()
+
+    def get_size(self):
+        total_len = 3  # Prop number + ending
+        for length, number in self.data:
+            total_len += length * number + 2
+        return total_len
+
+
+def station_layouts(value):
+    if isinstance(value, ConstantNumeric):
+        return [Action0Property(0x0F, value, 1 if value.value < 0xFF else 3)]
+    if not isinstance(value, Array) or len(value.values) == 0:
+        raise generic.ScriptError("station_layouts must be an array of layouts, or the ID of a station", value.pos)
+    layouts = {}
+    for layout in value.values:
+        if not isinstance(layout, Array) or len(layout.values) == 0:
+            raise generic.ScriptError("A station layout must be an array of platforms", layout.pos)
+        length = len(layout.values[0].values)
+        number = len(layout.values)
+        if (length, number) in layouts:
+            generic.print_warning(
+                generic.Warning.GENERIC, "Redefinition of layout {}x{}".format(length, number), layout.pos
+            )
+        layouts[(length, number)] = []
+        for platform in layout.values:
+            if not isinstance(platform, Array) or len(platform.values) == 0:
+                raise generic.ScriptError("A platform must be an array of tile types")
+            if len(platform.values) != length:
+                raise generic.ScriptError("All platforms in a station layout must have the same length", platform.pos)
+            for type in platform.values:
+                if type.reduce_constant().value % 2 != 0:
+                    generic.print_warning(
+                        generic.Warning.GENERIC,
+                        "Invalid tile {} in layout {}x{}".format(type, length, number),
+                        type.pos,
+                    )
+            layouts[(length, number)].append(
+                [nmlop.AND(type, 0xFE).reduce_constant().value for type in platform.values]
+            )
+    return [StationLayoutProp(0x0E, layouts)]
+
+
 def station_tile_flags(value):
     if not isinstance(value, Array) or len(value.values) % 2 != 0:
         raise generic.ScriptError("Flag list must be an array of even length", value.pos)
@@ -743,8 +803,8 @@ properties[0x04] = {
     # 0B (callback flags) is not set by user
     "disabled_platforms":    {"size": 1, "num": 0x0C, "value_function": station_platforms_length},
     "disabled_length":       {"size": 1, "num": 0x0D, "value_function": station_platforms_length},
-    # 0E (station layout) callback 24 should be enough
-    # 0F (copy station layout)
+    "station_layouts":       {"custom_function": station_layouts},  # = prop 0E
+    # 0F (copy station layout) is handled by station_layouts
     "cargo_threshold":       {"size": 2, "num": 0x10},
     "draw_pylon_tiles":      {"size": 1, "num": 0x11, "replaced_by": "tile_flags"},
     "cargo_random_triggers": {"size": 4, "num": 0x12, "value_function": cargo_bitmask},
@@ -759,7 +819,7 @@ properties[0x04] = {
     # 1B (minimum bridge height) JGR only
     "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
-    "tile_flags":            {"custom_function": station_tile_flags},
+    "tile_flags":            {"custom_function": station_tile_flags},  # = prop 1E
 }
 # fmt: on
 
