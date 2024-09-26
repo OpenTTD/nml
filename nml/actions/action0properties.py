@@ -832,7 +832,23 @@ properties[0x05] = {
     "graphic_flags": {"size": 1, "num": 0x09},
 }
 
-# TODO: Feature 0x06
+#
+# Feature 0x06 (Bridges)
+#
+properties[0x06] = {
+  # 0x08 - year availability (old way)
+  'min_length'              : { 'num': 0x09, 'size': 1 },
+  'max_length'              : { 'num': 0x0A, 'size': 1 },
+  # 0x0B - cost factor (old way)
+  'speed_limit'             : { 'num': 0x0C, 'size': 2, 'unit_type': 'speed', 'unit_conversion': (5000, 1397), 'adjust_value': lambda val, unit: ottd_display_speed(val, 1, unit)},
+  'sprite'                  : { 'num': 0x0D, 'size': 2 },
+  'flags'                   : { 'num': 0x0E, 'size': 1 },
+  'avail_year'              : { 'num': 0x0F, 'size': 4 },
+  'name'                    : { 'num': 0x10, 'size': 2, 'string': 0xDC },
+  'description_rail_bridge' : { 'num': 0x11, 'size': 2, 'string': 0xDC },
+  'description_road_bridge' : { 'num': 0x12, 'size': 2, 'string': 0xDC },
+  'cost_factor'             : { 'num': 0x13, 'size': 2 },
+}
 
 #
 # Feature 0x07 (Houses)
