@@ -36,9 +36,6 @@ spriteset(brewery_spriteset_ground) {
     tmpl_ground_tile( 10, 10, "groundtiles.png") //bare
     tmpl_ground_tile(150, 10, "groundtiles.png") //stones
     tmpl_ground_tile(220, 10, "groundtiles.png") //snowed
-    [] /* pad with empty sprites, as all spritesets have to have the same no. of sprites (=6) */
-    []
-    []
 }
 
 spriteset(brewery_spriteset_building) {

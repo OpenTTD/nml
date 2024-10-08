@@ -53,7 +53,7 @@ FF
 15 * 24 00 08 \b1 04 FF \wx0000
 16 "ROAD" "ELRD" "2YEL" "\00\00\00\00"
 
-16 * 6 01 01 \b10 FF \wx0008
+16 * 12 01 01 00 FF \wx0000 FF \wx000A FF \wx0008
 
 17 gfx/flatbed_truck_1_paper.png 8bpp 0 0 8 18 -3 -10 normal
 18 gfx/flatbed_truck_1_paper.png 8bpp 16 0 20 16 -14 -7 normal

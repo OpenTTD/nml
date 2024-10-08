@@ -20,7 +20,7 @@
 2 * 7 03 11 01 00 \b0
 \wx00FF 	// layout1;
 
-3 * 6 01 0F \b2 FF \wx0003
+3 * 12 01 0F 00 FF \wx0000 FF \wx0002 FF \wx0003
 
 4 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal
 5 * 1 00
@@ -80,7 +80,7 @@ F0 F1 F2 F3 F4 F5 00 00 00 00 00 00 00 00 00 FF
 \wx00FF \dx00000000 \dx00000000
 \wx00FF //
 
-12 * 6 01 11 \b2 FF \wx0003
+12 * 12 01 11 00 FF \wx0000 FF \wx0002 FF \wx0003
 
 13 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal
 14 * 1 00

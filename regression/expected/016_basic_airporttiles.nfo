@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 6 01 11 \b1 FF \wx0001
+0 * 12 01 11 00 FF \wx0000 FF \wx0001 FF \wx0001
 
 1 opengfx_trains_start.pcx 8bpp 142 112 8 22 -3 -10 normal
 
