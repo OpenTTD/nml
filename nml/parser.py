@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import ply.yacc as yacc
+from .ply import yacc
 
 from nml import expression, generic, nmlop, tokens, unit
 from nml.actions import actionD, real_sprite
@@ -59,24 +59,14 @@ class NMLParser:
     @type parser: L{ply.yacc}
     """
 
-    def __init__(self, rebuild=False, debug=False):
-        if debug:
-            try:
-                import os
-
-                os.remove(os.path.normpath(os.path.join(os.path.dirname(__file__), "generated", "parsetab.py")))
-            except FileNotFoundError:
-                # Tried to remove a non existing file
-                pass
+    def __init__(self, debug=False):
         self.lexer = tokens.NMLLexer()
-        self.lexer.build(rebuild or debug)
+        self.lexer.build()
         self.tokens = self.lexer.tokens
         self.parser = yacc.yacc(
             module=self,
             debug=debug,
-            optimize=not (rebuild or debug),
-            write_tables=not debug,
-            tabmodule="nml.generated.parsetab",
+            optimize=not debug,
         )
 
     def parse(self, text, input_filename):
