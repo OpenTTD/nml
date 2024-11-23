@@ -50,15 +50,22 @@ constant_numbers = {
     "CC_EXPRESS"      : 2,
     "CC_ARMOURED"     : 3,
     "CC_BULK"         : 4,
+    "CC_OPEN_BULK"    : 4,  # FRAX
     "CC_PIECE_GOODS"  : 5,
     "CC_LIQUID"       : 6,
+    "CC_LIQUID_BULK"  : 6,  # FRAX
     "CC_REFRIGERATED" : 7,
     "CC_HAZARDOUS"    : 8,
+    "CC_GAS_BULK"     : 8,  # FRAX
     "CC_COVERED"      : 9,
+    "CC_COVERED_BULK" : 9,  # FRAX
     "CC_OVERSIZED"    : 10,
+    "CC_FLATBED"      : 10,  # FRAX
     "CC_POWDERIZED"   : 11,
+    "CC_POWDER_BULK"  : 11,  # FRAX
     "CC_NON_POURABLE" : 12,
     "CC_NEO_BULK"     : 12,
+    "CC_WEIRD"        : 12,  # FRAX
     "CC_SPECIAL"      : 15,
     "NO_CARGO_CLASS"           : 0,
     "ALL_NORMAL_CARGO_CLASSES" : 0x1FFF,
