@@ -389,6 +389,29 @@ def zero_refit_mask(prop_num):
     return {"size": 4, "num": prop_num, "value_function": lambda value: ConstantNumeric(0)}
 
 
+def refittable_cargo_classes(prop_or_num, prop_and_num, refit_mask_num):
+    def prop_value(value, index):
+        if isinstance(value, ConstantNumeric):
+            return value if index == 0 else None
+        if isinstance(value, Array) and len(value.values) == 2 and isinstance(value.values[index], ConstantNumeric):
+            return value.values[index]
+        raise generic.ScriptError("refittable_cargo_classes must be a constant or an array of 2 constants")
+
+    def prop_test(value):
+        return value is not None
+
+    return [
+        {"size": 2, "num": prop_or_num, "value_function": lambda value: prop_value(value, 0)},
+        {
+            "size": 2,
+            "num": prop_and_num,
+            "value_function": lambda value: prop_value(value, 1),
+            "test_function": prop_test,
+        },
+        zero_refit_mask(refit_mask_num),
+    ]
+
+
 #
 # Feature 0x00 (Trains)
 #
@@ -440,7 +463,7 @@ properties[0x00] = {
     "bitmask_vehicle_info":           {"size": 1, "num": 0x25},
     "retire_early":                   {"size": 1, "num": 0x26},
     "misc_flags":                     {"size": 1, "num": 0x27},
-    "refittable_cargo_classes":       [{"size": 2, "num": 0x28}, zero_refit_mask(0x1D)],
+    "refittable_cargo_classes":       refittable_cargo_classes(0x28, 0x32, 0x1D),
     "non_refittable_cargo_classes":   [{"size": 2, "num": 0x29}, zero_refit_mask(0x1D)],
     "introduction_date":              {"size": 4, "num": 0x2A},
     "cargo_age_period":               {"size": 2, "num": 0x2B},
@@ -514,7 +537,7 @@ properties[0x01] = {
     "refit_cost":                   {"size": 1, "num": 0x1A},
     "retire_early":                 {"size": 1, "num": 0x1B},
     "misc_flags":                   {"size": 1, "num": 0x1C},
-    "refittable_cargo_classes":     [{"size": 2, "num": 0x1D}, zero_refit_mask(0x16)],
+    "refittable_cargo_classes":     refittable_cargo_classes(0x1D, 0x29, 0x16),
     "non_refittable_cargo_classes": [{"size": 2, "num": 0x1E}, zero_refit_mask(0x16)],
     "introduction_date":            {"size": 4, "num": 0x1F},
     # 20 (sort purchase list) is implemented elsewhere
@@ -604,7 +627,7 @@ properties[0x02] = {
     },
     "retire_early":                 {"size": 1, "num": 0x16},
     "misc_flags":                   {"size": 1, "num": 0x17},
-    "refittable_cargo_classes":     [{"size": 2, "num": 0x18}, zero_refit_mask(0x11)],
+    "refittable_cargo_classes":     refittable_cargo_classes(0x18, 0x25, 0x11),
     "non_refittable_cargo_classes": [{"size": 2, "num": 0x19}, zero_refit_mask(0x11)],
     "introduction_date":            {"size": 4, "num": 0x1A},
     # 1B (sort purchase list) is implemented elsewhere
@@ -668,7 +691,7 @@ properties[0x03] = {
     "refit_cost":                   {"size": 1, "num": 0x15},
     "retire_early":                 {"size": 1, "num": 0x16},
     "misc_flags":                   {"size": 1, "num": 0x17},
-    "refittable_cargo_classes":     [{"size": 2, "num": 0x18}, zero_refit_mask(0x13)],
+    "refittable_cargo_classes":     refittable_cargo_classes(0x18, 0x23, 0x13),
     "non_refittable_cargo_classes": [{"size": 2, "num": 0x19}, zero_refit_mask(0x13)],
     "introduction_date":            {"size": 4, "num": 0x1A},
     # 1B (sort purchase list) is implemented elsewhere
