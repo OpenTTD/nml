@@ -59,6 +59,8 @@ constant_numbers = {
     "CC_POWDERIZED"   : 11,
     "CC_NON_POURABLE" : 12,
     "CC_NEO_BULK"     : 12,
+    "CC_POTABLE"      : 13,
+    "CC_NON_POTABLE"  : 14,
     "CC_SPECIAL"      : 15,
     "NO_CARGO_CLASS"           : 0,
     "ALL_NORMAL_CARGO_CLASSES" : 0x1FFF,
