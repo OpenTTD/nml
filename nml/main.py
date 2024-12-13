@@ -90,6 +90,7 @@ def parse_cli(argv):
         allow_extra_zoom=True,
         allow_32bpp=True,
         disable_palette_validation=False,
+        list_unused_strings=False,
     )
     opt_parser.add_option("-d", "--debug", action="store_true", dest="debug", help="write the AST to stdout")
     opt_parser.add_option("-s", "--stack", action="store_true", dest="stack", help="Dump stack when an error occurs")
@@ -231,6 +232,9 @@ def parse_cli(argv):
         dest="disable_palette_validation",
         help="Disable palette validation for sprites",
     )
+    opt_parser.add_option(
+        "--list-unused-strings", action="store_true", dest="list_unused_strings", help="List unused strings"
+    )
 
     opts, args = opt_parser.parse_args(argv)
 
@@ -359,6 +363,9 @@ def main(argv):
     )
 
     input.close()
+
+    if opts.list_unused_strings:
+        grfstrings.list_unused_strings()
     sys.exit(ret)
 
 
