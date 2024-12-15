@@ -825,6 +825,8 @@ class Language:
     @type strings: C{dict} of
     """
 
+    used_strings = []
+
     def __init__(self, default):
         self.default = default
         self.langid = None
@@ -984,6 +986,9 @@ class Language:
         assert isinstance(string_id, str)
         assert string_id in self.strings
         assert lang_id == self.langid or self.langid == DEFAULT_LANGUAGE
+
+        if string_id not in Language.used_strings:
+            Language.used_strings.append(string_id)
 
         str_type = self.strings[string_id].get_type()
         parsed_string = ""
@@ -1291,3 +1296,10 @@ def read_lang_files(lang_dir, default_lang_file):
             continue
         parse_file(filename, False)
     langs.sort()
+
+
+def list_unused_strings():
+    for string in default_lang.strings:
+        if string in Language.used_strings:
+            continue
+        generic.print_warning(generic.Warning.GENERIC, 'String "{}" is unused'.format(string))
