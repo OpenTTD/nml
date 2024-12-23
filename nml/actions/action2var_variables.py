@@ -793,8 +793,8 @@ varact2vars_roadstop = {
 
     'has_road'              : {'var': 0x43, 'start':  0, 'size': 32, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
     'has_tram'              : {'var': 0x44, 'start':  0, 'size': 32, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
-    'road_type'             : {'var': 0x43, 'start':  8, 'size':  8}, # The roadtype of this tile
-    'tram_type'             : {'var': 0x44, 'start':  8, 'size':  8}, # The tramtype of this tile
+    'road_type'             : {'var': 0x43, 'start':  0, 'size':  8}, # The roadtype of this tile
+    'tram_type'             : {'var': 0x44, 'start':  0, 'size':  8}, # The tramtype of this tile
 
     'town_manhattan_dist'   : {'var': 0x45, 'start':  0, 'size': 16},
     'town_zone'             : {'var': 0x45, 'start': 16, 'size':  8},
