@@ -1277,6 +1277,9 @@ def parse_varaction2(switch_block):
             )
         )
 
+    if len(varaction2.ranges) > 255:
+        raise generic.ScriptError("Too many ranges.", varaction2.pos)
+
     # Handle default result
     if switch_block.body.default is not None:
         # there is a default value
