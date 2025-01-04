@@ -41,6 +41,19 @@ jobs:
         cache: 'pip'
         cache-dependency-path: setup.py
 
+    - name: Install dependencies (PyPy)
+      if: startsWith(matrix.python-version, 'pypy')
+      shell: bash
+      run: |
+        echo "::group::Update apt"
+        sudo apt-get update
+        echo "::endgroup::"
+
+        echo "::group::Install dependencies"
+        sudo apt-get install -y --no-install-recommends \
+          libjpeg-dev \
+          # EOF
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools
