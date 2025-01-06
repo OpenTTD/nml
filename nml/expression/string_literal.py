@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import generic
+from nml import generic, grfstrings
 
 from .base_expression import Expression, Type
 
@@ -37,7 +37,7 @@ class StringLiteral(Expression):
         return '"{}"'.format(self.value)
 
     def write(self, file, size):
-        assert len(self.value) == size
+        assert grfstrings.get_string_size(self.value, False, True) == size
         file.print_string(self.value, final_zero=False, force_ascii=True)
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):

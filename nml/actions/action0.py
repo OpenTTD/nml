@@ -611,13 +611,13 @@ def parse_property(prop_info, value_list, feature, id):
             if "string_literal" in prop_info and (
                 isinstance(value, expression.StringLiteral) or prop_info["string_literal"] != 4
             ):
-                # Parse non-string exprssions just like integers. User will have to take care of proper value.
+                # Parse non-string expressions just like integers. User will have to take care of proper value.
                 # This can be used to set a label (=string of length 4) to the value of a parameter.
                 if not isinstance(value, expression.StringLiteral):
                     raise generic.ScriptError(
                         "Value for property {:d} must be a string literal".format(prop_info["num"]), value.pos
                     )
-                if len(value.value) != prop_info["string_literal"]:
+                if grfstrings.get_string_size(value.value, False, True) != prop_info["string_literal"]:
                     raise generic.ScriptError(
                         "Value for property {:d} must be of length {:d}".format(
                             prop_info["num"], prop_info["string_literal"]
