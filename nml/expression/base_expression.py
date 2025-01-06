@@ -92,7 +92,7 @@ class Expression:
         @return: True if this expression can be calculated by advanced varaction2.
         """
         if raise_error:
-            raise generic.ScriptError("This expression is not supported in a switch-block", self.pos)
+            raise generic.ScriptError("This expression is not supported in a switch-block or produce-block", self.pos)
         return False
 
     def supported_by_actionD(self, raise_error):
