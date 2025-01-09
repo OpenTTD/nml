@@ -16,7 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import re
 import sys
 
-import ply.lex as lex
+from .ply import lex
 
 from nml import expression, generic
 
@@ -257,19 +257,11 @@ class NMLLexer:
         )
         sys.exit(1)
 
-    def build(self, rebuild=False):
+    def build(self):
         """
         Initial construction of the scanner.
         """
-        if rebuild:
-            try:
-                import os
-
-                os.remove(os.path.normpath(os.path.join(os.path.dirname(__file__), "generated", "lextab.py")))
-            except FileNotFoundError:
-                # Tried to remove a non existing file
-                pass
-        self.lexer = lex.lex(module=self, optimize=1, lextab="nml.generated.lextab")
+        self.lexer = lex.lex(module=self)
 
     def setup(self, text, fname):
         """
