@@ -15,12 +15,12 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 8 04 00 FF 01 \wxD000 "\80" 00
+2 * 52 08 09 "NML\13" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 9 04 00 FF \wx0001 \wxD000 "\80" 00
 
-4 * 26 04 00 FF 01 \wxDC00 "NML Test bulk wagon" 00
+4 * 27 04 00 FF \wx0001 \wxDC00 "NML Test bulk wagon" 00
 
-5 * 208 00 08 \b1 32 FF \wx0000
+5 * 208 00 08 \b1 \wx0032 \wx0000
 09 "WDPR" "SCRP" "CMNT" "WOOD" "LVST"
 "STEL" "VEHI" "BRCK" "WOOL" "BUBL"
 "TOYS" "FZDR" "FRUT" "FRVG" "FOOD"
@@ -32,10 +32,10 @@
 "MAIL" "BATT" "SWET" "RUBR" "FMSP"
 "ENSP" "MNSP" "FICR" "PLAS" "PLST"
 
-6 * 28 00 08 \b1 05 FF \wx0000
+6 * 28 00 08 \b1 \wx0005 \wx0000
 12 "RAIL" "ELRL" "MONO" "MGLV" "TRPD"
 
-7 * 6 01 00 \b8 FF \wx0004
+7 * 5 01 00 \b8 \wx0004
 
 8 temperate_railwagons.png 8bpp 0 25 8 24 -3 -12 normal
 9 temperate_railwagons.png 8bpp 16 25 22 17 -14 -9 normal
@@ -78,67 +78,67 @@
 39 temperate_railwagons.png 8bpp 96 275 22 17 -6 -9 normal
 
 // Name: bulk_wagon_coal_default_group - feature 00
-40 * 13 02 00 FF \b2 \b2
+40 * 14 02 00 \wx7FFF \b2 \b2
 \w0 \w1
 \w0 \w1
 
 // Name: bulk_wagon_coal_arctic_group - feature 00
-41 * 13 02 00 FE \b2 \b2
+41 * 14 02 00 \wx7FFE \b2 \b2
 \w2 \w3
 \w2 \w3
 
 // Name: bulk_wagon_coal2_group - feature 00
-42 * 13 02 00 FD \b2 \b2
+42 * 14 02 00 \wx7FFD \b2 \b2
 \w4 \w5
 \w4 \w5
 
 // Name: bulk_wagon_grain_group - feature 00
-43 * 13 02 00 FC \b2 \b2
+43 * 14 02 00 \wx7FFC \b2 \b2
 \w6 \w7
 \w6 \w7
 
 // Name: bulk_wagon_coal_default_switch
-44 * 15 02 00 FD 80 02 \b0 04
-\wx00FF \wx00FF \wx00FF // (2/3) -> (3/4): bulk_wagon_coal_default_group;
-\wx00FD // (1/3) -> (1/4): bulk_wagon_coal2_group;
+44 * 17 02 00 \wx7FFD 80 02 \b0 \wx0004
+\wx7FFF \wx7FFF \wx7FFF // (2/3) -> (3/4): bulk_wagon_coal_default_group;
+\wx7FFD // (1/3) -> (1/4): bulk_wagon_coal2_group;
 
 // param[127] = (param[131] & 255)
 45 * 9 0D 7F \D& 83 FF \dx000000FF
 
-46 * 7 06
-7F 04 FF \wx0006
+46 * 6 06
+7F 04 \wx0007
 FF
 
 // Name: bulk_wagon_coal_climate_switch
-47 * 23 02 00 FD 89
+47 * 25 02 00 \wx7FFD 89
 1A 00 \dx00000000 	// param[127]
-\b1
-\wx00FE \dx00000001 \dx00000001 	// 1 .. 1: bulk_wagon_coal_arctic_group;
-\wx00FD // default: bulk_wagon_coal_default_switch;
+\w1
+\wx7FFE \dx00000001 \dx00000001 	// 1 .. 1: bulk_wagon_coal_arctic_group;
+\wx7FFD // default: bulk_wagon_coal_default_switch;
 
 // Name: bulk_wagon_graphics_switch
-48 * 23 02 00 FC 89
+48 * 25 02 00 \wx7FFC 89
 47 00 \dx000000FF
-\b1
-\wx00FD \dx00000013 \dx00000013 	// 19 .. 19: bulk_wagon_coal_climate_switch;
-\wx00FC // default: bulk_wagon_grain_group;
+\w1
+\wx7FFD \dx00000013 \dx00000013 	// 19 .. 19: bulk_wagon_coal_climate_switch;
+\wx7FFC // default: bulk_wagon_grain_group;
 
 // Name: @CB_FAILED_REAL00
-49 * 9 02 00 FD \b1 \b1
+49 * 10 02 00 \wx7FFD \b1 \b1
 \w0
 \w0
 
 // Name: @CB_FAILED00
-50 * 23 02 00 FD 89
+50 * 25 02 00 \wx7FFD 89
 0C 00 \dx0000FFFF
-\b1
+\w1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FD // Non-graphics callback, return graphics result
+\wx7FFD // Non-graphics callback, return graphics result
 
 // Name: bulk_wagon_cb_capacity_switch
-51 * 83 02 00 FE 89
+51 * 85 02 00 \wx7FFE 89
 47 00 \dx000000FF
-\b7
+\w7
 \wx8019 \dx0000002F \dx0000002F 	// 47 .. 47: return 25;
 \wx8014 \dx0000000C \dx0000000C 	// 12 .. 12: return 20;
 \wx8014 \dx0000000D \dx0000000D 	// 13 .. 13: return 20;
@@ -146,24 +146,24 @@ FF
 \wx8019 \dx0000001B \dx0000001B 	// 27 .. 27: return 25;
 \wx8014 \dx0000001A \dx0000001A 	// 26 .. 26: return 20;
 \wx8019 \dx00000020 \dx00000020 	// 32 .. 32: return 25;
-\wx00FD // No default specified -> fail callback
+\wx7FFD // No default specified -> fail callback
 
 // Name: bulk_wagon_cb_weight_switch
-52 * 53 02 00 FF 89
+52 * 55 02 00 \wx7FFF 89
 47 00 \dx000000FF
-\b4
+\w4
 \wx8012 \dx00000013 \dx00000013 	// 19 .. 19: return 18;
 \wx8012 \dx0000000C \dx0000000C 	// 12 .. 12: return 18;
 \wx8012 \dx0000000D \dx0000000D 	// 13 .. 13: return 18;
 \wx8012 \dx0000001A \dx0000001A 	// 26 .. 26: return 18;
-\wx00FD // No default specified -> fail callback
+\wx7FFD // No default specified -> fail callback
 
 // Name: bulk_wagon_cb_name_switch
-53 * 30 02 00 FD 89
+53 * 32 02 00 \wx7FFD 89
 1A 20 \dx0000DC00
 \2sto 1A 00 \dx00000100
-\b1
-\wx00FD \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\w1
+\wx7FFD \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx8000 // default: return string(STR_JUST_STRING);
 
 // param[125] = (param[1] * 5000)
@@ -202,14 +202,14 @@ FF
 // param[124] = (param[123] / 2211)
 65 * 9 0D 7C \D/ 7B FF \dx000008A3
 
-66 * 22 06
-7F 02 FF \wx000B
-7E 02 FF \wx000E
-7D 02 FF \wx0011
-7C 02 FF \wx0014
+66 * 18 06
+7F 02 \wx000B
+7E 02 \wx000E
+7D 02 \wx0011
+7C 02 \wx0014
 FF
 
-67 * 22 00 00 \b5 01 FF \wx0074
+67 * 22 00 00 \b5 \wx0001 \wx0074
 09 \wx0024
 09 \wx0000
 09 \wx0000
@@ -222,21 +222,21 @@ FF
 // param[126] = (param[1] << -8)
 69 * 9 0D 7E \D<< 01 FF \dxFFFFFFF8
 
-70 * 12 06
-7F 01 FF \wx004D
-7E 01 FF \wx004F
+70 * 10 06
+7F 01 \wx0054
+7E 01 \wx0056
 FF
 
-71 * 82 00 00 \b26 01 FF \wx0074
+71 * 89 00 00 \b26 \wx0001 \wx0074
 06 0F
 28 \wx0010
 1D \dx00000000
 29 \wx01CB
 1D \dx00000000
-2C \b4
-00 01 0C 0D
+2C \w4
+\wx0000 \wx0001 \wx000C \wx000D
 1D \dx00000000
-15 13
+15 \wx0013
 12 FD
 2A \dx000A7A40
 04 FF
@@ -248,7 +248,7 @@ FF
 0D 05
 09 \wx0000
 1C 28
-05 00
+05 \wx0000
 0B \wx0000
 0E \dx00004C30
 14 1E
@@ -256,45 +256,45 @@ FF
 24 00
 25 00
 
-72 * 27 04 00 7F 01 FF \wx0074 "NML Test bulk wagon" 00
+72 * 27 04 00 7F \wx0001 \wx0074 "NML Test bulk wagon" 00
 
-73 * 11 00 00 \b2 01 FF \wx0074
+73 * 11 00 00 \b2 \wx0001 \wx0074
 1E 08
 31 01
 
 // Name: @action3_0
-74 * 33 02 00 FF 89
+74 * 35 02 00 \wx7FFF 89
 10 00 \dx000000FF
-\b2
-\wx00FE \dx00000014 \dx00000014 	// bulk_wagon_cb_capacity_switch;
-\wx00FF \dx00000016 \dx00000016 	// bulk_wagon_cb_weight_switch;
-\wx00FC // bulk_wagon_graphics_switch;
+\w2
+\wx7FFE \dx00000014 \dx00000014 	// bulk_wagon_cb_capacity_switch;
+\wx7FFF \dx00000016 \dx00000016 	// bulk_wagon_cb_weight_switch;
+\wx7FFC // bulk_wagon_graphics_switch;
 
 // Name: @action3_1
-75 * 33 02 00 FB 89
+75 * 35 02 00 \wx7FFB 89
 10 00 \dx000000FF
-\b2
+\w2
 \wx801E \dx00000014 \dx00000014 	// return 30;
 \wx8019 \dx00000016 \dx00000016 	// return 25;
-\wx00FC // bulk_wagon_graphics_switch;
+\wx7FFC // bulk_wagon_graphics_switch;
 
 // Name: @action3_2
-76 * 33 02 00 FF 89
+76 * 35 02 00 \wx7FFF 89
 0C 00 \dx0000FFFF
-\b2
-\wx00FE \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch;
-\wx00FF \dx00000036 \dx00000036 	// @action3_0;
-\wx00FC // bulk_wagon_graphics_switch;
+\w2
+\wx7FFE \dx00000015 \dx00000015 	// bulk_wagon_cb_capacity_switch;
+\wx7FFF \dx00000036 \dx00000036 	// @action3_0;
+\wx7FFC // bulk_wagon_graphics_switch;
 
 // Name: @action3_3
-77 * 33 02 00 FC 89
+77 * 35 02 00 \wx7FFC 89
 0C 00 \dx0000FFFF
-\b2
-\wx00FB \dx00000036 \dx00000036 	// @action3_1;
-\wx00FD \dx00000161 \dx00000161 	// bulk_wagon_cb_name_switch;
-\wx00FC // bulk_wagon_graphics_switch;
+\w2
+\wx7FFB \dx00000036 \dx00000036 	// @action3_1;
+\wx7FFD \dx00000161 \dx00000161 	// bulk_wagon_cb_name_switch;
+\wx7FFC // bulk_wagon_graphics_switch;
 
-78 * 12 03 00 01 FF \wx0074 \b1
-FF \wx00FC 	// @action3_3;
-\wx00FF 	// @action3_2;
+78 * 14 03 00 \wx0001 \wx0074 \w1
+\wx00FF \wx7FFC 	// @action3_3;
+\wx7FFF 	// @action3_2;
 

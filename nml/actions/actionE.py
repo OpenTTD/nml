@@ -21,10 +21,10 @@ class ActionE(base_action.BaseAction):
         self.grfid_list = grfid_list
 
     def write(self, file):
-        size = 2 + 4 * len(self.grfid_list)
+        size = 3 + 4 * len(self.grfid_list)
         file.start_sprite(size)
         file.print_bytex(0x0E)
-        file.print_byte(len(self.grfid_list))
+        file.print_word(len(self.grfid_list))
         for grfid in self.grfid_list:
             file.newline()
             file.print_dwordx(grfid)

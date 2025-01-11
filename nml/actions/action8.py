@@ -30,7 +30,7 @@ class Action8(base_action.BaseAction):
         file.start_sprite(size)
         file.print_bytex(8)
         # Write the grf version
-        file.print_bytex(8)
+        file.print_bytex(9)
         file.print_string(self.grfid.value, False, True)
         file.print_string(name)
         file.print_string(desc)

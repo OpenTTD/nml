@@ -192,15 +192,12 @@ class SpriteOutputBase(OutputBase):
         @param value: Value to output.
         @type  value: C{int}
 
-        @param size: Size of the output (1..4), 3 means extended byte.
+        @param size: Size of the output (1, 2, 4).
         @type  size: C{int}
         """
         if size == 1:
             self.print_bytex(value)
         elif size == 2:
-            self.print_wordx(value)
-        elif size == 3:
-            self.print_bytex(0xFF)
             self.print_wordx(value)
         elif size == 4:
             self.print_dwordx(value)

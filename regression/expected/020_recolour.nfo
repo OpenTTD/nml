@@ -15,15 +15,15 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\20" "NML regression test" 00 "A test newgrf testing NML" 00
+2 * 52 08 09 "NML\20" "NML regression test" 00 "A test newgrf testing NML" 00
 // param[3] = param[\DR]
 3 * 9 0D 03 \D= \DR FE \dx000308FF
 
-4 * 7 06
-03 02 FF \wx0003
+4 * 6 06
+03 02 \wx0005
 FF
 
-5 * 5 0A \b1 \b3 \w0
+5 * 7 0A \w1 \w3 \w0
 
 6 * 257 00
 00 00 00 00 00 00 00 00 00 00 0A 0B 0C 0D 0E 0F
@@ -77,7 +77,7 @@ D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 DA DB DC DD DE DF
 E0 E1 E2 E3 E4 E5 E6 E7 E8 E9 EA EB EC ED EE EF
 F0 F1 F2 F3 F4 F5 00 00 00 00 00 00 00 00 00 FF
 
-9 * 6 01 01 \b1 FF \wx0008
+9 * 5 01 01 \b1 \wx0008
 
 10 opengfx_generic_trams1.pcx 8bpp 48 56 8 18 -3 -10 normal
 11 opengfx_generic_trams1.pcx 8bpp 64 56 20 19 -14 -5 normal
@@ -89,10 +89,10 @@ F0 F1 F2 F3 F4 F5 00 00 00 00 00 00 00 00 00 FF
 17 opengfx_generic_trams1.pcx 8bpp 272 56 20 19 -6 -7 normal
 
 // Name: foster_express_group - feature 01
-18 * 9 02 01 FF \b1 \b1
+18 * 10 02 01 \wx7FFF \b1 \b1
 \w0
 \w0
 
-19 * 9 03 01 01 FF \wx0058 \b0
-\wx00FF 	// foster_express_group;
+19 * 10 03 01 \wx0001 \wx0058 \w0
+\wx7FFF 	// foster_express_group;
 

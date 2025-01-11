@@ -30,12 +30,12 @@ class ActionA(base_action.BaseAction):
 
     def write(self, file):
         # <Sprite-number> * <Length> 0A <num-sets> [<num-sprites> <first-sprite>]+
-        size = 2 + 3 * len(self.sets)
+        size = 3 + 4 * len(self.sets)
         file.start_sprite(size)
         file.print_bytex(0x0A)
-        file.print_byte(len(self.sets))
+        file.print_word(len(self.sets))
         for num, first in self.sets:
-            file.print_byte(num)
+            file.print_word(num)
             file.print_word(first)
         file.newline()
         file.end_sprite()
@@ -55,13 +55,13 @@ def parse_actionA(replaces):
     real_sprite_list = real_sprite.parse_sprite_data(replaces)
     block_list = []
     total_sprites = len(real_sprite_list)
-    offset = 2  # Skip 0A and <num-sets>
+    offset = 3  # Skip 0A and <num-sets>
     sprite_offset = 0  # Number of sprites already covered by previous [<num-sprites> <first-sprite>]-pairs
 
     while total_sprites > 0:
-        this_block = min(total_sprites, 255)  # number of sprites in this block
+        this_block = min(total_sprites, 65535)  # number of sprites in this block
         total_sprites -= this_block
-        offset += 1  # Skip <num-sprites>
+        offset += 2  # Skip <num-sprites>
 
         first_sprite = replaces.start_id  # number of first sprite
         if sprite_offset != 0:

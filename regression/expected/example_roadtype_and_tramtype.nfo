@@ -15,15 +15,15 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 245 08 08 "NML\04" "NML Example NewGRF: Roadtype and Tramtype" 00 "\8ENML Example NewGRF: Roadtype and Tramtype\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89Irwe, \98coding by \89andythenorth." 00
-3 * 627 04 12 FF 12 \wxDC00 "(Name 0x1B) Red Electric Road" 00 "(Toolbar Caption 0x09) Red Electric Road" 00 "(Menu Text 0x0A) Red Electric Road" 00 "(Build Window Caption 0x0B) Red Electric Road" 00 "(Autoreplace Text 0x0C) Red Electric Road" 00 "(New Engine Text 0x0D) red Electric Road" 00 "(Name 0x1B) Blue Road" 00 "(Toolbar Caption 0x09) Blue Road" 00 "(Menu Text 0x0A) Blue Road" 00 "(Build Window Caption 0x0B) Blue Road" 00 "(Autoreplace Text 0x0C) Blue Road" 00 "(New Engine Text 0x0D) Blue Road" 00 "(Name 0x1B) Yellow Road" 00 "(Toolbar Caption 0x09) Yellow Road" 00 "(Menu Text 0x0A) Yellow Road" 00 "(Build Window Caption 0x0B) Yellow Road" 00 "(Autoreplace Text 0x0C) Yellow Road" 00 "(New Engine Text 0x0D) Yellow Road" 00
+2 * 245 08 09 "NML\04" "NML Example NewGRF: Roadtype and Tramtype" 00 "\8ENML Example NewGRF: Roadtype and Tramtype\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89Irwe, \98coding by \89andythenorth." 00
+3 * 628 04 12 FF \wx0012 \wxDC00 "(Name 0x1B) Red Electric Road" 00 "(Toolbar Caption 0x09) Red Electric Road" 00 "(Menu Text 0x0A) Red Electric Road" 00 "(Build Window Caption 0x0B) Red Electric Road" 00 "(Autoreplace Text 0x0C) Red Electric Road" 00 "(New Engine Text 0x0D) red Electric Road" 00 "(Name 0x1B) Blue Road" 00 "(Toolbar Caption 0x09) Blue Road" 00 "(Menu Text 0x0A) Blue Road" 00 "(Build Window Caption 0x0B) Blue Road" 00 "(Autoreplace Text 0x0C) Blue Road" 00 "(New Engine Text 0x0D) Blue Road" 00 "(Name 0x1B) Yellow Road" 00 "(Toolbar Caption 0x09) Yellow Road" 00 "(Menu Text 0x0A) Yellow Road" 00 "(Build Window Caption 0x0B) Yellow Road" 00 "(Autoreplace Text 0x0C) Yellow Road" 00 "(New Engine Text 0x0D) Yellow Road" 00
 
-4 * 199 04 13 FF 06 \wxDC12 "(Name 0x1B) Green Tram" 00 "(Toolbar Caption 0x09) Green Tram" 00 "(Menu Text 0x0A) Green Tram" 00 "(Build Window Caption 0x0B) Green Tram" 00 "(Autoreplace Text 0x0C) Green Tram" 00 "(New Engine Text 0x0D) Green Tram" 00
+4 * 200 04 13 FF \wx0006 \wxDC12 "(Name 0x1B) Green Tram" 00 "(Toolbar Caption 0x09) Green Tram" 00 "(Menu Text 0x0A) Green Tram" 00 "(Build Window Caption 0x0B) Green Tram" 00 "(Autoreplace Text 0x0C) Green Tram" 00 "(New Engine Text 0x0D) Green Tram" 00
 
-5 * 52 00 12 \b10 01 FF \wx0005
+5 * 53 00 12 \b10 \wx0001 \wx0005
 1B \wxDC00
 08 "REDR"
-0F \b4 "BLUE" "REDR" "ROAD" "ELRD"
+0F \w4 "BLUE" "REDR" "ROAD" "ELRD"
 09 \wxDC01
 0A \wxDC02
 0B \wxDC03
@@ -32,7 +32,7 @@
 10 01
 1A 65
 
-6 * 6 01 12 \b2 FF \wx0013
+6 * 5 01 12 \b2 \wx0013
 
 7 gfx/roads_red.png 8bpp 0 0 64 31 -31 0 normal
 8 gfx/roads_red.png 8bpp 75 0 64 31 -31 0 normal
@@ -75,16 +75,16 @@
 44 gfx/roads_underlay.png 8bpp 225 80 64 31 -31 0 normal
 
 // Name: road_overlays_red - feature 12
-45 * 7 02 12 FF \b1 \b0
+45 * 8 02 12 \wx7FFF \b1 \b0
 \w0
 
 
 // Name: track_underlays - feature 12
-46 * 7 02 12 FE \b1 \b0
+46 * 8 02 12 \wx7FFE \b1 \b0
 \w1
 
 
-47 * 12 01 12 00 FF \wx0002 FF \wx0001 FF \wx0006
+47 * 9 01 12 00 \wx0002 \wx0001 \wx0006
 
 48 gfx/depot_normal.png 8bpp 200 10 16 8 17 11 normal
 49 gfx/depot_normal.png 8bpp 118 8 64 47 -1 -31 normal
@@ -94,11 +94,11 @@
 53 gfx/depot_normal.png 8bpp 118 63 64 47 -1 -31 normal
 
 // Name: depot_normal_road - feature 12
-54 * 7 02 12 FD \b1 \b0
+54 * 8 02 12 \wx7FFD \b1 \b0
 \w2
 
 
-55 * 12 01 12 00 FF \wx0003 FF \wx0001 FF \wx000B
+55 * 9 01 12 00 \wx0003 \wx0001 \wx000B
 
 56 gfx/roads_red.png 8bpp 0 0 64 31 -31 0 normal
 57 gfx/roads_red.png 8bpp 75 0 64 31 -31 0 normal
@@ -113,11 +113,11 @@
 66 gfx/roads_red.png 8bpp 450 0 64 31 -31 0 normal
 
 // Name: bridge_underlay - feature 12
-67 * 7 02 12 FC \b1 \b0
+67 * 8 02 12 \wx7FFC \b1 \b0
 \w3
 
 
-68 * 12 01 12 00 FF \wx0004 FF \wx0001 FF \wx0004
+68 * 9 01 12 00 \wx0004 \wx0001 \wx0004
 
 69 gfx/roads_red.png 8bpp 0 120 64 31 -31 0 normal
 70 gfx/roads_red.png 8bpp 75 120 64 31 -31 0 normal
@@ -125,11 +125,11 @@
 72 gfx/roads_red.png 8bpp 225 120 64 31 -31 0 normal
 
 // Name: roadstop_underlay_red - feature 12
-73 * 7 02 12 FB \b1 \b0
+73 * 8 02 12 \wx7FFB \b1 \b0
 \w4
 
 
-74 * 12 01 12 00 FF \wx0005 FF \wx0001 FF \wx0012
+74 * 9 01 12 00 \wx0005 \wx0001 \wx0012
 
 75 gfx/direction_markings.png 8bpp 34 8 24 16 -10 -9 normal
 76 gfx/direction_markings.png 8bpp 66 8 24 16 -13 -7 normal
@@ -151,23 +151,23 @@
 92 gfx/direction_markings.png 8bpp 194 72 24 16 -12 -8 normal
 
 // Name: st_direction_markings - feature 12
-93 * 7 02 12 FA \b1 \b0
+93 * 8 02 12 \wx7FFA \b1 \b0
 \w5
 
 
-94 * 25 03 12 01 05 \b6
-01 \wx00FF 	// road_overlays_red;
-02 \wx00FE 	// track_underlays;
-06 \wx00FC 	// bridge_underlay;
-08 \wx00FD 	// depot_normal_road;
-0A \wx00FB 	// roadstop_underlay_red;
-0B \wx00FA 	// st_direction_markings;
+94 * 34 03 12 \wx0001 \wx0005 \w6
+\wx0001 \wx7FFF 	// road_overlays_red;
+\wx0002 \wx7FFE 	// track_underlays;
+\wx0006 \wx7FFC 	// bridge_underlay;
+\wx0008 \wx7FFD 	// depot_normal_road;
+\wx000A \wx7FFB 	// roadstop_underlay_red;
+\wx000B \wx7FFA 	// st_direction_markings;
 \wx0000
 
-95 * 40 00 12 \b10 01 FF \wx0006
+95 * 41 00 12 \b10 \wx0001 \wx0006
 1B \wxDC06
 08 "BLUE"
-0F \b1 "ROAD"
+0F \w1 "ROAD"
 09 \wxDC07
 0A \wxDC08
 0B \wxDC09
@@ -176,7 +176,7 @@
 10 00
 1A 63
 
-96 * 12 01 12 00 FF \wx0006 FF \wx0001 FF \wx0013
+96 * 9 01 12 00 \wx0006 \wx0001 \wx0013
 
 97 gfx/roads_blue.png 8bpp 0 0 64 31 -31 0 normal
 98 gfx/roads_blue.png 8bpp 75 0 64 31 -31 0 normal
@@ -199,11 +199,11 @@
 115 gfx/roads_blue.png 8bpp 225 80 64 31 -31 0 normal
 
 // Name: road_overlays_blue - feature 12
-116 * 7 02 12 FB \b1 \b0
+116 * 8 02 12 \wx7FFB \b1 \b0
 \w6
 
 
-117 * 12 01 12 00 FF \wx0007 FF \wx0001 FF \wx0004
+117 * 9 01 12 00 \wx0007 \wx0001 \wx0004
 
 118 gfx/roads_blue.png 8bpp 0 120 64 31 -31 0 normal
 119 gfx/roads_blue.png 8bpp 75 120 64 31 -31 0 normal
@@ -211,23 +211,23 @@
 121 gfx/roads_blue.png 8bpp 225 120 64 31 -31 0 normal
 
 // Name: roadstop_underlay_blue - feature 12
-122 * 7 02 12 FF \b1 \b0
+122 * 8 02 12 \wx7FFF \b1 \b0
 \w7
 
 
-123 * 25 03 12 01 06 \b6
-01 \wx00FB 	// road_overlays_blue;
-02 \wx00FE 	// track_underlays;
-06 \wx00FC 	// bridge_underlay;
-08 \wx00FD 	// depot_normal_road;
-0A \wx00FF 	// roadstop_underlay_blue;
-0B \wx00FA 	// st_direction_markings;
+123 * 34 03 12 \wx0001 \wx0006 \w6
+\wx0001 \wx7FFB 	// road_overlays_blue;
+\wx0002 \wx7FFE 	// track_underlays;
+\wx0006 \wx7FFC 	// bridge_underlay;
+\wx0008 \wx7FFD 	// depot_normal_road;
+\wx000A \wx7FFF 	// roadstop_underlay_blue;
+\wx000B \wx7FFA 	// st_direction_markings;
 \wx0000
 
-124 * 40 00 12 \b10 01 FF \wx0007
+124 * 41 00 12 \b10 \wx0001 \wx0007
 1B \wxDC0C
 08 "2YEL"
-0F \b1 "ROAD"
+0F \w1 "ROAD"
 09 \wxDC0D
 0A \wxDC0E
 0B \wxDC0F
@@ -236,7 +236,7 @@
 10 00
 1A 64
 
-125 * 12 01 12 00 FF \wx0008 FF \wx0001 FF \wx0013
+125 * 9 01 12 00 \wx0008 \wx0001 \wx0013
 
 126 gfx/roads_yellow.png 8bpp 0 0 64 31 -31 0 normal
 127 gfx/roads_yellow.png 8bpp 75 0 64 31 -31 0 normal
@@ -259,11 +259,11 @@
 144 gfx/roads_yellow.png 8bpp 225 80 64 31 -31 0 normal
 
 // Name: road_overlays_yellow - feature 12
-145 * 7 02 12 FF \b1 \b0
+145 * 8 02 12 \wx7FFF \b1 \b0
 \w8
 
 
-146 * 12 01 12 00 FF \wx0009 FF \wx0001 FF \wx0004
+146 * 9 01 12 00 \wx0009 \wx0001 \wx0004
 
 147 gfx/roads_yellow.png 8bpp 0 120 64 31 -31 0 normal
 148 gfx/roads_yellow.png 8bpp 75 120 64 31 -31 0 normal
@@ -271,23 +271,23 @@
 150 gfx/roads_yellow.png 8bpp 225 120 64 31 -31 0 normal
 
 // Name: roadstop_underlay_yellow - feature 12
-151 * 7 02 12 FB \b1 \b0
+151 * 8 02 12 \wx7FFB \b1 \b0
 \w9
 
 
-152 * 25 03 12 01 07 \b6
-01 \wx00FF 	// road_overlays_yellow;
-02 \wx00FE 	// track_underlays;
-06 \wx00FC 	// bridge_underlay;
-08 \wx00FD 	// depot_normal_road;
-0A \wx00FB 	// roadstop_underlay_yellow;
-0B \wx00FA 	// st_direction_markings;
+152 * 34 03 12 \wx0001 \wx0007 \w6
+\wx0001 \wx7FFF 	// road_overlays_yellow;
+\wx0002 \wx7FFE 	// track_underlays;
+\wx0006 \wx7FFC 	// bridge_underlay;
+\wx0008 \wx7FFD 	// depot_normal_road;
+\wx000A \wx7FFB 	// roadstop_underlay_yellow;
+\wx000B \wx7FFA 	// st_direction_markings;
 \wx0000
 
-153 * 38 00 13 \b9 01 FF \wx0009
+153 * 39 00 13 \b9 \wx0001 \wx0009
 1B \wxDC12
 08 "GRTR"
-0F \b1 "TRAM"
+0F \w1 "TRAM"
 09 \wxDC13
 0A \wxDC14
 0B \wxDC15
@@ -295,7 +295,7 @@
 0D \wxDC17
 10 00
 
-154 * 6 01 13 \b2 FF \wx0013
+154 * 5 01 13 \b2 \wx0013
 
 155 gfx/tram_green.png 8bpp 0 0 64 31 -31 0 normal
 156 gfx/tram_green.png 8bpp 75 0 64 31 -31 0 normal
@@ -338,16 +338,16 @@
 192 gfx/roads_underlay.png 8bpp 225 80 64 31 -31 0 normal
 
 // Name: tram_overlays_green - feature 13
-193 * 7 02 13 FA \b1 \b0
+193 * 8 02 13 \wx7FFA \b1 \b0
 \w0
 
 
 // Name: track_underlays - feature 13
-194 * 7 02 13 FB \b1 \b0
+194 * 8 02 13 \wx7FFB \b1 \b0
 \w1
 
 
-195 * 12 01 13 00 FF \wx0002 FF \wx0001 FF \wx0006
+195 * 9 01 13 00 \wx0002 \wx0001 \wx0006
 
 196 gfx/depot_normal.png 8bpp 200 10 16 8 17 11 normal
 197 gfx/depot_normal.png 8bpp 118 8 64 47 -1 -31 normal
@@ -357,11 +357,11 @@
 201 gfx/depot_normal.png 8bpp 118 63 64 47 -1 -31 normal
 
 // Name: depot_normal_road - feature 13
-202 * 7 02 13 FD \b1 \b0
+202 * 8 02 13 \wx7FFD \b1 \b0
 \w2
 
 
-203 * 12 01 13 00 FF \wx0003 FF \wx0001 FF \wx000B
+203 * 9 01 13 00 \wx0003 \wx0001 \wx000B
 
 204 gfx/roads_red.png 8bpp 0 0 64 31 -31 0 normal
 205 gfx/roads_red.png 8bpp 75 0 64 31 -31 0 normal
@@ -376,14 +376,14 @@
 214 gfx/roads_red.png 8bpp 450 0 64 31 -31 0 normal
 
 // Name: bridge_underlay - feature 13
-215 * 7 02 13 FC \b1 \b0
+215 * 8 02 13 \wx7FFC \b1 \b0
 \w3
 
 
-216 * 19 03 13 01 09 \b4
-01 \wx00FA 	// tram_overlays_green;
-02 \wx00FB 	// track_underlays;
-06 \wx00FC 	// bridge_underlay;
-08 \wx00FD 	// depot_normal_road;
+216 * 26 03 13 \wx0001 \wx0009 \w4
+\wx0001 \wx7FFA 	// tram_overlays_green;
+\wx0002 \wx7FFB 	// track_underlays;
+\wx0006 \wx7FFC 	// bridge_underlay;
+\wx0008 \wx7FFD 	// depot_normal_road;
 \wx0000
 

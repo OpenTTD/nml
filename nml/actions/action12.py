@@ -24,15 +24,15 @@ class Action12(base_action.BaseAction):
 
     def write(self, file):
         # <sprite-number> * <length> 12 <num-def> (<font> <num-char> <base-char>){n}
-        size = 2 + 4 * len(self.sets)
+        size = 3 + 7 * len(self.sets)
         file.start_sprite(size)
         file.print_bytex(0x12)
-        file.print_byte(len(self.sets))
+        file.print_word(len(self.sets))
         file.newline()
         for font_size, num_char, base_char in self.sets:
             font_size.write(file, 1)
-            file.print_byte(num_char)
-            file.print_word(base_char)
+            file.print_word(num_char)
+            file.print_dword(base_char)
             file.newline()
         file.end_sprite()
 
@@ -58,17 +58,17 @@ def parse_action12(font_glyphs):
         raise generic.ScriptError(
             "Invalid value for parameter 'font_size' in font_glyph, valid values are 0, 1, 2", font_size.pos
         )
-    if not (0 <= base_char.value <= 0xFFFF):
+    if not (0 <= base_char.value <= 0x1FFFFF):
         raise generic.ScriptError(
-            "Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0xFFFF", base_char.pos
+            "Invalid value for parameter 'base_char' in font_glyph, valid values are 0-0x1FFFFF", base_char.pos
         )
 
     real_sprite_list = real_sprite.parse_sprite_data(font_glyphs)
     char = base_char.value
     last_char = char + len(real_sprite_list)
-    if last_char > 0xFFFF:
+    if last_char > 0x1FFFFF:
         raise generic.ScriptError(
-            "Character numbers in font_glyph block exceed the allowed range (0-0xFFFF)", font_glyphs.pos
+            "Character numbers in font_glyph block exceed the allowed range (0-0x1FFFFF)", font_glyphs.pos
         )
 
     sets = []

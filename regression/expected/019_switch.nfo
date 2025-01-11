@@ -15,69 +15,69 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\19" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 51 04 00 FF 03 \wxD000 "\98coal" 00 "\98diamonds" 00 "\98Extra info for coal mine: \7B" 00
+2 * 52 08 09 "NML\19" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 52 04 00 FF \wx0003 \wxD000 "\98coal" 00 "\98diamonds" 00 "\98Extra info for coal mine: \7B" 00
 
 // Name: @CB_FAILED_PROD
-4 * 15 02 0A FF 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
+4 * 16 02 0A \wx7FFF 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
 
 // Name: @CB_FAILED0A
-5 * 23 02 0A FF 89
+5 * 25 02 0A \wx7FFF 89
 0C 00 \dx0000FFFF
-\b1
+\w1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FF // Non-graphics callback, return graphics result
+\wx7FFF // Non-graphics callback, return graphics result
 
 // Name: return_switch
-6 * 38 02 0A FE 89
+6 * 40 02 0A \wx7FFE 89
 24 60 \dxFFFFFFFF \dxFFFFF862 \dx00000001
 \2psto 1A 00 \dx00000001
-\b1
-\wx00FF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\w1
+\wx7FFF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx8000 // default: return 0;
 
 // Name: coal_mine_subtype_switch
 // a : register 80
-7 * 48 02 0A FE 89
-7D 80 20 \dxFFFFFFFF 	// a
+7 * 53 02 0A \wx7FFE 89
+7D \dx00000080 20 \dxFFFFFFFF 	// a
 \2psto 1A 20 \dx00000000
 \2r 02 00 \dx000000FF
-\b2
+\w2
 \wx8000 \dx00000000 \dx0000000A 	// 0 .. 10: return string(STR_COALMINE_MONTH_0_10);
-\wx00FE \dx0000000D \dx0000000D 	// 13 .. 13: return_switch;
+\wx7FFE \dx0000000D \dx0000000D 	// 13 .. 13: return_switch;
 \wx8001 // default: return string(STR_COALMINE_MONTH_11);
 
-8 * 11 00 0A \b2 01 FF \wx0000
+8 * 11 00 0A \b2 \wx0001 \wx0000
 08 00
 09 00
 
-9 * 11 00 0A \b2 01 FF \wx0000
+9 * 11 00 0A \b2 \wx0001 \wx0000
 21 40
 22 03
 
 // Name: @return_action_0
-10 * 30 02 0A FE 89
+10 * 32 02 0A \wx7FFE 89
 1A 20 \dx00000004
 \2sto 1A 00 \dx00000080
-\b1
-\wx00FE \dx00000000 \dx00000000 	// coal_mine_subtype_switch
-\wx00FE // coal_mine_subtype_switch
+\w1
+\wx7FFE \dx00000000 \dx00000000 	// coal_mine_subtype_switch
+\wx7FFE // coal_mine_subtype_switch
 
 // Name: @return_action_1
-11 * 13 02 0A FD 89
+11 * 15 02 0A \wx7FFD 89
 10 00 \dx00000001
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @action3_0
-12 * 43 02 0A FF 89
+12 * 45 02 0A \wx7FFF 89
 0C 00 \dx0000FFFF
-\b3
-\wx00FE \dx00000037 \dx00000037 	// @return_action_0;
+\w3
+\wx7FFE \dx00000037 \dx00000037 	// @return_action_0;
 \wx8002 \dx0000003A \dx0000003A 	// return string(STR_COALMINE_EXTRA_TEXT);
-\wx00FD \dx0000003B \dx0000003B 	// return var[0x10, 0, 1]
-\wx00FF // @CB_FAILED0A;
+\wx7FFD \dx0000003B \dx0000003B 	// return var[0x10, 0, 1]
+\wx7FFF // @CB_FAILED0A;
 
-13 * 7 03 0A 01 00 \b0
-\wx00FF 	// @action3_0;
+13 * 10 03 0A \wx0001 \wx0000 \w0
+\wx7FFF 	// @action3_0;
 

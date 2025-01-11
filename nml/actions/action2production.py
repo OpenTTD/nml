@@ -67,16 +67,16 @@ class Action2Production(action2.Action2):
                 file.print_varx(val, cargo_size)
             file.print_bytex(values[-1])
         elif self.version == 2:
-            size = 4 + 2 * (len(self.sub_in) + len(self.add_out))
+            size = 4 + 3 * (len(self.sub_in) + len(self.add_out))
             action2.Action2.write_sprite_start(self, file, size)
             file.print_bytex(self.version)
             file.print_byte(len(self.sub_in))
             for cargoindex, value in self.sub_in:
-                file.print_bytex(cargoindex)
+                file.print_wordx(cargoindex)
                 file.print_bytex(value.parameter)
             file.print_byte(len(self.add_out))
             for cargoindex, value in self.add_out:
-                file.print_bytex(cargoindex)
+                file.print_wordx(cargoindex)
                 file.print_bytex(value.parameter)
             file.print_bytex(self.again.parameter)
         file.newline()

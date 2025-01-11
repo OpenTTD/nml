@@ -5,25 +5,25 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 6 01 11 \b1 FF \wx0001
+0 * 5 01 11 \b1 \wx0001
 
 1 * 1 00
 
 // Name: small_airport_tile_layout - feature 11
-2 * 25 02 11 FF \b2 \dx80000000
+2 * 26 02 11 \wx7FFF \b2 \dx80000000
 \dxC0008000 \b32 \b16 80
 \dx80000000 \b0 \b0 \b0 \b16 \b16 \b16
 
-3 * 16 00 11 \b4 01 FF \wx0000
+3 * 16 00 11 \b4 \wx0001 \wx0000
 08 00
 0F \wx0103
 10 01
 11 01
 
-4 * 7 03 11 01 00 \b0
-\wx00FF 	// small_airport_tile_layout;
+4 * 10 03 11 \wx0001 \wx0000 \w0
+\wx7FFF 	// small_airport_tile_layout;
 
-5 * 36 00 0D \b2 01 FF \wx0000
+5 * 36 00 0D \b2 \wx0001 \wx0000
 08 00
 0A \b1 \d21
 00 00 00 FE \wx0000

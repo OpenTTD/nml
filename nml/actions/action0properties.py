@@ -305,22 +305,17 @@ class VariableListProp(BaseAction0Property):
     Property value that is a variable-length list of variable sized values, the list length is written before the data.
     """
 
-    def __init__(self, prop_num, data, size, extended):
+    def __init__(self, prop_num, data, size):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
         self.prop_num = prop_num
         self.data = data
         self.size = size
-        self.extended = extended
 
     def write(self, file):
         file.print_bytex(self.prop_num)
         for elem in self.data:
-            if self.extended:
-                file.print_bytex(0xFF)
-                file.print_word(len(elem))
-            else:
-                file.print_byte(len(elem))
+            file.print_word(len(elem))
             for i, val in enumerate(elem):
                 if i % 8 == 0:
                     file.newline()
@@ -330,13 +325,17 @@ class VariableListProp(BaseAction0Property):
     def get_size(self):
         total_len = 1  # Prop number
         for elem in self.data:
-            # For each item ID to set, make space for all values + 3 or 1 for the length
-            total_len += len(elem) * self.size + (3 if self.extended else 1)
+            # For each item ID to set, make space for all values + 2 for the length
+            total_len += len(elem) * self.size + 2
         return total_len
 
 
-def VariableByteListProp(prop_num, data, extended=False):
-    return VariableListProp(prop_num, data, 1, extended)
+def VariableByteListProp(prop_num, data):
+    return VariableListProp(prop_num, data, 1)
+
+
+def VariableWordListProp(prop_num, data):
+    return VariableListProp(prop_num, data, 2)
 
 
 def ctt_list(prop_num, *values):
@@ -346,15 +345,11 @@ def ctt_list(prop_num, *values):
         if not isinstance(value, Array):
             raise generic.ScriptError("Value of cargolist property must be an array", value.pos)
     return [
-        VariableByteListProp(
+        VariableWordListProp(
             prop_num,
             [[ctype.reduce_constant().value for ctype in single_item_array.values] for single_item_array in values],
         )
     ]
-
-
-def VariableWordListProp(num_prop, data, extended=False):
-    return VariableListProp(num_prop, data, 2, extended)
 
 
 def accepted_cargos(prop_num, *values):
@@ -419,7 +414,7 @@ def refittable_cargo_classes(prop_or_num, prop_and_num, refit_mask_num):
 # fmt: off
 properties[0x00] = {
     **general_veh_props,
-    "track_type":                     {"size": 1, "num": 0x05},
+    "track_type":                     {"size": 2, "num": 0x05},
     "ai_special_flag":                {"size": 1, "num": 0x08},
     "speed": {
         "size": 2,
@@ -437,7 +432,7 @@ properties[0x00] = {
     "sprite_id":                      {"size": 1, "num": 0x12},
     "dual_headed":                    {"size": 1, "num": 0x13},
     "cargo_capacity":                 {"size": 1, "num": 0x14},
-    "default_cargo_type":             {"size": 1, "num": 0x15},
+    "default_cargo_type":             {"size": 2, "num": 0x15},
     "weight": two_byte_property(
         0x16,
         0x24,
@@ -510,8 +505,8 @@ def roadveh_speed_prop(prop_info):
 # fmt: off
 properties[0x01] = {
     **general_veh_props,
-    "road_type":                    {"size": 1, "num": 0x05},
-    "tram_type":                    {"size": 1, "num": 0x05},
+    "road_type":                    {"size": 2, "num": 0x05},
+    "tram_type":                    {"size": 2, "num": 0x05},
     "speed": roadveh_speed_prop(
         {
             "unit_type": "speed",
@@ -524,9 +519,9 @@ properties[0x01] = {
     # 0B -0D don"t exist
     "sprite_id":                    {"size": 1, "num": 0x0E},
     "cargo_capacity":               {"size": 1, "num": 0x0F},
-    "default_cargo_type":           {"size": 1, "num": 0x10},
+    "default_cargo_type":           {"size": 2, "num": 0x10},
     "cost_factor":                  {"size": 1, "num": 0x11},
-    "sound_effect":                 {"size": 1, "num": 0x12},
+    "sound_effect":                 {"size": 2, "num": 0x12},
     "power":                        {"size": 1, "num": 0x13, "unit_type": "power", "unit_conversion": (1, 10)},
     "weight":                       {"size": 1, "num": 0x14, "unit_type": "weight", "unit_conversion": 4},
     # 15 is set together with 08 (see above)
@@ -605,11 +600,11 @@ properties[0x02] = {
             "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 2, unit),
         }
     ),
-    "default_cargo_type":           {"size": 1, "num": 0x0C},
+    "default_cargo_type":           {"size": 2, "num": 0x0C},
     "cargo_capacity":               {"size": 2, "num": 0x0D},
     # 0E does not exist
     "running_cost_factor":          {"size": 1, "num": 0x0F},
-    "sound_effect":                 {"size": 1, "num": 0x10},
+    "sound_effect":                 {"size": 2, "num": 0x10},
     # 11 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 12 (callback flags) is not set by user
     "refit_cost":                   {"size": 1, "num": 0x13},
@@ -685,7 +680,7 @@ properties[0x03] = {
     "passenger_capacity":           {"size": 2, "num": 0x0F},
     # 10 does not exist
     "mail_capacity":                {"size": 1, "num": 0x11},
-    "sound_effect":                 {"size": 1, "num": 0x12},
+    "sound_effect":                 {"size": 2, "num": 0x12},
     # 13 (refittable cargo types) is removed, it is zeroed when setting a different refit property
     # 14 (callback flags) is not set by user
     "refit_cost":                   {"size": 1, "num": 0x15},
@@ -763,7 +758,7 @@ class StationLayoutProp(BaseAction0Property):
 
 def station_layouts(value):
     if isinstance(value, ConstantNumeric):
-        return [Action0Property(0x0F, value, 1 if value.value < 0xFF else 3)]
+        return [Action0Property(0x0F, value, 2)]
     if not isinstance(value, Array) or len(value.values) == 0:
         raise generic.ScriptError("station_layouts must be an array of layouts, or the ID of a station", value.pos)
     layouts = {}
@@ -799,7 +794,7 @@ def station_tile_flags(value):
     if not isinstance(value, Array) or len(value.values) % 2 != 0:
         raise generic.ScriptError("Flag list must be an array of even length", value.pos)
     if len(value.values) > 8:
-        return [VariableByteListProp(0x1E, [[flags.reduce_constant().value for flags in value.values]], True)]
+        return [VariableByteListProp(0x1E, [[flags.reduce_constant().value for flags in value.values]])]
     pylons = 0
     wires = 0
     blocked = 0
@@ -1128,13 +1123,13 @@ class RandomSoundsProp(BaseAction0Property):
 
     def write(self, file):
         file.print_bytex(0x15)
-        file.print_byte(len(self.sound_list))
+        file.print_word(len(self.sound_list))
         for sound in self.sound_list:
-            sound.write(file, 1)
+            sound.write(file, 2)
         file.newline()
 
     def get_size(self):
-        return len(self.sound_list) + 2
+        return len(self.sound_list) + 3
 
 
 def random_sounds(value):
@@ -1282,8 +1277,8 @@ def industry_cargo_types(value):
                     has_inpmult = True
 
     return [
-        VariableByteListProp(0x25, [output_cargos]),
-        VariableByteListProp(0x26, [input_cargos]),
+        VariableWordListProp(0x25, [output_cargos]),
+        VariableWordListProp(0x26, [input_cargos]),
         VariableByteListProp(0x27, [prod_multipliers]),
         IndustryInputMultiplierProp(0x28, input_multipliers if has_inpmult else []),
     ]
@@ -1502,14 +1497,14 @@ class LabelListProp(BaseAction0Property):
 
     def write(self, file):
         file.print_bytex(self.prop_num)
-        file.print_byte(len(self.labels))
+        file.print_word(len(self.labels))
         for label in self.labels:
             parse_string_to_dword(label)  # Error if the wrong length or not ASCII
             label.write(file, 4)
         file.newline()
 
     def get_size(self):
-        return len(self.labels) * 4 + 2
+        return len(self.labels) * 4 + 3
 
 
 def label_list(value, prop_num, description):

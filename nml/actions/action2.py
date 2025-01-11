@@ -17,7 +17,7 @@ from nml import generic, global_constants
 from nml.actions import base_action
 from nml.ast import base_statement, general
 
-total_action2_ids = 0x100
+total_action2_ids = 0x8000
 free_action2_ids = list(range(0, total_action2_ids))
 
 """
@@ -122,10 +122,10 @@ class Action2(base_action.BaseAction):
         if extra_comment:
             for c in extra_comment:
                 file.comment(c)
-        file.start_sprite(size + 3)
+        file.start_sprite(size + 4)
         file.print_bytex(2)
         file.print_bytex(self.feature)
-        file.print_bytex(self.id)
+        file.print_wordx(self.id)
 
     def skip_action7(self):
         return False

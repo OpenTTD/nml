@@ -398,8 +398,7 @@ class Action0(base_action.BaseAction):
         file.print_bytex(0)
         file.print_bytex(self.feature)
         file.print_byte(len(self.prop_list))
-        file.print_bytex(self.num_ids)
-        file.print_bytex(0xFF)
+        file.print_wordx(self.num_ids)
         file.print_wordx(self.id)
         file.newline()
         for prop in self.prop_list:
@@ -1080,7 +1079,7 @@ def parse_sort_block(feature, vehid_list):
         idx = len(vehid_list) - 1
         while idx >= 0:
             cur = vehid_list[idx]
-            prop = Action0Property(prop_num[feature], [last], 3)
+            prop = Action0Property(prop_num[feature], [last], 2)
             action_list.append(Action0(feature, cur.value))
             action_list[-1].prop_list.append(prop)
             last = cur
@@ -1214,5 +1213,5 @@ def get_layout_action0(feature, id, layouts):
 def get_copy_layout_action0(feature, id, source_id):
     act0, offset = create_action0(feature, id, None, None)
     act0.num_ids = 1
-    act0.prop_list.append(Action0Property(0x0A, source_id, 1 if source_id.value < 0xFF else 3))
+    act0.prop_list.append(Action0Property(0x0A, source_id, 2))
     return [act0]

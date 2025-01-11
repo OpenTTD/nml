@@ -73,18 +73,16 @@ class Action3(base_action.BaseAction):
             self.def_cid = map_cid(self.def_cid)
 
     def write(self, file):
-        size = 7 + 3 * len(self.cid_mappings)
-        if self.feature <= 3 or self.id >= 0xFF:
-            size += 2  # Vehicles or IDs >= 255 use extended byte
+        size = 10 + 4 * len(self.cid_mappings)
         file.start_sprite(size)
         file.print_bytex(3)
         file.print_bytex(self.feature)
-        file.print_bytex(1 if not self.is_livery_override else 0x81)  # a single id
-        file.print_varx(self.id, 3 if self.feature <= 3 or self.id >= 0xFF else 1)
-        file.print_byte(len(self.cid_mappings))
+        file.print_wordx(1 if not self.is_livery_override else 0x8001)  # a single id
+        file.print_wordx(self.id)
+        file.print_word(len(self.cid_mappings))
         file.newline()
         for cargo, cid, comment in self.cid_mappings:
-            file.print_bytex(cargo)
+            file.print_wordx(cargo)
             file.print_wordx(cid)
             file.newline(comment)
         file.print_wordx(self.def_cid)
@@ -238,9 +236,8 @@ def create_cb_choice_varaction2(feature, expr, mapping, default, pos):
 
 
 def create_action3(feature, id, action_list, act6, is_livery_override):
-    # Vehicles use an extended byte
-    size = 2 if feature <= 3 else 1
-    offset = 4 if feature <= 3 else 3
+    size = 2
+    offset = 5
 
     id, offset = actionD.write_action_value(id, action_list, act6, offset, size)
     return Action3(feature, id.value, is_livery_override)

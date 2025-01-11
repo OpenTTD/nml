@@ -15,8 +15,8 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\10" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 6 01 00 \b3 FF \wx0008
+2 * 52 08 09 "NML\10" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 5 01 00 \b3 \wx0008
 
 4 opengfx_trains_start.pcx 8bpp 142 112 8 22 -3 -10 normal
 5 opengfx_trains_start.pcx 8bpp 158 112 21 15 -14 -7 normal
@@ -46,31 +46,31 @@
 27 opengfx_trains_start.pcx 8bpp 366 139 20 16 -6 -7 normal
 
 // Name: turbotrain_engine_group - feature 00
-28 * 9 02 00 FF \b1 \b1
+28 * 10 02 00 \wx7FFF \b1 \b1
 \w0
 \w0
 
 // Name: normal_passenger_group - feature 00
-29 * 9 02 00 FE \b1 \b1
+29 * 10 02 00 \wx7FFE \b1 \b1
 \w1
 \w1
 
 // Name: turbotrain_passenger_group - feature 00
-30 * 9 02 00 FD \b1 \b1
+30 * 10 02 00 \wx7FFD \b1 \b1
 \w2
 \w2
 
-31 * 11 00 00 \b2 01 FF \wx0014
+31 * 11 00 00 \b2 \wx0001 \wx0014
 12 FD
 27 04
 
-32 * 9 03 00 01 FF \wx0014 \b0
-\wx00FF 	// turbotrain_engine_group;
+32 * 10 03 00 \wx0001 \wx0014 \w0
+\wx7FFF 	// turbotrain_engine_group;
 
-33 * 9 03 00 81 FF \wx001B \b0
-\wx00FD 	// turbotrain_passenger_group;
+33 * 10 03 00 \wx8001 \wx001B \w0
+\wx7FFD 	// turbotrain_passenger_group;
 
-34 * 27 00 00 \b6 01 FF \wx001B
+34 * 27 00 00 \b6 \wx0001 \wx001B
 12 FD
 27 04
 28 \wx0001
@@ -78,6 +78,6 @@
 29 \wx0000
 1D \dx00000000
 
-35 * 9 03 00 01 FF \wx001B \b0
-\wx00FE 	// normal_passenger_group;
+35 * 10 03 00 \wx0001 \wx001B \w0
+\wx7FFE 	// normal_passenger_group;
 

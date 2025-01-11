@@ -42,22 +42,22 @@ class Action1(base_action.BaseAction):
     def write(self, file):
         if self.first_set == 0 and self.num_sets < 256:
             # <Sprite-number> * <Length> 01 <feature> <num-sets> <num-ent>
-            file.start_sprite(6)
+            file.start_sprite(5)
             file.print_bytex(1)
             file.print_bytex(self.feature)
             file.print_byte(self.num_sets)
-            file.print_varx(self.num_ent, 3)
+            file.print_wordx(self.num_ent)
             file.newline()
             file.end_sprite()
         else:
             # <Sprite-number> * <Length> 01 <feature> 00 <first_set> <num-sets> <num-ent>
-            file.start_sprite(12)
+            file.start_sprite(9)
             file.print_bytex(1)
             file.print_bytex(self.feature)
             file.print_bytex(0)
-            file.print_varx(self.first_set, 3)
-            file.print_varx(self.num_sets, 3)
-            file.print_varx(self.num_ent, 3)
+            file.print_wordx(self.first_set)
+            file.print_wordx(self.num_sets)
+            file.print_wordx(self.num_ent)
             file.newline()
             file.end_sprite()
 

@@ -15,45 +15,45 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\12" "NML regression test" 00 "A test newgrf testing NML" 00
+2 * 52 08 09 "NML\12" "NML regression test" 00 "A test newgrf testing NML" 00
 // param[127] = (param[2] + 8)
 3 * 9 0D 7F \D+ 02 FF \dx00000008
 
-4 * 7 06
-7F 01 FF \wx0008
+4 * 6 06
+7F 01 \wx0008
 FF
 
-5 * 9 00 08 \b1 01 FF \wx0001
+5 * 9 00 08 \b1 \wx0001 \wx0001
 08 00
 
-6 * 14 00 08 \b1 06 FF \wx002A
+6 * 14 00 08 \b1 \wx0006 \wx002A
 08 06 06 06 06 06 06
 
-7 * 13 00 08 \b1 05 FF \wx0042
+7 * 13 00 08 \b1 \wx0005 \wx0042
 08 06 06 06 06 06
 
 // param[126] = (param[1] + 9)
 8 * 9 0D 7E \D+ 01 FF \dx00000009
 
-9 * 27 06
-7E 01 FF \wx0008
-7E 01 FF \wx0009
-7E 01 FF \wx000A
-7E 01 FF \wx000B
-7E 01 FF \wx000C
+9 * 22 06
+7E 01 \wx0008
+7E 01 \wx0009
+7E 01 \wx000A
+7E 01 \wx000B
+7E 01 \wx000C
 FF
 
-10 * 13 00 08 \b1 05 FF \wx000F
+10 * 13 00 08 \b1 \wx0005 \wx000F
 08 00 00 00 00 00
 
-11 * 9 00 08 \b1 01 FF \wx0034
+11 * 9 00 08 \b1 \wx0001 \wx0034
 08 15
 
 // param[124] = param[11]
 12 * 5 0D 7C \D= 0B 00
 
-13 * 7 06
-7C 01 FF \wx0003
+13 * 6 06
+7C 01 \wx0003
 FF
 
 // param[125] = param[0]
@@ -62,8 +62,8 @@ FF
 // param[122] = (param[11] + 1)
 15 * 9 0D 7A \D+ 0B FF \dx00000001
 
-16 * 7 06
-7A 01 FF \wx0003
+16 * 6 06
+7A 01 \wx0003
 FF
 
 // param[123] = param[0]
@@ -72,11 +72,11 @@ FF
 // param[124] = (param[123] + 8)
 18 * 9 0D 7C \D+ 7B FF \dx00000008
 
-19 * 12 06
-7D 02 FF \wx0005
-7C 01 FF \wx0008
+19 * 10 06
+7D 02 \wx0005
+7C 01 \wx0008
 FF
 
-20 * 9 00 08 \b1 01 FF \wx0000
+20 * 9 00 08 \b1 \wx0001 \wx0000
 08 00
 

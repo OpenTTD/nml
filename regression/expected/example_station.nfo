@@ -15,7 +15,7 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 193 08 08 "NML\06" "NML Example NewGRF: Station" 00 "\8ENML Example NewGRF: Station\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DConversion of CHIPS Cow pens." 00
+2 * 193 08 09 "NML\06" "NML Example NewGRF: Station" 00 "\8ENML Example NewGRF: Station\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DConversion of CHIPS Cow pens." 00
 // param[126] = param[161]
 3 * 5 0D 7E \D= A1 00
 
@@ -25,14 +25,14 @@
 // param[127] = (param[127] << -31)
 5 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-6 * 9 09 7F 04 \7= \dx00000000 01
+6 * 10 09 7F 04 \7= \dx00000000 \wx0001
 
 7 * 19 0B 03 7F 06 "1.2.0 (r22723)" 00
 
-8 * 12 00 08 \b1 01 FF \wx0000
+8 * 12 00 08 \b1 \wx0001 \wx0000
 09 "LVST"
 
-9 * 6 01 04 \b3 FF \wx0002
+9 * 5 01 04 \b3 \wx0002
 
 10 cows_cargo.png 8bpp 10 10 64 65 -31 -34 normal
 11 cows_cargo.png 8bpp 220 10 64 65 -31 -34 normal
@@ -44,42 +44,42 @@
 15 cows_cargo.png 8bpp 360 10 64 65 -31 -34 normal
 
 // Name: cow_pen_1 - feature 04
-16 * 11 02 04 FF \b2 \b1
+16 * 12 02 04 \wx7FFF \b2 \b1
 \w0 \w1
 \w2
 
 // Name: cow_pen_2 - feature 04
-17 * 13 02 04 FE \b3 \b1
+17 * 14 02 04 \wx7FFE \b3 \b1
 \w0 \w1 \w2
 \w2
 
 // Name: random_cow_pen
-18 * 11 02 04 FE 80 00 \b16 02
-\wx00FF // (1/2) -> (1/2): cow_pen_1;
-\wx00FE // (1/2) -> (1/2): cow_pen_2;
+18 * 13 02 04 \wx7FFE 80 00 \b16 \wx0002
+\wx7FFF // (1/2) -> (1/2): cow_pen_1;
+\wx7FFE // (1/2) -> (1/2): cow_pen_2;
 
-19 * 21 00 04 \b5 01 FF \wx0000
+19 * 21 00 04 \b5 \wx0001 \wx0000
 08 "NML_"
 10 \wx00A0
 11 00
 14 03
 15 03
 
-20 * 18 04 04 FF 01 \wxC400 "NML Example" 00
+20 * 19 04 04 FF \wx0001 \wxC400 "NML Example" 00
 
-21 * 21 04 04 FF 01 \wxC500 "CHIPS Cow pens" 00
+21 * 22 04 04 FF \wx0001 \wxC500 "CHIPS Cow pens" 00
 
 // Name: cow_pen_half - feature 04
-22 * 7 02 04 FF \b0 \b1
+22 * 8 02 04 \wx7FFF \b0 \b1
 
 \w1
 
 // Name: cow_pen_empty - feature 04
-23 * 7 02 04 FD \b0 \b1
+23 * 8 02 04 \wx7FFD \b0 \b1
 
 \w0
 
-24 * 51 00 04 \b1 01 FF \wx0000
+24 * 51 00 04 \b1 \wx0001 \wx0000
 1A \b2
 \b65 \dx00000000 \wx0002 82
 \dx8000842D \wx0002 \b0 \b0 \b0 \b16 \b16 \b36 83
@@ -89,58 +89,58 @@
 // Name: Station Layout@registers - Id 00
 // a : register 80
 // a : register 81
-25 * 106 02 04 FC 89
+25 * 114 02 04 \wx7FFC 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx00000080
 \2r 1A 20 \dx00000000
 \2sto 1A 20 \dx00000081
-\2r 7D 80 20 \dxFFFFFFFF 	// a
+\2r 7D \dx00000080 20 \dxFFFFFFFF 	// a
 \2+ 1A 20 \dx000007E6
 \2sto 1A 20 \dx00000082
 \2r 1A 20 \dx00000000
 \2sto 1A 20 \dx00000083
-\2r 7D 81 20 \dxFFFFFFFF 	// a
+\2r 7D \dx00000081 20 \dxFFFFFFFF 	// a
 \2+ 1A 20 \dx000007E6
 \2sto 1A 20 \dx00000084
 \2r 1A 20 \dx00000001
 \2sto 1A 00 \dx00000085
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @action3_0
-26 * 31 02 04 FD 89
-7E FC 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
+26 * 34 02 04 \wx7FFD 89
+7E \wx7FFC 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
-\b1
-\wx00FD \dx00000000 \dx00000000 	// cow_pen_empty;
-\wx00FD // cow_pen_empty;
+\w1
+\wx7FFD \dx00000000 \dx00000000 	// cow_pen_empty;
+\wx7FFD // cow_pen_empty;
 
 // Name: @action3_1
-27 * 31 02 04 FE 89
-7E FC 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
+27 * 34 02 04 \wx7FFE 89
+7E \wx7FFC 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
-\b1
-\wx00FE \dx00000000 \dx00000000 	// random_cow_pen;
-\wx00FE // random_cow_pen;
+\w1
+\wx7FFE \dx00000000 \dx00000000 	// random_cow_pen;
+\wx7FFE // random_cow_pen;
 
 // Name: @action3_2
-28 * 31 02 04 FF 89
-7E FC 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
+28 * 34 02 04 \wx7FFF 89
+7E \wx7FFC 20 \dxFFFFFFFF 	// Station Layout@registers - Id 00
 \2r 10 00 \dx000000FF
-\b1
-\wx00FF \dx00000000 \dx00000000 	// cow_pen_half;
-\wx00FF // cow_pen_half;
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// cow_pen_half;
+\wx7FFF // cow_pen_half;
 
 // Name: @action3_3
-29 * 33 02 04 FF 89
+29 * 35 02 04 \wx7FFF 89
 0C 00 \dx0000FFFF
-\b2
-\wx00FF \dx00000000 \dx00000000 	// @action3_2;
+\w2
+\wx7FFF \dx00000000 \dx00000000 	// @action3_2;
 \wx8000 \dx00000024 \dx00000024 	// return 0;
-\wx00FD // @action3_0;
+\wx7FFD // @action3_0;
 
-30 * 13 03 04 01 00 \b2
-00 \wx00FE 	// @action3_1;
-FF \wx00FF 	// @action3_3;
-\wx00FD 	// @action3_0;
+30 * 18 03 04 \wx0001 \wx0000 \w2
+\wx0000 \wx7FFE 	// @action3_1;
+\wx00FF \wx7FFF 	// @action3_3;
+\wx7FFD 	// @action3_0;
 

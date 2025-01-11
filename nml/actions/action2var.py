@@ -88,9 +88,9 @@ class Action2Var(action2.Action2):
             self.default_result = self.default_result.value | 0x8000
 
     def write(self, file):
-        # type_byte, num_ranges, default_result = 4
+        # type_byte, num_ranges, default_result = 5
         # 2 bytes for the result, 8 bytes for the min/max range.
-        size = 4 + (2 + 8) * len(self.ranges)
+        size = 5 + (2 + 8) * len(self.ranges)
         for var in self.var_list:
             if isinstance(var, nmlop.Operator):
                 size += 1
@@ -107,12 +107,12 @@ class Action2Var(action2.Action2):
             else:
                 var.write(file, 4)
                 file.newline(var.comment)
-        file.print_byte(len(self.ranges))
+        file.print_word(len(self.ranges))
         file.newline()
         for r in self.ranges:
             file.print_wordx(r.result)
-            file.print_varx(r.min.value, 4)
-            file.print_varx(r.max.value, 4)
+            file.print_dwordx(r.min.value)
+            file.print_dwordx(r.max.value)
             file.newline(r.comment)
         file.print_wordx(self.default_result)
         file.comment(self.default_comment)
@@ -149,11 +149,12 @@ class VarAction2Var:
     @type comment: C{basestr}
     """
 
-    def __init__(self, var_num, shift, mask, parameter=None, comment=""):
+    def __init__(self, var_num, shift, mask, parameter=None, procedure=None, comment=""):
         self.var_num = var_num
         self.shift = shift
         self.mask = mask
         self.parameter = parameter
+        self.procedure = procedure
         self.add = None
         self.div = None
         self.mod = None
@@ -161,8 +162,10 @@ class VarAction2Var:
 
     def write(self, file, size):
         file.print_bytex(self.var_num)
-        if self.parameter is not None:
-            file.print_bytex(self.parameter)
+        if self.procedure is not None:
+            file.print_wordx(self.procedure)
+        elif self.parameter is not None:
+            file.print_dwordx(self.parameter)
         if self.mod is not None:
             self.shift |= 0x80
         elif self.add is not None or self.div is not None:
@@ -180,10 +183,12 @@ class VarAction2Var:
                 file.print_varx(1, size)
 
     def get_size(self):
-        # var number (1) [+ parameter (1)] + shift num (1) + and mask (4) [+ add (4) + div/mod (4)]
+        # var number (1) [+ procedure [2]|+ parameter (4)] + shift num (1) + and mask (4) [+ add (4) + div/mod (4)]
         size = 6
-        if self.parameter is not None:
-            size += 1
+        if self.procedure is not None:
+            size += 2
+        elif self.parameter is not None:
+            size += 4
         if self.add is not None or self.div is not None or self.mod is not None:
             size += 8
         return size
@@ -208,10 +213,10 @@ class VarAction2ProcCallVar(VarAction2Var):
         self.sg_ref = sg_ref
 
     def resolve_parameter(self, feature):
-        self.parameter = self.sg_ref.get_action2_id(feature)
+        self.procedure = self.sg_ref.get_action2_id(feature)
 
     def get_size(self):
-        return 7
+        return 8
 
     def write(self, file, size):
         self.mask = get_mask(size)
@@ -255,7 +260,7 @@ class VarAction2LoadTempVar(VarAction2Var, expression.Expression):
         VarAction2Var.write(self, file, size)
 
     def get_size(self):
-        return 7
+        return 10
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
@@ -300,7 +305,7 @@ class VarAction2LoadCallParam(VarAction2Var, expression.Expression):
         VarAction2Var.write(self, file, size)
 
     def get_size(self):
-        return 7
+        return 10
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self
@@ -550,7 +555,7 @@ class Varaction2Parser:
             offset = 2
             param = None
         else:
-            offset = 3
+            offset = 6
             param = expr.param.value
         mask = self.parse_expr_to_constant(expr.mask, offset)
 
@@ -858,7 +863,7 @@ def create_ternary_action(guard, expr_true, expr_false, action_list, feature, va
     for mod in parser.mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = parser.var_list
-    offset += parser.var_list_size + 1  # +1 for the byte num-ranges
+    offset += parser.var_list_size + 2  # +2 for the word num-ranges
     for proc in parser.proc_call_list:
         action2.add_ref(proc, varaction2, True)
 
@@ -903,7 +908,7 @@ def create_return_action(expr, feature, name, var_range):
     action_list = varact2parser.extra_actions
     extra_act6 = action6.Action6()
     for mod in varact2parser.mods:
-        extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
+        extra_act6.modify_bytes(mod.param, mod.size, mod.offset + 5)
     if len(extra_act6.modifications) > 0:
         action_list.append(extra_act6)
 
@@ -1184,7 +1189,7 @@ def parse_varaction2(switch_block):
 
     expr = reduce_varaction2_expr(switch_block.expr, var_scope)
 
-    offset = 4  # first var
+    offset = 5  # first var
 
     parser = Varaction2Parser(feature, switch_block.var_range)
     parser.parse_expr(expr)
@@ -1192,7 +1197,7 @@ def parse_varaction2(switch_block):
     for mod in parser.mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + offset)
     varaction2.var_list = parser.var_list
-    offset += parser.var_list_size + 1  # +1 for the byte num-ranges
+    offset += parser.var_list_size + 2  # +2 for the word num-ranges
     for proc in parser.proc_call_list:
         action2.add_ref(proc, varaction2, True)
 

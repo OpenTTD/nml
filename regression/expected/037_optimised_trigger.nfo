@@ -15,21 +15,21 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\37" "NML regression test" 00 "A test newgrf testing NML" 00
+2 * 52 08 09 "NML\37" "NML regression test" 00 "A test newgrf testing NML" 00
 // Name: trigger_only
-3 * 23 02 00 FF 80 01 \b0 08
+3 * 25 02 00 \wx7FFF 80 01 \b0 \wx0008
 \wx8007 \wx8007 \wx8007 \wx8007 \wx8007 \wx8007 \wx8007 \wx8007 // (8/8) -> (8/8): return 7;
 
-4 * 9 00 00 \b1 01 FF \wx0064
+4 * 9 00 00 \b1 \wx0001 \wx0064
 1E 40
 
 // Name: @action3_0
-5 * 23 02 00 FF 89
+5 * 25 02 00 \wx7FFF 89
 0C 00 \dx0000FFFF
-\b1
+\w1
 \wx8005 \dx0000002D \dx0000002D 	// return 5;
-\wx00FF // trigger_only;
+\wx7FFF // trigger_only;
 
-6 * 9 03 00 01 FF \wx0064 \b0
-\wx00FF 	// @action3_0;
+6 * 10 03 00 \wx0001 \wx0064 \w0
+\wx7FFF 	// @action3_0;
 

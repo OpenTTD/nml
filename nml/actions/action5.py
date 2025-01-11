@@ -29,14 +29,12 @@ class Action5(base_action.BaseAction):
 
     def write(self, file):
         # <Sprite-number> * <Length> 05 <type> <num-sprites> [<offset>]
-        size = 5 if self.offset is None else 8
+        size = 4 if self.offset is None else 6
         file.start_sprite(size)
         file.print_bytex(0x05)
         file.print_bytex(self.type)
-        file.print_bytex(0xFF)
         file.print_word(self.num_sprites)
         if self.offset is not None:
-            file.print_bytex(0xFF)
             file.print_word(self.offset)
         file.newline()
         file.end_sprite()

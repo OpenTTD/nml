@@ -15,10 +15,10 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 292 08 08 "NML\01" "NML Example NewGRF: Object" 00 "\8ENML Example NewGRF: Object\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89planetmaker, \98coding by \89planetmaker.\0D\98This NewGRF defines a tile which can act as company-land replacement." 00
-3 * 34 04 0F FF 02 \wxD000 "Infrastructure" 00 "Company land" 00
+2 * 292 08 09 "NML\01" "NML Example NewGRF: Object" 00 "\8ENML Example NewGRF: Object\0D\98This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.\0DOriginal graphics by \89planetmaker, \98coding by \89planetmaker.\0D\98This NewGRF defines a tile which can act as company-land replacement." 00
+3 * 35 04 0F FF \wx0002 \wxD000 "Infrastructure" 00 "Company land" 00
 
-4 * 19 04 00 FF 01 \wxD002 "Company land" 00
+4 * 20 04 00 FF \wx0001 \wxD002 "Company land" 00
 
 // param[126] = param[161]
 5 * 5 0D 7E \D= A1 00
@@ -29,11 +29,11 @@
 // param[127] = (param[127] << -31)
 7 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-8 * 9 09 7F 04 \7= \dx00000000 01
+8 * 10 09 7F 04 \7= \dx00000000 \wx0001
 
 9 * 19 0B 03 7F 06 "1.2.0 (r22723)" 00
 
-10 * 6 01 0F \b1 FF \wx0013
+10 * 5 01 0F \b1 \wx0013
 
 11 cc_grid.png 8bpp 1 1 64 31 -31 0 normal
 12 cc_grid.png 8bpp 81 1 64 31 -31 0 normal
@@ -56,34 +56,34 @@
 29 cc_grid.png 8bpp 1437 1 64 31 -31 -8 normal
 
 // Name: company_land_layout - feature 0F
-30 * 31 02 0F FF \b66 \dx00000000 \wx0002 80
+30 * 32 02 0F \wx7FFF \b66 \dx00000000 \wx0002 80
 \dxC0008000 \wx0002 \b0 \b0 80 00
 \dx00000000 \wx0002 \b0 \b0 80 81
 
 // Name: company_land_layout@registers - feature 0F
-31 * 62 02 0F FF 89
-7D 00 20 \dxFFFFFFFF
-\2+ 7D 01 20 \dxFFFFFFFF
+31 * 76 02 0F \wx7FFF 89
+7D \dx00000000 20 \dxFFFFFFFF
+\2+ 7D \dx00000001 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000080
-\2r 7D 00 20 \dxFFFFFFFF
-\2+ 7D 01 20 \dxFFFFFFFF
+\2r 7D \dx00000000 20 \dxFFFFFFFF
+\2+ 7D \dx00000001 20 \dxFFFFFFFF
 \2sto 1A 00 \dx00000081
-\b1
-\wx00FF \dx00000000 \dx00000000
-\wx00FF //
+\w1
+\wx7FFF \dx00000000 \dx00000000
+\wx7FFF //
 
 // Name: @CB_FAILED_LAYOUT0F
-32 * 17 02 0F FE \b0 \dx00000000
+32 * 18 02 0F \wx7FFE \b0 \dx00000000
 \dx00000000 \b0 \b0 \b0 \b0 \b0
 // Name: @CB_FAILED0F
-33 * 23 02 0F FE 89
+33 * 25 02 0F \wx7FFE 89
 0C 00 \dx0000FFFF
-\b1
+\w1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FE // Non-graphics callback, return graphics result
+\wx7FFE // Non-graphics callback, return graphics result
 
 // Name: company_land_terrain_switch
-34 * 470 02 0F FD 89
+34 * 511 02 0F \wx7FFD 89
 41 28 \dx0000001F
 \2cmp 1A 20 \dx0000001E
 \2& 1A 20 \dx00000001
@@ -112,12 +112,12 @@
 \2cmp 1A 20 \dx0000000E
 \2^ 1A 20 \dx00000002
 \2< 1A 20 \dx00000001
-\2& 7D 84 20 \dxFFFFFFFF
+\2& 7D \dx00000084 20 \dxFFFFFFFF
 \2* 41 28 \dx0000001F
-\2+ 7D 83 20 \dxFFFFFFFF
-\2+ 7D 82 20 \dxFFFFFFFF
-\2+ 7D 81 20 \dxFFFFFFFF
-\2+ 7D 80 20 \dxFFFFFFFF
+\2+ 7D \dx00000083 20 \dxFFFFFFFF
+\2+ 7D \dx00000082 20 \dxFFFFFFFF
+\2+ 7D \dx00000081 20 \dxFFFFFFFF
+\2+ 7D \dx00000080 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000000
 \2r 1A 20 \dx00000F8D
 \2sto 1A 20 \dx00000001
@@ -127,12 +127,12 @@
 \2sto 1A 20 \dx00000085 	// guard
 \2^ 1A 20 \dx00000001
 \2sto 1A 20 \dx00000086 	// !guard
-\2r 7D 01 20 \dxFFFFFFFF
-\2* 7D 86 20 \dxFFFFFFFF
+\2r 7D \dx00000001 20 \dxFFFFFFFF
+\2* 7D \dx00000086 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000087
-\2r 7D 85 20 \dxFFFFFFFF
+\2r 7D \dx00000085 20 \dxFFFFFFFF
 \2* 1A 20 \dx000011C6
-\2+ 7D 87 20 \dxFFFFFFFF
+\2+ 7D \dx00000087 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000001
 \2r 41 20 \dx00000007
 \2cmp 1A 20 \dx00000004
@@ -140,29 +140,29 @@
 \2sto 1A 20 \dx00000088 	// guard
 \2^ 1A 20 \dx00000001
 \2sto 1A 20 \dx00000089 	// !guard
-\2r 7D 01 20 \dxFFFFFFFF
-\2* 7D 89 20 \dxFFFFFFFF
+\2r 7D \dx00000001 20 \dxFFFFFFFF
+\2* 7D \dx00000089 20 \dxFFFFFFFF
 \2sto 1A 20 \dx0000008A
-\2r 7D 88 20 \dxFFFFFFFF
+\2r 7D \dx00000088 20 \dxFFFFFFFF
 \2* 1A 20 \dx000011C6
-\2+ 7D 8A 20 \dxFFFFFFFF
+\2+ 7D \dx0000008A 20 \dxFFFFFFFF
 \2sto 1A 00 \dx00000001
-\b1
-\wx00FE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
-\wx00FF // default: company_land_layout;
+\w1
+\wx7FFE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx7FFF // default: company_land_layout;
 
 // Name: company_land_purchase_switch
-35 * 51 02 0F FF 89
+35 * 53 02 0F \wx7FFF 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx00000000
 \2r 1A 20 \dx00000F8D
 \2sto 1A 20 \dx00000001
 \2r 1A 00 \dx00000001
-\b1
-\wx00FE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
-\wx00FF // default: company_land_layout;
+\w1
+\wx7FFE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx7FFF // default: company_land_layout;
 
-36 * 43 00 0F \b12 01 FF \wx0000
+36 * 43 00 0F \b12 \wx0001 \wx0000
 08 "INFR"
 09 \wxD000
 0A \wxD001
@@ -176,19 +176,19 @@
 16 00
 17 01
 
-37 * 10 00 0F \b1 01 FF \wx0000
+37 * 10 00 0F \b1 \wx0001 \wx0000
 15 \wx0011
 
 // Name: @action3_0
-38 * 43 02 0F FF 89
+38 * 45 02 0F \wx7FFF 89
 0C 00 \dx0000FFFF
-\b3
-\wx00FF \dx00000000 \dx00000000 	// company_land_purchase_switch;
+\w3
+\wx7FFF \dx00000000 \dx00000000 	// company_land_purchase_switch;
 \wx8400 \dx00000157 \dx00000157 	// return 1024;
 \wx8002 \dx0000015C \dx0000015C 	// return string(STR_NAME_COMPANY_LAND);
-\wx00FD // company_land_terrain_switch;
+\wx7FFD // company_land_terrain_switch;
 
-39 * 10 03 0F 01 00 \b1
-FF \wx00FF 	// @action3_0;
-\wx00FD 	// company_land_terrain_switch;
+39 * 14 03 0F \wx0001 \wx0000 \w1
+\wx00FF \wx7FFF 	// @action3_0;
+\wx7FFD 	// company_land_terrain_switch;
 

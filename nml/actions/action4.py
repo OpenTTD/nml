@@ -28,9 +28,6 @@ class Action4(base_action.BaseAction):
     @ivar lang: Language ID of the text (set as ##grflangid in the .lng file, 0x7F for default)
     @type lang: C{int}
 
-    @ivar size: Size of the id, may be 1 (byte), 2 (word) or 3 (ext. byte)
-    @type size: C{int}
-
     @ivar id: ID of the first string to write
     @type id: C{int}
 
@@ -38,28 +35,27 @@ class Action4(base_action.BaseAction):
     @type texts: C{list} of C{str}
     """
 
-    def __init__(self, feature, lang, size, id, texts):
+    def __init__(self, feature, lang, generic, id, texts):
         self.feature = feature
         self.lang = lang
-        self.size = size
+        self.generic = generic
         self.id = id
         self.texts = texts
 
     def prepare_output(self, sprite_num):
-        # To indicate a word value, bit 7 of the lang ID must be set
-        if self.size == 2:
+        if self.generic:
             self.lang = self.lang | 0x80
 
     def write(self, file):
-        size = 4 + self.size
+        size = 7
         for text in self.texts:
             size += grfstrings.get_string_size(text)
         file.start_sprite(size)
         file.print_bytex(4)
         file.print_bytex(self.feature)
         file.print_bytex(self.lang)
-        file.print_bytex(len(self.texts))
-        file.print_varx(self.id, self.size)
+        file.print_wordx(len(self.texts))
+        file.print_wordx(self.id)
         for text in self.texts:
             file.print_string(text)
         file.newline()
@@ -134,8 +130,13 @@ def get_global_string_actions():
     for text in texts:
         str_lang, str_id, str_text, feature = text
         # If possible, append strings to the last action 4 instead of creating a new one
-        if str_lang != last_lang or str_id - 1 != last_id or feature != last_feature or len(actions[-1].texts) == 0xFF:
-            actions.append(Action4(feature, str_lang, 2, str_id, [str_text]))
+        if (
+            str_lang != last_lang
+            or str_id - 1 != last_id
+            or feature != last_feature
+            or len(actions[-1].texts) == 0xFFFF
+        ):
+            actions.append(Action4(feature, str_lang, True, str_id, [str_text]))
         else:
             actions[-1].texts.append(str_text)
         last_lang = str_lang
@@ -174,7 +175,7 @@ def get_string_action4s(feature, string_range, string, id=None):
 
     mod = None
     if string_range is not None:
-        size = 2
+        generic = True
         if string_ranges[string_range]["random_id"]:
             # ID is allocated randomly, we will output the actions later
             write_action4s = False
@@ -199,7 +200,7 @@ def get_string_action4s(feature, string_range, string, id=None):
     else:
         # Not a string range, so we must have an id
         assert id is not None
-        size = 3 if feature <= 3 else 1
+        generic = False
         if isinstance(id, expression.ConstantNumeric):
             id_val = id.value
         else:
@@ -207,7 +208,7 @@ def get_string_action4s(feature, string_range, string, id=None):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
             actions.extend(tmp_param_actions)
             # Apply ID via action4 later
-            mod = (tmp_param, 2 if feature <= 3 else 1, 5 if feature <= 3 else 4)
+            mod = (tmp_param, 2, 5)
 
     if write_action4s:
         strings = [
@@ -221,7 +222,7 @@ def get_string_action4s(feature, string_range, string, id=None):
                 act6 = action6.Action6()
                 act6.modify_bytes(*mod)
                 actions.append(act6)
-            actions.append(Action4(feature, lang_id, size, id_val, [text]))
+            actions.append(Action4(feature, lang_id, generic, id_val, [text]))
 
     action6.free_parameters.restore()
 

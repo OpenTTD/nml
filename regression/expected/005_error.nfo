@@ -31,7 +31,7 @@
 // param[127] = (param[127] << -31)
 9 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-10 * 9 09 7F 04 \7= \dx00000000 02
+10 * 10 09 7F 04 \7= \dx00000000 \wx0002
 
 11 * 61 0B 03 1F 06 "De wissels zijn bevroren, onze excuses voor het ongemak." 00
 
@@ -46,7 +46,7 @@
 // param[127] = (param[127] << -31)
 15 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-16 * 9 09 7F 04 \7= \dx00000000 02
+16 * 10 09 7F 04 \7= \dx00000000 \wx0002
 
 17 * 61 0B 03 1F 06 "De wissels zijn bevroren, onze excuses voor het ongemak." 00
 
@@ -61,7 +61,7 @@
 // param[127] = (param[127] << -31)
 21 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-22 * 9 09 7F 04 \7= \dx00000000 02
+22 * 10 09 7F 04 \7= \dx00000000 \wx0002
 
 23 * 61 0B 03 1F 06 "De wissels zijn bevroren, onze excuses voor het ongemak." 00
 

@@ -15,130 +15,130 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\35" "NML regression test" 00 "A test newgrf testing NML" 00
+2 * 52 08 09 "NML\35" "NML regression test" 00 "A test newgrf testing NML" 00
 // Name: @return_action_0
-3 * 34 02 09 FF 89
+3 * 36 02 09 \wx7FFF 89
 43 20 \dx000000FF
 \2cmp 1A 20 \dx00000002
 \2< 1A 20 \dx00000001
 \2^ 1A 00 \dx00000001
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @return_action_1
-4 * 34 02 09 FE 89
+4 * 36 02 09 \wx7FFE 89
 43 28 \dx000000FF
 \2cmp 1A 20 \dx00000005
 \2- 1A 20 \dx00000001
 \2> 1A 00 \dx00000000
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: random1
-5 * 15 02 09 FE 80 01 \b0 04
-\wx00FF \wx00FF \wx00FF // (2/3) -> (3/4): return (var[0x43, 0, 255] < 2)
-\wx00FE // (1/3) -> (1/4): return (var[0x43, 8, 255] > 5)
+5 * 17 02 09 \wx7FFE 80 01 \b0 \wx0004
+\wx7FFF \wx7FFF \wx7FFF // (2/3) -> (3/4): return (var[0x43, 0, 255] < 2)
+\wx7FFE // (1/3) -> (1/4): return (var[0x43, 8, 255] > 5)
 
 // Name: @return_action_0
-6 * 34 02 09 FF 89
+6 * 36 02 09 \wx7FFF 89
 43 20 \dx000000FF
 \2cmp 1A 20 \dx00000002
 \2< 1A 20 \dx00000001
 \2^ 1A 00 \dx00000001
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @return_action_1
-7 * 34 02 09 FD 89
+7 * 36 02 09 \wx7FFD 89
 43 28 \dx000000FF
 \2cmp 1A 20 \dx00000005
 \2- 1A 20 \dx00000001
 \2> 1A 00 \dx00000000
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: var1
-8 * 23 02 09 FD 89
+8 * 25 02 09 \wx7FFD 89
 42 00 \dx00000007
-\b1
-\wx00FF \dx00000000 \dx00000000 	// 0 .. 0: return (var[0x43, 0, 255] < 2)
-\wx00FD // default: return (var[0x43, 8, 255] > 5)
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// 0 .. 0: return (var[0x43, 0, 255] < 2)
+\wx7FFD // default: return (var[0x43, 8, 255] > 5)
 
 // Name: @return_action_2
-9 * 34 02 09 FF 8A
+9 * 36 02 09 \wx7FFF 8A
 45 38 \dx0000000F
 \2cmp 1A 20 \dx00000002
 \2< 1A 20 \dx00000001
 \2^ 1A 00 \dx00000001
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @return_action_3
-10 * 34 02 09 FC 8A
+10 * 36 02 09 \wx7FFC 8A
 45 3C \dx0000000F
 \2cmp 1A 20 \dx00000005
 \2- 1A 20 \dx00000001
 \2> 1A 00 \dx00000000
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: random2
-11 * 15 02 09 FC 83 01 \b0 04
-\wx00FF \wx00FF \wx00FF // (2/3) -> (3/4): return (var[0x45, 24, 15] < 2)
-\wx00FC // (1/3) -> (1/4): return (var[0x45, 28, 15] > 5)
+11 * 17 02 09 \wx7FFC 83 01 \b0 \wx0004
+\wx7FFF \wx7FFF \wx7FFF // (2/3) -> (3/4): return (var[0x45, 24, 15] < 2)
+\wx7FFC // (1/3) -> (1/4): return (var[0x45, 28, 15] > 5)
 
 // Name: @return_action_0
-12 * 34 02 09 FF 8A
+12 * 36 02 09 \wx7FFF 8A
 45 38 \dx0000000F
 \2cmp 1A 20 \dx00000002
 \2< 1A 20 \dx00000001
 \2^ 1A 00 \dx00000001
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @return_action_1
-13 * 34 02 09 FB 8A
+13 * 36 02 09 \wx7FFB 8A
 45 3C \dx0000000F
 \2cmp 1A 20 \dx00000005
 \2- 1A 20 \dx00000001
 \2> 1A 00 \dx00000000
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: var2
-14 * 23 02 09 FB 8A
+14 * 25 02 09 \wx7FFB 8A
 93 00 \dx000000FF
-\b1
-\wx00FF \dx00000000 \dx00000000 	// 0 .. 0: return (var[0x45, 24, 15] < 2)
-\wx00FB // default: return (var[0x45, 28, 15] > 5)
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// 0 .. 0: return (var[0x45, 24, 15] < 2)
+\wx7FFB // default: return (var[0x45, 28, 15] > 5)
 
-15 * 11 00 09 \b2 01 FF \wx0000
+15 * 11 00 09 \b2 \wx0001 \wx0000
 08 00
 09 00
 
-16 * 9 00 09 \b1 01 FF \wx0000
+16 * 9 00 09 \b1 \wx0001 \wx0000
 0E 62
 
 // Name: @CB_FAILED_LAYOUT09
-17 * 17 02 09 FF \b0 \dx00000000
+17 * 18 02 09 \wx7FFF \b0 \dx00000000
 \dx00000000 \b0 \b0 \b0 \b0 \b0
 // Name: @CB_FAILED09
-18 * 23 02 09 FF 89
+18 * 25 02 09 \wx7FFF 89
 0C 00 \dx0000FFFF
-\b1
+\w1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FF // Non-graphics callback, return graphics result
+\wx7FFF // Non-graphics callback, return graphics result
 
 // Name: @action3_0
-19 * 53 02 09 FF 89
+19 * 55 02 09 \wx7FFF 89
 0C 00 \dx0000FFFF
-\b4
-\wx00FB \dx00000025 \dx00000025 	// var2;
-\wx00FD \dx00000027 \dx00000027 	// var1;
-\wx00FE \dx00000030 \dx00000030 	// random1;
-\wx00FC \dx0000003C \dx0000003C 	// random2;
-\wx00FF // @CB_FAILED09;
+\w4
+\wx7FFB \dx00000025 \dx00000025 	// var2;
+\wx7FFD \dx00000027 \dx00000027 	// var1;
+\wx7FFE \dx00000030 \dx00000030 	// random1;
+\wx7FFC \dx0000003C \dx0000003C 	// random2;
+\wx7FFF // @CB_FAILED09;
 
-20 * 7 03 09 01 00 \b0
-\wx00FF 	// @action3_0;
+20 * 10 03 09 \wx0001 \wx0000 \w0
+\wx7FFF 	// @action3_0;
 

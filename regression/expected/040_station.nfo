@@ -15,18 +15,18 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\40" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 27 04 04 FF 02 \wxDC00 "Test" 00 "Basic station 2" 00
+2 * 52 08 09 "NML\40" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 28 04 04 FF \wx0002 \wxDC00 "Test" 00 "Basic station 2" 00
 
-4 * 16 00 08 \b1 02 FF \wx0000
+4 * 16 00 08 \b1 \wx0002 \wx0000
 09 "COAL" "LVST"
 
-5 * 47 00 04 \b6 01 FF \wx00FF
+5 * 46 00 04 \b6 \wx0001 \wx00FF
 08 "TEST"
 13 18
 12 \dx00000002
 0C F0
-1E FF \w10
+1E \w10
 00 01 02 03 04 05 06 07
 02 05
 0E \b1 \b1
@@ -36,11 +36,11 @@
 06 06
 \b0 \b0
 
-6 * 11 04 04 FF 01 \wxC4FF "Test" 00
+6 * 12 04 04 FF \wx0001 \wxC4FF "Test" 00
 
-7 * 20 04 04 FF 01 \wxC5FF "Basic station" 00
+7 * 21 04 04 FF \wx0001 \wxC5FF "Basic station" 00
 
-8 * 6 01 04 \b2 FF \wx0002
+8 * 5 01 04 \b2 \wx0002
 
 9 station.png 8bpp 1 1 5 5 -2 -2 normal
 10 station.png 8bpp 7 1 5 5 -2 -2 normal
@@ -49,16 +49,16 @@
 12 station.png 8bpp 8 2 3 3 -1 -1 normal
 
 // Name: station_spriteset - feature 04
-13 * 7 02 04 FF \b0 \b1
+13 * 8 02 04 \wx7FFF \b0 \b1
 
 \w0
 
 // Name: station_spriteset2 - feature 04
-14 * 7 02 04 FE \b0 \b1
+14 * 8 02 04 \wx7FFE \b0 \b1
 
 \w1
 
-15 * 114 00 04 \b1 01 FF \wx00FF
+15 * 114 00 04 \b1 \wx0001 \wx00FF
 1A \b2
 \b68 \dx000003F4 \wx0000
 \dx0000842E \wx0000 \b0 \b0 \b0 \b16 \b5 \b2
@@ -73,151 +73,151 @@
 
 // Name: Station Layout@registers - Id FF
 // a : register 80
-16 * 63 02 04 FD 89
+16 * 68 02 04 \wx7FFD 89
 1A 20 \dx00000001
 \2sto 1A 20 \dx00000080
 \2r 1A 20 \dx00000000
 \2sto 1A 20 \dx00000081
-\2r 7D 80 20 \dxFFFFFFFF 	// a
+\2r 7D \dx00000080 20 \dxFFFFFFFF 	// a
 \2sto 1A 20 \dx00000082
 \2r 1A 20 \dx00000001
 \2sto 1A 00 \dx00000083
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: Station Layout@prepare - Id FF
-17 * 35 02 04 FC 89
+17 * 40 02 04 \wx7FFC 89
 1A 20 \dx00000000
-\2sto 6B 2F 20 \dx0000FFFF
+\2sto 6B \dx0000002F 20 \dx0000FFFF
 \2r 1A 20 \dx00000001
 \2sto 1A 00 \dx00000001
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @action3_0
-18 * 49 02 04 FB 89
-7E FC 20 \dxFFFFFFFF 	// Station Layout@prepare - Id FF
-\2r 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
+18 * 53 02 04 \wx7FFB 89
+7E \wx7FFC 20 \dxFFFFFFFF 	// Station Layout@prepare - Id FF
+\2r 7E \wx7FFD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
 \2r 10 00 \dx000000FF
-\b2
+\w2
 \wx8000 \dx00000002 \dx00000002 	// return 0;
-\wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
-\wx00FF // station_spriteset;
+\wx7FFE \dx00000003 \dx00000003 	// station_spriteset2;
+\wx7FFF // station_spriteset;
 
 // Name: @action3_1
-19 * 49 02 04 FA 89
-7E FC 20 \dxFFFFFFFF 	// Station Layout@prepare - Id FF
-\2r 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
+19 * 53 02 04 \wx7FFA 89
+7E \wx7FFC 20 \dxFFFFFFFF 	// Station Layout@prepare - Id FF
+\2r 7E \wx7FFD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
 \2r 10 00 \dx000000FF
-\b2
-\wx00FF \dx00000001 \dx00000001 	// station_spriteset;
+\w2
+\wx7FFF \dx00000001 \dx00000001 	// station_spriteset;
 \wx8000 \dx00000002 \dx00000002 	// return 0;
-\wx00FE // station_spriteset2;
+\wx7FFE // station_spriteset2;
 
 // Name: @action3_2
-20 * 49 02 04 FC 89
-7E FC 20 \dxFFFFFFFF 	// Station Layout@prepare - Id FF
-\2r 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
+20 * 53 02 04 \wx7FFC 89
+7E \wx7FFC 20 \dxFFFFFFFF 	// Station Layout@prepare - Id FF
+\2r 7E \wx7FFD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
 \2r 10 00 \dx000000FF
-\b2
+\w2
 \wx8000 \dx00000002 \dx00000002 	// return 0;
-\wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
-\wx00FF // station_spriteset;
+\wx7FFE \dx00000003 \dx00000003 	// station_spriteset2;
+\wx7FFF // station_spriteset;
 
 // Name: @action3_3
-21 * 55 02 04 F9 89
+21 * 58 02 04 \wx7FF9 89
 1A 20 \dx00000003
 \2sto 1A 20 \dx00000003
-\2r 7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
+\2r 7E \wx7FFD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
 \2r 10 00 \dx000000FF
-\b2
+\w2
 \wx8000 \dx00000002 \dx00000002 	// return 0;
-\wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
-\wx00FF // station_spriteset;
+\wx7FFE \dx00000003 \dx00000003 	// station_spriteset2;
+\wx7FFF // station_spriteset;
 
-22 * 9 00 04 \b1 01 FF \wx00FF
+22 * 9 00 04 \b1 \wx0001 \wx00FF
 0B 08
 
 // Name: @return_action_0
-23 * 20 02 04 F8 89
+23 * 22 02 04 \wx7FF8 89
 43 38 \dx0000000F
 \2+ 43 1C \dx0000000F
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @action3_4
-24 * 23 02 04 F8 89
+24 * 25 02 04 \wx7FF8 89
 0C 00 \dx0000FFFF
-\b1
-\wx00F8 \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
-\wx00FB // @action3_0;
+\w1
+\wx7FF8 \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
+\wx7FFB // @action3_0;
 
 // Name: @return_action_1
-25 * 20 02 04 F7 89
+25 * 22 02 04 \wx7FF7 89
 43 38 \dx0000000F
 \2+ 43 1C \dx0000000F
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @action3_5
-26 * 33 02 04 F7 89
+26 * 35 02 04 \wx7FF7 89
 0C 00 \dx0000FFFF
-\b2
-\wx00FA \dx00000000 \dx00000000 	// @action3_1;
-\wx00F7 \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
-\wx00FB // @action3_0;
+\w2
+\wx7FFA \dx00000000 \dx00000000 	// @action3_1;
+\wx7FF7 \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
+\wx7FFB // @action3_0;
 
 // Name: @return_action_2
-27 * 20 02 04 FA 89
+27 * 22 02 04 \wx7FFA 89
 43 38 \dx0000000F
 \2+ 43 1C \dx0000000F
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: @action3_6
-28 * 33 02 04 FB 89
+28 * 35 02 04 \wx7FFB 89
 0C 00 \dx0000FFFF
-\b2
-\wx00FC \dx00000000 \dx00000000 	// @action3_2;
-\wx00FA \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
-\wx00FB // @action3_0;
+\w2
+\wx7FFC \dx00000000 \dx00000000 	// @action3_2;
+\wx7FFA \dx00000142 \dx00000142 	// return (var[0x43, 24, 15] + var[0x43, 28, 15])
+\wx7FFB // @action3_0;
 
-29 * 18 03 04 01 FF \wx00FF \b3
-00 \wx00F7 	// @action3_5;
-01 \wx00FB 	// @action3_6;
-FF \wx00F9 	// @action3_3;
-\wx00F8 	// @action3_4;
+29 * 22 03 04 \wx0001 \wx00FF \w3
+\wx0000 \wx7FF7 	// @action3_5;
+\wx0001 \wx7FFB 	// @action3_6;
+\wx00FF \wx7FF9 	// @action3_3;
+\wx7FF8 	// @action3_4;
 
-30 * 22 00 04 \b4 01 FF \wx0100
+30 * 21 00 04 \b4 \wx0001 \wx0100
 08 "TEST"
 1D \wxDC00
 1C \wxDC01
-0F FF \wx00FF
+0F \wx00FF
 
-31 * 11 00 04 \b1 01 FF \wx0100
-0A FF \wx00FF
+31 * 10 00 04 \b1 \wx0001 \wx0100
+0A \wx00FF
 
 // Name: @CB_FAILED_REAL04
-32 * 7 02 04 F8 \b0 \b1
+32 * 8 02 04 \wx7FF8 \b0 \b1
 
 \w0
 
 // Name: @CB_FAILED04
-33 * 23 02 04 F8 89
+33 * 25 02 04 \wx7FF8 89
 0C 00 \dx0000FFFF
-\b1
+\w1
 \wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00F8 // Non-graphics callback, return graphics result
+\wx7FF8 // Non-graphics callback, return graphics result
 
 // Name: @action3_7
-34 * 41 02 04 F8 89
-7E FD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
+34 * 44 02 04 \wx7FF8 89
+7E \wx7FFD 20 \dxFFFFFFFF 	// Station Layout@registers - Id FF
 \2r 10 00 \dx000000FF
-\b2
-\wx00FF \dx00000001 \dx00000001 	// station_spriteset;
-\wx00FE \dx00000003 \dx00000003 	// station_spriteset2;
-\wx00F8 // @CB_FAILED04;
+\w2
+\wx7FFF \dx00000001 \dx00000001 	// station_spriteset;
+\wx7FFE \dx00000003 \dx00000003 	// station_spriteset2;
+\wx7FF8 // @CB_FAILED04;
 
-35 * 9 03 04 01 FF \wx0100 \b0
-\wx00F8 	// @action3_7;
+35 * 10 03 04 \wx0001 \wx0100 \w0
+\wx7FF8 	// @action3_7;
 

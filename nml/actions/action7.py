@@ -17,7 +17,7 @@ from nml import expression, free_number_list, generic, nmlop
 from nml.actions import action6, action10, actionD, base_action
 
 free_labels = free_number_list.FreeNumberList(
-    list(range(0xFF, 0x0F, -1)),
+    list(range(0xFFFF, 0x7FFF, -1)),
     "No label available to use for large if-blocks and loops.",
     "No unique label available to use for large if-blocks and loops.",
 )
@@ -38,7 +38,6 @@ def print_stats():
 class SkipAction(base_action.BaseAction):
     def __init__(self, action_type, var, varsize, condtype, value, label):
         self.action_type = action_type
-        self.label = label
         self.var = var
         self.varsize = varsize
         self.condtype = condtype
@@ -48,7 +47,7 @@ class SkipAction(base_action.BaseAction):
             assert self.varsize == 1
 
     def write(self, file):
-        size = 5 + self.varsize
+        size = 6 + self.varsize
         file.start_sprite(size)
         file.print_bytex(self.action_type)
         file.print_bytex(self.var)
@@ -60,7 +59,7 @@ class SkipAction(base_action.BaseAction):
             file.print_dwordx(self.value >> 32)
         else:
             file.print_varx(self.value, self.varsize)
-        file.print_bytex(self.label)
+        file.print_wordx(self.label)
         file.newline()
         file.end_sprite()
 

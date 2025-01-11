@@ -15,19 +15,19 @@
 "B" "BLTR" \w1 "8"
 00
 00
-2 * 52 08 08 "NML\30" "NML regression test" 00 "A test newgrf testing NML" 00
-3 * 14 04 07 FF 01 \wxDC00 "Brewery" 00
+2 * 52 08 09 "NML\30" "NML regression test" 00 "A test newgrf testing NML" 00
+3 * 15 04 07 FF \wx0001 \wxDC00 "Brewery" 00
 
-4 * 24 00 08 \b1 04 FF \wx0000
+4 * 24 00 08 \b1 \wx0004 \wx0000
 09 "PASS" "MAIL" "GRAI" "WHEA"
 
-5 * 6 01 07 \b1 FF \wx0003
+5 * 5 01 07 \b1 \wx0003
 
 6 groundtiles.png 8bpp 10 10 64 31 -31 0 normal
 7 groundtiles.png 8bpp 150 10 64 31 -31 0 normal
 8 groundtiles.png 8bpp 220 10 64 31 -31 0 normal
 
-9 * 12 01 07 00 FF \wx0001 FF \wx0001 FF \wx0006
+9 * 9 01 07 00 \wx0001 \wx0001 \wx0006
 
 10 brewery.png 8bpp 10 60 64 91 -31 -60 normal nocrop
 11 brewery.png 8bpp 80 60 64 91 -31 -60 normal nocrop
@@ -39,13 +39,13 @@
 // Name: brewery_sprite_layout - feature 07
 // building_sprite : register 8B
 // with_smoke : register 8C
-16 * 49 02 07 FF \b67 \dx00000F8D \wx0000
+16 * 50 02 07 \wx7FFF \b67 \dx00000F8D \wx0000
 \dxC0000000 \wx0002 \b0 \b0 80 83
 \dx80008001 \wx0003 \b0 \b0 \b0 \b16 \b16 \b48 86 84
 \dx00000000 \wx0023 \b8 \b0 \b0 \b11 \b16 \b7 8A 87 88
 
 // Name: brewery_sprite_layout@registers - feature 07
-17 * 362 02 07 FF 89
+17 * 388 02 07 \wx7FFF 89
 43 20 \dx000000FF
 \2cmp 1A 20 \dx00000004
 \2& 1A 20 \dx00000001
@@ -54,27 +54,27 @@
 \2sto 1A 20 \dx00000081 	// !guard
 \2r 40 20 \dx00000003
 \2< 1A 20 \dx00000001
-\2* 7D 81 20 \dxFFFFFFFF
+\2* 7D \dx00000081 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000082
-\2r 7D 80 20 \dxFFFFFFFF
+\2r 7D \dx00000080 20 \dxFFFFFFFF
 \2* 1A 20 \dx00000002
-\2+ 7D 82 20 \dxFFFFFFFF
+\2+ 7D \dx00000082 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000083
 \2r 43 20 \dx000000FF
 \2cmp 1A 20 \dx00000004
 \2& 1A 20 \dx00000001
 \2* 1A 20 \dx00000003
-\2+ 7D 8B 20 \dxFFFFFFFF 	// building_sprite
+\2+ 7D \dx0000008B 20 \dxFFFFFFFF 	// building_sprite
 \2sto 1A 20 \dx00000084
 \2r 40 20 \dx00000003
 \2cmp 1A 20 \dx00000003
 \2& 1A 20 \dx00000001
 \2^ 1A 20 \dx00000001
 \2sto 1A 20 \dx00000085
-\2r 7D 8B 20 \dxFFFFFFFF 	// building_sprite
+\2r 7D \dx0000008B 20 \dxFFFFFFFF 	// building_sprite
 \2cmp 1A 20 \dxFFFFFFFF
 \2& 1A 20 \dx00000001
-\2| 7D 85 20 \dxFFFFFFFF
+\2| 7D \dx00000085 20 \dxFFFFFFFF
 \2^ 1A 20 \dx00000001
 \2sto 1A 20 \dx00000086
 \2r 46 60 \dx000000FF \dxFFFFFFFF \dx00000004
@@ -86,161 +86,161 @@
 \2cmp 1A 20 \dx00000000
 \2& 1A 20 \dx00000001
 \2sto 1A 20 \dx00000089
-\2r 7D 8C 20 \dxFFFFFFFF 	// with_smoke
+\2r 7D \dx0000008C 20 \dxFFFFFFFF 	// with_smoke
 \2u< 1A 20 \dx00000001
 \2^ 1A 20 \dx00000001
-\2| 7D 89 20 \dxFFFFFFFF
+\2| 7D \dx00000089 20 \dxFFFFFFFF
 \2^ 1A 20 \dx00000001
 \2sto 1A 00 \dx0000008A
-\b1
-\wx00FF \dx00000000 \dx00000000
-\wx00FF //
+\w1
+\wx7FFF \dx00000000 \dx00000000
+\wx7FFF //
 
 // Name: @return_action_0
-18 * 44 02 07 FE 89
+18 * 46 02 07 \wx7FFE 89
 1A 20 \dx00000002
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000000
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: @return_action_1
-19 * 44 02 07 FD 89
+19 * 46 02 07 \wx7FFD 89
 1A 20 \dx00000001
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000000
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: @return_action_2
-20 * 44 02 07 FC 89
+20 * 46 02 07 \wx7FFC 89
 1A 20 \dxFFFFFFFF
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000000
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: @return_action_3
-21 * 44 02 07 FB 89
+21 * 46 02 07 \wx7FFB 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000001
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: brewery_layout_1
-22 * 44 02 07 FB 89
-7D FF 10 \dx000000FF
-\b3
-\wx00FE \dx00000000 \dx00000000 	// 0 .. 0: @return_action_0;
-\wx00FD \dx00000002 \dx00000002 	// 2 .. 2: @return_action_1;
-\wx00FC \dx00000001 \dx00000001 	// 1 .. 1: @return_action_2;
-\wx00FB // default: @return_action_3;
+22 * 49 02 07 \wx7FFB 89
+7D \dx000000FF 10 \dx000000FF
+\w3
+\wx7FFE \dx00000000 \dx00000000 	// 0 .. 0: @return_action_0;
+\wx7FFD \dx00000002 \dx00000002 	// 2 .. 2: @return_action_1;
+\wx7FFC \dx00000001 \dx00000001 	// 1 .. 1: @return_action_2;
+\wx7FFB // default: @return_action_3;
 
 // Name: @return_action_0
-23 * 44 02 07 FC 89
+23 * 46 02 07 \wx7FFC 89
 1A 20 \dxFFFFFFFF
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000000
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: @return_action_1
-24 * 44 02 07 FD 89
+24 * 46 02 07 \wx7FFD 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000001
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: @return_action_2
-25 * 44 02 07 FE 89
+25 * 46 02 07 \wx7FFE 89
 1A 20 \dx00000002
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000000
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: @return_action_3
-26 * 44 02 07 FF 89
+26 * 46 02 07 \wx7FFF 89
 1A 20 \dx00000001
 \2sto 1A 20 \dx0000008B
 \2r 1A 20 \dx00000000
 \2sto 1A 00 \dx0000008C
-\b1
-\wx00FF \dx00000000 \dx00000000 	// brewery_sprite_layout
-\wx00FF // brewery_sprite_layout
+\w1
+\wx7FFF \dx00000000 \dx00000000 	// brewery_sprite_layout
+\wx7FFF // brewery_sprite_layout
 
 // Name: brewery_layout_2
-27 * 44 02 07 FF 89
-7D FF 10 \dx000000FF
-\b3
-\wx00FC \dx00000000 \dx00000000 	// 0 .. 0: @return_action_0;
-\wx00FD \dx00000002 \dx00000002 	// 2 .. 2: @return_action_1;
-\wx00FE \dx00000001 \dx00000001 	// 1 .. 1: @return_action_2;
-\wx00FF // default: @return_action_3;
+27 * 49 02 07 \wx7FFF 89
+7D \dx000000FF 10 \dx000000FF
+\w3
+\wx7FFC \dx00000000 \dx00000000 	// 0 .. 0: @return_action_0;
+\wx7FFD \dx00000002 \dx00000002 	// 2 .. 2: @return_action_1;
+\wx7FFE \dx00000001 \dx00000001 	// 1 .. 1: @return_action_2;
+\wx7FFF // default: @return_action_3;
 
 // Name: brewery_choose_layout
-28 * 23 02 07 FF 89
+28 * 25 02 07 \wx7FFF 89
 5F 08 \dx00000001
-\b1
-\wx00FB \dx00000000 \dx00000000 	// 0 .. 0: brewery_layout_1;
-\wx00FF // default: brewery_layout_2;
+\w1
+\wx7FFB \dx00000000 \dx00000000 	// 0 .. 0: brewery_layout_1;
+\wx7FFF // default: brewery_layout_2;
 
 // Name: brewery_next_frame
-29 * 23 02 07 FB 89
+29 * 25 02 07 \wx7FFB 89
 46 00 \dx000000FF
-\b1
+\w1
 \wx80FF \dx00000000 \dx00000000 	// 0 .. 0: return 255;
 \wx80FE // default: return 254;
 
 // Name: @return_action_0
-30 * 41 02 07 FE 89
+30 * 43 02 07 \wx7FFE 89
 46 20 \dx000000FF
 \2cmp 1A 20 \dx00000000
 \2& 1A 20 \dx00000001
 \2* 1A 20 \dxFFFFFF04 	// expr1 - expr2
 \2+ 1A 00 \dx000000FD
-\b0
+\w0
 \wx8000 // Return computed value
 
 // Name: brewery_cargo_accepted
-31 * 59 02 07 FE 89
+31 * 64 02 07 \wx7FFE 89
 5F 28 \dx00000001
 \2u< 1A 20 \dx00000001
 \2* 1A 20 \dxFFFFFFFF 	// expr1 - expr2
 \2+ 1A 20 \dx00000003
-\2cmp 7D FF 30 \dx000000FF
+\2cmp 7D \dx000000FF 30 \dx000000FF
 \2& 1A 00 \dx00000001
-\b1
-\wx00FE \dx00000001 \dx00000001 	// 1 .. 1: return ((var[0x46, 0, 255] == 0) ? 1 : 253)
+\w1
+\wx7FFE \dx00000001 \dx00000001 	// 1 .. 1: return ((var[0x46, 0, 255] == 0) ? 1 : 253)
 \wx80FD // default: return 253;
 
 // Name: brewery_check_location
-32 * 23 02 07 FD 89
+32 * 25 02 07 \wx7FFD 89
 44 00 \dx000000FF
-\b1
+\w1
 \wx8001 \dx00000000 \dx00000000 	// 0 .. 0: return 1;
 \wx8000 // default: return 0;
 
 // param[126] = 0
 33 * 9 0D 7E \D= FF 00 \dx00000000
 
-34 * 9 09 00 04 \7c \dx49415247 01
+34 * 10 09 00 04 \7c \dx49415247 \wx0001
 
 // param[126] = 1
 35 * 9 0D 7E \D= FF 00 \dx00000001
@@ -248,7 +248,7 @@
 // param[125] = 0
 36 * 9 0D 7D \D= FF 00 \dx00000000
 
-37 * 9 09 00 04 \7c \dx41454857 01
+37 * 10 09 00 04 \7c \dx41454857 \wx0001
 
 // param[125] = 1
 38 * 9 0D 7D \D= FF 00 \dx00000001
@@ -256,22 +256,22 @@
 // param[127] = (param[126] | param[125])
 39 * 5 0D 7F \D| 7E 7D
 
-40 * 9 07 7F 04 \7= \dx00000000 02
+40 * 10 07 7F 04 \7= \dx00000000 \wx0002
 
-41 * 183 00 07 \b20 04 FF \wx0000
+41 * 199 00 07 \b20 \wx0004 \wx0000
 08 28 29 2A 2B
 12 \wxDC00 \wxDC00 \wxDC00 \wxDC00
 09 30 20 20 20
 19 00 00 00 00
 0B 64 00 00 00
 0C 19 00 00 00
-23 \b4
+23 \w4
 \wx0802 \wx0803 \wx0200 \wx0101
-\b4
+\w4
 \wx0802 \wx0803 \wx0200 \wx0101
-\b4
+\w4
 \wx0802 \wx0803 \wx0200 \wx0101
-\b4
+\w4
 \wx0802 \wx0803 \wx0200 \wx0101
 10 \wx00C8 \wx00C8 \wx00C8 \wx00C8
 11 FA FA FA FA
@@ -285,85 +285,85 @@
 16 00 00 00 00
 1A 94 94 94 94
 1B 02 02 02 02
-20 \b2
-02 03
-\b2
-02 03
-\b2
-02 03
-\b2
-02 03
+20 \w2
+\wx0002 \wx0003
+\w2
+\wx0002 \wx0003
+\w2
+\wx0002 \wx0003
+\w2
+\wx0002 \wx0003
 
-42 * 9 00 07 \b1 01 FF \wx0000
+42 * 9 00 07 \b1 \wx0001 \wx0000
 14 03
 
 // Name: @action3_0
-43 * 57 02 07 FD 89
+43 * 59 02 07 \wx7FFD 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx000000FF
 \2r 0C 00 \dx0000FFFF
-\b3
-\wx00FD \dx00000017 \dx00000017 	// brewery_check_location;
-\wx00FB \dx0000001A \dx0000001A 	// brewery_next_frame;
-\wx00FE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
-\wx00FF // brewery_choose_layout;
+\w3
+\wx7FFD \dx00000017 \dx00000017 	// brewery_check_location;
+\wx7FFB \dx0000001A \dx0000001A 	// brewery_next_frame;
+\wx7FFE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
+\wx7FFF // brewery_choose_layout;
 
-44 * 9 07 7F 04 \7= \dx00000000 02
+44 * 10 07 7F 04 \7= \dx00000000 \wx0002
 
-45 * 7 03 07 01 00 \b0
-\wx00FD 	// @action3_0;
+45 * 10 03 07 \wx0001 \wx0000 \w0
+\wx7FFD 	// @action3_0;
 
-46 * 9 00 07 \b1 01 FF \wx0001
+46 * 9 00 07 \b1 \wx0001 \wx0001
 14 02
 
 // Name: @action3_1
-47 * 47 02 07 FD 89
+47 * 49 02 07 \wx7FFD 89
 1A 20 \dx00010100
 \2sto 1A 20 \dx000000FF
 \2r 0C 00 \dx0000FFFF
-\b2
-\wx00FB \dx0000001A \dx0000001A 	// brewery_next_frame;
-\wx00FE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
-\wx00FF // brewery_choose_layout;
+\w2
+\wx7FFB \dx0000001A \dx0000001A 	// brewery_next_frame;
+\wx7FFE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
+\wx7FFF // brewery_choose_layout;
 
-48 * 9 07 7F 04 \7= \dx00000000 02
+48 * 10 07 7F 04 \7= \dx00000000 \wx0002
 
-49 * 7 03 07 01 01 \b0
-\wx00FD 	// @action3_1;
+49 * 10 03 07 \wx0001 \wx0001 \w0
+\wx7FFD 	// @action3_1;
 
-50 * 9 00 07 \b1 01 FF \wx0002
+50 * 9 00 07 \b1 \wx0001 \wx0002
 14 02
 
 // Name: @action3_2
-51 * 47 02 07 FD 89
+51 * 49 02 07 \wx7FFD 89
 1A 20 \dx00020001
 \2sto 1A 20 \dx000000FF
 \2r 0C 00 \dx0000FFFF
-\b2
-\wx00FB \dx0000001A \dx0000001A 	// brewery_next_frame;
-\wx00FE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
-\wx00FF // brewery_choose_layout;
+\w2
+\wx7FFB \dx0000001A \dx0000001A 	// brewery_next_frame;
+\wx7FFE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
+\wx7FFF // brewery_choose_layout;
 
-52 * 9 07 7F 04 \7= \dx00000000 02
+52 * 10 07 7F 04 \7= \dx00000000 \wx0002
 
-53 * 7 03 07 01 02 \b0
-\wx00FD 	// @action3_2;
+53 * 10 03 07 \wx0001 \wx0002 \w0
+\wx7FFD 	// @action3_2;
 
-54 * 9 00 07 \b1 01 FF \wx0003
+54 * 9 00 07 \b1 \wx0001 \wx0003
 14 02
 
 // Name: @action3_3
-55 * 47 02 07 FF 89
+55 * 49 02 07 \wx7FFF 89
 1A 20 \dx00030101
 \2sto 1A 20 \dx000000FF
 \2r 0C 00 \dx0000FFFF
-\b2
-\wx00FB \dx0000001A \dx0000001A 	// brewery_next_frame;
-\wx00FE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
-\wx00FF // brewery_choose_layout;
+\w2
+\wx7FFB \dx0000001A \dx0000001A 	// brewery_next_frame;
+\wx7FFE \dx00000148 \dx00000148 	// brewery_cargo_accepted;
+\wx7FFF // brewery_choose_layout;
 
-56 * 9 07 7F 04 \7= \dx00000000 01
+56 * 10 07 7F 04 \7= \dx00000000 \wx0001
 
-57 * 7 03 07 01 03 \b0
-\wx00FF 	// @action3_3;
+57 * 10 03 07 \wx0001 \wx0003 \w0
+\wx7FFF 	// @action3_3;
 

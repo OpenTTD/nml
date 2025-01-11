@@ -19,11 +19,12 @@ from nml.actions import base_action
 class Action10(base_action.BaseAction):
     def __init__(self, label):
         self.label = label
+        assert self.label >= 0x8000 and self.label <= 0xFFFF
 
     def write(self, file):
-        file.start_sprite(2)
+        file.start_sprite(3)
         file.print_bytex(0x10)
-        file.print_bytex(self.label)
+        file.print_wordx(self.label)
         file.newline()
         file.end_sprite()
 
