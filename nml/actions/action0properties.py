@@ -243,40 +243,6 @@ def animation_info(value, loop_bit=8, max_frame=253):
     return ConstantNumeric((looping << loop_bit) + frames - 1)
 
 
-def cargo_list(value, max_num_cargos):
-    """
-    Encode an array of cargo types in a single property value. If less than the maximum
-    number of cargos are given the rest is filled up with 0xFF (=invalid cargo).
-
-    @param value: Array of cargo types.
-    @type  value: C{Array}
-
-    @param max_num_cargos: The maximum number of cargos in the array.
-    @type  max_num_cargos: C{int}
-
-    @param prop_num: Property number.
-    @type  prop_num: C{int}
-
-    @param prop_size: Property size in bytes.
-    @type  prop_size: C{int}
-    """
-    if not isinstance(value, Array) or len(value.values) > max_num_cargos:
-        raise generic.ScriptError(
-            "Cargo list must be an array with no more than {:d} values".format(max_num_cargos), value.pos
-        )
-    cargoes = value.values + [ConstantNumeric(0xFF, value.pos) for _ in range(max_num_cargos - len(value.values))]
-
-    ret = None
-    for i, cargo in enumerate(cargoes):
-        byte = nmlop.AND(cargo, 0xFF)
-        if i == 0:
-            ret = byte
-        else:
-            byte = nmlop.SHIFT_LEFT(byte, i * 8)
-            ret = nmlop.OR(ret, byte)
-    return ret.reduce()
-
-
 #
 # General vehicle properties that apply to feature 0x00 .. 0x03
 #
@@ -1107,16 +1073,6 @@ def industry_layouts(value):
     return [IndustryLayoutProp(layouts)]
 
 
-def industry_prod_multiplier(value):
-    if not isinstance(value, Array) or len(value.values) > 2:
-        raise generic.ScriptError("Prod multiplier must be an array of up to two values", value.pos)
-    props = []
-    for i in range(0, 2):
-        val = value.values[i].reduce_constant() if i < len(value.values) else ConstantNumeric(0)
-        props.append(Action0Property(0x12 + i, val, 1))
-    return props
-
-
 class RandomSoundsProp(BaseAction0Property):
     def __init__(self, sound_list):
         self.sound_list = sound_list
@@ -1165,20 +1121,6 @@ def industry_conflicting_types(value):
     while len(types_list) < 3:
         types_list.append(ConstantNumeric(0xFF))
     return [ConflictingTypesProp(types_list)]
-
-
-def industry_input_multiplier(value, prop_num):
-    if not isinstance(value, Array) or len(value.values) > 2:
-        raise generic.ScriptError("Input multiplier must be an array of up to two values", value.pos)
-    val1 = value.values[0].reduce() if len(value.values) > 0 else ConstantNumeric(0)
-    val2 = value.values[1].reduce() if len(value.values) > 1 else ConstantNumeric(0)
-    if not isinstance(val1, (ConstantNumeric, ConstantFloat)) or not isinstance(val2, (ConstantNumeric, ConstantFloat)):
-        raise generic.ScriptError("Expected a compile-time constant", value.pos)
-    generic.check_range(val1.value, 0, 256, "input_multiplier", val1.pos)
-    generic.check_range(val2.value, 0, 256, "input_multiplier", val2.pos)
-    mul1 = int(val1.value * 256)
-    mul2 = int(val2.value * 256)
-    return [Action0Property(prop_num, ConstantNumeric(mul1 | (mul2 << 16)), 4)]
 
 
 class IndustryInputMultiplierProp(BaseAction0Property):
@@ -1294,23 +1236,7 @@ properties[0x0A] = {
     "prod_increase_msg":      {"size": 2, "num": 0x0D, "string": 0xDC},
     "prod_decrease_msg":      {"size": 2, "num": 0x0E, "string": 0xDC},
     "fund_cost_multiplier":   {"size": 1, "num": 0x0F},
-    "prod_cargo_types": {
-        "size": 2,
-        "num": 0x10,
-        "value_function": lambda value: cargo_list(value, 2),
-        "replaced_by": "cargo_types",
-    },
-    "accept_cargo_types": {
-        "size": 4,
-        "num": 0x11,
-        "value_function": lambda value: cargo_list(value, 3),
-        "replaced_by": "cargo_types",
-    },
-    # prop 12,13
-    "prod_multiplier": {
-        "custom_function": industry_prod_multiplier,
-        "replaced_by": "cargo_types",
-    },
+    # props 10+11+12+13 are replaced by cargo_types
     "min_cargo_distr":        {"size": 1, "num": 0x14},
     "random_sound_effects":   {"custom_function": random_sounds},  # = prop 15
     "conflicting_ind_types":  {"custom_function": industry_conflicting_types},  # = prop 16
@@ -1320,18 +1246,7 @@ properties[0x0A] = {
     "map_colour":             {"size": 1, "num": 0x19},
     "spec_flags":             {"size": 4, "num": 0x1A},
     "new_ind_msg":            {"size": 2, "num": 0x1B, "string": 0xDC},
-    "input_multiplier_1": {
-        "custom_function": lambda value: industry_input_multiplier(value, 0x1C),
-        "replaced_by": "cargo_types",
-    },
-    "input_multiplier_2": {
-        "custom_function": lambda value: industry_input_multiplier(value, 0x1D),
-        "replaced_by": "cargo_types",
-    },
-    "input_multiplier_3": {
-        "custom_function": lambda value: industry_input_multiplier(value, 0x1E),
-        "replaced_by": "cargo_types",
-    },
+    # prop 1C+1D+1E are replaced by cargo_types
     "name":                   {"size": 2, "num": 0x1F, "string": 0xDC},
     "prospect_chance":        {"size": 4, "num": 0x20, "unit_conversion": 0xFFFFFFFF},
     # prop 21, 22 (callback flags) are not set by user
