@@ -123,7 +123,8 @@ class NMLParser:
             t[0] = t[1] + [t[2]]
 
     def p_include(self, t):
-        "include : INCLUDE LPAREN STRING_LITERAL RPAREN SEMICOLON"
+        """include : INCLUDE LPAREN STRING_LITERAL RPAREN SEMICOLON
+        | INCLUDE LPAREN STRING_LITERAL COMMA include_define_list RPAREN SEMICOLON"""
         fname = t[3].value
         try:
             with codecs.open(generic.find_file(fname), "r", "utf-8") as input:
@@ -132,12 +133,24 @@ class NMLParser:
             raise generic.ScriptError("Input file is not utf-8 encoded: {}".format(ex))
         # Strip a possible BOM
         script = script.lstrip(str(codecs.BOM_UTF8, "utf-8"))
-        self.lexer.push_state(t.lineno(1))
+        self.lexer.push_state(t.lineno(1), t[5] if len(t) == 8 else None)
         for i in self.lexer.includes:
             if generic.find_file(i.filename) == generic.find_file(fname):
                 raise generic.ScriptError("Include loop detected: {}".format(fname), t.lineno(1))
         t[0] = self.parse(script, fname)
         self.lexer.pop_state()
+
+    def p_include_define_list(self, t):
+        """include_define_list : include_define
+        | include_define_list COMMA include_define"""
+        if len(t) == 2:
+            t[0] = t[1]
+        else:
+            t[0] = t[1] | t[3]
+
+    def p_include_define(self, t):
+        "include_define : ID EQ expression"
+        t[0] = {t[1].value: t[3]}
 
     def p_main_block(self, t):
         """main_block : switch
