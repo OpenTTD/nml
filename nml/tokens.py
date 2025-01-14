@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import codecs
 import re
 import sys
 
@@ -62,7 +63,7 @@ reserved = {
     "recolour_sprite":     "RECOLOUR_SPRITE",
     "engine_override":     "ENGINE_OVERRIDE",
     "sort":                "SORT_VEHICLES",
-    "const":               "CONST"
+    "const":               "CONST",
 }
 # fmt: on
 
@@ -81,6 +82,8 @@ class NMLLexer:
     @ivar text: Input text to scan.
     @type text: C{str}
     """
+
+    states = (("include", "inclusive"),)
 
     # Tokens
     tokens = list(reserved.values()) + [
@@ -157,6 +160,37 @@ class NMLLexer:
     t_TERNARY_OPEN = r"\?"
     t_COLON = r":"
     t_SEMICOLON = r";"
+
+    def t_include_INCLUDE(self, t):
+        r"\binclude\b"
+
+        def expect(type):
+            t = self.lexer.token()
+            if t is None:
+                raise generic.ScriptError("Syntax error, unexpected end-of-file")
+            if t.type != type:
+                raise generic.ScriptError(f'Syntax error, unexpected token "{t.value}"', t.lineno)
+            return t
+
+        self.lexer.push_state("INITIAL")
+        expect("LPAREN")
+        fname = expect("STRING_LITERAL").value.value
+        expect("RPAREN")
+        expect("SEMICOLON")
+        self.lexer.pop_state()
+
+        self.states.append((self.lexer.lexdata, self.lexer.lexpos))
+        self.includes.append(self.lexer.lineno)
+        for i in self.includes:
+            if generic.find_file(i.filename) == generic.find_file(fname):
+                raise generic.ScriptError(f"Include loop detected: {fname}", t.lineno)
+        with codecs.open(generic.find_file(fname), "r", "utf-8") as input:
+            script = generic.read_file(input)
+        self.setup(script, fname)
+
+        token = self.lexer.token()
+        self.lexer.lexmatch = None  # is deleted, so the slot should exist on exit
+        return token
 
     def t_FLOAT(self, t):
         r"\d+\.\d+"
@@ -258,11 +292,24 @@ class NMLLexer:
         )
         sys.exit(1)
 
+    def t_include_eof(self, t):
+        if self.states:
+            lexdata, lexpos = self.states.pop()
+            self.lexer.input(lexdata)
+            self.lexer.lexpos = lexpos
+            self.lexer.lineno = self.includes.pop()
+        if self.lexer.lexpos != self.lexer.lexlen:
+            return self.lexer.token()
+        return None
+
     def build(self):
         """
         Initial construction of the scanner.
         """
         self.lexer = lex.lex(module=self)
+        self.lexer.begin("include")
+        self.includes = []
+        self.states = []
 
     def setup(self, text, fname):
         """
@@ -274,8 +321,6 @@ class NMLLexer:
         @param fname: Filename associated with the input text (main input file).
         @type  fname: C{str}
         """
-        self.includes = []
-        self.text = text
         self.set_position(fname, 1)
         self.lexer.input(text)
 
@@ -289,7 +334,7 @@ class NMLLexer:
         self.set_position(self.lexer.lineno.filename, self.lexer.lineno.line_start + count)
 
     def find_column(self, t):
-        last_cr = self.text.rfind("\n", 0, t.lexpos)
+        last_cr = t.lexer.lexdata.rfind("\n", 0, t.lexpos)
         if last_cr < 0:
             last_cr = 0
         return t.lexpos - last_cr

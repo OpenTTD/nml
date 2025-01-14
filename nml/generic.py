@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import codecs
 import os
 import sys
 import time
@@ -616,3 +617,12 @@ def open_cache_file(sources, extension, mode):
                 "Can't create cache file {}. Check permissions, or use --cache-dir or --no-cache.".format(path),
             )
         raise
+
+
+def read_file(input):
+    try:
+        script = input.read()
+    except UnicodeDecodeError as ex:
+        raise ScriptError(f"Input file is not utf-8 encoded: {ex}")
+    # Strip a possible BOM
+    return script.lstrip(str(codecs.BOM_UTF8, "utf-8"))
