@@ -180,6 +180,9 @@ class NMLLexer:
         r"[a-zA-Z_][a-zA-Z0-9_]*"
         if t.value in reserved:  # Check for reserved words
             t.type = reserved[t.value]
+        elif t.value in self.defines:
+            t.value = self.defines[t.value]
+            t.value.pos = t.lineno
         else:
             t.type = "ID"
             t.value = expression.Identifier(t.value, t.lineno)
@@ -278,6 +281,7 @@ class NMLLexer:
         self.lexer = lex.lex(module=self, optimize=1, lextab="nml.generated.lextab")
         self.includes = []
         self.states = []
+        self.defines = {}
 
     def setup(self, text, fname):
         """
@@ -293,12 +297,14 @@ class NMLLexer:
         self.set_position(fname, 1)
         self.lexer.input(text)
 
-    def push_state(self, pos):
-        self.states.append((self.text, self.lexer.clone()))
+    def push_state(self, pos, defines):
+        self.states.append((self.text, self.lexer.clone(), self.defines.copy()))
         self.includes.append(pos)
+        if defines:
+            self.defines |= defines
 
     def pop_state(self):
-        self.text, self.lexer = self.states.pop()
+        self.text, self.lexer, self.defines = self.states.pop()
         self.includes.pop()
 
     def set_position(self, fname, line):

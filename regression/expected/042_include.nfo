@@ -14,6 +14,15 @@
 // param[0] = (param[0] + 1)
 2 * 9 0D 00 \D+ 00 FF \dx00000001
 
-// param[0] = (param[0] + 1)
-3 * 9 0D 00 \D+ 00 FF \dx00000001
+// param[0] = (param[0] + 2)
+3 * 9 0D 00 \D+ 00 FF \dx00000002
+
+// param[0] = (param[0] + 2)
+4 * 9 0D 00 \D+ 00 FF \dx00000002
+
+// param[0] = (param[0] + 3)
+5 * 9 0D 00 \D+ 00 FF \dx00000003
+
+// param[0] = (param[0] + 3)
+6 * 9 0D 00 \D+ 00 FF \dx00000003
 
