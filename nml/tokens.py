@@ -61,7 +61,8 @@ reserved = {
     "recolour_sprite":     "RECOLOUR_SPRITE",
     "engine_override":     "ENGINE_OVERRIDE",
     "sort":                "SORT_VEHICLES",
-    "const":               "CONST"
+    "const":               "CONST",
+    "include":             "INCLUDE"
 }
 # fmt: on
 
@@ -257,6 +258,11 @@ class NMLLexer:
         )
         sys.exit(1)
 
+    def t_eof(self, t):
+        if self.lexer.lexpos != self.lexer.lexlen:
+            return self.lexer.token()
+        return None
+
     def build(self, rebuild=False):
         """
         Initial construction of the scanner.
@@ -270,6 +276,8 @@ class NMLLexer:
                 # Tried to remove a non existing file
                 pass
         self.lexer = lex.lex(module=self, optimize=1, lextab="nml.generated.lextab")
+        self.includes = []
+        self.states = []
 
     def setup(self, text, fname):
         """
@@ -281,10 +289,17 @@ class NMLLexer:
         @param fname: Filename associated with the input text (main input file).
         @type  fname: C{str}
         """
-        self.includes = []
         self.text = text
         self.set_position(fname, 1)
         self.lexer.input(text)
+
+    def push_state(self, pos):
+        self.states.append((self.text, self.lexer.clone()))
+        self.includes.append(pos)
+
+    def pop_state(self):
+        self.text, self.lexer = self.states.pop()
+        self.includes.pop()
 
     def set_position(self, fname, line):
         """

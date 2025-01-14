@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import codecs
 import ply.yacc as yacc
 
 from nml import expression, generic, nmlop, tokens, unit
@@ -114,11 +115,29 @@ class NMLParser:
 
     def p_script(self, t):
         """script :
-        | script main_block"""
+        | script main_block
+        | script include"""
         if len(t) == 1:
             t[0] = []
         else:
             t[0] = t[1] + [t[2]]
+
+    def p_include(self, t):
+        "include : INCLUDE LPAREN STRING_LITERAL RPAREN SEMICOLON"
+        fname = t[3].value
+        try:
+            with codecs.open(generic.find_file(fname), "r", "utf-8") as input:
+                script = input.read()
+        except UnicodeDecodeError as ex:
+            raise generic.ScriptError("Input file is not utf-8 encoded: {}".format(ex))
+        # Strip a possible BOM
+        script = script.lstrip(str(codecs.BOM_UTF8, "utf-8"))
+        self.lexer.push_state(t.lineno(1))
+        for i in self.lexer.includes:
+            if generic.find_file(i.filename) == generic.find_file(fname):
+                raise generic.ScriptError("Include loop detected: {}".format(fname), t.lineno(1))
+        t[0] = self.parse(script, fname)
+        self.lexer.pop_state()
 
     def p_main_block(self, t):
         """main_block : switch
