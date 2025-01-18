@@ -122,6 +122,7 @@ class NMLLexer:
         "NUMBER",
         "FLOAT",
         "UNIT",
+        "CONCAT",
     ]
 
     t_PLUS = r"\+"
@@ -157,6 +158,7 @@ class NMLLexer:
     t_TERNARY_OPEN = r"\?"
     t_COLON = r":"
     t_SEMICOLON = r";"
+    t_CONCAT = r"\#\#"
 
     def t_FLOAT(self, t):
         r"\d+\.\d+"

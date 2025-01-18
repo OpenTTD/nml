@@ -1,3 +1,3 @@
 param[0] = param[0] + VALUE;
-const NAME = VALUE;
-param[0] = param[0] + NAME;
+const _ ## NAME ## x ## y = VALUE;
+param[0] = param[0] + _ ## NAME ## x ## y;
