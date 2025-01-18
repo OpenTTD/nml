@@ -1,0 +1,4 @@
+param[0] = 0;
+include("042_include.inc", VALUE = 1);
+include("042_include.inc", VALUE = 2, NAME = test);
+include("042_include.inc", VALUE = 3, NAME = test2);
