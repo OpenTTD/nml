@@ -809,10 +809,21 @@ def get_cargolist_action(cargo_list):
 
 
 def get_badgelist_action(badge_list):
-    action0 = Action0(0x08, 0)
-    action0.prop_list.append(StringListProp(0x18, badge_list))
-    action0.num_ids = len(badge_list)
-    return [action0]
+    index = 0
+    actions = []
+    while index < len(badge_list):
+        last = index + len(badge_list)
+        if last - index > 250:
+            last = index + 250
+
+        action0 = Action0(0x08, index)
+        action0.prop_list.append(StringListProp(0x18, badge_list[index:last]))
+        action0.num_ids = last - index
+        actions.append(action0)
+
+        index = last
+
+    return actions
 
 
 def get_tracktypelist_action(table_prop_id, cond_tracktype_not_defined, tracktype_list):
