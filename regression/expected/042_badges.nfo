@@ -18,15 +18,15 @@
 2 * 52 08 08 "NML\42" "NML regression test" 00 "A test newgrf testing NML" 00
 3 * 43 04 00 FF 01 \wxD000 "Can only attach power/steam vehicles" 00
 
+4 * 64 00 08 \b1 05 FF \wx0000
+18 "flag/GB" 00 "flag/US" 00 "power/steam" 00 "power/diesel" 00 "power/electric" 00
+
 // Name: sw_can_attach_wagon
-4 * 24 02 00 FF 89
-7A 02 00 \dx00000001
+5 * 24 02 00 FF 89
+7A 04 00 \dx00000001
 \b1
 \wx8401 \dx00000001 \dx00000001 	// 1 .. 1: return 1025;
 \wx8000 // default: return string(STR_NO_BADGE);
-
-5 * 64 00 08 \b1 05 FF \wx0000
-18 "flag/GB" 00 "flag/US" 00 "power/steam" 00 "power/diesel" 00 "power/electric" 00
 
 6 * 14 00 00 \b1 01 FF \wx0008
 33 \wx0002

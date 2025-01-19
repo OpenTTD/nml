@@ -6,17 +6,17 @@ grf {
     min_compatible_version: 0;
 }
 
-switch (FEAT_TRAINS, SELF, sw_can_attach_wagon, has_badge("power/steam")) {
-    1: return CB_RESULT_ATTACH_ALLOW;
-    return string(STR_NO_BADGE);
-}
-
 badgetable {
     "flag/GB",
     "flag/US",
     "power/steam",
     "power/diesel",
     "power/electric",
+}
+
+switch (FEAT_TRAINS, SELF, sw_can_attach_wagon, has_badge("power/electric")) {
+    1: return CB_RESULT_ATTACH_ALLOW;
+    return string(STR_NO_BADGE);
 }
 
 item (FEAT_TRAINS, default_train, 8) {
