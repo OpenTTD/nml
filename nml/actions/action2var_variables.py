@@ -867,6 +867,14 @@ varact2vars60x_roadstop = {
     'nearby_tile_road_stop_id'          : {'var': 0x6B, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
 }
 
+#
+# Badges (feature 0x15)
+#
+
+varact2vars_badges = {
+    'intro_date'             : {'var': 0x40, 'start':  0, 'size': 32},
+}
+
 class VarAct2Scope:
     def __init__(self, name, vars_normal, vars_60x, has_persistent_storage=False):
         self.name = name
@@ -906,6 +914,7 @@ scope_airporttiles = VarAct2Scope("AirportTiles", varact2vars_airporttiles, vara
 scope_roadtypes = VarAct2Scope("RoadTypes", varact2vars_roadtype, varact2vars60x_roadtype)
 scope_tramtypes = VarAct2Scope("TramTypes", varact2vars_tramtype, varact2vars60x_tramtype)
 scope_roadstops = VarAct2Scope("RoadStops", varact2vars_roadstop, varact2vars60x_roadstop)
+scope_badges = VarAct2Scope("Badges", varact2vars_badges, {})
 
 varact2features = [
     VarAct2Feature(scope_trains, scope_trains),
@@ -929,4 +938,5 @@ varact2features = [
     VarAct2Feature(scope_roadtypes, None),
     VarAct2Feature(scope_tramtypes, None),
     VarAct2Feature(scope_roadstops, scope_towns),
+    VarAct2Feature(scope_badges, None),
 ]
