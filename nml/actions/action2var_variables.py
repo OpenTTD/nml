@@ -244,6 +244,7 @@ varact2vars60x_vehicles = {
     'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
     'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
     'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
+    'count_has_badge'     : {'var': 0x64, 'start':  0, 'size': 8, 'param_function':badge_parameter},
     'has_badge'           : {'var': 0x7A, 'start':  0, 'size': 1, 'param_function':badge_parameter},
 }
 
