@@ -5,85 +5,63 @@ on:
     types: [published]
 
 jobs:
-  release-ubuntu:
-    name: Ubuntu release
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # macos-13 is an intel runner, macos-14 is apple silicon
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-13, macos-14]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v4
 
-    - name: Checkout tags
-      shell: bash
-      run: |
-        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Build sdist
+        run: pipx run build --sdist
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-        cache: 'pip'
-        cache-dependency-path: setup.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
 
-    - name: Install twine
-      run: |
-        python -m pip install --upgrade pip
-        pip install twine
-
-    - name: Build manylinux Python wheels
-      uses: RalfG/python-wheels-manylinux-build@v0.6.0-manylinux2014_x86_64
-      with:
-        python-versions: 'cp36-cp36m cp37-cp37m cp38-cp38'
-        build-requirements: '-e . --verbose'  # pip args
-        pre-build-command: 'git config --global --add safe.directory ${GITHUB_WORKSPACE}'
-
-    - name: Publish manylinux Python wheels
-      env:
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        twine upload --username __token__ dist/*-manylinux*.whl
-
-
-  release-osx:
-    name: MacOS release
-    runs-on: macOS-latest
-
+  upload:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          # unpacks all CIBW artifacts into dist/
+          pattern: cibw-*
+          path: dist
+          merge-multiple: true
 
-    - name: Checkout tags
-      shell: bash
-      run: |
-        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Install twine
+        run: |
+          python -m pip install --upgrade pip packaging
+          pip install twine
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-        cache: 'pip'
-        cache-dependency-path: setup.py
+      - name: Publish wheel and source distribution
+        env:
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          twine upload --username __token__ dist/*.whl dist/*.tar.gz
+          gh release upload ${{ github.event.release.tag_name }} dist/*.tar.gz
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine
-        pip install -e .
-
-    # Only publish source package on one OS, to prevent PyPI file conflicts.
-    # Use MacOS rather than Windows to get LF rather than CRLF line endings
-    # (useful for Debian source packages), and MacOS rather than Linux, since
-    # the latter has a different build process.
-    - name: Build and publish wheel and source distribution
-      env:
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        python setup.py sdist bdist_wheel
-        twine upload --username __token__ dist/*.whl dist/*.tar.gz
-        gh release upload ${{ github.event.release.tag_name }} dist/*.tar.gz
 
   release-windows:
     name: Windows release
@@ -91,13 +69,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Checkout tags
-      shell: bash
-      run: |
-        git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -109,15 +80,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel twine pyinstaller
+        pip install pyinstaller
         pip install -e .
-
-    - name: Build and publish wheel
-      env:
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        python setup.py bdist_wheel
-        twine upload --username __token__ dist/*.whl
 
     - name: Build and publish standalone executable
       env:
