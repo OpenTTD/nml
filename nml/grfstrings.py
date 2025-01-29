@@ -1234,7 +1234,7 @@ def parse_file(filename, default):
         with open(generic.find_file(filename), "r", encoding="utf-8") as fh:
             for idx, line in enumerate(fh):
                 pos = generic.LinePosition(filename, idx + 1)
-                line = line.rstrip("\n\r").lstrip("\uFEFF")
+                line = line.rstrip("\n\r").lstrip("\ufeff")
                 # The default language is processed twice here. Once as fallback langauge
                 # and once as normal language.
                 if default:
