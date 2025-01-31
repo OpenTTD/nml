@@ -1,0 +1,2 @@
+[build-system]
+requires = ["setuptools", "ply", "pillow>=3.4"]
