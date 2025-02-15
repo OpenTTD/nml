@@ -1,6 +1,6 @@
 MAKE?=make
 PYTHON?=/usr/bin/env python3
-BLACK_OPTIONS=-l 120 --exclude 'action2var_variables.py|action3_callbacks.py|generated'
+BLACK_OPTIONS=-l 120 --exclude 'action2var_variables.py|action3_callbacks.py|ply'
 
 .PHONY: regression test install extensions clean flake black
 
