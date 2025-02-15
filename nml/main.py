@@ -53,6 +53,7 @@ try:
     from PIL import Image
 except ImportError:
     # Image is required only when using graphics
+    Image = None
     pass
 
 developmode = False  # Give 'nice' error message instead of a stack dump.
@@ -495,6 +496,11 @@ def nml(
             for sprite in action.sprite_list:
                 if sprite.is_empty:
                     continue
+
+                if not Image:
+                    generic.print_error("PIL (python-imaging) wasn't found, no support for using graphics")
+                    sys.exit(3)
+
                 sprite.validate_size()
 
                 file = sprite.file
@@ -524,10 +530,6 @@ def nml(
     if skip_sprite_processing:
         generic.clear_progress()
         return 0
-
-    if not Image and len(sprite_files) > 0:
-        generic.print_error("PIL (python-imaging) wasn't found, no support for using graphics")
-        sys.exit(3)
 
     used_palette = forced_palette
 
