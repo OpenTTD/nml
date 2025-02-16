@@ -1,3 +1,39 @@
+0.7.6 (2025-02-15)
+------------------------------------------------------------------------
+This release adds support for user defined constants, improves stations support, and reduces comsuption of limited ressources (registers and D0xx strings).
+
+Support for NewGRF additions of OpenTTD 15:
+ - Add: Support for station property 1E (#333)
+ - Change: Support for 8 bit station tile types. (#339)
+ - Change: cargo class bits 13 and 14 now define potable and non-potable (OpenTTD #12979) (#343)
+ - Change: add vehicle 'refit' callback (cb 0x163) and cargo class filter prop (0x28 for trains etc) (#344)
+ - Fix: incorrect start values for roadstop var 43/44 (#349)
+ - Add: Support for Action5 type 19 road waypoints (#351)
+
+Support for NewGRF additions of OpenTTD 14:
+ - Add: Support for station variable 6B (#320)
+ - Add: Constants and varact2 variable associated with road waypoints (#327)
+
+Other changes and fixes:
+ - Add: 'const' keyword to allow users to define new constants (#302)
+ - Change: reduce register consumption for spritelayouts (#306)
+ - Codechange: Reduce register usage for BinOp (#308)
+ - Change: Use extended Action1s (#309)
+ - Fix #238: include information about relevant block in ScriptError message (#321)
+ - Add: Basic range check for replace() (#324)
+ - Change: Reduce D0xx usage where possible (#326)
+ - Change: Unreachable range for default only switch should target CB_FAILED (#328)
+ - Change: Remove road stops variable random_bits (#329)
+ - Fix d4eb3ff: `nearby_tile_same_grf`, `nearby_tile_other_grf` and `nearby_tile_original_gfx` compared to wrong values (#330)
+ - Fix 749aa73: station property 0A should be an extended byte (#334)
+ - Add: Support for station properties 0E and 0F (station layouts) (#335)
+ - Fix #337: Station 'availability' is a purchase callback (#338)
+ - Fix #340: Always use raw strings for token regex (#341)
+ - Add: --list-unused-strings to list the unused strings (#348)
+ - Fix: Properly check number of varaction2 ranges (#352)
+ - Fix #354: Improve length check for string literal properties (#355)
+
+
 0.7.5 (2024-03-02)
 ------------------------------------------------------------------------
 This release restores compatibility for stations in OpenTTD <14.
