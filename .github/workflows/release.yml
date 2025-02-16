@@ -38,7 +38,15 @@ jobs:
           name: cibw-sdist
           path: dist/*.tar.gz
 
-  upload:
+      - name: Upload to github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} dist/*.tar.gz
+
+
+  publish:
+    name: Publish wheels and source distribution
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     steps:
@@ -57,10 +65,8 @@ jobs:
       - name: Publish wheel and source distribution
         env:
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           twine upload --username __token__ dist/*.whl dist/*.tar.gz
-          gh release upload ${{ github.event.release.tag_name }} dist/*.tar.gz
 
 
   release-windows:
