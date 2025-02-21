@@ -5,14 +5,14 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d20
+0 * 4 \d24
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
 "B" "MINV" \w4 \dx00000000
 "B" "NPAR" \w1 00
 "B" "PALS" \w1 "A"
-"B" "BLTR" \w1 "8"
+"B" "BLTR" \w1 "3"
 00
 00
 2 * 52 08 08 "NML\42" "NML regression test" 00 "A test newgrf testing NML" 00
@@ -70,13 +70,25 @@
 
 16 * 11 04 15 7F 01 01 "Steam" 00
 
-17 * 21 00 15 \b1 01 FF \wx0002
+17 * 6 01 15 \b1 FF \wx0001
+
+18 opengfx_generic_trams1.png 32bpp 96 56 28 15 -14 -8 normal
+
+// Name: sprite_steam - feature 15
+19 * 7 02 15 FE \b1 \b0
+\w0
+
+
+20 * 7 03 15 01 01 \b0
+\wx00FE 	// sprite_steam;
+
+21 * 21 00 15 \b1 01 FF \wx0002
 08 "power/diesel" 00
 
-18 * 12 04 15 7F 01 02 "Diesel" 00
+22 * 12 04 15 7F 01 02 "Diesel" 00
 
-19 * 23 00 15 \b1 01 FF \wx0003
+23 * 23 00 15 \b1 01 FF \wx0003
 08 "power/electric" 00
 
-20 * 14 04 15 7F 01 03 "Electric" 00
+24 * 14 04 15 7F 01 03 "Electric" 00
 

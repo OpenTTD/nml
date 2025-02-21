@@ -41,10 +41,19 @@ item (FEAT_BADGES, power) {
     }
 }
 
+template tmpl_truck(x) {
+    [ 96,56, 28,15,  -14, -8]
+}
+
+spriteset(sprite_steam, ZOOM_LEVEL_NORMAL, BIT_DEPTH_32BPP, "opengfx_generic_trams1.png") { tmpl_truck(0) }
+
 item (FEAT_BADGES, steam) {
     property {
         label: "power/steam";
         name: string(STR_POWER_STEAM);
+    }
+    graphics {
+        default: sprite_steam;
     }
 }
 
