@@ -84,6 +84,7 @@ action5_table = {
     "RAILTYPE_TUNNELS": (0x17, 16, Action5BlockType.OFFSET),
     "OTTD_RECOLOUR": (0x18, 1, Action5BlockType.OFFSET),
     "ROAD_WAYPOINTS": (0x19, 4, Action5BlockType.OFFSET),
+    "OVERLAY_ROCKS": (0x1A, 95, Action5BlockType.OFFSET),
 }
 
 
