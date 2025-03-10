@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, global_constants, nmlop
 from nml.actions import action2, action2real, action2var_variables, action4, action6, actionD
-from nml.ast import switch
+from nml.ast import general, switch, spriteblock
 
 
 class Action2Var(action2.Action2):
@@ -1016,6 +1016,16 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     if result.name.value == "CB_FAILED":
         return get_failed_cb_result(parent_action.feature, action_list, parent_action, result.pos)
 
+    target = action2.resolve_spritegroup(result.name) if not result.act2 else None
+
+    if parent_action.feature not in action2.features_sprite_layout and isinstance(target, spriteblock.SpriteLayout):
+        raise generic.ScriptError(
+            "SpriteLayout '{}' is not a valid return value for feature '{}'".format(
+                result.name, general.feature_name(parent_action.feature)
+            ),
+            result.pos,
+        )
+
     if len(result.param_list) == 0:
         action2.add_ref(result, parent_action)
         return result
@@ -1024,14 +1034,13 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     # Insert an intermediate varaction2 to store expressions in registers
     var_scope = get_scope(parent_action.feature, var_range)
     varact2parser = Varaction2Parser(parent_action.feature, var_range)
-    layout = action2.resolve_spritegroup(result.name)
     for i, param in enumerate(result.param_list):
         if i > 0:
             varact2parser.var_list.append(nmlop.VAL2)
             varact2parser.var_list_size += 1
         varact2parser.parse_expr(reduce_varaction2_expr(param, var_scope))
         varact2parser.var_list.append(nmlop.STO_TMP)
-        store_tmp = VarAction2StoreCallParam(layout.register_map[parent_action.feature][i])
+        store_tmp = VarAction2StoreCallParam(target.register_map[parent_action.feature][i])
         varact2parser.var_list.append(store_tmp)
         varact2parser.var_list_size += store_tmp.get_size() + 1  # Add 1 for operator
 
