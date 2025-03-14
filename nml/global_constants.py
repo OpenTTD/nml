@@ -63,8 +63,8 @@ constant_numbers = {
     "CC_NON_POTABLE"  : 14,
     "CC_SPECIAL"      : 15,
     "NO_CARGO_CLASS"           : 0,
-    "ALL_NORMAL_CARGO_CLASSES" : 0x1FFF,
-    "ALL_CARGO_CLASSES"        : 0x9FFF,
+    "ALL_NORMAL_CARGO_CLASSES" : 0x7FFF,
+    "ALL_CARGO_CLASSES"        : 0xFFFF,
 
     # engine class
     "ENGINE_CLASS_STEAM"    : 0x00,
