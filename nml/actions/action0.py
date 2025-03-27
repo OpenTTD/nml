@@ -197,9 +197,9 @@ used_ids = [
     BlockAllocation(0, 0xFFFE, "Station"),  # UINT16_MAX - 1
     BlockAllocation(0, 8, "Canal", False),
     BlockAllocation(0, 15, "Bridge", False),
-    BlockAllocation(0, 255, "House"),
+    BlockAllocation(0, 4095, "House"),
     BlockAllocation(0, -1, "Global", False),
-    BlockAllocation(0, 255, "Industry Tile"),
+    BlockAllocation(0, 254, "Industry Tile"),
     BlockAllocation(0, 127, "Industry"),
     BlockAllocation(0, 63, "Cargo"),
     BlockAllocation(0, -1, "Sound"),
