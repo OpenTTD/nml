@@ -138,8 +138,6 @@ class GRF(base_statement.BaseStatement):
         self.version = self.version.reduce_constant()
         self.min_compatible_version = self.min_compatible_version.reduce_constant()
 
-        global param_stats
-
         param_num = 0
         for param in self.params:
             param.pre_process(expression.ConstantNumeric(param_num))
