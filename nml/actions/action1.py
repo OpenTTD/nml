@@ -158,10 +158,10 @@ class SpritesetCollection(base_action.BaseAction):
 
 
 """
-The collection which was previoulsy used. add_to_action1 will try to reuse this
-collection as long as possible to reduce the duplication of sprites. As soon
-as a spriteset with a different feature or amount of sprites is added a new
-collection will be created.
+The list of collections per feature. add_to_action1 will try to reuse the
+last collection as long as possible to reduce the duplication of sprites. As soon
+as a spriteset with a different amount of sprites is added a new collection will
+be created.
 """
 spriteset_collections = {}
 
@@ -188,7 +188,6 @@ def add_to_action1(spritesets, feature, pos):
 
     actions = []
 
-    global spriteset_collections
     if feature not in spriteset_collections:
         spriteset_collections[feature] = [
             SpritesetCollection(feature, 0, len(real_sprite.parse_sprite_data(spritesets[0])))
