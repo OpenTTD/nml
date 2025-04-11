@@ -199,7 +199,7 @@ def get_string_action4s(feature, string_range, string, id=None):
     else:
         # Not a string range, so we must have an id
         assert id is not None
-        size = 3 if feature <= 3 else 1
+        size = 3 if (feature <= 3 or feature == 21) else 1
         if isinstance(id, expression.ConstantNumeric):
             id_val = id.value
         else:
@@ -207,7 +207,7 @@ def get_string_action4s(feature, string_range, string, id=None):
             tmp_param, tmp_param_actions = actionD.get_tmp_parameter(id)
             actions.extend(tmp_param_actions)
             # Apply ID via action4 later
-            mod = (tmp_param, 2 if feature <= 3 else 1, 5 if feature <= 3 else 4)
+            mod = (tmp_param, 2 if (feature <= 3 or feature == 21) else 1, 5 if (feature <= 3 or feature == 21) else 4)
 
     if write_action4s:
         strings = [

@@ -63,12 +63,12 @@
 13 * 14 00 15 \b1 01 FF \wx0000
 08 "power" 00
 
-14 * 11 04 15 7F 01 00 "Power" 00
+14 * 13 04 15 7F 01 FF \wx0000 "Power" 00
 
 15 * 20 00 15 \b1 01 FF \wx0001
 08 "power/steam" 00
 
-16 * 11 04 15 7F 01 01 "Steam" 00
+16 * 13 04 15 7F 01 FF \wx0001 "Steam" 00
 
 17 * 6 01 15 \b1 FF \wx0001
 
@@ -85,10 +85,10 @@
 21 * 21 00 15 \b1 01 FF \wx0002
 08 "power/diesel" 00
 
-22 * 12 04 15 7F 01 02 "Diesel" 00
+22 * 14 04 15 7F 01 FF \wx0002 "Diesel" 00
 
 23 * 23 00 15 \b1 01 FF \wx0003
 08 "power/electric" 00
 
-24 * 14 04 15 7F 01 03 "Electric" 00
+24 * 16 04 15 7F 01 FF \wx0003 "Electric" 00
 
