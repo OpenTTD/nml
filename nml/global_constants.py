@@ -149,6 +149,12 @@ constant_numbers = {
     "VEHICLE_FLAG_SYNC_VARIANT_EXCLUSIVE_PREVIEW" : 2,
     "VEHICLE_FLAG_SYNC_VARIANT_RELIABILITY"       : 3,
 
+    # badge flags
+    "BADGE_FLAG_COPY_TO_RELATED_ENTITY"           : 0,
+    "BADGE_FLAG_NAME_LIST_STOP"                   : 1,
+    "BADGE_FLAG_NAME_LIST_FIRST_ONLY"             : 2,
+    "BADGE_FLAG_NAME_USE_COMPANY_COLOUR"          : 3,
+
     # Graphic flags for waterfeatures
     "WATERFEATURE_ALTERNATIVE_SPRITES" : 0,
 
