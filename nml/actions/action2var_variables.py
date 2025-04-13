@@ -697,6 +697,9 @@ varact2vars_railtype = {
     'level_crossing_status' : {'var': 0x42, 'start': 0, 'size':  8},
     'build_date'            : {'var': 0x43, 'start': 0, 'size': 32},
     'town_zone'             : {'var': 0x44, 'start': 0, 'size':  8},
+    'roadtype'              : {'var': 0x45, 'start': 0, 'size':  8},
+    'tramtype'              : {'var': 0x45, 'start': 8, 'size':  8},
+    'railtype'              : {'var': 0x45, 'start': 16, 'size': 8},
     'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
 # Railtypes have no 60+x variables
@@ -738,6 +741,9 @@ varact2vars_roadtype = {
     'level_crossing_status' : {'var': 0x42, 'start': 0, 'size':  8},
     'build_date'            : {'var': 0x43, 'start': 0, 'size': 32},
     'town_zone'             : {'var': 0x44, 'start': 0, 'size':  8},
+    'roadtype'              : {'var': 0x45, 'start': 0, 'size':  8},
+    'tramtype'              : {'var': 0x45, 'start': 8, 'size':  8},
+    'railtype'              : {'var': 0x45, 'start': 16, 'size': 8},
     'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
 # Roadtypes have no 60+x variables
@@ -752,6 +758,9 @@ varact2vars_tramtype = {
     'level_crossing_status' : {'var': 0x42, 'start': 0, 'size':  8},
     'build_date'            : {'var': 0x43, 'start': 0, 'size': 32},
     'town_zone'             : {'var': 0x44, 'start': 0, 'size':  8},
+    'roadtype'              : {'var': 0x45, 'start': 0, 'size':  8},
+    'tramtype'              : {'var': 0x45, 'start': 8, 'size':  8},
+    'railtype'              : {'var': 0x45, 'start': 16, 'size': 8},
     'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
 # Tramtypes have no 60+x variables
