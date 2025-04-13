@@ -383,7 +383,9 @@ def badge_list(prop_num, *values):
 
         for badge in value.values:
             if not isinstance(badge, StringLiteral) or badge.value not in table:
-                raise generic.ScriptError("Parameter for badges must be a string literal that is also in your badge table", value.pos)
+                raise generic.ScriptError(
+                    "Parameter for badges must be a string literal that is also in your badge table", value.pos
+                )
 
     return [
         VariableListProp(
