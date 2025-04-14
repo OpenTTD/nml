@@ -892,11 +892,11 @@ varact2features = [
     VarAct2Feature(scope_industries, scope_towns),
     VarAct2Feature(scope_cargos, None),
     VarAct2Feature(scope_soundeffects, None),
-    VarAct2Feature(scope_airports, None),
+    VarAct2Feature(scope_airports, scope_towns),
     None,  # signals
     VarAct2Feature(scope_objects, scope_towns),
     VarAct2Feature(scope_railtypes, None),
-    VarAct2Feature(scope_airporttiles, None),
+    VarAct2Feature(scope_airporttiles, scope_airports),
     VarAct2Feature(scope_roadtypes, None),
     VarAct2Feature(scope_tramtypes, None),
     VarAct2Feature(scope_roadstops, scope_towns),
