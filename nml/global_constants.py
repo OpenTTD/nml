@@ -1503,7 +1503,7 @@ def print_stats():
         # Ids FE and FF have special meanings in Action3, so we do not consider them valid ids.
         generic.print_info("Cargo translation table: {}/{}".format(len(cargo_numbers), 0xFE))
     if len(badge_numbers) > 0:
-        generic.print_info("Badge translation table: {}/{}".format(len(cargo_numbers), 0x10000))
+        generic.print_info("Badge translation table: {}/{}".format(len(badge_numbers), 0xFFFF))
     if not is_default_railtype_table:
         generic.print_info("Railtype translation table: {}/{}".format(len(railtype_table), 0x100))
     if not is_default_roadtype_table:
