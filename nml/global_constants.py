@@ -385,15 +385,6 @@ constant_numbers = {
     # station tiles
     "STAT_ALL_TILES"     : 0xFF,
 
-    # station animation triggers
-    "STAT_ANIM_IS_BUILT"              : 0,
-    "STAT_ANIM_CARGO_ARRIVES"         : 1,
-    "STAT_ANIM_CARGO_REMOVED"         : 2,
-    "STAT_ANIM_TRAIN_ENTERS"          : 3,
-    "STAT_ANIM_TRAIN_LEAVES"          : 4,
-    "STAT_ANIM_TRAIN_LOAD_UNLOAD"     : 5,
-    "STAT_ANIM_250_TICKS"             : 6,
-
     # house flags
     "HOUSE_FLAG_NOT_SLOPED"         : 1,
     "HOUSE_FLAG_ANIMATE"            : 5,
@@ -516,11 +507,6 @@ constant_numbers = {
     "OBJ_FLAG_ALLOW_BRIDGE"    : 11,
     "OBJ_FLAG_RANDOM_ANIMATION": 12,
     "OBJ_FLAG_SCALE_BY_WATER"  : 13,
-
-    # object animation triggers
-    "OBJ_ANIM_IS_BUILT"        : 0,
-    "OBJ_ANIM_PERIODIC"        : 1,
-    "OBJ_ANIM_SYNC"            : 2,
 
     # Special values for object var 0x60
     "OBJECT_TYPE_OTHER_GRF"     : 0xFFFE,
@@ -784,6 +770,13 @@ constant_numbers = {
     "TRIGGER_STATION_TRAIN_LOADS_UNLOADS"   : 4,
     "TRIGGER_STATION_TRAIN_RESERVES"        : 5,
 
+    "TRIGGER_ROAD_STOP_NEW_CARGO"           : 0,
+    "TRIGGER_ROAD_STOP_NO_MORE_CARGO"       : 1,
+    "TRIGGER_ROAD_STOP_VEH_ARRIVES"         : 2,
+    "TRIGGER_ROAD_STOP_VEH_LEAVES"          : 3,
+    "TRIGGER_ROAD_STOP_VEH_LOADS_UNLOADS"   : 4,
+    "TRIGGER_ROAD_STOP_VEH_RESERVES"        : 5,
+
     "TRIGGER_HOUSE_TILELOOP"                : 0,
     "TRIGGER_HOUSE_TOP_TILELOOP"            : 1,
 
@@ -819,6 +812,9 @@ constant_numbers = {
     "ANIM_TRIGGER_INDTILE_RECEIVED_CARGO"     : 3,
     "ANIM_TRIGGER_INDTILE_DISTRIBUTES_CARGO"  : 4,
 
+    "OBJ_ANIM_IS_BUILT"                     : "ANIM_TRIGGER_OBJ_BUILT",
+    "OBJ_ANIM_PERIODIC"                     : "ANIM_TRIGGER_OBJ_TILELOOP",
+    "OBJ_ANIM_SYNC"                         : "ANIM_TRIGGER_OBJ_256_TICKS",
     "ANIM_TRIGGER_OBJ_BUILT"                : 0,
     "ANIM_TRIGGER_OBJ_TILELOOP"             : 1,
     "ANIM_TRIGGER_OBJ_256_TICKS"            : 2,
@@ -837,6 +833,24 @@ constant_numbers = {
     "ANIM_TRIGGER_ROAD_STOP_VEH_LEAVE"      : 4,
     "ANIM_TRIGGER_ROAD_STOP_VEH_LOAD"       : 5,
     "ANIM_TRIGGER_ROAD_STOP_250_TICKS"      : 6,
+    "ANIM_TRIGGER_ROAD_STOP_TILELOOP"       : 7,
+
+    "STAT_ANIM_IS_BUILT"                    : "ANIM_TRIGGER_STAT_BUILT",
+    "STAT_ANIM_CARGO_ARRIVES"               : "ANIM_TRIGGER_STAT_NEW_CARGO",
+    "STAT_ANIM_CARGO_REMOVED"               : "ANIM_TRIGGER_STAT_CARGO_TAKEN",
+    "STAT_ANIM_TRAIN_ENTERS"                : "ANIM_TRIGGER_STAT_VEH_ENTER",
+    "STAT_ANIM_TRAIN_LEAVES"                : "ANIM_TRIGGER_STAT_VEH_LEAVE",
+    "STAT_ANIM_TRAIN_LOAD_UNLOAD"           : "ANIM_TRIGGER_STAT_VEH_LOAD",
+    "STAT_ANIM_250_TICKS"                   : "ANIM_TRIGGER_STAT_250_TICKS",
+    "ANIM_TRIGGER_STAT_BUILT"               : 0,
+    "ANIM_TRIGGER_STAT_NEW_CARGO"           : 1,
+    "ANIM_TRIGGER_STAT_CARGO_TAKEN"         : 2,
+    "ANIM_TRIGGER_STAT_VEH_ENTER"           : 3,
+    "ANIM_TRIGGER_STAT_VEH_LEAVE"           : 4,
+    "ANIM_TRIGGER_STAT_VEH_LOAD"            : 5,
+    "ANIM_TRIGGER_STAT_250_TICKS"           : 6,
+    "ANIM_TRIGGER_STAT_TILELOOP"            : 7,
+    "ANIM_TRIGGER_STAT_TRAIN_RESERVES"      : 8,
 
     # Animation looping
     "ANIMATION_NON_LOOPING"                 : 0,
