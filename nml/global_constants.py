@@ -548,6 +548,14 @@ constant_numbers = {
     "TRAMTYPE_FLAG_HIDDEN"            : 3,
     "TRAMTYPE_FLAG_TOWN_BUILD"        : 4,
 
+    # special values for road/tram/railtype var 0x45
+    "ROADTYPE_OTHER_GRF"        : 0xFE,
+    "ROADTYPE_NO_ROAD"          : 0xFF,
+    "TRAMTYPE_OTHER_GRF"        : 0xFE,
+    "TRAMTYPE_NO_TRAM"          : 0xFF,
+    "RAILTYPE_OTHER_GRF"        : 0xFE,
+    "RAILTYPE_NO_RAIL"          : 0xFF,
+
     # type of default station graphics used for a railtype
     "RAILTYPE_STATION_NORMAL"   : 0,
     "RAILTYPE_STATION_MONORAIL" : 1,
