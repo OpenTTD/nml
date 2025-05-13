@@ -14,6 +14,6 @@ per-file-ignores =
 
 exclude =
     build
-    generated
+    ply
     nml/actions/action2var_variables.py
     nml/actions/action3_callbacks.py
