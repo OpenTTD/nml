@@ -234,6 +234,9 @@ def vehicle_roadtype(name, args, pos, info):
 def vehicle_tramtype(name, args, pos, info):
     return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="tramtype"), [])
 
+def badge_parameter(name, args, pos, info):
+    return [expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="badgetype"), []]
+
 varact2vars60x_vehicles = {
     'count_veh_id'        : {'var': 0x60, 'start':  0, 'size': 8},
     'other_veh_curv_info' : {'var': 0x62, 'start':  0, 'size': 4, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
@@ -241,6 +244,8 @@ varact2vars60x_vehicles = {
     'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
     'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
     'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
+    'count_has_badge'     : {'var': 0x64, 'start':  0, 'size': 8, 'param_function':badge_parameter},
+    'has_badge'           : {'var': 0x7A, 'start':  0, 'size': 1, 'param_function':badge_parameter},
 }
 
 varact2vars60x_trains = {
@@ -292,6 +297,7 @@ varact2vars60x_base_stations = {
     'cargo_accepted_last_month' : {'var': 0x69, 'start': 1, 'size':  1},
     'cargo_accepted_this_month' : {'var': 0x69, 'start': 2, 'size':  1},
     'cargo_accepted_bigtick'    : {'var': 0x69, 'start': 3, 'size':  1},
+    'has_badge'                 : {'var': 0x7A, 'start': 0, 'size':  1},
 }
 
 varact2vars_stations = {
@@ -483,6 +489,7 @@ varact2vars60x_houses = {
     'nearby_tile_house_id'               : {'var': 0x66, 'start':  0, 'size': 16, 'param_function': signed_tile_offset, 'value_function': value_sign_extend},
     'nearby_tile_house_class'            : {'var': 0x66, 'start': 16, 'size': 16, 'param_function': signed_tile_offset, 'value_function': value_sign_extend},
     'nearby_tile_house_grfid'            : {'var': 0x67, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'has_badge'                          : {'var': 0x7A, 'start':  0, 'size':  1},
 }
 
 #
@@ -514,6 +521,7 @@ varact2vars60x_industrytiles = {
     'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
     'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_industrytile_id'  : {'var': 0x62, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
+    'has_badge'                    : {'var': 0x7A, 'start':  0, 'size':  1},
 }
 
 #
@@ -619,6 +627,7 @@ varact2vars60x_industries = {
     'incoming_cargo_waiting'       : {'var': 0x6F, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
     'production_rate'              : {'var': 0x70, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
     'transported_last_month_pct'   : {'var': 0x71, 'start':  0, 'size': 32, 'param_function': industry_cargotype, 'value_function': value_mul_div(101, 256)},
+    'has_badge'                    : {'var': 0x7A, 'start':  0, 'size':  1},
 }
 
 #
@@ -685,6 +694,8 @@ varact2vars60x_objects = {
 
     'object_count'                 : {'var': 0x64, 'start': 16, 'size':  8, 'param_function': industry_count},
     'object_distance'              : {'var': 0x64, 'start':  0, 'size': 16, 'param_function': industry_count},
+
+    'has_badge'                    : {'var': 0x7A, 'start':  0, 'size':  1},
 }
 
 #
@@ -702,7 +713,10 @@ varact2vars_railtype = {
     'railtype'              : {'var': 0x45, 'start': 16, 'size': 8},
     'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
-# Railtypes have no 60+x variables
+
+varact2vars60x_railtype = {
+    'has_badge'             : {'var': 0x7A, 'start': 0, 'size':  1},
+}
 
 #
 # Airport tiles (feature 0x11)
@@ -729,6 +743,7 @@ varact2vars60x_airporttiles = {
     'nearby_tile_class'            : {'var': 0x60, 'start': 24, 'size':  4, 'param_function': signed_tile_offset},
     'nearby_tile_animation_frame'  : {'var': 0x61, 'start':  0, 'size':  8, 'param_function': signed_tile_offset},
     'nearby_tile_airporttile_id'   : {'var': 0x62, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
+    'has_badge'                    : {'var': 0x7A, 'start':  0, 'size':  1},
 }
 
 #
@@ -746,7 +761,10 @@ varact2vars_roadtype = {
     'railtype'              : {'var': 0x45, 'start': 16, 'size': 8},
     'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
-# Roadtypes have no 60+x variables
+
+varact2vars60x_roadtype = {
+    'has_badge'             : {'var': 0x7A, 'start': 0, 'size':  1},
+}
 
 #
 # Tramtypes (feature 0x13)
@@ -763,7 +781,10 @@ varact2vars_tramtype = {
     'railtype'              : {'var': 0x45, 'start': 16, 'size': 8},
     'random_bits'           : {'var': 0x5F, 'start': 8, 'size':  2},
 }
-# Tramtypes have no 60+x variables
+
+varact2vars60x_tramtype = {
+    'has_badge'             : {'var': 0x7A, 'start': 0, 'size':  1},
+}
 
 
 #
@@ -847,6 +868,14 @@ varact2vars60x_roadstop = {
     'nearby_tile_road_stop_id'          : {'var': 0x6B, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
 }
 
+#
+# Badges (feature 0x15)
+#
+
+varact2vars_badges = {
+    'intro_date'             : {'var': 0x40, 'start':  0, 'size': 32},
+}
+
 class VarAct2Scope:
     def __init__(self, name, vars_normal, vars_60x, has_persistent_storage=False):
         self.name = name
@@ -881,11 +910,12 @@ scope_cargos = VarAct2Scope("Cargos", {}, {})
 scope_soundeffects = VarAct2Scope("SoundEffects", {}, {})
 scope_airports = VarAct2Scope("Airports", varact2vars_airports, varact2vars60x_airports, has_persistent_storage=True)
 scope_objects = VarAct2Scope("Objects", varact2vars_objects, varact2vars60x_objects)
-scope_railtypes = VarAct2Scope("RailTypes", varact2vars_railtype, {})
+scope_railtypes = VarAct2Scope("RailTypes", varact2vars_railtype, varact2vars60x_railtype)
 scope_airporttiles = VarAct2Scope("AirportTiles", varact2vars_airporttiles, varact2vars60x_airporttiles)
-scope_roadtypes = VarAct2Scope("RoadTypes", varact2vars_roadtype, {})
-scope_tramtypes = VarAct2Scope("TramTypes", varact2vars_tramtype, {})
+scope_roadtypes = VarAct2Scope("RoadTypes", varact2vars_roadtype, varact2vars60x_roadtype)
+scope_tramtypes = VarAct2Scope("TramTypes", varact2vars_tramtype, varact2vars60x_tramtype)
 scope_roadstops = VarAct2Scope("RoadStops", varact2vars_roadstop, varact2vars60x_roadstop)
+scope_badges = VarAct2Scope("Badges", varact2vars_badges, {})
 
 varact2features = [
     VarAct2Feature(scope_trains, scope_trains),
@@ -909,4 +939,5 @@ varact2features = [
     VarAct2Feature(scope_roadtypes, None),
     VarAct2Feature(scope_tramtypes, None),
     VarAct2Feature(scope_roadstops, scope_towns),
+    VarAct2Feature(scope_badges, None),
 ]
