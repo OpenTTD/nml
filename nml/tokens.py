@@ -26,6 +26,7 @@ reserved = {
     "var":                 "VARIABLE",
     "param":               "PARAMETER",
     "cargotable":          "CARGOTABLE",
+    "badgetable":          "BADGETABLE",
     "railtypetable":       "RAILTYPETABLE",
     "roadtypetable":       "ROADTYPETABLE",
     "tramtypetable":       "TRAMTYPETABLE",
