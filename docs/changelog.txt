@@ -1,3 +1,23 @@
+0.8.0 (2025-06-21)
+------------------------------------------------------------------------
+This release removes external dependency for "ply".
+
+Support for NewGRF additions of OpenTTD 15:
+ - Add: Support for badge menu vertical ellipsis icon (#377)
+ - Add: Constants for (new) station and roadstop animation and random triggers. (#375)
+ - Add: Road/tram/railtype variable 0x45. (#373)
+ - Fix #367: Incorrect limits for House and Industry Tile (#368)
+ - Fix: ALL_NORMAL_CARGO_CLASSES and ALL_CARGO_CLASSES did not include newer cargo classes. (#366)
+ - Add: Support for Action5 type 1A overlay rocks (#365)
+
+Support for NewGRF additions of OpenTTD 14:
+ - Add: Parent scope for airports and airport tiles. (#374)
+
+Other changes and fixes:
+ - Change: Vendor in latest ply version, removes --rebuild-parser/-R option (#342)
+ - Fix: Nicer error message when a station switch returns a SpriteLayout (#360)
+
+
 0.7.6 (2025-02-15)
 ------------------------------------------------------------------------
 This release adds support for user defined constants, improves stations support, and reduces comsuption of limited ressources (registers and D0xx strings).
