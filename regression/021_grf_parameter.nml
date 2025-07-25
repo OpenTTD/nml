@@ -39,6 +39,22 @@ grf {
             };
         }
     }
+    param (2) {
+        param_NoGrid {
+            type:    bool;
+            name:    string(STR_PARAM_NOGRID);
+            desc:    string(STR_PARAM_NOGRID_DESC);
+            def_value: 1;
+        }
+    }
+    param (2) {
+        transmitter2rock {
+            type:    bool;
+            name:    string(STR_PARAM_TRANSMITTER);
+            desc:    string(STR_PARAM_TRANSMITTER_DESC);
+            def_value: 0;
+        }
+    }
 }
 
 param[10] = param_landscape;
