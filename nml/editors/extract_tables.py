@@ -80,6 +80,7 @@ prop_tables = [
     action0properties.properties[0x01],
     action0properties.properties[0x02],
     action0properties.properties[0x03],
+    action0properties.properties[0x04],
     action0properties.properties[0x05],
     action0properties.properties[0x07],
     action0properties.properties[0x09],
