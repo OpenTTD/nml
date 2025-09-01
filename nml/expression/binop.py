@@ -118,12 +118,11 @@ class BinOp(Expression):
                 elif op == nmlop.CMP_GT:
                     op = nmlop.CMP_LT
 
-        if (
-            isinstance(expr1, Array)
-            and isinstance(expr2, ConstantNumeric)
-            and self.op == nmlop.MUL
-        ):
+        if isinstance(expr1, Array) and isinstance(expr2, ConstantNumeric) and self.op == nmlop.MUL:
             return Array(self.op.compiletime_func(expr1.values, expr2.value), self.pos)
+
+        if isinstance(expr1, Array) and isinstance(expr2, Array) and self.op == nmlop.ADD:
+            return Array(self.op.compiletime_func(expr1.values, expr2.values), self.pos)
 
         # - If the operation is a no-op, delete it.
         if op == nmlop.AND and isinstance(expr2, ConstantNumeric) and (expr2.value == -1 or expr2.value == 0xFFFFFFFF):
