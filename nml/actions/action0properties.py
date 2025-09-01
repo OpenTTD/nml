@@ -819,15 +819,27 @@ def station_tile_flags(value):
     ]
 
 
-def array_for_station_properties(prop_num: int, list_type: str, prefered_size: int, invert_function: callable):
+def array_for_station_properties(prop_num: int, list_type: str, invert_function: callable):
     def generated_function(value):
-        if isinstance(value, ConstantNumeric):
-            value = Array([value, invert_function(value)] * prefered_size, value.pos)
         if not isinstance(value, Array):
-            raise generic.ScriptError(f"{list_type} list must be an array", value.pos)
-        if len(value.values) % 2 != 0:
-            raise generic.ScriptError(f"{list_type} list does not have even length", value.pos)
-        return [VariableByteListProp(prop_num, [[flags.reduce_constant().value for flags in value.values]], True)]
+            raise generic.ScriptError(f"{list_type} list must be an array, not {type(value).__name__}", value.pos)
+        new_value = Array([], value.pos)
+        for element in value.values:
+            if isinstance(element, ConstantNumeric):
+                new_value.values.append(element)
+                new_value.values.append(invert_function(element))
+            elif isinstance(element, Array):
+                if len(element.values) != 2:
+                    raise generic.ScriptError(
+                        f"{list_type} list can only contain int or two element array", element.pos
+                    )
+                new_value.values.append(element.values[0])
+                new_value.values.append(element.values[1])
+            else:
+                raise generic.ScriptError(f"{list_type} list can only contain int or two element array", element.pos)
+        if len(new_value.values) % 2 != 0:
+            raise generic.ScriptError(f"{list_type} list does not have even length", new_value.pos)
+        return [VariableByteListProp(prop_num, [[flags.reduce_constant().value for flags in new_value.values]], True)]
 
     return generated_function
 
@@ -875,10 +887,10 @@ properties[0x04] = {
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
     "tile_flags":            {"custom_function": station_tile_flags},  # = prop 1E
     "minimum_bridge_height": {
-        "custom_function": array_for_station_properties(0x20, "Bridge heights", 0xFFFF, lambda v : v)
+        "custom_function": array_for_station_properties(0x20, "Bridge heights", lambda v : v)
     },
     "bridge_pillars_flags":  {
-        "custom_function": array_for_station_properties(0x21, "Flag", 0xFFFF, invert_bridge_pillars_flags)
+        "custom_function": array_for_station_properties(0x21, "Flag", invert_bridge_pillars_flags)
     },
 }
 # fmt: on
@@ -1695,9 +1707,9 @@ properties[0x14] = {
     "general_flags":             {"size": 4, "num": 0x12},
     "cost_multipliers":          {"custom_function": lambda x: byte_sequence_list(x, 0x15, "Cost multipliers", 2)},
     "minimum_bridge_height": {
-        "custom_function": array_for_station_properties(0x13, "Bridge heights", 1, lambda v : v)
+        "custom_function": array_for_station_properties(0x13, "Bridge heights", lambda v : v)
     },
     "bridge_pillars_flags":  {
-        "custom_function": array_for_station_properties(0x14, "Flag", 1, invert_bridge_pillars_flags)
+        "custom_function": array_for_station_properties(0x14, "Flag", invert_bridge_pillars_flags)
     },
 }
