@@ -16,6 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import itertools
 
 from nml import generic, nmlop, global_constants
+from nml.global_constants import constant_numbers as global_constant_numbers
 from nml.expression import (
     AcceptCargo,
     Array,
@@ -825,13 +826,27 @@ def array_for_station_properties(prop_num: int, list_type: str, prefered_size: i
         if not isinstance(value, Array):
             raise generic.ScriptError(f"{list_type} list must be an array", value.pos)
         if len(value.values) % 2 != 0:
-            generic.print_warning(generic.Warning.GENERIC, f"{list_type} list does not have even length", 0)
+            raise generic.ScriptError(f"{list_type} list does not have even length", value.pos)
         return [VariableByteListProp(prop_num, [[flags.reduce_constant().value for flags in value.values]], True)]
 
     return generated_function
 
 
-
+def invert_bridge_pillars_flags(value):
+    out = ConstantNumeric(0, value.pos)
+    for i_flag, o_flag in [
+        (global_constant_numbers["BRIDGE_PILLAR_CORNER_W"], global_constant_numbers["BRIDGE_PILLAR_CORNER_S"]),
+        (global_constant_numbers["BRIDGE_PILLAR_CORNER_S"], global_constant_numbers["BRIDGE_PILLAR_CORNER_W"]),
+        (global_constant_numbers["BRIDGE_PILLAR_CORNER_N"], global_constant_numbers["BRIDGE_PILLAR_CORNER_E"]),
+        (global_constant_numbers["BRIDGE_PILLAR_CORNER_E"], global_constant_numbers["BRIDGE_PILLAR_CORNER_N"]),
+        (global_constant_numbers["BRIDGE_PILLAR_EDGE_NE"], global_constant_numbers["BRIDGE_PILLAR_EDGE_NE"]),
+        (global_constant_numbers["BRIDGE_PILLAR_EDGE_SE"], global_constant_numbers["BRIDGE_PILLAR_EDGE_SW"]),
+        (global_constant_numbers["BRIDGE_PILLAR_EDGE_SW"], global_constant_numbers["BRIDGE_PILLAR_EDGE_SE"]),
+        (global_constant_numbers["BRIDGE_PILLAR_EDGE_NW"], global_constant_numbers["BRIDGE_PILLAR_EDGE_NW"]),
+    ]:
+        if value.value & (1 << i_flag):
+            out.value += 1 << o_flag
+    return out
 
 
 # fmt: off
@@ -859,8 +874,12 @@ properties[0x04] = {
     "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
     "tile_flags":            {"custom_function": station_tile_flags},  # = prop 1E
-    "minimum_bridge_height": {"custom_function": array_for_station_properties(0x20, "Bridge heights", 10, lambda v : v)},
-    "bridge_pillars_flags":  {"custom_function": array_for_station_properties(0x21, "Flag", 10, lambda v : v)},
+    "minimum_bridge_height": {
+        "custom_function": array_for_station_properties(0x20, "Bridge heights", 0xFFFF, lambda v : v)
+    },
+    "bridge_pillars_flags":  {
+        "custom_function": array_for_station_properties(0x21, "Flag", 0xFFFF, invert_bridge_pillars_flags)
+    },
 }
 # fmt: on
 
