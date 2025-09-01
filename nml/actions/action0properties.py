@@ -1694,4 +1694,10 @@ properties[0x14] = {
     # 11 (callback flags) is not set by user
     "general_flags":             {"size": 4, "num": 0x12},
     "cost_multipliers":          {"custom_function": lambda x: byte_sequence_list(x, 0x15, "Cost multipliers", 2)},
+    "minimum_bridge_height": {
+        "custom_function": array_for_station_properties(0x13, "Bridge heights", 1, lambda v : v)
+    },
+    "bridge_pillars_flags":  {
+        "custom_function": array_for_station_properties(0x14, "Flag", 1, invert_bridge_pillars_flags)
+    },
 }
