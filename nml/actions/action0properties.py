@@ -818,6 +818,12 @@ def station_tile_flags(value):
     ]
 
 
+def station_minimum_bridge_height(value):
+    if not isinstance(value, Array):
+        raise generic.ScriptError("Flag list must be an array", value.pos)
+    return [VariableByteListProp(0x20, [[flags.reduce_constant().value for flags in value.values]], True)]
+
+
 # fmt: off
 properties[0x04] = {
     "class":                 {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
@@ -843,6 +849,7 @@ properties[0x04] = {
     "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
     "tile_flags":            {"custom_function": station_tile_flags},  # = prop 1E
+    "minimum_bridge_height": {"custom_function": station_minimum_bridge_height},  # = prop 20
 }
 # fmt: on
 
