@@ -818,10 +818,20 @@ def station_tile_flags(value):
     ]
 
 
-def station_minimum_bridge_height(value):
-    if not isinstance(value, Array):
-        raise generic.ScriptError("Flag list must be an array", value.pos)
-    return [VariableByteListProp(0x20, [[flags.reduce_constant().value for flags in value.values]], True)]
+def array_for_station_properties(prop_num: int, list_type: str, prefered_size: int, invert_function: callable):
+    def generated_function(value):
+        if isinstance(value, ConstantNumeric):
+            value = Array([value, invert_function(value)] * prefered_size, value.pos)
+        if not isinstance(value, Array):
+            raise generic.ScriptError(f"{list_type} list must be an array", value.pos)
+        if len(value.values) % 2 != 0:
+            generic.print_warning(generic.Warning.GENERIC, f"{list_type} list does not have even length", 0)
+        return [VariableByteListProp(prop_num, [[flags.reduce_constant().value for flags in value.values]], True)]
+
+    return generated_function
+
+
+
 
 
 # fmt: off
@@ -849,7 +859,8 @@ properties[0x04] = {
     "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
     "tile_flags":            {"custom_function": station_tile_flags},  # = prop 1E
-    "minimum_bridge_height": {"custom_function": station_minimum_bridge_height},  # = prop 20
+    "minimum_bridge_height": {"custom_function": array_for_station_properties(0x20, "Bridge heights", 10, lambda v : v)},
+    "bridge_pillars_flags":  {"custom_function": array_for_station_properties(0x21, "Flag", 10, lambda v : v)},
 }
 # fmt: on
 
