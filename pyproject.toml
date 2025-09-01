@@ -1,2 +1,6 @@
 [build-system]
 requires = ["setuptools", "ply"]
+
+[tool.black]
+line-length = 120
+exclude = 'action2var_variables.py|action3_callbacks.py|ply|setup.py'
