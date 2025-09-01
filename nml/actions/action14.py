@@ -278,9 +278,9 @@ def param_desc_actions(root, params):
                     setting_node.subnodes.append(value_names_node)
             else:
                 assert setting.type == "bool"
+                assert setting.bit_num is not None
                 setting_node.subnodes.append(BinaryNode("TYPE", 1, 1))
-                bit = setting.bit_num.value if setting.bit_num is not None else 0
-                setting_node.subnodes.append(SettingMaskNode(param_num, bit, 1))
+                setting_node.subnodes.append(SettingMaskNode(param_num, setting.bit_num.value, 1))
             if setting.def_val is not None:
                 setting_node.subnodes.append(BinaryNode("DFLT", 4, setting.def_val.value))
             param_root.subnodes.append(setting_node)
