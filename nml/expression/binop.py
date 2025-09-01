@@ -14,6 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import generic, nmlop
+from . import Array
 
 from .base_expression import ConstantFloat, ConstantNumeric, Expression
 from .boolean import Boolean
@@ -71,6 +72,7 @@ class BinOp(Expression):
         # - If both subexpressions are constant, compute the result and return it.
         # - If the operator allows it and the second expression is more complex than
         #   the first one swap them.
+        # - If first subexpression is an array, compute the result and return it.
         # - If the operation is a no-op, delete it.
         # - Variables (as used in action2var) can have some computations attached to
         #   them, do that if possible.
@@ -115,6 +117,13 @@ class BinOp(Expression):
                     op = nmlop.CMP_GT
                 elif op == nmlop.CMP_GT:
                     op = nmlop.CMP_LT
+
+        if (
+            isinstance(expr1, Array)
+            and isinstance(expr2, ConstantNumeric)
+            and self.op == nmlop.MUL
+        ):
+            return Array(self.op.compiletime_func(expr1.values, expr2.value), self.pos)
 
         # - If the operation is a no-op, delete it.
         if op == nmlop.AND and isinstance(expr2, ConstantNumeric) and (expr2.value == -1 or expr2.value == 0xFFFFFFFF):
