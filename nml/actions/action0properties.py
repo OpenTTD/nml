@@ -818,6 +818,12 @@ def station_tile_flags(value):
     ]
 
 
+def station_tile_list(value, prop_num, description):
+    if not isinstance(value, Array) or len(value.values) % 2 != 0:
+        raise generic.ScriptError(description + " list must be an array of even length", value.pos)
+    return [VariableByteListProp(prop_num, [[x.reduce_constant().value for x in value.values]], True)]
+
+
 # fmt: off
 properties[0x04] = {
     "class":                 {"size": 4, "num": 0x08, "first": None, "string_literal": 4},
@@ -843,6 +849,8 @@ properties[0x04] = {
     "name":                  {"size": 2, "num": (256, -1, 0x1C), "string": (256, 0xC5, 0xDC), "required": True},
     "classname":             {"size": 2, "num": (256, -1, 0x1D), "string": (256, 0xC4, 0xDC)},
     "tile_flags":            {"custom_function": station_tile_flags},  # = prop 1E
+    "heights":               {"custom_function": lambda x: station_tile_list(x, 0x20, "Station height")},
+    "blocked_pillars":       {"custom_function": lambda x: station_tile_list(x, 0x21, "Station blocked pillar")},
 }
 # fmt: on
 
@@ -1656,5 +1664,7 @@ properties[0x14] = {
     "animation_triggers":        {"size": 2, "num": 0x10},
     # 11 (callback flags) is not set by user
     "general_flags":             {"size": 4, "num": 0x12},
+    "heights":                   {"custom_function": lambda x: station_tile_list(x, 0x13, "Station height")},
+    "blocked_pillars":           {"custom_function": lambda x: station_tile_list(x, 0x14, "Station blocked pillar")},
     "cost_multipliers":          {"custom_function": lambda x: byte_sequence_list(x, 0x15, "Cost multipliers", 2)},
 }
