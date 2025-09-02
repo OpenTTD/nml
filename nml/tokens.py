@@ -61,7 +61,9 @@ reserved = {
     "recolour_sprite":     "RECOLOUR_SPRITE",
     "engine_override":     "ENGINE_OVERRIDE",
     "sort":                "SORT_VEHICLES",
-    "const":               "CONST"
+    "const":               "CONST",
+    "for":                 "FOR",
+    "in":                  "IN",
 }
 # fmt: on
 
