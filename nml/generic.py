@@ -378,7 +378,7 @@ def clear_progress():
 
 def print_progress(msg, incremental=False):
     """
-    Output progess information to the user.
+    Output progress information to the user.
 
     @param msg: Progress message.
     @type  msg: C{str}
@@ -411,7 +411,7 @@ def print_progress(msg, incremental=False):
 
 def print_info(msg):
     """
-    Output a pure informational message to th euser.
+    Output a pure informational message to the user.
     """
     if verbosity_level < VERBOSITY_INFO:
         return
@@ -590,7 +590,7 @@ def _cache_file_path(sources, extension):
                 path = os.path.join(cache_root_dir, path)
                 result = os.path.join(path, name)
             else:
-                # In case of multiple soure files, ignore the path component for all but the first
+                # In case of multiple source files, ignore the path component for all but the first
                 result += "_" + name
 
     return result + extension

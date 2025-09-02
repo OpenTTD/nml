@@ -84,7 +84,7 @@ class BaseStatement:
     def pre_process(self):
         """
         Called to do any pre-processing before the actual action generation.
-        For example, to remove identifiesr
+        For example, to remove identifiers
         """
         pass
 

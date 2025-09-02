@@ -178,7 +178,7 @@ def cond_skip_actions(action_list, param, condtype, value, value_size, pos):
 
         # We need to create a new block
         if skip_opts[0]:
-            # We can just choose to not skip the preceeding actions without harm
+            # We can just choose to not skip the preceding actions without harm
             actions.extend(action_list[start : start + length])
         else:
             action_type = 7 if skip_opts[1] else 9

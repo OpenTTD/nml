@@ -117,7 +117,7 @@ class Action2LayoutSprite:
             flags |= 1 << 2
         if self.palette_from_action1:
             flags |= 1 << 3
-        # for building sprites: bit 4 => xoffset+yoffset, bit 5 => zoffset (x and y always set totgether)
+        # for building sprites: bit 4 => xoffset+yoffset, bit 5 => zoffset (x and y always set together)
         # for child sprites: bit 4 => xoffset, bit 5 => yoffset
         if self.type == Action2LayoutSpriteType.BUILDING:
             assert (self.get_register("xoffset") is not None) == (self.get_register("yoffset") is not None)
