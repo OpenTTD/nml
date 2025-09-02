@@ -316,7 +316,7 @@ class BinaryOutputBase(SpriteOutputBase):
 
     def print_data(self, data):
         """
-        Print a chunck of data in one go
+        Print a chunk of data in one go
 
         @param data: Data to output
         @type data: C{array}

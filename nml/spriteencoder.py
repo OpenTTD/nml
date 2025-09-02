@@ -180,7 +180,7 @@ class SpriteEncoder:
         """
         Get encoded sprite date, either from cache, or new.
 
-        @param sprite_info: Sprite meta data
+        @param sprite_info: Sprite metadata
         @type  sprite_info: C{RealSprite}
         """
 
@@ -253,7 +253,7 @@ class SpriteEncoder:
         """
         Crop and compress a real sprite.
 
-        @param sprite_info: Sprite meta data
+        @param sprite_info: Sprite metadata
         @type  sprite_info: C{RealSprite}
 
         @return: size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, pixel_stats

@@ -201,10 +201,10 @@ class RealSprite:
         return [parse_real_sprite(self, default_file, default_mask_file, poslist, id_dict)]
 
     def check_sprite_size(self):
-        generic.check_range(self.xpos.value, 0, 0x7FFFFFFF, "Real sprite paramater 'xpos'", self.xpos.pos)
-        generic.check_range(self.ypos.value, 0, 0x7FFFFFFF, "Real sprite paramater 'ypos'", self.ypos.pos)
-        generic.check_range(self.xsize.value, 1, 0xFFFF, "Real sprite paramater 'xsize'", self.xsize.pos)
-        generic.check_range(self.ysize.value, 1, 0xFFFF, "Real sprite paramater 'ysize'", self.ysize.pos)
+        generic.check_range(self.xpos.value, 0, 0x7FFFFFFF, "Real sprite parameter 'xpos'", self.xpos.pos)
+        generic.check_range(self.ypos.value, 0, 0x7FFFFFFF, "Real sprite parameter 'ypos'", self.ypos.pos)
+        generic.check_range(self.xsize.value, 1, 0xFFFF, "Real sprite parameter 'xsize'", self.xsize.pos)
+        generic.check_range(self.ysize.value, 1, 0xFFFF, "Real sprite parameter 'ysize'", self.ysize.pos)
 
     def validate_size(self):
         """
@@ -232,7 +232,7 @@ class RealSprite:
 
     def get_cache_key(self, crop_sprites):
         """
-        Assemble the sprite meta data into a key, able to identify the sprite.
+        Assemble the sprite metadata into a key, able to identify the sprite.
 
         @param crop_sprites: Whether to crop sprites, which allow it.
         @type  crop_sprites: C{bool}
@@ -492,14 +492,14 @@ def parse_real_sprite(sprite, default_file, default_mask_file, poslist, id_dict)
         new_sprite.xrel.value,
         -0x8000,
         0x7FFF,
-        "Real sprite paramater {:d} 'xrel'".format(param_offset + 1),
+        "Real sprite parameter {:d} 'xrel'".format(param_offset + 1),
         new_sprite.xrel.pos,
     )
     generic.check_range(
         new_sprite.yrel.value,
         -0x8000,
         0x7FFF,
-        "Real sprite paramater {:d} 'yrel'".format(param_offset + 2),
+        "Real sprite parameter {:d} 'yrel'".format(param_offset + 2),
         new_sprite.yrel.pos,
     )
     param_offset += 2

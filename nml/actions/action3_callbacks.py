@@ -29,7 +29,7 @@ callbacks = 0x15 * [{}]
 general_vehicle_cbs = {
     'default'                 : {'type': 'cargo', 'num': None},
     'purchase'                : {'type': 'cargo', 'num': 0xFF},
-    'random_trigger'          : {'type': 'cb', 'num': 0x01}, # Almost undocumented, but really neccesary!
+    'random_trigger'          : {'type': 'cb', 'num': 0x01}, # Almost undocumented, but really necessary!
     'loading_speed'           : {'type': 'cb', 'num': 0x36, 'var10': 0x07},
     'cargo_subtype_text'      : {'type': 'cb', 'num': 0x19, 'flag_bit': 5},
     'additional_text'         : {'type': 'cb', 'num': 0x23, 'purchase': 2},

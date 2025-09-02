@@ -1294,7 +1294,7 @@ def add_1920(expr, info):
 
 def map_exponentiate(expr, info):
     """
-    Given a exponent, add an offset to it and compute the exponentiation with base 2.
+    Given an exponent, add an offset to it and compute the exponentiation with base 2.
 
     @param expr: The exponent.
     @type expr: L{Expression}

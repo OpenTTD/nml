@@ -22,7 +22,7 @@ class TileLayout(base_statement.BaseStatement):
     """
     'tile_layout' AST node. A TileLayout is a list of x,y-offset/tileID pairs.
     The x and y offsets are from the northernmost tile of the industry/airport.
-    Additionally some extra properties can be stored in the TileLayout, like
+    Additionally, some extra properties can be stored in the TileLayout, like
     the orientation of the airport.
 
     @ivar name: The name of this layout by which it can be referenced later.

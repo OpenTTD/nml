@@ -1,6 +1,6 @@
 # NML NewGRF meta language
 
-NML is a a python-based compiler, capable of compiling NML files (along
+NML is a Python-based compiler, capable of compiling NML files (along
 with their associated language, sound and graphic files) into grf
 and / or nfo files.
 

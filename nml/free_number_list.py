@@ -25,7 +25,7 @@ class FreeNumberList:
     @type total_amount: C{int}
 
     @ivar stats: Statistics about id usage.
-    @type stats: Tuple of C{int} and L{Position} refering to the amount on location of most concurrently used ids.
+    @type stats: Tuple of C{int} and L{Position} referring to the amount on location of most concurrently used ids.
 
     @ivar free_numbers: The list with currently unused numbers.
     @type free_numbers: C{list}
@@ -86,7 +86,7 @@ class FreeNumberList:
     def pop_global(self, pos):
         """
         Pop a free number from the list. The number may have been used before
-        and already been restored but it'll never be given out again.
+        and already been restored, but it'll never be given out again.
 
         @param pos: Positional context.
         @type  pos: L{Position}

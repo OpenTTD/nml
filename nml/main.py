@@ -308,7 +308,7 @@ def main(argv):
         input = sys.stdin
     else:
         input = codecs.open(generic.find_file(input_filename), "r", "utf-8")
-        # Only append an output grf name, if no ouput is given, also not implicitly via -M
+        # Only append an output grf name, if no output is given, also not implicitly via -M
         if not opts.outputfile_given and not outputs:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")
 
@@ -528,7 +528,7 @@ def nml(
 
         last_file = None
         for f_pair in sprite_files:
-            # Palette is defined by mask_file, if present. Otherwise by the main file.
+            # Palette is defined by mask_file, if present. Otherwise, by the main file.
             f = f_pair[1]
             if f is None:
                 f = f_pair[0]
