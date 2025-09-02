@@ -108,7 +108,7 @@ class Action0Property(BaseAction0Property):
 # Summary: If 'string' or 'string_literal' is set, the value should be a
 # string or literal string, else the value is a number. 'unit_type' and
 # 'unit_conversion' are used to convert user-entered values to nfo values.
-# If some more arithmetic is needed to convert the entered value into an nfo
+# If some more arithmetic is needed to convert the entered value into a nfo
 # value, 'value_function' can be used. For even more complicated things,
 # 'custom_function' can be used to create a special mapping of the value to nfo
 # properties, else 'num' and 'size' are used to provide a 'normal' action0.
@@ -214,7 +214,7 @@ def two_byte_property(low_prop, high_prop, low_prop_info=None, high_prop_info=No
 def animation_info(value, loop_bit=8, max_frame=253):
     """
     Convert animation info array of two elements to an animation info property.
-    The first is 0/1, and defines whether or not the animation loops.
+    The first is 0/1, and defines whether the animation loops.
     The second is the number of frames, at most 253 frames.
 
     @param value: Array of animation info.
@@ -440,12 +440,12 @@ properties[0x00] = {
         "unit_conversion": (5000, 1397),
         "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 1, unit)
     },
-    # 09 doesn"t exist
+    # 09 doesn't exist
     "power":                          {"size": 2, "num": 0x0B, "unit_type": "power"},
-    # 0A doesn"t exist
+    # 0A doesn't exist
     "running_cost_factor":            {"size": 1, "num": 0x0D},
     "running_cost_base":              {"size": 4, "num": 0x0E},
-    # 0F -11 don"t exist
+    # 0F -11 don't exist
     "sprite_id":                      {"size": 1, "num": 0x12},
     "dual_headed":                    {"size": 1, "num": 0x13},
     "cargo_capacity":                 {"size": 1, "num": 0x14},
@@ -729,7 +729,7 @@ properties[0x03] = {
 
 def station_platforms_length(value):
     # Writing bitmask(2) to disable platform/length 3 is not very intuitive.
-    # Instead we expect the user will write bitmask(3) and we shift the result.
+    # Instead, we expect the user will write bitmask(3) and we shift the result.
     return nmlop.SHIFT_RIGHT(value, 1, value.pos).reduce()
 
 
@@ -1578,7 +1578,7 @@ properties[0x10] = {
 properties[0x11] = {
     "substitute":         {"size": 1, "num": 0x08, "first": None},
     "override":           {"size": 1, "num": 0x09},
-    # 0A - 0D don"t exist (yet?)
+    # 0A - 0D don't exist (yet?)
     # 0E (callback flags) is not set by user
     "animation_info":     {"size": 2, "num": 0x0F, "value_function": animation_info},
     "animation_speed":    {"size": 1, "num": 0x10},

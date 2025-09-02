@@ -27,13 +27,13 @@ class ActionD(base_action.BaseAction):
     @ivar target: Number of the target parameter
     @ivar target: L{ConstantNumeric}
 
-    @ivar param1: Paramter number of the first operand
+    @ivar param1: Parameter number of the first operand
     @type param1: L{ConstantNumeric}
 
     @ivar op: (Binary) operator to use.
     @type op: L{Operator}
 
-    @ivar param2: Paramter number of the second operand
+    @ivar param2: Parameter number of the second operand
     @type param2: L{ConstantNumeric}
 
     @ivar data: Numerical data that will be used instead of parameter value,
@@ -324,7 +324,7 @@ def transform_bin_op(assignment):
     elif op == nmlop.CMP_NEQ:
         extra_actions.extend(parse_actionD(ParameterAssignment(assignment.param, nmlop.SUB(expr1, expr2))))
         op = nmlop.DIV
-        # We rely here on the (ondocumented) behavior of both OpenTTD and TTDPatch
+        # We rely here on the (undocumented) behavior of both OpenTTD and TTDPatch
         # that expr/0==expr. What we do is compute A/A, which will result in 1 if
         # A != 0 and in 0 if A == 0
         expr1 = assignment.param

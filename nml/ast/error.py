@@ -20,8 +20,8 @@ from nml.ast import base_statement
 
 class Error(base_statement.BaseStatement):
     """
-    An error has occured while parsing the GRF. This can be anything ranging from
-    an imcompatible GRF file that was found or a game setting that is set to the
+    An error has occurred while parsing the GRF. This can be anything ranging from
+    an incompatible GRF file that was found or a game setting that is set to the
     wrong value to a wrong combination of parameters. The action taken by the host
     depends on the severity level of the error.
     NML equivalent: error(level, message[, extra_text[, parameter1[, parameter2]]]).
@@ -33,7 +33,7 @@ class Error(base_statement.BaseStatement):
     @type severity: L{Expression}
 
     @ivar msg: The string to be used for this error message. This can be either
-               one of the predifined error strings or a custom string from the
+               one of the predefined error strings or a custom string from the
                language file.
     @type msg: L{Expression}
 
