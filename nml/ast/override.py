@@ -23,7 +23,7 @@ class EngineOverride(base_statement.BaseStatement):
     AST Node for an engine override.
 
     @ivar grfid: GRFid of the grf to override the engines from.
-    @type grfid: C{int{
+    @type grfid: C{int}
 
     @ivar source_grfid: GRFid of the grf that overrides the engines.
     @type source_grfid: C{int}

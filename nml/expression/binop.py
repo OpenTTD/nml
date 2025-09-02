@@ -173,7 +173,7 @@ class BinOp(Expression):
                     expr1.add = ConstantNumeric(0)
                 expr1.mod = expr2
                 return expr1
-            # Since we have a lot of nml-variables that are in fact only the high bits of an nfo
+            # Since we have a lot of nml-variables that are in fact only the high bits of a nfo
             # variable it can happen that we want to shift back the variable to the left.
             # Don't use any extra opcodes but just reduce the shift-right in that case.
             if (

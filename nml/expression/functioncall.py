@@ -92,7 +92,7 @@ class SpecialCheck(Expression):
     @ivar varsize: Varsize for the action7/9 check
     @type varsize: C{int}
 
-    @ivar mask: Mask to to test only certain bits of the value
+    @ivar mask: Mask to test only certain bits of the value
     @type mask: C{int}
 
     @ivar pos: Position information
@@ -183,7 +183,7 @@ def builtin_max(name, args, pos):
     """
     max(...) builtin function.
 
-    @return Heighest value of the given arguments.
+    @return Highest value of the given arguments.
     """
     if len(args) < 2:
         raise generic.ScriptError("max() requires at least 2 arguments", pos)
