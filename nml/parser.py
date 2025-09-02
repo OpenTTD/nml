@@ -29,6 +29,7 @@ from nml.ast import (
     disable_item,
     error,
     font,
+    for_,
     general,
     grf,
     item,
@@ -45,6 +46,7 @@ from nml.ast import (
     townnames,
     tracktypetable,
 )
+
 
 
 class NMLParser:
@@ -145,7 +147,8 @@ class NMLParser:
         | engine_override
         | sort_vehicles
         | basecost
-        | constant"""
+        | constant
+        | for"""
         t[0] = t[1]
 
     #
@@ -389,7 +392,9 @@ class NMLParser:
         """property_assignment : ID COLON expression SEMICOLON
         | ID COLON expression UNIT SEMICOLON
         | NUMBER COLON expression SEMICOLON
-        | NUMBER COLON expression UNIT SEMICOLON"""
+        | NUMBER COLON expression UNIT SEMICOLON
+        | ID COLON for SEMICOLON
+        | NUMBER COLON for SEMICOLON"""
         name = t[1]
         unit_value = None if len(t) == 5 else unit.get_unit(t[4])
         t[0] = item.Property(name, t[3], unit_value, t.lineno(1))
@@ -835,3 +840,11 @@ class NMLParser:
     def p_constant(self, t):
         "constant : CONST expression EQ expression SEMICOLON"
         t[0] = constant.Constant(t[2], t[4])
+
+    def p_for(self, t):
+        """for : FOR ID LPAREN id_list RPAREN LBRACE layout_sprite_list RBRACE
+        | LBRACKET non_empty_expression_list FOR ID IN expression RBRACKET"""
+        if t[1] == '[' :
+            t[0] = for_.For(" ", t[3], t[5])
+        else:
+            t[0] = for_.For(t[2], t[4], t[7])
