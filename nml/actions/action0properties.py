@@ -412,6 +412,16 @@ def refittable_cargo_classes(prop_or_num, prop_and_num, refit_mask_num):
     ]
 
 
+def single_or_list(prop_name, single_num, multiple_num, value):
+    if isinstance(value, ConstantNumeric):
+        return [Action0Property(single_num, value, 1)]
+    if isinstance(value, Array):
+        if len(value.values) == 1:
+            return [Action0Property(single_num, value.values[0].reduce_constant(), 1)]
+        return [VariableByteListProp(multiple_num, [[type.reduce_constant().value for type in value.values]])]
+    raise generic.ScriptError("'{}' must be a constant or an array of constants".format(prop_name))
+
+
 #
 # Feature 0x00 (Trains)
 #
@@ -419,7 +429,9 @@ def refittable_cargo_classes(prop_or_num, prop_and_num, refit_mask_num):
 # fmt: off
 properties[0x00] = {
     **general_veh_props,
-    "track_type":                     {"size": 1, "num": 0x05},
+    "track_type": {
+        "custom_function": lambda value: single_or_list("track_type", 0x05, 0x34, value)
+    },
     "ai_special_flag":                {"size": 1, "num": 0x08},
     "speed": {
         "size": 2,

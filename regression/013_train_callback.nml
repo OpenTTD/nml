@@ -136,6 +136,8 @@ item(FEAT_TRAINS, bulk_wagon) {
         speed: 0;
         refit_cost: 40;
         track_type: RAIL;
+        track_type: [RAIL];
+        track_type: [RAIL, ELRL];
         power: 0;
         running_cost_base: RUNNING_COST_STEAM;
         cargo_capacity: 30;
