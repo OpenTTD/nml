@@ -470,7 +470,7 @@ def builtin_str2number(name, args, pos):
     return ConstantNumeric(parse_string_to_dword(args[0]))
 
 
-@builtins("cargotype", "railtype", "roadtype", "tramtype")
+@builtins("badgetype", "cargotype", "railtype", "roadtype", "tramtype")
 def builtin_resolve_typelabel(name, args, pos, table_name=None):
     """
     {cargo,rail,road,tram}type(label) builtin functions.
@@ -478,6 +478,7 @@ def builtin_resolve_typelabel(name, args, pos, table_name=None):
     Also used from some Action2Var variables to resolve cargo labels.
     """
     tracktype_funcs = {
+        "badgetype": global_constants.badge_numbers,
         "cargotype": global_constants.cargo_numbers,
         "railtype": global_constants.railtype_table,
         "roadtype": global_constants.roadtype_table,
@@ -489,6 +490,8 @@ def builtin_resolve_typelabel(name, args, pos, table_name=None):
     table = tracktype_funcs[table_name]
     if table_name == "cargotype":
         table_name = "cargo"  # NML syntax uses "cargotable" and "railtypetable"
+    if table_name == "badgetype":
+        table_name = "badge"
 
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
