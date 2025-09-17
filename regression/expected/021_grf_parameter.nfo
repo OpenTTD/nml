@@ -7,10 +7,10 @@
 
 0 * 4 \d3
 
-1 * 817 14 "C" "INFO"
+1 * 1254 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000001
 "B" "MINV" \w4 \dx00000000
-"B" "NPAR" \w1 03
+"B" "NPAR" \w1 05
 "C" "PARA"
 "C" \d0
 "T" "NAME" 7F "Disable gridlines" 00
@@ -39,6 +39,20 @@
 "T" \d4 7F "tropical (not implemented)" 00
 "T" \d5 7F "toyland (not implemented)" 00
 00
+"B" "DFLT" \w4 \dx00000000
+00
+"C" \d3
+"T" "NAME" 7F "Disable gridlines" 00
+"T" "DESC" 7F "This setting allows to replace all ground sprites such that the landscape is painted (mostly) without grid lines. Note that roads and train tracks don't yet follow this rule" 00
+"B" "TYPE" \w1 01
+"B" "MASK" \w3 \b2 \b0 \b1
+"B" "DFLT" \w4 \dx00000001
+00
+"C" \d4
+"T" "NAME" 7F "Replace the transmitter tower by a rock" 00
+"T" "DESC" 7F "Enable to replace the transmitter tower by a rock (useful for early scenarios without telecomunication towers)" 00
+"B" "TYPE" \w1 01
+"B" "MASK" \w3 \b2 \b1 \b1
 "B" "DFLT" \w4 \dx00000000
 00
 00
