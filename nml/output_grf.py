@@ -34,7 +34,7 @@ class OutputGRF(output_base.BinaryOutputBase):
     def open_file(self):
         # Remove / unlink the file, most useful for linux systems
         # See also issue #4165
-        # If the file happens to be in use or non-existant, ignore
+        # If the file happens to be in use or non-existent, ignore
         try:
             os.unlink(self.filename)
         except OSError:
