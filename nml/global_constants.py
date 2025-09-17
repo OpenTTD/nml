@@ -385,6 +385,16 @@ constant_numbers = {
     # station tiles
     "STAT_ALL_TILES"     : 0xFF,
 
+    # bridge pillar flags
+    "BRIDGE_PILLAR_CORNER_W" : 0,
+    "BRIDGE_PILLAR_CORNER_S" : 1,
+    "BRIDGE_PILLAR_CORNER_E" : 2,
+    "BRIDGE_PILLAR_CORNER_N" : 3,
+    "BRIDGE_PILLAR_EDGE_NE"  : 4,
+    "BRIDGE_PILLAR_EDGE_SE"  : 5,
+    "BRIDGE_PILLAR_EDGE_SW"  : 6,
+    "BRIDGE_PILLAR_EDGE_NW"  : 7,
+
     # house flags
     "HOUSE_FLAG_NOT_SLOPED"         : 1,
     "HOUSE_FLAG_ANIMATE"            : 5,

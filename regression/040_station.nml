@@ -135,6 +135,17 @@ item (FEAT_STATIONS, basic_station, 255) {
                 [6, 7]
             ],
         ];
+        heights: [1, 1, 2, 2, 3, 3, 4, 4];
+        blocked_pillars: [
+            bitmask(BRIDGE_PILLAR_CORNER_N, BRIDGE_PILLAR_CORNER_E),
+            bitmask(BRIDGE_PILLAR_CORNER_S, BRIDGE_PILLAR_CORNER_W),
+            bitmask(BRIDGE_PILLAR_CORNER_N, BRIDGE_PILLAR_CORNER_E),
+            bitmask(BRIDGE_PILLAR_CORNER_S, BRIDGE_PILLAR_CORNER_W),
+            bitmask(BRIDGE_PILLAR_CORNER_N, BRIDGE_PILLAR_CORNER_E, BRIDGE_PILLAR_EDGE_NE, BRIDGE_PILLAR_EDGE_NW),
+            bitmask(BRIDGE_PILLAR_CORNER_S, BRIDGE_PILLAR_CORNER_W, BRIDGE_PILLAR_EDGE_SE, BRIDGE_PILLAR_EDGE_SW),
+            bitmask(BRIDGE_PILLAR_CORNER_N, BRIDGE_PILLAR_CORNER_E, BRIDGE_PILLAR_EDGE_NE, BRIDGE_PILLAR_EDGE_NW),
+            bitmask(BRIDGE_PILLAR_CORNER_S, BRIDGE_PILLAR_CORNER_W, BRIDGE_PILLAR_EDGE_SE, BRIDGE_PILLAR_EDGE_SW),
+        ];
     }
     graphics {
         foundations: 0;
