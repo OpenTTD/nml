@@ -29,6 +29,7 @@ from nml.ast import (
     disable_item,
     error,
     font,
+    for_,
     general,
     grf,
     item,
@@ -835,3 +836,7 @@ class NMLParser:
     def p_constant(self, t):
         "constant : CONST expression EQ expression SEMICOLON"
         t[0] = constant.Constant(t[2], t[4])
+
+    def p_in_array_for(self, t):
+        """expression : LBRACKET non_empty_expression_list FOR ID IN expression RBRACKET"""
+        t[0] = for_.InArrayFor(t[6], t[4], t[2], t.lineno(1))
