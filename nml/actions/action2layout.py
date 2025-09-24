@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml import expression, generic, nmlop
+from nml import expression, generic, global_constants, nmlop
 from nml.actions import action0, action1, action2, action2real, action2var, action6, actionD, real_sprite
 from nml.ast import general, spriteblock
 
@@ -296,6 +296,14 @@ class Action2LayoutSprite:
         else:
             self.sprite_from_action1 = False
             if isinstance(value, expression.ConstantNumeric):
+                # For stations always assume a non-track tile ground, unless explicit rail ground sprite.
+                if (
+                    self.feature == 0x04
+                    and self.type == Action2LayoutSpriteType.GROUND
+                    and value.value != global_constants.constant_numbers["GROUNDSPRITE_RAIL_X"]
+                    and value.value != global_constants.constant_numbers["GROUNDSPRITE_RAIL_Y"]
+                ):
+                    self.create_register(name, expression.ConstantNumeric(0))
                 generic.check_range(value.value, 0, (1 << 14) - 1, "sprite", value.pos)
                 return value
             if value.supported_by_actionD(raise_error=False):
