@@ -105,7 +105,7 @@ random_types = {
 
 def parse_randomswitch_type(random_switch):
     """
-    Parse the type of a random switch to determine the type and random bits to use.
+    Parse the type of random switch to determine the type and random bits to use.
 
     @param random_switch: Random switch to parse the type of
     @type random_switch: L{RandomSwitch}
@@ -203,7 +203,7 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
 
     @return: A tuple of two values:
                 - The first random bit to use
-                - The number of random choices to use. This may be higher the the original amount passed as paramter
+                - The number of random choices to use. This may be higher than the original amount passed as parameter
     @rtype: C{tuple} of (C{int}, C{int})
     """
     # Dependent random chains
@@ -240,7 +240,7 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
     else:
         randbit = -1
 
-    # INdependent random chains
+    # Independent random chains
     possible_mask = ((1 << bits_available) - 1) << start_bit
     for indep in random_switch.independent:
         act2 = lookup_random_action2(indep)

@@ -48,7 +48,7 @@ class BlockAllocation:
     @ivar allocated: Mapping of allocated blocks.
     @type allocated: C{dict} of C{int} to allocation information.
 
-    @ivar filled: Mapping of block size to smallest address that may contain free space.
+    @ivar filled: Mapping of block size to the smallest address that may contain free space.
                   Serves as a cache to speed up searches.
     @type filled: C{dict} of C{int}
     """
@@ -72,7 +72,7 @@ class BlockAllocation:
 
     def get_max_allocated(self):
         """
-        Return maximum number of allocateable ids.
+        Return maximum number of allocatable ids.
         """
         if self.dynamic_allocation:
             return self.last - self.first + 1
@@ -90,7 +90,7 @@ class BlockAllocation:
         @param length: Number of addresses in the block.
         @type  length: C{int}
 
-        @return: Whether the block fits enitrely in the available address space.
+        @return: Whether the block fits entirely in the available address space.
         @rtype:  C{bool}
         """
         return addr >= 0 and addr + length - 1 <= self.last
@@ -923,7 +923,7 @@ def get_basecost_action(basecost):
 
         num_ids = 1  # Number of values that will be written in one go
         values = []
-        # try to capture as much values as possible
+        # try to capture as many values as possible
         while True:
             cost = basecost.costs[i]
             if isinstance(cost.value, expression.ConstantNumeric):

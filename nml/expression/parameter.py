@@ -47,7 +47,7 @@ class Parameter(Expression):
         supported = isinstance(self.num, ConstantNumeric)
         if not supported and raise_error:
             raise generic.ScriptError(
-                "Parameter acessess with non-constant numbers are not supported in a switch-block.", self.pos
+                "Parameter accesses with non-constant numbers are not supported in a switch-block.", self.pos
             )
         return supported
 
@@ -100,12 +100,12 @@ class OtherGRFParameter(Expression):
 
 def parse_string_to_dword(string):
     """
-    Convert string literal expression of length 4 to it's equivalent 32 bit number.
+    Convert string literal expression of length 4 to its equivalent 32-bit number.
 
     @param string: Expression to convert.
     @type  string: L{Expression}
 
-    @return: Value of the converted expression (a 32 bit integer number, little endian).
+    @return: Value of the converted expression (a 32-bit integer number, little endian).
     @rtype:  C{int}
     """
     if not isinstance(string, StringLiteral) or grfstrings.get_string_size(string.value, False, True) != 4:
