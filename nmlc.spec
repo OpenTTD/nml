@@ -7,10 +7,7 @@ a = Analysis(['nmlc'],
              pathex=['.'],
              binaries=[('./nml_lz77.*.pyd', '.')],
              datas=[],
-             hiddenimports=[
-                'nml.generated.lextab',
-                'nml.generated.parsetab'
-             ],
+             hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
