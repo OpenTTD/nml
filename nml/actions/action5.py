@@ -85,6 +85,7 @@ action5_table = {
     "OTTD_RECOLOUR": (0x18, 1, Action5BlockType.OFFSET),
     "ROAD_WAYPOINTS": (0x19, 4, Action5BlockType.OFFSET),
     "OVERLAY_ROCKS": (0x1A, 95, Action5BlockType.OFFSET),
+    "BRIDGE_DECKS": (0x1B, 24, Action5BlockType.OFFSET),
 }
 
 
