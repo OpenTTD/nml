@@ -305,6 +305,8 @@ class ParameterSetting:
 
 
 class ParameterDescription:
+    free_bits = {}
+
     def __init__(self, setting_list, num=None, pos=None):
         self.setting_list = setting_list
         self.num = num
@@ -330,15 +332,31 @@ class ParameterDescription:
         if self.num is None:
             self.num = num
         self.num = self.num.reduce_constant()
+        if self.num.value not in ParameterDescription.free_bits:
+            ParameterDescription.free_bits[self.num.value] = list(range(0, 32))
         for setting in self.setting_list:
             setting.pre_process()
         for setting in self.setting_list:
             if setting.type == "int":
-                if len(self.setting_list) > 1:
+                if len(self.setting_list) > 1 or len(ParameterDescription.free_bits[self.num.value]) != 32:
                     raise generic.ScriptError(
-                        "When packing multiple settings in one parameter only bool settings are allowed", self.pos
+                        "When packing multiple settings in one parameter only bool settings are allowed",
+                        setting.name.pos,
                     )
                 global_constants.settings[setting.name.value] = {"num": self.num.value, "size": 4}
+                ParameterDescription.free_bits[self.num.value].clear()
             else:
-                bit = 0 if setting.bit_num is None else setting.bit_num.value
-                global_constants.misc_grf_bits[setting.name.value] = {"param": self.num.value, "bit": bit}
+                if setting.bit_num is None:
+                    if len(ParameterDescription.free_bits[self.num.value]) == 0:
+                        raise generic.ScriptError("No bits available for this parameter", setting.name.pos)
+                    setting.bit_num = expression.ConstantNumeric(ParameterDescription.free_bits[self.num.value].pop(0))
+                else:
+                    if setting.bit_num.value not in ParameterDescription.free_bits[self.num.value]:
+                        raise generic.ScriptError(
+                            "Bit {} is already used".format(setting.bit_num.value), setting.name.pos
+                        )
+                    ParameterDescription.free_bits[self.num.value].remove(setting.bit_num.value)
+                global_constants.misc_grf_bits[setting.name.value] = {
+                    "param": self.num.value,
+                    "bit": setting.bit_num.value,
+                }
