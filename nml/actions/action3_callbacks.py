@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import nmlop
 
-callbacks = 0x15 * [{}]
+callbacks = 0x16 * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -319,4 +319,24 @@ callbacks[0x14] = {
     'anim_speed'      : {'type': 'cb', 'num': 0x142, 'flag_bit': 2},
     'default'         : {'type': 'cargo', 'num': None},
     'purchase'        : {'type': 'cargo', 'num': 0xFF},
+}
+
+# Badges
+callbacks[0x15] = {
+    'trains'          : {'type': 'cargo', 'num': 0x00},
+    'roadvehs'        : {'type': 'cargo', 'num': 0x01},
+    'ships'           : {'type': 'cargo', 'num': 0x02},
+    'aircraft'        : {'type': 'cargo', 'num': 0x03},
+    'stations'        : {'type': 'cargo', 'num': 0x04},
+    'houses'          : {'type': 'cargo', 'num': 0x07},
+    'industrytiles'   : {'type': 'cargo', 'num': 0x09},
+    'industries'      : {'type': 'cargo', 'num': 0x0A},
+    'airports'        : {'type': 'cargo', 'num': 0x0D},
+    'objects'         : {'type': 'cargo', 'num': 0x0F},
+    'railtypes'       : {'type': 'cargo', 'num': 0x10},
+    'airporttiles'    : {'type': 'cargo', 'num': 0x11},
+    'roadtypes'       : {'type': 'cargo', 'num': 0x12},
+    'tramtypes'       : {'type': 'cargo', 'num': 0x13},
+    'roadstops'       : {'type': 'cargo', 'num': 0x14},
+    'default'         : {'type': 'cargo', 'num': None},
 }
