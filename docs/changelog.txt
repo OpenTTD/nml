@@ -1,3 +1,15 @@
+
+0.8.1 (2025-11-24)
+------------------------------------------------------------------------
+Support for NewGRF additions of OpenTTD 15:
+ - Add: Extend FEAT_TRAIN track_type for prop 34 (#390)
+ - Add: Support for Action5 type 1B bridge deck overlays (#393)
+
+Other changes and fixes:
+ - Fix: Validation and handling of multiple settings in one parameter (#382)
+ - Add: FEAT_AIRCRAFT flight_state variable (varE2) (#391)
+
+
 0.8.0 (2025-06-21)
 ------------------------------------------------------------------------
 This release removes external dependency for "ply".
