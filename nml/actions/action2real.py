@@ -89,6 +89,11 @@ def get_real_action2s(spritegroup, feature):
             else:
                 loaded_list.append(action1_index)
 
+    if len(loaded_list) >= 0x80:
+        raise generic.ScriptError("Too many 'loaded' sprite set(s).", spritegroup.pos)
+    if len(loading_list) >= 0xFF:
+        raise generic.ScriptError("Too many 'loading' sprite set(s).", spritegroup.pos)
+
     actions.append(
         Action2Real(
             feature,
