@@ -677,7 +677,6 @@ class NewGRFString:
                     raise generic.ScriptError('Invalid case-name "{}"'.format(case), pos)
                 command.case = lang.cases[case]
             if string[end] != "}":
-                command.argument_is_assigment = string[end] == "="
                 arg_start = end + 1
                 end = string.find("}", end + 1)
                 if end == -1 or not command.set_arguments(string[arg_start:end]):
