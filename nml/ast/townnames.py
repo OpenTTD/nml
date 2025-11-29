@@ -208,7 +208,7 @@ class TownNamesPart:
 
         finished_actions.extend(heap)
 
-        # To ensure the chances do not get messed up due to one part needing less bits for its
+        # To ensure the chances do not get messed up due to one part needing fewer bits for its
         # selection, all parts are forced to use the same number of bits.
         max_prob = max(sub[0] for sub in finished_actions)
         num_bits = 1
@@ -305,7 +305,7 @@ class TownNamesPart:
 class TownNamesParam:
     """
     Class containing a parameter of a town name.
-    Currently known key/values:
+    Currently, known key/values:
      - 'styles'  / string expression
     """
 

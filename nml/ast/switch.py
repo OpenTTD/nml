@@ -117,7 +117,7 @@ class Switch(switch_base_class):
             )
             return self.optimised is not self
 
-        self.optimised = self  # Prevent multiple run on the same non optimisable Switch
+        self.optimised = self  # Prevent multiple run on the same non-optimisable Switch
         return False
 
     def collect_references(self):
@@ -390,7 +390,7 @@ class RandomSwitch(switch_base_class):
         if self.optimised:
             return self.optimised is not self
 
-        # Triggers have side-effects, and can't be skipped.
+        # Triggers have side effects, and can't be skipped.
         # Scope for expressions can be different in referencing location, so don't optimise them.
         if self.triggers.value == 0 and len(self.choices) == 1:
             optimised = self.choices[0].result.value
@@ -407,7 +407,7 @@ class RandomSwitch(switch_base_class):
                 self.optimised = optimised
                 return True
 
-        self.optimised = self  # Prevent multiple run on the same non optimisable RandomSwitch
+        self.optimised = self  # Prevent multiple run on the same non-optimisable RandomSwitch
         return False
 
     def collect_references(self):

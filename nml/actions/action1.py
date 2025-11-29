@@ -145,7 +145,7 @@ class SpritesetCollection(base_action.BaseAction):
         Create a list of actions needed to write this collection to the output. This
         will generate a single Action1 and as many realsprites as needed.
 
-        @return: A list of actions needed to represet this collection in a GRF.
+        @return: A list of actions needed to represent this collection in a GRF.
         @rtype: C{list} of L{BaseAction}
         """
         actions = [Action1(self.feature, self.first_set, len(self.spritesets), self.num_sprites_per_spriteset)]

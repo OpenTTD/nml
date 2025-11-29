@@ -474,7 +474,7 @@ def parse_graphics_block_single_id(
         # Special case for vehicle cb 36, maps var10 values to spritegroups
         cb36_mapping = {}
         cb36_buy_mapping = {}
-        # Sspecial case for industry production CB, maps var18 values to spritegroups
+        # Special case for industry production CB, maps var18 values to spritegroups
         prod_cb_mapping = {}
 
         for cb_info, gfx in callbacks:

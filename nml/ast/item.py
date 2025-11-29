@@ -128,7 +128,7 @@ class Item(base_statement.BaseStatementList):
 class Property:
     """
     AST-node representing a single property. These are only valid
-    insde a PropertyBlock.
+    inside a PropertyBlock.
 
     @ivar name: The name (or number) of this property.
     @type name: L{Identifier} or L{ConstantNumeric}.

@@ -36,7 +36,7 @@ class SpecialParameter(Expression):
                             Position information
                         Return value is a 2-tuple:
                             Left side of the assignment (must be a parameter)
-                            Right side of the assignment (may be any expression)
+                            Right side of the assignment (can be any expression)
     @type write_func: C{function}
 
     @ivar read_func: Function that will be called to read out the parameter value

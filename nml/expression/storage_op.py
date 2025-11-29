@@ -33,7 +33,7 @@ class StorageOp(Expression):
     @ivar name: Name of the called storage function
     @type name: C{str}
 
-    @ivar info: Dictionary containting information about the operation to perform
+    @ivar info: Dictionary containing information about the operation to perform
     @type info: C{dict}
 
     @ivar value: Value to store, or C{None} for loading operations

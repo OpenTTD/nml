@@ -49,7 +49,7 @@ def validate_string(string):
 def is_ascii_string(string):
     """
     Check whether a given string can be written using the ASCII codeset or
-    that we need unicode.
+    that we need Unicode.
 
     @param string: The string to check.
     @type  string: C{str}
@@ -81,7 +81,7 @@ def get_string_size(string, final_zero=True, force_ascii=False):
     @param string: The string to check.
     @type  string: C{str}
 
-    @param final_zero: Whether or not to account for a zero-byte directly after the string.
+    @param final_zero: Whether to account for a zero-byte directly after the string.
     @type  final_zero: C{bool}
 
     @param force_ascii: When true, make sure the string is written as ascii as opposed to unicode.
@@ -421,14 +421,14 @@ class StringCommand:
         """
         Convert the string command to output text.
 
-        @param str_type: Exptected type of result text, C{"unicode"} or C{"ascii"}.
+        @param str_type: Expected type of result text, C{"unicode"} or C{"ascii"}.
         @type  str_type: C{str}
 
         @param lang: Language of the string.
         @type  lang: L{Language}
 
         @param wanted_lang_id: Language-id to use for interpreting the command
-                               (this string may be from another language, eg with missing strings).
+                               (this string may be from another language, e.g. with missing strings).
 
         @param prev_command: Argument of previous string command (parameter number, size).
         @type  prev_command: C{tuple} or C{None}
@@ -677,7 +677,6 @@ class NewGRFString:
                     raise generic.ScriptError('Invalid case-name "{}"'.format(case), pos)
                 command.case = lang.cases[case]
             if string[end] != "}":
-                command.argument_is_assigment = string[end] == "="
                 arg_start = end + 1
                 end = string.find("}", end + 1)
                 if end == -1 or not command.set_arguments(string[arg_start:end]):
