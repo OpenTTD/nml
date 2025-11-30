@@ -39,7 +39,7 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
 
         num_params = len(param_list)
         if not (1 <= num_params <= 2):
-            raise generic.ScriptError("replace-block requires 1 or 2 parameters, encountered " + str(num_params), pos)
+            raise generic.ScriptError(f"replace-block requires 1 or 2 parameters, encountered {num_params}", pos)
         self.start_id = param_list[0]
         if num_params >= 2:
             self.image_file = param_list[1].reduce()
@@ -112,7 +112,7 @@ class ReplaceNewSprite(base_statement.BaseStatement, sprite_container.SpriteCont
         num_params = len(param_list)
         if not (1 <= num_params <= 3):
             raise generic.ScriptError(
-                "replacenew-block requires 1 to 3 parameters, encountered " + str(num_params), pos
+                f"replacenew-block requires 1 to 3 parameters, encountered {str(num_params)}", pos
             )
 
         self.type = param_list[0]

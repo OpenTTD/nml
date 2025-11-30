@@ -244,7 +244,7 @@ def builtin_day_of_year(name, args, pos):
     @return Day of the year, assuming February has 28 days.
     """
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have a month and a day parameter", pos)
+        raise generic.ScriptError(f"{name}() must have a month and a day parameter", pos)
 
     month = args[0].reduce()
     if not isinstance(month, ConstantNumeric):
@@ -275,21 +275,21 @@ def builtin_storage(name, args, pos):
 @builtin
 def builtin_UCMP(name, args, pos):
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+        raise generic.ScriptError(f"{name}() must have exactly two parameters", pos)
     return nmlop.VACT2_UCMP(args[0], args[1], pos)
 
 
 @builtin
 def builtin_CMP(name, args, pos):
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+        raise generic.ScriptError(f"{name}() must have exactly two parameters", pos)
     return nmlop.VACT2_CMP(args[0], args[1], pos)
 
 
 @builtin
 def builtin_rotate(name, args, pos):
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+        raise generic.ScriptError(f"{name}() must have exactly two parameters", pos)
     return nmlop.ROT_RIGHT(args[0], args[1], pos)
 
 
@@ -306,7 +306,7 @@ def builtin_hasbit(name, args, pos):
     @return C{1} if and only if C{value} has bit C{bit_num} set, C{0} otherwise.
     """
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have exactly two parameters", pos)
+        raise generic.ScriptError(f"{name}() must have exactly two parameters", pos)
     return nmlop.HASBIT(args[0], args[1], pos)
 
 
@@ -319,7 +319,7 @@ def builtin_getbits(name, args, pos):
             that is (C{value} >> C{first}) & (1 << C{amount} - 1)
     """
     if len(args) != 3:
-        raise generic.ScriptError(name + "() must have exactly three parameters", pos)
+        raise generic.ScriptError(f"{name}() must have exactly three parameters", pos)
 
     # getbits(value, first, amount) = (value >> first) & ((0xFFFFFFFF << amount) ^ 0xFFFFFFFF)
     part1 = nmlop.SHIFTU_RIGHT(args[0], args[1], pos)
@@ -340,19 +340,19 @@ def builtin_version_openttd(name, args, pos):
     @return The version information encoded in a double-word.
     """
     if len(args) < 2:
-        raise generic.ScriptError(name + "() must have at least 2 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have at least 2 parameters", pos)
 
     major = args[0].reduce_constant().value
     minor = args[1].reduce_constant().value
 
     if major >= 12:
         if len(args) != 2:
-            raise generic.ScriptError(name + "() must have at exactly 2 parameters for OpenTTD >= 12.0", pos)
+            raise generic.ScriptError(f"{name}() must have at exactly 2 parameters for OpenTTD >= 12.0", pos)
 
         return ConstantNumeric(((16 + major) << 24) | (minor << 20))
     else:
         if len(args) > 4:
-            raise generic.ScriptError(name + "() must have at most 4 parameters", pos)
+            raise generic.ScriptError(f"{name}() must have at most 4 parameters", pos)
 
         revision = args[2].reduce_constant().value if len(args) >= 3 else 0
         build = args[3].reduce_constant().value if len(args) >= 4 else 0x80000
@@ -374,7 +374,7 @@ def builtin_typelabel_available(name, args, pos):
     }[name]
 
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have exactly 1 parameter", pos)
     label = args[0].reduce()
     return SpecialCheck(op, 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, label), pos=args[0].pos)
 
@@ -404,7 +404,7 @@ def builtin_grf_status(name, args, pos):
         string = "{}({}, {})".format(name, grfid, mask)
         varsize = 8
     else:
-        raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 1 or 2 parameters", pos)
 
     return SpecialCheck(op, 0x88, results, parse_string_to_dword(grfid), string, varsize, mask, args[0].pos)
 
@@ -421,7 +421,7 @@ def builtin_visual_effect_and_powered(name, args, pos):
     """
     arg_len = 2 if name == "visual_effect" else 3
     if len(args) != arg_len:
-        raise generic.ScriptError(name + "() must have {:d} parameters".format(arg_len), pos)
+        raise generic.ScriptError(f"{name}() must have {arg_len:d} parameters", pos)
     effect = args[0].reduce_constant(global_constants.const_list).value
     offset = nmlop.ADD(args[1], 8).reduce_constant().value
     generic.check_range(offset, 0, 0x0F, "offset in function " + name, pos)
@@ -448,7 +448,7 @@ def builtin_create_effect(name, args, pos):
 
     """
     if len(args) != 4:
-        raise generic.ScriptError(name + "() must have 4 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 4 parameters", pos)
 
     sprite = args[0].reduce_constant(global_constants.const_list).value
     offset1 = args[1].reduce_constant().value
@@ -466,7 +466,7 @@ def builtin_create_effect(name, args, pos):
 @builtin
 def builtin_str2number(name, args, pos):
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
     return ConstantNumeric(parse_string_to_dword(args[0]))
 
 
@@ -491,7 +491,7 @@ def builtin_resolve_typelabel(name, args, pos, table_name=None):
         table_name = "cargo"  # NML syntax uses "cargotable" and "railtypetable"
 
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
     if not isinstance(args[0], StringLiteral) or args[0].value not in table:
         raise generic.ScriptError(
             "Parameter for {}() must be a string literal that is also in your {} table".format(name, table_name), pos
@@ -502,7 +502,7 @@ def builtin_resolve_typelabel(name, args, pos, table_name=None):
 @builtin
 def builtin_reserve_sprites(name, args, pos):
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
     count = args[0].reduce_constant()
     return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, lambda x: "{}({:d})".format(name, count.value), pos)
 
@@ -515,7 +515,7 @@ def builtin_industry_type(name, args, pos):
     @return The industry type in the format used by grfs (industry prop 0x16 and var 0x64)
     """
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have 2 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 2 parameters", pos)
 
     type = args[0].reduce_constant(global_constants.const_list).value
     if type not in (0, 1):
@@ -532,11 +532,11 @@ def builtin_industry_type(name, args, pos):
 @builtins("accept_cargo", "produce_cargo")
 def builtin_cargoexpr(name, args, pos):
     if len(args) < 1:
-        raise generic.ScriptError(name + "() must have 1 or more parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 1 or more parameters", pos)
 
     if not isinstance(args[0], StringLiteral) or args[0].value not in global_constants.cargo_numbers:
         raise generic.ScriptError(
-            "First argument of " + name + "() must be a string literal that is also in your cargo table", pos
+            f"First argument of {name}() must be a string literal that is also in your cargo table", pos
         )
     cargotype = global_constants.cargo_numbers[args[0].value]
 
@@ -551,10 +551,10 @@ def builtin_cargoexpr(name, args, pos):
 @builtins("acos", "asin", "atan", "cos", "sin", "sqrt", "tan")
 def builtin_math(name, args, pos):
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
     val = args[0].reduce()
     if not isinstance(val, (ConstantNumeric, ConstantFloat)):
-        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
+        raise generic.ScriptError(f"Parameter for {name}() must be a constant", pos)
     math_func_table = {
         "acos": math.acos,
         "asin": math.asin,
@@ -570,36 +570,36 @@ def builtin_math(name, args, pos):
 @builtin
 def builtin_round(name, args, pos):
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
     val = args[0].reduce()
     if not isinstance(val, (ConstantNumeric, ConstantFloat)):
-        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
+        raise generic.ScriptError(f"Parameter for {name}() must be a constant", pos)
     return ConstantNumeric(round(val.value), pos)
 
 
 @builtin
 def builtin_int(name, args, pos):
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
     val = args[0].reduce()
     if not isinstance(val, (ConstantNumeric, ConstantFloat)):
-        raise generic.ScriptError("Parameter for " + name + "() must be a constant", pos)
+        raise generic.ScriptError(f"Parameter for {name}() must be a constant", pos)
     return ConstantNumeric(int(val.value), val.pos)
 
 
 @builtin
 def builtin_abs(name, args, pos):
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
     return AbsOp(args[0], args[0].pos).reduce()
 
 
 @builtin
 def builtin_sound(name, args, pos):
     if len(args) not in (1, 2):
-        raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 1 or 2 parameters", pos)
     if not isinstance(args[0], StringLiteral):
-        raise generic.ScriptError("Parameter for " + name + "() must be a string literal", pos)
+        raise generic.ScriptError(f"Parameter for {name}() must be a string literal", pos)
     volume = args[1].reduce_constant().value if len(args) >= 2 else 100
     generic.check_range(volume, 0, 100, "sound volume", pos)
     from nml.actions import action11
@@ -610,7 +610,7 @@ def builtin_sound(name, args, pos):
 @builtin
 def builtin_import_sound(name, args, pos):
     if len(args) not in (2, 3):
-        raise generic.ScriptError(name + "() must have 2 or 3 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 2 or 3 parameters", pos)
     grfid = parse_string_to_dword(args[0].reduce())
     sound_num = args[1].reduce_constant().value
     volume = args[2].reduce_constant().value if len(args) >= 3 else 100
@@ -628,7 +628,7 @@ def builtin_relative_coord(name, args, pos):
     @return Coordinates in 0xYYXX format.
     """
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have x and y coordinates as parameters", pos)
+        raise generic.ScriptError(f"{name}() must have x and y coordinates as parameters", pos)
 
     if isinstance(args[0], ConstantNumeric):
         generic.check_range(args[0].value, 0, 255, "Argument of '{}'".format(name), args[0].pos)
@@ -652,7 +652,7 @@ def builtin_num_corners_raised(name, args, pos):
     @return Number of raised corners in a slope (4 for steep slopes)
     """
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
 
     slope = args[0]
     # The returned value is ((slope x 0x8421) & 0x11111) % 0xF
@@ -676,7 +676,7 @@ def builtin_slope_to_sprite_offset(name, args, pos):
     @return sprite offset to use
     """
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
 
     if isinstance(args[0], ConstantNumeric):
         generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
@@ -702,7 +702,7 @@ def builtin_palette_1cc(name, args, pos):
     @return Recolour sprite to use
     """
     if len(args) != 1:
-        raise generic.ScriptError(name + "() must have 1 parameter", pos)
+        raise generic.ScriptError(f"{name}() must have 1 parameter", pos)
 
     if isinstance(args[0], ConstantNumeric):
         generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
@@ -718,7 +718,7 @@ def builtin_palette_2cc(name, args, pos):
     @return Recolour sprite to use
     """
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have 2 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 2 parameters", pos)
 
     for i in range(0, 2):
         if isinstance(args[i], ConstantNumeric):
@@ -740,7 +740,7 @@ def builtin_vehicle_curv_info(name, args, pos):
     @return Value to use with vehicle var curv_info
     """
     if len(args) != 2:
-        raise generic.ScriptError(name + "() must have 2 parameters", pos)
+        raise generic.ScriptError(f"{name}() must have 2 parameters", pos)
 
     for arg in args:
         if isinstance(arg, ConstantNumeric):
@@ -759,11 +759,11 @@ def builtin_format_string(name, args, pos):
     @return Formatted string
     """
     if len(args) < 1:
-        raise generic.ScriptError(name + "() must have at least one parameter", pos)
+        raise generic.ScriptError(f"{name}() must have at least one parameter", pos)
 
     format = args[0].reduce()
     if not isinstance(format, StringLiteral):
-        raise generic.ScriptError(name + "() parameter 1 'format' must be a literal string", format.pos)
+        raise generic.ScriptError(f"{name}() parameter 1 'format' must be a literal string", format.pos)
 
     # Validate other args
     format_args = []
@@ -771,7 +771,7 @@ def builtin_format_string(name, args, pos):
         arg = arg.reduce()
         if not isinstance(arg, (StringLiteral, ConstantFloat, ConstantNumeric)):
             raise generic.ScriptError(
-                name + "() parameter {:d} is not a constant number of literal string".format(i + 1), arg.pos
+                f"{name}() parameter {i + 1:d} is not a constant number of literal string", arg.pos
             )
         format_args.append(arg.value)
 
@@ -779,7 +779,7 @@ def builtin_format_string(name, args, pos):
         result = format.value % tuple(format_args)
         return StringLiteral(result, pos)
     except Exception as ex:
-        raise generic.ScriptError("Invalid combination of format / arguments for {}: {}".format(name, str(ex)), pos)
+        raise generic.ScriptError(f"Invalid combination of format / arguments for {name}: {ex}", pos)
 
 
 # }

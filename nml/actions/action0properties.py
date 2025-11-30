@@ -237,7 +237,7 @@ def animation_info(value, loop_bit=8, max_frame=253):
         raise generic.ScriptError("First field of the animation_info array must be either 0 or 1", value.values[0].pos)
     if frames < 1 or frames > max_frame:
         raise generic.ScriptError(
-            "Second field of the animation_info array must be between 1 and " + str(max_frame), value.values[1].pos
+            f"Second field of the animation_info array must be between 1 and {max_frame}", value.values[1].pos
         )
 
     return ConstantNumeric((looping << loop_bit) + frames - 1)
@@ -1526,7 +1526,7 @@ class LabelListProp(BaseAction0Property):
 
 def label_list(value, prop_num, description):
     if not isinstance(value, Array):
-        raise generic.ScriptError(description + " list must be an array of literal strings", value.pos)
+        raise generic.ScriptError(f"{description} list must be an array of literal strings", value.pos)
     return [LabelListProp(prop_num, value.values)]
 
 
@@ -1642,7 +1642,7 @@ class ByteSequenceProp(BaseAction0Property):
         for item in self.items:
             val = item.reduce_constant().value
             if val > 0xFF or val < 0:
-                raise generic.ScriptError(self.description + " items must be bytes", self.pos)
+                raise generic.ScriptError(f"{self.description} items must be bytes", self.pos)
             file.print_byte(val)
         file.newline()
 
@@ -1652,7 +1652,7 @@ class ByteSequenceProp(BaseAction0Property):
 
 def byte_sequence_list(value, prop_num, description, expected_count):
     if not isinstance(value, Array) or len(value.values) != expected_count:
-        raise generic.ScriptError(description + " must be an array of " + str(expected_count) + " bytes", value.pos)
+        raise generic.ScriptError(f"{description} must be an array of {expected_count} bytes", value.pos)
     return [ByteSequenceProp(prop_num, value.values, description, value.pos)]
 
 

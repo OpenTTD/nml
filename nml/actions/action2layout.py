@@ -257,7 +257,7 @@ class Action2LayoutSprite:
                     pos,
                 )
         else:
-            raise generic.ScriptError("Expected 0 or 1 parameter, got " + str(len(offset)), pos)
+            raise generic.ScriptError(f"Expected 0 or 1 parameter, got {len(offset)}", pos)
         return offset
 
     def resolve_spritegroup_ref(self, sg_ref):
@@ -355,10 +355,10 @@ class Action2LayoutSprite:
 
     def _validate_bounding_box(self, name, value):
         if self.type == Action2LayoutSpriteType.GROUND:
-            raise generic.ScriptError(name + " can not be set for ground sprites", value.pos)
+            raise generic.ScriptError(f"{name} can not be set for ground sprites", value.pos)
         elif self.type == Action2LayoutSpriteType.CHILD:
             if name not in ("xoffset", "yoffset"):
-                raise generic.ScriptError(name + " can not be set for child sprites", value.pos)
+                raise generic.ScriptError(f"{name} can not be set for child sprites", value.pos)
             if isinstance(value, expression.ConstantNumeric):
                 generic.check_range(value.value, 0, 255, name, value.pos)
                 return value

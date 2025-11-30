@@ -458,7 +458,7 @@ def get_property_info_list(feature, name):
     if isinstance(name, expression.Identifier):
         prop_name = name.value
         if prop_name not in properties[feature]:
-            raise generic.ScriptError("Unknown property name: " + prop_name, name.pos)
+            raise generic.ScriptError(f"Unknown property name: {prop_name}", name.pos)
         prop_info_list = properties[feature][prop_name]
         if not isinstance(prop_info_list, list):
             prop_info_list = [prop_info_list]
@@ -470,7 +470,7 @@ def get_property_info_list(feature, name):
             if len(prop_info_list) == 1 and "num" in prop_info_list[0] and prop_info_list[0]["num"] == name.value:
                 break
         else:
-            raise generic.ScriptError("Unknown property number: " + str(name), name.pos)
+            raise generic.ScriptError(f"Unknown property number: {name}", name.pos)
     else:
         raise AssertionError()
 
@@ -635,7 +635,7 @@ def parse_property(prop_info, value_list, feature, id):
             elif isinstance(value, expression.String):
                 if "string" not in prop_info:
                     raise generic.ScriptError(
-                        "String used as value for non-string property: " + str(prop_info["num"]), value.pos
+                        f"String used as value for non-string property: {prop_info['num']}", value.pos
                     )
                 string_range = apply_threshold(prop_info["string"])
                 stringid, string_actions = action4.get_string_action4s(feature, string_range, value, id)
