@@ -305,38 +305,34 @@ class VariableListProp(BaseAction0Property):
     Property value that is a variable-length list of variable sized values, the list length is written before the data.
     """
 
-    def __init__(self, prop_num, data, size, extended):
+    def __init__(self, prop_num, data, data_size, len_size):
         # data is a list, each element belongs to an item ID
         # Each element in the list is a list of cargo types
         self.prop_num = prop_num
         self.data = data
-        self.size = size
-        self.extended = extended
+        self.data_size = data_size
+        self.len_size = len_size
 
     def write(self, file):
         file.print_bytex(self.prop_num)
         for elem in self.data:
-            if self.extended:
-                file.print_bytex(0xFF)
-                file.print_word(len(elem))
-            else:
-                file.print_byte(len(elem))
+            file.print_varx(len(elem), self.len_size)
             for i, val in enumerate(elem):
                 if i % 8 == 0:
                     file.newline()
-                file.print_varx(val, self.size)
+                file.print_varx(val, self.data_size)
             file.newline()
 
     def get_size(self):
         total_len = 1  # Prop number
         for elem in self.data:
-            # For each item ID to set, make space for all values + 3 or 1 for the length
-            total_len += len(elem) * self.size + (3 if self.extended else 1)
+            # For each item ID to set, make space for all values + len_size for the length
+            total_len += len(elem) * self.data_size + self.len_size
         return total_len
 
 
-def VariableByteListProp(prop_num, data, extended=False):
-    return VariableListProp(prop_num, data, 1, extended)
+def VariableByteListProp(prop_num, data, len_size=1):
+    return VariableListProp(prop_num, data, 1, len_size)
 
 
 def ctt_list(prop_num, *values):
@@ -353,8 +349,8 @@ def ctt_list(prop_num, *values):
     ]
 
 
-def VariableWordListProp(num_prop, data, extended=False):
-    return VariableListProp(num_prop, data, 2, extended)
+def VariableWordListProp(num_prop, data, len_size=1):
+    return VariableListProp(num_prop, data, 2, len_size)
 
 
 def accepted_cargos(prop_num, *values):
@@ -811,7 +807,7 @@ def station_tile_flags(value):
     if not isinstance(value, Array) or len(value.values) % 2 != 0:
         raise generic.ScriptError("Flag list must be an array of even length", value.pos)
     if len(value.values) > 8:
-        return [VariableByteListProp(0x1E, [[flags.reduce_constant().value for flags in value.values]], True)]
+        return [VariableByteListProp(0x1E, [[flags.reduce_constant().value for flags in value.values]], 3)]
     pylons = 0
     wires = 0
     blocked = 0
@@ -833,7 +829,7 @@ def station_tile_flags(value):
 def station_tile_list(value, prop_num, description):
     if not isinstance(value, Array) or len(value.values) % 2 != 0:
         raise generic.ScriptError(f"{description} list must be an array of even length", value.pos)
-    return [VariableByteListProp(prop_num, [[x.reduce_constant().value for x in value.values]], True)]
+    return [VariableByteListProp(prop_num, [[x.reduce_constant().value for x in value.values]], 3)]
 
 
 # fmt: off
