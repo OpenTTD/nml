@@ -149,6 +149,13 @@ constant_numbers = {
     "VEHICLE_FLAG_SYNC_VARIANT_EXCLUSIVE_PREVIEW" : 2,
     "VEHICLE_FLAG_SYNC_VARIANT_RELIABILITY"       : 3,
 
+    # badge flags
+    "BADGE_FLAG_COPY_TO_RELATED_ENTITY" : 0,
+    "BADGE_FLAG_NAME_LIST_STOP" : 1,
+    "BADGE_FLAG_NAME_LIST_FIRST_ONLY" : 2,
+    "BADGE_FLAG_USE_COMPANY_COLOUR" : 3,
+    "BADGE_FLAG_NAME_SKIP" : 4,
+
     # Graphic flags for waterfeatures
     "WATERFEATURE_ALTERNATIVE_SPRITES" : 0,
 
@@ -1437,6 +1444,7 @@ def create_spritegroup_ref(name, info, pos):
 
 
 cargo_numbers = {}
+badge_numbers = {}
 
 is_default_railtype_table = True
 # if no railtype_table is provided, OpenTTD assumes these 3 railtypes
@@ -1484,6 +1492,7 @@ const_list = [
     (patch_variables, patch_variable),
     (named_parameters, param_from_name),
     cargo_numbers,
+    badge_numbers,
     railtype_table,
     roadtype_table,
     tramtype_table,
@@ -1504,6 +1513,8 @@ def print_stats():
     if len(cargo_numbers) > 0:
         # Ids FE and FF have special meanings in Action3, so we do not consider them valid ids.
         generic.print_info("Cargo translation table: {}/{}".format(len(cargo_numbers), 0xFE))
+    if len(badge_numbers) > 0:
+        generic.print_info("Badge translation table: {}/{}".format(len(badge_numbers), 0xFFFF))
     if not is_default_railtype_table:
         generic.print_info("Railtype translation table: {}/{}".format(len(railtype_table), 0x100))
     if not is_default_roadtype_table:
