@@ -1,5 +1,44 @@
+[project]
+name = "nml"
+dynamic = ["version"]
+description = "An OpenTTD NewGRF compiler for the nml language"
+readme = "README.md"
+license = "GPL-2.0+"
+license-files = ["LICENSE"]
+authors = [
+  {name = "NML Development Team", email = "info@openttd.org"},
+]
+classifiers=[
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Compilers",
+]
+
+requires-python = ">=3.9"
+dependencies = [
+  "Pillow>=3.4",
+]
+
+[project.urls]
+Repository = "https://github.com/OpenTTD/nml"
+Issues = "https://github.com/OpenTTD/nml/issues"
+Changelog = "https://github.com/OpenTTD/nml/blob/master/docs/changelog.txt"
+
+[project.scripts]
+nmlc = "nml.main:run"
+
 [build-system]
-requires = ["setuptools", "ply"]
+requires = ["setuptools"]
+
+[tool.setuptools.package-dir]
+nml = "nml"
 
 [tool.black]
 line-length = 120
