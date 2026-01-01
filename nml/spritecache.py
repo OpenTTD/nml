@@ -312,9 +312,10 @@ class SpriteCache:
         index_output = json.JSONEncoder(sort_keys=True).encode(index_data)
 
         try:
-            with generic.open_cache_file(self.sources, ".cache", "wb") as cache_file, generic.open_cache_file(
-                self.sources, ".cacheindex", "w"
-            ) as index_file:
+            with (
+                generic.open_cache_file(self.sources, ".cache", "wb") as cache_file,
+                generic.open_cache_file(self.sources, ".cacheindex", "w") as index_file,
+            ):
                 index_file.write(index_output)
                 sprite_data.tofile(cache_file)
         except OSError:

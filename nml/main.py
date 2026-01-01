@@ -68,7 +68,7 @@ def parse_cli(argv):
     @return: Options, and input filename (if not supplied, use C{sys.stdin}).
     @rtype:  C{tuple} (C{Object}, C{str} or C{None})
     """
-    usage = "Usage: %prog [options] <filename>\n" "Where <filename> is the nml file to parse"
+    usage = "Usage: %prog [options] <filename>\nWhere <filename> is the nml file to parse"
 
     opt_parser = optparse.OptionParser(usage=usage, version=version_info.get_cli_version())
     opt_parser.set_defaults(

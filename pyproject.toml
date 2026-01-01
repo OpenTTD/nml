@@ -42,4 +42,16 @@ nml = "nml"
 
 [tool.black]
 line-length = 120
-exclude = 'action2var_variables.py|action3_callbacks.py|ply|setup.py'
+exclude = 'action2var_variables.py|action3_callbacks.py|ply'
+
+[tool.ruff]
+line-length = 120
+exclude = [
+  "nml/ply/*",
+]
+
+[tool.ruff.format]
+exclude = [
+  "nml/actions/action2var_variables.py",
+  "nml/actions/action3_callbacks.py",
+]
