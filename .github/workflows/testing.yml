@@ -61,7 +61,7 @@ jobs:
 
   flake8:
     name: Flake8
-    uses: OpenTTD/actions/.github/workflows/rw-py-flake8.yml@v5
+    uses: OpenTTD/actions/.github/workflows/rw-py-flake8.yml@v6
     with:
       python-path: nml
 
