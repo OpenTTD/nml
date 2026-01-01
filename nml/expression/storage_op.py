@@ -57,10 +57,8 @@ class StorageOp(Expression):
         if self.info["grfid"]:
             arg_len += (arg_len[0] + 1,)
         if len(args) not in arg_len:
-            argstr = "{:d}".format(arg_len[0]) if len(arg_len) == 1 else "{}..{}".format(arg_len[0], arg_len[1])
-            raise generic.ScriptError(
-                "{} requires {} argument(s), encountered {:d}".format(name, argstr, len(args)), pos
-            )
+            argstr = f"{arg_len[0]}" if len(arg_len) == 1 else f"{arg_len[0]}..{arg_len[1]}"
+            raise generic.ScriptError(f"{name} requires {argstr} argument(s), encountered {len(args)}", pos)
 
         i = 0
         if self.info["store"]:
@@ -114,7 +112,7 @@ class StorageOp(Expression):
                 raise generic.ProcCallSyntaxError(register.name, register.pos)
             raise generic.ScriptError("Register to access must be an integer.", register.pos)
         if isinstance(register, ConstantNumeric) and register.value > self.info["max"]:
-            raise generic.ScriptError("Maximum register for {} is {:d}".format(self.name, self.info["max"]), self.pos)
+            raise generic.ScriptError(f"Maximum register for {self.name} is {self.info['max']}", self.pos)
         if isinstance(register, ConstantNumeric) and register.value in self.info["reserved"]:
             raise generic.ScriptError(
                 "Temporary registers from 128 to 255 are reserved for NML's internal calculations.", self.pos
@@ -134,7 +132,7 @@ class StorageOp(Expression):
 
     def supported_by_actionD(self, raise_error):
         if raise_error:
-            raise generic.ScriptError("{}() may only be used inside switch-blocks".format(self.name), self.pos)
+            raise generic.ScriptError(f"{self.name}() may only be used inside switch-blocks", self.pos)
         return False
 
     def collect_references(self):

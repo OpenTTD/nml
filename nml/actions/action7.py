@@ -29,9 +29,7 @@ def print_stats():
     """
     if free_labels.stats[0] > 0:
         generic.print_info(
-            "Concurrent Action10 labels: {}/{} ({})".format(
-                free_labels.stats[0], free_labels.total_amount, str(free_labels.stats[1])
-            )
+            f"Concurrent Action10 labels: {free_labels.stats[0]}/{free_labels.total_amount} ({free_labels.stats[1]})"
         )
 
 
@@ -88,7 +86,7 @@ def op_to_cond_op(op):
     if op == nmlop.CMP_LE:
         return (5, r"\7>")
     # Not reached
-    raise ValueError("Unexpected operator '{}'".format(op.token))
+    raise ValueError(f"Unexpected operator '{op.token}'")
 
 
 def parse_conditional(expr):

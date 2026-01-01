@@ -186,9 +186,8 @@ def get_string_action4s(feature, string_range, string, id=None):
                     used_strings[string_range][(feature, string)] = id_val
                 except IndexError:
                     raise generic.ScriptError(
-                        "Unable to allocate ID for string, no more free IDs available (maximum is {:d})".format(
-                            string_ranges[string_range]["total"]
-                        ),
+                        "Unable to allocate ID for string, no more free IDs available"
+                        f" (maximum is {string_ranges[string_range]['total']})",
                         string.pos,
                     )
         else:

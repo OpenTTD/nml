@@ -54,10 +54,10 @@ class ActionD(base_action.BaseAction):
             size += 4
 
         # print the statement for easier debugging
-        str1 = "param[{}]".format(self.param1) if self.param1.value != 0xFF else str(self.data)
-        str2 = "param[{}]".format(self.param2) if self.param2.value != 0xFF else str(self.data)
+        str1 = f"param[{self.param1}]" if self.param1.value != 0xFF else str(self.data)
+        str2 = f"param[{self.param2}]" if self.param2.value != 0xFF else str(self.data)
         str_total = self.op.to_string(str1, str2) if self.op != nmlop.ASSIGN else str1
-        file.comment("param[{}] = {}".format(self.target, str_total))
+        file.comment(f"param[{self.target}] = {str_total}")
 
         file.start_sprite(size)
         file.print_bytex(0x0D)
@@ -97,7 +97,7 @@ class ParameterAssignment(base_statement.BaseStatement):
             if global_constants.identifier_refcount[self.param.value] == 0:
                 generic.print_warning(
                     generic.Warning.OPTIMISATION,
-                    "Named parameter '{}' is not referenced, ignoring.".format(self.param.value),
+                    f"Named parameter '{self.param.value}' is not referenced, ignoring.",
                     self.param.pos,
                 )
                 return
@@ -110,7 +110,7 @@ class ParameterAssignment(base_statement.BaseStatement):
         if isinstance(self.param, expression.SpecialParameter):
             if not self.param.can_assign():
                 raise generic.ScriptError(
-                    "Trying to assign a value to the read-only variable '{}'".format(self.param.name), self.param.pos
+                    f"Trying to assign a value to the read-only variable '{self.param.name}'", self.param.pos
                 )
         elif isinstance(self.param, expression.Identifier):
             return
@@ -126,7 +126,7 @@ class ParameterAssignment(base_statement.BaseStatement):
         return parse_actionD(self)
 
     def __str__(self):
-        return "{} = {};\n".format(self.param, self.value)
+        return f"{self.param} = {self.value};\n"
 
 
 # prevent evaluating common sub-expressions multiple times

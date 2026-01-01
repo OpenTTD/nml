@@ -32,9 +32,7 @@ class SortVehicles(base_statement.BaseStatement):
     def __init__(self, params, pos):
         base_statement.BaseStatement.__init__(self, "sort-block", pos)
         if len(params) != 2:
-            raise generic.ScriptError(
-                "Sort-block requires exactly two parameters, got {:d}".format(len(params)), self.pos
-            )
+            raise generic.ScriptError(f"Sort-block requires exactly two parameters, got {len(params)}", self.pos)
         self.feature = general.parse_feature(params[0])
         self.vehid_list = params[1]
 
@@ -57,4 +55,4 @@ class SortVehicles(base_statement.BaseStatement):
         return action0.parse_sort_block(self.feature.value, self.vehid_list.values)
 
     def __str__(self):
-        return "sort({:d}, {});\n".format(self.feature.value, self.vehid_list)
+        return f"sort({self.feature.value}, {self.vehid_list});\n"

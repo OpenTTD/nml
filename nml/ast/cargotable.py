@@ -34,7 +34,7 @@ class CargoTable(base_statement.BaseStatement):
             if self.cargo_list[i].value in global_constants.cargo_numbers:
                 generic.print_warning(
                     generic.Warning.GENERIC,
-                    "Duplicate entry in cargo table: {}".format(self.cargo_list[i].value),
+                    f"Duplicate entry in cargo table: {self.cargo_list[i].value}",
                     cargo.pos,
                 )
             else:

@@ -38,7 +38,7 @@ def default_60xvar(name, args, pos, info):
     @rtype: C{tuple} of (L{Expression}, C{list} C{tuple} of (C{int}, L{Expression}))
     """
     if len(args) != 1:
-        raise generic.ScriptError("'{}'() requires one argument, encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"'{name}'() requires one argument, encountered {len(args)}", pos)
     return (args[0], [])
 
 # Some commonly used functions that apply some modification to the raw variable value
@@ -62,10 +62,10 @@ def value_equals(const):
 
 def tile_offset(name, args, pos, info, min, max):
     if len(args) != 2:
-        raise generic.ScriptError("'{}'() requires 2 arguments, encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"'{name}'() requires 2 arguments, encountered {len(args)}", pos)
     for arg in args:
         if isinstance(arg, expression.ConstantNumeric):
-            generic.check_range(arg.value, min, max, "Argument of '{}'".format(name), arg.pos)
+            generic.check_range(arg.value, min, max, f"Argument of '{name}'", arg.pos)
 
     x = nmlop.AND(args[0], 0xF)
     y = nmlop.AND(args[1], 0xF)
@@ -219,10 +219,10 @@ varact2vars_aircraft = {
 def signed_byte_parameter(name, args, pos, info):
     # Convert to a signed byte by AND-ing with 0xFF
     if len(args) != 1:
-        raise generic.ScriptError("{}() requires one argument, encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"{name}() requires one argument, encountered {len(args)}", pos)
     if isinstance(args[0], expression.ConstantNumeric):
 
-        generic.check_range(args[0].value, -128, 127, "parameter of {}()".format(name), pos)
+        generic.check_range(args[0].value, -128, 127, f"parameter of {name}()", pos)
     ret = nmlop.AND(args[0], 0xFF, pos).reduce()
     return (ret, [])
 
@@ -326,13 +326,13 @@ mapping_platform_param = {
 
 def platform_info_param(name, args, pos, info):
     if len(args) != 1:
-        raise generic.ScriptError("'{}'() requires one argument, encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"'{name}'() requires one argument, encountered {len(args)}", pos)
     if (not isinstance(args[0], expression.ConstantNumeric)) or args[0].value not in (0, 1, 2):
-        raise generic.ScriptError("Invalid argument for '{}'(), must be one of PLATFORM_SAME_XXX.".format(name), pos)
+        raise generic.ScriptError(f"Invalid argument for '{name}'(), must be one of PLATFORM_SAME_XXX.", pos)
 
     is_middle = 'middle' in info and info['middle']
     if is_middle and args[0].value == 2:
-        raise generic.ScriptError("Invalid argument for '{}'(), PLATFORM_SAME_DIRECTION is not supported here.".format(name), pos)
+        raise generic.ScriptError(f"Invalid argument for '{name}'(), PLATFORM_SAME_DIRECTION is not supported here.", pos)
     # Temporarily store variable number in the param, this will be fixed in the value_function
     return (expression.ConstantNumeric(mapping_platform_param[(args[0].value, is_middle)]), [])
 
@@ -430,13 +430,13 @@ varact2vars_houses = {
 def cargo_accepted_nearby(name, args, pos, info):
     # cargo_accepted_nearby(cargo[, xoffset, yoffset])
     if len(args) not in (1, 3):
-        raise generic.ScriptError("{}() requires 1 or 3 arguments, encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"{name}() requires 1 or 3 arguments, encountered {len(args)}", pos)
 
     if len(args) > 1:
         offsets = args[1:3]
         for i, offs in enumerate(offsets[:]):
             if isinstance(offs, expression.ConstantNumeric):
-                generic.check_range(offs.value, -128, 127, "{}-parameter {:d} '{}offset'".format(name, i + 1, "x" if i == 0 else "y"), pos)
+                generic.check_range(offs.value, -128, 127, f"{name}-parameter {i + 1} '{'x' if i == 0 else 'y'}offset'", pos)
             offsets[i] = nmlop.AND(offs, 0xFF, pos).reduce()
         # Register 0x100 should be set to xoffset | (yoffset << 8)
         reg100 = nmlop.OR(nmlop.MUL(offsets[1], 256, pos), offsets[0]).reduce()
@@ -449,11 +449,11 @@ def nearest_house_matching_criterion(name, args, pos, info):
     # nearest_house_matching_criterion(radius, criterion)
     # parameter is radius | (criterion << 6)
     if len(args) != 2:
-        raise generic.ScriptError("{}() requires 2 arguments, encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"{name}() requires 2 arguments, encountered {len(args)}", pos)
     if isinstance(args[0], expression.ConstantNumeric):
-        generic.check_range(args[0].value, 1, 63, "{}()-parameter 1 'radius'".format(name), pos)
+        generic.check_range(args[0].value, 1, 63, f"{name}()-parameter 1 'radius'", pos)
     if isinstance(args[1], expression.ConstantNumeric) and args[1].value not in (0, 1, 2):
-        raise generic.ScriptError("Invalid value for {}()-parameter 2 'criterion'".format(name), pos)
+        raise generic.ScriptError(f"Invalid value for {name}()-parameter 2 'criterion'", pos)
 
     radius = nmlop.AND(args[0], 0x3F, pos)
     criterion = nmlop.AND(args[1], 0x03, pos)
@@ -560,7 +560,7 @@ varact2vars_industries = {
 
 def industry_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
-        raise generic.ScriptError("'{}'() requires between 1 and 2 argument(s), encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"'{name}'() requires between 1 and 2 argument(s), encountered {len(args)}", pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
     extra_params = [(0x100, grfid)]
@@ -570,7 +570,7 @@ def industry_count(name, args, pos, info):
 
 def industry_layout_count(name, args, pos, info):
     if len(args) < 2 or len(args) > 3:
-        raise generic.ScriptError("'{}'() requires between 2 and 3 argument(s), encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"'{name}'() requires between 2 and 3 argument(s), encountered {len(args)}", pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 2 else args[2]
 
@@ -581,7 +581,7 @@ def industry_layout_count(name, args, pos, info):
 
 def industry_town_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
-        raise generic.ScriptError("'{}'() requires between 1 and 2 argument(s), encountered {:d}".format(name, len(args)), pos)
+        raise generic.ScriptError(f"'{name}'() requires between 1 and 2 argument(s), encountered {len(args)}", pos)
 
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
 

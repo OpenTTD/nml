@@ -64,17 +64,17 @@ def get_cli_version():
     result = get_nml_version() + "\n\n"
 
     nmlc_path = os.path.abspath(sys.argv[0])
-    result += "nmlc: {}\n".format(nmlc_path)
+    result += f"nmlc: {nmlc_path}\n"
 
     from nml import lz77
 
     lz77_ver = "C (native)" if lz77.is_native else "Python"
-    result += "LZ77 implementation: {}\n\n".format(lz77_ver)
+    result += f"LZ77 implementation: {lz77_ver}\n\n"
 
     result += "Library versions encountered:\n"
     for lib, lib_ver in get_lib_versions().items():
-        result += "  {}: {}\n".format(lib, lib_ver)
+        result += f"  {lib}: {lib_ver}\n"
 
-    result += "\nPython: {}\n".format(sys.executable)
-    result += "version {}".format(sys.version)
+    result += f"\nPython: {sys.executable}\n"
+    result += f"version {sys.version}"
     return result

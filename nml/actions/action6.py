@@ -28,11 +28,9 @@ def print_stats():
     Print statistics about used ids.
     """
     if free_parameters.stats[0] > 0:
-        generic.print_info(
-            "Concurrent ActionD registers: {}/{} ({})".format(
-                free_parameters.stats[0], free_parameters.total_amount, str(free_parameters.stats[1])
-            )
-        )
+        used = free_parameters.stats[0]
+        total = free_parameters.total_amount
+        generic.print_info(f"Concurrent ActionD registers: {used}/{total} ({free_parameters.stats[1]})")
 
 
 class Action6(base_action.BaseAction):

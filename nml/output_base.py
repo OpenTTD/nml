@@ -48,7 +48,7 @@ class OutputBase:
         """
         Open the output file. Data gets stored in-memory.
         """
-        raise NotImplementedError("Implement me in {}".format(type(self)))
+        raise NotImplementedError(f"Implement me in {type(self)}")
 
     def open_file(self):
         """
@@ -57,7 +57,7 @@ class OutputBase:
         @return: File handle of the opened file.
         @rtype: C{file}
         """
-        raise NotImplementedError("Implement me in {}".format(type(self)))
+        raise NotImplementedError(f"Implement me in {type(self)}")
 
     def assemble_file(self, real_file):
         """
@@ -215,7 +215,7 @@ class SpriteOutputBase(OutputBase):
         @param byte: Value to output.
         @type  byte: C{int}
         """
-        raise NotImplementedError("Implement print_bytex() in {}".format(type(self)))
+        raise NotImplementedError(f"Implement print_bytex() in {type(self)}")
 
     def print_wordx(self, byte):
         """
@@ -224,7 +224,7 @@ class SpriteOutputBase(OutputBase):
         @param byte: Value to output.
         @type  byte: C{int}
         """
-        raise NotImplementedError("Implement print_wordx() in {}".format(type(self)))
+        raise NotImplementedError(f"Implement print_wordx() in {type(self)}")
 
     def print_dwordx(self, byte):
         """
@@ -233,7 +233,7 @@ class SpriteOutputBase(OutputBase):
         @param byte: Value to output.
         @type  byte: C{int}
         """
-        raise NotImplementedError("Implement print_dwordx() in {}".format(type(self)))
+        raise NotImplementedError(f"Implement print_dwordx() in {type(self)}")
 
     def newline(self, msg="", prefix="\t"):
         """
@@ -246,7 +246,7 @@ class SpriteOutputBase(OutputBase):
         @param prefix: Additional white space in front of the comment.
         @type  prefix: C{str}
         """
-        raise NotImplementedError("Implement newline() in {}".format(type(self)))
+        raise NotImplementedError(f"Implement newline() in {type(self)}")
 
     def comment(self, msg):
         """
@@ -257,7 +257,7 @@ class SpriteOutputBase(OutputBase):
 
         @note: Only use if no bytes have been written to the current line.
         """
-        raise NotImplementedError("Implement comment() in {}".format(type(self)))
+        raise NotImplementedError(f"Implement comment() in {type(self)}")
 
     def start_sprite(self, expected_size, is_real_sprite=False):
         """
@@ -284,8 +284,8 @@ class SpriteOutputBase(OutputBase):
         assert self.in_sprite
         self.in_sprite = False
         self.newline()
-        assert self.expected_count == self.byte_count, "Expected {:d} bytes to be written to sprite, got {:d}".format(
-            self.expected_count, self.byte_count
+        assert self.expected_count == self.byte_count, (
+            f"Expected {self.expected_count} bytes to be written to sprite, got {self.byte_count}"
         )
 
 

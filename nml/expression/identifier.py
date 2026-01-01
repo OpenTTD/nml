@@ -80,7 +80,7 @@ class Identifier(Expression):
 
     def supported_by_actionD(self, raise_error):
         if raise_error:
-            raise generic.ScriptError("Unknown identifier '{}'".format(self.value), self.pos)
+            raise generic.ScriptError(f"Unknown identifier '{self.value}'", self.pos)
 
         return False
 

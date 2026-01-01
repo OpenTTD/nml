@@ -50,7 +50,7 @@ class TileLayout(base_statement.BaseStatement):
             if isinstance(tileprop, assignment.Assignment):
                 name = tileprop.name.value
                 if name in self.properties:
-                    raise generic.ScriptError("Duplicate property {} in tile layout".format(name), tileprop.name.pos)
+                    raise generic.ScriptError(f"Duplicate property {name} in tile layout", tileprop.name.pos)
                 self.properties[name] = tileprop.value.reduce_constant(global_constants.const_list)
             else:
                 assert isinstance(tileprop, LayoutTile)
@@ -61,15 +61,13 @@ class TileLayout(base_statement.BaseStatement):
                     tile = expression.ConstantNumeric(0xFF)
                 self.tile_list.append(LayoutTile(x, y, tile))
         if self.name in action0properties.tilelayout_names:
-            raise generic.ScriptError(
-                "A tile layout with name '{}' has already been defined.".format(self.name), self.pos
-            )
+            raise generic.ScriptError(f"A tile layout with name '{self.name}' has already been defined.", self.pos)
         action0properties.tilelayout_names[self.name] = self
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "TileLayout")
         for tile in self.tile_list:
-            generic.print_dbg(indentation + 2, "At {:d},{:d}:".format(tile.x, tile.y))
+            generic.print_dbg(indentation + 2, f"At {tile.x},{tile.y}:")
             tile.tiletype.debug_print(indentation + 4)
 
     def get_action_list(self):
@@ -101,9 +99,7 @@ class TileLayout(base_statement.BaseStatement):
                 tile_id = global_constants.item_names[tile.tiletype.value].id
                 if not isinstance(tile_id, expression.ConstantNumeric):
                     raise generic.ScriptError(
-                        "Tile '{}' cannot be used in a tilelayout, as its ID is not a constant.".format(
-                            tile.tiletype.value
-                        ),
+                        f"Tile '{tile.tiletype.value}' cannot be used in a tilelayout, as its ID is not a constant.",
                         tile.tiletype.pos,
                     )
                 file.print_wordx(tile_id.value)
@@ -133,4 +129,4 @@ class LayoutTile:
         self.tiletype = tiletype
 
     def __str__(self):
-        return "{}, {}: {};".format(self.x, self.y, self.tiletype)
+        return f"{self.x}, {self.y}: {self.tiletype};"

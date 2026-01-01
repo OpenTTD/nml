@@ -81,4 +81,4 @@ def identifier_to_print(name):
     """
     if is_valid_id.match(name):
         return name
-    return '"{}"'.format(name)
+    return f'"{name}"'

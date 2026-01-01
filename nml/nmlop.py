@@ -98,9 +98,9 @@ class Operator:
         @rtype:  C{str}
         """
         if self.prefix_text is not None:
-            return "{}({}, {})".format(self.prefix_text, expr1, expr2)
+            return f"{self.prefix_text}({expr1}, {expr2})"
         else:  # Infix notation.
-            return "({} {} {})".format(expr1, self.token, expr2)
+            return f"({expr1} {self.token} {expr2})"
 
     def __call__(self, expr1, expr2, pos=None):
         return binop.BinOp(self, expr1, expr2, pos)

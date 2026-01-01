@@ -46,7 +46,7 @@ class Expression:
         @param indentation: Indent all printed lines with at least
             C{indentation} spaces.
         """
-        raise NotImplementedError("debug_print must be implemented in expression-subclass {!r}".format(type(self)))
+        raise NotImplementedError(f"debug_print must be implemented in expression-subclass {type(self)!r}")
 
     def __str__(self):
         """
@@ -54,7 +54,7 @@ class Expression:
 
         @return: A string representation of this expression.
         """
-        raise NotImplementedError("__str__ must be implemented in expression-subclass {!r}".format(type(self)))
+        raise NotImplementedError(f"__str__ must be implemented in expression-subclass {type(self)!r}")
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         """
@@ -67,7 +67,7 @@ class Expression:
 
         @return: A deep copy of this expression simplified as much as possible.
         """
-        raise NotImplementedError("reduce must be implemented in expression-subclass {!r}".format(type(self)))
+        raise NotImplementedError(f"reduce must be implemented in expression-subclass {type(self)!r}")
 
     def reduce_constant(self, id_dicts=None):
         """

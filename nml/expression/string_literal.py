@@ -31,10 +31,10 @@ class StringLiteral(Expression):
         self.value = value
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, 'String literal: "{}"'.format(self.value))
+        generic.print_dbg(indentation, f'String literal: "{self.value}"')
 
     def __str__(self):
-        return '"{}"'.format(self.value)
+        return f'"{self.value}"'
 
     def write(self, file, size):
         assert grfstrings.get_string_size(self.value, False, True) == size

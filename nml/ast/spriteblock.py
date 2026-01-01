@@ -31,9 +31,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
         for sprite in self.sprite_list:
             if isinstance(sprite, real_sprite.TemplateUsage):
                 if sprite.name.value == self.name.value:
-                    raise generic.ScriptError(
-                        "Sprite template '{}' includes itself.".format(sprite.name.value), self.pos
-                    )
+                    raise generic.ScriptError(f"Sprite template '{sprite.name.value}' includes itself.", self.pos)
                 elif sprite.name.value not in real_sprite.sprite_template_map:
                     raise generic.ScriptError(
                         "Encountered unknown template identifier: " + sprite.name.value, sprite.pos
@@ -43,9 +41,8 @@ class TemplateDeclaration(base_statement.BaseStatement):
             real_sprite.sprite_template_map[self.name.value] = self
         else:
             raise generic.ScriptError(
-                "Template named '{}' is already defined, first definition at {}".format(
-                    self.name.value, real_sprite.sprite_template_map[self.name.value].pos
-                ),
+                f"Template named '{self.name.value}' is already defined,"
+                f" first definition at {real_sprite.sprite_template_map[self.name.value].pos}",
                 self.pos,
             )
 
@@ -56,7 +53,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
             sprite_labels, num_sprites = sprite.get_labels()
             for lbl, lbl_offset in sprite_labels.items():
                 if lbl in labels:
-                    raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(lbl), self.pos)
+                    raise generic.ScriptError(f"Duplicate label encountered; '{lbl}' already exists.", self.pos)
                 labels[lbl] = lbl_offset + offset
             offset += num_sprites
         return labels, offset
@@ -76,7 +73,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
     def __str__(self):
         ret = "template {}({}) {{\n".format(str(self.name), ", ".join([str(param) for param in self.param_list]))
         for sprite in self.sprite_list:
-            ret += "\t{}\n".format(sprite)
+            ret += f"\t{sprite}\n"
         ret += "}\n"
         return ret
 
@@ -151,7 +148,7 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
             sprite_labels, num_sprites = sprite.get_labels()
             for lbl, lbl_offset in sprite_labels.items():
                 if lbl in self.labels:
-                    raise generic.ScriptError("Duplicate label encountered; '{}' already exists.".format(lbl), self.pos)
+                    raise generic.ScriptError(f"Duplicate label encountered; '{lbl}' already exists.", self.pos)
                 self.labels[lbl] = lbl_offset + offset
             offset += num_sprites
 
@@ -184,7 +181,7 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
             params.append(self.mask_file)
         ret = "spriteset({}) {{\n".format(", ".join(str(p) for p in params))
         for sprite in self.sprite_list:
-            ret += "\t{}\n".format(str(sprite))
+            ret += f"\t{sprite}\n"
         ret += "}\n"
         return ret
 
@@ -219,9 +216,9 @@ class SpriteGroup(spritegroup_base_class):
         return action_list
 
     def __str__(self):
-        ret = "spritegroup {} {{\n".format(self.name)
+        ret = f"spritegroup {self.name} {{\n"
         for spriteview in self.spriteview_list:
-            ret += "\t{}\n".format(spriteview)
+            ret += f"\t{spriteview}\n"
         ret += "}\n"
         return ret
 
@@ -275,7 +272,7 @@ class SpriteLayout(spritelayout_base_class):
             if not isinstance(param, expression.Identifier):
                 raise generic.ScriptError("spritelayout parameter names must be identifiers.", param.pos)
             if param.value in seen_names:
-                raise generic.ScriptError("Duplicate parameter name '{}' encountered.".format(param.value), param.pos)
+                raise generic.ScriptError(f"Duplicate parameter name '{param.value}' encountered.", param.pos)
             seen_names.add(param.value)
         spritelayout_base_class.pre_process(self)
 

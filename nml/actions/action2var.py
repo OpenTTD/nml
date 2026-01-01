@@ -97,7 +97,7 @@ class Action2Var(action2.Action2):
             else:
                 size += var.get_size()
 
-        regs = ["{} : register {:X}".format(reg.name, reg.register) for reg in self.param_registers]
+        regs = [f"{reg.name} : register {reg.register:X}" for reg in self.param_registers]
         self.write_sprite_start(file, size, regs)
         file.print_bytex(self.type_byte)
         file.newline()
@@ -198,11 +198,9 @@ class VarAction2ProcCallVar(VarAction2Var):
     def __init__(self, sg_ref):
         if not sg_ref.act2:
             if not isinstance(action2.resolve_spritegroup(sg_ref.name), (switch.Switch, switch.RandomSwitch)):
-                raise generic.ScriptError(
-                    "Block with name '{}' is not a valid procedure".format(sg_ref.name), sg_ref.pos
-                )
+                raise generic.ScriptError(f"Block with name '{sg_ref.name}' is not a valid procedure", sg_ref.pos)
             if not sg_ref.is_procedure:
-                raise generic.ScriptError("Unexpected identifier encountered: '{}'".format(sg_ref.name), sg_ref.pos)
+                raise generic.ScriptError(f"Unexpected identifier encountered: '{sg_ref.name}'", sg_ref.pos)
         VarAction2Var.__init__(self, 0x7E, 0, 0, comment=str(sg_ref))
         # Reference to the called action2
         self.sg_ref = sg_ref
@@ -475,7 +473,7 @@ class Varaction2Parser:
         assert isinstance(expr, expression.StorageOp)
         if expr.info["perm"] and not self.var_scope.has_persistent_storage:
             raise generic.ScriptError(
-                "Persistent storage is not supported for feature '{}'".format(self.var_scope.name),
+                f"Persistent storage is not supported for feature '{self.var_scope.name}'",
                 expr.pos,
             )
 
@@ -844,7 +842,7 @@ def create_ternary_action(guard, expr_true, expr_false, action_list, feature, va
     act6 = action6.Action6()
 
     global return_action_id
-    name = "@ternary_action_{:d}".format(return_action_id)
+    name = f"@ternary_action_{return_action_id}"
     varaction2 = Action2Var(feature, name, guard.pos, var_range)
     return_action_id += 1
 
@@ -960,9 +958,7 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
             # Normal action2
             act1_actions, act1_index = action1.make_cb_failure_action1(feature)
             action_list.extend(act1_actions)
-            act2 = action2real.make_simple_real_action2(
-                feature, "@CB_FAILED_REAL{:02X}".format(feature), pos, act1_index
-            )
+            act2 = action2real.make_simple_real_action2(feature, f"@CB_FAILED_REAL{feature:02X}", pos, act1_index)
         action_list.append(act2)
 
         # Create varaction2, to choose between returning graphics and 0, depending on CB
@@ -971,7 +967,7 @@ def get_failed_cb_result(feature, action_list, parent_action, pos):
             expression.Variable(expression.ConstantNumeric(0x0C), mask=expression.ConstantNumeric(0xFFFF))
         )
 
-        varaction2 = Action2Var(feature, "@CB_FAILED{:02X}".format(feature), pos, 0x89)
+        varaction2 = Action2Var(feature, f"@CB_FAILED{feature:02X}", pos, 0x89)
         varaction2.var_list = varact2parser.var_list
 
         varaction2.ranges.append(
@@ -1019,10 +1015,9 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     target = action2.resolve_spritegroup(result.name) if not result.act2 else None
 
     if parent_action.feature not in action2.features_sprite_layout and isinstance(target, spriteblock.SpriteLayout):
+        parent_name = general.feature_name(parent_action.feature)
         raise generic.ScriptError(
-            "SpriteLayout '{}' is not a valid return value for feature '{}'".format(
-                result.name, general.feature_name(parent_action.feature)
-            ),
+            f"SpriteLayout '{result.name}' is not a valid return value for feature '{parent_name}'",
             result.pos,
         )
 
@@ -1052,7 +1047,7 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
         action_list.append(extra_act6)
 
     global return_action_id
-    name = "@return_action_{:d}".format(return_action_id)
+    name = f"@return_action_{return_action_id}"
     varaction2 = Action2Var(parent_action.feature, name, result.pos, var_range)
     return_action_id += 1
     varaction2.var_list = varact2parser.var_list
@@ -1119,23 +1114,23 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
         result = parse_sg_ref_result(value, action_list, parent_action, var_range)
         comment = result.name.value + ";"
     elif isinstance(value, expression.ConstantNumeric):
-        comment = "return {:d};".format(value.value)
+        comment = f"return {value.value};"
         result = value
         if not (-16384 <= value.value <= 32767):
             msg = (
                 "Callback results are limited to -16384..16383 (when the result is a signed number)"
-                " or 0..32767 (unsigned), encountered {:d}."
-            ).format(value.value)
+                f" or 0..32767 (unsigned), encountered {value.value}."
+            )
             raise generic.ScriptError(msg, value.pos)
 
     elif isinstance(value, expression.String):
-        comment = "return {};".format(str(value))
+        comment = f"return {value};"
         str_id, actions = action4.get_string_action4s(0, 0xD0, value)
         action_list.extend(actions)
         result = expression.ConstantNumeric(str_id - 0xD000 + 0x8000)
     elif value.supported_by_actionD(False):
         tmp_param, tmp_param_actions = actionD.get_tmp_parameter(nmlop.OR(value, 0x8000).reduce())
-        comment = "return param[{:d}];".format(tmp_param)
+        comment = f"return param[{tmp_param}];"
         action_list.extend(tmp_param_actions)
         for i in range(repeat_result):
             act6.modify_bytes(tmp_param, 2, offset + 2 * i)
@@ -1143,12 +1138,12 @@ def parse_result(value, action_list, act6, offset, parent_action, none_result, v
     else:
         global return_action_id
         extra_actions, result = create_return_action(
-            value, parent_action.feature, "@return_action_{:d}".format(return_action_id), var_range
+            value, parent_action.feature, f"@return_action_{return_action_id}", var_range
         )
         return_action_id += 1
         action2.add_ref(result, parent_action)
         action_list.extend(extra_actions)
-        comment = "return {}".format(value)
+        comment = f"return {value}"
     return (result, comment)
 
 

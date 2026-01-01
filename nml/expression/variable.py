@@ -45,17 +45,17 @@ class Variable(Expression):
                 extra_param.debug_print(indentation + 4)
 
     def __str__(self):
-        num = "0x{:02X}".format(self.num.value) if isinstance(self.num, ConstantNumeric) else str(self.num)
-        ret = "var[{}, {}, {}".format(num, self.shift, self.mask)
+        num = f"0x{self.num.value:02X}" if isinstance(self.num, ConstantNumeric) else str(self.num)
+        ret = f"var[{num}, {self.shift}, {self.mask}"
         if self.param is not None:
-            ret += ", {}".format(self.param)
+            ret += f", {self.param}"
         ret += "]"
         if self.add is not None:
-            ret = "({} + {})".format(ret, self.add)
+            ret = f"({ret} + {self.add})"
         if self.div is not None:
-            ret = "({} / {})".format(ret, self.div)
+            ret = f"({ret} / {self.div})"
         if self.mod is not None:
-            ret = "({} % {})".format(ret, self.mod)
+            ret = f"({ret} % {self.mod})"
         return ret
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):

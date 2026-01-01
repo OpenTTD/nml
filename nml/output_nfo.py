@@ -68,23 +68,23 @@ class OutputNFO(output_base.SpriteOutputBase):
         if pretty_print is not None:
             self.file.write(pretty_print + " ")
             return
-        self.file.write("{:02X} ".format(value))
+        self.file.write(f"{value:02X} ")
 
     def print_word(self, value):
         value = self.prepare_word(value)
-        self.file.write("\\w{:d} ".format(value))
+        self.file.write(f"\\w{value:d} ")
 
     def print_wordx(self, value):
         value = self.prepare_word(value)
-        self.file.write("\\wx{:04X} ".format(value))
+        self.file.write(f"\\wx{value:04X} ")
 
     def print_dword(self, value):
         value = self.prepare_dword(value)
-        self.file.write("\\d{:d} ".format(value))
+        self.file.write(f"\\d{value:d} ")
 
     def print_dwordx(self, value):
         value = self.prepare_dword(value)
-        self.file.write("\\dx{:08X} ".format(value))
+        self.file.write(f"\\dx{value:08X} ")
 
     def print_string(self, value, final_zero=True, force_ascii=False):
         assert self.in_sprite

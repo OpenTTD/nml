@@ -87,7 +87,7 @@ class Action14Node:
 
         @return: The size (in bytes) of this node.
         """
-        raise NotImplementedError("get_size must be implemented in Action14Node-subclass {!r}".format(type(self)))
+        raise NotImplementedError(f"get_size must be implemented in Action14Node-subclass {type(self)!r}")
 
     def write(self, file):
         """
@@ -95,7 +95,7 @@ class Action14Node:
 
         @param file: The file to write the output to.
         """
-        raise NotImplementedError("write must be implemented in Action14Node-subclass {!r}".format(type(self)))
+        raise NotImplementedError(f"write must be implemented in Action14Node-subclass {type(self)!r}")
 
     def write_type_id(self, file):
         file.print_string(self.type_string, False, True)
@@ -266,7 +266,7 @@ def param_desc_actions(root, params):
                 if min_val > max_val or def_val < min_val or def_val > max_val:
                     generic.print_warning(
                         generic.Warning.GENERIC,
-                        "Limits for GRF parameter {} are incoherent, ignoring.".format(param_num),
+                        f"Limits for GRF parameter {param_num} are incoherent, ignoring.",
                     )
                     min_val = 0
                     max_val = 0xFFFFFFFF

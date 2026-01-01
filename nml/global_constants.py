@@ -19,7 +19,7 @@ from nml import expression, generic, nmlop
 def constant_number(name, info, pos):
     if isinstance(info, str):
         generic.print_warning(
-            generic.Warning.DEPRECATION, "'{}' is deprecated, consider using '{}' instead".format(name, info), pos
+            generic.Warning.DEPRECATION, f"'{name}' is deprecated, consider using '{info}' instead", pos
         )
         info = constant_numbers[info]
     return expression.ConstantNumeric(info, pos)
@@ -1369,7 +1369,7 @@ patch_variables = {
 
 
 def config_flag_read(bit, pos):
-    return expression.SpecialCheck((0x01, r"\70"), 0x85, (0, 1), bit, "PatchFlag({})".format(bit), varsize=1, pos=pos)
+    return expression.SpecialCheck((0x01, r"\70"), 0x85, (0, 1), bit, f"PatchFlag({bit})", varsize=1, pos=pos)
 
 
 def config_flag(name, info, pos):
@@ -1422,7 +1422,7 @@ def setting_from_info(name, info, pos):
 
 def item_to_id(name, item, pos):
     if not isinstance(item.id, expression.ConstantNumeric):
-        raise generic.ScriptError("Referencing item '{}' with a non-constant id is not possible.".format(name), pos)
+        raise generic.ScriptError(f"Referencing item '{name}' with a non-constant id is not possible.", pos)
     return expression.ConstantNumeric(item.id.value, pos)
 
 
@@ -1503,10 +1503,10 @@ def print_stats():
     """
     if len(cargo_numbers) > 0:
         # Ids FE and FF have special meanings in Action3, so we do not consider them valid ids.
-        generic.print_info("Cargo translation table: {}/{}".format(len(cargo_numbers), 0xFE))
+        generic.print_info(f"Cargo translation table: {len(cargo_numbers)}/{0xFE}")
     if not is_default_railtype_table:
-        generic.print_info("Railtype translation table: {}/{}".format(len(railtype_table), 0x100))
+        generic.print_info(f"Railtype translation table: {len(railtype_table)}/{0x100}")
     if not is_default_roadtype_table:
-        generic.print_info("Roadtype translation table: {}/{}".format(len(roadtype_table), 0x100))
+        generic.print_info(f"Roadtype translation table: {len(roadtype_table)}/{0x100}")
     if not is_default_tramtype_table:
-        generic.print_info("Tramtype translation table: {}/{}".format(len(tramtype_table), 0x100))
+        generic.print_info(f"Tramtype translation table: {len(tramtype_table)}/{0x100}")

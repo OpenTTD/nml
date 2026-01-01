@@ -194,9 +194,7 @@ def parse_cli(argv):
         type="int",
         dest="verbosity",
         metavar="<level>",
-        help="Set the verbosity level for informational output. [default: %default, max: {}]".format(
-            generic.VERBOSITY_MAX
-        ),
+        help=f"Set the verbosity level for informational output. [default: %default, max: {generic.VERBOSITY_MAX}]",
     )
     opt_parser.add_option(
         "-D", "--debug-parser", action="store_true", dest="debug_parser", help="Enable debug mode for parser."
@@ -252,7 +250,7 @@ def parse_cli(argv):
     else:
         input_filename = args[0]
         if not os.access(input_filename, os.R_OK):
-            raise generic.ScriptError('Input file "{}" does not exist'.format(input_filename))
+            raise generic.ScriptError(f'Input file "{input_filename}" does not exist')
 
     return opts, input_filename
 
@@ -337,7 +335,7 @@ def main(argv):
         elif outext == ".dep":
             outputs.append(output_dep.OutputDEP(output, opts.grf_filename))
         else:
-            generic.print_error("Unknown output format {}".format(outext))
+            generic.print_error(f"Unknown output format {outext}")
             sys.exit(2)
 
     ret = nml(
@@ -413,7 +411,7 @@ def nml(
     try:
         script = inputfile.read()
     except UnicodeDecodeError as ex:
-        raise generic.ScriptError("Input file is not utf-8 encoded: {}".format(ex))
+        raise generic.ScriptError(f"Input file is not utf-8 encoded: {ex}")
     # Strip a possible BOM
     script = script.lstrip(str(codecs.BOM_UTF8, "utf-8"))
 
@@ -539,7 +537,7 @@ def nml(
                     if im.mode != "P":
                         continue
                     pal = palette.validate_palette(im, f)
-            except IOError as ex:
+            except OSError as ex:
                 raise generic.ImageError(str(ex), f)
 
             if (
@@ -547,9 +545,7 @@ def nml(
                 and pal != forced_palette
                 and not (forced_palette == "DEFAULT" and pal == "LEGACY")
             ):
-                raise generic.ImageError(
-                    "Image has '{}' palette, but you forced the '{}' palette".format(pal, used_palette), f
-                )
+                raise generic.ImageError(f"Image has '{pal}' palette, but you forced the '{used_palette}' palette", f)
 
             if used_palette == "ANY":
                 used_palette = pal
@@ -558,7 +554,7 @@ def nml(
                     used_palette = "DEFAULT"
                 else:
                     raise generic.ImageError(
-                        "Image has '{}' palette, but \"{}\" has the '{}' palette".format(pal, last_file, used_palette),
+                        f"Image has '{pal}' palette, but \"{last_file}\" has the '{used_palette}' palette",
                         f,
                     )
             last_file = f
@@ -661,7 +657,7 @@ def run():
         # User mode: print user friendly error message.
         ex_msg = str(ex)
         if len(ex_msg) > 0:
-            ex_msg = '"{}"'.format(ex_msg)
+            ex_msg = f'"{ex_msg}"'
 
         traceback = sys.exc_info()[2]
         # Walk through the traceback object until we get to the point where the exception happened.
@@ -680,7 +676,7 @@ def run():
             "version": version,
             "msg": ex_msg,
             "cli": sys.argv,
-            "loc": 'File "{}", line {:d}, in {}'.format(filename, lineno, name),
+            "loc": f'File "{filename}", line {lineno}, in {name}',
         }
 
         msg = (

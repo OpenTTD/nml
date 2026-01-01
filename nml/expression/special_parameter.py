@@ -60,7 +60,7 @@ class SpecialParameter(Expression):
         self.is_bool = is_bool
 
     def debug_print(self, indentation):
-        generic.print_dbg(indentation, "Special parameter '{}'".format(self.name))
+        generic.print_dbg(indentation, f"Special parameter '{self.name}'")
 
     def __str__(self):
         return self.name

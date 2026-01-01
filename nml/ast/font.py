@@ -74,6 +74,6 @@ class FontGlyphBlock(base_statement.BaseStatement, sprite_container.SpriteContai
             params.append(self.image_file)
         ret = "font_glyph {}({}) {{\n".format(name, ", ".join(str(param) for param in params))
         for sprite in self.sprite_list:
-            ret += "\t{}\n".format(sprite)
+            ret += f"\t{sprite}\n"
         ret += "}\n"
         return ret

@@ -44,15 +44,11 @@ def print_stats():
     """
     if spritegroup_stats[0] > 0:
         generic.print_info(
-            "Concurrent spritegroups: {}/{} ({})".format(
-                spritegroup_stats[0], total_action2_ids, str(spritegroup_stats[1])
-            )
+            f"Concurrent spritegroups: {spritegroup_stats[0]}/{total_action2_ids} ({spritegroup_stats[1]})"
         )
     if a2register_stats[0] > 0:
         generic.print_info(
-            "Concurrent Action2 registers: {}/{} ({})".format(
-                a2register_stats[0], total_tmp_locations, str(a2register_stats[1])
-            )
+            f"Concurrent Action2 registers: {a2register_stats[0]}/{total_tmp_locations} ({a2register_stats[1]})"
         )
 
 
@@ -117,7 +113,7 @@ class Action2(base_action.BaseAction):
             )
 
     def write_sprite_start(self, file, size, extra_comment=None):
-        assert self.num_refs == 0, "Action2 reference counting has {:d} dangling references.".format(self.num_refs)
+        assert self.num_refs == 0, f"Action2 reference counting has {self.num_refs} dangling references."
         file.comment("Name: " + self.name)
         if extra_comment:
             for c in extra_comment:
@@ -298,10 +294,8 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             Instead, call initialize(...).
             """
             raise NotImplementedError(
-                (
-                    "__init__ must be implemented in ASTSpriteGroup-subclass {!r},"
-                    " initialize(..) should be called instead"
-                ).format(type(self))
+                f"__init__ must be implemented in ASTSpriteGroup-subclass {type(self)!r},"
+                " initialize(..) should be called instead"
             )
 
         def initialize(self, name=None, feature=None, num_params=0):
@@ -389,7 +383,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                     assert self.name is not None
                     generic.print_warning(
                         generic.Warning.OPTIMISATION,
-                        "Block '{}' is not referenced, ignoring.".format(self.name.value),
+                        f"Block '{self.name.value}' is not referenced, ignoring.",
                         self.pos,
                     )
 
@@ -433,7 +427,7 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
             @rtype: C{iterable} of L{SpriteGroupRef}
             """
             raise NotImplementedError(
-                "collect_references must be implemented in ASTSpriteGroup-subclass {!r}".format(type(self))
+                f"collect_references must be implemented in ASTSpriteGroup-subclass {type(self)!r}"
             )
 
         def set_action2(self, action2, feature):
@@ -492,16 +486,14 @@ def make_sprite_group_class(cls_is_spriteset, cls_is_referenced, cls_has_explici
                 # Passing parameters is not possible here
                 if len(target_ref.param_list) != 0:
                     raise generic.ScriptError(
-                        "Passing parameters to '{}' is only possible from a spritelayout.".format(
-                            target_ref.name.value
-                        ),
+                        f"Passing parameters to '{target_ref.name.value}' is only possible from a spritelayout.",
                         target_ref.pos,
                     )
 
                 self.used_sprite_sets.append(target)
             else:
                 if len(target_ref.param_list) != target.num_params:
-                    msg = "'{}' expects {:d} parameters, encountered {:d}."
+                    msg = "'{}' expects {} parameters, encountered {}."
                     msg = msg.format(target_ref.name.value, target.num_params, len(target_ref.param_list))
                     raise generic.ScriptError(msg, target_ref.pos)
 
@@ -543,7 +535,7 @@ def register_spritegroup(spritegroup):
     """
     name = spritegroup.name.value
     if name in spritegroup_list:
-        raise generic.ScriptError("Block with name '{}' has already been defined".format(name), spritegroup.pos)
+        raise generic.ScriptError(f"Block with name '{name}' has already been defined", spritegroup.pos)
     spritegroup_list[name] = spritegroup
     global_constants.spritegroups[name] = name
 
@@ -559,5 +551,5 @@ def resolve_spritegroup(name):
     @rtype: L{ASTSpriteGroup}
     """
     if name.value not in spritegroup_list:
-        raise generic.ScriptError("Unknown identifier encountered: '{}'".format(name.value), name.pos)
+        raise generic.ScriptError(f"Unknown identifier encountered: '{name.value}'", name.pos)
     return spritegroup_list[name.value]

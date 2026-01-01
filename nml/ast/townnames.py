@@ -95,13 +95,13 @@ class TownNames(base_statement.BaseStatement):
                 raise generic.ScriptError("ID must be a number between 0 and 0x7f (inclusive)", self.pos)
 
             if self.id_number not in actionF.free_numbers:
-                raise generic.ScriptError("town names ID 0x{:x} is already used.".format(self.id_number), self.pos)
+                raise generic.ScriptError(f"town names ID 0x{self.id_number:x} is already used.", self.pos)
             actionF.free_numbers.remove(self.id_number)
 
     def __str__(self):
         ret = "town_names"
         if self.name is not None:
-            ret += "({})".format(self.name)
+            ret += f"({self.name})"
         ret += "{{\n{}}}\n".format("".join(str(x) for x in self.param_list))
         return ret
 
@@ -156,9 +156,7 @@ class TownNamesPart:
         if len(self.pieces) == 0:
             raise generic.ScriptError("Expected names and/or town_name references in the part.", self.pos)
         if len(self.pieces) > 255:
-            raise generic.ScriptError(
-                "Too many values in a part, found {:d}, maximum is 255".format(len(self.pieces)), self.pos
-            )
+            raise generic.ScriptError(f"Too many values in a part, found {len(self.pieces)}, maximum is 255", self.pos)
 
         return actFs, self
 
@@ -218,7 +216,7 @@ class TownNamesPart:
         # Assign to action F
         actFs = []
         for _prob, _idx, sub in finished_actions:
-            actF_name = expression.Identifier("**townname #{:d}**".format(townname_serial), None)
+            actF_name = expression.Identifier(f"**townname #{townname_serial}**", None)
             townname_serial = townname_serial + 1
             town_part = TownNamesPart(sub, self.pos)
             town_part.set_numbits(num_bits)
@@ -268,7 +266,7 @@ class TownNamesPart:
 
     def debug_print(self, indentation):
         total = sum(piece.probability.value for piece in self.pieces)
-        generic.print_dbg(indentation, "Town names part (total {:d})".format(total))
+        generic.print_dbg(indentation, f"Town names part (total {total})")
         for piece in self.pieces:
             piece.debug_print(indentation + 2, total)
 
@@ -322,7 +320,7 @@ class TownNamesParam:
         self.value.debug_print(indentation + 4)
 
     def __str__(self):
-        return "{}: {};\n".format(self.key, self.value)
+        return f"{self.key}: {self.value};\n"
 
 
 class TownNamesEntryDefinition:
@@ -369,15 +367,15 @@ class TownNamesEntryDefinition:
         if isinstance(self.def_number, expression.Identifier):
             name_text = "name '" + self.def_number.value + "'"
         else:
-            name_text = "number 0x{:x}".format(self.def_number.value)
+            name_text = f"number 0x{self.def_number.value:x}"
 
         generic.print_dbg(
             indentation,
-            "Insert town_name ID {} with probability {:d}/{:d}".format(name_text, self.probability.value, total),
+            f"Insert town_name ID {name_text} with probability {self.probability.value}/{total}",
         )
 
     def __str__(self):
-        return "town_names({}, {:d}),".format(str(self.def_number), self.probability.value)
+        return f"town_names({self.def_number}, {self.probability.value}),"
 
     def get_length(self):
         return 2
@@ -392,16 +390,14 @@ class TownNamesEntryDefinition:
             self.number = actionF.named_numbers.get(self.def_number.value)
             if self.number is None:
                 raise generic.ScriptError(
-                    'Town names name "{}" is not defined or points to a next town_names node'.format(
-                        self.def_number.value
-                    ),
+                    f'Town names name "{self.def_number.value}" is not defined or points to a next town_names node',
                     self.pos,
                 )
         else:
             self.number = self.def_number.value
             if self.number not in actionF.numbered_numbers:
                 raise generic.ScriptError(
-                    'Town names number "{}" is not defined or points to a next town_names node'.format(self.number),
+                    f'Town names number "{self.number}" is not defined or points to a next town_names node',
                     self.pos,
                 )
         return self.number
@@ -439,12 +435,10 @@ class TownNamesEntryText:
             raise generic.ScriptError("Probability out of range (must be between 0 and 0x7f inclusive).", self.pos)
 
     def debug_print(self, indentation, total):
-        generic.print_dbg(
-            indentation, "Text {} with probability {:d}/{:d}".format(self.text.value, self.probability.value, total)
-        )
+        generic.print_dbg(indentation, f"Text {self.text.value} with probability {self.probability.value}/{total}")
 
     def __str__(self):
-        return "text({}, {:d}),".format(self.text, self.probability.value)
+        return f"text({self.text}, {self.probability.value}),"
 
     def get_length(self):
         return 1 + grfstrings.get_string_size(self.text.value)  # probability, text

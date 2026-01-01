@@ -51,7 +51,7 @@ class FunctionPtr(Expression):
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         raise generic.ScriptError(
-            "'{}' is a function and should be called using the function call syntax.".format(str(self.name)),
+            f"'{self.name}' is a function and should be called using the function call syntax.",
             self.name.pos,
         )
 

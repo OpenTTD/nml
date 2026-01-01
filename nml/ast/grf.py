@@ -33,7 +33,7 @@ def print_stats():
     Print statistics about used ids.
     """
     if param_stats[0] > 0:
-        generic.print_info("GRF parameter registers: {}/{}".format(param_stats[0], param_stats[1]))
+        generic.print_info(f"GRF parameter registers: {param_stats[0]}/{param_stats[1]}")
 
 
 def set_palette_used(pal):
@@ -193,13 +193,13 @@ class GRF(base_statement.BaseStatement):
 
     def __str__(self):
         ret = "grf {\n"
-        ret += "\tgrfid: {};\n".format(str(self.grfid))
-        ret += "\tname: {};\n".format(str(self.name))
-        ret += "\tdesc: {};\n".format(str(self.desc))
+        ret += f"\tgrfid: {self.grfid};\n"
+        ret += f"\tname: {self.name};\n"
+        ret += f"\tdesc: {self.desc};\n"
         if self.url is not None:
-            ret += "\turl: {};\n".format(self.url)
-        ret += "\tversion: {};\n".format(self.version)
-        ret += "\tmin_compatible_version: {};\n".format(self.min_compatible_version)
+            ret += f"\turl: {self.url};\n"
+        ret += f"\tversion: {self.version};\n"
+        ret += f"\tmin_compatible_version: {self.min_compatible_version};\n"
         for param in self.params:
             ret += str(param)
         ret += "}\n"
@@ -225,15 +225,15 @@ class ParameterSetting:
             self.set_property(set_val.name.value, set_val.value)
 
     def __str__(self):
-        ret = "\t\t{} {{\n".format(self.name)
+        ret = f"\t\t{self.name} {{\n"
         for val in self.value_list:
             if val.name.value == "names":
                 ret += "\t\t\tnames: {\n"
                 for name in val.value.values:
-                    ret += "\t\t\t\t{}: {};\n".format(name.name, name.value)
+                    ret += f"\t\t\t\t{name.name}: {name.value};\n"
                 ret += "\t\t\t};\n"
             else:
-                ret += "\t\t\t{}: {};\n".format(val.name, val.value)
+                ret += f"\t\t\t{val.name}: {val.value};\n"
         ret += "\t\t}\n"
         return ret
 
@@ -352,9 +352,7 @@ class ParameterDescription:
                     setting.bit_num = expression.ConstantNumeric(ParameterDescription.free_bits[self.num.value].pop(0))
                 else:
                     if setting.bit_num.value not in ParameterDescription.free_bits[self.num.value]:
-                        raise generic.ScriptError(
-                            "Bit {} is already used".format(setting.bit_num.value), setting.name.pos
-                        )
+                        raise generic.ScriptError(f"Bit {setting.bit_num.value} is already used", setting.name.pos)
                     ParameterDescription.free_bits[self.num.value].remove(setting.bit_num.value)
                 global_constants.misc_grf_bits[setting.name.value] = {
                     "param": self.num.value,

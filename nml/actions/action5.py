@@ -100,30 +100,34 @@ def parse_action5(replaces):
 
     if block_type == Action5BlockType.FIXED:
         if num_sprites < num_required:
-            msg = "Invalid sprite count for sprite replacement type '{}', expected {:d}, got {:d}"
-            msg = msg.format(replaces.type, num_required, num_sprites)
+            msg = (
+                f"Invalid sprite count for sprite replacement type '{replaces.type}',"
+                f" expected {num_required}, got {num_sprites}"
+            )
             raise generic.ScriptError(msg, replaces.pos)
 
         elif num_sprites > num_required:
             msg = (
-                "Too many sprites specified for sprite replacement type '{}',"
-                " expected {:d}, got {:d}, extra sprites may be ignored"
-            ).format(replaces.type, num_required, num_sprites)
+                f"Too many sprites specified for sprite replacement type '{replaces.type}',"
+                f" expected {num_required}, got {num_sprites}, extra sprites may be ignored"
+            )
             generic.print_warning(generic.Warning.GENERIC, msg, replaces.pos)
 
         if replaces.offset != 0:
-            msg = "replacenew parameter 'offset' must be zero for sprite replacement type '{}'".format(replaces.type)
+            msg = f"replacenew parameter 'offset' must be zero for sprite replacement type '{replaces.type}'"
             raise generic.ScriptError(msg, replaces.pos)
 
     elif block_type == Action5BlockType.ANY:
         if replaces.offset != 0:
-            msg = "replacenew parameter 'offset' must be zero for sprite replacement type '{}'".format(replaces.type)
+            msg = f"replacenew parameter 'offset' must be zero for sprite replacement type '{replaces.type}'"
             raise generic.ScriptError(msg, replaces.pos)
 
     elif block_type == Action5BlockType.OFFSET:
         if num_sprites + replaces.offset > num_required:
-            msg = "Exceeding the limit of {:d} sprites for sprite replacement type '{}', extra sprites may be ignored"
-            msg = msg.format(num_required, replaces.type)
+            msg = (
+                f"Exceeding the limit of {num_required} sprites for sprite replacement type '{replaces.type}',"
+                " extra sprites may be ignored"
+            )
             generic.print_warning(generic.Warning.GENERIC, msg, replaces.pos)
 
         if replaces.offset != 0 or num_sprites != num_required:

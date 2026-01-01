@@ -171,7 +171,7 @@ class LinePosition(Position):
         self.line_start = line_start
 
     def __str__(self):
-        return '"{}", line {:d}'.format(self.filename, self.line_start)
+        return f'"{self.filename}", line {self.line_start}'
 
 
 class PixelPosition(Position):
@@ -191,7 +191,7 @@ class PixelPosition(Position):
         self.ypos = ypos
 
     def __str__(self):
-        return '"{}" at [x: {:d}, y: {:d}]'.format(self.filename, self.xpos, self.ypos)
+        return f'"{self.filename}" at [x: {self.xpos}, y: {self.ypos}]'
 
 
 class ImageFilePosition(Position):
@@ -206,7 +206,7 @@ class ImageFilePosition(Position):
         Position.__init__(self, filename, poslist)
 
     def __str__(self):
-        return 'Image file "{}"'.format(self.filename)
+        return f'Image file "{self.filename}"'
 
 
 class LanguageFilePosition(Position):
@@ -218,7 +218,7 @@ class LanguageFilePosition(Position):
         Position.__init__(self, filename, [])
 
     def __str__(self):
-        return 'Language file "{}"'.format(self.filename)
+        return f'Language file "{self.filename}"'
 
 
 class ScriptError(Exception):
@@ -254,7 +254,7 @@ class RangeError(ScriptError):
 
 class ProcCallSyntaxError(ScriptError):
     def __init__(self, name, pos=None):
-        ScriptError.__init__(self, "Missing '()' after '{}'.".format(name), pos)
+        ScriptError.__init__(self, f"Missing '()' after '{name}'.", pos)
 
 
 class ImageError(ScriptError):
@@ -275,7 +275,7 @@ class OnlyOnceError(ScriptError):
         @param pos: Position of the error, if provided.
         @type  pos: C{None} or L{Position}
         """
-        ScriptError.__init__(self, "A grf may contain only one {}.".format(typestr), pos)
+        ScriptError.__init__(self, f"A grf may contain only one {typestr}.", pos)
 
 
 class OnlyOnce:
@@ -369,7 +369,7 @@ def clear_progress():
     hide_progress()
 
     if (progress_message is not None) and (verbosity_level >= VERBOSITY_TIMING):
-        print("{} {:.1f} s".format(progress_message, time.process_time() - progress_start_time))
+        print(f"{progress_message} {time.process_time() - progress_start_time:.1f} s")
 
     progress_message = None
     progress_start_time = None
@@ -526,29 +526,25 @@ def find_file(filepath):
             matches = [entry for entry in entries if lcomp == entry.lower()]
 
             if len(matches) == 0:
-                raise ScriptError(
-                    'Path "{}" does not exist (even after case conversions)'.format(os.path.join(path, comp))
-                )
+                raise ScriptError(f'Path "{os.path.join(path, comp)}" does not exist (even after case conversions)')
             elif len(matches) > 1:
                 raise ScriptError(
-                    'Path "{}" is not unique (case conversion gave {:d} solutions)'.format(
-                        os.path.join(path, comp), len(matches)
-                    )
+                    f'Path "{os.path.join(path, comp)}" is not unique (case conversion gave {len(matches)} solutions)'
                 )
 
             if matches[0] != comp:
                 given_path = os.path.join(path, comp)
                 real_path = os.path.join(path, matches[0])
                 msg = (
-                    'Path "{}" at the file system does not match path "{}" given in the input'
+                    f'Path "{real_path}" at the file system does not match path "{given_path}" given in the input'
                     " (case mismatch in the last component)"
-                ).format(real_path, given_path)
+                )
                 print_warning(Warning.GENERIC, msg)
         elif os.access(path, os.X_OK):
             # Path is only accessible, cannot inspect the file system.
             matches = [comp]
         else:
-            raise ScriptError('Path "{}" does not exist or is not accessible'.format(path))
+            raise ScriptError(f'Path "{path}" does not exist or is not accessible')
 
         path = os.path.join(path, matches[0])
         if len(components) > 0:
@@ -613,6 +609,6 @@ def open_cache_file(sources, extension, mode):
         if "w" in mode:
             print_warning(
                 Warning.GENERIC,
-                "Can't create cache file {}. Check permissions, or use --cache-dir or --no-cache.".format(path),
+                f"Can't create cache file {path}. Check permissions, or use --cache-dir or --no-cache.",
             )
         raise

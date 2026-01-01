@@ -33,7 +33,7 @@ class BaseAction:
         @param file: The outputfile to write the data to.
         @type  file: L{SpriteOutputBase}
         """
-        raise NotImplementedError("write is not implemented in {!r}".format(type(self)))
+        raise NotImplementedError(f"write is not implemented in {type(self)!r}")
 
     def skip_action7(self):
         """

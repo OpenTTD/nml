@@ -55,7 +55,7 @@ def feature_name(feature):
     for name, num in feature_ids.items():
         if num == feature:
             return name
-    raise AssertionError("Invalid feature number '{}'.".format(feature))
+    raise AssertionError(f"Invalid feature number '{feature}'.")
 
 
 def parse_feature(expr):
@@ -70,7 +70,7 @@ def parse_feature(expr):
     """
     expr = expr.reduce_constant([feature_ids])
     if expr.value not in feature_ids.values():
-        raise generic.ScriptError("Invalid feature '{:02X}' encountered.".format(expr.value), expr.pos)
+        raise generic.ScriptError(f"Invalid feature '{expr.value:02X}' encountered.", expr.pos)
     return expr
 
 

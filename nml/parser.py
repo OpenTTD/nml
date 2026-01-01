@@ -93,7 +93,7 @@ class NMLParser:
         if t is None:
             raise generic.ScriptError("Syntax error, unexpected end-of-file")
         else:
-            raise generic.ScriptError('Syntax error, unexpected token "{}"'.format(t.value), t.lineno)
+            raise generic.ScriptError(f'Syntax error, unexpected token "{t.value}"', t.lineno)
 
     #
     # Main script blocks
