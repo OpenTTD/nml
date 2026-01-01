@@ -1,3 +1,7 @@
+"""
+Action 11 support classes (sounds).
+"""
+
 __license__ = """
 NML is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -13,9 +17,6 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-"""
-Action 11 support classes (sounds).
-"""
 import os
 
 from nml import generic

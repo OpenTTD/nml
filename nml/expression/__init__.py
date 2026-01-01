@@ -36,6 +36,38 @@ from .ternaryop import TernaryOp
 from .abs_op import AbsOp
 from .variable import Variable
 
+__all__ = [
+    "AbsOp",
+    "AcceptCargo",
+    "Array",
+    "BinNot",
+    "BinOp",
+    "BitMask",
+    "Boolean",
+    "ConstantFloat",
+    "ConstantNumeric",
+    "Expression",
+    "FunctionCall",
+    "FunctionPtr",
+    "GRMOp",
+    "Identifier",
+    "Not",
+    "OtherGRFParameter",
+    "Parameter",
+    "PatchVariable",
+    "ProduceCargo",
+    "SpecialCheck",
+    "SpecialParameter",
+    "SpriteGroupRef",
+    "StorageOp",
+    "String",
+    "StringLiteral",
+    "TernaryOp",
+    "Type",
+    "Variable",
+    "parse_string_to_dword",
+]
+
 is_valid_id = re.compile("[a-zA-Z_][a-zA-Z0-9_]{3}$")
 
 

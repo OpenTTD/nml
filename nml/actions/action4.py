@@ -101,11 +101,11 @@ def print_stats():
     """
     Print statistics about used ids.
     """
-    for t, l in string_ranges.items():
-        if l["random_id"]:
-            num_used = l["total"] - len(l["ids"])
+    for str_range, attrs in string_ranges.items():
+        if attrs["random_id"]:
+            num_used = attrs["total"] - len(attrs["ids"])
             if num_used > 0:
-                generic.print_info("{:02X}xx strings: {}/{}".format(t, num_used, l["total"]))
+                generic.print_info("{:02X}xx strings: {}/{}".format(str_range, num_used, attrs["total"]))
 
 
 def get_global_string_actions():
