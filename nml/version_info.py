@@ -21,19 +21,16 @@ def get_lib_versions():
     versions = {}
     # PIL
     try:
-        import PIL
+        from PIL import __version__ as pil_version
 
-        versions["PIL"] = PIL.__version__
+        versions["PIL"] = pil_version
     except ImportError:
         versions["PIL"] = "Not found!"
 
     # PLY
-    try:
-        from ply import lex
+    from nml.ply import __version__ as ply_version
 
-        versions["PLY"] = lex.__version__
-    except ImportError:
-        versions["PLY"] = "Not found!"
+    versions["PLY"] = ply_version
 
     return versions
 
