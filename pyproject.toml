@@ -50,6 +50,30 @@ exclude = [
   "nml/ply/*",
 ]
 
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle
+  "F",   # Pyflakes
+  "UP",  # pyupgrade
+  "B",   # flake8-bugbear
+  "SIM", # flake8-simplify
+  "I",   # isort
+]
+
+ignore = [
+  "B904", # use of nested exceptions
+  "SIM108", # rewrite as ternary
+]
+
+# Files with tables of data, not conducive to being linted or formatted
+[tool.ruff.lint.per-file-ignores]
+"nml/palette.py" = ["E203", "E241"]
+"nml/grfstrings.py" = ["E203", "E241"]
+"nml/global_constants.py" = ["E203", "E241"]
+"nml/actions/real_sprite.py" = ["E203", "E241"]
+"nml/actions/action2var_variables.py" = ["E203", "E241", "E501"]
+"nml/actions/action3_callbacks.py" = ["E203", "E241", "E501"]
+
 [tool.ruff.format]
 exclude = [
   "nml/actions/action2var_variables.py",
