@@ -60,10 +60,10 @@ class BaseStatement:
         """
         seen_item = False
         for scope in scope_list:
-            if scope.list_type == BaseStatementList.LIST_TYPE_SKIP:
+            if scope.list_type == BaseStatementList.LIST_TYPE_SKIP:  # noqa: SIM102  # match block
                 if not self.bs_skipable:
                     raise generic.ScriptError(f"{self.bs_name} may not appear inside a conditional block.", self.pos)
-            if scope.list_type == BaseStatementList.LIST_TYPE_LOOP:
+            if scope.list_type == BaseStatementList.LIST_TYPE_LOOP:  # noqa: SIM102  # match block
                 if not self.bs_loopable:
                     raise generic.ScriptError(f"{self.bs_name} may not appear inside a loop.", self.pos)
             if scope.list_type == BaseStatementList.LIST_TYPE_ITEM:

@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml.actions import base_action, real_sprite, action2
+from nml.actions import action2, base_action, real_sprite
 
 
 class Action1(base_action.BaseAction):
@@ -231,10 +231,13 @@ def get_action1_index(spriteset, feature):
     @rtype: C{int}
     """
     assert feature in spriteset_collections
+    act1_idx = None
     for spriteset_collection in spriteset_collections[feature]:
         if spriteset in spriteset_collection.spritesets:
-            return spriteset_collection.get_index(spriteset)
-    assert False
+            act1_idx = spriteset_collection.get_index(spriteset)
+            break
+    assert act1_idx is not None
+    return act1_idx
 
 
 def make_cb_failure_action1(feature):

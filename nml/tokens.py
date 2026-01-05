@@ -16,9 +16,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import re
 import sys
 
-from nml.ply import lex
-
 from nml import expression, generic
+from nml.ply import lex
 
 # fmt: off
 reserved = {

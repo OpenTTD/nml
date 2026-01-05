@@ -12,6 +12,7 @@ with nmlL; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import json
+
 from nml.editors import extract_tables
 
 text1 = """\

@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, nmlop
 
+
 def default_60xvar(name, args, pos, info):
     """
     Function to convert arguments into a variable parameter.
@@ -44,21 +45,26 @@ def default_60xvar(name, args, pos, info):
 # Some commonly used functions that apply some modification to the raw variable value
 # To pass extra parameters, lambda calculus may be used
 
+
 def value_sign_extend(var, info):
-    #r = (x ^ m) - m; with m being (1 << (num_bits -1))
+    # r = (x ^ m) - m; with m being (1 << (num_bits -1))
     m = expression.ConstantNumeric(1 << (info['size'] - 1))
     return nmlop.SUB(nmlop.XOR(var, m), m)
+
 
 def value_mul_div(mul, div):
     return lambda var, info: nmlop.DIV(nmlop.MUL(var, mul), div)
 
+
 def value_add_constant(const):
     return lambda var, info: nmlop.ADD(var, const)
+
 
 def value_equals(const):
     return lambda var, info: nmlop.CMP_EQ(var, const)
 
 # Commonly used functions to let a variable accept an (x, y)-offset as parameters
+
 
 def tile_offset(name, args, pos, info, min, max):
     if len(args) != 2:
@@ -72,11 +78,13 @@ def tile_offset(name, args, pos, info, min, max):
     # Shift y left by four
     y = nmlop.SHIFT_LEFT(y, 4)
     param = nmlop.ADD(x, y)
-    #Make sure to reduce the result
-    return ( param.reduce(), [] )
+    # Make sure to reduce the result
+    return (param.reduce(), [])
+
 
 def signed_tile_offset(name, args, pos, info):
     return tile_offset(name, args, pos, info, -8, 7)
+
 
 def unsigned_tile_offset(name, args, pos, info):
     return tile_offset(name, args, pos, info, 0, 15)
@@ -84,6 +92,7 @@ def unsigned_tile_offset(name, args, pos, info):
 #
 # Global variables, usable for all features
 #
+
 
 varact2_globalvars = {
     'current_month'        : {'var': 0x02, 'start':  0, 'size':  8},
@@ -114,10 +123,10 @@ varact2vars_vehicles = {
     'grfid'                            : {'var': 0x25, 'start':  0, 'size': 32},
     'position_in_consist'              : {'var': 0x40, 'start':  0, 'size':  8},
     'position_in_consist_from_end'     : {'var': 0x40, 'start':  8, 'size':  8},
-    'num_vehs_in_consist'              : {'var': 0x40, 'start': 16, 'size':  8, 'value_function': value_add_constant(1)}, # Zero-based, add 1 to make sane
+    'num_vehs_in_consist'              : {'var': 0x40, 'start': 16, 'size':  8, 'value_function': value_add_constant(1)},  # Zero-based, add 1 to make sane
     'position_in_vehid_chain'          : {'var': 0x41, 'start':  0, 'size':  8},
     'position_in_vehid_chain_from_end' : {'var': 0x41, 'start':  8, 'size':  8},
-    'num_vehs_in_vehid_chain'          : {'var': 0x41, 'start': 16, 'size':  8}, # One-based, already sane
+    'num_vehs_in_vehid_chain'          : {'var': 0x41, 'start': 16, 'size':  8},  # One-based, already sane
     'cargo_classes_in_consist'         : {'var': 0x42, 'start':  0, 'size':  8},
     'most_common_cargo_type'           : {'var': 0x42, 'start':  8, 'size':  8},
     'most_common_cargo_subtype'        : {'var': 0x42, 'start': 16, 'size':  8},
@@ -173,8 +182,8 @@ varact2vars_vehicles = {
 
 varact2vars_trains = {
     **varact2vars_vehicles,
-    #0x4786 / 0x10000 is an approximation of 3.5790976, the conversion factor
-    #for train speed
+    # 0x4786 / 0x10000 is an approximation of 3.5790976, the conversion factor
+    # for train speed
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'current_railtype'    : {'var': 0x4A, 'start':  0, 'size':  8},
@@ -184,8 +193,8 @@ varact2vars_trains = {
 
 varact2vars_roadvehs = {
     **varact2vars_vehicles,
-    #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
-    #for road vehicle speed
+    # 0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
+    # for road vehicle speed
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'current_roadtype'    : {'var': 0x4A, 'start':  0, 'size':  8},
@@ -196,8 +205,8 @@ varact2vars_roadvehs = {
 
 varact2vars_ships = {
     **varact2vars_vehicles,
-    #0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
-    #for ship speed
+    # 0x23C3 / 0x10000 is an approximation of 7.1581952, the conversion factor
+    # for ship speed
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
     'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x23C3, 0x10000)},
@@ -206,15 +215,16 @@ varact2vars_ships = {
 
 varact2vars_aircraft = {
     **varact2vars_vehicles,
-    #0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
-    #Note that the denominator has one less zero here!
-    #for aircraft speed
+    # 0x3939 / 0x1000 is an approximation of 0.279617, the conversion factor
+    # Note that the denominator has one less zero here!
+    # for aircraft speed
     'max_speed'           : {'var': 0x98, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x3939, 0x1000)},
     'current_speed'       : {'var': 0xB4, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x3939, 0x1000)},
     'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x3939, 0x1000)},
     'flight_state'        : {'var': 0xE2, 'start': 0, 'size':  8},
     'vehicle_is_in_depot' : {'var': 0xE6, 'start': 0, 'size':  8, 'value_function': value_equals(0)},
 }
+
 
 def signed_byte_parameter(name, args, pos, info):
     # Convert to a signed byte by AND-ing with 0xFF
@@ -226,41 +236,45 @@ def signed_byte_parameter(name, args, pos, info):
     ret = nmlop.AND(args[0], 0xFF, pos).reduce()
     return (ret, [])
 
+
 def vehicle_railtype(name, args, pos, info):
     return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="railtype"), [])
+
 
 def vehicle_roadtype(name, args, pos, info):
     return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="roadtype"), [])
 
+
 def vehicle_tramtype(name, args, pos, info):
     return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="tramtype"), [])
 
+
 varact2vars60x_vehicles = {
     'count_veh_id'        : {'var': 0x60, 'start':  0, 'size': 8},
-    'other_veh_curv_info' : {'var': 0x62, 'start':  0, 'size': 4, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
-    'other_veh_is_hidden' : {'var': 0x62, 'start':  7, 'size': 1, 'param_function':signed_byte_parameter},
-    'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
-    'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
-    'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function':signed_byte_parameter, 'value_function':value_sign_extend},
+    'other_veh_curv_info' : {'var': 0x62, 'start':  0, 'size': 4, 'param_function': signed_byte_parameter, 'value_function': value_sign_extend},
+    'other_veh_is_hidden' : {'var': 0x62, 'start':  7, 'size': 1, 'param_function': signed_byte_parameter},
+    'other_veh_x_offset'  : {'var': 0x62, 'start':  8, 'size': 8, 'param_function': signed_byte_parameter, 'value_function': value_sign_extend},
+    'other_veh_y_offset'  : {'var': 0x62, 'start': 16, 'size': 8, 'param_function': signed_byte_parameter, 'value_function': value_sign_extend},
+    'other_veh_z_offset'  : {'var': 0x62, 'start': 24, 'size': 8, 'param_function': signed_byte_parameter, 'value_function': value_sign_extend},
 }
 
 varact2vars60x_trains = {
     **varact2vars60x_vehicles,
     # Var 0x63 bit 0 is only useful when testing multiple bits at once. On its own it is already covered by railtype_available().
-    'tile_supports_railtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function':vehicle_railtype},
-    'tile_powers_railtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function':vehicle_railtype},
-    'tile_is_railtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function':vehicle_railtype},
+    'tile_supports_railtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function': vehicle_railtype},
+    'tile_powers_railtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function': vehicle_railtype},
+    'tile_is_railtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function': vehicle_railtype},
 }
 
 varact2vars60x_roadvehs = {
     **varact2vars60x_vehicles,
     # Var 0x63 bit 0 is only useful when testing multiple bits at once. On its own it is already covered by road/tramtype_available().
-    'tile_supports_roadtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function':vehicle_roadtype},
-    'tile_supports_tramtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function':vehicle_tramtype},
-    'tile_powers_roadtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function':vehicle_roadtype},
-    'tile_powers_tramtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function':vehicle_tramtype},
-    'tile_is_roadtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function':vehicle_roadtype},
-    'tile_is_tramtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function':vehicle_tramtype},
+    'tile_supports_roadtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function': vehicle_roadtype},
+    'tile_supports_tramtype' : {'var': 0x63, 'start':  1, 'size': 1, 'param_function': vehicle_tramtype},
+    'tile_powers_roadtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function': vehicle_roadtype},
+    'tile_powers_tramtype'   : {'var': 0x63, 'start':  2, 'size': 1, 'param_function': vehicle_tramtype},
+    'tile_is_roadtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function': vehicle_roadtype},
+    'tile_is_tramtype'       : {'var': 0x63, 'start':  3, 'size': 1, 'param_function': vehicle_tramtype},
 }
 
 #
@@ -271,7 +285,7 @@ varact2vars60x_roadvehs = {
 varact2vars_base_stations = {
     'random_bits_station' : {'var': 0x5F, 'start': 8, 'size': 16},
     # Var 48 doesn't work with newcargos, do not use
-    'had_vehicle_of_type' : {'var': 0x8A, 'start': 1, 'size': 5}, # Only read bits 1-5
+    'had_vehicle_of_type' : {'var': 0x8A, 'start': 1, 'size': 5},  # Only read bits 1-5
     'is_waypoint'         : {'var': 0x8A, 'start': 6, 'size': 1},
     'facilities'          : {'var': 0xF0, 'start': 0, 'size': 8},
     'airport_type'        : {'var': 0xF1, 'start': 0, 'size': 8},
@@ -324,6 +338,7 @@ mapping_platform_param = {
     (2, False) : 0x49,
 }
 
+
 def platform_info_param(name, args, pos, info):
     if len(args) != 1:
         raise generic.ScriptError(f"'{name}'() requires one argument, encountered {len(args)}", pos)
@@ -334,7 +349,8 @@ def platform_info_param(name, args, pos, info):
     if is_middle and args[0].value == 2:
         raise generic.ScriptError(f"Invalid argument for '{name}'(), PLATFORM_SAME_DIRECTION is not supported here.", pos)
     # Temporarily store variable number in the param, this will be fixed in the value_function
-    return (expression.ConstantNumeric(mapping_platform_param[(args[0].value, is_middle)]), [])
+    return (expression.ConstantNumeric(mapping_platform_param[args[0].value, is_middle]), [])
+
 
 def platform_info_fix_var(var, info):
     # Variable to use was temporarily stored in the param
@@ -342,6 +358,7 @@ def platform_info_fix_var(var, info):
     var.num = var.param
     var.param = None
     return var
+
 
 varact2vars60x_stations = {
     **varact2vars60x_base_stations,
@@ -368,9 +385,9 @@ varact2vars60x_stations = {
     'platform_position_from_end'    : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
     'platform_number_from_start'    : {'var': 0x00, 'start':  8, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
     'platform_number_from_end'      : {'var': 0x00, 'start': 12, 'size':  4, 'param_function': platform_info_param, 'value_function': platform_info_fix_var},
-    'platform_position_from_middle' : {'var': 0x00, 'start':  0, 'size':  4, 'param_function': platform_info_param, 'middle': True, # 'middle' is used by platform_info_param
+    'platform_position_from_middle' : {'var': 0x00, 'start':  0, 'size':  4, 'param_function': platform_info_param, 'middle': True,  # 'middle' is used by platform_info_param
                                             'value_function': lambda var, info: value_sign_extend(platform_info_fix_var(var, info), info)},
-    'platform_number_from_middle'   : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': platform_info_param, 'middle': True, # 'middle' is used by platform_info_param
+    'platform_number_from_middle'   : {'var': 0x00, 'start':  4, 'size':  4, 'param_function': platform_info_param, 'middle': True,  # 'middle' is used by platform_info_param
                                             'value_function': lambda var, info: value_sign_extend(platform_info_fix_var(var, info), info)},
 }
 
@@ -394,6 +411,7 @@ varact2vars_canals = {
 # Houses (feature 0x07)
 #
 
+
 def house_same_class(var, info):
     # Just using var 44 fails for non-north house tiles, as these have no class
     # Therefore work around it using var 61
@@ -413,8 +431,8 @@ varact2vars_houses = {
     'terrain_type'          : {'var': 0x43, 'start':  0, 'size':  8},
     'same_house_count_town' : {'var': 0x44, 'start':  0, 'size':  8},
     'same_house_count_map'  : {'var': 0x44, 'start':  8, 'size':  8},
-    'same_class_count_town' : {'var': 0xFF, 'start': 16, 'size':  8, 'value_function': house_same_class}, # 'var' is unused
-    'same_class_count_map'  : {'var': 0xFF, 'start': 24, 'size':  8, 'value_function': house_same_class}, # 'var' is unused
+    'same_class_count_town' : {'var': 0xFF, 'start': 16, 'size':  8, 'value_function': house_same_class},  # 'var' is unused
+    'same_class_count_map'  : {'var': 0xFF, 'start': 24, 'size':  8, 'value_function': house_same_class},  # 'var' is unused
     'generating_town'       : {'var': 0x45, 'start':  0, 'size':  1},
     'animation_frame'       : {'var': 0x46, 'start':  0, 'size':  8},
     'x_coordinate'          : {'var': 0x47, 'start':  0, 'size': 16},
@@ -426,6 +444,7 @@ varact2vars_houses = {
     'house_tile'            : {'var': 0x7D, 'start': 16, 'size':  8, 'param': 0xFF},
     'house_type_id'         : {'var': 0x7D, 'start': 24, 'size':  8, 'param': 0xFF},
 }
+
 
 def cargo_accepted_nearby(name, args, pos, info):
     # cargo_accepted_nearby(cargo[, xoffset, yoffset])
@@ -445,6 +464,7 @@ def cargo_accepted_nearby(name, args, pos, info):
 
     return (args[0], [(0x100, reg100)])
 
+
 def nearest_house_matching_criterion(name, args, pos, info):
     # nearest_house_matching_criterion(radius, criterion)
     # parameter is radius | (criterion << 6)
@@ -460,6 +480,7 @@ def nearest_house_matching_criterion(name, args, pos, info):
     criterion = nmlop.MUL(criterion, 0x40)
     retval = nmlop.OR(criterion, radius).reduce()
     return (retval, [])
+
 
 varact2vars60x_houses = {
     'old_house_count_town'               : {'var': 0x60, 'start':  0, 'size':  8},
@@ -558,6 +579,7 @@ varact2vars_industries = {
     'last_accept_date'             : {'var': 0xB4, 'start':  0, 'size': 16, 'value_function': value_add_constant(701265)},
 }
 
+
 def industry_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
         raise generic.ScriptError(f"'{name}'() requires between 1 and 2 argument(s), encountered {len(args)}", pos)
@@ -575,9 +597,10 @@ def industry_layout_count(name, args, pos, info):
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 2 else args[2]
 
     extra_params = []
-    extra_params.append( (0x100, grfid) )
-    extra_params.append( (0x101, nmlop.AND(args[1], 0xFF).reduce()) )
+    extra_params.append((0x100, grfid))
+    extra_params.append((0x101, nmlop.AND(args[1], 0xFF).reduce()))
     return (args[0], extra_params)
+
 
 def industry_town_count(name, args, pos, info):
     if len(args) < 1 or len(args) > 2:
@@ -586,12 +609,14 @@ def industry_town_count(name, args, pos, info):
     grfid = expression.ConstantNumeric(0xFFFFFFFF) if len(args) == 1 else args[1]
 
     extra_params = []
-    extra_params.append( (0x100, grfid) )
-    extra_params.append( (0x101, expression.ConstantNumeric(0x0100)) )
+    extra_params.append((0x100, grfid))
+    extra_params.append((0x101, expression.ConstantNumeric(0x0100)))
     return (args[0], extra_params)
+
 
 def industry_cargotype(name, args, pos, info):
     return (expression.functioncall.builtin_resolve_typelabel(name, args, pos, table_name="cargotype"), [])
+
 
 varact2vars60x_industries = {
     'nearby_tile_industry_tile_id' : {'var': 0x60, 'start':  0, 'size': 16, 'param_function': unsigned_tile_offset},
@@ -803,17 +828,17 @@ varact2vars_roadstop = {
 
     'has_road'              : {'var': 0x43, 'start':  0, 'size': 32, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
     'has_tram'              : {'var': 0x44, 'start':  0, 'size': 32, 'value_function': lambda var, info: nmlop.CMP_NEQ(var, 0xFFFFFFFF)},
-    'road_type'             : {'var': 0x43, 'start':  0, 'size':  8}, # The roadtype of this tile
-    'tram_type'             : {'var': 0x44, 'start':  0, 'size':  8}, # The tramtype of this tile
+    'road_type'             : {'var': 0x43, 'start':  0, 'size':  8},  # The roadtype of this tile
+    'tram_type'             : {'var': 0x44, 'start':  0, 'size':  8},  # The tramtype of this tile
 
     'town_manhattan_dist'   : {'var': 0x45, 'start':  0, 'size': 16},
     'town_zone'             : {'var': 0x45, 'start': 16, 'size':  8},
     'town_euclidean_dist'   : {'var': 0x46, 'start':  0, 'size': 32},
 
-    'company_num'           : {'var': 0x47, 'start':  0, 'size':  8}, # 0..14 company number
-    'company_type'          : {'var': 0x47, 'start': 16, 'size':  2}, # PLAYERTYPE_HUMAN, PLAYERTYPE_AI etc.
-    'company_colour1'       : {'var': 0x47, 'start': 24, 'size':  4}, # COLOUR_XXX. See https://newgrf-specs.tt-wiki.net/wiki/NML:List_of_default_colour_translation_palettes#Company_colour_helper_functions
-    'company_colour2'       : {'var': 0x47, 'start': 28, 'size':  4}, # Same as above
+    'company_num'           : {'var': 0x47, 'start':  0, 'size':  8},  # 0..14 company number
+    'company_type'          : {'var': 0x47, 'start': 16, 'size':  2},  # PLAYERTYPE_HUMAN, PLAYERTYPE_AI etc.
+    'company_colour1'       : {'var': 0x47, 'start': 24, 'size':  4},  # COLOUR_XXX. See https://newgrf-specs.tt-wiki.net/wiki/NML:List_of_default_colour_translation_palettes#Company_colour_helper_functions
+    'company_colour2'       : {'var': 0x47, 'start': 28, 'size':  4},  # Same as above
 
     'animation_frame'       : {'var': 0x49, 'start':  0, 'size':  8},
 
@@ -847,6 +872,7 @@ varact2vars60x_roadstop = {
     'nearby_tile_grfid'                 : {'var': 0x6A, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
     'nearby_tile_road_stop_id'          : {'var': 0x6B, 'start':  0, 'size': 16, 'param_function': signed_tile_offset},
 }
+
 
 class VarAct2Scope:
     def __init__(self, name, vars_normal, vars_60x, has_persistent_storage=False):

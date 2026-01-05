@@ -725,9 +725,8 @@ class NewGRFString:
         i = 0
         while i < len(self.components):
             comp = self.components[i]
-            if isinstance(comp, StringCommand):
-                if comp.name == "P" or comp.name == "G":
-                    self.components[i] = comp.arguments[-1] if comp.arguments else ""
+            if isinstance(comp, StringCommand) and comp.name in ("P", "G"):
+                self.components[i] = comp.arguments[-1] if comp.arguments else ""
             i += 1
 
     def parse_string(self, str_type, lang, wanted_lang_id, static_args):
@@ -1113,7 +1112,7 @@ class Language:
         @param value: Value of the string.
         @type  value: C{str}
         """
-        if not re.match("[A-Za-z_0-9]+$", string):
+        if not re.match(r"[A-Za-z_0-9]+$", string):
             raise generic.ScriptError(f'Invalid string name "{string}"', pos)
 
         if string in self.strings and case is None:
@@ -1161,7 +1160,7 @@ class Language:
             # Silently ignore empty lines.
             return
 
-        elif len(line) > 2 and line[:2] == "##" and not line[:3] == "###":
+        elif len(line) > 2 and line[:2] == "##" and line[:3] != "###":
             # "##pragma" line, call relevant handler.
             if self.default:
                 # Default language ignores all pragmas.

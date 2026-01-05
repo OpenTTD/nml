@@ -129,9 +129,8 @@ class Switch(switch_base_class):
 
     def is_read_only(self):
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
-            if result is not None and result.value is not None:
-                if not result.value.is_read_only():
-                    return False
+            if result is not None and result.value is not None and not result.value.is_read_only():
+                return False
         return self.expr.is_read_only()
 
     def debug_print(self, indentation):
@@ -413,10 +412,7 @@ class RandomSwitch(switch_base_class):
         return all_refs
 
     def is_read_only(self):
-        for choice in self.choices:
-            if not choice.result.value.is_read_only():
-                return False
-        return True
+        return all(choice.result.value.is_read_only() for choice in self.choices)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Random")

@@ -305,7 +305,7 @@ def main(argv):
     if input_filename is None:
         input = sys.stdin
     else:
-        input = codecs.open(generic.find_file(input_filename), "r", "utf-8")
+        input = codecs.open(generic.find_file(input_filename), "r", "utf-8")  # noqa: SIM115  # explicit handle usage
         # Only append an output grf name, if no output is given, also not implicitly via -M
         if not opts.outputfile_given and not outputs:
             opts.grf_filename = filename_output_from_input(input_filename, ".grf")

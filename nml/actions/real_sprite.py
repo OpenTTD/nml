@@ -13,12 +13,6 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-try:
-    from PIL import Image
-except ImportError:
-    # Image is required only when using graphics
-    pass
-
 from nml import expression, generic
 from nml.actions import base_action
 from nml.ast import assignment
@@ -211,6 +205,9 @@ class RealSprite:
         Check if xpos/ypos/xsize/ysize are already set and if not, set them
         to 0,0,image_width,image_height.
         """
+        # Image is required only when using graphics, existence already checked by entrypoint
+        from PIL import Image
+
         if self.xpos is None:
             with Image.open(generic.find_file(self.file.value)) as im:
                 self.xpos = expression.ConstantNumeric(0)
@@ -384,10 +381,7 @@ class RecolourSpriteAction(SpriteAction):
                     val += i
                 colour_mapping[idx] = val
         for i in range(256):
-            if i in colour_mapping:
-                colour = colour_mapping[i]
-            else:
-                colour = i
+            colour = colour_mapping.get(i, i)
             self.output_table.append(colour)
 
     def write(self, file):

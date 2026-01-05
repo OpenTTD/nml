@@ -18,12 +18,6 @@ import array
 from nml import generic, lz77, palette, spritecache
 from nml.actions import real_sprite
 
-try:
-    from PIL import Image
-except ImportError:
-    # Image is required only when using graphics
-    pass
-
 # Some constants for the 'info' byte
 INFO_RGB = 1
 INFO_ALPHA = 2
@@ -237,6 +231,9 @@ class SpriteEncoder:
         @return: Image file
         @rtype:  L{Image}
         """
+        # Image is required only when using graphics, existence already checked by entrypoint
+        from PIL import Image
+
         if filename in self.cached_image_files:
             im = self.cached_image_files[filename]
         else:

@@ -179,11 +179,11 @@ def get_string_action4s(feature, string_range, string, id=None):
             # ID is allocated randomly, we will output the actions later
             write_action4s = False
             if (feature, string) in used_strings[string_range]:
-                id_val = used_strings[string_range][(feature, string)]
+                id_val = used_strings[string_range][feature, string]
             else:
                 try:
                     id_val = string_ranges[string_range]["ids"].pop()
-                    used_strings[string_range][(feature, string)] = id_val
+                    used_strings[string_range][feature, string] = id_val
                 except IndexError:
                     raise generic.ScriptError(
                         "Unable to allocate ID for string, no more free IDs available"

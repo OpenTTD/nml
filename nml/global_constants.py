@@ -1222,7 +1222,7 @@ def signextend(param, info):
 
 
 def global_param_write(info, expr, pos):
-    if not ("writable" in info and info["writable"]):
+    if not (info.get("writable")):
         raise generic.ScriptError("Target parameter is not writable.", pos)
     return expression.Parameter(expression.ConstantNumeric(info["num"]), pos), expr
 

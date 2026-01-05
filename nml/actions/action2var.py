@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import expression, generic, global_constants, nmlop
 from nml.actions import action2, action2real, action2var_variables, action4, action6, actionD
-from nml.ast import general, switch, spriteblock
+from nml.ast import general, spriteblock, switch
 
 
 class Action2Var(action2.Action2):
@@ -574,7 +574,7 @@ class Varaction2Parser:
             self.in_store_op = True
 
         if (
-            isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable))
+            isinstance(expr.expr2, (expression.ConstantNumeric, expression.Variable))  # noqa:SIM101  # keep related types together
             or isinstance(expr.expr2, (VarAction2LoadTempVar, VarAction2LoadCallParam))
             or (isinstance(expr.expr2, expression.Parameter) and isinstance(expr.expr2.num, expression.ConstantNumeric))
             or (isinstance(expr.expr2, expression.StorageOp) and expr.expr2.name == "LOAD_TEMP")

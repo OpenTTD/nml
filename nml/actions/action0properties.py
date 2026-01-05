@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 
-from nml import generic, nmlop, global_constants
+from nml import generic, global_constants, nmlop
 from nml.expression import (
     AcceptCargo,
     Array,
@@ -784,7 +784,7 @@ def station_layouts(value):
         number = len(layout.values)
         if (length, number) in layouts:
             generic.print_warning(generic.Warning.GENERIC, f"Redefinition of layout {length}x{number}", layout.pos)
-        layouts[(length, number)] = []
+        layouts[length, number] = []
         for platform in layout.values:
             if not isinstance(platform, Array) or len(platform.values) == 0:
                 raise generic.ScriptError("A platform must be an array of tile types")
@@ -797,7 +797,7 @@ def station_layouts(value):
                         f"Invalid tile {type} in layout {length}x{number}",
                         type.pos,
                     )
-            layouts[(length, number)].append(
+            layouts[length, number].append(
                 [nmlop.AND(type, 0xFE).reduce_constant().value for type in platform.values]
             )
     return [StationLayoutProp(0x0E, layouts)]
