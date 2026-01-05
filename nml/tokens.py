@@ -16,7 +16,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import re
 import sys
 
-from .ply import lex
+from nml.ply import lex
 
 from nml import expression, generic
 
