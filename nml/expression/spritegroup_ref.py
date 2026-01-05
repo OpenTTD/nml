@@ -75,7 +75,7 @@ class SpriteGroupRef(Expression):
         try:
             spritegroup = action2.resolve_spritegroup(self.name)
         except generic.ScriptError:
-            raise AssertionError("Illegal action2 reference '{}' encountered.".format(self.name.value))
+            raise AssertionError(f"Illegal action2 reference '{self.name.value}' encountered.")
 
         return spritegroup.get_action2(feature).id
 

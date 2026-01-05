@@ -225,9 +225,9 @@ class BinOp(Expression):
 
     def supported_by_action2(self, raise_error):
         if not self.op.act2_supports:
-            token = " '{}'".format(self.op.token) if self.op.token else ""
+            token = f" '{self.op.token}'" if self.op.token else ""
             if raise_error:
-                raise generic.ScriptError("Operator{} not supported in a switch-block".format(token), self.pos)
+                raise generic.ScriptError(f"Operator{token} not supported in a switch-block", self.pos)
             return False
         return self.expr1.supported_by_action2(raise_error) and self.expr2.supported_by_action2(raise_error)
 
@@ -240,8 +240,8 @@ class BinOp(Expression):
                     raise generic.ScriptError("STORE_TEMP is only available in switch-blocks.", self.pos)
 
                 # default case
-                token = " '{}'".format(self.op.token) if self.op.token else ""
-                raise generic.ScriptError("Operator{} not supported in parameter assignment".format(token), self.pos)
+                token = f" '{self.op.token}'" if self.op.token else ""
+                raise generic.ScriptError(f"Operator{token} not supported in parameter assignment", self.pos)
             return False
         return self.expr1.supported_by_actionD(raise_error) and self.expr2.supported_by_actionD(raise_error)
 

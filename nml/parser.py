@@ -13,8 +13,6 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml.ply import yacc
-
 from nml import expression, generic, nmlop, tokens, unit
 from nml.actions import actionD, real_sprite
 from nml.ast import (
@@ -45,6 +43,7 @@ from nml.ast import (
     townnames,
     tracktypetable,
 )
+from nml.ply import yacc
 
 
 class NMLParser:
@@ -93,7 +92,7 @@ class NMLParser:
         if t is None:
             raise generic.ScriptError("Syntax error, unexpected end-of-file")
         else:
-            raise generic.ScriptError('Syntax error, unexpected token "{}"'.format(t.value), t.lineno)
+            raise generic.ScriptError(f'Syntax error, unexpected token "{t.value}"', t.lineno)
 
     #
     # Main script blocks

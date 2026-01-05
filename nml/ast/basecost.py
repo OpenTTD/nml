@@ -55,7 +55,7 @@ class BaseCost(base_statement.BaseStatement):
                     new_costs.extend(tmp_list)
                 else:
                     raise generic.ScriptError(
-                        "Unrecognized base cost identifier '{}' encountered".format(cost.name.value), cost.name.pos
+                        f"Unrecognized base cost identifier '{cost.name.value}' encountered", cost.name.pos
                     )
             else:
                 cost.name = cost.name.reduce()
@@ -75,7 +75,7 @@ class BaseCost(base_statement.BaseStatement):
     def __str__(self):
         ret = "basecost {\n"
         for cost in self.costs:
-            ret += "\t{}: {};\n".format(cost.name, cost.value)
+            ret += f"\t{cost.name}: {cost.value};\n"
         ret += "}\n"
         return ret
 

@@ -81,9 +81,9 @@ class ReplaceSprite(base_statement.BaseStatement, sprite_container.SpriteContain
     def __str__(self):
         name = str(self.block_name) if self.block_name is not None else ""
         def_file = "" if self.image_file is None else ", " + str(self.image_file)
-        ret = "replace {}({}{}) {{\n".format(name, self.start_id, def_file)
+        ret = f"replace {name}({self.start_id}{def_file}) {{\n"
         for sprite in self.sprite_list:
-            ret += "\t{}\n".format(sprite)
+            ret += f"\t{sprite}\n"
         ret += "}\n"
         return ret
 
@@ -164,6 +164,6 @@ class ReplaceNewSprite(base_statement.BaseStatement, sprite_container.SpriteCont
                 params.append(self.offset)
         ret = "replacenew {}({}) {{\n".format(name, ", ".join(str(param) for param in params))
         for sprite in self.sprite_list:
-            ret += "\t{}\n".format(sprite)
+            ret += f"\t{sprite}\n"
         ret += "}\n"
         return ret

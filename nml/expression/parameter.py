@@ -35,7 +35,7 @@ class Parameter(Expression):
         self.num.debug_print(indentation + 2)
 
     def __str__(self):
-        return "param[{}]".format(self.num)
+        return f"param[{self.num}]"
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         num = self.num.reduce(id_dicts)
@@ -76,7 +76,7 @@ class OtherGRFParameter(Expression):
         self.num.debug_print(indentation + 2)
 
     def __str__(self):
-        return "param[{}, {}]".format(self.grfid, self.num)
+        return f"param[{self.grfid}, {self.num}]"
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         grfid = self.grfid.reduce(id_dicts)

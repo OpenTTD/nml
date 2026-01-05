@@ -60,4 +60,4 @@ class Boolean(Expression):
         return True
 
     def __str__(self):
-        return "!!({})".format(self.expr)
+        return f"!!({self.expr})"

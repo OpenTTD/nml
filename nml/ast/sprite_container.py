@@ -43,9 +43,7 @@ class SpriteContainer:
         self.sprite_data = {}
         if block_name is not None:
             if block_name.value in SpriteContainer.sprite_blocks:
-                raise generic.ScriptError(
-                    "Block with name '{}' is already defined.".format(block_name.value), block_name.pos
-                )
+                raise generic.ScriptError(f"Block with name '{block_name.value}' is already defined.", block_name.pos)
             SpriteContainer.sprite_blocks[block_name.value] = self
 
     def add_sprite_data(self, sprite_list, default_file, pos, zoom_level=0, bit_depth=8, default_mask_file=None):
@@ -80,6 +78,4 @@ class SpriteContainer:
     def resolve_sprite_block(cls, block_name):
         if block_name.value in cls.sprite_blocks:
             return cls.sprite_blocks[block_name.value]
-        raise generic.ScriptError(
-            "Undeclared block identifier '{}' encountered".format(block_name.value), block_name.pos
-        )
+        raise generic.ScriptError(f"Undeclared block identifier '{block_name.value}' encountered", block_name.pos)

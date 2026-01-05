@@ -29,12 +29,12 @@ callbacks = 0x15 * [{}]
 general_vehicle_cbs = {
     'default'                 : {'type': 'cargo', 'num': None},
     'purchase'                : {'type': 'cargo', 'num': 0xFF},
-    'random_trigger'          : {'type': 'cb', 'num': 0x01}, # Almost undocumented, but really necessary!
+    'random_trigger'          : {'type': 'cb', 'num': 0x01},  # Almost undocumented, but really necessary!
     'loading_speed'           : {'type': 'cb', 'num': 0x36, 'var10': 0x07},
     'cargo_subtype_text'      : {'type': 'cb', 'num': 0x19, 'flag_bit': 5},
     'additional_text'         : {'type': 'cb', 'num': 0x23, 'purchase': 2},
-    'colour_mapping'          : {'type': 'cb', 'num': 0x2D, 'flag_bit':6, 'purchase': 'purchase_colour_mapping'},
-    'purchase_colour_mapping' : {'type': 'cb', 'num': 0x2D, 'flag_bit':6, 'purchase': 2},
+    'colour_mapping'          : {'type': 'cb', 'num': 0x2D, 'flag_bit': 6, 'purchase': 'purchase_colour_mapping'},
+    'purchase_colour_mapping' : {'type': 'cb', 'num': 0x2D, 'flag_bit': 6, 'purchase': 2},
     'start_stop'              : {'type': 'cb', 'num': 0x31},
     'every_32_days'           : {'type': 'cb', 'num': 0x32},
     'sound_effect'            : {'type': 'cb', 'num': 0x33, 'flag_bit': 7},
@@ -43,19 +43,21 @@ general_vehicle_cbs = {
     'refit'                   : {'type': 'cb', 'num': 0x163, "purchase": 2},
 }
 
+
 # Function to convert vehicle length to the actual property value, which is (8 - length)
 def vehicle_length(value):
     return nmlop.SUB(8, value)
+
 
 # Trains
 callbacks[0x00] = {
     'visual_effect_and_powered'            : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'effect_spawn_model_and_powered'       : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'value_function': vehicle_length},
-    'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+    'cargo_capacity'                       : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                                {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
-    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'purchase': 1}, # Don't add separate purchase CB here
+    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'purchase': 1},  # Don't add separate purchase CB here
     'can_attach_wagon'                     : {'type': 'cb', 'num': 0x1D},
     'speed'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_speed'},
     'purchase_speed'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
@@ -81,10 +83,10 @@ callbacks[0x01] = {
     'visual_effect'                        : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'effect_spawn_model'                   : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'value_function': vehicle_length},
-    'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+    'cargo_capacity'                       : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                                {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
-    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4,  'purchase': 1}, # Don't add separate purchase CB here
+    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4,  'purchase': 1},  # Don't add separate purchase CB here
     'running_cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_running_cost_factor'},
     'purchase_running_cost_factor'         : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
     'cost_factor'                          : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
@@ -105,7 +107,7 @@ callbacks[0x01].update(general_vehicle_cbs)
 callbacks[0x02] = {
     'visual_effect'                : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'effect_spawn_model'           : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'cargo_capacity'               : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+    'cargo_capacity'               : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                        {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity'      : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
     'cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0A, 'purchase': 2},
@@ -120,7 +122,7 @@ callbacks[0x02].update(general_vehicle_cbs)
 
 # Aircraft
 callbacks[0x03] = {
-    'passenger_capacity'           : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+    'passenger_capacity'           : [{'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                        {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_passenger_capacity'}],
     'purchase_passenger_capacity'  : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
     'cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
@@ -197,8 +199,8 @@ callbacks[0x09] = {
     'anim_control'        : {'type': 'cb', 'num': 0x25},
     'anim_next_frame'     : {'type': 'cb', 'num': 0x26, 'flag_bit': 0},
     'anim_speed'          : {'type': 'cb', 'num': 0x27, 'flag_bit': 1},
-    'cargo_amount_accept' : {'type': 'cb', 'num': 0x2B, 'flag_bit': 2}, # Should work like the industry CB, i.e. call multiple times
-    'cargo_type_accept'   : {'type': 'cb', 'num': 0x2C, 'flag_bit': 3}, # Should work like the industry CB, i.e. call multiple times
+    'cargo_amount_accept' : {'type': 'cb', 'num': 0x2B, 'flag_bit': 2},  # Should work like the industry CB, i.e. call multiple times
+    'cargo_type_accept'   : {'type': 'cb', 'num': 0x2C, 'flag_bit': 3},  # Should work like the industry CB, i.e. call multiple times
     'tile_check'          : {'type': 'cb', 'num': 0x2F, 'flag_bit': 4},
     'foundations'         : {'type': 'cb', 'num': 0x30, 'flag_bit': 5},
     'autoslope'           : {'type': 'cb', 'num': 0x3C, 'flag_bit': 6},
@@ -210,7 +212,7 @@ callbacks[0x0A] = {
     'construction_probability' : {'type': 'cb', 'num': 0x22,  'flag_bit': 0},
     'produce_cargo_arrival'    : {'type': 'cb', 'num': 0x00,  'flag_bit': 1, 'var18': 0},
     'produce_256_ticks'        : {'type': 'cb', 'num': 0x00,  'flag_bit': 2, 'var18': 1},
-    'location_check'           : {'type': 'cb', 'num': 0x28,  'flag_bit': 3}, # We need a way to access all those special variables
+    'location_check'           : {'type': 'cb', 'num': 0x28,  'flag_bit': 3},  # We need a way to access all those special variables
     'random_prod_change'       : {'type': 'cb', 'num': 0x29,  'flag_bit': 4},
     'monthly_prod_change'      : {'type': 'cb', 'num': 0x35,  'flag_bit': 5},
     'cargo_subtype_display'    : {'type': 'cb', 'num': 0x37,  'flag_bit': 6},

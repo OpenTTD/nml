@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import itertools
 
-from nml import generic, nmlop, global_constants
+from nml import generic, global_constants, nmlop
 from nml.expression import (
     AcceptCargo,
     Array,
@@ -43,7 +43,7 @@ class BaseAction0Property:
         @param file: The outputfile we have to write to.
         @type  file: L{SpriteOutputBase}
         """
-        raise NotImplementedError("write is not implemented in {!r}".format(type(self)))
+        raise NotImplementedError(f"write is not implemented in {type(self)!r}")
 
     def get_size(self):
         """
@@ -53,7 +53,7 @@ class BaseAction0Property:
         @return: The size of this property in bytes.
         @rtype:  C{int}
         """
-        raise NotImplementedError("get_size is not implemented in {!r}".format(type(self)))
+        raise NotImplementedError(f"get_size is not implemented in {type(self)!r}")
 
 
 class Action0Property(BaseAction0Property):
@@ -261,9 +261,7 @@ def cargo_list(value, max_num_cargos):
     @type  prop_size: C{int}
     """
     if not isinstance(value, Array) or len(value.values) > max_num_cargos:
-        raise generic.ScriptError(
-            "Cargo list must be an array with no more than {:d} values".format(max_num_cargos), value.pos
-        )
+        raise generic.ScriptError(f"Cargo list must be an array with no more than {max_num_cargos} values", value.pos)
     cargoes = value.values + [ConstantNumeric(0xFF, value.pos) for _ in range(max_num_cargos - len(value.values))]
 
     ret = None
@@ -419,7 +417,7 @@ def single_or_list(prop_name, single_num, multiple_num, value):
         if len(value.values) == 1:
             return [Action0Property(single_num, value.values[0].reduce_constant(), 1)]
         return [VariableByteListProp(multiple_num, [[type.reduce_constant().value for type in value.values]])]
-    raise generic.ScriptError("'{}' must be a constant or an array of constants".format(prop_name))
+    raise generic.ScriptError(f"'{prop_name}' must be a constant or an array of constants")
 
 
 #
@@ -785,10 +783,8 @@ def station_layouts(value):
         length = len(layout.values[0].values)
         number = len(layout.values)
         if (length, number) in layouts:
-            generic.print_warning(
-                generic.Warning.GENERIC, "Redefinition of layout {}x{}".format(length, number), layout.pos
-            )
-        layouts[(length, number)] = []
+            generic.print_warning(generic.Warning.GENERIC, f"Redefinition of layout {length}x{number}", layout.pos)
+        layouts[length, number] = []
         for platform in layout.values:
             if not isinstance(platform, Array) or len(platform.values) == 0:
                 raise generic.ScriptError("A platform must be an array of tile types")
@@ -798,10 +794,10 @@ def station_layouts(value):
                 if type.reduce_constant().value % 2 != 0:
                     generic.print_warning(
                         generic.Warning.GENERIC,
-                        "Invalid tile {} in layout {}x{}".format(type, length, number),
+                        f"Invalid tile {type} in layout {length}x{number}",
                         type.pos,
                     )
-            layouts[(length, number)].append(
+            layouts[length, number].append(
                 [nmlop.AND(type, 0xFE).reduce_constant().value for type in platform.values]
             )
     return [StationLayoutProp(0x0E, layouts)]
@@ -1127,7 +1123,7 @@ def industry_layouts(value):
     layouts = []
     for name in value.values:
         if name.value not in tilelayout_names:
-            raise generic.ScriptError("Unknown layout name '{}'".format(name.value), name.pos)
+            raise generic.ScriptError(f"Unknown layout name '{name.value}'", name.pos)
         layouts.append(tilelayout_names[name.value])
     return [IndustryLayoutProp(layouts)]
 
@@ -1443,7 +1439,7 @@ def airport_layouts(value):
     layouts = []
     for name in value.values:
         if name.value not in tilelayout_names:
-            raise generic.ScriptError("Unknown layout name '{}'".format(name.value), name.pos)
+            raise generic.ScriptError(f"Unknown layout name '{name.value}'", name.pos)
         layout = tilelayout_names[name.value]
         if "rotation" not in layout.properties:
             raise generic.ScriptError("Airport layouts must have the 'rotation' property", layout.pos)

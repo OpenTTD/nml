@@ -92,4 +92,4 @@ class TernaryOp(Expression):
         return hash((self.guard, self.expr1, self.expr2))
 
     def __str__(self):
-        return "({} ? {} : {})".format(str(self.guard), str(self.expr1), str(self.expr2))
+        return f"({self.guard} ? {self.expr1} : {self.expr2})"

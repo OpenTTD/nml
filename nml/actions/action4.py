@@ -101,11 +101,11 @@ def print_stats():
     """
     Print statistics about used ids.
     """
-    for t, l in string_ranges.items():
-        if l["random_id"]:
-            num_used = l["total"] - len(l["ids"])
+    for str_range, attrs in string_ranges.items():
+        if attrs["random_id"]:
+            num_used = attrs["total"] - len(attrs["ids"])
             if num_used > 0:
-                generic.print_info("{:02X}xx strings: {}/{}".format(t, num_used, l["total"]))
+                generic.print_info("{:02X}xx strings: {}/{}".format(str_range, num_used, attrs["total"]))
 
 
 def get_global_string_actions():
@@ -179,16 +179,15 @@ def get_string_action4s(feature, string_range, string, id=None):
             # ID is allocated randomly, we will output the actions later
             write_action4s = False
             if (feature, string) in used_strings[string_range]:
-                id_val = used_strings[string_range][(feature, string)]
+                id_val = used_strings[string_range][feature, string]
             else:
                 try:
                     id_val = string_ranges[string_range]["ids"].pop()
-                    used_strings[string_range][(feature, string)] = id_val
+                    used_strings[string_range][feature, string] = id_val
                 except IndexError:
                     raise generic.ScriptError(
-                        "Unable to allocate ID for string, no more free IDs available (maximum is {:d})".format(
-                            string_ranges[string_range]["total"]
-                        ),
+                        "Unable to allocate ID for string, no more free IDs available"
+                        f" (maximum is {string_ranges[string_range]['total']})",
                         string.pos,
                     )
         else:

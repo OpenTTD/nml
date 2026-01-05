@@ -18,12 +18,6 @@ import array
 from nml import generic, lz77, palette, spritecache
 from nml.actions import real_sprite
 
-try:
-    from PIL import Image
-except ImportError:
-    # Image is required only when using graphics
-    pass
-
 # Some constants for the 'info' byte
 INFO_RGB = 1
 INFO_ALPHA = 2
@@ -116,9 +110,7 @@ class SpriteEncoder:
 
             for sprite_info in sprite_list:
                 count_sprites += 1
-                generic.print_progress(
-                    "Encoding {}/{}: {}".format(count_sprites, num_sprites, source_name), incremental=True
-                )
+                generic.print_progress(f"Encoding {count_sprites}/{num_sprites}: {source_name}", incremental=True)
 
                 cache_key = sprite_info.get_cache_key(self.crop_sprites)
                 cache_item = local_cache.get_item(cache_key, self.palette)
@@ -208,9 +200,8 @@ class SpriteEncoder:
                 alpha = pixel_stats.get("alpha", 0)
                 if alpha > 0 and (sprite_info.flags.value & real_sprite.FLAG_NOALPHA) != 0:
                     warnings.append(
-                        "{}: {:d} of {:d} pixels ({:d}%) are semi-transparent, but NOALPHA is in flags".format(
-                            str(image_32_pos), alpha, total, alpha * 100 // total
-                        )
+                        f"{image_32_pos}: {alpha} of {total} pixels ({alpha * 100 // total}%)"
+                        " are semi-transparent, but NOALPHA is in flags"
                     )
 
             if cache_key[2] is not None:
@@ -219,15 +210,13 @@ class SpriteEncoder:
                 anim = pixel_stats.get("anim", 0)
                 if white > 0 and (sprite_info.flags.value & real_sprite.FLAG_WHITE) == 0:
                     warnings.append(
-                        "{}: {:d} of {:d} pixels ({:d}%) are pure white, but WHITE isn't in flags".format(
-                            str(image_8_pos), white, total, white * 100 // total
-                        )
+                        f"{image_8_pos}: {white} of {total} pixels ({white * 100 // total}%)"
+                        " are pure white, but WHITE isn't in flags"
                     )
                 if anim > 0 and (sprite_info.flags.value & real_sprite.FLAG_ANIM) == 0:
                     warnings.append(
-                        "{}: {:d} of {:d} pixels ({:d}%) are animated, but ANIM isn't in flags".format(
-                            str(image_8_pos), anim, total, anim * 100 // total
-                        )
+                        f"{image_8_pos}: {anim} of {total} pixels ({anim * 100 // total}%)"
+                        " are animated, but ANIM isn't in flags"
                     )
 
         return (size_x, size_y, xoffset, yoffset, compressed_data, info_byte, crop_rect, warnings)
@@ -242,6 +231,9 @@ class SpriteEncoder:
         @return: Image file
         @rtype:  L{Image}
         """
+        # Image is required only when using graphics, existence already checked by entrypoint
+        from PIL import Image
+
         if filename in self.cached_image_files:
             im = self.cached_image_files[filename]
         else:
@@ -300,12 +292,12 @@ class SpriteEncoder:
             (im_width, im_height) = im.size
             if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
                 pos = generic.build_position(sprite_info.poslist)
-                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), pos)
+                raise generic.ScriptError(f"Read beyond bounds of image file '{filename_32bpp.value}'", pos)
             try:
                 sprite = im.crop((x, y, x + size_x, y + size_y))
             except OSError:
                 pos = generic.build_position(sprite_info.poslist)
-                raise generic.ImageError("Failed to crop 32bpp {} image".format(im.format), filename_32bpp.value, pos)
+                raise generic.ImageError(f"Failed to crop 32bpp {im.format} image", filename_32bpp.value, pos)
             rgb_sprite_data = sprite.tobytes()
 
             if (info_byte & INFO_ALPHA) != 0:
@@ -323,14 +315,12 @@ class SpriteEncoder:
             (im_width, im_height) = mask_im.size
             if mask_x < 0 or mask_y < 0 or mask_x + size_x > im_width or mask_y + size_y > im_height:
                 pos = generic.build_position(sprite_info.poslist)
-                raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), pos)
+                raise generic.ScriptError(f"Read beyond bounds of image file '{filename_8bpp.value}'", pos)
             try:
                 mask_sprite = mask_im.crop((mask_x, mask_y, mask_x + size_x, mask_y + size_y))
             except OSError:
                 pos = generic.build_position(sprite_info.poslist)
-                raise generic.ImageError(
-                    "Failed to crop 8bpp {} image".format(mask_im.format), filename_8bpp.value, pos
-                )
+                raise generic.ImageError(f"Failed to crop 8bpp {mask_im.format} image", filename_8bpp.value, pos)
             mask_sprite_data = self.palconvert(mask_sprite.tobytes(), im_mask_pal)
 
             # Check for white pixels; those that cause "artefacts" when shading

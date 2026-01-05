@@ -15,6 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 import re
 
+from .abs_op import AbsOp
 from .array import Array
 from .base_expression import ConstantFloat, ConstantNumeric, Expression, Type
 from .bin_not import BinNot, Not
@@ -33,10 +34,41 @@ from .storage_op import StorageOp
 from .string import String
 from .string_literal import StringLiteral
 from .ternaryop import TernaryOp
-from .abs_op import AbsOp
 from .variable import Variable
 
-is_valid_id = re.compile("[a-zA-Z_][a-zA-Z0-9_]{3}$")
+__all__ = [
+    "AbsOp",
+    "AcceptCargo",
+    "Array",
+    "BinNot",
+    "BinOp",
+    "BitMask",
+    "Boolean",
+    "ConstantFloat",
+    "ConstantNumeric",
+    "Expression",
+    "FunctionCall",
+    "FunctionPtr",
+    "GRMOp",
+    "Identifier",
+    "Not",
+    "OtherGRFParameter",
+    "Parameter",
+    "PatchVariable",
+    "ProduceCargo",
+    "SpecialCheck",
+    "SpecialParameter",
+    "SpriteGroupRef",
+    "StorageOp",
+    "String",
+    "StringLiteral",
+    "TernaryOp",
+    "Type",
+    "Variable",
+    "parse_string_to_dword",
+]
+
+is_valid_id = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]{3}$")
 
 
 def identifier_to_print(name):
@@ -49,4 +81,4 @@ def identifier_to_print(name):
     """
     if is_valid_id.match(name):
         return name
-    return '"{}"'.format(name)
+    return f'"{name}"'

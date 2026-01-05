@@ -38,7 +38,7 @@ class Switch(switch_base_class):
             self.var_range = var_ranges[param_list[1].value]
         else:
             raise generic.ScriptError(
-                "Unrecognized value for switch parameter 2 'variable range': '{}'".format(param_list[1].value),
+                f"Unrecognized value for switch parameter 2 'variable range': '{param_list[1].value}'",
                 param_list[1].pos,
             )
         if not isinstance(param_list[2], expression.Identifier):
@@ -58,7 +58,7 @@ class Switch(switch_base_class):
             if not isinstance(param, expression.Identifier):
                 raise generic.ScriptError("switch parameter names must be identifiers.", param.pos)
             if param.value in seen_names:
-                raise generic.ScriptError("Duplicate parameter name '{}' encountered.".format(param.value), param.pos)
+                raise generic.ScriptError(f"Duplicate parameter name '{param.value}' encountered.", param.pos)
             seen_names.add(param.value)
 
         feature = next(iter(self.feature_set))
@@ -112,7 +112,7 @@ class Switch(switch_base_class):
         if self.optimised:
             generic.print_warning(
                 generic.Warning.OPTIMISATION,
-                "Block '{}' returns a constant, optimising.".format(self.name.value),
+                f"Block '{self.name.value}' returns a constant, optimising.",
                 self.pos,
             )
             return self.optimised is not self
@@ -129,15 +129,12 @@ class Switch(switch_base_class):
 
     def is_read_only(self):
         for result in [r.result for r in self.body.ranges] + [self.body.default]:
-            if result is not None and result.value is not None:
-                if not result.value.is_read_only():
-                    return False
+            if result is not None and result.value is not None and not result.value.is_read_only():
+                return False
         return self.expr.is_read_only()
 
     def debug_print(self, indentation):
-        generic.print_dbg(
-            indentation, "Switch, Feature = {:d}, name = {}".format(next(iter(self.feature_set)), self.name.value)
-        )
+        generic.print_dbg(indentation, f"Switch, Feature = {next(iter(self.feature_set))}, name = {self.name.value}")
 
         if self.param_list:
             generic.print_dbg(indentation + 2, "Parameters:")
@@ -158,8 +155,8 @@ class Switch(switch_base_class):
     def __str__(self):
         var_range = "SELF" if self.var_range == 0x89 else "PARENT"
         params = "" if not self.param_list else "{}, ".format(", ".join(str(x) for x in self.param_list))
-        return "switch({}, {}, {}, {}{}) {{\n{}}}\n".format(
-            next(iter(self.feature_set)), var_range, self.name, params, self.expr, self.body
+        return (
+            f"switch({next(iter(self.feature_set))}, {var_range}, {self.name}, {params}{self.expr}) {{\n{self.body}}}\n"
         )
 
 
@@ -213,9 +210,9 @@ class SwitchBody:
             self.default.debug_print(indentation + 2)
 
     def __str__(self):
-        ret = "".join("\t{}\n".format(r) for r in self.ranges)
+        ret = "".join(f"\t{r}\n" for r in self.ranges)
         if self.default is not None:
-            ret += "\t{}\n".format(str(self.default))
+            ret += f"\t{self.default}\n"
         return ret
 
 
@@ -287,18 +284,16 @@ class SwitchValue:
             assert self.is_return
             return "return;"
         elif self.is_return:
-            return "return {};".format(self.value)
+            return f"return {self.value};"
         else:
-            return "{};".format(self.value)
+            return f"{self.value};"
 
 
 class RandomSwitch(switch_base_class):
     def __init__(self, param_list, choices, pos):
         base_statement.BaseStatement.__init__(self, "random_switch-block", pos, False, False)
         if not (3 <= len(param_list) <= 4):
-            raise generic.ScriptError(
-                "random_switch requires 3 or 4 parameters, encountered {:d}".format(len(param_list)), pos
-            )
+            raise generic.ScriptError(f"random_switch requires 3 or 4 parameters, encountered {len(param_list)}", pos)
         # feature
         feature = general.parse_feature(param_list[0]).value
 
@@ -373,7 +368,7 @@ class RandomSwitch(switch_base_class):
                 spritegroup = action2.resolve_spritegroup(dep_list[i].name)
                 if not isinstance(spritegroup, RandomSwitch):
                     raise generic.ScriptError(
-                        "Value of (in)dependent '{}' should refer to a random_switch.".format(dep_list[i].name.value),
+                        f"Value of (in)dependent '{dep_list[i].name.value}' should refer to a random_switch.",
                         dep_list[i].pos,
                     )
 
@@ -401,7 +396,7 @@ class RandomSwitch(switch_base_class):
             ):
                 generic.print_warning(
                     generic.Warning.OPTIMISATION,
-                    "Block '{}' returns a constant, optimising.".format(self.name.value),
+                    f"Block '{self.name.value}' returns a constant, optimising.",
                     self.pos,
                 )
                 self.optimised = optimised
@@ -417,10 +412,7 @@ class RandomSwitch(switch_base_class):
         return all_refs
 
     def is_read_only(self):
-        for choice in self.choices:
-            if not choice.result.value.is_read_only():
-                return False
-        return True
+        return all(choice.result.value.is_read_only() for choice in self.choices)
 
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Random")
@@ -448,13 +440,11 @@ class RandomSwitch(switch_base_class):
         return []
 
     def __str__(self):
-        ret = "random_switch({}, {}, {}, {}) {{\n".format(
-            str(next(iter(self.feature_set))), str(self.type), str(self.name), str(self.triggers)
-        )
+        ret = f"random_switch({next(iter(self.feature_set))}, {self.type}, {self.name}, {self.triggers}) {{\n"
         for dep in self.dependent:
-            ret += "dependent: {};\n".format(dep)
+            ret += f"dependent: {dep};\n"
         for indep in self.independent:
-            ret += "independent: {};\n".format(indep)
+            ret += f"independent: {indep};\n"
         for choice in self.choices:
             ret += str(choice) + "\n"
         ret += "}\n"
@@ -495,4 +485,4 @@ class RandomChoice:
         self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        return "{}: {}".format(self.probability, self.result)
+        return f"{self.probability}: {self.result}"

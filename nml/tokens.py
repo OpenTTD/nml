@@ -16,9 +16,8 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 import re
 import sys
 
-from nml.ply import lex
-
 from nml import expression, generic
+from nml.ply import lex
 
 # fmt: off
 reserved = {
@@ -248,13 +247,11 @@ class NMLLexer:
         self.increment_lines(len(t.value))
 
     def t_error(self, t):
-        print(
-            (
-                "Illegal character '{}' (character code 0x{:02X}) at {}, column {:d}".format(
-                    t.value[0], ord(t.value[0]), t.lexer.lineno, self.find_column(t)
-                )
-            )
-        )
+        line = t.lexer.lineno
+        col = self.find_column(t)
+        char = t.value[0]
+        hex_ord = f"0x{ord(char):02X}"
+        print(f"Illegal character '{char}' (character code {hex_ord}) at {line}, column {col}")
         sys.exit(1)
 
     def build(self):

@@ -6,3 +6,4 @@ nml/__version__.py
 nml.egg-info/*
 nml_lz77*
 regression/*output*/*
+.python-version

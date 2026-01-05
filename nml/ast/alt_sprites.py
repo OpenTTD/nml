@@ -131,6 +131,6 @@ class AltSpritesBlock(base_statement.BaseStatement):
             params.append(self.mask_file)
         ret = "alternative_sprites({}) {{\n".format(", ".join(str(p) for p in params))
         for sprite in self.sprite_list:
-            ret += "\t{}\n".format(sprite)
+            ret += f"\t{sprite}\n"
         ret += "}\n"
         return ret

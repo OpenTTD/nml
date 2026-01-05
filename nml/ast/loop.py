@@ -48,7 +48,7 @@ class Loop(base_statement.BaseStatementList):
         return action7.parse_loop_block(self)
 
     def __str__(self):
-        ret = "while({}) {{\n".format(self.expr)
+        ret = f"while({self.expr}) {{\n"
         ret += base_statement.BaseStatementList.__str__(self)
         ret += "}\n"
         return ret

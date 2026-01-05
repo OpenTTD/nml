@@ -126,7 +126,7 @@ def parse_randomswitch_type(random_switch):
     # Validate type name / param combination
     if type_str not in random_types[feature_val]:
         raise generic.ScriptError(
-            "Invalid combination for random_switch feature {:d} and type '{}'. ".format(feature_val, type_str), type_pos
+            f"Invalid combination for random_switch feature {feature_val} and type '{type_str}'. ", type_pos
         )
     type_info = random_types[feature_val][type_str]
 
@@ -135,14 +135,14 @@ def parse_randomswitch_type(random_switch):
         # No param given
         if type_info["param"] == 1:
             raise generic.ScriptError(
-                "Value '{}' for random_switch parameter 2 'type' requires a parameter.".format(type_str), type_pos
+                f"Value '{type_str}' for random_switch parameter 2 'type' requires a parameter.", type_pos
             )
         count = None
     else:
         # Param given
         if type_info["param"] == 0:
             raise generic.ScriptError(
-                "Value '{}' for random_switch parameter 2 'type' should not have a parameter.".format(type_str),
+                f"Value '{type_str}' for random_switch parameter 2 'type' should not have a parameter.",
                 type_pos,
             )
         if (
@@ -157,7 +157,7 @@ def parse_randomswitch_type(random_switch):
 
     if random_switch.triggers.value != 0 and not type_info["triggers"]:
         raise generic.ScriptError(
-            "Triggers may not be set for random_switch feature {:d} and type '{}'. ".format(feature_val, type_str),
+            f"Triggers may not be set for random_switch feature {feature_val} and type '{type_str}'. ",
             type_pos,
         )
 
@@ -215,16 +215,16 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
         if act2_to_copy is not None:
             if act2_to_copy.randbit != act2.randbit:
                 msg = (
-                    "random_switch '{}' cannot be dependent on both '{}' and '{}'"
-                    " as these are independent of each other."
-                ).format(random_switch.name.value, act2_to_copy.name, act2.name)
+                    f"random_switch '{random_switch.name.value}' cannot be dependent on"
+                    f" both '{act2_to_copy.name}' and '{act2.name}' as these are independent of each other."
+                )
                 raise generic.ScriptError(msg, random_switch.pos)
 
             if act2_to_copy.nrand != act2.nrand:
                 msg = (
-                    "random_switch '{}' cannot be dependent on both '{}' and '{}'"
-                    " as they don't use the same amount of random data."
-                ).format(random_switch.name.value, act2_to_copy.name, act2.name)
+                    f"random_switch '{random_switch.name.value}' cannot be dependent on"
+                    f" both '{act2_to_copy.name}' and '{act2.name}' as they don't use the same amount of random data."
+                )
                 raise generic.ScriptError(msg, random_switch.pos)
         else:
             act2_to_copy = act2
@@ -254,8 +254,8 @@ def parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nr
         if possible_mask & (required_mask << randbit) != (required_mask << randbit):
             msg = (
                 "Combination of dependence on and independence from"
-                " random_switches is not possible for random_switch '{}'."
-            ).format(random_switch.name.value)
+                f" random_switches is not possible for random_switch '{random_switch.name.value}'."
+            )
             raise generic.ScriptError(msg, random_switch.pos)
     else:
         # find a suitable randbit
@@ -292,9 +292,9 @@ def parse_randomswitch(random_switch):
         nrand <<= 1
 
     # Verify that enough random data is available
-    if min(1 << bits_available, 0x80) < nrand:
-        msg = "The maximum sum of all random_switch probabilities is {:d}, encountered {:d}."
-        msg = msg.format(min(1 << bits_available, 0x80), total_prob)
+    max_rand_switch_sum = min(1 << bits_available, 0x80)
+    if max_rand_switch_sum < nrand:
+        msg = f"The maximum sum of all random_switch probabilities is {max_rand_switch_sum}, encountered {total_prob}."
         raise generic.ScriptError(msg, random_switch.pos)
 
     randbit, nrand = parse_randomswitch_dependencies(random_switch, start_bit, bits_available, nrand)
@@ -344,7 +344,7 @@ def parse_randomswitch(random_switch):
             res_prob,
         )
         offset += res_prob * 2
-        comment = "({:d}/{:d}) -> ({:d}/{:d}): ".format(choice.probability.value, total_prob, res_prob, nrand) + comment
+        comment = f"({choice.probability.value}/{total_prob}) -> ({res_prob}/{nrand}): " + comment
         random_action2.choices.append(RandomAction2Choice(result, res_prob, comment))
 
     if len(act6.modifications) > 0:
@@ -355,9 +355,7 @@ def parse_randomswitch(random_switch):
         random_switch.set_action2(random_action2, feature)
     else:
         # Create intermediate varaction2 to compute parameter for type 0x84
-        varaction2 = action2var.Action2Var(
-            feature, "{}@registers".format(random_switch.name.value), random_switch.pos, 0x89
-        )
+        varaction2 = action2var.Action2Var(feature, f"{random_switch.name.value}@registers", random_switch.pos, 0x89)
         varact2parser = action2var.Varaction2Parser(feature)
         varact2parser.parse_expr(count_expr)
         varaction2.var_list = varact2parser.var_list

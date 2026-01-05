@@ -71,7 +71,7 @@ var_tables = [
 
 variables = set()
 for d in var_tables:
-    for key in d.keys():
+    for key in d:
         variables.add(key)
 
 prop_tables = [
@@ -97,7 +97,7 @@ prop_tables = [
 
 properties = set()
 for d in prop_tables:
-    for key in d.keys():
+    for key in d:
         properties.add(key)
 
 dummy = action2layout.Action2LayoutSprite(None, None)
@@ -126,7 +126,7 @@ cb_tables = [
 
 callbacks = set()
 for d in cb_tables:
-    for key in d.keys():
+    for key in d:
         callbacks.add(key)
 
 # No easy way to get action14 stuff
@@ -169,7 +169,7 @@ const_tables = [
 
 constant_names = set()
 for d in const_tables:
-    for key in d.keys():
+    for key in d:
         constant_names.add(key)
 
 act5_names = set(action5.action5_table.keys())

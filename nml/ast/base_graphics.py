@@ -39,9 +39,7 @@ class BaseGraphics(base_statement.BaseStatement, sprite_container.SpriteContaine
 
         num_params = len(param_list)
         if not (0 <= num_params <= 2):
-            raise generic.ScriptError(
-                "base_graphics-block requires 0 to 2 parameters, encountered {:d}".format(num_params), pos
-            )
+            raise generic.ScriptError(f"base_graphics-block requires 0 to 2 parameters, encountered {num_params}", pos)
         if num_params >= 2:
             self.sprite_num = param_list[0].reduce_constant()
         else:
@@ -82,6 +80,6 @@ class BaseGraphics(base_statement.BaseStatement, sprite_container.SpriteContaine
             params.append(self.image_file)
         ret = "base_graphics {}({}) {{\n".format(name, ", ".join(str(param) for param in params))
         for sprite in self.sprite_list:
-            ret += "\t{}\n".format(sprite)
+            ret += f"\t{sprite}\n"
         ret += "}\n"
         return ret

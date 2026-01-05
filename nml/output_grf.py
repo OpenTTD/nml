@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
+import contextlib
 import hashlib
 import os
 
@@ -35,11 +36,8 @@ class OutputGRF(output_base.BinaryOutputBase):
         # Remove / unlink the file, most useful for linux systems
         # See also issue #4165
         # If the file happens to be in use or non-existent, ignore
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(self.filename)
-        except OSError:
-            # Ignore
-            pass
         return open(self.filename, "wb")
 
     def get_md5(self):

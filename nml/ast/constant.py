@@ -27,7 +27,7 @@ class Constant(base_statement.BaseStatement):
         if not isinstance(self.name, expression.Identifier):
             raise generic.ScriptError("Constant name should be an identifier", self.name.pos)
         if self.name.value in global_constants.constant_numbers:
-            raise generic.ScriptError("Redefinition of constant '{}'.".format(self.name.value), self.name.pos)
+            raise generic.ScriptError(f"Redefinition of constant '{self.name.value}'.", self.name.pos)
         global_constants.constant_numbers[self.name.value] = self.value.reduce_constant(
             global_constants.const_list
         ).value
@@ -44,4 +44,4 @@ class Constant(base_statement.BaseStatement):
         return []
 
     def __str__(self):
-        return "const {} = {};".format(self.name, self.value)
+        return f"const {self.name} = {self.value};"

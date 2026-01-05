@@ -21,13 +21,13 @@ from functools import reduce
 from nml import generic, global_constants, nmlop
 
 from . import identifier
+from .abs_op import AbsOp
 from .base_expression import ConstantFloat, ConstantNumeric, Expression, Type
 from .bitmask import BitMask
 from .cargo import AcceptCargo, ProduceCargo
 from .parameter import parse_string_to_dword
 from .storage_op import StorageOp
 from .string_literal import StringLiteral
-from .abs_op import AbsOp
 
 
 class FunctionCall(Expression):
@@ -64,12 +64,10 @@ class FunctionCall(Expression):
                     func_ptr.is_procedure = True
                     return func_ptr
                 if func_ptr.type() != Type.FUNCTION_PTR:
-                    raise generic.ScriptError(
-                        "'{}' is defined, but it is not a function.".format(self.name.value), self.pos
-                    )
+                    raise generic.ScriptError(f"'{self.name.value}' is defined, but it is not a function.", self.pos)
                 return func_ptr.call(params)
             if unknown_id_fatal:
-                raise generic.ScriptError("'{}' is not defined as a function.".format(self.name.value), self.pos)
+                raise generic.ScriptError(f"'{self.name.value}' is not defined as a function.", self.pos)
             return FunctionCall(self.name, params, self.pos)
 
 
@@ -231,7 +229,7 @@ def builtin_date(name, args, pos):
     for i in range(month - 1):
         day_in_year += days_in_month[i]
     day_in_year += day
-    if month >= 3 and (year.value % 4 == 0) and ((not year.value % 100 == 0) or (year.value % 400 == 0)):
+    if month >= 3 and (year.value % 4 == 0) and (year.value % 100 != 0 or year.value % 400 == 0):
         day_in_year += 1
     return ConstantNumeric(year.value * 365 + calendar.leapdays(0, year.value) + day_in_year - 1, pos)
 
@@ -259,7 +257,7 @@ def builtin_day_of_year(name, args, pos):
     # Mapping of month to number of days in that month.
     number_days = {1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
     if day.value < 1 or day.value > number_days[month.value]:
-        raise generic.ScriptError("Day should be value between 1 and {:d}.".format(number_days[month.value]), day.pos)
+        raise generic.ScriptError(f"Day should be value between 1 and {number_days[month.value]}.", day.pos)
 
     return ConstantNumeric(datetime.date(1, month.value, day.value).toordinal(), pos)
 
@@ -376,7 +374,7 @@ def builtin_typelabel_available(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have exactly 1 parameter", pos)
     label = args[0].reduce()
-    return SpecialCheck(op, 0, (0, 1), parse_string_to_dword(label), "{}({})".format(name, label), pos=args[0].pos)
+    return SpecialCheck(op, 0, (0, 1), parse_string_to_dword(label), f"{name}({label})", pos=args[0].pos)
 
 
 @builtins("grf_current_status", "grf_future_status", "grf_order_behind")
@@ -396,12 +394,12 @@ def builtin_grf_status(name, args, pos):
     if len(args) == 1:
         grfid = args[0].reduce()
         mask = None
-        string = "{}({})".format(name, grfid)
+        string = f"{name}({grfid})"
         varsize = 4
     elif len(args) == 2:
         grfid = args[0].reduce()
         mask = parse_string_to_dword(args[1].reduce())
-        string = "{}({}, {})".format(name, grfid, mask)
+        string = f"{name}({grfid}, {mask})"
         varsize = 8
     else:
         raise generic.ScriptError(name + "() must have 1 or 2 parameters", pos)
@@ -421,7 +419,7 @@ def builtin_visual_effect_and_powered(name, args, pos):
     """
     arg_len = 2 if name == "visual_effect" else 3
     if len(args) != arg_len:
-        raise generic.ScriptError(name + "() must have {:d} parameters".format(arg_len), pos)
+        raise generic.ScriptError(name + f"() must have {arg_len} parameters", pos)
     effect = args[0].reduce_constant(global_constants.const_list).value
     offset = nmlop.ADD(args[1], 8).reduce_constant().value
     generic.check_range(offset, 0, 0x0F, "offset in function " + name, pos)
@@ -494,7 +492,7 @@ def builtin_resolve_typelabel(name, args, pos, table_name=None):
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     if not isinstance(args[0], StringLiteral) or args[0].value not in table:
         raise generic.ScriptError(
-            "Parameter for {}() must be a string literal that is also in your {} table".format(name, table_name), pos
+            f"Parameter for {name}() must be a string literal that is also in your {table_name} table", pos
         )
     return ConstantNumeric(table[args[0].value])
 
@@ -504,7 +502,7 @@ def builtin_reserve_sprites(name, args, pos):
     if len(args) != 1:
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
     count = args[0].reduce_constant()
-    return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, lambda x: "{}({:d})".format(name, count.value), pos)
+    return GRMOp(nmlop.GRM_RESERVE, 0x08, count.value, lambda x: f"{name}({count.value})", pos)
 
 
 @builtin
@@ -631,9 +629,9 @@ def builtin_relative_coord(name, args, pos):
         raise generic.ScriptError(name + "() must have x and y coordinates as parameters", pos)
 
     if isinstance(args[0], ConstantNumeric):
-        generic.check_range(args[0].value, 0, 255, "Argument of '{}'".format(name), args[0].pos)
+        generic.check_range(args[0].value, 0, 255, f"Argument of '{name}'", args[0].pos)
     if isinstance(args[1], ConstantNumeric):
-        generic.check_range(args[1].value, 0, 255, "Argument of '{}'".format(name), args[1].pos)
+        generic.check_range(args[1].value, 0, 255, f"Argument of '{name}'", args[1].pos)
 
     x_coord = nmlop.AND(args[0], 0xFF)
     y_coord = nmlop.AND(args[1], 0xFF)
@@ -679,7 +677,7 @@ def builtin_slope_to_sprite_offset(name, args, pos):
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
 
     if isinstance(args[0], ConstantNumeric):
-        generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
+        generic.check_range(args[0].value, 0, 15, f"Argument of '{name}'", args[0].pos)
 
     # step 1: ((slope >= 0) & (slope <= 14)) * slope
     # This handles all non-steep slopes
@@ -705,7 +703,7 @@ def builtin_palette_1cc(name, args, pos):
         raise generic.ScriptError(name + "() must have 1 parameter", pos)
 
     if isinstance(args[0], ConstantNumeric):
-        generic.check_range(args[0].value, 0, 15, "Argument of '{}'".format(name), args[0].pos)
+        generic.check_range(args[0].value, 0, 15, f"Argument of '{name}'", args[0].pos)
 
     return nmlop.ADD(args[0], 775, pos)
 
@@ -722,7 +720,7 @@ def builtin_palette_2cc(name, args, pos):
 
     for i in range(0, 2):
         if isinstance(args[i], ConstantNumeric):
-            generic.check_range(args[i].value, 0, 15, "Argument of '{}'".format(name), args[i].pos)
+            generic.check_range(args[i].value, 0, 15, f"Argument of '{name}'", args[i].pos)
 
     col2 = nmlop.MUL(args[1], 16, pos)
     col12 = nmlop.ADD(col2, args[0])
@@ -744,7 +742,7 @@ def builtin_vehicle_curv_info(name, args, pos):
 
     for arg in args:
         if isinstance(arg, ConstantNumeric):
-            generic.check_range(arg.value, -2, 2, "Argument of '{}'".format(name), arg.pos)
+            generic.check_range(arg.value, -2, 2, f"Argument of '{name}'", arg.pos)
 
     args = [nmlop.AND(arg, 0xF, pos) for arg in args]
     cur_next = nmlop.SHIFT_LEFT(args[1], 8)
@@ -771,7 +769,7 @@ def builtin_format_string(name, args, pos):
         arg = arg.reduce()
         if not isinstance(arg, (StringLiteral, ConstantFloat, ConstantNumeric)):
             raise generic.ScriptError(
-                name + "() parameter {:d} is not a constant number of literal string".format(i + 1), arg.pos
+                name + f"() parameter {i + 1} is not a constant number of literal string", arg.pos
             )
         format_args.append(arg.value)
 
@@ -779,7 +777,7 @@ def builtin_format_string(name, args, pos):
         result = format.value % tuple(format_args)
         return StringLiteral(result, pos)
     except Exception as ex:
-        raise generic.ScriptError("Invalid combination of format / arguments for {}: {}".format(name, str(ex)), pos)
+        raise generic.ScriptError(f"Invalid combination of format / arguments for {name}: {ex}", pos)
 
 
 # }

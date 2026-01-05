@@ -1,3 +1,7 @@
+"""
+Action 11 support classes (sounds).
+"""
+
 __license__ = """
 NML is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -13,9 +17,6 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-"""
-Action 11 support classes (sounds).
-"""
 import os
 
 from nml import generic
@@ -45,12 +46,10 @@ class LoadBinaryFile(base_action.BaseAction):
 
     def prepare_output(self, sprite_num):
         if not os.access(self.fname, os.R_OK):
-            raise generic.ScriptError("Sound file '{}' does not exist.".format(self.fname), self.pos)
+            raise generic.ScriptError(f"Sound file '{self.fname}' does not exist.", self.pos)
         size = os.path.getsize(self.fname)
         if size == 0:
-            raise generic.ScriptError(
-                "Expected sound file '{}' to have a non-zero length.".format(self.fname), self.pos
-            )
+            raise generic.ScriptError(f"Expected sound file '{self.fname}' to have a non-zero length.", self.pos)
 
     def write(self, file):
         file.print_named_filedata(self.fname)
@@ -102,7 +101,7 @@ def print_stats():
     """
     if len(registered_sounds) > 0:
         # Currently NML does not optimise the order of sound effects. So we assume NUM_ANIMATION_SOUNDS as the maximum.
-        generic.print_info("Sound effects: {}/{}".format(len(registered_sounds), NUM_ANIMATION_SOUNDS))
+        generic.print_info(f"Sound effects: {len(registered_sounds)}/{NUM_ANIMATION_SOUNDS}")
 
 
 def add_sound(args, pos):

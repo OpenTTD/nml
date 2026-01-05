@@ -33,13 +33,13 @@ class CargoExpression(Expression):
 
     def debug_print(self, indentation):
         if self.value is None:
-            generic.print_dbg(indentation, "{0} cargo {1}".format(self._debugname, self.cargolabel()))
+            generic.print_dbg(indentation, f"{self._debugname} cargo {self.cargolabel()}")
         else:
-            generic.print_dbg(indentation, "{0} cargo {1} with result:".format(self._debugname, self.cargolabel()))
+            generic.print_dbg(indentation, f"{self._debugname} cargo {self.cargolabel()} with result:")
             self.value.debug_print(indentation + 2)
 
     def __str__(self):
-        return "{0}({1}, {2})".format(self._fnname, self.cargolabel(), str(self.value))
+        return f"{self._fnname}({self.cargolabel()}, {self.value})"
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self

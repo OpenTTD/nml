@@ -1,6 +1,81 @@
+[project]
+name = "nml"
+dynamic = ["version"]
+description = "An OpenTTD NewGRF compiler for the nml language"
+readme = "README.md"
+license = "GPL-2.0+"
+license-files = ["LICENSE"]
+authors = [
+  {name = "NML Development Team", email = "info@openttd.org"},
+]
+classifiers=[
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Compilers",
+]
+
+requires-python = ">=3.9"
+dependencies = [
+  "Pillow>=3.4",
+]
+
+[project.urls]
+Repository = "https://github.com/OpenTTD/nml"
+Issues = "https://github.com/OpenTTD/nml/issues"
+Changelog = "https://github.com/OpenTTD/nml/blob/master/docs/changelog.txt"
+
+[project.scripts]
+nmlc = "nml.main:run"
+
 [build-system]
-requires = ["setuptools", "ply"]
+requires = ["setuptools"]
+
+[tool.setuptools.package-dir]
+nml = "nml"
 
 [tool.black]
 line-length = 120
-exclude = 'action2var_variables.py|action3_callbacks.py|ply|setup.py'
+exclude = 'action2var_variables.py|action3_callbacks.py|ply'
+
+[tool.ruff]
+line-length = 120
+exclude = [
+  "nml/ply/*",
+]
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle
+  "F",   # Pyflakes
+  "UP",  # pyupgrade
+  "B",   # flake8-bugbear
+  "SIM", # flake8-simplify
+  "I",   # isort
+]
+
+ignore = [
+  "B904", # use of nested exceptions
+  "SIM108", # rewrite as ternary
+]
+
+# Files with tables of data, not conducive to being linted or formatted
+[tool.ruff.lint.per-file-ignores]
+"nml/palette.py" = ["E203", "E241"]
+"nml/grfstrings.py" = ["E203", "E241"]
+"nml/global_constants.py" = ["E203", "E241"]
+"nml/actions/real_sprite.py" = ["E203", "E241"]
+"nml/actions/action2var_variables.py" = ["E203", "E241", "E501"]
+"nml/actions/action3_callbacks.py" = ["E203", "E241", "E501"]
+
+[tool.ruff.format]
+exclude = [
+  "nml/actions/action2var_variables.py",
+  "nml/actions/action3_callbacks.py",
+]

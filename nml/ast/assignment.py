@@ -46,7 +46,7 @@ class Assignment:
         self.value.debug_print(indentation + 4)
 
     def __str__(self):
-        return "{}: {};".format(self.name, self.value)
+        return f"{self.name}: {self.value};"
 
 
 class UnitAssignment(Assignment):
@@ -73,7 +73,7 @@ class UnitAssignment(Assignment):
         if self.unit is None:
             return Assignment.__str__(self)
         else:
-            return "{}: {} {};".format(self.name, self.value, self.unit.name)
+            return f"{self.name}: {self.value} {self.unit.name};"
 
 
 class Range:
@@ -96,4 +96,4 @@ class Range:
     def __str__(self):
         if self.max is None:
             return str(self.min)
-        return "{} .. {}".format(self.min, self.max)
+        return f"{self.min} .. {self.max}"

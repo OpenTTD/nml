@@ -44,9 +44,7 @@ class Item(base_statement.BaseStatementList):
         )
 
         if not (1 <= len(params) <= 4):
-            raise generic.ScriptError(
-                "Item block requires between 1 and 4 parameters, found {:d}.".format(len(params)), self.pos
-            )
+            raise generic.ScriptError(f"Item block requires between 1 and 4 parameters, found {len(params)}.", self.pos)
         self.feature = general.parse_feature(params[0])
         if self.feature.value in (0x08, 0x0C, 0x0E):
             raise generic.ScriptError("Defining item blocks for this feature is not allowed.", self.pos)
@@ -76,9 +74,10 @@ class Item(base_statement.BaseStatementList):
                 if self.id is not None and existing_id.value != self.id.value:
                     raise generic.ScriptError(
                         (
-                            "Duplicate item with name '{}'."
-                            " This item has already been assigned to id {:d}, cannot reassign to id {:d}"
-                        ).format(self.name.value, existing_id.value, self.id.value),
+                            f"Duplicate item with name '{self.name.value}'."
+                            f" This item has already been assigned to id {existing_id.value},"
+                            f" cannot reassign to id {self.id.value}"
+                        ),
                         self.pos,
                     )
                 self.id = existing_id
@@ -112,13 +111,13 @@ class Item(base_statement.BaseStatementList):
         return base_statement.BaseStatementList.get_action_list(self)
 
     def __str__(self):
-        ret = "item({:d}".format(self.feature.value)
+        ret = f"item({self.feature.value}"
         if self.name is not None:
-            ret += ", {}".format(self.name)
+            ret += f", {self.name}"
         ret += ", {}".format(str(self.id) if self.id is not None else "-1")
         if self.size is not None:
             sizes = ["1X1", None, "2X1", "1X2", "2X2"]
-            ret += ", HOUSE_SIZE_{}".format(sizes[self.size.value])
+            ret += f", HOUSE_SIZE_{sizes[self.size.value]}"
         ret += ") {\n"
         ret += base_statement.BaseStatementList.__str__(self)
         ret += "}\n"
@@ -158,7 +157,7 @@ class Property:
 
     def __str__(self):
         unit = "" if self.unit is None else " " + str(self.unit)
-        return "\t{}: {}{};".format(self.name, self.value, unit)
+        return f"\t{self.name}: {self.value}{unit};"
 
 
 class PropertyBlock(base_statement.BaseStatement):
@@ -189,7 +188,7 @@ class PropertyBlock(base_statement.BaseStatement):
     def __str__(self):
         ret = "property {\n"
         for prop in self.prop_list:
-            ret += "{}\n".format(prop)
+            ret += f"{prop}\n"
         ret += "}\n"
         return ret
 
@@ -215,11 +214,11 @@ class LiveryOverride(base_statement.BaseStatement):
         return action3.parse_graphics_block(self.graphics_block, item_feature, wagon_id, item_size, True)
 
     def __str__(self):
-        ret = "livery_override({}) {{\n".format(self.wagon_id)
+        ret = f"livery_override({self.wagon_id}) {{\n"
         for graphics in self.graphics_block.graphics_list:
-            ret += "\t{}\n".format(graphics)
+            ret += f"\t{graphics}\n"
         if self.graphics_block.default_graphics is not None:
-            ret += "\t{}\n".format(self.graphics_block.default_graphics)
+            ret += f"\t{self.graphics_block.default_graphics}\n"
         ret += "}\n"
         return ret
 
@@ -274,9 +273,9 @@ class GraphicsBlock(graphics_base_class):
     def __str__(self):
         ret = "graphics {\n"
         for graphics in self.graphics_list:
-            ret += "\t{}\n".format(graphics)
+            ret += f"\t{graphics}\n"
         if self.default_graphics is not None:
-            ret += "\t{}\n".format(self.default_graphics)
+            ret += f"\t{self.default_graphics}\n"
         ret += "}\n"
         return ret
 
@@ -303,4 +302,4 @@ class GraphicsDefinition:
         self.result.debug_print(indentation + 2)
 
     def __str__(self):
-        return "{}: {}".format(self.cargo_id, self.result)
+        return f"{self.cargo_id}: {self.result}"

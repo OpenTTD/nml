@@ -34,7 +34,7 @@ class PatchVariable(Expression):
         generic.print_dbg(indentation, "PatchVariable:", self.num)
 
     def __str__(self):
-        return "PatchVariable({:d})".format(self.num)
+        return f"PatchVariable({self.num})"
 
     def reduce(self, id_dicts=None, unknown_id_fatal=True):
         return self

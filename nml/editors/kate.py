@@ -163,19 +163,19 @@ def write_file(fname):
     with open(fname, "w") as file:
         file.write(header_text)
         for word in extract_tables.keywords:
-            file.write("      <item> {} </item>\n".format(word))
+            file.write(f"      <item> {word} </item>\n")
 
         file.write(feature_text)
         for word in extract_tables.features:
-            file.write("      <item> {} </item>\n".format(word))
+            file.write(f"      <item> {word} </item>\n")
 
         file.write(builtin_text)
         for word in extract_tables.functions:
-            file.write("      <item> {} </item>\n".format(word))
+            file.write(f"      <item> {word} </item>\n")
 
         file.write(constant_text)
         for word in extract_tables.callback_names_table:
-            file.write("      <item> {} </item>\n".format(word))
+            file.write(f"      <item> {word} </item>\n")
 
         file.write(tail_text)
 

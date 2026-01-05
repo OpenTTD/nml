@@ -129,7 +129,7 @@ def create_intermediate_varaction2(feature, varact2parser, mapping, default, pos
     for mod in varact2parser.mods:
         act6.modify_bytes(mod.param, mod.size, mod.offset + 4)
 
-    name = expression.Identifier("@action3_{:d}".format(action2_id))
+    name = expression.Identifier(f"@action3_{action2_id}")
     action2_id += 1
     varaction2 = action2var.Action2Var(feature, name.value, pos, 0x89)
     varaction2.var_list = varact2parser.var_list
@@ -319,7 +319,7 @@ def parse_graphics_block_single_id(
             cb_table = action3_callbacks.callbacks[feature]
             if cb_name in cb_table:
                 if cb_name in seen_callbacks:
-                    raise generic.ScriptError("Callback '{}' is defined multiple times.".format(cb_name), cargo_id.pos)
+                    raise generic.ScriptError(f"Callback '{cb_name}' is defined multiple times.", cargo_id.pos)
                 seen_callbacks.add(cb_name)
 
                 info_list = cb_table[cb_name]
@@ -336,7 +336,7 @@ def parse_graphics_block_single_id(
                         # Not a callback, but an alias for a certain cargo type
                         if info["num"] in cargo_gfx:
                             raise generic.ScriptError(
-                                "Graphics for '{}' are defined multiple times.".format(cb_name), cargo_id.pos
+                                f"Graphics for '{cb_name}' are defined multiple times.", cargo_id.pos
                             )
                         cargo_gfx[info["num"]] = graphics.result.value
                     elif info["type"] == "cb":
@@ -358,7 +358,7 @@ def parse_graphics_block_single_id(
                             layouts = (var10map, registers_ref)
                         else:
                             raise generic.ScriptError(
-                                "'{}' must be an array of even length, or the ID of a station".format(cb_name),
+                                f"'{cb_name}' must be an array of even length, or the ID of a station",
                                 cargo_id.pos,
                             )
                         prepend_action_list.extend(actions)
@@ -369,7 +369,7 @@ def parse_graphics_block_single_id(
                             or len(graphics.result.value.values) > 6
                         ):
                             raise generic.ScriptError(
-                                "'{}' must be an array of at most 6 elements".format(cb_name), cargo_id.pos
+                                f"'{cb_name}' must be an array of at most 6 elements", cargo_id.pos
                             )
                         custom_spritesets = graphics.result.value.values
                     elif info["type"] == "prepare_layout":
@@ -394,15 +394,13 @@ def parse_graphics_block_single_id(
                 "Associating graphics with a specific cargo is possible only for vehicles and stations.", cargo_id.pos
             )
         if cargo_id.value in cargo_gfx:
-            raise generic.ScriptError(
-                "Graphics for cargo {:d} are defined multiple times.".format(cargo_id.value), cargo_id.pos
-            )
+            raise generic.ScriptError(f"Graphics for cargo {cargo_id.value} are defined multiple times.", cargo_id.pos)
         cargo_gfx[cargo_id.value] = graphics.result.value
 
     if graphics_block.default_graphics is not None:
         if "default" not in action3_callbacks.callbacks[feature]:
             raise generic.ScriptError(
-                "Default graphics may not be defined for this feature (0x{:02X}).".format(feature),
+                f"Default graphics may not be defined for this feature (0x{feature:02X}).",
                 graphics_block.default_graphics.pos,
             )
         if None in cargo_gfx:
@@ -429,7 +427,7 @@ def parse_graphics_block_single_id(
             elif prepare_layout:
                 if not isinstance(prepare_layout, expression.SpriteGroupRef):
                     actions, prepare_layout = action2var.create_return_action(
-                        prepare_layout, feature, "Station Layout@prepare - Id {:02X}".format(id.value), 0x89
+                        prepare_layout, feature, f"Station Layout@prepare - Id {id.value:02X}", 0x89
                     )
                     prepend_action_list.extend(actions)
                 varact2parser.parse(prepare_layout)

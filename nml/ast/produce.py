@@ -35,7 +35,7 @@ class ProduceOld(produce_base_class):
         base_statement.BaseStatement.__init__(self, "produce-block", pos, False, False)
         if not (6 <= len(param_list) <= 7):
             raise generic.ScriptError(
-                "produce-block requires 6 or 7 parameters, encountered {:d}".format(len(param_list)), self.pos
+                f"produce-block requires 6 or 7 parameters, encountered {len(param_list)}", self.pos
             )
         name = param_list[0]
         if not isinstance(name, expression.Identifier):
@@ -48,7 +48,7 @@ class ProduceOld(produce_base_class):
     def pre_process(self):
         generic.print_warning(
             generic.Warning.DEPRECATION,
-            "Consider using the new produce() syntax for '{}'".format(self.name),
+            f"Consider using the new produce() syntax for '{self.name}'",
             self.name.pos,
         )
         var_scope = action2var.get_scope(0x0A)
@@ -128,7 +128,7 @@ class Produce(produce_base_class):
         return all_refs
 
     def __str__(self):
-        return "produce({0}, [{1}], [{2}], {3})\n".format(
+        return "produce({}, [{}], [{}], {})\n".format(
             str(self.name),
             " ".join(str(x) for x in self.subtract_in),
             " ".join(str(x) for x in self.add_out),
@@ -138,10 +138,10 @@ class Produce(produce_base_class):
     def debug_print(self, indentation):
         generic.print_dbg(indentation, "Produce, name =", self.name)
         for cargopair in self.subtract_in:
-            generic.print_dbg(indentation + 2, "Subtract from input {0}:".format(cargopair.name.value))
+            generic.print_dbg(indentation + 2, f"Subtract from input {cargopair.name.value}:")
             cargopair.value.debug_print(indentation + 4)
         for cargopair in self.add_out:
-            generic.print_dbg(indentation + 2, "Add to output {0}:".format(cargopair.name.value))
+            generic.print_dbg(indentation + 2, f"Add to output {cargopair.name.value}:")
             cargopair.value.debug_print(indentation + 4)
         generic.print_dbg(indentation + 2, "Again:")
         self.again.debug_print(indentation + 4)
