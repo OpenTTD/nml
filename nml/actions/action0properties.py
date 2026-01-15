@@ -441,7 +441,7 @@ def refittable_cargo_classes(prop_or_num, prop_and_num, refit_mask_num):
             return value if index == 0 else None
         if isinstance(value, Array) and len(value.values) == 2 and isinstance(value.values[index], ConstantNumeric):
             return value.values[index]
-        raise generic.ScriptError("refittable_cargo_classes must be a constant or an array of 2 constants")
+        raise generic.ScriptError("refittable_cargo_classes must be a constant or an array of 2 constants", value.pos)
 
     def prop_test(value):
         return value is not None
@@ -465,7 +465,7 @@ def single_or_list(prop_name, single_num, multiple_num, value):
         if len(value.values) == 1:
             return [Action0Property(single_num, value.values[0].reduce_constant(), 1)]
         return [VariableByteListProp(multiple_num, [[type.reduce_constant().value for type in value.values]])]
-    raise generic.ScriptError("'{}' must be a constant or an array of constants".format(prop_name))
+    raise generic.ScriptError("'{}' must be a constant or an array of constants".format(prop_name), value.pos)
 
 
 #
@@ -832,6 +832,8 @@ def station_layouts(value):
     for layout in value.values:
         if not isinstance(layout, Array) or len(layout.values) == 0:
             raise generic.ScriptError("A station layout must be an array of platforms", layout.pos)
+        if not isinstance(layout.values[0], Array):
+            raise generic.ScriptError("A platform must be an array of tile types", layout.values[0].pos)
         length = len(layout.values[0].values)
         number = len(layout.values)
         if (length, number) in layouts:
@@ -841,7 +843,7 @@ def station_layouts(value):
         layouts[(length, number)] = []
         for platform in layout.values:
             if not isinstance(platform, Array) or len(platform.values) == 0:
-                raise generic.ScriptError("A platform must be an array of tile types")
+                raise generic.ScriptError("A platform must be an array of tile types", platform.pos)
             if len(platform.values) != length:
                 raise generic.ScriptError("All platforms in a station layout must have the same length", platform.pos)
             for type in platform.values:
