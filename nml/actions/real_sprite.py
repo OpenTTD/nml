@@ -422,7 +422,7 @@ class TemplateUsage:
     def get_labels(self):
         # Load labels from the template definition
         if self.name.value not in sprite_template_map:
-            raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
+            raise generic.ScriptError(f"Encountered unknown template identifier: {self.name.value}", self.name.pos)
         labels, offset = sprite_template_map[self.name.value].get_labels()
         # Add (possibly) label applied to ourselves
         if self.label is not None:
@@ -435,14 +435,13 @@ class TemplateUsage:
 
     def expand(self, default_file, default_mask_file, poslist, parameters):
         if self.name.value not in sprite_template_map:
-            raise generic.ScriptError("Encountered unknown template identifier: " + self.name.value, self.name.pos)
+            raise generic.ScriptError(f"Encountered unknown template identifier: {self.name.value}", self.name.pos)
         template = sprite_template_map[self.name.value]
         if len(self.param_list) != len(template.param_list):
             raise generic.ScriptError(
-                "Incorrect number of template arguments. Expected "
-                + str(len(template.param_list))
-                + ", got "
-                + str(len(self.param_list)),
+                "Incorrect number of template arguments. Expected {}, got {}".format(
+                    str(len(template.param_list)), str(len(self.param_list))
+                ),
                 self.pos,
             )
         param_dict = {}

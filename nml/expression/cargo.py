@@ -29,7 +29,7 @@ class CargoExpression(Expression):
         for label, number in global_constants.cargo_numbers.items():
             if number == self.cargotype:
                 return label
-        raise AssertionError("Cargo expression with unregistered cargotype at " + str(self.pos))
+        raise AssertionError(f"Cargo expression with unregistered cargotype at {self.pos}")
 
     def debug_print(self, indentation):
         if self.value is None:
