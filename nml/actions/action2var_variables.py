@@ -180,6 +180,7 @@ varact2vars_trains = {
     'current_railtype'    : {'var': 0x4A, 'start':  0, 'size':  8},
     'current_max_speed'   : {'var': 0x4C, 'start': 0, 'size': 16, 'value_function': value_mul_div(0x4786, 0x10000)},
     'vehicle_is_in_depot' : {'var': 0xE2, 'start': 7, 'size':  1},
+    'consist_current_power' : {'var': 0xF4, 'start': 0, 'size': 32},
 }
 
 varact2vars_roadvehs = {
