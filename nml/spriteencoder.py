@@ -297,7 +297,7 @@ class SpriteEncoder:
             if im.mode == "RGBA":
                 info_byte |= INFO_ALPHA
 
-            (im_width, im_height) = im.size
+            im_width, im_height = im.size
             if x < 0 or y < 0 or x + size_x > im_width or y + size_y > im_height:
                 pos = generic.build_position(sprite_info.poslist)
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_32bpp.value), pos)
@@ -320,7 +320,7 @@ class SpriteEncoder:
             im_mask_pal = palette.validate_palette(mask_im, filename_8bpp.value)
             info_byte |= INFO_PAL
 
-            (im_width, im_height) = mask_im.size
+            im_width, im_height = mask_im.size
             if mask_x < 0 or mask_y < 0 or mask_x + size_x > im_width or mask_y + size_y > im_height:
                 pos = generic.build_position(sprite_info.poslist)
                 raise generic.ScriptError("Read beyond bounds of image file '{}'".format(filename_8bpp.value), pos)
