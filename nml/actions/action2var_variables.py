@@ -896,10 +896,10 @@ class VarAct2Feature:
 
 
 scope_towns = VarAct2Scope("Towns", varact2vars_towns, {}, has_persistent_storage=True)
-scope_trains = VarAct2Scope("Trains", varact2vars_trains, varact2vars60x_trains)
-scope_roadvehs = VarAct2Scope("RoadVehs", varact2vars_roadvehs, varact2vars60x_roadvehs)
-scope_ships = VarAct2Scope("Ships", varact2vars_ships, varact2vars60x_vehicles)
-scope_aircraft = VarAct2Scope("Aircraft", varact2vars_aircraft, varact2vars60x_vehicles)
+scope_trains = VarAct2Scope("Trains", varact2vars_trains, varact2vars60x_trains, has_persistent_storage=True)
+scope_roadvehs = VarAct2Scope("RoadVehs", varact2vars_roadvehs, varact2vars60x_roadvehs, has_persistent_storage=True)
+scope_ships = VarAct2Scope("Ships", varact2vars_ships, varact2vars60x_vehicles, has_persistent_storage=True)
+scope_aircraft = VarAct2Scope("Aircraft", varact2vars_aircraft, varact2vars60x_vehicles, has_persistent_storage=True)
 scope_stations = VarAct2Scope("Stations", varact2vars_stations, varact2vars60x_stations)
 scope_canals = VarAct2Scope("Canals", varact2vars_canals, {})
 scope_houses = VarAct2Scope("Houses", varact2vars_houses, varact2vars60x_houses)
