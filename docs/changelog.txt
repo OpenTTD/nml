@@ -1,3 +1,15 @@
+0.9.0 (2026-03-28)
+------------------------------------------------------------------------
+This release sets python 3.10 as minimum version, and adds support for badges.
+
+Support for NewGRF additions of OpenTTD 15:
+ - Add: Support for NewGRF badges. (#359)
+
+Other changes and fixes:
+ - Fix: Feature 0x14 missing from extract tables. (#403)
+ - Fix #407: missing position for some action0 errors (#408)
+
+
 0.8.1 (2025-12-02)
 ------------------------------------------------------------------------
 Support for NewGRF additions of OpenTTD 15:
