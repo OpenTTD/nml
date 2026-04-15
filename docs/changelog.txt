@@ -1,3 +1,21 @@
+0.9.0 (2026-04-15)
+------------------------------------------------------------------------
+This release sets python 3.10 as minimum version, and adds support for badges and push-pull trains.
+
+Support for NewGRF additions of OpenTTD 16:
+ - Add: Flag for allow unpowered wagons to lead a train when backing up (#420)
+ - Add: Variable for when a train is driving backwards (#421)
+ - Change: distinguish perimeter from area in station distributed cargo flag. (#422)
+
+Support for NewGRF additions of OpenTTD 15:
+ - Add: Support for NewGRF badges. (#359)
+ - Change: add support for vehicle var 0x65 (#378)
+
+Other changes and fixes:
+ - Fix: Feature 0x14 missing from extract tables. (#403)
+ - Fix #407: missing position for some action0 errors (#408)
+
+
 0.8.1 (2025-12-02)
 ------------------------------------------------------------------------
 Support for NewGRF additions of OpenTTD 15:
