@@ -247,9 +247,7 @@ class ConstError(ScriptError):
 
 class RangeError(ScriptError):
     def __init__(self, value, min_value, max_value, name, pos=None):
-        ScriptError.__init__(
-            self, name + " out of range " + str(min_value) + ".." + str(max_value) + ", encountered " + str(value), pos
-        )
+        ScriptError.__init__(self, f"{name} out of range {min_value}..{max_value}, encountered {value}", pos)
 
 
 class ProcCallSyntaxError(ScriptError):
