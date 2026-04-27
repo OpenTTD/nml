@@ -395,6 +395,9 @@ constant_numbers = {
     # station tiles
     "STAT_ALL_TILES"     : 0xFF,
 
+    # bridge general flags
+    "FAR_PILLARS_DISABLE" : 0,
+
     # bridge pillar flags
     "BRIDGE_PILLAR_CORNER_W" : 0,
     "BRIDGE_PILLAR_CORNER_S" : 1,

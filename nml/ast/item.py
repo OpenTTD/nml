@@ -14,7 +14,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from nml import expression, generic, global_constants
-from nml.actions import action0, action2, action2var, action3
+from nml.actions import action0, action0bridge, action2, action2var, action3
 from nml.ast import base_statement, general
 
 item_feature = None
@@ -234,6 +234,10 @@ class GraphicsBlock(graphics_base_class):
         self.default_graphics = default_graphics
 
     def pre_process(self):
+        if item_feature == 0x06:
+            action0bridge.collect(self, self.pos)
+            return
+
         for graphics_def in self.graphics_list:
             graphics_def.reduce_expressions(action2var.get_scope(item_feature))
         if self.default_graphics is not None:
@@ -267,7 +271,9 @@ class GraphicsBlock(graphics_base_class):
             self.default_graphics.debug_print(indentation + 4)
 
     def get_action_list(self):
-        if self.prepare_act2_output():
+        if item_feature == 0x06:
+            return action0bridge.emit_actions(self, item_id, self.pos)
+        elif self.prepare_act2_output():
             return action3.parse_graphics_block(self, item_feature, item_id, item_size)
         return []
 

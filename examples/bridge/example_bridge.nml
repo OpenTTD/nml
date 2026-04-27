@@ -1,0 +1,266 @@
+﻿/*
+ * This file is aimed to provide an example on how to code a custom bridge in NML.
+ * It creates a wooden rail bridge with support for multiple transports
+ * (rail, road, monorail, maglev).
+ *
+ * Key concepts demonstrated:
+ * - Sprite templates: reusable coordinate definitions that work at multiple zoom levels
+ * - Bridge graphics structure: back sprites, front sprites, pillars, and ends (ramps)
+ * - Alternative sprites: higher-zoom graphics (4x) for better quality at higher resolutions
+ *
+ * For more information, refer to the NewGRF specifications documentation.
+ *
+ * Apart from this file, you will also need:
+ * - Graphics in gfx/  (ramps_wood_rail_64.png, ramps_wood_rail_256.png,
+ *                      wood_rail_64.png, wood_rail_256.png)
+ * - Language files in lang/ (english.lng)
+ */
+
+/*
+ * First, define a grf block with basic properties.
+ * String constants like STR_GRF_NAME come from the language files in lang/.
+ */
+grf {
+    grfid: "NML\07";
+    name: string(STR_GRF_NAME);
+    desc: string(STR_GRF_DESC);
+    version: 1;
+    min_compatible_version: 1;
+}
+
+/*
+ * Sprite templates help avoid repetitive coordinate definitions.
+ * The z parameter scales coordinates for different zoom levels:
+ *   z = 1 for normal zoom (64 pixels per tile)
+ *   z = 4 for 4x zoom (256 pixels per tile)
+ *
+ * Sprite format: [ x_in_file, y_in_file, width, height, x_offset, y_offset ]
+ */
+
+/*
+ * Bridge ramps -- 8 sprites per transport type for bridge approaches.
+ * First 4: flat end (far X, far Y, near X, near Y)
+ * Last 4: ramp (far X, far Y, near X, near Y)
+ */
+template template_bridgeramps_wood(x, y, z) {
+    [   1*z+x*z, 1*z+y*z, 64*z, 47*z-1, -31*z, -24*z ]  /* flat farthest X */
+    [ 131*z+x*z, 1*z+y*z, 64*z, 47*z-1, -31*z, -24*z ]  /* flat farthest Y */
+    [  66*z+x*z, 1*z+y*z, 64*z, 63*z-1, -31*z, -32*z ]  /* flat nearest X */
+    [ 196*z+x*z, 1*z+y*z, 64*z, 63*z-1, -31*z, -32*z ]  /* flat nearest Y */
+    [ 326*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp farthest X */
+    [ 456*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp farthest Y */
+    [ 261*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp nearest X */
+    [ 391*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp nearest Y */
+}
+
+/*
+ * Bridge parts:
+ * _0_	            Bridge of length 3
+ * _0(23)1_	        Bridge of even length
+ * _0(23)4(23)1_	Bridge of (uneven) lengths 5, 9, 13, 17 etc.
+ * _0(23)253(23)1_	Bridge of (uneven) lengths 7, 11, 15, 19 etc.
+ *
+ * BRIDGE_PIECE_NORTH (0):        Outer end toward north (farthest)
+ * BRIDGE_PIECE_SOUTH (1):        Outer end toward south (nearest)
+ * BRIDGE_PIECE_INNER_NORTH (2):  Suspension towers near north  } repeated
+ * BRIDGE_PIECE_INNER_SOUTH (3):  Suspension towers near south  }
+ * BRIDGE_PIECE_MIDDLE_ODD  (4):  Odd middle position           } uneven lengths
+ * BRIDGE_PIECE_MIDDLE_EVEN (5):  Even middle position          }
+ */
+
+template template_bridgesegment_back(x, y, z) {
+    [ 66*z+x*z, 1*z+y*z, 64*z, 128*z-1, -31*z, -84*z ]   /* X-coord */
+    [  1*z+x*z, 1*z+y*z, 64*z, 128*z-1, -31*z, -84*z ]   /* Y-coord */
+}
+
+template template_bridgesegment_front_pillar_rev(x, y, z) {
+    [ 66*z+x*z, 1*z+y*z, 64*z, 128*z-1, -55*z, -96*z ]   /* X-coord */
+    [  1*z+x*z, 1*z+y*z, 64*z, 128*z-1,  -7*z, -96*z ]   /* Y-coord */
+}
+
+template template_bridgerow_back(x, y, z) {
+    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_NORTH */
+    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_SOUTH */
+    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_INNER_NORTH */
+    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_INNER_SOUTH */
+    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_MIDDLE_ODD */
+    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_MIDDLE_EVEN */
+}
+
+template template_bridgerow_front_pillar_rev(x, y, z) {
+    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_NORTH */
+    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_SOUTH */
+    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_INNER_NORTH */
+    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_INNER_SOUTH */
+    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_MIDDLE_ODD */
+    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_MIDDLE_EVEN */
+}
+
+/*
+ * Each role (back/front/pillars) is 48 sprites: 4 transports x 6 parts x 2 coords.
+ * This example reuses the same row per transport -- the global sprite pool will
+ * dedup them down to 12 unique part sprites. `ends` is 32 sprites across 4 transports.
+ * alternative_sprites adds higher-zoom graphics for high-resolution displays.
+ */
+
+/* Back row: 48 sprites (12 x 4 transports) */
+spriteset(wood_back_spr, "gfx/wood_rail_64.png") {
+    template_bridgerow_back(0, 0, 1)
+    template_bridgerow_back(0, 0, 1)
+    template_bridgerow_back(0, 0, 1)
+    template_bridgerow_back(0, 0, 1)
+}
+alternative_sprites(wood_back_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/wood_rail_256.png") {
+    template_bridgerow_back(0, 0, 4)
+    template_bridgerow_back(0, 0, 4)
+    template_bridgerow_back(0, 0, 4)
+    template_bridgerow_back(0, 0, 4)
+}
+
+/* Front row: 48 sprites (12 x 4 transports) */
+spriteset(wood_front_spr, "gfx/wood_rail_64.png") {
+    template_bridgerow_front_pillar_rev(0, 129, 1)
+    template_bridgerow_front_pillar_rev(0, 129, 1)
+    template_bridgerow_front_pillar_rev(0, 129, 1)
+    template_bridgerow_front_pillar_rev(0, 129, 1)
+}
+alternative_sprites(wood_front_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/wood_rail_256.png") {
+    template_bridgerow_front_pillar_rev(0, 129, 4)
+    template_bridgerow_front_pillar_rev(0, 129, 4)
+    template_bridgerow_front_pillar_rev(0, 129, 4)
+    template_bridgerow_front_pillar_rev(0, 129, 4)
+}
+
+/* Pillars row: 48 sprites (12 x 4 transports) */
+spriteset(wood_pillar_spr, "gfx/wood_rail_64.png") {
+    template_bridgerow_front_pillar_rev(0, 259, 1)
+    template_bridgerow_front_pillar_rev(0, 259, 1)
+    template_bridgerow_front_pillar_rev(0, 259, 1)
+    template_bridgerow_front_pillar_rev(0, 259, 1)
+}
+alternative_sprites(wood_pillar_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/wood_rail_256.png") {
+    template_bridgerow_front_pillar_rev(0, 259, 4)
+    template_bridgerow_front_pillar_rev(0, 259, 4)
+    template_bridgerow_front_pillar_rev(0, 259, 4)
+    template_bridgerow_front_pillar_rev(0, 259, 4)
+}
+
+/* Ramp heads (BRIDGE_PIECE_HEAD): 32 sprites (8 x 4 transports) */
+spriteset(wood_ramps_spr, "gfx/ramps_wood_rail_64.png") {
+    template_bridgeramps_wood(0, 0, 1)
+    template_bridgeramps_wood(0, 0, 1)
+    template_bridgeramps_wood(0, 0, 1)
+    template_bridgeramps_wood(0, 0, 1)
+}
+alternative_sprites(wood_ramps_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/ramps_wood_rail_256.png") {
+    template_bridgeramps_wood(0, 0, 4)
+    template_bridgeramps_wood(0, 0, 4)
+    template_bridgeramps_wood(0, 0, 4)
+    template_bridgeramps_wood(0, 0, 4)
+}
+
+/*
+ * Bridge definition.
+ * The `graphics { }` block supplies sprite tables for all four transport types
+ * (rail, road, monorail, maglev). In this example we reuse the same sprites
+ * per transport; the game overlays the correct transport tiles at runtime.
+ */
+item(FEAT_BRIDGES, wood_rail_bridge, 0x00) {
+    property {
+        min_length:         0;
+        max_length:         255;
+        cost_factor:        80;
+        speed_limit:        40 km/h;
+        flags:              1;
+        avail_year:         1800;
+        name:               string(STR_BRIDGE_NAME);
+        description_road:   string(STR_BRIDGE_DESC_ROAD);
+        description_rail:   string(STR_BRIDGE_DESC_RAIL);
+        /*
+         * pillar_info is 12 bytes (x0 y0 x1 y1 ... x5 y5) -- one byte per bridge part per coord.
+         * Each byte is a bitmask of which pillars (corner N/S/W/E) and walls (edge NE/NW/SE/SW)
+         * the piece renders. Compose with bitmask() and the BRIDGE_PILLAR_CORNER_{N,S,W,E} /
+         * BRIDGE_PILLAR_EDGE_{NE,SE,SW,NW} constants.
+         */
+        pillar_info: [
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            ),
+            bitmask(
+                BRIDGE_PILLAR_CORNER_W,
+                BRIDGE_PILLAR_CORNER_S,
+                BRIDGE_PILLAR_CORNER_E,
+                BRIDGE_PILLAR_CORNER_N
+            )
+        ];
+    }
+    graphics {
+        bridge_back:    [wood_back_spr];
+        bridge_front:   [wood_front_spr];
+        bridge_pillars: [wood_pillar_spr];
+        bridge_head:    [wood_ramps_spr];
+    }
+}

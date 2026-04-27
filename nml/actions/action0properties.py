@@ -1,4 +1,4 @@
-__license__ = """
+﻿__license__ = """
 NML is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -928,7 +928,74 @@ properties[0x05] = {
     "graphic_flags": {"size": 1, "num": 0x09},
 }
 
-# TODO: Feature 0x06
+
+#
+# Feature 0x06 (Bridges)
+#
+
+
+class BridgePillarInfoProp(BaseAction0Property):
+    """Prop 0x15: pillar info -- 2n raw bytes, one pair per pillar config."""
+
+    def __init__(self, bytes_list):
+        assert len(bytes_list) % 2 == 0 and len(bytes_list) > 0
+        self.bytes = bytes_list
+
+    def write(self, file):
+        file.print_bytex(0x15)
+        file.print_bytex(len(self.bytes) // 2)
+        for i, b in enumerate(self.bytes):
+            if i > 0 and i % 8 == 0:
+                file.newline()
+            file.print_bytex(b)
+        file.newline()
+
+    def get_size(self):
+        return 2 + len(self.bytes)  # prop_num(1) + size_byte(1) + 2n data bytes
+
+
+# fmt: off
+def bridge_pillar_info(value):
+    if not isinstance(value, Array) or len(value.values) % 2 != 0 or len(value.values) == 0:
+        raise generic.ScriptError(
+            "pillar_info must be an array with an even number of bytes (2 per pillar config, typically 12)",
+            value.pos,
+        )
+
+    bytes_list = []
+    for elem in value.values:
+        reduced = elem.reduce(global_constants.const_list)
+        if not isinstance(reduced, ConstantNumeric):
+            raise generic.ScriptError("pillar_info values must be compile-time constants", elem.pos)
+        generic.check_range(reduced.value, 0, 255, "pillar_info byte", elem.pos)
+        bytes_list.append(reduced.value)
+
+    return [BridgePillarInfoProp(bytes_list)]
+
+
+properties[0x06] = {
+    # 0x08 - year availability (old way)
+    "min_length":               {"size": 1, "num": 0x09},
+    "max_length":               {"size": 1, "num": 0x0A},
+    # 0x0B - cost factor (old way)
+    "speed_limit": {
+        "size": 2,
+        "num": 0x0C,
+        "unit_type": "speed",
+        "unit_conversion": (5000, 1397),
+        "adjust_value": lambda val, unit: ottd_display_speed(val, 1, 1, unit),
+    },
+    # 0x0D - sprite tables (set via the `graphics { bridge_back/front/pillars/head: ... }` block)
+    "flags":                    {"size": 1, "num": 0x0E},
+    "avail_year":               {"size": 4, "num": 0x0F},
+    "name":                     {"size": 2, "num": 0x10, "string": 0xDC},
+    "description_rail":         {"size": 2, "num": 0x11, "string": 0xDC},
+    "description_road":         {"size": 2, "num": 0x12, "string": 0xDC},
+    "cost_factor":              {"size": 2, "num": 0x13},
+    "pillar_info":              {"num": 0x15, "custom_function": bridge_pillar_info},
+}
+
+# fmt: on
 
 #
 # Feature 0x07 (Houses)
