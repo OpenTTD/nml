@@ -1,266 +1,177 @@
-﻿/*
+/*
  * This file is aimed to provide an example on how to code a custom bridge in NML.
- * It creates a wooden rail bridge with support for multiple transports
- * (rail, road, monorail, maglev).
+ * It creates a cable bridge with support for multiple transport types (rail, road,
+ * monorail, maglev). The same set of cable sprites is reused across all transport
+ * types; the game overlays the correct track or road surface at runtime.
  *
- * Key concepts demonstrated:
- * - Sprite templates: reusable coordinate definitions that work at multiple zoom levels
- * - Bridge graphics structure: back sprites, front sprites, pillars, and ends (ramps)
- * - Alternative sprites: higher-zoom graphics (4x) for better quality at higher resolutions
+ * To keep the code readable, not every property is documented in detail.
+ * Refer to the bridge-specific reference in the documentation for the full list
+ * of available properties and callbacks.
  *
- * For more information, refer to the NewGRF specifications documentation.
+ * Apart from this file, you will also need the following:
+ * - Graphics, in gfx/cable.png
+ * - Language files, to be placed in the 'lang' folder.
+ *     Currently english.lng is supplied.
  *
- * Apart from this file, you will also need:
- * - Graphics in gfx/  (ramps_wood_rail_64.png, ramps_wood_rail_256.png,
- *                      wood_rail_64.png, wood_rail_256.png)
- * - Language files in lang/ (english.lng)
+ * Graphics are from JP+ Bridges by Emperor Jake.
  */
 
 /*
- * First, define a grf block with basic properties.
- * String constants like STR_GRF_NAME come from the language files in lang/.
+ * First, define a grf block. This defines some basic properties of the grf,
+ * which are required for the grf to be valid and loadable.
  */
 grf {
+    /* This grf is part of NML, therefore "NML" is chosen as the first three
+     * characters of the GRFID. It is the eighth example grf defined as part of
+     * NML, therefore the last character is set to 7 as numbering is zero-based.
+     */
     grfid: "NML\07";
+    /* GRF name and description strings are defined in the lang files */
     name: string(STR_GRF_NAME);
     desc: string(STR_GRF_DESC);
+    /* This is the first version, start numbering at 1. */
     version: 1;
     min_compatible_version: 1;
 }
 
-/*
- * Sprite templates help avoid repetitive coordinate definitions.
- * The z parameter scales coordinates for different zoom levels:
- *   z = 1 for normal zoom (64 pixels per tile)
- *   z = 4 for 4x zoom (256 pixels per tile)
+/* Next: a series of templates for the bridge graphics.
+ * Templates allow you to avoid repeating sprite coordinates for each spriteset.
+ * Parameter t selects the column within the sprite sheet (0 = leftmost column,
+ * 1 = next, and so on), so different bridge part slots can share the same layout.
  *
- * Sprite format: [ x_in_file, y_in_file, width, height, x_offset, y_offset ]
- */
-
-/*
- * Bridge ramps -- 8 sprites per transport type for bridge approaches.
- * First 4: flat end (far X, far Y, near X, near Y)
- * Last 4: ramp (far X, far Y, near X, near Y)
- */
-template template_bridgeramps_wood(x, y, z) {
-    [   1*z+x*z, 1*z+y*z, 64*z, 47*z-1, -31*z, -24*z ]  /* flat farthest X */
-    [ 131*z+x*z, 1*z+y*z, 64*z, 47*z-1, -31*z, -24*z ]  /* flat farthest Y */
-    [  66*z+x*z, 1*z+y*z, 64*z, 63*z-1, -31*z, -32*z ]  /* flat nearest X */
-    [ 196*z+x*z, 1*z+y*z, 64*z, 63*z-1, -31*z, -32*z ]  /* flat nearest Y */
-    [ 326*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp farthest X */
-    [ 456*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp farthest Y */
-    [ 261*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp nearest X */
-    [ 391*z+x*z, 1*z+y*z, 64*z, 55*z-1, -31*z, -24*z ]  /* ramp nearest Y */
-}
-
-/*
- * Bridge parts:
- * _0_	            Bridge of length 3
- * _0(23)1_	        Bridge of even length
- * _0(23)4(23)1_	Bridge of (uneven) lengths 5, 9, 13, 17 etc.
- * _0(23)253(23)1_	Bridge of (uneven) lengths 7, 11, 15, 19 etc.
+ * Each template produces two sprites: one for each track orientation (X-axis and Y-axis).
  *
- * BRIDGE_PIECE_NORTH (0):        Outer end toward north (farthest)
- * BRIDGE_PIECE_SOUTH (1):        Outer end toward south (nearest)
- * BRIDGE_PIECE_INNER_NORTH (2):  Suspension towers near north  } repeated
- * BRIDGE_PIECE_INNER_SOUTH (3):  Suspension towers near south  }
- * BRIDGE_PIECE_MIDDLE_ODD  (4):  Odd middle position           } uneven lengths
- * BRIDGE_PIECE_MIDDLE_EVEN (5):  Even middle position          }
+ * A bridge span is divided into four visual layers:
+ *   head    - the ramp pieces where vehicles enter and leave the bridge
+ *   back    - the structural section drawn behind vehicles
+ *   front   - the structural section drawn in front of vehicles
+ *   pillar  - the support columns underneath the span
+ */
+template template_head(t) {
+    [1 + t*130,  1, 64,  64, -31, -24]
+    [66 + t*130, 1, 64,  64, -31, -24]
+}
+
+template template_back(t) {
+    /* ANIM marks these sprites as safe for animated palettes */
+    [1 + t*130,  66, 64, 128,  -31,  -84, ANIM]
+    [66 + t*130, 66, 64, 128,  -31,  -84, ANIM]
+}
+
+template template_front(t) {
+    [1 + t*130,  195, 64, 128,  -55,  -96, ANIM]
+    [66 + t*130, 195, 64, 128,   -7,  -96, ANIM]
+}
+
+template template_pillar(t) {
+    [1 + t*130,  324, 64, 128,  -55,  -96]
+    [66 + t*130, 324, 64, 128,   -7,  -96]
+}
+
+/* The back, front and pillar spritesets each contain six part slots (0-5), which
+ * the game assembles in different combinations depending on bridge length:
+ *
+ *   _0_                  Bridge of length 3
+ *   _0(23)1_             Bridge of even length
+ *   _0(23)4(23)1_        Bridge of lengths 5, 9, 13, 17 etc.
+ *   _0(23)253(23)1_      Bridge of lengths 7, 11, 15, 19 etc.
+ *
+ * Here _ represents the head/ramp (a separate spriteset), and the numbers 0-5 are
+ * the span slots drawn in sequence. Slots 2 and 3 repeat as needed to fill the span.
+ * Slots 4 and 5 are inserted once in the middle to handle longer odd-length bridges.
  */
 
-template template_bridgesegment_back(x, y, z) {
-    [ 66*z+x*z, 1*z+y*z, 64*z, 128*z-1, -31*z, -84*z ]   /* X-coord */
-    [  1*z+x*z, 1*z+y*z, 64*z, 128*z-1, -31*z, -84*z ]   /* Y-coord */
+/* The head spriteset has eight sprites in total: a flat approach piece and a ramp piece
+ * for each bridge end (north and south), each in both track orientations (X-axis and Y-axis).
+ * Each template call produces the X-axis and Y-axis sprites for one piece.
+ */
+spriteset(cable_head, "gfx/cable.png") {
+    template_head(0)   // north flat (X and Y)
+    template_head(1)   // south flat (X and Y)
+    template_head(2)   // north ramp (X and Y)
+    template_head(3)   // south ramp (X and Y)
 }
 
-template template_bridgesegment_front_pillar_rev(x, y, z) {
-    [ 66*z+x*z, 1*z+y*z, 64*z, 128*z-1, -55*z, -96*z ]   /* X-coord */
-    [  1*z+x*z, 1*z+y*z, 64*z, 128*z-1,  -7*z, -96*z ]   /* Y-coord */
+/* The back and front spritesets have one pair of sprites per slot.
+ * Slots 1 and 4 reuse the same column as slot 0 since they share the same appearance.
+ */
+spriteset(cable_back, "gfx/cable.png") {
+    template_back(0)   // slot 0
+    template_back(0)   // slot 1: same appearance as slot 0
+    template_back(2)   // slot 2
+    template_back(3)   // slot 3
+    template_back(0)   // slot 4: same appearance as slot 0
+    template_back(5)   // slot 5
 }
 
-template template_bridgerow_back(x, y, z) {
-    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_NORTH */
-    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_SOUTH */
-    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_INNER_NORTH */
-    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_INNER_SOUTH */
-    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_MIDDLE_ODD */
-    template_bridgesegment_back(x, y, z)   /* BRIDGE_PIECE_MIDDLE_EVEN */
+spriteset(cable_front, "gfx/cable.png") {
+    template_front(0)  // slot 0
+    template_front(0)  // slot 1: same appearance as slot 0
+    template_front(2)  // slot 2
+    template_front(3)  // slot 3
+    template_front(0)  // slot 4: same appearance as slot 0
+    template_front(5)  // slot 5
 }
 
-template template_bridgerow_front_pillar_rev(x, y, z) {
-    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_NORTH */
-    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_SOUTH */
-    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_INNER_NORTH */
-    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_INNER_SOUTH */
-    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_MIDDLE_ODD */
-    template_bridgesegment_front_pillar_rev(x, y, z)   /* BRIDGE_PIECE_MIDDLE_EVEN */
+/* Empty sprite pairs [] [] mean no pillar is drawn for that slot.
+ * Pillars are only needed at slots 3 and 5, where longer spans need support.
+ */
+spriteset(cable_pillar, "gfx/cable.png") {
+    [] []              // slot 0: no pillar at the ramp
+    [] []              // slot 1: short spans need no pillar
+    [] []              // slot 2: no pillar here
+    template_pillar(3) // slot 3: pillar for longer spans
+    [] []              // slot 4: no pillar here
+    template_pillar(3) // slot 5: reuse the same pillar graphics
 }
 
 /*
- * Each role (back/front/pillars) is 48 sprites: 4 transports x 6 parts x 2 coords.
- * This example reuses the same row per transport -- the global sprite pool will
- * dedup them down to 12 unique part sprites. `ends` is 32 sprites across 4 transports.
- * alternative_sprites adds higher-zoom graphics for high-resolution displays.
- */
-
-/* Back row: 48 sprites (12 x 4 transports) */
-spriteset(wood_back_spr, "gfx/wood_rail_64.png") {
-    template_bridgerow_back(0, 0, 1)
-    template_bridgerow_back(0, 0, 1)
-    template_bridgerow_back(0, 0, 1)
-    template_bridgerow_back(0, 0, 1)
-}
-alternative_sprites(wood_back_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/wood_rail_256.png") {
-    template_bridgerow_back(0, 0, 4)
-    template_bridgerow_back(0, 0, 4)
-    template_bridgerow_back(0, 0, 4)
-    template_bridgerow_back(0, 0, 4)
-}
-
-/* Front row: 48 sprites (12 x 4 transports) */
-spriteset(wood_front_spr, "gfx/wood_rail_64.png") {
-    template_bridgerow_front_pillar_rev(0, 129, 1)
-    template_bridgerow_front_pillar_rev(0, 129, 1)
-    template_bridgerow_front_pillar_rev(0, 129, 1)
-    template_bridgerow_front_pillar_rev(0, 129, 1)
-}
-alternative_sprites(wood_front_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/wood_rail_256.png") {
-    template_bridgerow_front_pillar_rev(0, 129, 4)
-    template_bridgerow_front_pillar_rev(0, 129, 4)
-    template_bridgerow_front_pillar_rev(0, 129, 4)
-    template_bridgerow_front_pillar_rev(0, 129, 4)
-}
-
-/* Pillars row: 48 sprites (12 x 4 transports) */
-spriteset(wood_pillar_spr, "gfx/wood_rail_64.png") {
-    template_bridgerow_front_pillar_rev(0, 259, 1)
-    template_bridgerow_front_pillar_rev(0, 259, 1)
-    template_bridgerow_front_pillar_rev(0, 259, 1)
-    template_bridgerow_front_pillar_rev(0, 259, 1)
-}
-alternative_sprites(wood_pillar_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/wood_rail_256.png") {
-    template_bridgerow_front_pillar_rev(0, 259, 4)
-    template_bridgerow_front_pillar_rev(0, 259, 4)
-    template_bridgerow_front_pillar_rev(0, 259, 4)
-    template_bridgerow_front_pillar_rev(0, 259, 4)
-}
-
-/* Ramp heads (BRIDGE_PIECE_HEAD): 32 sprites (8 x 4 transports) */
-spriteset(wood_ramps_spr, "gfx/ramps_wood_rail_64.png") {
-    template_bridgeramps_wood(0, 0, 1)
-    template_bridgeramps_wood(0, 0, 1)
-    template_bridgeramps_wood(0, 0, 1)
-    template_bridgeramps_wood(0, 0, 1)
-}
-alternative_sprites(wood_ramps_spr, ZOOM_LEVEL_IN_4X, BIT_DEPTH_8BPP, "gfx/ramps_wood_rail_256.png") {
-    template_bridgeramps_wood(0, 0, 4)
-    template_bridgeramps_wood(0, 0, 4)
-    template_bridgeramps_wood(0, 0, 4)
-    template_bridgeramps_wood(0, 0, 4)
-}
-
-/*
- * Bridge definition.
- * The `graphics { }` block supplies sprite tables for all four transport types
- * (rail, road, monorail, maglev). In this example we reuse the same sprites
- * per transport; the game overlays the correct transport tiles at runtime.
+ * Now define the bridge item itself.
+ * Unlike vehicles, bridges are identified by a fixed slot index rather than a
+ * named label. Valid IDs are 0x00 to 0x0D (0–13), each replacing the corresponding
+ * default OpenTTD bridge. It is not possible to add bridges beyond that range.
  */
 item(FEAT_BRIDGES, wood_rail_bridge, 0x00) {
     property {
-        min_length:         0;
-        max_length:         255;
-        cost_factor:        80;
-        speed_limit:        40 km/h;
-        flags:              1;
-        avail_year:         1800;
+        min_length:         0;          // allow spans of any length
+        max_length:         255;        // effectively unlimited
+        cost_factor:        224;
+        speed_limit:        300 km/h;
+        flags:              bitmask(FAR_PILLARS_DISABLE); // omit distant pillars for this style
+        avail_year:         1970;
         name:               string(STR_BRIDGE_NAME);
         description_road:   string(STR_BRIDGE_DESC_ROAD);
         description_rail:   string(STR_BRIDGE_DESC_RAIL);
-        /*
-         * pillar_info is 12 bytes (x0 y0 x1 y1 ... x5 y5) -- one byte per bridge part per coord.
-         * Each byte is a bitmask of which pillars (corner N/S/W/E) and walls (edge NE/NW/SE/SW)
-         * the piece renders. Compose with bitmask() and the BRIDGE_PILLAR_CORNER_{N,S,W,E} /
-         * BRIDGE_PILLAR_EDGE_{NE,SE,SW,NW} constants.
+
+        /* pillar_info declares where the bridge's pillars and walls are located for each
+         * span slot. There are six slots, each with one byte for the X orientation and one
+         * for Y, giving 12 values in total. Each byte is a bitmask of corners and edges,
+         * using BRIDGE_PILLAR_CORNER_{N,S,W,E} and BRIDGE_PILLAR_EDGE_{NE,SE,SW,NW}.
+         * The game checks this against whatever sits on the tiles underneath: if a tile
+         * conflicts with a declared pillar position, the game skips rendering that pillar
+         * for that tile. A value of 0 means no pillars for that slot and orientation.
          */
         pillar_info: [
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            ),
-            bitmask(
-                BRIDGE_PILLAR_CORNER_W,
-                BRIDGE_PILLAR_CORNER_S,
-                BRIDGE_PILLAR_CORNER_E,
-                BRIDGE_PILLAR_CORNER_N
-            )
+            0, 0,  // slot 0: no pillars
+            0, 0,  // slot 1: no pillars
+            0, 0,  // slot 2: no pillars
+            bitmask(BRIDGE_PILLAR_CORNER_N, BRIDGE_PILLAR_CORNER_E),  // slot 3, X-axis
+            bitmask(BRIDGE_PILLAR_CORNER_S, BRIDGE_PILLAR_CORNER_W),  // slot 3, Y-axis
+            0, 0,  // slot 4: no pillars
+            bitmask(BRIDGE_PILLAR_CORNER_N, BRIDGE_PILLAR_CORNER_E),  // slot 5, X-axis
+            bitmask(BRIDGE_PILLAR_CORNER_S, BRIDGE_PILLAR_CORNER_W),  // slot 5, Y-axis
         ];
     }
+
+    /* Assign spritesets to each visual layer.
+     * Each list holds four entries, one per transport type: [rail, road, monorail, maglev].
+     * We supply the same cable sprites for all transport types; the game draws
+     * the appropriate track or road surface on top automatically.
+     */
     graphics {
-        bridge_back:    [wood_back_spr];
-        bridge_front:   [wood_front_spr];
-        bridge_pillars: [wood_pillar_spr];
-        bridge_head:    [wood_ramps_spr];
+        bridge_head:    [cable_head,   cable_head,   cable_head,   cable_head];
+        bridge_back:    [cable_back,   cable_back,   cable_back,   cable_back];
+        bridge_front:   [cable_front,  cable_front,  cable_front,  cable_front];
+        bridge_pillars: [cable_pillar, cable_pillar, cable_pillar, cable_pillar];
     }
 }

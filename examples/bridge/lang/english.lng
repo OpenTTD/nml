@@ -1,6 +1,6 @@
 ##grflangid 0x01
 STR_GRF_NAME                                                    :NML Example NewGRF: Bridge
 STR_GRF_DESC                                                    :{ORANGE}NML Example NewGRF: Bridge{}{BLACK}This NewGRF is intended to provide a coding example for the high-level NewGRF-coding language NML.{}It demonstrates how to define a custom bridge using FEAT_BRIDGES with sprite templates, 6-table duplication for bridge_parts, and 4x zoom alternatives.
-STR_BRIDGE_NAME                                                 :Wooden Bridge
-STR_BRIDGE_DESC_RAIL                                            :A traditional wooden rail bridge.
-STR_BRIDGE_DESC_ROAD                                            :A traditional wooden road bridge.
+STR_BRIDGE_NAME                                                 :Cable-Stayed Bridge
+STR_BRIDGE_DESC_RAIL                                            :Cable-Stayed Rail Bridge
+STR_BRIDGE_DESC_ROAD                                            :Cable-Stayed Road Bridge
