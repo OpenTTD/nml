@@ -24,8 +24,8 @@
 0E 00
 0F \dx0000078A
 
-// param[63] = param[0]
-4 * 9 0D 3F \D= 00 FE \dx000D08FF
+// param[63] = param[\DR]
+4 * 9 0D 3F \D= \DR FE \dx000D08FF
 
 5 * 7 06
 3F 82 FF \wx0003

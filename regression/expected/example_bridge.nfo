@@ -31,8 +31,8 @@
 15 06 00 00 00 00 00 00 0C 03
 00 00 0C 03
 
-// param[63] = param[0]
-5 * 9 0D 3F \D= 00 FE \dx001A08FF
+// param[63] = param[\DR]
+5 * 9 0D 3F \D= \DR FE \dx001A08FF
 
 6 * 7 06
 3F 82 FF \wx0003
