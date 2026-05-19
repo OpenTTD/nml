@@ -1124,7 +1124,10 @@ properties[0x07] = {
         "multitile_function": mt_house_same,
         "custom_function": lambda *values: accepted_cargos(0x23, *values),
     },
-    "badges":                  {"custom_function": lambda value: badge_list(0x24, value)},
+    "badges": {
+        "multitile_function": mt_house_same,
+        "custom_function": lambda value: badge_list(0x24, value)
+    },
 }
 # fmt: on
 
