@@ -93,6 +93,7 @@ prop_tables = [
     action0properties.properties[0x12],
     action0properties.properties[0x13],
     action0properties.properties[0x14],
+    action0properties.properties[0x15],
 ]
 
 properties = set()
@@ -122,6 +123,7 @@ cb_tables = [
     action3_callbacks.callbacks[0x12],
     action3_callbacks.callbacks[0x13],
     action3_callbacks.callbacks[0x14],
+    action3_callbacks.callbacks[0x15],
 ]
 
 callbacks = set()
