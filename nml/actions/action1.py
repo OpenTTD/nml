@@ -13,7 +13,12 @@ You should have received a copy of the GNU General Public License along
 with NML; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-from nml.actions import base_action, real_sprite, action2
+from nml.actions import base_action, real_sprite
+
+"""
+Maximum number of sprites IDs.
+"""
+total_action1_ids = 0x4000
 
 
 class Action1(base_action.BaseAction):
@@ -88,7 +93,6 @@ class SpritesetCollection(base_action.BaseAction):
         self.first_set = first_set
         self.num_sprites_per_spriteset = num_sprites_per_spriteset
         self.spritesets = {}
-        self.max_id = 0x3FFF if feature in action2.features_sprite_layout else 0xFFFF
 
     def skip_action7(self):
         return False
@@ -109,10 +113,12 @@ class SpritesetCollection(base_action.BaseAction):
         @return: True iff the given spriteset can be added to this collection.
         @rtype: C{bool}
         """
-        assert self.first_set + 1 <= self.max_id
+        assert self.first_set + len(self.spritesets) <= total_action1_ids
         if len(real_sprite.parse_sprite_data(spriteset)) != self.num_sprites_per_spriteset:
             return False
-        return self.first_set + len(self.spritesets) + (1 if spriteset not in self.spritesets else 0) <= self.max_id
+        return (
+            self.first_set + len(self.spritesets) + (1 if spriteset not in self.spritesets else 0) <= total_action1_ids
+        )
 
     def add(self, spriteset):
         """
@@ -196,14 +202,13 @@ def add_to_action1(spritesets, feature, pos):
 
     current_collection = spriteset_collections[feature][-1]
     for spriteset in spritesets:
-        for spriteset_collection in spriteset_collections[feature]:
-            if spriteset in spriteset_collection.spritesets:
-                continue
+        if any(spriteset in spriteset_collection.spritesets for spriteset_collection in spriteset_collections[feature]):
+            continue
         if not current_collection.can_add(spriteset):
             spriteset_collections[feature].append(
                 SpritesetCollection(
                     feature,
-                    current_collection.first_set + len(current_collection.spritesets),
+                    (current_collection.first_set + len(current_collection.spritesets)) % total_action1_ids,
                     len(real_sprite.parse_sprite_data(spriteset)),
                 )
             )
