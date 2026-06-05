@@ -197,17 +197,3 @@ def get_production_v2_actions(produce):
     prod_action = Action2Production(produce.name.value, produce.pos, 2, sub_in, add_out, again)
 
     return finish_production_actions(produce, prod_action, action_list, varact2parser)
-
-
-def make_empty_production_action2(pos):
-    """
-    Make an empty production action2
-    For use with failed callbacks
-
-    @param pos: Positional context.
-    @type  pos: L{Position}
-
-    @return: The created production action2
-    @rtype: L{Action2Production}
-    """
-    return Action2Production("@CB_FAILED_PROD", pos, 0, [0, 0, 0], [0, 0], 0)

@@ -610,26 +610,6 @@ def get_layout_action2s(spritelayout, feature):
     return actions
 
 
-def make_empty_layout_action2(feature, pos):
-    """
-    Make an empty layout action2
-    For use with failed callbacks
-
-    @param feature: Feature of the sprite layout to create
-    @type feature: C{int}
-
-    @param pos: Positional context.
-    @type  pos: L{Position}
-
-    @return: The created sprite layout action2
-    @rtype: L{Action2Layout}
-    """
-    layout = ParsedSpriteLayout()
-    layout.ground_sprite = Action2LayoutSprite(feature, Action2LayoutSpriteType.GROUND)
-    layout.ground_sprite.set_param(expression.Identifier("sprite"), expression.ConstantNumeric(0))
-    return Action2Layout(feature, "@CB_FAILED_LAYOUT{:02X}".format(feature), pos, layout, [])
-
-
 class StationSpriteset(expression.Expression):
     def __init__(self, spriteset, args, var10, pos=None):
         expression.Expression.__init__(self, pos)
