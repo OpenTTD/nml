@@ -90,7 +90,7 @@ random_types = {
     0x0A: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 16, "triggers": False}},
     0x0B: {},
     0x0C: {},
-    0x0D: {},
+    0x0D: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 16, "triggers": False}},
     0x0E: {},
     0x0F: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 8, "triggers": False}},
     0x10: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 2, "triggers": False}},
@@ -100,6 +100,11 @@ random_types = {
     },
     0x12: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 2, "triggers": False}},
     0x13: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 2, "triggers": False}},
+    0x14: {
+        "SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 16, "triggers": True},
+        "TILE": {"type": 0x80, "param": 0, "first_bit": 16, "num_bits": 8, "triggers": True},
+    },
+    0x15: {},
 }
 
 
