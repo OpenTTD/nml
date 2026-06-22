@@ -668,9 +668,10 @@ class StationSpritesetVar10Map:
                     spriteset.set_action2(real_action2, feature)
                 ref = expression.SpriteGroupRef(spriteset.name, [], None, spriteset.get_action2(feature))
             else:
-                if spriteset > len(custom_spritesets):
+                try:
+                    ref = custom_spritesets[spriteset]
+                except IndexError:
                     raise generic.ScriptError("Index out of range")
-                ref = custom_spritesets[spriteset]
             # Skip default result
             if ref == default:
                 continue
