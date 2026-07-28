@@ -170,7 +170,7 @@ class Action0Property(BaseAction0Property):
 #
 # 'required' (value doesn't matter) if the property is required for the item to be valid.
 
-properties = 0x16 * [None]
+properties = 0x17 * [None]
 
 #
 # Some helper functions that are used for multiple features
@@ -1753,4 +1753,16 @@ properties[0x15] = {
     'label':                     {'custom_function': lambda x: string_property(0x08, x), "required": True},
     'flags':                     {'size': 4, 'num': 0x09},
     'name':                      {'num': -1, 'string': None},
+}
+
+#
+# Feature 0x16 (Trees)
+#
+
+properties[0x16] = {
+    "substitute":            {"size": 1, "num": 0x08, "first": None},
+    "override":              {"size": 1, "num": 0x09},
+    "climates_available":    {"size": 1, "num": 0x0A},
+    "tropiczones_available": {"size": 1, "num": 0x0B},
+    "probability":           {"size": 1, "num": 0x0C},
 }
