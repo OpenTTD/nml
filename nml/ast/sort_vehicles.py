@@ -44,7 +44,7 @@ class SortVehicles(base_statement.BaseStatement):
             isinstance(x, expression.ConstantNumeric) for x in self.vehid_list.values
         ):
             raise generic.ScriptError(
-                "Second parameter is not an array of one of the items in it could not be reduced to a constant number",
+                "Second parameter is not an array or one of the items in it could not be reduced to a constant number",
                 self.pos,
             )
 
