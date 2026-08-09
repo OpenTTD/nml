@@ -100,6 +100,7 @@ random_types = {
     },
     0x12: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 2, "triggers": False}},
     0x13: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 2, "triggers": False}},
+    0x16: {"SELF": {"type": 0x80, "param": 0, "first_bit": 0, "num_bits": 2, "triggers": False}},
 }
 
 

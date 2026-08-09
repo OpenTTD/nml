@@ -881,6 +881,28 @@ varact2vars_badges = {
     'intro_date'             : {'var': 0x40, 'start':  0, 'size': 32},
 }
 
+#
+# Trees (feature 0x16)
+#
+
+varact2vars_trees = {
+    'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
+    'tree_count' : {'var': 0x41, 'start': 0, 'size': 8},
+    'variant' : {'var': 0x42, 'start': 0, 'size': 2},
+    'town_zone' : {'var': 0x43, 'start': 0, 'size': 8},
+    'tree_month' : {'var': 0x44, 'start': 0, 'size': 4},
+}
+
+varact2vars60x_trees = {
+    'nearby_tile_info' : {'var': 0x60, 'start':  0, 'size': 32, 'param_function': signed_tile_offset},
+    'nearby_tile_slope' : {'var': 0x60, 'start':  0, 'size': 5, 'param_function': signed_tile_offset},
+    'nearby_tile_is_water' : {'var': 0x60, 'start':  9, 'size': 1, 'param_function': signed_tile_offset},
+    'nearby_tile_terrain_type' : {'var': 0x60, 'start': 10, 'size': 3, 'param_function': signed_tile_offset},
+    'nearby_tile_water_class' : {'var': 0x60, 'start': 13, 'size': 2, 'param_function': signed_tile_offset},
+    'nearby_tile_height' : {'var': 0x60, 'start': 16, 'size': 8, 'param_function': signed_tile_offset},
+    'nearby_tile_class' : {'var': 0x60, 'start': 24, 'size': 4, 'param_function': signed_tile_offset},
+}
+
 class VarAct2Scope:
     def __init__(self, name, vars_normal, vars_60x, has_persistent_storage=False):
         self.name = name
@@ -921,6 +943,7 @@ scope_roadtypes = VarAct2Scope("RoadTypes", varact2vars_roadtype, varact2vars60x
 scope_tramtypes = VarAct2Scope("TramTypes", varact2vars_tramtype, varact2vars60x_tramtype)
 scope_roadstops = VarAct2Scope("RoadStops", varact2vars_roadstop, varact2vars60x_roadstop)
 scope_badges = VarAct2Scope("Badges", varact2vars_badges, {})
+scope_trees = VarAct2Scope("Trees", varact2vars_trees, varact2vars60x_trees)
 
 varact2features = [
     VarAct2Feature(scope_trains, scope_trains),
@@ -945,4 +968,5 @@ varact2features = [
     VarAct2Feature(scope_tramtypes, None),
     VarAct2Feature(scope_roadstops, scope_towns),
     VarAct2Feature(scope_badges, None),
+    VarAct2Feature(scope_trees, None),
 ]

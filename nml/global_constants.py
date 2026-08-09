@@ -38,6 +38,13 @@ constant_numbers = {
     "NO_CLIMATE"            : 0x00,
     "ALL_CLIMATES"          : 0x0F,
 
+    # tropic zones
+    "TROPICZONE_NORMAL"     : 0,
+    "TROPICZONE_DESERT"     : 1,
+    "TROPICZONE_RAINFOREST" : 2,
+    "NO_TROPICZONES"        : 0x00,
+    "ALL_TROPICZONES"       : 0x07,
+
     # never expire
     "VEHICLE_NEVER_EXPIRES" : 0xFF,
 
