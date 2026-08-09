@@ -1764,5 +1764,9 @@ properties[0x16] = {
     "override":              {"size": 1, "num": 0x09},
     "climates_available":    {"size": 1, "num": 0x0A},
     "tropiczones_available": {"size": 1, "num": 0x0B},
-    "probability":           {"size": 1, "num": 0x0C},
+    "probabilities":         {"size": 4, "num": 0x0C},
+    "classes0":              {"size": 4, "num": 0x0D},
+    "classes1":              {"size": 4, "num": 0x0E},
+    "classes2":              {"size": 4, "num": 0x0F},
+    "classes3":              {"size": 4, "num": 0x10},
 }

@@ -889,7 +889,8 @@ varact2vars_trees = {
     'terrain_type' : {'var': 0x40, 'start': 0, 'size': 8},
     'tree_count' : {'var': 0x41, 'start': 0, 'size': 8},
     'variant' : {'var': 0x42, 'start': 0, 'size': 2},
-    'town_zone' : {'var': 0x43, 'start': 0, 'size':  8},
+    'town_zone' : {'var': 0x43, 'start': 0, 'size': 8},
+    'tree_month' : {'var': 0x44, 'start': 0, 'size': 4},
 }
 
 varact2vars60x_trees = {
