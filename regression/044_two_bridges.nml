@@ -1,0 +1,84 @@
+﻿grf {
+    grfid: "NML+";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+/* Two independent bridges using the `graphics { bridge_back/bridge_front/bridge_pillars/bridge_ends: ... }`
+   block.  Unique sprites from both bridges share a single GRM reservation and
+   a single ActionA sprite-load sequence, emitted once before the first bridge's
+   Action0.  Each bridge's Action0 is patched via its own Action6. */
+
+template bridge_spr() {
+    [0, 0, 4, 4, -2, -2]
+}
+
+/* Bridge A sprites (48 for parts, 32 for ends) */
+
+spriteset(bridge_a_parts_spr, "oneway.png") {
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+}
+
+spriteset(bridge_a_ends_spr, "oneway.png") {
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+}
+
+/* Bridge B sprites (48 for parts, 32 for ends) */
+
+spriteset(bridge_b_parts_spr, "oneway.png") {
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+}
+
+spriteset(bridge_b_ends_spr, "oneway.png") {
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+}
+
+/* Bridge definitions */
+
+item(FEAT_BRIDGES, bridge_a, 0x01) {
+    property {
+        min_length:          0;
+        max_length:          12;
+        cost_factor:         40;
+        speed_limit:         64 km/h;
+        flags:               0;
+        avail_year:          1930;
+    }
+    graphics {
+        bridge_back:    [bridge_a_parts_spr];
+        bridge_front:   [bridge_a_parts_spr];
+        bridge_pillars: [bridge_a_parts_spr];
+        bridge_head:    [bridge_a_ends_spr];
+    }
+}
+
+item(FEAT_BRIDGES, bridge_b, 0x02) {
+    property {
+        min_length:          0;
+        max_length:          16;
+        cost_factor:         60;
+        speed_limit:         80 km/h;
+        flags:               0;
+        avail_year:          1950;
+    }
+    graphics {
+        bridge_back:    [bridge_b_parts_spr];
+        bridge_front:   [bridge_b_parts_spr];
+        bridge_pillars: [bridge_b_parts_spr];
+        bridge_head:    [bridge_b_ends_spr];
+    }
+}
