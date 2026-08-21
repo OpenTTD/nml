@@ -1,0 +1,16 @@
+grf {
+    grfid: "NML\43";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+item(FEAT_TRAINS, item_mu_MU_Wagon_Unpowered, 10) {}
+item(FEAT_TRAINS, item_mu_MU_Wagon_Powered, 11) {}
+
+// Should emit a warning
+item(FEAT_TRAINS, item_mu_mu_wagon_unpowered) {}
+
+// Should not emit a warning
+item(FEAT_TRAINS, item_mu_MU_Wagon_Powered) {}
