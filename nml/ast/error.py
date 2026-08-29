@@ -45,9 +45,7 @@ class Error(base_statement.BaseStatement):
     def __init__(self, param_list, pos):
         base_statement.BaseStatement.__init__(self, "error()", pos)
         if not 2 <= len(param_list) <= 5:
-            raise generic.ScriptError(
-                "'error' expects between 2 and 5 parameters, got " + str(len(param_list)), self.pos
-            )
+            raise generic.ScriptError(f"'error' expects between 2 and 5 parameters, got {len(param_list)}", self.pos)
         self.severity = param_list[0]
         self.msg = param_list[1]
         self.data = param_list[2] if len(param_list) >= 3 else None

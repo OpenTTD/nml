@@ -107,7 +107,7 @@ class GRF(base_statement.BaseStatement):
             elif assignment.name.value == "min_compatible_version":
                 self.min_compatible_version = assignment.value
             else:
-                raise generic.ScriptError("Unknown item in GRF-block: " + str(assignment.name), assignment.name.pos)
+                raise generic.ScriptError(f"Unknown item in GRF-block: {assignment.name}", assignment.name.pos)
 
     def register_names(self):
         generic.OnlyOnce.enforce(self, "GRF-block")
@@ -301,7 +301,7 @@ class ParameterSetting:
             if self.type == "bool" and self.def_val.value != 0 and self.def_val.value != 1:
                 raise generic.ScriptError("setting-def_value must be either 0 or 1 for 'bool' settings", value.pos)
         else:
-            raise generic.ScriptError("Unknown setting-property " + name, value.pos)
+            raise generic.ScriptError(f"Unknown setting-property {name}", value.pos)
 
 
 class ParameterDescription:

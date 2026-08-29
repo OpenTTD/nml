@@ -94,7 +94,7 @@ def parse_action5(replaces):
     num_sprites = len(real_sprite_list)
 
     if replaces.type.value not in action5_table:
-        raise generic.ScriptError(replaces.type.value + " is not a valid sprite replacement type", replaces.type.pos)
+        raise generic.ScriptError(f"{replaces.type.value} is not a valid sprite replacement type", replaces.type.pos)
     type_id, num_required, block_type = action5_table[replaces.type.value]
     offset = None
 
