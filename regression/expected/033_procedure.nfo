@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d13
+0 * 4 \d11
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -23,20 +23,10 @@
 7D 88 20 \dxFFFFFFFF 	// a
 \2+ 7D 89 00 \dxFFFFFFFF 	// b
 \b0
-\wx8000 // Return computed value
-
-// Name: @CB_FAILED_PROD
-4 * 15 02 0A FE 00 \wx0000 \wx0000 \wx0000 \wx0000 \wx0000 00
-
-// Name: @CB_FAILED0A
-5 * 23 02 0A FE 89
-0C 00 \dx0000FFFF
-\b1
-\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FE // Non-graphics callback, return graphics result
+\wx7FFE // Return computed value
 
 // Name: @return_action_0
-6 * 66 02 0A FD 89
+4 * 66 02 0A FE 89
 1A 20 \dx00000005
 \2sto 1A 20 \dx00000088
 \2r 7D 86 20 \dxFFFFFFFF 	// a
@@ -50,7 +40,7 @@
 
 // Name: callee
 // a : register 86
-7 * 67 02 0A FD 89
+5 * 67 02 0A FE 89
 45 30 \dx00000003
 \2+ 45 38 \dx0000000F
 \2sto 1A 20 \dx00000087
@@ -59,11 +49,11 @@
 \2* 7D 87 20 \dxFFFFFFFF
 \2+ 7D 86 00 \dxFFFFFFFF 	// a
 \b1
-\wx00FE \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
-\wx00FD // default: return (a + dumb_add(5, a))
+\wx7FFF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00FE // default: return (a + dumb_add(5, a))
 
 // Name: caller2
-8 * 232 02 0A FC 89
+6 * 232 02 0A FD 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
@@ -72,7 +62,7 @@ B3 20 \dx00000003
 \2sto 1A 20 \dx00000081
 \2r 1A 20 \dx00000001
 \2sto 1A 20 \dx00000086
-\2r 7E FD 20 \dxFFFFFFFF 	// callee(1)
+\2r 7E FE 20 \dxFFFFFFFF 	// callee(1)
 \2+ 5F 28 \dx0000FFFF
 \2sto 1A 20 \dx00000082
 \2r 43 20 \dxFFFFFFFF
@@ -96,10 +86,10 @@ B3 20 \dx00000003
 \2* 7D 81 20 \dxFFFFFFFF
 \2* 7D 80 00 \dxFFFFFFFF
 \b0
-\wx8000 // Return computed value
+\wx7FFE // Return computed value
 
 // Name: caller1
-9 * 145 02 0A FF 89
+7 * 145 02 0A FF 89
 B3 20 \dx00000003
 \2+ AA 20 \dx0000FFFF
 \2sto 1A 20 \dx00000080
@@ -107,7 +97,7 @@ B3 20 \dx00000003
 \2sto 1A 20 \dx00000081
 \2r 1A 20 \dx00000000
 \2sto 1A 20 \dx00000086
-\2r 7E FD 20 \dxFFFFFFFF 	// callee(0)
+\2r 7E FE 20 \dxFFFFFFFF 	// callee(0)
 \2sto 1A 20 \dx00000082
 \2r 7D 81 20 \dxFFFFFFFF
 \2sto 1A 20 \dx00000088
@@ -120,23 +110,23 @@ B3 20 \dx00000003
 \2* 7D 83 20 \dxFFFFFFFF
 \2* 7D 80 00 \dxFFFFFFFF
 \b0
-\wx8000 // Return computed value
+\wx7FFE // Return computed value
 
-10 * 11 00 0A \b2 01 FF \wx0000
+8 * 11 00 0A \b2 01 FF \wx0000
 08 00
 09 00
 
-11 * 9 00 0A \b1 01 FF \wx0000
+9 * 9 00 0A \b1 01 FF \wx0000
 22 42
 
 // Name: @action3_0
-12 * 33 02 0A FE 89
+10 * 33 02 0A FF 89
 0C 00 \dx0000FFFF
 \b2
-\wx00FC \dx0000003B \dx0000003B 	// caller2;
+\wx00FD \dx0000003B \dx0000003B 	// caller2;
 \wx00FF \dx0000015F \dx0000015F 	// caller1;
-\wx00FE // @CB_FAILED0A;
+\wx7FFF // CB_FAILED;
 
-13 * 7 03 0A 01 00 \b0
-\wx00FE 	// @action3_0;
+11 * 7 03 0A 01 00 \b0
+\wx00FF 	// @action3_0;
 

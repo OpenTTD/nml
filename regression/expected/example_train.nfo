@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d120
+0 * 4 \d118
 
 1 * 665 14 "C" "INFO"
 "T" "NAME" 1F "NML Voorbeeld NewGRF: Trein" 00
@@ -151,29 +151,17 @@ F2 20 \dx000000FF
 \wx00FF \dx00000001 \dx00000001 	// 1 .. 1: set_icm_invisible;
 \wx00FC // default: set_icm_middle;
 
-// Name: @CB_FAILED_REAL00
-55 * 9 02 00 FF \b1 \b1
-\w0
-\w0
-
-// Name: @CB_FAILED00
-56 * 23 02 00 FF 89
-0C 00 \dx0000FFFF
-\b1
-\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FF // Non-graphics callback, return graphics result
-
 // Name: sw_icm_graphics
-57 * 51 02 00 FD 89
+55 * 51 02 00 FD 89
 40 80 \dx000000FF \dx00000000 \dx00000004
 \b3
 \wx00FE \dx00000000 \dx00000000 	// 0 .. 0: sw_icm_graphics_front;
 \wx00FC \dx00000001 \dx00000002 	// 1 .. 2: sw_icm_graphics_middle;
 \wx00FD \dx00000003 \dx00000003 	// 3 .. 3: sw_icm_graphics_rear;
-\wx00FF // default: @CB_FAILED00;
+\wx7FFF // default: CB_FAILED;
 
 // Name: sw_icm_cargo_subtype_text
-58 * 33 02 00 FC 89
+56 * 33 02 00 FC 89
 F2 00 \dx000000FF
 \b2
 \wx8000 \dx00000000 \dx00000000 	// 0 .. 0: return string(STR_ICM_SUBTYPE_3_PART);
@@ -181,14 +169,14 @@ F2 00 \dx000000FF
 \wx8400 // default: return 1024;
 
 // param[127] = param[17]
-59 * 9 0D 7F \D= 11 FE \dx0000FFFF
+57 * 9 0D 7F \D= 11 FE \dx0000FFFF
 
-60 * 7 06
+58 * 7 06
 7F 04 FF \wx001B
 FF
 
 // Name: @return_action_0
-61 * 34 02 00 FE 89
+59 * 34 02 00 FE 89
 43 38 \dx0000000F
 \2* 1A 20 \dx00000010
 \2+ 1A 20 \dx00000003
@@ -197,61 +185,61 @@ FF
 \wx8000 // Return computed value
 
 // param[124] = param[17]
-62 * 9 0D 7C \D= 11 FE \dx0000FFFF
+60 * 9 0D 7C \D= 11 FE \dx0000FFFF
 
 // param[125] = (param[124] + 16384)
-63 * 9 0D 7D \D+ 7C FF \dx00004000
+61 * 9 0D 7D \D+ 7C FF \dx00004000
 
 // param[126] = (param[125] | 32768)
-64 * 9 0D 7E \D| 7D FF \dx00008000
+62 * 9 0D 7E \D| 7D FF \dx00008000
 
 // param[123] = param[17]
-65 * 9 0D 7B \D= 11 FE \dx0000FFFF
+63 * 9 0D 7B \D= 11 FE \dx0000FFFF
 
 // param[124] = (param[123] + 3)
-66 * 9 0D 7C \D+ 7B FF \dx00000003
+64 * 9 0D 7C \D+ 7B FF \dx00000003
 
 // param[125] = (param[124] | 32768)
-67 * 9 0D 7D \D| 7C FF \dx00008000
+65 * 9 0D 7D \D| 7C FF \dx00008000
 
-68 * 17 06
+66 * 17 06
 00 04 FF \wx0006
 7E 02 FF \wx0015
 7D 02 FF \wx001F
 FF
 
 // Name: sw_icm_colour_mapping
-69 * 43 02 00 FE 89
+67 * 43 02 00 FE 89
 1A 00 \dx00000000 	// param[0]
 \b3
 \wx00FE \dx00000000 \dx00000000 	// 0 .. 0: return (((var[0x43, 24, 15] * 16) + 3) + base_sprite_2cc)
 \wx8000 \dx00000001 \dx00000001 	// 1 .. 1: return param[126];
 \wx8000 \dx00000002 \dx00000002 	// 2 .. 2: return param[125];
-\wx00FF // default: @CB_FAILED00;
+\wx7FFF // default: CB_FAILED;
 
 // Name: sw_icm_start_stop
-70 * 31 02 00 FB 89
+68 * 31 02 00 FF 89
 40 50 \dx000000FF \dx00000001 \dx00000001
 \b1
 \wx8400 \dx00000001 \dx00000010 	// 1 .. 16: return 1024;
 \wx8002 // default: return string(STR_ICM_CANNOT_START);
 
 // Name: sw_icm_articulated_part
-71 * 23 02 00 FA 89
+69 * 23 02 00 FB 89
 10 00 \dxFFFFFFFF
 \b1
 \wx8074 \dx00000001 \dx00000003 	// 1 .. 3: return 116;
 \wxFFFF // default: return 32767;
 
 // Name: sw_icm_can_attach_wagon
-72 * 23 02 00 F9 89
+70 * 23 02 00 FA 89
 C6 00 \dx0000FFFF
 \b1
 \wx8401 \dx00000074 \dx00000074 	// 116 .. 116: return 1025;
 \wx8003 // default: return string(STR_ICM_CANNOT_ATTACH_OTHER);
 
 // Name: sw_icm_length_3_part_vehicle
-73 * 41 02 00 F8 89
+71 * 41 02 00 F9 89
 40 80 \dx000000FF \dx00000000 \dx00000004
 \b2
 \wx8001 \dx00000001 \dx00000001 	// 1 .. 1: return 1;
@@ -259,43 +247,43 @@ C6 00 \dx0000FFFF
 \wx8008 // default: return 8;
 
 // Name: sw_icm_length
-74 * 23 02 00 F8 89
+72 * 23 02 00 F9 89
 F2 00 \dx000000FF
 \b1
-\wx00F8 \dx00000000 \dx00000000 	// 0 .. 0: sw_icm_length_3_part_vehicle;
+\wx00F9 \dx00000000 \dx00000000 	// 0 .. 0: sw_icm_length_3_part_vehicle;
 \wx8008 // default: return 8;
 
 // Name: sw_icm_power
-75 * 23 02 00 F7 89
+73 * 23 02 00 F8 89
 F2 00 \dx000000FF
 \b1
 \wx8699 \dx00000000 \dx00000000 	// 0 .. 0: return 1689;
 \wx89E6 // default: return 2534;
 
 // Name: sw_icm_weight
-76 * 23 02 00 F6 89
+74 * 23 02 00 F7 89
 F2 00 \dx000000FF
 \b1
 \wx8090 \dx00000000 \dx00000000 	// 0 .. 0: return 144;
 \wx80C0 // default: return 192;
 
 // Name: sw_icm_te
-77 * 23 02 00 F5 89
+75 * 23 02 00 F6 89
 F2 00 \dx000000FF
 \b1
 \wx8019 \dx00000000 \dx00000000 	// 0 .. 0: return 25;
 \wx801C // default: return 28;
 
 // param[142] = 2
-78 * 9 0D 8E \D= FF 00 \dx00000002
+76 * 9 0D 8E \D= FF 00 \dx00000002
 
 // param[158] = (param[158] | 8)
-79 * 9 0D 9E \D| 9E FF \dx00000008
+77 * 9 0D 9E \D| 9E FF \dx00000008
 
-80 * 9 00 08 \b1 01 FF \wx002C
+78 * 9 00 08 \b1 01 FF \wx002C
 08 0A
 
-81 * 104 00 00 \b37 01 FF \wx0074
+79 * 104 00 00 \b37 01 FF \wx0074
 06 07
 2A \dx000B0D34
 04 FF
@@ -334,24 +322,24 @@ F2 00 \dx000000FF
 23 00
 25 00
 
-82 * 33 04 00 7F 01 FF \wx0074 "ICM 'Koploper' (Electric)" 00
+80 * 33 04 00 7F 01 FF \wx0074 "ICM 'Koploper' (Electric)" 00
 
-83 * 35 04 00 1F 01 FF \wx0074 "ICM 'Koploper' (Electrisch)" 00
+81 * 35 04 00 1F 01 FF \wx0074 "ICM 'Koploper' (Electrisch)" 00
 
-84 * 12 01 00 00 FF \wx0006 FF \wx0001 FF \wx0001
+82 * 12 01 00 00 FF \wx0006 FF \wx0001 FF \wx0001
 
-85 icm.png 8bpp 1 161 53 14 -25 -10 normal
+83 icm.png 8bpp 1 161 53 14 -25 -10 normal
 
 // Name: set_icm_purchase - feature 00
-86 * 9 02 00 F4 \b1 \b1
+84 * 9 02 00 F5 \b1 \b1
 \w6
 \w6
 
-87 * 9 00 00 \b1 01 FF \wx0074
+85 * 9 00 00 \b1 01 FF \wx0074
 1E 79
 
 // Name: @return_action_0
-88 * 41 02 00 F3 89
+86 * 41 02 00 F4 89
 F2 20 \dx000000FF
 \2cmp 1A 20 \dx00000001
 \2& 1A 20 \dx00000001
@@ -361,7 +349,7 @@ F2 20 \dx000000FF
 \wx8000 // Return computed value
 
 // Name: @return_action_1
-89 * 35 02 00 F2 89
+87 * 35 02 00 F3 89
 F2 60 \dx000000FF \dx00000003 \dx00000001
 \2* 1A 20 \dx00000024
 \2/ 1A 00 \dx00000004
@@ -369,33 +357,33 @@ F2 60 \dx000000FF \dx00000003 \dx00000001
 \wx8000 // Return computed value
 
 // Name: @return_action_2
-90 * 20 02 00 F1 89
+88 * 20 02 00 F2 89
 1A 20 \dx00000008
 \2- 1C 00 \dxFFFFFFFF
 \b0
 \wx8000 // Return computed value
 
 // Name: @action3_1
-91 * 24 02 00 F1 89
-7E F8 00 \dxFFFFFFFF 	// sw_icm_length
+89 * 24 02 00 F2 89
+7E F9 00 \dxFFFFFFFF 	// sw_icm_length
 \b1
-\wx00FF \dx0000FFFF \dx0000FFFF 	// @CB_FAILED00;
-\wx00F1 // return (8 - var[0x1C, 0, -1])
+\wx7FFF \dx0000FFFF \dx0000FFFF 	// CB_FAILED;
+\wx00F2 // return (8 - var[0x1C, 0, -1])
 
 // Name: @action3_0
-92 * 73 02 00 F1 89
+90 * 73 02 00 F2 89
 10 00 \dx000000FF
 \b6
-\wx00F7 \dx0000000B \dx0000000B 	// sw_icm_power;
-\wx00F3 \dx0000000D \dx0000000D 	// return ((var[0xF2, 0, 255] == 1) ? 150 : 100)
-\wx00F2 \dx00000014 \dx00000014 	// return (((var[0xF2, 0, 255] + 3) * 36) / 4)
-\wx00F6 \dx00000016 \dx00000016 	// sw_icm_weight;
-\wx00F5 \dx0000001F \dx0000001F 	// sw_icm_te;
-\wx00F1 \dx00000021 \dx00000021 	// @action3_1;
+\wx00F8 \dx0000000B \dx0000000B 	// sw_icm_power;
+\wx00F4 \dx0000000D \dx0000000D 	// return ((var[0xF2, 0, 255] == 1) ? 150 : 100)
+\wx00F3 \dx00000014 \dx00000014 	// return (((var[0xF2, 0, 255] + 3) * 36) / 4)
+\wx00F7 \dx00000016 \dx00000016 	// sw_icm_weight;
+\wx00F6 \dx0000001F \dx0000001F 	// sw_icm_te;
+\wx00F2 \dx00000021 \dx00000021 	// @action3_1;
 \wx00FD // sw_icm_graphics;
 
 // Name: @action3_2
-93 * 63 02 00 F5 89
+91 * 63 02 00 F6 89
 10 00 \dx000000FF
 \b5
 \wx8699 \dx0000000B \dx0000000B 	// return 1689;
@@ -406,7 +394,7 @@ F2 60 \dx000000FF \dx00000003 \dx00000001
 \wx00FD // sw_icm_graphics;
 
 // Name: @return_action_3
-94 * 49 02 00 F6 89
+92 * 49 02 00 F7 89
 40 A0 \dx000000FF \dx00000000 \dx00000004
 \2cmp 1A 20 \dx00000000
 \2& 1A 20 \dx00000001
@@ -416,7 +404,7 @@ F2 60 \dx000000FF \dx00000003 \dx00000001
 \wx8000 // Return computed value
 
 // Name: @return_action_4
-95 * 35 02 00 F2 89
+93 * 35 02 00 F3 89
 F2 60 \dx000000FF \dx00000003 \dx00000001
 \2* 1A 20 \dx00000024
 \2/ 1A 00 \dx00000004
@@ -424,94 +412,94 @@ F2 60 \dx000000FF \dx00000003 \dx00000001
 \wx8000 // Return computed value
 
 // Name: @action3_3
-96 * 93 02 00 F1 89
+94 * 93 02 00 F2 89
 0C 00 \dx0000FFFF
 \b8
-\wx00F6 \dx00000010 \dx00000010 	// return ((((var[0x40, 0, 255] + 0) % 4) == 0) ? 186 : 200)
-\wx00F2 \dx00000015 \dx00000015 	// return (((var[0xF2, 0, 255] + 3) * 36) / 4)
-\wx00FA \dx00000016 \dx00000016 	// sw_icm_articulated_part;
+\wx00F7 \dx00000010 \dx00000010 	// return ((((var[0x40, 0, 255] + 0) % 4) == 0) ? 186 : 200)
+\wx00F3 \dx00000015 \dx00000015 	// return (((var[0xF2, 0, 255] + 3) * 36) / 4)
+\wx00FB \dx00000016 \dx00000016 	// sw_icm_articulated_part;
 \wx00FC \dx00000019 \dx00000019 	// sw_icm_cargo_subtype_text;
-\wx00F9 \dx0000001D \dx0000001D 	// sw_icm_can_attach_wagon;
+\wx00FA \dx0000001D \dx0000001D 	// sw_icm_can_attach_wagon;
 \wx00FE \dx0000002D \dx0000002D 	// sw_icm_colour_mapping;
-\wx00FB \dx00000031 \dx00000031 	// sw_icm_start_stop;
-\wx00F1 \dx00000036 \dx00000036 	// @action3_0;
+\wx00FF \dx00000031 \dx00000031 	// sw_icm_start_stop;
+\wx00F2 \dx00000036 \dx00000036 	// @action3_0;
 \wx00FD // sw_icm_graphics;
 
 // Name: @action3_4
-97 * 63 02 00 FD 89
+95 * 63 02 00 FD 89
 0C 00 \dx0000FFFF
 \b5
-\wx00F4 \dx00000000 \dx00000000 	// set_icm_purchase;
-\wx00FA \dx00000016 \dx00000016 	// sw_icm_articulated_part;
+\wx00F5 \dx00000000 \dx00000000 	// set_icm_purchase;
+\wx00FB \dx00000016 \dx00000016 	// sw_icm_articulated_part;
 \wx8004 \dx00000023 \dx00000023 	// return string(STR_ICM_ADDITIONAL_TEXT);
 \wx00FE \dx0000002D \dx0000002D 	// sw_icm_colour_mapping;
-\wx00F5 \dx00000036 \dx00000036 	// @action3_2;
+\wx00F6 \dx00000036 \dx00000036 	// @action3_2;
 \wx00FD // sw_icm_graphics;
 
-98 * 12 03 00 01 FF \wx0074 \b1
+96 * 12 03 00 01 FF \wx0074 \b1
 FF \wx00FD 	// @action3_4;
-\wx00F1 	// @action3_3;
+\wx00F2 	// @action3_3;
 
 // param[126] = param[161]
-99 * 5 0D 7E \D= A1 00
+97 * 5 0D 7E \D= A1 00
 
 // param[127] = (302012601 - param[126])
-100 * 9 0D 7F \D- FF 7E \dx120058B9
+98 * 9 0D 7F \D- FF 7E \dx120058B9
 
 // param[127] = (param[127] << -31)
-101 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
+99 * 9 0D 7F \Du<< 7F FF \dxFFFFFFE1
 
-102 * 9 07 7F 04 \7= \dx00000000 01
+100 * 9 07 7F 04 \7= \dx00000000 01
 
-103 * 10 00 00 \b1 01 FF \wx0074
+101 * 10 00 00 \b1 01 FF \wx0074
 2B \wx00B9
 
-104 * 12 01 00 00 FF \wx0007 FF \wx0002 FF \wx0004
+102 * 12 01 00 00 FF \wx0007 FF \wx0002 FF \wx0004
 
-105 cargo_wagons.png 8bpp 1 1 8 24 -3 -12 normal
-106 cargo_wagons.png 8bpp 10 1 22 20 -14 -12 normal
-107 cargo_wagons.png 8bpp 33 1 32 16 -16 -12 normal
-108 cargo_wagons.png 8bpp 66 1 22 20 -6 -12 normal
+103 cargo_wagons.png 8bpp 1 1 8 24 -3 -12 normal
+104 cargo_wagons.png 8bpp 10 1 22 20 -14 -12 normal
+105 cargo_wagons.png 8bpp 33 1 32 16 -16 -12 normal
+106 cargo_wagons.png 8bpp 66 1 22 20 -6 -12 normal
 
-109 cargo_wagons.png 8bpp 1 33 8 24 -3 -12 normal
-110 cargo_wagons.png 8bpp 10 33 22 20 -14 -12 normal
-111 cargo_wagons.png 8bpp 33 33 32 16 -16 -12 normal
-112 cargo_wagons.png 8bpp 66 33 22 20 -6 -12 normal
+107 cargo_wagons.png 8bpp 1 33 8 24 -3 -12 normal
+108 cargo_wagons.png 8bpp 10 33 22 20 -14 -12 normal
+109 cargo_wagons.png 8bpp 33 33 32 16 -16 -12 normal
+110 cargo_wagons.png 8bpp 66 33 22 20 -6 -12 normal
 
 // Name: set_cargo_wagon - feature 00
-113 * 9 02 00 F1 \b1 \b1
+111 * 9 02 00 F2 \b1 \b1
 \w7
 \w7
 
 // Name: cargo_wagon_switch_vehicle
-114 * 30 02 00 F1 89
+112 * 30 02 00 F2 89
 1A 20 \dx80000000
 \2sto 1A 00 \dx00000100
 \b1
-\wx00FF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
-\wx00F1 // default: set_cargo_wagon;
+\wx7FFF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx00F2 // default: set_cargo_wagon;
 
 // Name: set_cargo_wagon_load - feature 00
-115 * 9 02 00 FD \b1 \b1
+113 * 9 02 00 FD \b1 \b1
 \w8
 \w8
 
 // Name: cargo_wagon_switch_load
-116 * 30 02 00 FD 89
+114 * 30 02 00 FD 89
 1A 20 \dx00000000
 \2sto 1A 00 \dx00000100
 \b1
-\wx00FF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
+\wx7FFF \dx00000001 \dx00000000 	// Bogus range to avoid nvar == 0
 \wx00FD // default: set_cargo_wagon_load;
 
 // Name: cargo_wagon_switch_graphics
-117 * 23 02 00 FD 89
+115 * 23 02 00 FD 89
 10 08 \dx000000FF
 \b1
-\wx00F1 \dx00000000 \dx00000000 	// 0 .. 0: cargo_wagon_switch_vehicle;
+\wx00F2 \dx00000000 \dx00000000 	// 0 .. 0: cargo_wagon_switch_vehicle;
 \wx00FD // default: cargo_wagon_switch_load;
 
-118 * 37 00 00 \b11 01 FF \wx0075
+116 * 37 00 00 \b11 01 FF \wx0075
 06 0F
 2A \dx000A96C9
 04 FF
@@ -524,9 +512,9 @@ FF \wx00FD 	// @action3_4;
 24 00
 0B \wx0000
 
-119 * 19 04 00 7F 01 FF \wx0075 "Cargo Wagon" 00
+117 * 19 04 00 7F 01 FF \wx0075 "Cargo Wagon" 00
 
-120 * 12 03 00 01 FF \wx0075 \b1
+118 * 12 03 00 01 FF \wx0075 \b1
 FF \wx00FD 	// cargo_wagon_switch_graphics;
 \wx00FD 	// cargo_wagon_switch_graphics;
 
