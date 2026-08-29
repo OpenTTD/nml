@@ -81,29 +81,17 @@
 
 24 * 51 00 04 \b1 01 FF \wx0000
 1A \b2
-\b65 \dx00000000 \wx0002 82
-\dx8000842D \wx0002 \b0 \b0 \b0 \b16 \b16 \b36 83
-\b65 \dx00000000 \wx0002 84
-\dx8000842D \wx0002 \b0 \b0 \b0 \b16 \b16 \b36 85
+\b65 \dx000007E6 \wx0002 80
+\dx8000842D \wx0002 \b0 \b0 \b0 \b16 \b16 \b36 80
+\b65 \dx000007E6 \wx0002 80
+\dx8000842D \wx0002 \b0 \b0 \b0 \b16 \b16 \b36 81
 
 // Name: Station Layout@registers - Id 00
-// a : register 80
-// a : register 81
-25 * 106 02 04 FC 89
+25 * 34 02 04 FC 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx00000080
-\2r 1A 20 \dx00000000
-\2sto 1A 20 \dx00000081
-\2r 7D 80 20 \dxFFFFFFFF 	// a
-\2+ 1A 20 \dx000007E6
-\2sto 1A 20 \dx00000082
-\2r 1A 20 \dx00000000
-\2sto 1A 20 \dx00000083
-\2r 7D 81 20 \dxFFFFFFFF 	// a
-\2+ 1A 20 \dx000007E6
-\2sto 1A 20 \dx00000084
 \2r 1A 20 \dx00000001
-\2sto 1A 00 \dx00000085
+\2sto 1A 00 \dx00000081
 \b0
 \wx8000 // Return computed value
 

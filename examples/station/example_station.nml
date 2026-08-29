@@ -60,9 +60,9 @@ spriteset (cow_pen_full, "cows_cargo.png") {
     [ 360, 10, 64, 65, -31, -34 ]
 }
 
-spritelayout cow_pen_X(a) {
+spritelayout cow_pen_X {
     ground {
-        sprite: 2022 + a; // prevent railtype offset
+        sprite: 2022;
     }
     building {
         sprite: DEFAULT(0); // first sprite in active spriteset
@@ -72,9 +72,9 @@ spritelayout cow_pen_X(a) {
     }
 }
 
-spritelayout cow_pen_Y(a) {
+spritelayout cow_pen_Y {
     ground {
-        sprite: 2022 + a; // prevent railtype offset
+        sprite: 2022;
     }
     building {
         sprite: DEFAULT(1); // second sprite in active spriteset
@@ -115,7 +115,7 @@ item(FEAT_STATIONS, cow_pen) {
         ];
     }
     graphics {
-        sprite_layouts: [cow_pen_X(0), cow_pen_Y(0)];
+        sprite_layouts: [cow_pen_X, cow_pen_Y];
         select_tile_type: 0;
         purchase: cow_pen_half;
         LVST: random_cow_pen;
