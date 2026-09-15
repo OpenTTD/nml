@@ -1,0 +1,3 @@
+ nmlc warning: "040_station.nml", line 130: Redefinition of layout 1x1
+ nmlc warning: "040_station.nml", line 134: Invalid tile 5 in layout 2x2
+ nmlc warning: "040_station.nml", line 135: Invalid tile 7 in layout 2x2

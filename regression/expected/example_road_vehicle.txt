@@ -1,0 +1,1 @@
+ nmlc warning: "example_road_vehicle.nml", line 341: 'SOUND_BUS_START_PULL_AWAY' is deprecated, consider using 'SOUND_DEPARTURE_OLD_RV_1' instead
