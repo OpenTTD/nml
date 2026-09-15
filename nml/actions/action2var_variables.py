@@ -167,7 +167,8 @@ varact2vars_vehicles = {
     'vehicle_is_not_powered'           : {'var': 0xFE, 'start':  6, 'size':  1},
     'vehicle_is_reversed'              : {'var': 0xFE, 'start':  8, 'size':  1},
     'built_during_preview'             : {'var': 0xFE, 'start': 10, 'size':  1},
-    'train_is_driving_backwards'       : {'var': 0xFE, 'start': 11, 'size':  1},
+    'train_is_driving_backwards'       : {'var': 0xFE, 'start': 11, 'size':  1, 'replaced_by': 'vehicle_is_moving_backwards'},
+    'vehicle_is_moving_backwards'      : {'var': 0xFE, 'start': 11, 'size':  1},
 }
 
 # Vehicle-type-specific variables
