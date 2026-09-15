@@ -82,6 +82,16 @@ class Item(base_statement.BaseStatementList):
                         self.pos,
                     )
                 self.id = existing_id
+            else:
+                casefoldedname = self.name.value.casefold()
+                for key in global_constants.item_names:
+                    if casefoldedname == key.casefold():
+                        generic.print_warning(
+                            generic.Warning.GENERIC,
+                            f"Item with name '{self.name.value}' similar to existing name '{key}'",
+                            self.pos,
+                        )
+                        break
 
         # We may have to reserve multiple item IDs for houses
         num_ids = action0.house_sizes[self.size.value] if self.size is not None else 1
