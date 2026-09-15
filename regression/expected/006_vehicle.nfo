@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d28
+0 * 4 \d26
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -109,48 +109,36 @@ FF
 \w0
 \w0
 
-// Name: @CB_FAILED_REAL01
-22 * 9 02 01 FD \b1 \b1
-\w0
-\w0
-
-// Name: @CB_FAILED01
-23 * 23 02 01 FD 89
-0C 00 \dx0000FFFF
-\b1
-\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FD // Non-graphics callback, return graphics result
-
 // Name: @return_action_0
-24 * 20 02 01 FC 89
+22 * 20 02 01 FD 89
 1A 20 \dx00000008
 \2- 1C 00 \dxFFFFFFFF
 \b0
 \wx8000 // Return computed value
 
 // Name: @action3_1
-25 * 38 02 01 FC 89
+23 * 38 02 01 FD 89
 1A 20 \dx00000000
 \2sto 1A 20 \dx00000080
 \2r 7E FF 00 \dxFFFFFFFF 	// switch_length(0)
 \b1
-\wx00FD \dx0000FFFF \dx0000FFFF 	// @CB_FAILED01;
-\wx00FC // return (8 - var[0x1C, 0, -1])
+\wx7FFF \dx0000FFFF \dx0000FFFF 	// CB_FAILED;
+\wx00FD // return (8 - var[0x1C, 0, -1])
 
 // Name: @action3_0
-26 * 23 02 01 FC 89
+24 * 23 02 01 FD 89
 10 00 \dx000000FF
 \b1
-\wx00FC \dx00000023 \dx00000023 	// @action3_1;
+\wx00FD \dx00000023 \dx00000023 	// @action3_1;
 \wx00FE // foster_express_set;
 
 // Name: @action3_2
-27 * 23 02 01 FE 89
+25 * 23 02 01 FE 89
 0C 00 \dx0000FFFF
 \b1
-\wx00FC \dx00000036 \dx00000036 	// @action3_0;
+\wx00FD \dx00000036 \dx00000036 	// @action3_0;
 \wx00FE // foster_express_set;
 
-28 * 9 03 01 01 FF \wx0059 \b0
+26 * 9 03 01 01 FF \wx0059 \b0
 \wx00FE 	// @action3_2;
 

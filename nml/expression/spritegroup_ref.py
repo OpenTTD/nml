@@ -70,8 +70,10 @@ class SpriteGroupRef(Expression):
         """
         if self.act2 is not None:
             return self.act2.id
+        if self.name.value == "":
+            return 0x7FFE
         if self.name.value == "CB_FAILED":
-            return 0  # 0 serves as a failed CB result because it is never used
+            return 0x7FFF
         try:
             spritegroup = action2.resolve_spritegroup(self.name)
         except generic.ScriptError:
