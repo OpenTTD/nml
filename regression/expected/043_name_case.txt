@@ -1,0 +1,1 @@
+ nmlc warning: "043_name_case.nml", line 13: Item with name 'item_mu_mu_wagon_unpowered' similar to existing name 'item_mu_MU_Wagon_Unpowered'
