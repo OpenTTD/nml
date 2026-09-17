@@ -1,0 +1,92 @@
+﻿grf {
+    grfid: "NML+";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+/*
+ * Dedup regression test (global pool).
+ *
+ * bridge_back/bridge_front/bridge_pillars each reference `dedup_12` (12 distinct xrel sprites)
+ * four times -- 4 refs x 12 sprites = 48 per role, same 12 unique sprites.
+ * bridge_ends uses `dedup_ends` (32 identical sprites) -> 1 unique.
+ *
+ * Expected:
+ *   - GRM reserves 13 sprites (12 unique parts + 1 unique end), shared globally.
+ *   - Exactly one ActionA chunk of 13 sprites.
+ *   - Prop 0x0D slots for bridge_back/bridge_front/bridge_pillars cycle indices 0..11 across each
+ *     role; all 32 bridge_ends slots resolve to index 12.
+ */
+
+/* 12 sprites with distinct xrel values -- one unique sprite per xrel. */
+spriteset(dedup_12, "oneway.png") {
+    [0, 0, 4, 4,  -2,  0]
+    [0, 0, 4, 4,  -3,  0]
+    [0, 0, 4, 4,  -4,  0]
+    [0, 0, 4, 4,  -5,  0]
+    [0, 0, 4, 4,  -6,  0]
+    [0, 0, 4, 4,  -7,  0]
+    [0, 0, 4, 4,  -8,  0]
+    [0, 0, 4, 4,  -9,  0]
+    [0, 0, 4, 4, -10,  0]
+    [0, 0, 4, 4, -11,  0]
+    [0, 0, 4, 4, -12,  0]
+    [0, 0, 4, 4, -13,  0]
+}
+
+/* 32 identical sprites for ends -- deduplicates to 1 unique. */
+spriteset(dedup_ends, "oneway.png") {
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+    [0, 0, 4, 4, -2, -2]
+}
+
+item(FEAT_BRIDGES, dedup_bridge, 0x03) {
+    property {
+        min_length:          0;
+        max_length:          12;
+        cost_factor:         40;
+        speed_limit:         64 km/h;
+        flags:               0;
+        avail_year:          1930;
+    }
+    graphics {
+        /* 4 refs x 12 sprites = 48 per role, 12 unique across back/front/pillars */
+        bridge_back:    [dedup_12, dedup_12, dedup_12, dedup_12];
+        bridge_front:   [dedup_12, dedup_12, dedup_12, dedup_12];
+        bridge_pillars: [dedup_12, dedup_12, dedup_12, dedup_12];
+        /* 32 sprites, all identical -> 1 unique */
+        bridge_head:    [dedup_ends];
+    }
+}
