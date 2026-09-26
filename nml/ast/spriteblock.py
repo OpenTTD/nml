@@ -36,7 +36,7 @@ class TemplateDeclaration(base_statement.BaseStatement):
                     )
                 elif sprite.name.value not in real_sprite.sprite_template_map:
                     raise generic.ScriptError(
-                        "Encountered unknown template identifier: " + sprite.name.value, sprite.pos
+                        f"Encountered unknown template identifier: {sprite.name.value}", sprite.pos
                     )
         # Register template
         if self.name.value not in real_sprite.sprite_template_map:
@@ -88,7 +88,7 @@ class SpriteSet(spriteset_base_class, sprite_container.SpriteContainer):
     def __init__(self, param_list, sprite_list, pos):
         base_statement.BaseStatement.__init__(self, "spriteset", pos, False, False)
         if not (1 <= len(param_list) <= 5):
-            raise generic.ScriptError("Spriteset requires 1 to 5 parameters, encountered " + str(len(param_list)), pos)
+            raise generic.ScriptError(f"Spriteset requires 1 to 5 parameters, encountered {len(param_list)}", pos)
         name = param_list[0]
         if not isinstance(name, expression.Identifier):
             raise generic.ScriptError("Spriteset parameter 1 'name' should be an identifier", name.pos)

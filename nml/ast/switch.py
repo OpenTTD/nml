@@ -28,7 +28,7 @@ class Switch(switch_base_class):
         base_statement.BaseStatement.__init__(self, "switch-block", pos, False, False)
         if len(param_list) < 4:
             raise generic.ScriptError(
-                "Switch-block requires at least 4 parameters, encountered " + str(len(param_list)), pos
+                f"Switch-block requires at least 4 parameters, encountered {len(param_list)}", pos
             )
         if not isinstance(param_list[1], expression.Identifier):
             raise generic.ScriptError(
@@ -380,7 +380,7 @@ class RandomSwitch(switch_base_class):
         self.triggers = self.triggers.reduce_constant(global_constants.const_list)
         if not (0 <= self.triggers.value <= 255):
             raise generic.ScriptError(
-                "random_switch parameter 4 'triggers' out of range 0..255, encountered " + str(self.triggers.value),
+                f"random_switch parameter 4 'triggers' out of range 0..255, encountered {self.triggers.value}",
                 self.triggers.pos,
             )
 

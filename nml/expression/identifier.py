@@ -74,7 +74,7 @@ class Identifier(Expression):
                     return func(self.value, id_d[self.value], self.pos).reduce(id_dicts)
 
         if unknown_id_fatal and not ignore_all_invalid_ids:
-            raise generic.ScriptError("Unrecognized identifier '" + self.value + "' encountered", self.pos)
+            raise generic.ScriptError(f"Unrecognized identifier '{self.value}' encountered", self.pos)
 
         return self
 
