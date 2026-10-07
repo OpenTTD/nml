@@ -5,7 +5,7 @@
 // Escapes: D= = DR D+ = DF D- = DC Du* = DM D* = DnF Du<< = DnC D<< = DO D& D| Du/ D/ Du% D%
 // Format: spritenum imagefile depth xpos ypos xsize ysize xrel yrel zoom flags
 
-0 * 4 \d20
+0 * 4 \d18
 
 1 * 54 14 "C" "INFO"
 "B" "VRSN" \w4 \dx00000000
@@ -119,26 +119,16 @@
 16 * 9 00 09 \b1 01 FF \wx0000
 0E 62
 
-// Name: @CB_FAILED_LAYOUT09
-17 * 17 02 09 FF \b0 \dx00000000
-\dx00000000 \b0 \b0 \b0 \b0 \b0
-// Name: @CB_FAILED09
-18 * 23 02 09 FF 89
-0C 00 \dx0000FFFF
-\b1
-\wx8000 \dx00000000 \dx00000000 	// graphics callback -> return 0
-\wx00FF // Non-graphics callback, return graphics result
-
 // Name: @action3_0
-19 * 53 02 09 FF 89
+17 * 53 02 09 FC 89
 0C 00 \dx0000FFFF
 \b4
 \wx00FB \dx00000025 \dx00000025 	// var2;
 \wx00FD \dx00000027 \dx00000027 	// var1;
 \wx00FE \dx00000030 \dx00000030 	// random1;
 \wx00FC \dx0000003C \dx0000003C 	// random2;
-\wx00FF // @CB_FAILED09;
+\wx7FFF // CB_FAILED;
 
-20 * 7 03 09 01 00 \b0
-\wx00FF 	// @action3_0;
+18 * 7 03 09 01 00 \b0
+\wx00FC 	// @action3_0;
 
