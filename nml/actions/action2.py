@@ -97,18 +97,16 @@ class Action2(base_action.BaseAction):
         self.tmp_locations = list(range(0x80, 0x80 + total_tmp_locations))
 
     def prepare_output(self, sprite_num):
+        assert self.num_refs != 0, "Action 2 is not referenced"
         free_references(self)
 
         global spritegroup_stats
 
         try:
-            if self.num_refs == 0:
-                self.id = free_action2_ids[0]
-            else:
-                self.id = free_action2_ids.pop()
-                num_used = total_action2_ids - len(free_action2_ids)
-                if num_used > spritegroup_stats[0]:
-                    spritegroup_stats = (num_used, self.pos)
+            self.id = free_action2_ids.pop()
+            num_used = total_action2_ids - len(free_action2_ids)
+            if num_used > spritegroup_stats[0]:
+                spritegroup_stats = (num_used, self.pos)
         except IndexError:
             raise generic.ScriptError(
                 "Unable to allocate ID for [random]switch, sprite set/layout/group or produce-block."
