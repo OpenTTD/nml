@@ -6,6 +6,10 @@ grf {
     min_compatible_version: 0;
 }
 
+switch(FEAT_INDUSTRIES, SELF, fc1, founder_colour1) { return; }
+
+switch(FEAT_INDUSTRIES, SELF, fc2, founder_colour2) { return; }
+
 switch(FEAT_INDUSTRIES, SELF, dumb_add, a, b, a + b) { return; }
 
 /* some computation that requires registers for intermediate values */
@@ -29,5 +33,6 @@ item(FEAT_INDUSTRIES, coal_mine) {
     graphics {
         build_prod_change: return caller1;
         control_special: return caller2;
+        colour: return dumb_add(fc1(), fc2());
     }
 }
