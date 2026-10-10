@@ -1068,6 +1068,9 @@ def parse_sg_ref_result(result, action_list, parent_action, var_range):
     action2.add_ref(ref, varaction2, True)
     action2.add_ref(ref, varaction2, True)
 
+    for proc in varact2parser.proc_call_list:
+        action2.add_ref(proc, varaction2, True)
+
     ref = expression.SpriteGroupRef(expression.Identifier(name), [], None, varaction2)
     action_list.append(varaction2)
     action2.add_ref(ref, parent_action)
