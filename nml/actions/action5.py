@@ -86,6 +86,7 @@ action5_table = {
     "ROAD_WAYPOINTS": (0x19, 4, Action5BlockType.OFFSET),
     "OVERLAY_ROCKS": (0x1A, 95, Action5BlockType.OFFSET),
     "BRIDGE_DECKS": (0x1B, 24, Action5BlockType.OFFSET),
+    "OVERLAY_SEA_SHIMMER": (0x1C, 8, Action5BlockType.OFFSET),
 }
 
 
