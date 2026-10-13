@@ -1,0 +1,122 @@
+//Add action8, so we can test the vehicle in-game
+grf {
+    grfid: "NML\42";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+cargotable {
+    COAL, LVST
+}
+
+spriteset(station_spriteset, "station.png") {
+    [  1,  1,  5,  5,  -2,  -2]
+    [  7,  1,  5,  5,  -2,  -2]
+    [  2,  2,  3,  3,  -1,  -1]
+    [  8,  2,  3,  3,  -1,  -1]
+}
+
+spritelayout station_sprite_layout_X(a) {
+    ground {
+        sprite: GROUNDSPRITE_RAIL_X;
+    }
+    building {
+        sprite: 0x42E;
+        xoffset: 0;
+        yoffset: 0;
+        zoffset: 0;
+        xextent: 16;
+        yextent: 5;
+        zextent: 2;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: CUSTOM(0);
+    }
+    childsprite {
+        sprite: DEFAULT(a);
+        xoffset: 17;
+        yoffset: 11;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: CUSTOM(1);
+    }
+}
+
+spritelayout station_sprite_layout_Y(a) {
+    ground {
+        sprite: GROUNDSPRITE_RAIL_Y;
+    }
+    building {
+        sprite: 0x42F;
+        xoffset: 0;
+        yoffset: 0;
+        zoffset: 0;
+        xextent: 5;
+        yextent: 16;
+        zextent: 2;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: CUSTOM(2);
+    }
+    childsprite {
+        sprite: station_spriteset(a);
+        xoffset: 20;
+        yoffset: 11;
+        recolour_mode: RECOLOUR_REMAP;
+        palette: CUSTOM(3);
+    }
+}
+
+spriteset (palette_1) {
+    recolour_sprite {
+        0xC6:0xB3;0xC7:0xB4;0xC8:0xB5;0xC9:0xB6;0xCA:0xB7;0xCB:0xA4;0xCC:0xA5;0xCD:0xA6;
+    }
+}
+spriteset (palette_2) {
+    recolour_sprite {
+        0xC6:0x60;0xC7:0x61;0xC8:0x62;0xC9:0x63;0xCA:0x64;0xCB:0x65;0xCC:0x66;0xCD:0x67;
+    }
+}
+spriteset (palette_3) {
+    recolour_sprite {
+        0xC6:0xC6;0xC7:0xC7;0xC8:0xC8;0xC9:0xC9;0xCA:0xCA;0xCB:0xCB;0xCC:0xCC;0xCD:0xCD;
+    }
+}
+spriteset (palette_4) {
+    recolour_sprite {
+        0xC6:0x58;0xC7:0x59;0xC8:0x5A;0xC9:0x5B;0xCA:0x5C;0xCB:0x5D;0xCC:0x5E;0xCD:0x5F;
+    }
+}
+
+switch (FEAT_STATIONS, SELF, palette_switch, a, company_colour2-a) {
+    0 : palette_1;
+    1 : palette_2;
+    2 : palette_3;
+    palette_4;
+}
+
+item (FEAT_STATIONS, basic_station, 255) {
+    property {
+        class    : "TEST";
+        classname: string(STR_STATION_TEST_CLASS);
+        name     : string(STR_STATION_BASIC);
+        general_flags: bitmask(STAT_FLAG_EXTENDED_FOUNDATIONS);
+        cargo_random_triggers: [LVST];
+        disabled_platforms: bitmask(5, 6, 7, 8);
+        tile_flags: [a | bitmask(a) for a in [0, 1, 2, 3]];
+        station_layouts: [[[2]],[[a, a] for a in [4, 6]]];
+    }
+    graphics {
+        foundations: param[param[2]];
+        prepare_layout: [STORE_TEMP(0,nearby_tile_station_id(-1,2)), STORE_TEMP(1,1)];
+        purchase_prepare_layout: STORE_TEMP(3,3);
+        sprite_layouts: [
+            station_sprite_layout_X(a),
+            station_sprite_layout_Y(a) for a in [0, 1] + [2, 3]
+        ];
+        custom_spritesets: [palette_switch(a) for a in [param[param[1]],5,6,10]];
+        anim_speed: company_colour1 + company_colour2;
+        LVST: station_spriteset;
+        COAL: station_spriteset;
+        station_spriteset;
+    }
+}
