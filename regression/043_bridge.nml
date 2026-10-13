@@ -1,0 +1,62 @@
+﻿grf {
+    grfid: "NML+";
+    name: string(STR_REGRESSION_NAME);
+    desc: string(STR_REGRESSION_DESC);
+    version: 0;
+    min_compatible_version: 0;
+}
+
+/* Minimal bridge sprite template -- reuses a small region of oneway.png */
+template bridge_spr() {
+    [0, 0, 4, 4, -2, -2]
+}
+
+/*
+ * Each of bridge_back/bridge_front/bridge_pillars is 48 sprites (4 transports x 6 tables x 2 coords).
+ * bridge_ends is 32 sprites (4 transports x flat/ramp x 4 sub-slots).
+ * 4 rows x 12 = 48 for parts; 4 rows x 8 = 32 for ends.
+ */
+spriteset(bridge_parts_spr, "oneway.png") {
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+}
+
+spriteset(bridge_ends_spr, "oneway.png") {
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+    bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr() bridge_spr()
+}
+
+item(FEAT_BRIDGES, my_bridge, 0x01) {
+    property {
+        min_length:          0;
+        max_length:          12;
+        cost_factor:         40;
+        speed_limit:         64 km/h;
+        flags:               0;
+        avail_year:          1930;
+        pillar_info: [
+            bitmask(BRIDGE_PILLAR_CORNER_N, BRIDGE_PILLAR_CORNER_S),   // BRIDGE_PIECE_NORTH x
+            bitmask(BRIDGE_PILLAR_CORNER_W, BRIDGE_PILLAR_CORNER_E),   // BRIDGE_PIECE_NORTH y
+            bitmask(BRIDGE_PILLAR_EDGE_NE),                            // BRIDGE_PIECE_SOUTH x
+            bitmask(BRIDGE_PILLAR_EDGE_SW),                            // BRIDGE_PIECE_SOUTH y
+            0x00,                                                      // BRIDGE_PIECE_INNER_NORTH x
+            0x00,                                                      // BRIDGE_PIECE_INNER_NORTH y
+            0xFF,                                                      // BRIDGE_PIECE_INNER_SOUTH x
+            0xFF,                                                      // BRIDGE_PIECE_INNER_SOUTH y
+            bitmask(BRIDGE_PILLAR_EDGE_NW, BRIDGE_PILLAR_EDGE_SE),     // BRIDGE_PIECE_MIDDLE_ODD x
+            bitmask(BRIDGE_PILLAR_CORNER_N),                           // BRIDGE_PIECE_MIDDLE_ODD y
+            0x00,                                                      // BRIDGE_PIECE_MIDDLE_EVEN x
+            0x00,                                                      // BRIDGE_PIECE_MIDDLE_EVEN y
+        ];
+    }
+    graphics {
+        bridge_back:    [bridge_parts_spr];
+        bridge_front:   [bridge_parts_spr];
+        bridge_pillars: [bridge_parts_spr];
+        bridge_head:    [bridge_ends_spr];
+    }
+}
