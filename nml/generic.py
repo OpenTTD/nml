@@ -476,13 +476,6 @@ def print_dbg(indent, *args):
     show_progress()
 
 
-"""
-Paths already resolved to correct paths on the system.
-The key is the path as specified in the sources. The value is the validated path on the system.
-"""
-_paths = {}
-
-
 def find_file(filepath):
     """
     Verify whether L{filepath} exists. If not, try to find a similar one with a
@@ -494,6 +487,11 @@ def find_file(filepath):
     @return: Path name to a file that exists at the file system.
     @rtype:  C{str}
     """
+    # Try to directly access given path before attempting further search.
+    if os.access(filepath, os.R_OK):
+        return filepath
+
+    original_path = filepath
     # Split the filepath in components (directory parts and the filename).
     drive, filepath = os.path.splitdrive(os.path.normpath(filepath))
     # 'splitdrive' above does not remove the leading / of absolute Unix paths.
@@ -514,10 +512,6 @@ def find_file(filepath):
         path = os.getcwd()
     while len(components) > 0:
         comp = components.pop()
-        childpath = os.path.join(path, comp)
-        if childpath in _paths:
-            path = _paths[childpath]
-            continue
 
         if os.access(path, os.R_OK):
             # Path is readable, compare provided path with the file system.
@@ -551,10 +545,8 @@ def find_file(filepath):
             raise ScriptError('Path "{}" does not exist or is not accessible'.format(path))
 
         path = os.path.join(path, matches[0])
-        if len(components) > 0:
-            _paths[childpath] = path
 
-    return path
+    raise ScriptError(f'Path "{original_path}" does not exist; did you mean "{path}"?')
 
 
 cache_root_dir = ".nmlcache"
