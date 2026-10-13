@@ -164,18 +164,22 @@ class NMLLexer:
     def t_include_INCLUDE(self, t):
         r"\binclude\b"
 
-        def expect(type):
+        def expect(*types):
             t = self.lexer.token()
             if t is None:
                 raise generic.ScriptError("Syntax error, unexpected end-of-file")
-            if t.type != type:
+            if t.type not in types:
                 raise generic.ScriptError(f'Syntax error, unexpected token "{t.value}"', t.lineno)
             return t
 
         self.lexer.push_state("INITIAL")
         expect("LPAREN")
         fname = expect("STRING_LITERAL").value.value
-        expect("RPAREN")
+        self.symbols.append(self.symbols[0].copy())
+        while expect("COMMA", "RPAREN").type == "COMMA":
+            id = expect("ID").value.value
+            expect("EQ")
+            self.symbols[0][id] = expect("STRING_LITERAL").value.value
         expect("SEMICOLON")
         self.lexer.pop_state()
 
@@ -185,7 +189,7 @@ class NMLLexer:
             if generic.find_file(i.filename) == generic.find_file(fname):
                 raise generic.ScriptError(f"Include loop detected: {fname}", t.lineno)
         with codecs.open(generic.find_file(fname), "r", "utf-8") as input:
-            script = generic.read_file(input)
+            script = generic.read_file(input, self.symbols[0])
         self.setup(script, fname)
 
         token = self.lexer.token()
@@ -222,6 +226,7 @@ class NMLLexer:
     def t_STRING_LITERAL(self, t):
         r'"([^"\\]|\\.)*"'
         t.value = expression.StringLiteral(t.value[1:-1], t.lineno)
+        self.increment_lines(t.value.value.count("\n"))
         return t
 
     # Ignored characters
@@ -298,6 +303,7 @@ class NMLLexer:
             self.lexer.input(lexdata)
             self.lexer.lexpos = lexpos
             self.lexer.lineno = self.includes.pop()
+            self.symbols[0] = self.symbols.pop()
         if self.lexer.lexpos != self.lexer.lexlen:
             return self.lexer.token()
         return None
@@ -310,6 +316,7 @@ class NMLLexer:
         self.lexer.begin("include")
         self.includes = []
         self.states = []
+        self.symbols = [{}]
 
     def setup(self, text, fname):
         """
