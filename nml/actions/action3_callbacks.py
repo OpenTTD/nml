@@ -15,7 +15,7 @@ with NML; if not, write to the Free Software Foundation, Inc.,
 
 from nml import nmlop
 
-callbacks = 0x16 * [{}]
+callbacks = 0x17 * [{}]
 
 # Possible values for 'purchase':
 # 0 (or not set): not called from purchase list
@@ -339,4 +339,10 @@ callbacks[0x15] = {
     'tramtypes'       : {'type': 'cargo', 'num': 0x13},
     'roadstops'       : {'type': 'cargo', 'num': 0x14},
     'default'         : {'type': 'cargo', 'num': None},
+}
+
+# Trees
+callbacks[0x16] = {
+    'default'         : {'type': 'cargo', 'num': None},
+    'purchase'        : {'type': 'cargo', 'num': 0xFF},
 }
