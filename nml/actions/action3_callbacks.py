@@ -53,8 +53,12 @@ callbacks[0x00] = {
     'effect_spawn_model_and_powered'       : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x21, 'value_function': vehicle_length},
     'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
-                                               {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
-    'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
+                                               {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity', 'deprecate_message': "'cargo_capacity' is deprecated, consider using 'cargo_capacity_refit' with misc flag TRAIN_FLAG_SIMPLE_REFIT_CAPACITY instead"}], # Depricated due to being complicated and inefficent
+    'cargo_capacity_refit'                 : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 'purchase_cargo_capacity_refit'},
+    'cargo_capacity_default'               : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity_default'},
+    'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2, 'deprecate_message': "'purchase_cargo_capacity' is deprecated, consider using 'purchase_cargo_capacity_refit' with misc flag TRAIN_FLAG_SIMPLE_REFIT_CAPACITY instead"},
+    'purchase_cargo_capacity_refit'        : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 2},
+    'purchase_cargo_capacity_default'      : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
     'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'purchase': 1}, # Don't add separate purchase CB here
     'can_attach_wagon'                     : {'type': 'cb', 'num': 0x1D},
     'speed'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_speed'},
@@ -82,8 +86,12 @@ callbacks[0x01] = {
     'effect_spawn_model'                   : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
     'length'                               : {'type': 'cb', 'num': 0x36, 'var10': 0x23, 'value_function': vehicle_length},
     'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
-                                               {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
-    'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
+                                               {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity', 'deprecate_message': "'cargo_capacity' is deprecated, consider using 'cargo_capacity_refit' with misc flag ROADVEH_FLAG_SIMPLE_REFIT_CAPACITY instead"}], # Depricated due to being complicated and inefficent
+    'cargo_capacity_refit'                 : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 'purchase_cargo_capacity_refit'},
+    'cargo_capacity_default'               : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity_default'},
+    'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2, 'deprecate_message': "'purchase_cargo_capacity' is deprecated, consider using 'purchase_cargo_capacity_refit' with misc flag ROADVEH_FLAG_SIMPLE_REFIT_CAPACITY instead"},
+    'purchase_cargo_capacity_refit'        : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 2},
+    'purchase_cargo_capacity_default'      : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
     'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4,  'purchase': 1}, # Don't add separate purchase CB here
     'running_cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_running_cost_factor'},
     'purchase_running_cost_factor'         : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
@@ -103,37 +111,45 @@ callbacks[0x01].update(general_vehicle_cbs)
 
 # Ships
 callbacks[0x02] = {
-    'visual_effect'                : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'effect_spawn_model'           : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
-    'cargo_capacity'               : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
-                                       {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_cargo_capacity'}],
-    'purchase_cargo_capacity'      : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
-    'cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0A, 'purchase': 2},
-    'speed'                        : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 'purchase_speed'},
-    'purchase_speed'               : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
-    'running_cost_factor'          : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_running_cost_factor'},
-    'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
-    'cargo_age_period'             : {'type': 'cb', 'num': 0x36, 'var10': 0x1D},
-    'create_effect'                : {'type': 'cb', 'num': 0x160},
+    'visual_effect'                        : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'effect_spawn_model'                   : {'type': 'cb', 'num': 0x10, 'flag_bit': 0},
+    'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+                                               {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_cargo_capacity', 'deprecate_message': "'cargo_capacity' is deprecated, consider using 'cargo_capacity_refit' with misc flag SHIP_FLAG_SIMPLE_REFIT_CAPACITY instead"}], # Depricated due to being complicated and inefficent
+    'cargo_capacity_refit'                 : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 'purchase_cargo_capacity_refit'},
+    'cargo_capacity_default'               : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 'purchase_cargo_capacity_default'},
+    'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2, 'deprecate_message': "'purchase_cargo_capacity' is deprecated, consider using 'purchase_cargo_capacity_refit' with misc flag SHIP_FLAG_SIMPLE_REFIT_CAPACITY instead"},
+    'purchase_cargo_capacity_refit'        : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 2},
+    'purchase_cargo_capacity_default'      : {'type': 'cb', 'num': 0x36, 'var10': 0x0D, 'purchase': 2},
+    'cost_factor'                          : {'type': 'cb', 'num': 0x36, 'var10': 0x0A, 'purchase': 2},
+    'speed'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 'purchase_speed'},
+    'purchase_speed'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
+    'running_cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_running_cost_factor'},
+    'purchase_running_cost_factor'         : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
+    'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x1D},
+    'create_effect'                        : {'type': 'cb', 'num': 0x160},
 }
 callbacks[0x02].update(general_vehicle_cbs)
 
 # Aircraft
 callbacks[0x03] = {
-    'passenger_capacity'           : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
-                                       {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_passenger_capacity'}],
-    'purchase_passenger_capacity'  : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
-    'cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
-    'speed'                        : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 'purchase_speed'},
-    'purchase_speed'               : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 2},
-    'running_cost_factor'          : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 'purchase_running_cost_factor'},
-    'purchase_running_cost_factor' : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 2},
-    'mail_capacity'                : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 'purchase_mail_capacity'},
-    'purchase_mail_capacity'       : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
-    'cargo_age_period'             : {'type': 'cb', 'num': 0x36, 'var10': 0x1C},
-    'range'                        : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_range'},
-    'purchase_range'               : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
-    'rotor'                        : {'type': 'override'},
+    'passenger_capacity'                   : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
+                                               {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity', 'deprecate_message': "'passenger_capacity' is deprecated, consider using 'passenger_capacity_refit' with misc flag AIRCRAFT_FLAG_SIMPLE_REFIT_CAPACITY instead"}], # Depricated due to being complicated and inefficent
+    'passenger_capacity_refit'             : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 'purchase_cargo_capacity_refit'},
+    'passenger_capacity_default'           : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity_default'},
+    'purchase_passenger_capacity'          : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2, 'deprecate_message': "'purchase_passenger_capacity' is deprecated, consider using 'purchase_passenger_capacity_refit' with misc flag AIRCRAFT_FLAG_SIMPLE_REFIT_CAPACITY instead"},
+    'purchase_passenger_capacity_refit'    : {'type': 'cb', 'num': 0x15, 'flag_bit': 3, 'purchase': 2},
+    'purchase_passenger_capacity_default'  : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
+    'cost_factor'                          : {'type': 'cb', 'num': 0x36, 'var10': 0x0B, 'purchase': 2},
+    'speed'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 'purchase_speed'},
+    'purchase_speed'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x0C, 'purchase': 2},
+    'running_cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 'purchase_running_cost_factor'},
+    'purchase_running_cost_factor'         : {'type': 'cb', 'num': 0x36, 'var10': 0x0E, 'purchase': 2},
+    'mail_capacity'                        : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 'purchase_mail_capacity'},
+    'purchase_mail_capacity'               : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
+    'cargo_age_period'                     : {'type': 'cb', 'num': 0x36, 'var10': 0x1C},
+    'range'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 'purchase_range'},
+    'purchase_range'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x1F, 'purchase': 2},
+    'rotor'                                : {'type': 'override'},
 }
 callbacks[0x03].update(general_vehicle_cbs)
 
