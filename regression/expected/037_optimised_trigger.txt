@@ -1,0 +1,1 @@
+ nmlc warning: "037_optimised_trigger.nml", line 9: Block 'unconditional_switch' returns a constant, optimising.

@@ -1,0 +1,6 @@
+ nmlc warning: "038_optimised_scope.nml", line 14: Block 'color_unconditional' returns a constant, optimising.
+ nmlc warning: "038_optimised_scope.nml", line 19: Block 'color_indirect1' returns a constant, optimising.
+ nmlc warning: "038_optimised_scope.nml", line 24: Block 'color_indirect0' returns a constant, optimising.
+ nmlc warning: "038_optimised_scope.nml", line 29: Block 'color_indirect' returns a constant, optimising.
+ nmlc warning: "038_optimised_scope.nml", line 45: Block 'mixed_scope_capacity' returns a constant, optimising.
+ nmlc warning: "038_optimised_scope.nml", line 39: Block 'text' returns a constant, optimising.

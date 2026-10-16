@@ -1,0 +1,1 @@
+ nmlc warning: "example_station.nml", line 58: "cows_cargo.png" at [x: 150, y: 10]: 3 of 4160 pixels (0%) are animated, but ANIM isn't in flags
