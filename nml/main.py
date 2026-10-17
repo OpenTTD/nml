@@ -410,12 +410,7 @@ def nml(
 
     generic.print_progress("Reading {} ...".format(input_filename or "standard input"))
 
-    try:
-        script = inputfile.read()
-    except UnicodeDecodeError as ex:
-        raise generic.ScriptError("Input file is not utf-8 encoded: {}".format(ex))
-    # Strip a possible BOM
-    script = script.lstrip(str(codecs.BOM_UTF8, "utf-8"))
+    script = generic.read_file(inputfile)
 
     if script.strip() == "":
         generic.print_error("Empty input file")
