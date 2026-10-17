@@ -330,6 +330,12 @@ def parse_graphics_block_single_id(
                 for info in info_list:
                     if "deprecate_message" in info:
                         generic.print_warning(generic.Warning.DEPRECATION, info["deprecate_message"], cargo_id.pos)
+                    if "maxid" in info and id.value > info["maxid"]:
+                        generic.print_warning(
+                            generic.Warning.GENERIC,
+                            "Make sure you don't use this item as result for callback '{}'.".format(cb_name),
+                            cargo_id.pos,
+                        )
                     if house_tile is not None and "tiles" in info and house_tile not in info["tiles"]:
                         continue
 
