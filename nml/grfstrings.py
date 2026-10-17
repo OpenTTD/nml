@@ -289,7 +289,7 @@ special_commands = [
 ]
 
 
-def read_extra_commands(custom_tags_file):
+def read_extra_commands(custom_tags_file, dependencies: list[str]):
     """
     @param custom_tags_file: Filename of the custom tags file.
     @type  custom_tags_file: C{str}
@@ -298,6 +298,7 @@ def read_extra_commands(custom_tags_file):
         # Failed to open custom_tags.txt, ignore this
         return
     line_no = 0
+    dependencies.append(custom_tags_file)
     with open(generic.find_file(custom_tags_file), "r", encoding="utf-8") as fh:
         for line in fh:
             line_no += 1
@@ -1267,7 +1268,7 @@ def parse_file(filename, default):
             langs.append((lang.langid, lang))
 
 
-def read_lang_files(lang_dir, default_lang_file):
+def read_lang_files(lang_dir, default_lang_file, dependencies: list[str]):
     """
     Read the language files containing the translations for string constants
     used in the NML specification.
@@ -1289,10 +1290,13 @@ def read_lang_files(lang_dir, default_lang_file):
             'Default language file "{}" doesn\'t exist'.format(os.path.join(lang_dir, default_lang_file)),
         )
         return
+    dependencies.append(lang_dir + os.sep + default_lang_file)
     parse_file(lang_dir + os.sep + default_lang_file, True)
+    dependencies.append(lang_dir)
     for filename in glob.glob(lang_dir + os.sep + "*.lng"):
         if filename.endswith(default_lang_file):
             continue
+        dependencies.append(filename)
         parse_file(filename, False)
     langs.sort()
 

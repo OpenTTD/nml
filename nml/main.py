@@ -105,7 +105,7 @@ def parse_cli(argv):
         dest="dep_check",
         help=(
             "output a rule suitable for make describing"
-            " the graphics dependencies of the main grf file (requires input file or --grf)"
+            " the dependencies of the main grf file (requires input file or --grf)"
         ),
     )
     opt_parser.add_option(
@@ -265,11 +265,13 @@ def main(argv):
     if opts.stack:
         developmode = True
 
-    grfstrings.read_extra_commands(opts.custom_tags)
+    dependencies = []
+
+    grfstrings.read_extra_commands(opts.custom_tags, dependencies)
 
     generic.print_progress("Reading lang ...")
 
-    grfstrings.read_lang_files(opts.lang_dir, opts.default_lang)
+    grfstrings.read_lang_files(opts.lang_dir, opts.default_lang, dependencies)
 
     generic.clear_progress()
 
@@ -307,6 +309,7 @@ def main(argv):
     if input_filename is None:
         input = sys.stdin
     else:
+        dependencies.append(input_filename)
         input = codecs.open(generic.find_file(input_filename), "r", "utf-8")
         # Only append an output grf name, if no output is given, also not implicitly via -M
         if not opts.outputfile_given and not outputs:
@@ -352,6 +355,7 @@ def main(argv):
         opts.md5_filename,
         opts.debug_parser,
         opts.disable_palette_validation,
+        dependencies,
     )
 
     input.close()
@@ -377,6 +381,7 @@ def nml(
     md5_filename,
     debug_parser,
     disable_palette_validation,
+    dependencies,
 ):
     """
     Compile an NML file.
@@ -405,6 +410,9 @@ def nml(
     @param md5_filename: Filename to use for writing the md5 sum of the grf file.
                          C{None} if the file should not be written.
     @type  md5_filename: C{str} or C{None}
+
+    @param dependencies: List of lang/config file dependencies.
+    @type  dependencies: C{List}
     """
     generic.OnlyOnce.clear()
 
@@ -510,6 +518,10 @@ def nml(
     for outputfile in outputfiles:
         if isinstance(outputfile, output_dep.OutputDEP):
             with outputfile:
+                # Dependencies from outside world
+                for dep in dependencies:
+                    outputfile.write(dep)
+                # Sprite dependencies discovered during build
                 for f in sprite_files:
                     if f[0] is not None:
                         outputfile.write(f[0])
