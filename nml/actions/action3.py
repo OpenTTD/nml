@@ -311,6 +311,7 @@ def parse_graphics_block_single_id(
     prepare_layout = None
     purchase_prepare_layout = None
     foundations = None
+    need_purchase = False
 
     for graphics in graphics_block.graphics_list:
         cargo_id = graphics.cargo_id
@@ -331,6 +332,9 @@ def parse_graphics_block_single_id(
                         generic.print_warning(generic.Warning.DEPRECATION, info["deprecate_message"], cargo_id.pos)
                     if house_tile is not None and "tiles" in info and house_tile not in info["tiles"]:
                         continue
+
+                    if "purchase" in info and info["purchase"] == 2:
+                        need_purchase = True
 
                     if info["type"] == "cargo":
                         # Not a callback, but an alias for a certain cargo type
@@ -409,13 +413,12 @@ def parse_graphics_block_single_id(
             raise generic.ScriptError("Default graphics are defined twice.", graphics_block.default_graphics.pos)
         cargo_gfx[None] = graphics_block.default_graphics.value
 
+    if "default" in action3_callbacks.callbacks[feature] and None not in cargo_gfx:
+        cargo_gfx[None] = expression.SpriteGroupRef(expression.Identifier("CB_FAILED", None), [], None)
+    if need_purchase and 0xFF not in cargo_gfx:
+        cargo_gfx[0xFF] = cargo_gfx[None]
+
     if layouts or foundations:
-        if None not in cargo_gfx:
-            cargo_gfx[None] = expression.SpriteGroupRef(expression.Identifier("CB_FAILED", None), [], None)
-
-        if purchase_prepare_layout and 0xFF not in cargo_gfx:
-            cargo_gfx[0xFF] = cargo_gfx[None]
-
         var10map, registers_ref = layouts or (None, None)
 
         for cargo in sorted(cargo_gfx, key=lambda x: -1 if x is None else x):
@@ -465,8 +468,6 @@ def parse_graphics_block_single_id(
     if len(callbacks) != 0 or feature == 0x07:
         cb_flags = 0
         # Determine the default value
-        if None not in cargo_gfx:
-            cargo_gfx[None] = expression.SpriteGroupRef(expression.Identifier("CB_FAILED", None), [], None)
         default_val = cargo_gfx[None]
 
         cb_mapping = {}
@@ -490,15 +491,12 @@ def parse_graphics_block_single_id(
             if isinstance(purchase, str):
                 # Not in purchase list, if separate purchase CB is set
                 purchase = 0 if purchase in seen_callbacks else 1
-            # Explicit purchase CBs will need a purchase cargo, even if not needed for graphics
-            if purchase == 2 and 0xFF not in cargo_gfx:
-                cargo_gfx[0xFF] = default_val
 
             num = cb_info["num"]
             if num == 0x36:
                 if purchase != 2:
                     cb36_mapping[cb_info["var10"]] = mapping_val
-                if purchase != 0:
+                if purchase != 0 and 0xFF in cargo_gfx:
                     cb36_buy_mapping[cb_info["var10"]] = mapping_val
             elif feature == 0x0A and num == 0x00:
                 # Industry production CB
