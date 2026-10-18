@@ -1464,6 +1464,8 @@ tramtype_table = {"ELRL": 0}
 
 identifier_refcount = {}
 item_names = {}
+# cache used for tracking casefolded names to prevent case-insenstive duplicate names
+item_names_guard = {}
 settings = {}
 named_parameters = {}
 spritegroups = {"CB_FAILED": "CB_FAILED"}
