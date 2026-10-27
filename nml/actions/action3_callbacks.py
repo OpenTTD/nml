@@ -55,7 +55,7 @@ callbacks[0x00] = {
     'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                                {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x14, 'purchase': 2},
-    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'purchase': 1}, # Don't add separate purchase CB here
+    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'maxid': 0x3FFF, 'purchase': 1}, # Don't add separate purchase CB here
     'can_attach_wagon'                     : {'type': 'cb', 'num': 0x1D},
     'speed'                                : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_speed'},
     'purchase_speed'                       : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
@@ -84,7 +84,7 @@ callbacks[0x01] = {
     'cargo_capacity'                       : [ {'type': 'cb', 'num': 0x15, 'flag_bit': 3},
                                                {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 'purchase_cargo_capacity'}],
     'purchase_cargo_capacity'              : {'type': 'cb', 'num': 0x36, 'var10': 0x0F, 'purchase': 2},
-    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4,  'purchase': 1}, # Don't add separate purchase CB here
+    'articulated_part'                     : {'type': 'cb', 'num': 0x16, 'flag_bit': 4, 'maxid': 0x3FFF, 'purchase': 1}, # Don't add separate purchase CB here
     'running_cost_factor'                  : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 'purchase_running_cost_factor'},
     'purchase_running_cost_factor'         : {'type': 'cb', 'num': 0x36, 'var10': 0x09, 'purchase': 2},
     'cost_factor'                          : {'type': 'cb', 'num': 0x36, 'var10': 0x11, 'purchase': 2},
