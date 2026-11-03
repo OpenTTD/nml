@@ -212,6 +212,7 @@ used_ids = [
     BlockAllocation(0, 62, "Tramtype"),
     BlockAllocation(0, 0xFFFE, "RoadStop"),  # UINT16_MAX - 1
     BlockAllocation(0, 64000, "Badge"),
+    BlockAllocation(0, 255, "Trees"),
 ]
 
 
