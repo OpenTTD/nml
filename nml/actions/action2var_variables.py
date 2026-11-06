@@ -801,6 +801,8 @@ varact2vars_towns = {
     'is_city'                        : {'var': 0x40, 'start': 0, 'size': 1},
     'cities_enabled'                 : {'var': 0x40, 'start': 1, 'size': 1, 'value_function': lambda var, info: expression.Not(var, var.pos)},
     'town_index'                     : {'var': 0x41, 'start': 0, 'size': 16},
+    'road_layout'                    : {'var': 0x42, 'start': 0, 'size': 2},
+    'num_nearby_stations'            : {'var': 0x43, 'start': 0, 'size': 16},
     'population'                     : {'var': 0x82, 'start': 0, 'size': 16},
     'has_church'                     : {'var': 0x92, 'start': 1, 'size': 1},
     'has_stadium'                    : {'var': 0x92, 'start': 2, 'size': 1},
@@ -812,6 +814,21 @@ varact2vars_towns = {
     'num_houses'                     : {'var': 0xB6, 'start': 0, 'size': 16},
     'percent_transported_passengers' : {'var': 0xCA, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
     'percent_transported_mail'       : {'var': 0xCB, 'start': 0, 'size': 8, 'value_function': value_mul_div(101, 256)},
+}
+
+varact2vars60x_towns = {
+    'nearby_tile_slope'              : {'var': 0x60, 'start':  0, 'size': 5, 'param_function': unsigned_tile_offset},
+    'nearby_tile_is_water'           : {'var': 0x60, 'start':  9, 'size': 1, 'param_function': unsigned_tile_offset},
+    'nearby_tile_terrain_type'       : {'var': 0x60, 'start': 10, 'size': 3, 'param_function': unsigned_tile_offset},
+    'nearby_tile_water_class'        : {'var': 0x60, 'start': 13, 'size': 2, 'param_function': unsigned_tile_offset},
+    'nearby_tile_height'             : {'var': 0x60, 'start': 16, 'size': 8, 'param_function': unsigned_tile_offset},
+    'nearby_tile_class'              : {'var': 0x60, 'start': 24, 'size': 4, 'param_function': unsigned_tile_offset},
+    'this_month_production'          : {'var': 0x61, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'this_month_transported'         : {'var': 0x62, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'last_month_production'          : {'var': 0x63, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'last_month_transported'         : {'var': 0x64, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'this_month_accepted'            : {'var': 0x65, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
+    'last_month_accepted'            : {'var': 0x66, 'start':  0, 'size': 32, 'param_function': industry_cargotype},
 }
 
 #
@@ -900,7 +917,7 @@ class VarAct2Feature:
         return self.self_scope if var_range == 0x89 else self.parent_scope
 
 
-scope_towns = VarAct2Scope("Towns", varact2vars_towns, {}, has_persistent_storage=True)
+scope_towns = VarAct2Scope("Towns", varact2vars_towns, varact2vars60x_towns, has_persistent_storage=True)
 scope_trains = VarAct2Scope("Trains", varact2vars_trains, varact2vars60x_trains)
 scope_roadvehs = VarAct2Scope("RoadVehs", varact2vars_roadvehs, varact2vars60x_roadvehs)
 scope_ships = VarAct2Scope("Ships", varact2vars_ships, varact2vars60x_vehicles)
