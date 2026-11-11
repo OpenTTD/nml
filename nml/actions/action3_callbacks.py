@@ -187,6 +187,7 @@ callbacks[0x07] = {
     'graphics_south'         : {'type': 'cb', 'num':  0x00, 'tiles': 's'},
     'graphics_west'          : {'type': 'cb', 'num':  0x00, 'tiles': 'w'},
     'default'                : {'type': 'cargo', 'num': None},
+    'purchase'               : {'type': 'cargo', 'num': 0xFF},
 }
 
 # General variables (0x08) have no action3
@@ -203,6 +204,7 @@ callbacks[0x09] = {
     'foundations'         : {'type': 'cb', 'num': 0x30, 'flag_bit': 5},
     'autoslope'           : {'type': 'cb', 'num': 0x3C, 'flag_bit': 6},
     'default'             : {'type': 'cargo', 'num': None},
+    'purchase'            : {'type': 'cargo', 'num': 0xFF},
 }
 
 # Industries
@@ -223,6 +225,7 @@ callbacks[0x0A] = {
     'cargo_output'             : {'type': 'cb', 'num': 0x14C, 'flag_bit': 13},
     'build_prod_change'        : {'type': 'cb', 'num': 0x15F, 'flag_bit': 14},
     'default'                  : {'type': 'cargo', 'num': None},
+    'purchase'                 : {'type': 'cargo', 'num': 0xFF},
 }
 
 # Cargos
@@ -239,6 +242,7 @@ callbacks[0x0D] = {
     'additional_text' : {'type': 'cb', 'num': 0x155},
     'layout_name'     : {'type': 'cb', 'num': 0x156},
     'default'         : {'type': 'cargo', 'num': None},
+    'purchase'        : {'type': 'cargo', 'num': 0xFF},
 }
 
 # New signals (0x0E) have no item-specific action3
@@ -281,6 +285,7 @@ callbacks[0x11] = {
     'anim_next_frame' : {'type': 'cb', 'num': 0x153, 'flag_bit': 0},
     'anim_speed'      : {'type': 'cb', 'num': 0x154, 'flag_bit': 1},
     'default'         : {'type': 'cargo', 'num': None},
+    'purchase'        : {'type': 'cargo', 'num': 0xFF},
 }
 
 # Roadtypes
