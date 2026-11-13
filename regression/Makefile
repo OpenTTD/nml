@@ -19,8 +19,9 @@ $(TEST_FILES):
 	$(_V) echo "Running test $@"
 	$(_V) mkdir -p output nml_output output2
 # First pass : check compilation of source nml and generation of optimised nml
-	$(_V) $(NMLC) $(NML_FLAGS) --nfo output/$@.nfo --grf output/$@.grf $@.nml --nml nml_output/$@.nml
+	$(_V) $(NMLC) $(NML_FLAGS) --nfo output/$@.nfo --grf output/$@.grf $@.nml --nml nml_output/$@.nml > output/$@.txt 2>&1
 	$(_V) diff -u --strip-trailing-cr expected/$@.nfo output/$@.nfo
+	$(_V) diff -u --strip-trailing-cr expected/$@.txt output/$@.txt
 	$(_V) diff expected/$@.grf output/$@.grf
 # Second pass : check compilation of optimised nml
 	$(_V) $(NMLC) $(NML_FLAGS) -n --nfo output2/$@.nfo --grf output2/$@.grf nml_output/$@.nml
@@ -37,8 +38,9 @@ $(EXAMPLES):
 		--nfo ../../regression/output/example_$@.nfo \
 		--nml ../../regression/nml_output/example_$@.nml \
 		--grf ../../regression/output/example_$@.grf \
-		example_$@.nml && cd ../../regression
+		example_$@.nml > ../../regression/output/example_$@.txt 2>&1 && cd ../../regression
 	$(_V) diff -u --strip-trailing-cr expected/example_$@.nfo output/example_$@.nfo
+	$(_V) diff -u --strip-trailing-cr expected/example_$@.txt output/example_$@.txt
 	$(_V) diff expected/example_$@.grf output/example_$@.grf
 # Second pass
 	$(_V) cd ../examples/$@/ && \
